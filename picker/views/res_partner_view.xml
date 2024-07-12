@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <field name="credit_policy" position="before"> <!--existing field-->
                 <field name="transfer_limit"/><!--New field-->
-            </field>
+            </field>hello
         </field>
     </record>
 </data>
