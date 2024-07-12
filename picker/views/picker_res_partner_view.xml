@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+<data>
+    <!--Add field to form view
+    <record model="ir.ui.view" id="stock_picker_view_form">
+        <field name="name">stock_picker_view_form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="priority" eval="16"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group/group/div//field[@name='scheduled_date']" position="attributes">
+                <attribute name="on_change">onchange_date(my_date)</attribute>
+            </xpath>
+        </field>
+    </record>-->
+
+    <record model="ir.ui.view" id="picker_res_partner_view_form">
+        <field name="name">picker_res_partner_view_form</field> <!--View name-->
+        <field name="model">res.partner</field> <!--Model name where view will applied-->
+        <field name="inherit_id" ref="account_financial_risk.res_partner_view_risk"/> <!--External ID of Parent view which inherited-->
+        <field name="priority" eval="13"/>
+        <field name="arch" type="xml">
+            <field name="credit_policy" position="before">
+                <field name="transfer_limit"/>
+            </field>
+        </field>
+    </record>
+</data>
+</odoo>
