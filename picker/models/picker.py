@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models
+from datetime import date, timedelta
+from odoo.exceptions import ValidationError
 
 
 
@@ -9,7 +11,7 @@ class Picking(models.Model):
     
     def button_validate(self):
         if (self.picking_type_code == 'outgoing'):
-            #if (self.partner_id.transfer_limit):
+            if (self.partner_id.transfer_limit):
                 if not self.env.context.get("bypass_risk", False):
                     for order in self:
                         exception_msg = order.transfer_evaluate()
@@ -59,13 +61,11 @@ class Picking(models.Model):
     
     def check_partner_draft_invoice(self):
         for order in self:
-            invoices = order.partner_id.invoice_ids  # Get 'account.move' recordset for this partner
+            invoices = order.partner_id.risk_invoice_draft  # Get 'account.move' recordset for this partner
             if (invoices):  # check if there are records in 'account.move' for this partner
-                payments = invoices.filtered(lambda x: x.state == "draft")
-                if (payments):
-                    drftinv = True
-                else:
-                    drftinv = False
+                drftinv = True
+            else:
+                drftinv = False
         return drftinv
     
     def compute_remaining_unpaid_limit(self):
@@ -112,10 +112,26 @@ class Picking(models.Model):
     def compute_transfer_value(self):
         for order in self:
             lines = order.move_ids_without_package
+            today = date.today() - timedelta(days=1)
             lines_value = 0
             for line in lines:
-                line_value = (line.sale_line_id.price_subtotal / line.sale_line_id.product_uom_qty ) * line.quantity_done
-                lines_value = lines_value + line_value
+                sale_order = line.sale_line_id
+                sub_total = sale_order.price_subtotal
+                qty = sale_order.product_uom_qty
+                done = line.quantity_done
+                tax = sale_order.tax_id.amount
+                currency = sale_order.currency_id
+                currency_rate = currency.rate_type_ids.filtered(lambda x: x.name == today and x.rate_type_id.code == "forex_selling")
+                inverse = currency_rate.inverse_company_rate
+                if (currency.name == 'TRY'):
+                    line_value = (sub_total / qty ) * done * (1 + tax/100)
+                    lines_value = lines_value + line_value
+                else:
+                    if (not currency_rate):
+                        raise ValidationError(('Currency rate for today is not exists.\n\nPlease contact accounting manager to get this value.'))
+                    else:
+                        line_value = (sub_total / qty ) * done * (1 + tax/100) * inverse
+                        lines_value = lines_value + line_value
         return lines_value
     
     def compute_remaining_open_limit(self):
