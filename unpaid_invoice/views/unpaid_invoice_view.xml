@@ -12,7 +12,7 @@
         </field>
     </record>
 
-    <templates xml:space="preserve">
+    <templates>
     <t t-extend="ListView.buttons">
       <t t-jquery="button.o_list_export_xlsx" t-operation="after">
         <button type="button" class="btn btn-secondary o_list_export_pdf">Export PDF</button>
