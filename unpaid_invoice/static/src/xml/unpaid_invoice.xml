@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
   <templates xml:space="preserve">
-    <t t-extend="ListView.buttons">
-      <t t-jquery="button.o_list_export_xlsx" t-operation="after">
-        <button type="button" class="btn btn-secondary">Export PDF</button>
-      </t>
+    <t t-extend="ListView.buttons" t-name="UnpaidListView.buttons">
+        <t t-jquery="button.o_list_button_add" t-operation="after">
+            <button type="button" class="btn btn-secondary">
+                unpaid
+            </button>
+        </t>
     </t>
   </templates>
