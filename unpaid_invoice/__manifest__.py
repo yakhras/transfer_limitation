@@ -28,6 +28,12 @@
         #"security/security.xml",
         "views/unpaid_invoice_view.xml",
     ],
+
+    'assets': {
+        'web.assets_qweb': [
+            'unpaid_invoice/static/src/xml/unpaid_invoice.xml',
+        ],
+    },
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
