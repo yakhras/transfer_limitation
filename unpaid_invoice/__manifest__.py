@@ -26,7 +26,7 @@
     # always loaded
     'data': [
         #"security/security.xml",
-        "views/res_partner_view.xml",
+        "views/unpaid_invoice_view.xml",
     ],
     # only loaded in demonstration mode
     'demo': [
