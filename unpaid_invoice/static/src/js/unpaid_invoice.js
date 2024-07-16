@@ -3,9 +3,9 @@ odoo.define('export_pdf.print_pdf',function(require){
 
 var ListController = require('web.ListController');
 ListController.include({
-   renderButtons: function($node) {
-   this._super.apply(this, arguments);
-       if (this.$buttons) {
+   renderButtons: function($node){
+    this._super.apply(this, arguments);
+       if (this.$buttons){
          this.$buttons.find('.o_list_export_pdf') ;
        }
    }, 
