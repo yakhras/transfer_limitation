@@ -2,7 +2,9 @@
 <templates xml:space="preserve">
   <t t-extend="ListView.buttons">
     <t t-jquery="button.o_list_add" t-operation="after">
-      <button type="button" class="btn btn-secondary o_list_export_pdf">Export PDF</button>
+      <t  t-if="widget.modelName == 'res.partner'">
+        <button type="button" class="btn btn-secondary o_list_export_pdf">Export PDF</button>
+      </t>
     </t>
   </t>
 </templates>
