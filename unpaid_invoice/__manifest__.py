@@ -34,7 +34,7 @@
             'unpaid_invoice/static/src/xml/unpaid_invoice.xml',
         ],
         'web.assets_backend': [
-            'unpaid_invoice/static/src/xml/unpaid_invoice.js'
+            'unpaid_invoice/static/src/js/unpaid_invoice.js'
         ],
     },
     # only loaded in demonstration mode
