@@ -1,19 +1,14 @@
 odoo.define('button_near_create.tree_button', function (require) {
     "use strict";
-    var Widget = require('web.Widget');
-
-    var Counter = Widget.extend({
-        template: 'some.template',
-        events: {
-            'click button': '_onClick',
-        },
-        init: function (parent, value) {
-            this._super(parent);
-            this.count = value;
-        },
-        _onClick: function () {
-            this.count++;
-            this.$('.val').text(this.count);
+    var rpc = require('web.rpc');
+    var ListController = require('web.LoistController');
+    ListController.include({
+        events: _.extend({}, ListController.prototype.events, {
+            "click .call_custom": "get_call_window",
+        }),
+        get_call_window: function(e){
+            console.log("Hello Yaser")
         },
     });
 });
+    
