@@ -7,7 +7,7 @@ odoo.define('button_near_create.tree_button', function (require) {
             "click .call_custom": "get_call_window",
         }),
         get_call_window: function(e){
-            console.log("Hello Yaser")
+            console.log("Hello Yaser");
         },
     });
 });
