@@ -21,7 +21,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['account'],
+    'depends': ['account','sale_management'],
 
     # always loaded
     'data': [
