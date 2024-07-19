@@ -3,11 +3,9 @@ odoo.define('owl_pos.call_button', function (require) {
     var ListController = require('web.LoistController');
     ListController.include({
         events: _.extend({}, ListController.prototype.events, {
-            "click .call_custom": "get_call_window",
+            "click .call_custom": console.log("Hi Yaser"),
         }),
-        get_call_window: function(){
-            console.log("Hello Yaser");
-        },
+        
     });
 });
     
