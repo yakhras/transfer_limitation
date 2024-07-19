@@ -5,9 +5,11 @@ odoo.define('owl_pos.call_button', function (require) {
 
     ListController.include({
         events: _.extend({}, ListController.prototype.events, {
-            "click .call_custom": console.log("Hi Yaser"),
+            "click .call_custom": "get_call_window",
         }),
-        
+        get_call_window: function(){
+            console.log("Hello Yaser");
+        },
     });
 });
     
