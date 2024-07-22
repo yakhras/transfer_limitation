@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-extend="ListView.buttons" t-name="unpaid.button">
-        <t t-jquery="button .o_list_export_xlsx" t-operation="after">
+        <t t-jquery="button.o_list_export_xlsx" t-operation="after">
             <t t-if="widget.modelName == 'pos.order'">
                 <button type="button"
                         class="btn btn-secondary call_custom"
