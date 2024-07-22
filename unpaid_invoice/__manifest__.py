@@ -33,9 +33,9 @@
         'web.assets_qweb': [
             'unpaid_invoice/static/src/xml/unpaid_invoice.xml',
         ],
-        'web.assets_backend': [
-            'unpaid_invoice/static/src/js/unpaid_invoice.js'
-        ],
+        #'web.assets_backend': [
+           # 'unpaid_invoice/static/src/js/unpaid_invoice.js'
+        #],
     },
     # only loaded in demonstration mode
     'demo': [
