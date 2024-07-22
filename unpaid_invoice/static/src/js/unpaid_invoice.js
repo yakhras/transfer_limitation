@@ -10,5 +10,5 @@ odoo.define('owl_pos.call_button', function (require) {
         get_call_window: function(){
             console.log("Hello Yaser");
         },
-    })
+    });
 });
