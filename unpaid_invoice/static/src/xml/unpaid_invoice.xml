@@ -3,9 +3,7 @@
     <t t-extend="ListView.buttons" t-name="unpaid.button">
         <t t-jquery="button.o_list_export_xlsx" t-operation="after">
             <t t-if="widget.modelName == 'pos.order'">
-                <button type="button"
-                        class="btn btn-secondary call_custom"
-                        title="Unpaid">
+                <button class="btn btn-primary btn-sm m-2" t-on-click="get_call_window">
                         Unpaid
                 </button>
             </t>
