@@ -2,8 +2,9 @@ odoo.define('owl_pos.call_button', function (require) {
     "use strict";
 
     var ListController = require('web.ListController');
+    const ListView = require('web.ListView');
 
-    ListController.extend({
+    const UnpaidListController = ListController.extend({
         events: _.extend({}, ListController.prototype.events, {
             "click .call_unpaid": "get_call_unpaid",
         }),
@@ -11,5 +12,13 @@ odoo.define('owl_pos.call_button', function (require) {
             console.log("Hello Yaser");
         },
     });
+
+    var UnpaidListView = ListViewView.extend({
+        config: _.extend({}, ListView.prototype.config, {
+            Controller: UnpaidListController,
+        }),
+    });
+
+    viewRegistry.add('unpaid_list', UnpaidListView);
 
 });
