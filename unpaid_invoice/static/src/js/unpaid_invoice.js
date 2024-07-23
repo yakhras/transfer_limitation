@@ -1,15 +1,15 @@
 odoo.define('owl_pos.call_button', function (require) {
     "use strict";
 
-    //var ListController = require('web.ListController');
+    var ListController = require('web.ListController');
 
-    //ListController.include({
-    //     events: _.extend({}, ListController.prototype.events, {
-    //         "click .call_custom": "get_call_window",
-    //     }),
-    get_call_window() {
-        console.log("Hello Yaser");
-    },
-    //});
+    ListController.extend({
+        events: _.extend({}, ListController.prototype.events, {
+            "click .call_unpaid": "get_call_unpaid",
+        }),
+        get_call_unpaid() {
+            console.log("Hello Yaser");
+        },
+    });
 
 });
