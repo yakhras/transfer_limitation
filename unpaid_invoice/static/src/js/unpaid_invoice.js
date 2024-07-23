@@ -6,6 +6,7 @@ odoo.define('owl_pos.call_button', function (require) {
     var viewRegistry = require('web.view_registry');
 
     const UnpaidListController = ListController.extend({
+        buttons_template: "unpaid_button.buttons",
         events: _.extend({}, ListController.prototype.events, {
             "click .call_unpaid": "get_call_unpaid",
         }),
