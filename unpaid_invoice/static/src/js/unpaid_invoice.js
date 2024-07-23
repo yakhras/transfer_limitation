@@ -4,7 +4,7 @@ odoo.define('owl_pos.call_button', function (require) {
     var ListController = require('web.ListController');
     const ListView = require('web.ListView');
 
-    ListController.extend({
+    const UnpaidListController = ListController.extend({
         events: _.extend({}, ListController.prototype.events, {
             "click .call_unpaid": "get_call_unpaid",
         }),
