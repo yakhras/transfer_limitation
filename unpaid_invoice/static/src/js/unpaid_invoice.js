@@ -1,4 +1,4 @@
-odoo.define('owl_pos.call_button', function (require) {
+odoo.define('owl.call_button', function (require) {
     "use strict";
 
     var ListController = require('web.ListController');
