@@ -13,7 +13,7 @@ odoo.define('owl_pos.call_button', function (require) {
         },
     });
 
-    var UnpaidListView = ListViewView.extend({
+    var UnpaidListView = ListView.extend({
         config: _.extend({}, ListView.prototype.config, {
             Controller: UnpaidListController,
         }),
