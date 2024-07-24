@@ -18,7 +18,7 @@
             <field name="inherit_id" ref="account.view_account_invoice_filter" /> <!--External ID of Parent view which inherited-->
             <field name="arch" type="xml">
                 <filter name="late" position="attributes">
-                    <attribute name="domain">['state', '=', 'draft']</attribute>
+                    <attribute name="domain">[('state', '=', 'draft')]</attribute>
                 </filter>
             </field>
         </record>
