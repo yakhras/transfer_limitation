@@ -1,24 +1,32 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<data>
-    <record model="ir.ui.view" id="unpaid_invoice_view_tree">
-        <field name="name">unpaid_invoice_view_tree</field> <!--View name-->
-        <field name="model">account.move</field> <!--Model name where view will applied-->
-        <field name="inherit_id" ref="account.view_out_invoice_tree"/> <!--External ID of Parent view which inherited-->
-        <field name="arch" type="xml">
-            <xpath expr="//tree" position="attributes">
-                <attribute name="js_class">unpaid_list</attribute> 
-            </xpath>
-        </field>
-    </record>
+    <data>
+        <record model="ir.ui.view" id="unpaid_invoice_view_tree">
+            <field name="name">unpaid_invoice_view_tree</field> <!--View
+            name-->
+            <field name="model">account.move</field> <!--Model
+            name where view will applied-->
+            <field name="inherit_id" ref="account.view_out_invoice_tree" /> <!--External
+            ID of Parent view which inherited-->
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="js_class">unpaid_list</attribute>
+                </xpath>
+            </field>
+        </record>
 
-    <record model="ir.ui.view" id="unpaid_invoice_view_filter">
-        <field name="name">unpaid_invoice_view_filter</field> <!--View name-->
-        <field name="model">account.move</field> <!--Model name where view will applied-->
-        <field name="inherit_id" ref="account.view_out_invoice_tree"/> <!--External ID of Parent view which inherited-->
-        <field name="arch" type="xml">
-            <filter name="unpaid_invoice" string="Unpaid" domain="['state', '=', 'draft']"/> 
-        </field>
-    </record>
-</data>
+        <record model="ir.ui.view" id="unpaid_invoice_view_filter">
+            <field name="name">unpaid_invoice_view_filter</field> <!--View
+            name-->
+            <field name="model">account.move</field> <!--Model
+            name where view will applied-->
+            <field name="inherit_id" ref="view_account_invoice_filter" /> <!--External
+            ID of Parent view which inherited-->
+            <field name="arch" type="xml">
+                <filter name="late" position="attributes">
+                    <attribute name="domain">['state', '=', 'draft']</attribute>
+                </filter>
+            </field>
+        </record>
+    </data>
 </odoo>
