@@ -11,7 +11,7 @@ odoo.define('owl.call_button', function (require) {
             "click .call_unpaid": "get_call_unpaid",
         }),
         get_call_unpaid() {
-            console.log("Hello Yasser");
+            window.alert("Hey,Whatsapp!!")
         },
     });
 
