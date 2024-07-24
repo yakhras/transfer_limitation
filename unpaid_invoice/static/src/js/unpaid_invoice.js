@@ -19,6 +19,9 @@ odoo.define('owl.call_button', function (require) {
                 views: [[false, 'form']],
                 view_mode: 'form',
                 target: 'new',
+                context: {
+                    'search_default_state': 'draft',
+                }
             }
         }
     })
