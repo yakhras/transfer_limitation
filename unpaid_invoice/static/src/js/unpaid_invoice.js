@@ -14,10 +14,10 @@ odoo.define('owl.call_button', function (require) {
             return {
                 model: 'ir.actions.act_window',
                 type: 'ir.actions.act_window',
-                name: ('Unpaid Invoices'),
+                name: 'Unpaid Invoices',
                 res_model: 'account.move',
-                views: [[false, 'form']],
-                view_mode: 'form',
+                views: [[false, 'tree']],
+                view_mode: 'tree',
                 target: 'new',
                 context: {
                     'search_default_state': 'draft',
