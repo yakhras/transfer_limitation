@@ -12,10 +12,10 @@ odoo.define('owl.call_button', function (require) {
     const UnpaidListController = ListController.extend({
         buttons_template: "unpaid_button.buttons",
         function() {
-            console.log('Hi Yaser')
-        }
+            console.log('Hi Yaser');
+        },
 
-    })
+    });
 
     // ListRenderer Inherits.
     const UnpaidListRenderer = ListRenderer.extend({
@@ -27,10 +27,10 @@ odoo.define('owl.call_button', function (require) {
                 model: 'ir.ui.view',
                 method: 'get_view_id',
                 args: ['account.view_account_invoice_filter'],
-            })
-            console.log('Hi Yassor')
-        }
-    })
+            });
+            console.log('Hi Yassor');
+        },
+    });
 
     // ListView Inherits.
     const UnpaidListView = ListView.extend({
