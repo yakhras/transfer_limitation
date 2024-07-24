@@ -11,7 +11,15 @@ odoo.define('owl.call_button', function (require) {
     // Add click Event.
     const UnpaidListController = ListController.extend({
         buttons_template: "unpaid_button.buttons",
-        events: _.extend({}, ListController.prototype.events, {
+        function() {
+            console.log('Hi Yaser')
+        }
+
+    })
+
+    // ListRenderer Inherits.
+    const UnpaidListRenderer = ListRenderer.extend({
+        events: _.extend({}, ListRenderer.prototype.events, {
             "click .call_unpaid": "get_call_unpaid",
         }),
         get_call_unpaid() {
@@ -20,14 +28,7 @@ odoo.define('owl.call_button', function (require) {
                 method: 'get_view_id',
                 args: ['account.view_account_invoice_filter'],
             })
-            console.log('Hi Yaser')
-        }
-    })
-
-    // ListRenderer Inherits.
-    const UnpaidListRenderer = ListRenderer.extend({
-        _render: function () {
-            return this._super.apply(this, arguments)
+            console.log('Hi Yassor')
         }
     })
 
