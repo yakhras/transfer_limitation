@@ -11,7 +11,11 @@ odoo.define('owl.call_button', function (require) {
             "click .call_unpaid": "get_call_unpaid",
         }),
         get_call_unpaid() {
-            console.log(document)
+            this._rpc({
+                model: 'ir.ui.view',
+                method: 'get_view_id',
+                args: ['account.view_account_invoice_filter'],
+            })
         }
     })
 
