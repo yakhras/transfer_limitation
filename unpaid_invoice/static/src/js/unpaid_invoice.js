@@ -16,6 +16,7 @@ odoo.define('owl.call_button', function (require) {
                 method: 'get_view_id',
                 args: ['account.view_account_invoice_filter'],
             })
+            console.log('Hi Yaser')
         }
     })
 
