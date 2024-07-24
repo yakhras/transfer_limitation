@@ -11,7 +11,7 @@ odoo.define('owl.call_button', function (require) {
     // Add click Event.
     const UnpaidListController = ListController.extend({
         buttons_template: "unpaid_button.buttons",
-        function() {
+        un_pai () {
             console.log('Hi Yaser');
         },
 
