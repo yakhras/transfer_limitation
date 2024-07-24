@@ -11,16 +11,17 @@ odoo.define('owl.call_button', function (require) {
             "click .call_unpaid": "get_call_unpaid",
         }),
         get_call_unpaid() {
-                return {
-                    type: 'ir.actions.act_window',
-                    name: ('Unpaid Invoices'),
-                    res_model: 'account.move',
-                    views: [[false, 'form']],
-                    view_mode: 'form',
-                    target: 'new',
-                }
+            return {
+                model: 'ir.actions.act_window',
+                type: 'ir.actions.act_window',
+                name: ('Unpaid Invoices'),
+                res_model: 'account.move',
+                views: [[false, 'form']],
+                view_mode: 'form',
+                target: 'new',
             }
-        })
+        }
+    })
 
     var UnpaidListView = ListView.extend({
         config: _.extend({}, ListView.prototype.config, {
