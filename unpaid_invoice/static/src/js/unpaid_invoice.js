@@ -1,10 +1,14 @@
 odoo.define('owl.call_button', function (require) {
     "use strict";
 
-    var ListController = require('web.ListController');
+    const ListController = require('web.ListController');
+    const ListRenderer = require('web.ListRenderer')
     const ListView = require('web.ListView');
     var viewRegistry = require('web.view_registry');
 
+    // ListController Inherites,
+    // Add Button Template,
+    // Add click Event.
     const UnpaidListController = ListController.extend({
         buttons_template: "unpaid_button.buttons",
         events: _.extend({}, ListController.prototype.events, {
@@ -20,12 +24,22 @@ odoo.define('owl.call_button', function (require) {
         }
     })
 
-    var UnpaidListView = ListView.extend({
+    // ListRenderer Inherits.
+    const UnpaidListRenderer = ListRenderer.extend({
+        _render: function () {
+            return this._super.apply(this, arguments)
+        }
+    })
+
+    // ListView Inherits.
+    const UnpaidListView = ListView.extend({
         config: _.extend({}, ListView.prototype.config, {
             Controller: UnpaidListController,
+            Renderer: UnpaidListRenderer,
         }),
     });
 
+    // Register ListView with js Class
     viewRegistry.add('unpaid_list', UnpaidListView);
 
 });
