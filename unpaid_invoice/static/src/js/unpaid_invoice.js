@@ -16,6 +16,7 @@ odoo.define('owl.call_button', function (require) {
         }),
         get_call_unpaid () {
             console.log('Hi Yassor');
+            this.do_action('unpaid_invoice.unpaid_invoices_action');
             console.log('Hi Yaser');
         },
 
