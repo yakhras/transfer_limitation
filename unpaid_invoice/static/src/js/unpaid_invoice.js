@@ -16,27 +16,11 @@ odoo.define('owl.call_button', function (require) {
         }),
         get_call_unpaid () {
             console.log('Hi Yassor');
-            //this.do_action('unpaid_invoice.unpaid_invoice_view_filter');
             console.log('Hi Yaser');
         },
 
     });
 
-    // ListRenderer Inherits.
- /*   const UnpaidListRenderer = ListRenderer.extend({
-        events: _.extend({}, ListRenderer.prototype.events, {
-            "click .call_unpaid": "get_call_unpaid",
-        }),
-        get_call_unpaid() {
-            this._rpc({
-                model: 'ir.ui.view',
-                method: 'get_view_id',
-                args: ['account.view_account_invoice_filter'],
-            });
-            console.log('Hi Yassor');
-        },
-    });
-*/
     // ListView Inherits.
     const UnpaidListView = ListView.extend({
         config: _.extend({}, ListView.prototype.config, {
