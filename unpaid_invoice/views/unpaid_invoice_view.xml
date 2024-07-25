@@ -28,7 +28,7 @@
             <field name="res_model">account.move</field>
             <field name="view_mode">list</field>
             <field name="target">current</field>
-            <field name="view_id" ref="unpaid_invoice.unpaid_invoice_view_filter" />
+            <field name="view_id" ref="unpaid_invoice_view_filter" />
         </record>
     </data>
 </odoo>
