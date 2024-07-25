@@ -22,5 +22,13 @@
                 </filter>
             </field>
         </record>
+
+        <record id="unpaid_invoices_action" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoices</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">list</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="unpaid_invoice.unpaid_invoice_view_filter" />
+        </record>
     </data>
 </odoo>
