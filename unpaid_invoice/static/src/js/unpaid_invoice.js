@@ -19,14 +19,14 @@ odoo.define('owl.call_button', function (require) {
             console.log('Hi Yaser');
         },
 
-    });
+    })
 
     // ListView Inherits.
     const UnpaidListView = ListView.extend({
         config: _.extend({}, ListView.prototype.config, {
             Controller: UnpaidListController,
         }),
-    });
+    })
 
     // Register ListView with js Class
     viewRegistry.add('unpaid_list', UnpaidListView);
