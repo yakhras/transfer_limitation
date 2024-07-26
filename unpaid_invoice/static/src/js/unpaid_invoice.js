@@ -5,9 +5,7 @@ odoo.define('owl.call_button', function (require) {
     //const ListRenderer = require('web.ListRenderer')
     const ListView = require('web.ListView');
     var viewRegistry = require('web.view_registry');
-   /**  
-    * @param {Object} group
-    */
+   
     
 
     // ListController Inherites,
@@ -18,6 +16,9 @@ odoo.define('owl.call_button', function (require) {
         events: _.extend({}, ListController.prototype.events, {
             "click .call_unpaid": "get_call_unpaid",
         }),
+        /**  
+    * @param {Object} group
+    */
         get_call_unpaid () {
             console.log('Hi Yassor');
             this.do_action('unpaid_invoice.unpaid_invoices_action');
