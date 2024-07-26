@@ -5,7 +5,6 @@
             <field name="name">unpaid_invoice_view_tree</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_out_invoice_tree" />
-            
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="js_class">unpaid_list</attribute>
