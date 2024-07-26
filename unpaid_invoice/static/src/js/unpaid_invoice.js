@@ -5,6 +5,10 @@ odoo.define('owl.call_button', function (require) {
     //const ListRenderer = require('web.ListRenderer')
     const ListView = require('web.ListView');
     var viewRegistry = require('web.view_registry');
+   /**  
+    * @param {Object} group
+    */
+    
 
     // ListController Inherites,
     // Add Button Template,
@@ -18,6 +22,7 @@ odoo.define('owl.call_button', function (require) {
             console.log('Hi Yassor');
             this.do_action('unpaid_invoice.unpaid_invoices_action');
             console.log('Hi Yaser');
+            console.log(group);
         },
 
     })
