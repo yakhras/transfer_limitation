@@ -6,8 +6,6 @@ odoo.define('owl.call_button', function (require) {
     const ListView = require('web.ListView');
     var viewRegistry = require('web.view_registry');
    
-    
-
     // ListController Inherites,
     // Add Button Template,
     // Add click Event.
