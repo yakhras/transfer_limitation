@@ -12,13 +12,13 @@
             </field>
         </record>
            
-        <record model="ir.ui.view" id="unpaid_invoice_view_filter">
-            <field name="name">unpaid_invoice_view_filter</field> 
+        <record model="ir.ui.view" id="unpaid_invoice_view_tree">
+            <field name="name">unpaid_invoice_view_tree</field> 
             <field name="model">account.move</field> 
             <field name="inherit_id" ref="account.view_out_invoice_tree" /> 
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
-                    <attribute name="default_order">invoice_date_due</attribute>
+                    <attribute name="default_order">invoice_date_due desc</attribute>
                 </xpath>
             </field>
         </record>
@@ -27,7 +27,7 @@
             <field name="name">Unpaid Invoices</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">list</field>
-            <field name="view_id" ref="unpaid_invoice.unpaid_invoice_view_filter"/>
+            <field name="view_id" ref="unpaid_invoice.unpaid_invoice_view_tree"/>
             <field name="target">current</field>
             <field name="domain">[('move_type', '=', 'out_invoice'), 
                 ('state', '=', 'posted'), 
