@@ -34,7 +34,7 @@
                 ('payment_state', 'in', ('not_paid', 'partial')), 
                 ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')]</field>
-            <field name="context">{'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale', 'search_default_groupby_partner_id':1}</field>
+            <field name="context">{'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale', 'search_default_groupby_invoice_partner_display_name':1}</field>
         </record>
     </data>
 </odoo>
