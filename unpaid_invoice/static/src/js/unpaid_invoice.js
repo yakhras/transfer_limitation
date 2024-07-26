@@ -17,8 +17,8 @@ odoo.define('owl.call_button', function (require) {
             "click .call_unpaid": "get_call_unpaid",
         }),
         /**  
-    * @param {Object} group
-    */
+         @param {Object} group
+        */
         get_call_unpaid () {
             console.log('Hi Yassor');
             this.do_action('unpaid_invoice.unpaid_invoices_action');
