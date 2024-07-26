@@ -5,6 +5,19 @@
             <field name="name">unpaid_invoice_view_tree</field>
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_out_invoice_tree" />
+            
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="js_class">unpaid_list</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="unpaid_invoices_action" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoices</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">list</field>
+            <field name="target">current</field>
             <field name="domain">[
                 ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
@@ -20,18 +33,6 @@
                 'group_by':'invoice_date_due',
                 }
             </field>
-            <field name="arch" type="xml">
-                <xpath expr="//tree" position="attributes">
-                    <attribute name="js_class">unpaid_list</attribute>
-                </xpath>
-            </field>
-        </record>
-
-        <record id="unpaid_invoices_action" model="ir.actions.act_window">
-            <field name="name">Unpaid Invoices</field>
-            <field name="res_model">account.move</field>
-            <field name="view_mode">list</field>
-            <field name="target">current</field>
         </record>
     </data>
 </odoo>
