@@ -18,7 +18,7 @@
             <field name="inherit_id" ref="account.view_out_invoice_tree" /> 
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
-                    <attribute name="default_order">payment_state</attribute>
+                    <attribute name="order_by">invoice_date_due</attribute>
                 </xpath>
             </field>
         </record>
@@ -34,7 +34,7 @@
                 ('payment_state', 'in', ('not_paid', 'partial')), 
                 ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')]</field>
-            <field name="context">{'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale', 'group_by':'invoice_date_due'}</field>
+            <field name="context">{'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale'}</field>
         </record>
     </data>
 </odoo>
