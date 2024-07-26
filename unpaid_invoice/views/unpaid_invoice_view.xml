@@ -40,7 +40,8 @@
             <field name="context">{
                 'default_move_type': 'out_invoice', 
                 'move_type': 'out_invoice', 
-                'journal_type': 'sale',
+                'journal_type': 'sale', 
+                'group_by':'invoice_date_due',
             }
             </field>
         </record>
