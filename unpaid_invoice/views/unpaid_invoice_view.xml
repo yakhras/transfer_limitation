@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        
+    <data>   
         <record model="ir.ui.view" id="unpaid_invoice_view_tree">
             <field name="name">unpaid_invoice_view_tree</field> 
             <field name="model">account.move</field> 
             <field name="inherit_id" ref="account.view_out_invoice_tree" /> 
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
+                    <attribute name="create">false</attribute>
                     <attribute name="js_class">unpaid_list</attribute>
                 </xpath>
             </field>
