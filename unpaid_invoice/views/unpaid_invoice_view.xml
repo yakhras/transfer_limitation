@@ -9,6 +9,21 @@
                 <xpath expr="//tree" position="attributes">
                     <attribute name="js_class">unpaid_list</attribute>
                 </xpath>
+                <field name="domain">[
+                    ('move_type', '=', 'out_invoice'),
+                    ('state', '=', 'posted'),
+                    ('payment_state', 'in', ('not_paid', 'partial')),
+                    ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')),
+                    ('partner_id.property_account_receivable_id.code', '=', '120001')
+                    ]
+                </field>
+                <field name="context">{
+                    'default_move_type': 'out_invoice',
+                    'move_type': 'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by':'invoice_date_due',
+                    }
+                </field>
             </field>
         </record>
 
@@ -17,21 +32,6 @@
             <field name="res_model">account.move</field>
             <field name="view_mode">list</field>
             <field name="target">current</field>
-            <field name="domain">[
-                ('move_type', '=', 'out_invoice'),
-                ('state', '=', 'posted'),
-                ('payment_state', 'in', ('not_paid', 'partial')),
-                ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')),
-                ('partner_id.property_account_receivable_id.code', '=', '120001')
-                ]
-            </field>
-            <field name="context">{
-                'default_move_type': 'out_invoice',
-                'move_type': 'out_invoice',
-                'journal_type': 'sale',
-                'group_by':'invoice_date_due',
-                }
-            </field>
         </record>
     </data>
 </odoo>
