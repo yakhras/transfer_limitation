@@ -2,7 +2,6 @@ odoo.define('owl.call_button', function (require) {
     "use strict";
 
     const ListController = require('web.ListController');
-    //const ListRenderer = require('web.ListRenderer')
     const ListView = require('web.ListView');
     var viewRegistry = require('web.view_registry');
    
