@@ -9,15 +9,15 @@ odoo.define('owl.call_button', function (require) {
     // Add Button Template,
     // Add click Event.
     const UnpaidListController = ListController.extend({
-        buttons_template: "unpaid_button.buttons",
-        events: _.extend({}, ListController.prototype.events, {
-            "click .call_unpaid": "get_call_unpaid",
-        }),
-        get_call_unpaid () {
-            console.log('Hi Yassor');
-            this.do_action('unpaid_invoice.unpaid_invoices_action');
-            console.log('Hi Yaser');
-        },
+        buttons_template: "unpaid_button.buttons123",
+        // events: _.extend({}, ListController.prototype.events, {
+        //     "click .call_unpaid": "get_call_unpaid",
+        // }),
+        // get_call_unpaid () {
+        //     console.log('Hi Yassor');
+        //     this.do_action('unpaid_invoice.unpaid_invoices_action');
+        //     console.log('Hi Yaser');
+        // },
     })
 
     // ListView Inherits.
