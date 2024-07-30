@@ -6,5 +6,6 @@
         <field name="report_type">qweb-html</field>
         <field name="report_name">unpaid_invoice.unpaid_invoice_report</field>
         <field name="report_file">unpaid_invoice.unpaid_invoice_report</field>
+        <field name="xml_id">account_financial_report.report_aged_partner_balance_lines</field>
     </record>
 </odoo>
