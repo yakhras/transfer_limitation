@@ -9,6 +9,7 @@
     <menuitem
         parent="menu_yaser_reports"
         id="menu_unpaid_invoice"
+        name="Unpaid Invoices"
         sequence="60"
     />
 </odoo>
