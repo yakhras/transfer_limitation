@@ -26,6 +26,7 @@
     # always loaded
     'data': [
         #"security/security.xml",
+        "menuitems.xml",
         "views/unpaid_invoice_view.xml",
     ],
 
