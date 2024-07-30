@@ -9,7 +9,7 @@ odoo.define('owl.call_button', function (require) {
     // Add Button Template,
     // Add click Event.
     const UnpaidListController = ListController.extend({
-        buttons_template: "unpaid_invoice.html_container",
+        buttons_template: "unpaid_button.buttons123",
         // events: _.extend({}, ListController.prototype.events, {
         //     "click .call_unpaid": "get_call_unpaid",
         // }),

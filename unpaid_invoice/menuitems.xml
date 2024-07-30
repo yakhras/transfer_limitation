@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <menuitem
+        parent="account.menu_finance_reports"
+        id="menu_yaser_reports"
+        name="Yaser Reports"
+    />
+    
+    <menuitem
+        parent="menu_yaser_reports"
+        id="menu_unpaid_invoice"
+        sequence="60"
+    />
+</odoo>
