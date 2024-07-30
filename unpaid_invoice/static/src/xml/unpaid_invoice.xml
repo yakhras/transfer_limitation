@@ -9,7 +9,7 @@
             </button>
         </t>
     </t>
-</templates>-->
+</templates>
 
 <templates id="template1" xml:space="preserve">
     <t t-name="unpaid_button.buttons123">
@@ -17,4 +17,13 @@
             Helooooooooo
         </div>
     </t>
-</templates>
+</templates>-->
+
+<template id="unpaid_invoice.html_container">
+    <t t-name="unpaid_button.buttons123">
+        <t t-set="body_classname" t-value="'container'" />
+        <t t-call="web.report_layout">
+            <t t-out="0" />
+        </t>
+    </t>
+</template>
