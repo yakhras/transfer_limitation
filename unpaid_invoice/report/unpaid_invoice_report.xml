@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="unpaid_report">
         <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
-                <t t-call="web.internal_layout">
-                    <h1>Hello Unpaid</h1>
-                </t>
+            <t t-call="web.internal_layout">
+                <h1>Hello Unpaid</h1>
             </t>
         </t>
     </template>
