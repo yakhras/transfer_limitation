@@ -6,9 +6,7 @@
                 <h1>Hello Report</h1>
                 <br></br>
                 <p>This Yaser Akhras Say Hi</p>
-                <p t-foreach="docs" t-as="i" t-key="i">
-                    <span t-esc="i._name"/>
-                </p>
+                <span t-esc="o._name"/>
             </t>
         </t>
     </template>
