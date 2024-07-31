@@ -28,7 +28,7 @@
         #"security/security.xml",
         "reports.xml",
         "menuitems.xml",
-        "layouts.xml",
+        "report/layouts.xml",
         "report/unpaid_invoice_report.xml",
         "views/unpaid_invoice_view.xml",
     ],
