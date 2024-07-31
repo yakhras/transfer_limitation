@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="action_report_unpaid_invoice_html" model="ir.actions.report">
-        <field name="name">Unpaid Invoices</field>
+        <field name="name">Unpaid Invoice</field>
         <field name="model">account.move</field>
         <field name="report_type">qweb-html</field>
         <field name="report_name">unpaid_invoice.unpaid_invoice_report</field>
