@@ -6,10 +6,8 @@
                 <h1>Hello Report</h1>
                 <br></br>
                 <p>This Yaser Akhras Say Hi</p>
-                <p>
-                    <t t-foreach="docs" t-as="o">
-                        <t t-esc="o" />
-                    </t>
+                <p t-foreach="[1, 2, 3]" t-as="i" t-key="i">
+                    <t t-esc="i" />
                 </p>
             </t>
         </t>
