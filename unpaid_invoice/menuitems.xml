@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <menuitem
-        parent="account.menu_finance_reports"
         id="menu_yaser_reports"
+        parent="account.menu_finance_reports"
         name="Yaser Reports"
     />
     
     <menuitem
-        parent="menu_yaser_reports"
         id="menu_unpaid_invoice"
         name="Unpaid Invoices"
+        parent="menu_yaser_reports"
+        action="action_report_unpaid_invoice_html"
         sequence="60"
     />
 </odoo>
