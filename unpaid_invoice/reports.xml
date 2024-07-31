@@ -6,6 +6,6 @@
         <field name="report_type">qweb-html</field>
         <field name="report_name">unpaid_invoice.unpaid_report</field>
         <field name="report_file">unpaid_invoice.unpaid_invoice_report</field>
-        <field name="binding_model_id" ref="model_account.move"/>
+        <field name="binding_model_id" ref="account.model_account_move"/>
     </record>
 </odoo>
