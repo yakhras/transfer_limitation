@@ -2,11 +2,12 @@
 <odoo>
     <template id="unpaid_report">
         <t t-call="unpaid_invoice.html_container">
-            <t t-call="unpaid_invoice.internal_layout">
-                <h1>Hello Report</h1>
-                <br></br>
-                <p>This is Yaser Akhras Say Hi</p>
-                <t t-foreach="docs" t-as="o">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="unpaid_invoice.internal_layout">
+                    <h1>Hello Report</h1>
+                    <br></br>
+                    <p>This is Yaser Akhras Say Hi</p>
+
                     <span
                         t-field="o.res_model">
                     </span>
