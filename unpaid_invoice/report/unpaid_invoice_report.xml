@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <template id="unpaid_report">
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
-                <h1>Hello Unpaid</h1>
+                <t t-call="unpaid_invoice.report_unpaid_invoice_base" />
             </t>
         </t>
     </template>
+    <template id="unpaid_invoice.report_unpaid_invoice_base">
+        <t t-set="title" t-value="VAT Report" />
+        <div class="page">
+            <div class="row">
+                <h4
+                    class="mt0"
+                    t-esc="title or 'Odoo Report'"
+                    style="text-align: center;"
+                />
+            </div>
+        </div>
+    </template>
+
 </odoo>
