@@ -7,7 +7,7 @@
                 <br></br>
                 <p>This Yaser Akhras Say Hi</p>
                 <p t-foreach="docs" t-as="i" t-key="i">
-                    <t t-esc="i" />
+                    <span t-esc="i._name"/>
                 </p>
             </t>
         </t>
