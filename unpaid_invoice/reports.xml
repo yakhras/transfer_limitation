@@ -7,5 +7,12 @@
         <field name="report_name">unpaid_invoice.unpaid_invoice_report</field>
         <field name="report_file">unpaid_invoice.unpaid_invoice_report</field>
         <field name="binding_model_id" ref="model_account_move"/>
+        <field name="context">{
+            'default_move_type': 'out_invoice',
+            'move_type': 'out_invoice',
+            'journal_type': 'sale',
+            'group_by':'invoice_date_due',
+            }
+        </field>
     </record>
 </odoo>
