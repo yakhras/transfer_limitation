@@ -4,6 +4,7 @@
         <t t-call="account_financial_report.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="account_financial_report.internal_layout">
+                    <h1>Hello Unpaid</h1>
                 </t>
             </t>
         </t>
