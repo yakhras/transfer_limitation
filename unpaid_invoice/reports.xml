@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="action_print_report_unpaid_invoice_html" model="ir.actions.report">
-        <field name="name">Unpaid Report</field>
+        <field name="name">  </field>
         <field name="model">account.move</field>
         <field name="report_type">qweb-html</field>
         <field name="report_name">unpaid_invoice.unpaid_invoice_report</field>
         <field name="report_file">unpaid_invoice.unpaid_invoice_report</field>
-        <field name="xml_id">account_financial_report.report_aged_partner_balance_lines</field>
+        <field name="binding_model_id" ref="model_account_move"/>
     </record>
 </odoo>
