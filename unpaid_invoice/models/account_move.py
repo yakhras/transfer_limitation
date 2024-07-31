@@ -5,8 +5,7 @@ from datetime import date, timedelta
 
 
 
-class UnpaidInvoice(models.Model):
-    _name = 'unpaid.invoice'
+class AccountingMove(models.Model):
     _inherit = 'account.move'   # Inherit the model
 
 
