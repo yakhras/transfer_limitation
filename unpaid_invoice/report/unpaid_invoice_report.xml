@@ -8,7 +8,7 @@
                 <p>This is Yaser Akhras Say Hi</p>
                 <t t-foreach="docs" t-as="o">
                     <span
-                        t-field="res_model">
+                        t-field="o.res_model">
                     </span>
                 </t>
             </t>
