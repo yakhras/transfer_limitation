@@ -5,12 +5,10 @@
             <t t-call="unpaid_invoice.internal_layout">
                 <h1>Hello Report</h1>
                 <br></br>
-                <p>This Yaser Akhras Say Hi</p>
+                <p>This is Yaser Akhras Say Hi</p>
                 <t t-foreach="docs" t-as="o">
                     <span
-                        t-att-res-id="res_id"
-                        t-att-res-model="res_model"
-                    >
+                        t-field="res_model">
                     </span>
                 </t>
             </t>
