@@ -4,7 +4,7 @@
         <field name="name">Unpaid Invoice</field>
         <field name="model">account.move</field>
         <field name="report_type">qweb-html</field>
-        <field name="report_name">unpaid_invoice.unpaid_report</field>
-        <field name="report_file">unpaid_invoice.unpaid_invoice_report</field>
+        <field name="report_name">unpaid_invoice.unpaid_report</field> <!-- report data view Template id -->
+        <field name="report_file">unpaid_invoice.unpaid_invoice_report</field> <!-- The template file name -->
     </record>
 </odoo>
