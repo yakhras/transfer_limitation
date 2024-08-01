@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from ..report import unpaid_invoice
+from ..report import unpaid_invoice_report
