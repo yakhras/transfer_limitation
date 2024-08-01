@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="unpaid_report" model="account.move">
+    <template id="unpaid_report" name="Unpaid Invoives" model="account.move">
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <t t-foreach="docs" t-as="o" t-key="o">
