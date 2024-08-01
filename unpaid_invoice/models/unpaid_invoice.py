@@ -1,11 +1,10 @@
         # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
-from datetime import date, timedelta
+from odoo import models
 
 
 
-class UnpaidInvoice(models.Model):
+class UnpaidInvoice(models.AbstractModel):
     _name = 'unpaid.invoice'
     _description = 'Unpaid Invoices Report'
 
