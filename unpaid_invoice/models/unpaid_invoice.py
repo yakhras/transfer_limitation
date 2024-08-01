@@ -5,7 +5,11 @@ from datetime import date, timedelta
 
 
 
-class AccountingMove(models.Model):
+class UnpaidInvoice(models.Model):
+    _name = 'unpaid.invoice'
     _inherit = 'account.move'   # Inherit the model
+
+    def yaser(self):
+        print('Helloooo')
 
 
