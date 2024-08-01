@@ -7,9 +7,13 @@ from datetime import date, timedelta
 
 class UnpaidInvoice(models.Model):
     _name = 'unpaid.invoice'
-    _inherit = 'account.move'   # Inherit the model
+    _description = 'Unpaid Invoices Report'
 
+    
     def yaser(self):
-        print('Helloooo')
+        env = self.env['account.move']
+        for i in env:
+            name = i.name
+        return name
 
 
