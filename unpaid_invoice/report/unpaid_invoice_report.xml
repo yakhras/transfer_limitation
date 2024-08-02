@@ -5,7 +5,7 @@
             <t t-call="unpaid_invoice.internal_layout">
                 <div>
                     <t t-foreach="subjects" t-as="y">
-                        <span t-esc="y" />
+                        <span t-esc="y.payment_reference" />
                     </t>
                 </div>
                 <h1>Hello Report</h1>

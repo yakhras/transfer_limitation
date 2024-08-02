@@ -33,7 +33,7 @@ class UnpaidInvoice(models.AbstractModel):
         # for part in partner:
         #     partner_id = part.property_account_receivable_id.code
         #     partner_name = part.name
-        subjects.extend(part.payment_reference for part in partner)
+        subjects.extend(part for part in partner)
         return {
             'subjects': subjects,
         }
