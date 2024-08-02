@@ -29,6 +29,7 @@ class UnpaidInvoice(models.AbstractModel):
         subjects.extend(part.property_account_receivable_id.code for part in partner)
         subjects.count()
         return {
-            'subjects': subjects
+            'subjects': subjects,
+            'count': count
         }
         
