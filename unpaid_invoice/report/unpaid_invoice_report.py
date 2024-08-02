@@ -20,7 +20,7 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # partner_ids = data["partner_ids"]
         # partners_data = self.get_data(partner_ids)
-        partner = self.env['res.partner'].search([])
+        partner = self.env['account.move'].search([])
         subjects = []
         # for part in partner:
         #     partner_id = part.property_account_receivable_id.code
