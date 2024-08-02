@@ -21,6 +21,8 @@ class UnpaidInvoice(models.AbstractModel):
         # partner_ids = data["partner_ids"]
         # partners_data = self.get_data(partner_ids)
         partner = self.env["res.partner"]
-        return partner
+        return {
+            'partner': partner
+        }
     # {'subjects':['Math', 'English', 'Programming']}
         
