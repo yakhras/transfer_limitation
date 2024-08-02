@@ -8,12 +8,15 @@ class UnpaidInvoice(models.AbstractModel):
     _name = 'unpaid.invoice'
     _description = 'Unpaid Invoices Report'
 
-    name = fields.Char()
     
     def yaser(self):
-        env = self.env['account.move']
-        for i in env:
-            self.name = i.name
-        return self.name
+        partners_data = {}
+        partner = self.env["res.partner"]
+        group_id = partner.id
+        group_name = partner.name
+        partners_data.update({group_id: {"id":group_id, "name":group_name}})
+        return partners_data
+        
+    partners_data = yaser()
 
 
