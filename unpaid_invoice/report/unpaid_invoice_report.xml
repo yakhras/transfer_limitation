@@ -5,7 +5,7 @@
             <t t-call="unpaid_invoice.internal_layout">
                 <div>
                     <t t-foreach="partner" t-as="d">
-                        <span t-esc="d" />
+                        <span t-esc="d.name" />
                     </t>
                 </div>
                 <h1>Hello Report</h1>
