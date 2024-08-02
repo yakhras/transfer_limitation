@@ -6,10 +6,16 @@
                 <div class="act_as_table data_table" style="width: 100%;">
                     <t t-foreach="subjects" t-as="y">
                         <div class="act_as_row lines">
-                            <span>
-                                <t t-raw="y.partner_id.name"/>
-                                <t t-raw= "y.payment_reference"/>
-                            </span>
+                            <div class="act_as_cell">
+                                <span>
+                                    <t t-raw="y.partner_id.name"/>
+                                </span>
+                            </div>
+                            <div class="act_as_cell">
+                                <span>
+                                    <t t-raw= "y.payment_reference"/>
+                                </span>
+                            </div>
                         </div>
                     </t>
                 </div>
