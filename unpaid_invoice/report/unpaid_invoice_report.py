@@ -5,7 +5,7 @@ from odoo import models, fields
 
 
 class UnpaidInvoice(models.AbstractModel):
-    _name = 'unpaid.invoice'
+    _name = 'unpaid.invoice.unpaid_report'
     _description = 'Unpaid Invoices Report'
 
     
