@@ -17,12 +17,12 @@ class UnpaidInvoice(models.AbstractModel):
         partners_data.update({group_id: {"id":group_id, "name":group_name}})
         return partners_data
     
-    def get_value(self, data):
-        partner_ids = data["partner_ids"]
-        partners_data = self.get_data(partner_ids)
-        return{
-            "partners_data": partners_data
-        }
+    # def get_value(self, data):
+    #     partner_ids = data["partner_ids"]
+    #     partners_data = self.get_data(partner_ids)
+    #     return{
+    #         "partners_data": partners_data
+    #     }
         
     
 
