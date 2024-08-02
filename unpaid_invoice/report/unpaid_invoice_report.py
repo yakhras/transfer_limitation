@@ -14,7 +14,7 @@ class UnpaidInvoice(models.AbstractModel):
         partner = self.env["res.partner"]
         group_id = partner.id
         group_name = partner.name
-        partners_data.update({group_id: {"id":group_id, "name":group_name}})
+        partners_data.update({"id":group_id, "name":group_name})
         return partners_data
     
     # def get_value(self, data):
