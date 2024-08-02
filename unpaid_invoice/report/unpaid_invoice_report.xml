@@ -7,7 +7,10 @@
                     <t t-foreach="subjects" t-as="y">
                         <div class="act_as_row lines">
                             <div class="act_as_cell">
-                                <span>
+                                <span 
+                                    t-att-res-id="y"
+                                    res-model="res.partner"
+                                    view-type="form">
                                     <t t-raw="y.partner_id.name"/>
                                 </span>
                             </div>
