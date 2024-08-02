@@ -4,13 +4,13 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
-                    <div class="act_as_row lines">
-                        <t t-foreach="subjects" t-as="y">
+                    <t t-foreach="subjects" t-as="y">
+                        <div class="act_as_row lines">
                             <span>
                                 <t t-raw="y.partner_id.name" />
                             </span>
-                        </t>
-                    </div>
+                        </div>
+                    </t>
                 </div>
                 <h1>Hello Report</h1>
             </t>
