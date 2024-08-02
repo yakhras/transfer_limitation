@@ -10,7 +10,8 @@
                                 <span 
                                     t-att-res-id="y.partner_id.id"
                                     res-model="res.partner"
-                                    view-type="list">
+                                    view-type="form"
+                                    target="new">
                                     <t t-raw="y.partner_id.name"/>
                                 </span>
                             </div>
