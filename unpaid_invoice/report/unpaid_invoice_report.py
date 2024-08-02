@@ -25,7 +25,7 @@ class UnpaidInvoice(models.AbstractModel):
         for part in partner:
             partner_id = part.property_account_receivable_id.code
             partner_name = part.name
-            subjects = [partner_id, partner_name]
+            subjects.append(partner_id, partner_name)
         return {
             'subjects': subjects
         }
