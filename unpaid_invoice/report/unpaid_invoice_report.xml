@@ -3,16 +3,16 @@
     <template id="unpaid_report">
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
-                <div>
-                    <t t-foreach="subjects" t-as="y">
-                        <span>
-                            <t t-raw="y.partner_id.name" />
-                        </span>
-                    </t>
+                <div class="act_as_table data_table">
+                    <div class="act_as_row lines">
+                        <t t-foreach="subjects" t-as="y">
+                            <span>
+                                <t t-raw="y.partner_id.name" />
+                            </span>
+                        </t>
+                    </div>
                 </div>
                 <h1>Hello Report</h1>
-                <br></br>
-                <p>This is Yaser Akhras Say Hi</p>
             </t>
         </t>
     </template>
