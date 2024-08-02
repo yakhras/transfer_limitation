@@ -16,6 +16,11 @@
                                     <t t-raw= "y.payment_reference"/>
                                 </span>
                             </div>
+                            <div class="act_as_cell">
+                                <span>
+                                    <t t-raw= "y.invoice_date_due"/>
+                                </span>
+                            </div>
                         </div>
                     </t>
                 </div>
