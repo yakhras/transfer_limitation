@@ -10,7 +10,7 @@
                             res-model="res.partner"
                             view-type="form"
                         >
-                            <t t-esc="y.partner_name" />
+                            <t t-esc="y.partner_id.name" />
                         </span>
                     </t>
                 </div>
