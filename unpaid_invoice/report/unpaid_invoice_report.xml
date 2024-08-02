@@ -3,9 +3,11 @@
     <template id="unpaid_report">
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
-                <p>
-                    <t t-esc="partners_data['name']" />
-                </p>
+                <div>
+                    <t t-foreach="partners_data.keys()" t-as="partner_id">
+                        <span t-esc="partners_data[partner_id]['name']" />
+                    </t>
+                </div>
                 <h1>Hello Report</h1>
                 <br></br>
                 <p>This is Yaser Akhras Say Hi</p>
