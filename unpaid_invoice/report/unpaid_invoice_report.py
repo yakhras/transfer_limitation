@@ -17,6 +17,6 @@ class UnpaidInvoice(models.AbstractModel):
         partners_data.update({group_id: {"id":group_id, "name":group_name}})
         return partners_data
         
-    partners_data = yaser()
+    
 
 
