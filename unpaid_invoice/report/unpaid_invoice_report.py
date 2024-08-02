@@ -20,7 +20,8 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # partner_ids = data["partner_ids"]
         # partners_data = self.get_data(partner_ids)
-        subjects = ['Math', 'English', 'Programming']
+        partner = self.env['res.partner']
+        subjects = [partner.id, partner.name]
         return {
             'subjects': subjects
         }
