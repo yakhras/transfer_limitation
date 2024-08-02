@@ -22,8 +22,8 @@ class UnpaidInvoice(models.AbstractModel):
         # partners_data = self.get_data(partner_ids)
         partner = self.env['res.partner'].search([])
         for part in partner:
-            partner_id = str(part.id)
-            partner_name = str(part.name)
+            partner_id = part.id
+            partner_name = part.name
             subjects = [partner_id, partner_name]
         return {
             'subjects': subjects
