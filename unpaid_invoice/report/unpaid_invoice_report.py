@@ -10,12 +10,12 @@ class UnpaidInvoice(models.AbstractModel):
 
     
     def get_data(self, **kw):
-        partners_data = {}
+        # partners_data = {}
         partner = self.env["res.partner"]
-        group_id = partner.id
-        group_name = partner.name
-        partners_data.update({"id":group_id, "name":group_name})
-        return partners_data
+        # group_id = partner.id
+        # group_name = partner.name
+        # partners_data.update({"id":group_id, "name":group_name})
+        return partner
     
     # def get_value(self, data):
     #     partner_ids = data["partner_ids"]

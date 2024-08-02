@@ -4,8 +4,8 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div>
-                    <t t-foreach="partners_data.keys()" t-as="partner_id">
-                        <span t-esc="partners_data[partner_id]['name']" />
+                    <t t-foreach="partner" t-as="p">
+                        <span t-esc="p.name" />
                     </t>
                 </div>
                 <h1>Hello Report</h1>
