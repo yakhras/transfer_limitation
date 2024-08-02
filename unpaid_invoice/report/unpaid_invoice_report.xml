@@ -5,11 +5,7 @@
             <t t-call="unpaid_invoice.internal_layout">
                 <div>
                     <t t-foreach="subjects" t-as="y">
-                        <span
-                            t-att-res-id="y['partner_id']"
-                            res-model="res.partner"
-                            view-type="form"
-                        >
+                        <span>
                             <t t-raw="y.partner_id.name" />
                         </span>
                     </t>
