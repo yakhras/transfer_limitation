@@ -17,7 +17,7 @@ class UnpaidInvoice(models.AbstractModel):
     #     # partners_data.update({"id":group_id, "name":group_name})
     #     return {'subjects':['Math', 'English', 'Programming']}
     
-    def _get_report_values(self, data):
+    def _get_report_values(self, docids, data):
         # partner_ids = data["partner_ids"]
         # partners_data = self.get_data(partner_ids)
         return {'subjects':['Math', 'English', 'Programming']}
