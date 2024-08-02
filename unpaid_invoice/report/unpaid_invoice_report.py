@@ -1,7 +1,7 @@
         # -*- coding: utf-8 -*-
 
 from odoo import models, fields
-from datetime import time
+from datetime import datetime
 
 
 
@@ -21,12 +21,12 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # partner_ids = data["partner_ids"]
         # partners_data = self.get_data(partner_ids)
-        # now = datetime.now()
+        now = datetime.now()
         partner = self.env['account.move'].search([
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
                 ('payment_state', 'in', ('not_paid', 'partial')),
-                ('invoice_date_due', '<', time.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ])
         subjects = []
