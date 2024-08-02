@@ -1,7 +1,7 @@
         # -*- coding: utf-8 -*-
 
 from odoo import models, fields
-from datetime import datetime
+from datetime import time
 
 
 
@@ -26,7 +26,7 @@ class UnpaidInvoice(models.AbstractModel):
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
                 ('payment_state', 'in', ('not_paid', 'partial')),
-                ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '<', time.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ])
         subjects = []
