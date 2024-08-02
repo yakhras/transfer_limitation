@@ -21,7 +21,7 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # partner_ids = data["partner_ids"]
         # partners_data = self.get_data(partner_ids)
-        now = datetime.now()
+        # now = datetime.now()
         partner = self.env['account.move'].search([
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
