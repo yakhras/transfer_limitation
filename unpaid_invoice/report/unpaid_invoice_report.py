@@ -22,7 +22,7 @@ class UnpaidInvoice(models.AbstractModel):
         # partners_data = self.get_data(partner_ids)
         partner = self.env['res.partner'].search([])
         for part in partner:
-            partner_id = part.property_account_receivable_id
+            partner_id = part.property_account_receivable_id.code
             partner_name = part.name
             subjects = [partner_id, partner_name]
         return {
