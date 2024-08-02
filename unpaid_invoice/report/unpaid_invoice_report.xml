@@ -4,8 +4,8 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div>
-                    <t t-foreach="subjects" t-as="d">
-                        <span t-esc="d" />
+                    <t t-foreach="subjects" t-as="y">
+                        <span t-esc="y" />
                     </t>
                 </div>
                 <h1>Hello Report</h1>
