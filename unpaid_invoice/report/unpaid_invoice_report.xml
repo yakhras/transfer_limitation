@@ -7,11 +7,14 @@
                     <t t-foreach="subjects" t-as="y">
                         <div class="act_as_row lines">
                             <ol>
-                                <div class="act_as_cell">
-                                    <span>
-                                        <li></li>
-                                    </span>
-                                </div>
+                                <li>
+                                    <div class="act_as_cell">
+                                        <span>
+                                            
+                                        </span>
+                                    </div>
+                                </li>
+                                    
                                 <div class="act_as_cell">
                                     <span 
                                         t-att-res-id="y.partner_id.id"
@@ -31,6 +34,7 @@
                                         <t t-raw= "y.invoice_date_due"/>
                                     </span>
                                 </div>
+                                
                             </ol>
                         </div>
                     </t>
