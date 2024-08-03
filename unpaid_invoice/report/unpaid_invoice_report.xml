@@ -7,6 +7,11 @@
                     <t t-foreach="subjects" t-as="y">
                         <div class="act_as_row lines">
                             <div class="act_as_cell">
+                                <span>
+                                    <ol></ol>
+                                </span>
+                            </div>
+                            <div class="act_as_cell">
                                 <span 
                                     t-att-res-id="y.partner_id.id"
                                     res-model="res.partner"
