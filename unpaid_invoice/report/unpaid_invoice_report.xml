@@ -8,7 +8,7 @@
                         <div class="act_as_row lines">
                             <div class="act_as_cell">
                                 <span>
-                                    <ol></ol>
+                                    <ol><li></li></ol>
                                 </span>
                             </div>
                             <div class="act_as_cell">
