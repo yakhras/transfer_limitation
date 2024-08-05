@@ -6,36 +6,29 @@
                 <div class="act_as_table data_table" style="width: 100%;">
                     <t t-foreach="subjects" t-as="y">
                         <div class="act_as_row lines">
-                            <ol>
-                                <li>
-                                    <div class="act_as_cell">
-                                        <span>
-                                            
-                                        </span>
-                                    </div>
-                                </li>
-                                    
-                                <div class="act_as_cell">
-                                    <span 
-                                        t-att-res-id="y.partner_id.id"
-                                        res-model="res.partner"
+                            <div class="act_as_cell">
+                                <span
+                                    t-att-res-id="y.partner_id.id"
+                                    res-model="res.partner"
+                                    view-type="form"
+                                    target="_blank">
+                                    <t t-raw="y.partner_id.name" />
+                                </span>
+                            </div>
+                            <div class="act_as_cell">
+                                <span>
+                                    <a t-attf-href="#"
                                         view-type="form"
-                                        target="_blank">
-                                        <t t-raw="y.partner_id.name"/>
-                                    </span>
-                                </div>
-                                <div class="act_as_cell">
-                                    <span>
-                                        <t t-raw= "y.payment_reference"/>
-                                    </span>
-                                </div>
-                                <div class="act_as_cell">
-                                    <span>
-                                        <t t-raw= "y.invoice_date_due"/>
-                                    </span>
-                                </div>
-                                
-                            </ol>
+                                        res-model="account.move"
+                                        t-att-res-id="y.id"/>
+                                    <t t-raw="y.payment_reference" />
+                                </span>
+                            </div>
+                            <div class="act_as_cell">
+                                <span>
+                                    <t t-raw="y.invoice_date_due" />
+                                </span>
+                            </div>
                         </div>
                     </t>
                 </div>
