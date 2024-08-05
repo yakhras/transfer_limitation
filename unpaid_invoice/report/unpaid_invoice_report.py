@@ -29,6 +29,16 @@ class UnpaidInvoice(models.AbstractModel):
         ])
         subjects = []
         subjects.extend(part for part in partner)
+        domain = [
+            ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),
+                ('payment_state', 'in', ('not_paid', 'partial')),
+                ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
+                ('partner_id.property_account_receivable_id.code', '=', '120001')
+        ]
+        invoices = self.env['account.move'].read_group(domain=domain, fields=["partner_id"], groupby=["partner_id"])
+        results =[]
+        results.extend(inv for inv in invoices)
         return {
             'subjects': subjects,
         }
