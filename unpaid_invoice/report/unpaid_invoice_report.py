@@ -29,10 +29,11 @@ class UnpaidInvoice(models.AbstractModel):
         ]
 
         partner = partner = self.env["res.partner"]
-        partner_id = partner.id
-        partner_name = partner.name
         subjects = {}
-        subjects.update({partner_id: {"id":partner_id, "name": partner_name}})
+        for part in partner:
+            partner_id = part.id
+            partner_name = part.name
+            subjects.update({partner_id: {"id":partner_id, "name": partner_name}})
         
         
         
