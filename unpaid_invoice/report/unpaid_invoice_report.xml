@@ -8,20 +8,17 @@
                         <div class="act_as_row lines">
                             <div class="act_as_cell">
                                 <span
-                                    t-att-res-id="y.partner_id.id"
                                     res-model="res.partner"
-                                    view-type="form">
+                                    view-type="form"
+                                    t-att-res-id="y.partner_id.id">
                                     <t t-raw="y.partner_id.name" />
                                 </span>
                             </div>
                             <div class="act_as_cell">
-                                <span>
-                                    <a target="_blank" 
-                                        t-attf-href="/web/"
-                                        t-esc="y.payment_reference"
-                                        view-type="form"
-                                        res-model="account.move"
-                                        t-att-res-id="y.id"/>
+                                <span
+                                    res-model="account.move"
+                                    view-type="form"
+                                    t-att-res-id="y.id">
                                     <t t-raw="y.payment_reference" />
                                 </span>
                             </div>
