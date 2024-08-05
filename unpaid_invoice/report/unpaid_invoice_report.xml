@@ -17,6 +17,7 @@
                             <div class="act_as_cell">
                                 <span>
                                     <a t-attf-href="_blank"
+                                        t-esc="y.payment_reference"
                                         view-type="form"
                                         res-model="account.move"
                                         t-att-res-id="y.id"/>
