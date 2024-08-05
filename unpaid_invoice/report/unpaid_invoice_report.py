@@ -41,5 +41,6 @@ class UnpaidInvoice(models.AbstractModel):
         results.extend(inv for inv in invoices)
         return {
             'subjects': subjects,
+            'results': results,
         }
         
