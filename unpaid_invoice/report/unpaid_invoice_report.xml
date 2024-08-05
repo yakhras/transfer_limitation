@@ -17,7 +17,7 @@
                             <div class="act_as_cell">
                                 <span>
                                     <a target="_blank" 
-                                        t-attf-href="#"
+                                        t-attf-href="https://test.menagate.com.tr/web#id=280323&menu_id=356&model=account.move&view_type=form"
                                         t-esc="y.payment_reference"
                                         view-type="form"
                                         res-model="account.move"
