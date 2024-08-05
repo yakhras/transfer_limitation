@@ -27,8 +27,8 @@ class UnpaidInvoice(models.AbstractModel):
                 ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ])
-        subjects = []
-        subjects.extend(part.partner_id for part in partner)
+        subjects = {}
+        subjects.update({"id":partner.partner_id.id, "name": partner.partner_id.name})
         domain = [
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
