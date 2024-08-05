@@ -20,16 +20,6 @@ class UnpaidInvoice(models.AbstractModel):
     
     def _get_report_values(self, docids, data=None):
         now = datetime.now()
-        partner = self.env['account.move'].search([
-            ('move_type', '=', 'out_invoice'),
-                ('state', '=', 'posted'),
-                ('payment_state', 'in', ('not_paid', 'partial')),
-                ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
-                ('partner_id.property_account_receivable_id.code', '=', '120001')
-        ])
-        subjects = {}
-        for part in partner:
-            subjects.update({"id":part.partner_id.id, "name": part.partner_id.name})
         domain = [
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
@@ -37,6 +27,15 @@ class UnpaidInvoice(models.AbstractModel):
                 ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
+
+        partner = partner = self.env["res.partner"]
+        partner_id = partner.id
+        partner_name = partner.name
+        subjects = {}
+        subjects.update({partner_id: {"id":partner_id, "name": partner_name}})
+        
+        
+        
         invoices = self.env['account.move'].read_group(domain=domain, fields=["partner_id"], groupby=["partner_id"])
         results =[]
         results.extend(inv for inv in invoices)
