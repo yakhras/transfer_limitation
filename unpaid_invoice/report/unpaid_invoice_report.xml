@@ -7,28 +7,28 @@
                     <t t-foreach="subjects" t-as="y">
                         <div class="act_as_caption account_title">
                             <span t-esc="y.partner_id.name" />
-                        </div>
-                        <div class="act_as_row lines">
-                            <div class="act_as_cell">
-                                <span
-                                    res-model="res.partner"
-                                    view-type="form"
-                                    t-att-res-id="y.partner_id.id">
-                                    <t t-raw="y.partner_id.name" />
-                                </span>
-                            </div>
-                            <div class="act_as_cell">
-                                <span
-                                    res-model="account.move"
-                                    view-type="form"
-                                    t-att-res-id="y.id">
-                                    <t t-raw="y.payment_reference" />
-                                </span>
-                            </div>
-                            <div class="act_as_cell">
-                                <span>
-                                    <t t-raw="y.invoice_date_due" />
-                                </span>
+                            <div class="act_as_row lines">
+                                <div class="act_as_cell">
+                                    <span
+                                        res-model="res.partner"
+                                        view-type="form"
+                                        t-att-res-id="y.partner_id.id">
+                                        <t t-raw="y.partner_id.name" />
+                                    </span>
+                                </div>
+                                <div class="act_as_cell">
+                                    <span
+                                        res-model="account.move"
+                                        view-type="form"
+                                        t-att-res-id="y.id">
+                                        <t t-raw="y.payment_reference" />
+                                    </span>
+                                </div>
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-raw="y.invoice_date_due" />
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </t>
