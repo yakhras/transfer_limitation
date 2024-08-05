@@ -28,18 +28,17 @@ class UnpaidInvoice(models.AbstractModel):
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
 
-        partner = partner = self.env["res.partner"]
+        partner = self.env["res.partner"]
         subjects = {}
         for part in partner:
             partner_id = part.id
             partner_name = part.name
             subjects.update({partner_id: {"id":partner_id, "name": partner_name}})
         
-        
-        
         invoices = self.env['account.move'].read_group(domain=domain, fields=["partner_id"], groupby=["partner_id"])
         results =[]
         results.extend(inv for inv in invoices)
+
         return {
             'subjects': subjects,
             'results': results,
