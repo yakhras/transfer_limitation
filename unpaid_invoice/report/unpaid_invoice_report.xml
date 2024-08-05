@@ -17,7 +17,7 @@
                             </div>
                             <div class="act_as_cell">
                                 <span>
-                                    <a t-attf-href="#"
+                                    <a t-att-href="#"
                                         view-type="form"
                                         res-model="account.move"
                                         t-att-res-id="y.id"/>
