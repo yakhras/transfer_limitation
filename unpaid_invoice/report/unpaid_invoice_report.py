@@ -10,14 +10,6 @@ class UnpaidInvoice(models.AbstractModel):
     _description = 'Unpaid Invoices Report'
 
     
-    # def get_data(self, **kw):
-    #     # partners_data = {}
-    #     # partner = self.env["res.partner"]
-    #     # group_id = partner.id
-    #     # group_name = partner.name
-    #     # partners_data.update({"id":group_id, "name":group_name})
-    #     return {'subjects':['Math', 'English', 'Programming']}
-    
     def _get_report_values(self, docids, data=None):
         now = datetime.now()
         domain = [
@@ -47,7 +39,7 @@ class UnpaidInvoice(models.AbstractModel):
         match = {}
         for r in records.keys():
             if r in invoices.keys() :
-                match.update({r: {"dn":invoices[r]['pn']}})
+                match.update({r: {"dn":invoices[r]['pn'], "ref":invoices[r]['pr']}})
         
         return {
             'invoices': invoices,
