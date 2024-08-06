@@ -41,7 +41,7 @@ class UnpaidInvoice(models.AbstractModel):
             partner_id = t.partner_id
             t_id = t.id
             t_pr = t.payment_reference
-            t_name = partner_id.id.name
+            t_name = partner_id.name
             invoices.update({partner_id: {"id":t_id, "pr":t_pr, "pn":t_name}})
 
         match = {}
