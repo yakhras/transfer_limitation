@@ -31,8 +31,8 @@ class UnpaidInvoice(models.AbstractModel):
         idd = self.env['res.partner'].search([])
         
        
-        table = self.env['account.move'].search(domain).filtered(lambda x: x.partner_id == idd)
-        records.append(table)
+        # table = self.env['account.move'].search(domain).filtered(lambda x: x.partner_id == idd)
+        records.extend(raw.id for raw in idd)
 
         return {
             'records': records,
