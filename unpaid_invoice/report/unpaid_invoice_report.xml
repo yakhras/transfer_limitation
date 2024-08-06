@@ -4,10 +4,10 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
-                    <t t-foreach="match.keys()" t-as="r">
+                    <t t-foreach="match.keys()" t-as="m">
                         
                             
-                                <span t-esc="r" />
+                                <span t-esc="m" />
                             
                             
                         
