@@ -27,9 +27,12 @@ class UnpaidInvoice(models.AbstractModel):
                 ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
-        records =[]
+        records ={}
         idd = self.env['res.partner'].search([])
-        records.extend(i for i in idd)
+        for i in idd:
+            i_id = i.id
+            i_name = i.name
+        records.update({i: {"id":i_id, "name":i_name}})
 
         invoices = {}
         table = self.env['account.move'].search(domain)
@@ -47,5 +50,6 @@ class UnpaidInvoice(models.AbstractModel):
         
         return {
             'invoices': invoices,
+            'records': records,
         }
         
