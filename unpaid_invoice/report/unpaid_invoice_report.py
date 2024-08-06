@@ -37,8 +37,9 @@ class UnpaidInvoice(models.AbstractModel):
 
         match = []
         for y in records:
-            if y in invoices:
-                match.append(invoices[y.payment_reference])
+            for z in invoices:
+                if y == z:
+                    match.append(z.payment_reference)
         
         return {
             'records': records,
