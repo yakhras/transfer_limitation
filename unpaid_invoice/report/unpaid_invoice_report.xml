@@ -4,7 +4,7 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
-                    <t t-foreach="match" t-as="y">
+                    <t t-foreach="invoices" t-as="y">
                         <span t-esc="y" />
                             <!-- <div class="act_as_caption account_title">
                                 <span t-esc="y.partner_id.name" />
