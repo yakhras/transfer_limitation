@@ -35,8 +35,12 @@ class UnpaidInvoice(models.AbstractModel):
         table = self.env['account.move'].search(domain)
         invoices.extend(i.partner_id.id for i in table)
 
+        match = []
+        if records in invoices:
+            match.append('y')
         return {
             'records': records,
             'invoices': invoices,
+            'match': match,
         }
         
