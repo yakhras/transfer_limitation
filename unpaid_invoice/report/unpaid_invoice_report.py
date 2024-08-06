@@ -32,7 +32,7 @@ class UnpaidInvoice(models.AbstractModel):
         for i in idd:
             i_id = i.id
             i_name = i.name
-        records.update({i: {"id":i_id, "name":i_name}})
+            records.update({i: {"id":i_id, "name":i_name}})
 
         invoices = {}
         table = self.env['account.move'].search(domain)
