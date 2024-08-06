@@ -36,7 +36,7 @@ class UnpaidInvoice(models.AbstractModel):
         for t in table:
             t_id = t.id
             t_pr = t.payment_reference
-            invoices.update({t_id:{"id":t_id, "pr":t_pr}})
+            invoices.update({t_id:[{"id":t_id, "pr":t_pr}]})
 
         # match = []
         # for y in records:
