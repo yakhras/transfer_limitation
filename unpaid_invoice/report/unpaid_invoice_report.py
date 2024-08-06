@@ -36,8 +36,10 @@ class UnpaidInvoice(models.AbstractModel):
         invoices.extend(i.partner_id.id for i in table)
 
         match = []
-        if records in invoices:
-            match.append('y')
+        for y in records:
+            if y in invoices:
+                match.append('y')
+        
         return {
             'records': records,
             'invoices': invoices,
