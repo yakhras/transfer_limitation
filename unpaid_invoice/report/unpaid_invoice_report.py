@@ -34,7 +34,9 @@ class UnpaidInvoice(models.AbstractModel):
         invoices = {}
         table = self.env['account.move'].search(domain)
         for t in table:
-            invoices.update({t.id:{"id":t.id, "pr":t.payment_reference}})
+            t_id = t.id
+            t_pr = t.payment_reference
+            invoices.update({t_id:{"id":t_id, "pr":t_pr}})
 
         match = []
         for y in records:
