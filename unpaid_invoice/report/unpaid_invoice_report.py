@@ -29,11 +29,11 @@ class UnpaidInvoice(models.AbstractModel):
         ]
         records =[]
         idd = self.env['res.partner'].search([])
-        records.extend(i.id for i in idd)
+        records.extend(i for i in idd)
 
         invoices = []
         table = self.env['account.move'].search(domain)
-        invoices.extend(i.partner_id.id for i in table)
+        invoices.extend(i.partner_id for i in table)
 
         match = []
         for y in records:
