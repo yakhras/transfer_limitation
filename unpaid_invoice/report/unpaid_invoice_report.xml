@@ -7,7 +7,7 @@
                     <t t-foreach="match.keys()" t-as="m">
                         
                             
-                                <span t-esc="m" />
+                                <span t-esc="match[m]" />
                             
                             
                         
