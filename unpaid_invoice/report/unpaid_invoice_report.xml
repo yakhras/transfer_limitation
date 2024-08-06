@@ -6,7 +6,7 @@
                 <div class="act_as_table data_table" style="width: 100%;">
                     <t t-foreach="records.keys()" t-as="r">
                         <t t-foreach="invoices.keys()" t-as="i">
-                            <t t-if="r in invoices[i]">
+                            <t t-if="r in i">
                                 <span t-esc="invoices[i]['pr']" />
                             </t>
                             
