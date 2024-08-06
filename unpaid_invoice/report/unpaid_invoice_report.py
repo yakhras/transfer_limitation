@@ -27,10 +27,10 @@ class UnpaidInvoice(models.AbstractModel):
                 ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
-
-        table = self.env['account.move'].search(domain)
         records =[]
-        records.extend(raw.partner_id.id for raw in table)
+        table = self.env['account.move'].search(domain).filtered(lambda x: x.partner_id.id == 66313)
+        
+        records.extend(raw for raw in table)
 
         return {
             'records': records,
