@@ -37,5 +37,6 @@ class UnpaidInvoice(models.AbstractModel):
 
         return {
             'records': records,
+            'invoices': invoices,
         }
         
