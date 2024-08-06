@@ -9,18 +9,12 @@
                                 <span t-esc="match[m]['dn']" />
                                 <div class="act_as_row lines">
                                     <div class="act_as_cell">
-                                        <span
-                                            res-model="res.partner"
-                                            view-type="form"
-                                            t-att-res-id="y.partner_id.id">
+                                        <span>
                                             <t t-raw="match[m]['dn']" />
                                         </span>
                                     </div>
                                     <div class="act_as_cell">
-                                        <span
-                                            res-model="account.move"
-                                            view-type="form"
-                                            t-att-res-id="y.id">
+                                        <span>
                                             <t t-raw="match[m]['ref']" />
                                         </span>
                                     </div>
