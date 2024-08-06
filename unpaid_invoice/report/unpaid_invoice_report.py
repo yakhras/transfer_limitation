@@ -38,8 +38,9 @@ class UnpaidInvoice(models.AbstractModel):
 
         match = {}
         for r in records.keys():
-            if r in invoices.keys() :
-                match.update({r: {"dn":invoices[r]['pn'], "ref":invoices[r]['pr']}})
+            for v in invoices.keys() :
+                if r in v :
+                    match.update({r: {"dn":invoices[v]['pn'], "ref":invoices[v]['pr']}})
         
         return {
             'invoices': invoices,
