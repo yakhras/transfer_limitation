@@ -4,13 +4,13 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
-                    <t t-foreach="records.keys()" t-as="r">
-                        <t t-foreach="invoices.keys()" t-as="i">
-                            <t t-if="r in i">
-                                <span t-esc="invoices[i]['pr']" />
-                            </t>
+                    <t t-foreach="match.keys()" t-as="r">
+                        
                             
-                        </t>
+                                <span t-esc="r" />
+                            
+                            
+                        
                         
                             <!-- <div class="act_as_caption account_title">
                                 <span t-esc="y.partner_id.name" />

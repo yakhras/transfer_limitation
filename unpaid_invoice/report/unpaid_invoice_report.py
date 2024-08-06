@@ -27,6 +27,7 @@ class UnpaidInvoice(models.AbstractModel):
                 ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
+
         records ={}
         idd = self.env['res.partner'].search([])
         for i in idd:
@@ -42,14 +43,15 @@ class UnpaidInvoice(models.AbstractModel):
             t_pr = t.payment_reference
             invoices.update({partner_id: {"id":t_id, "pr":t_pr}})
 
-        # match = []
-        # for y in records:
-        #     for z in invoices:
-        #         if y == z:
-        #             match.append(z.payment_reference)
+        match = {}
+        for r in records.keys():
+            for v in invoices.keys():
+                if r in v:
+                    match.update({"dn":v['pr']})
         
         return {
             'invoices': invoices,
             'records': records,
+            'match': match,
         }
         
