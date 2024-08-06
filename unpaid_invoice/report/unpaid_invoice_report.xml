@@ -5,7 +5,7 @@
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
                     <t t-foreach="invoices.keys()" t-as="y">
-                        <span t-esc="y" />
+                        <span t-esc="invoices[y]" />
                             <!-- <div class="act_as_caption account_title">
                                 <span t-esc="y.partner_id.name" />
                                 <div class="act_as_row lines">
