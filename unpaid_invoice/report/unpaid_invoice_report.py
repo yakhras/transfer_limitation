@@ -38,7 +38,7 @@ class UnpaidInvoice(models.AbstractModel):
 
         match = {}
         for r in records.keys():
-            match.update(records[r]['id'])
+            match.update({"id":records[r]['id']})
         
         return {
             'invoices': invoices,
