@@ -4,11 +4,11 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
-                    <t t-foreach="match" t-as="m">
+                    <t t-foreach="invoices" t-as="m">
                         <div class="act_as_row lines">
                             <div class="act_as_cell">
                                 <span>
-                                    <t t-raw="match[m]['id']" />
+                                    <t t-raw="invoices" />
                                 </span>
                             </div>
                         </div>
