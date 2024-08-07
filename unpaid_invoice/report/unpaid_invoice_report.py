@@ -20,7 +20,7 @@ class UnpaidInvoice(models.AbstractModel):
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
 
-        records ={partner_id:{"id":part_id, "name":t_name}}
+        
 
         # records ={}
         # idd = self.env['res.partner'].search([])
@@ -38,6 +38,7 @@ class UnpaidInvoice(models.AbstractModel):
             t_name = partner_id.name
             part_id = partner_id.id
             invoices.update({t_id: {"id":part_id, "pr":t_pr, "pn":t_name}})
+            records ={partner_id:{"id":part_id, "name":t_name}}
         x = []
         match = {j['id']: 
                  {z:
