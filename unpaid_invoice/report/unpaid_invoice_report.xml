@@ -4,8 +4,15 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
-                    <t t-foreach="match.keys()" t-as="m">
-                            <div class="act_as_caption account_title">
+                    <t t-foreach="records" t-as="m">
+                        <div class="act_as_row lines">
+                            <div class="act_as_cell">
+                                <span>
+                                    <t t-raw="m" />
+                                </span>
+                            </div>
+                        </div>
+                            <!-- <div class="act_as_caption account_title">
                                 <span t-esc="match[m]['dn']" />
                                 <div class="act_as_row lines">
                                     <div class="act_as_cell">
@@ -18,13 +25,13 @@
                                             <t t-raw="match[m]['ref']" />
                                         </span>
                                     </div>
-                                    <!-- <div class="act_as_cell">
+                                    <div class="act_as_cell">
                                         <span>
                                             <t t-raw="y.invoice_date_due" />
                                         </span>
-                                    </div> -->
+                                    </div>
                                 </div>
-                            </div>
+                            </div> -->
                     </t>
                 </div>
                 <h1>Hello Report</h1>
