@@ -12,7 +12,7 @@ class UnpaidInvoice(models.AbstractModel):
     
     def _get_report_values(self, docids, data=None):
         now = datetime.now()
-        now1 = date.now()
+        now1 = date.today()
         domain = [
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
