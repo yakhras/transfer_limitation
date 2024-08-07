@@ -19,38 +19,31 @@ class UnpaidInvoice(models.AbstractModel):
                 ('invoice_date_due', '<', now.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
-
-        
-
-        records ={}
-        # idd = self.env['res.partner'].search([])
-        # for i in idd:
-        #     i_id = i.id
-        #     i_name = i.name
-        #     records.update({i: {"id":i_id, "name":i_name}})
-
+        partners ={}
         invoices = {}
         table = self.env['account.move'].search(domain)
-        for t in table:
-            partner_id = t.partner_id
-            t_id = t.id
-            t_pr = t.payment_reference
-            t_name = partner_id.name
+
+        for raw in table:
+            partner_id = raw.partner_id
+            inv_id = raw.id
+            inv_pay_ref = raw.payment_reference
+            part_name = partner_id.name
             part_id = partner_id.id
-            invoices.update({t_id: {"id":part_id, "pr":t_pr, "pn":t_name}})
-            records.update({partner_id:{"id":part_id, "name":t_name}})
-        x = []
-        match = {j['id']: 
-                 {z:
-                  {"pay_ref":d['pr'], 
-                   "part_nm":d['pn']
-                  }for (z,d) in invoices.items() 
-                 if j['id']==d['id']
-                 }for (i,j) in records.items() }
+            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name}})
+            partners.update({partner_id:{"id":part_id, "name":part_name}})
+        
+        match = {j['id']:
+                 {
+                     z:{"pay_ref":d['pr'], "part_nm":d['pn']}
+                     for (z,d) in invoices.items()
+                     if j['id']==d['id']
+                 }
+                 for (i,j) in partners.items()
+                }
         
         return {
             'invoices': invoices,
-            'records': records,
+            'partners': partners,
             'match': match,
         }
         
