@@ -27,7 +27,7 @@ class UnpaidInvoice(models.AbstractModel):
             partner_id = raw.partner_id
             inv_id = raw.id
             inv_pay_ref = raw.payment_reference
-            inv_due_date = raw.invoice_date_due
+            inv_due_date = raw.invoice_date_due.strftime('%Y-%m-%d')
             part_name = partner_id.name
             part_id = partner_id.id
             invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date}})
