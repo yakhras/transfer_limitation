@@ -37,7 +37,7 @@ class UnpaidInvoice(models.AbstractModel):
             part_id = partner_id.id
             invoices.update({t_id: {"id":part_id, "pr":t_pr, "pn":t_name}})
         x = []
-        match = {j['id']:x.append(j['pr']) for (i,j) in invoices.items() if j['id']==j+1['id']}
+        match = {j['id']: {z:{"pay_ref":d['pr'], "part_nm":d['pn']}} for (z,d) in invoices.items() for (i,j) in records.items() if j['id']==d['id']}
         
         return {
             'invoices': invoices,
