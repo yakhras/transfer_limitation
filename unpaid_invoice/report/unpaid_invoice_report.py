@@ -27,14 +27,15 @@ class UnpaidInvoice(models.AbstractModel):
             partner_id = raw.partner_id
             inv_id = raw.id
             inv_pay_ref = raw.payment_reference
+            inv_due_date = raw.invoice_date_due
             part_name = partner_id.name
             part_id = partner_id.id
-            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name}})
+            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date}})
             partners.update({partner_id:{"id":part_id, "name":part_name}})
         
         match = {j['id']:
                  {
-                     z:{"pay_ref":d['pr'], "part_nm":d['pn']}
+                     z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt']}
                      for (z,d) in invoices.items()
                      if j['id']==d['id']
                  }
