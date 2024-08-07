@@ -1,7 +1,7 @@
         # -*- coding: utf-8 -*-
 
 from odoo import models, fields
-from datetime import datetime
+from datetime import datetime, date
 
 
 
@@ -12,6 +12,7 @@ class UnpaidInvoice(models.AbstractModel):
     
     def _get_report_values(self, docids, data=None):
         now = datetime.now()
+        now1 = date.now()
         domain = [
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
@@ -28,9 +29,10 @@ class UnpaidInvoice(models.AbstractModel):
             inv_id = raw.id
             inv_pay_ref = raw.payment_reference
             inv_due_date = raw.invoice_date_due.strftime('%Y-%m-%d')
+            delay = now1 - raw.invoice_date_due
             part_name = partner_id.name
             part_id = partner_id.id
-            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date}})
+            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":delay}})
             partners.update({partner_id:{"id":part_id, "name":part_name}})
         
         match = {j['id']:
