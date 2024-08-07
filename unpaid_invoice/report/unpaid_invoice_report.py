@@ -32,7 +32,7 @@ class UnpaidInvoice(models.AbstractModel):
             delay = now1 - raw.invoice_date_due
             part_name = partner_id.name
             part_id = partner_id.id
-            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":delay}})
+            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":delay.days}})
             partners.update({partner_id:{"id":part_id, "name":part_name}})
         
         match = {j['id']:
