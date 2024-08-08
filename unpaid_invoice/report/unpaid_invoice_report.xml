@@ -7,7 +7,6 @@
                     <!-- Extract data from main dict (Level 1) -->
                     <t t-foreach="match.items()" t-as="partner, account">
                         <!-- Extract data from main dict (Level 2) -->
-                         <t t-esc="partner"/>
                         <t t-call="unpaid_invoice.report_lines_header"></t>
                         <!-- <t t-foreach="partner.values()" t-as="account"> -->
                             
@@ -16,10 +15,10 @@
                                 <!-- div for print each value in cell -->
                                 <div class="act_as_cell">
                                     <span>
-                                        <t t-raw="account['ref']" />
+                                        <t t-raw="partner" />
                                     </span>
                                 </div>
-                                <div class="act_as_cell">
+                                <!-- <div class="act_as_cell">
                                     <span>
                                         <t t-raw="account['partner']" />
                                     </span>
@@ -33,7 +32,7 @@
                                     <span>
                                         <t t-raw="account['delay']" />
                                     </span>
-                                </div>
+                                </div> -->
                             </div>
                             
 
