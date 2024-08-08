@@ -25,7 +25,8 @@
                                 </div>
                                 <div class="act_as_cell">
                                     <span>
-                                        <t t-esc="account['delay'] + days ago" />
+                                        <t t-esc="account['delay']"/>
+                                        <t t-esc=" days ago"/>
                                     </span>
                                 </div>
                             </div>
