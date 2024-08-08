@@ -7,18 +7,19 @@
                     <!-- Extract data from main dict (Level 1) -->
                     <t t-foreach="match.items()" t-as="partner">
                         <!-- Extract data from main dict (Level 2) -->
+                        <t esc="partner[0].name" />
                         <t t-call="unpaid_invoice.report_lines_header"></t>
-                        <!-- <t t-foreach="partner.values()" t-as="account"> -->
+                        <t t-foreach="partner[1]" t-as="account">
                             
                             <!-- div for table lines -->
                             <div class="act_as_row lines">
                                 <!-- div for print each value in cell -->
                                 <div class="act_as_cell">
                                     <span>
-                                        <t t-raw="partner[0].name" />
+                                        <t t-raw="account['ref']" />
                                     </span>
                                 </div>
-                                <!-- <div class="act_as_cell">
+                                <div class="act_as_cell">
                                     <span>
                                         <t t-raw="account['partner']" />
                                     </span>
@@ -32,11 +33,11 @@
                                     <span>
                                         <t t-raw="account['delay']" />
                                     </span>
-                                </div> -->
+                                </div>
                             </div>
                             
 
-                        <!-- </t> -->
+                        </t>
                         <!-- Make a space between each partner -->
                         <br></br>
                     </t>
