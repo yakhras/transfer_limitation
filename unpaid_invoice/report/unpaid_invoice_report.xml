@@ -15,7 +15,7 @@
                                 <!-- div for print each value in cell -->
                                 <div class="act_as_cell">
                                     <span>
-                                        <t t-raw="partner[0]" />
+                                        <t t-raw="partner[0].name" />
                                     </span>
                                 </div>
                                 <!-- <div class="act_as_cell">
