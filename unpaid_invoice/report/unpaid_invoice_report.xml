@@ -9,12 +9,18 @@
                         <!-- Extract data from main dict (Level 2) -->
                         <t t-call="unpaid_invoice.report_lines_header"></t>
                         <t t-foreach="partner.values()" t-as="account">
+                            
                             <!-- div for table lines -->
                             <div class="act_as_row lines">
                                 <!-- div for print each value in cell -->
                                 <div class="act_as_cell">
                                     <span>
                                         <t t-raw="account['ref']" />
+                                    </span>
+                                </div>
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-raw="account['partner']" />
                                     </span>
                                 </div>
                                 <div class="act_as_cell">
@@ -28,6 +34,8 @@
                                     </span>
                                 </div>
                             </div>
+                            
+
                         </t>
                         <!-- Make a space between each partner -->
                         <br></br>
