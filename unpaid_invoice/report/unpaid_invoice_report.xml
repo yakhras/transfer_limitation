@@ -7,7 +7,7 @@
                     <!-- Extract data from main dict (Level 1) -->
                     <t t-foreach="match.items()" t-as="partner">
                         <!-- Extract data from main dict (Level 2) -->
-                        <div><span><t t-esc="partner[0].name"/></span></div>  
+                        <div class="act_as_thead"><span><t t-esc="partner[0].name"/></span></div>  
                         <t t-call="unpaid_invoice.report_lines_header"></t>
                         <t t-foreach="partner[1].values()" t-as="account">
                             <!-- div for table lines -->
