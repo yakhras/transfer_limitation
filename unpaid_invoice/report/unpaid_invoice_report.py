@@ -1,7 +1,7 @@
         # -*- coding: utf-8 -*-
 
 from odoo import models, fields
-from datetime import datetime, date
+from datetime import  date
 
 
 
@@ -11,13 +11,12 @@ class UnpaidInvoice(models.AbstractModel):
 
     
     def _get_report_values(self, docids, data=None):
-        now = datetime.now()
-        now1 = date.today()
+        today = date.today()
         domain = [
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
                 ('payment_state', 'in', ('not_paid', 'partial')),
-                ('invoice_date_due', '<', now1.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '<', today.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
         partners ={}
@@ -29,7 +28,7 @@ class UnpaidInvoice(models.AbstractModel):
             inv_id = raw.id
             inv_pay_ref = raw.payment_reference
             inv_due_date = raw.invoice_date_due.strftime('%Y-%m-%d')
-            delay = (now1 - raw.invoice_date_due).days
+            delay = (today - raw.invoice_date_due).days
             part_name = partner_id.name
             part_id = partner_id.id
             invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date, "dd":delay}})
