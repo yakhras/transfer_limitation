@@ -29,10 +29,10 @@ class UnpaidInvoice(models.AbstractModel):
             inv_id = raw.id
             inv_pay_ref = raw.payment_reference
             inv_due_date = raw.invoice_date_due.strftime('%Y-%m-%d')
-            delay = now1 - raw.invoice_date_due
+            delay = (now1 - raw.invoice_date_due).days
             part_name = partner_id.name
             part_id = partner_id.id
-            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":delay.days}})
+            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date, "dd":delay}})
             partners.update({partner_id:{"id":part_id, "name":part_name}})
         
         match = {j['id']:
