@@ -37,7 +37,7 @@ class UnpaidInvoice(models.AbstractModel):
         
         match = {j['id']:
                  {
-                     z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt']}
+                     z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt'], "delay":d['dd']}
                      for (z,d) in invoices.items()
                      if j['id']==d['id']
                  }
