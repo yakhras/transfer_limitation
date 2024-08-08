@@ -7,8 +7,9 @@
                     <!-- Extract data from main dict (Level 1) -->
                     <t t-foreach="match.values()" t-as="partner">
                         <!-- Extract data from main dict (Level 2) -->
+                        <t t-call="unpaid_invoice.report_lines_header"></t>
                         <t t-foreach="partner.values()" t-as="account">
-                            <t t-call="unpaid_invoice.report_lines_header"></t>
+                            
                             <!-- div for table lines -->
                             <div class="act_as_row lines">
                                 <!-- div for print each value in cell -->
