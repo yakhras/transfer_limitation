@@ -5,13 +5,16 @@
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
                     <t t-foreach="match.values()" t-as="m">
-                        <div class="act_as_row lines">
-                            <div class="act_as_cell">
-                                <span>
-                                    <t t-raw="match[m]['date']" />
-                                </span>
+                        <t t-foreach="m.values()" t-as="d">
+                            <div class="act_as_row lines">
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-raw="match[m][d]['date']" />
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        </t>
+                        
                             <!-- <div class="act_as_caption account_title">
                                 <span t-esc="match[m]['dn']" />
                                 <div class="act_as_row lines">
