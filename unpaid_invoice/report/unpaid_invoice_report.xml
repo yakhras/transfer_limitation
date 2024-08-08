@@ -21,7 +21,7 @@
                                 <div class="act_as_cell">
                                     <span>
                                         <t t-raw="account['date']" />
-                                        <t t-raw=" days ago"/>
+                                        <t t-esc=" days ago"/>
                                     </span>
                                 </div>
                                 <div class="act_as_cell">
