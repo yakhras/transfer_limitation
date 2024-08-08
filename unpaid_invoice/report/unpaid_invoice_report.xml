@@ -9,7 +9,7 @@
                             <div class="act_as_row lines">
                                 <div class="act_as_cell">
                                     <span>
-                                        <t t-raw="match[m][d]['date']" />
+                                        <t t-raw="match[d]['date']" />
                                     </span>
                                 </div>
                             </div>
