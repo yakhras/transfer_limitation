@@ -27,7 +27,6 @@
                                         <t t-raw="d['delay']" />
                                     </span>
                                 </div>
-                            <br></br>
                             </div>
                         </t>
                     </t>
