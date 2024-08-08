@@ -20,13 +20,12 @@
                                 </div>
                                 <div class="act_as_cell">
                                     <span>
-                                        <t t-raw="account['date']" />
-                                        <t t-esc=" days ago"/>
+                                        <t t-raw="account['date']"/>
                                     </span>
                                 </div>
                                 <div class="act_as_cell">
                                     <span>
-                                        <t t-raw="account['delay']" />
+                                        <t t-esc="account['delay'] + days ago" />
                                     </span>
                                 </div>
                             </div>
