@@ -31,4 +31,17 @@
             </div>
         </div>
     </template>
+    <template id="unpaid_invoice.report_lines_header">
+        <!-- Display table headers for lines -->
+        <div class="act_as_thead">
+            <div class="act_as_row labels">
+                <!--## date-->
+                <div class="act_as_cell first_column">Invoice Number</div>
+                <!--## move-->
+                <div class="act_as_cell">Date</div>
+                <!--## journal-->
+                <div class="act_as_cell">Delay</div>
+            </div>
+        </div>
+    </template>
 </odoo>

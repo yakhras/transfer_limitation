@@ -4,31 +4,39 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
-                    <t t-foreach="match.values()" t-as="m">
-                        <t t-foreach="m.values()" t-as="d">
-                            <div class="act_as_row lines">
-                                <div class="act_as_cell">
-                                    <span>
-                                        <t t-raw="d['ref']" />
-                                    </span>
+                    <!-- Extract data from main dict (Level 1) -->
+                    <t t-foreach="match.values()" t-as="partner">
+                        <!-- Extract data from main dict (Level 2) -->
+                        <t t-foreach="partner.values()" t-as="account">
+                            <t t-call="unpaid_invoice.report_lines_header">
+                                <!-- div for table lines -->
+                                <div class="act_as_row lines">
+                                    <!-- div for print each value in cell -->
+                                    <div class="act_as_cell">
+                                        <span>
+                                            <t t-raw="account['ref']" />
+                                        </span>
+                                    </div>
+                                    <div class="act_as_cell">
+                                        <span>
+                                            <t t-raw="account['partner']" />
+                                        </span>
+                                    </div>
+                                    <div class="act_as_cell">
+                                        <span>
+                                            <t t-raw="account['date']" />
+                                        </span>
+                                    </div>
+                                    <div class="act_as_cell">
+                                        <span>
+                                            <t t-raw="account['delay']" />
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="act_as_cell">
-                                    <span>
-                                        <t t-raw="d['partner']" />
-                                    </span>
-                                </div>
-                                <div class="act_as_cell">
-                                    <span>
-                                        <t t-raw="d['date']" />
-                                    </span>
-                                </div>
-                                <div class="act_as_cell">
-                                    <span>
-                                        <t t-raw="d['delay']" />
-                                    </span>
-                                </div>
-                            </div>
+                            </t>
+
                         </t>
+                        <!-- Make a space between each partner -->
                         <br></br>
                     </t>
                 </div>

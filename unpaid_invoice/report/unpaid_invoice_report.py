@@ -11,7 +11,9 @@ class UnpaidInvoice(models.AbstractModel):
 
     
     def _get_report_values(self, docids, data=None):
+        # Define today
         today = date.today()
+        # Define domain for search
         domain = [
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
@@ -19,21 +21,24 @@ class UnpaidInvoice(models.AbstractModel):
                 ('invoice_date_due', '<', today.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', '120001')
         ]
-        partners ={}
+        # Define dictionary for partners
+        partners = {}
+        # Define dictionary for invoices
         invoices = {}
+        # Define table will working with
         table = self.env['account.move'].search(domain)
-
+        # Extract data from table to update the dictionaries
         for raw in table:
-            partner_id = raw.partner_id
-            inv_id = raw.id
-            inv_pay_ref = raw.payment_reference
-            inv_due_date = raw.invoice_date_due.strftime('%Y-%m-%d')
-            delay = (today - raw.invoice_date_due).days
-            part_name = partner_id.name
-            part_id = partner_id.id
-            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date, "dd":delay}})
-            partners.update({partner_id:{"id":part_id, "name":part_name}})
-        
+            partner_id = raw.partner_id #res.partner object
+            inv_id = raw.id #account.move id
+            inv_pay_ref = raw.payment_reference #payment reference / invoice number
+            inv_due_date = raw.invoice_date_due.strftime('%Y-%m-%d') #invoice due date
+            delay = (today - raw.invoice_date_due).days #delay duration from due date to now
+            part_name = partner_id.name #partner name
+            part_id = partner_id.id #partner id
+            invoices.update({inv_id: {"id":part_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date, "dd":delay}}) #update dict with value
+            partners.update({partner_id:{"id":part_id, "name":part_name}}) #update dict with value
+        # Define a dictionary contains matched values, will return nested dict
         match = {j['id']:
                  {
                      z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt'], "delay":d['dd']}
