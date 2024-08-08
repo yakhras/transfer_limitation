@@ -9,7 +9,7 @@
                         <!-- Extract data from main dict (Level 2) -->
                         <t esc="partner[0].name" />
                         <t t-call="unpaid_invoice.report_lines_header"></t>
-                        <t t-foreach="partner[1]" t-as="account">
+                        <t t-foreach="partner[1].values()" t-as="account">
                             
                             <!-- div for table lines -->
                             <div class="act_as_row lines">
