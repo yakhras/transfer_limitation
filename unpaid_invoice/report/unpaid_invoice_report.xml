@@ -20,11 +20,6 @@
                                 </div>
                                 <div class="act_as_cell">
                                     <span>
-                                        <t t-raw="account['partner']" />
-                                    </span>
-                                </div>
-                                <div class="act_as_cell">
-                                    <span>
                                         <t t-raw="account['date']" />
                                     </span>
                                 </div>

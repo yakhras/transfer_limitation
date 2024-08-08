@@ -37,7 +37,6 @@
             <div class="act_as_row labels">
                 <!--## date-->
                 <div class="act_as_cell first_column">Invoice Number</div>
-                <div class="act_as_cell">Partner</div>
                 <!--## move-->
                 <div class="act_as_cell">Date</div>
                 <!--## journal-->
