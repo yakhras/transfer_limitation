@@ -5,7 +5,7 @@
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
                     <!-- Extract data from main dict (Level 1) -->
-                    <t t-foreach="match.items()" t-as="partner, account">
+                    <t t-foreach="match.items()" t-as="partner">
                         <!-- Extract data from main dict (Level 2) -->
                         <t t-call="unpaid_invoice.report_lines_header"></t>
                         <!-- <t t-foreach="partner.values()" t-as="account"> -->
