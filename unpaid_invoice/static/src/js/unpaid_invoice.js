@@ -47,6 +47,6 @@ odoo.define('owl.call_button', function (require) {
     // Register ListView with js Class
     // viewRegistry.add('unpaid_list', UnpaidListView);
 
-    core.action_registry.add('report.client_action', UnpaidReportAction);
+    core.action_registry.add('unpaid_button.buttons', UnpaidReportAction);
 
 });
