@@ -9,9 +9,8 @@
     <template id="unpaid_invoice.internal_layout">
         <div>
             <button name="function_name"
-                    string="string"
+                    string="YASER"
                     type="object"
-                    special="cancel"
                     default_focus="10"
                     confirm="message"
                     help="message" />
