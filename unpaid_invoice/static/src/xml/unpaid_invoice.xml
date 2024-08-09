@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<templates id="template" xml:space="preserve">
+<template id="template" xml:space="preserve">
+
+    <div t-name="report.unpaid_invoice">
+        <iframe class="o_report_iframe"/>
+    </div>
+
     <t t-extend="report.client_action.ControlButtons" t-name="unpaid_button.buttons">
         <t t-jquery="button.o_report_print" t-operation="after">
             <button class="btn btn-primary call_unpaid">
@@ -9,7 +14,7 @@
             </button>
         </t>
     </t>
-</templates>
+</template>
 
 <!-- <templates id="template1" xml:space="preserve">
     <t t-name="unpaid_button.buttons123">
