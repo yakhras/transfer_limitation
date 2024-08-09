@@ -9,6 +9,16 @@
     <template id="unpaid_invoice.internal_layout">
         <div class="article">
             <t t-out="0" />
+            
+            <button name="function_name"
+                    string="string"
+                    type="object"
+                    special="cancel"
+                    default_focus="0"
+                    icon="gtk-apply"
+                    confirm="message"
+                    help="message" />
+            
         </div>
         <div class="footer">
             <div class="row">
