@@ -11,7 +11,7 @@ odoo.define('owl.call_button', function (require) {
     // Add click Event.
     const UnpaidReportAction = ReportAction.extend({
         hasControlPanel: true,
-        contentTemplate: 'report.client_action',
+        contentTemplate: 'unpaid_button.buttons',
 
         init: function (parent, action, options) {
             this._super.apply(this, arguments);
@@ -48,5 +48,5 @@ odoo.define('owl.call_button', function (require) {
     // viewRegistry.add('unpaid_list', UnpaidListView);
 
     core.action_registry.add('unpaid_button.buttons', UnpaidReportAction);
-
+    return UnpaidReportAction;
 });
