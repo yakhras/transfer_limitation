@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<!--<templates id="template" xml:space="preserve">
-    <t t-extend="ListView.buttons" t-name="unpaid_button.buttons">
-        <t t-jquery="button.o_list_export_xlsx" t-operation="after">
+<templates id="template" xml:space="preserve">
+    <t t-extend="report.client_action.ControlButtons" t-name="unpaid_button.buttons">
+        <t t-jquery="button.o_report_print" t-operation="after">
             <button class="btn btn-primary call_unpaid">
                     Unpaid
             </button>
@@ -11,19 +11,19 @@
     </t>
 </templates>
 
-<templates id="template1" xml:space="preserve">
+<!-- <templates id="template1" xml:space="preserve">
     <t t-name="unpaid_button.buttons123">
         <div class="page">
             Helooooooooo
         </div>
     </t>
-</templates>-->
+</templates> -->
 
-<template id="unpaid_invoice.html_container">
+<!-- <template id="unpaid_invoice.html_container">
     <t t-name="unpaid_button.buttons123">
         <t t-set="body_classname" t-value="'container'" />
         <t t-call="web.report_layout">
             <t t-out="0" />
         </t>
     </t>
-</template>
+</template> -->
