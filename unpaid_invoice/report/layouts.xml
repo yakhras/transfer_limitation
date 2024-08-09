@@ -14,8 +14,7 @@
                     string="string"
                     type="object"
                     special="cancel"
-                    default_focus="0"
-                    icon="gtk-apply"
+                    default_focus="10"
                     confirm="message"
                     help="message" />
             
