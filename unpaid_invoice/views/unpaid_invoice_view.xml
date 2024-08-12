@@ -66,14 +66,6 @@
                                                 </div>
                                                 
                                             </div>
-                                            <div class="col-6 o_kanban_card_manage_section o_kanban_manage_reporting" groups="project.group_project_manager">
-                                                <div role="menuitem" class="o_kanban_card_manage_title">
-                                                    <span>Reporting</span>
-                                                </div>
-                                                <div role="menuitem">
-                                                    <a name="action_view_tasks_analysis" type="object">Tasks Analysis</a>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
