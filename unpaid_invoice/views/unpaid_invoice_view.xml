@@ -91,9 +91,7 @@
                                                 <div role="menuitem">
                                                     <a name="action_view_tasks_analysis" type="object">Tasks Analysis</a>
                                                 </div>
-                                                <div role="menuitem">
-                                                    <a name="%(action_project_task_burndown_chart_report)d" type="action">Burndown Chart</a>
-                                                </div>
+                                                
                                             </div>
                                         </div>
                                         <div class="o_kanban_card_manage_settings row" groups="project.group_project_manager">
