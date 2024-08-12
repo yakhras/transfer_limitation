@@ -35,7 +35,7 @@
         </record>
 
         <record model="ir.ui.view" id="view_unpaid_invoice_kanban">
-            <field name="name">unpaid_unvoice.kanban</field>
+            <field name="name">unpaid_invoice.kanban</field>
             <field name="model">account.move</field>
             <field name="arch" type="xml">
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors"  sample="1">
