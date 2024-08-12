@@ -63,7 +63,7 @@
                                                         </t>
                                                     </b>
                                                 </div>
-                                                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                                
                                             </div>
                                         </div>
                                     </div>
