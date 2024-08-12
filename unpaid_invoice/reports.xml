@@ -13,7 +13,7 @@
         <field name="res_model">account.move</field>
         <field name="domain">[]</field>
         <field name="view_mode">kanban</field>
-        <field name="view_id" ref="view_unpaid_invoice_kanban"/>
+        <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_kanban"/>
         <field name="context">{}</field>
     </record>
 </odoo>
