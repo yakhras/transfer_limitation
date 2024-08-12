@@ -104,9 +104,7 @@
                                     <a class="o_kanban_manage_toggle_button o_dropdown_kanban" href="#" groups="base.group_user">
                                         <i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/>
                                     </a>
-                                    <span>
-                                       <field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1" />
-                                    </span>
+                                    
                                 </div>
                                 <div class="o_kanban_record_bottom mt-3">
                                     <div class="oe_kanban_bottom_left">
