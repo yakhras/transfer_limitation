@@ -28,6 +28,7 @@
         #"security/security.xml",
         "reports.xml", #action file.
         "menuitems.xml", #menu items file.
+        "views/unpaid_invoice_view.xml", 
         "report/layouts.xml", #report page templates file. 
         "report/unpaid_invoice_report.xml", #report data view file
     ],
