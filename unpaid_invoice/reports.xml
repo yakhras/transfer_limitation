@@ -13,6 +13,6 @@
         <field name="res_model">account.move</field>
         <field name="view_mode">kanban,form</field>
         <field name="target">current</field>
-        <field name="view_id" ref="account.view_account_move_kanban"/>
+        <field name="view_id" ref="project.view_project_kanban"/>
     </record>
 </odoo>
