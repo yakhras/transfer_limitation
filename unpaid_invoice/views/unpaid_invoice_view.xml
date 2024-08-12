@@ -48,10 +48,7 @@
                                     <div class="o_kanban_card_content mw-100">
                                         <div class="o_kanban_primary_left">
                                             <div class="o_primary">
-                                                <span class="o_text_overflow"><t t-esc="record.name.value"/></span>
-                                                <span class="o_text_overflow text-muted" t-if="record.partner_id.value">
-                                                    <span class="fa fa-user mr-2" aria-label="Partner" title="Partner"></span><t t-esc="record.partner_id.value"/>
-                                                </span>                                               
+                                                <span class="o_text_overflow"><t t-esc="record.name.value"/></span>                                              
                                             </div>
                                         </div>
                                     </div>
