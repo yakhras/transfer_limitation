@@ -36,30 +36,11 @@
 
         <record model="ir.ui.view" id="view_unpaid_invoice_kanban">
             <field name="name">unpaid_unvoice.kanban</field>
-            <field name="model">project.project</field>
+            <field name="model">account.move</field>
             <field name="arch" type="xml">
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors"  sample="1">
                     <field name="name"/>
                     <field name="partner_id"/>
-                    <field name="commercial_partner_id"/>
-                    <field name="color"/>
-                    <field name="task_count"/>
-                    <field name="label_tasks"/>
-                    <field name="alias_id"/>
-                    <field name="alias_name"/>
-                    <field name="alias_domain"/>
-                    <field name="is_favorite"/>
-                    <field name="rating_percentage_satisfaction"/>
-                    <field name="rating_status"/>
-                    <field name="rating_active" />
-                    <field name="analytic_account_id"/>
-                    <field name="date"/>
-                    <field name="doc_count"/>
-                    <field name="privacy_visibility"/>
-                    <field name="last_update_color"/>
-                    <field name="last_update_status"/>
-                    <field name="tag_ids"/>
-                    <progressbar field="last_update_status" colors='{"on_track": "success", "at_risk": "warning", "off_track": "danger", "on_hold": "info"}'/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card">
