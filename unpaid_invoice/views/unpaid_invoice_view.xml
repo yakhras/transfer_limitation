@@ -42,7 +42,7 @@
                     <field name="name"/>
                     <field name="partner_id"/>
                     <templates>
-                        <t t-name="kanban-boxes">
+                        <t t-name="kanban-box">
                             <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card">
                                 <div class="o_project_kanban_main ">
                                     <div class="o_kanban_card_content mw-100">
