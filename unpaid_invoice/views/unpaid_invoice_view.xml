@@ -51,19 +51,7 @@
                                                 <span class="o_text_overflow"><t t-esc="record.name.value"/></span>
                                                 <span class="o_text_overflow text-muted" t-if="record.partner_id.value">
                                                     <span class="fa fa-user mr-2" aria-label="Partner" title="Partner"></span><t t-esc="record.partner_id.value"/>
-                                                </span>
-                                                
-                                                <div t-if="record.alias_name.value and record.alias_domain.value" class="text-muted">
-                                                    <span class="fa fa-envelope-o mr-2" aria-label="Domain Alias" title="Domain Alias"></span><t t-esc="record.alias_id.value"/>
-                                                </div>
-                                                <div t-if="record.rating_active.raw_value" class="text-muted" title="Percentage of happy ratings over the past 30 days." groups="project.group_project_rating">
-                                                    <b>
-                                                        <t t-if="record.rating_percentage_satisfaction.value != -1">
-                                                            <i class="fa fa-smile-o" role="img" aria-label="Percentage of satisfaction" title="Percentage of satisfaction"/> <t t-esc="record.rating_percentage_satisfaction.value"/>%
-                                                        </t>
-                                                    </b>
-                                                </div>
-                                                
+                                                </span>                                               
                                             </div>
                                         </div>
                                     </div>
@@ -87,40 +75,8 @@
                                                 <div role="menuitem">
                                                     <a name="action_view_tasks_analysis" type="object">Tasks Analysis</a>
                                                 </div>
-                                                
                                             </div>
                                         </div>
-                                        <div class="o_kanban_card_manage_settings row" groups="project.group_project_manager">
-                                            <div role="menuitem" aria-haspopup="true" class="col-8">
-                                                <ul class="oe_kanban_colorpicker" data-field="color" role="popup"/>
-                                            </div>
-                                            <div role="menuitem" class="col-4">
-                                                <a t-if="record.privacy_visibility.raw_value == 'portal'" class="dropdown-item" role="menuitem" name="%(project.project_share_wizard_action)d" type="action">Share</a>
-                                                <!-- [XBO] TODO: remove the name attribute in this a tag in master -->
-                                                <a class="dropdown-item" role="menuitem" type="edit" name="action_view_kanban_project">Edit</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a class="o_kanban_manage_toggle_button o_dropdown_kanban" href="#" groups="base.group_user">
-                                        <i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/>
-                                    </a>
-                                    
-                                </div>
-                                <div class="o_kanban_record_bottom mt-3">
-                                    <div class="oe_kanban_bottom_left">
-                                        <div class="o_project_kanban_boxes">
-                                            <a class="o_project_kanban_box" name="action_view_tasks" type="object">
-                                                <div>
-                                                    <span class="o_value"><t t-esc="record.task_count.value"/></span>
-                                                    <span class="o_label"><t t-esc="record.label_tasks.value"/></span>
-                                                </div>
-                                            </a>
-                                        </div>
-                                        <field name="activity_ids" widget="kanban_activity"/>
-                                    </div>
-                                    <div class="oe_kanban_bottom_right">
-                                        <span t-att-class="'o_status_bubble mx-0 o_color_bubble_' + record.last_update_color.value" t-att-title="record.last_update_status.value"></span>
-                                        <field name="user_id" widget="many2one_avatar_user" t-if="record.user_id.raw_value"/>
                                     </div>
                                 </div>
                             </div>
