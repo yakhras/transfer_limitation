@@ -11,7 +11,7 @@
         id="menu_unpaid_invoice"
         name="Unpaid Invoices"
         parent="menu_yaser_reports"
-        action="unpaid_invoice.action_report_unpaid_invoice_html"
+        action="unpaid_invoice.action_kanban_unpaid_invoice_view"
         sequence="60"
     />
 </odoo>

@@ -7,4 +7,13 @@
         <field name="report_name">unpaid_invoice.unpaid_report</field> <!-- report data view Template id -->
         <field name="report_file">unpaid_invoice.unpaid_invoice_report</field> <!-- The template file name -->
     </record>
+
+    <record id="action_kanban_unpaid_invoice_view" model="ir.actions.act_window">
+        <field name="name">Unpaid Invoice</field>
+        <field name="res_model">account.move</field>
+        <field name="domain">[]</field>
+        <field name="view_mode">kanban</field>
+        <field name="view_id" ref="view_unpaid_invoice_kanban"/>
+        <field name="context">{}</field>
+    </record>
 </odoo>
