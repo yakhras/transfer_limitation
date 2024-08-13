@@ -1,6 +1,6 @@
 from odoo import models, fields
 
-class UnpaidInvoice(models.Model):
+class CrmTeam(models.Model):
     _name = 'unpaid.invoice'
     _inherit = 'crm.team'
 
