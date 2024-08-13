@@ -7,17 +7,8 @@
         </t>
     </template>
     <template id="unpaid_invoice.internal_layout">
-        <div>
-            <button name="function_name"
-                    string="YASER"
-                    type="object"
-                    default_focus="10"
-                    confirm="message"
-                    help="message" />
-        </div>
         <div class="article">
             <t t-out="0" />
-            
         </div>
         <div class="footer">
             <div class="row">

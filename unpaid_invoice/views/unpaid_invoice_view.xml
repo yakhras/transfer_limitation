@@ -38,7 +38,7 @@
             <field name="name">unpaid_invoice.kanban</field>
             <field name="model">crm.team</field>
             <field name="arch" type="xml">
-                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1">
+                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
                     <field name="name"/>
                     <templates>
                         <t t-name="kanban-box">
