@@ -21,7 +21,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['account','project'],
+    'depends': ['account','crm'],
 
     # always loaded
     'data': [
