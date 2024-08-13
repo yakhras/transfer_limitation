@@ -12,7 +12,7 @@
         <field name="name">Unpaid Invoice</field>
         <field name="res_model">sale.order</field>
         <field name="view_mode">kanban,form</field>
-        <field name="target">new</field>
+        <field name="target">current</field>
         <field name="view_id" ref="sale.view_sale_order_kanban"/>
     </record>
 </odoo>
