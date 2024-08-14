@@ -12,8 +12,8 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # Define today
         today = date.today()
-        model = self.env.context.get('active_model')
-        docs = self.env[model].browse(self.env.context.get('active_id'))
+        #model = self.env.context.get('active_model')
+        #docs = self.env[model].browse(self.env.context.get('active_id'))
         # Define domain for search
         domain = [
             ('move_type', '=', 'out_invoice'),
