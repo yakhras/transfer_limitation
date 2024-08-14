@@ -49,7 +49,7 @@
                                             <div class="o_primary">
                                                 <span class="o_text_overflow">
                                                     <a name="action_unpaid_invoice" type="object">
-                                                        <t t-esc="record.id"/></a>
+                                                        <t t-esc="record.id.id"/></a>
                                                     </span>                                              
                                             </div>
                                         </div>
