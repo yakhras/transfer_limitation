@@ -17,6 +17,8 @@ class UnpaidInvoice(models.AbstractModel):
             code = 120001
         elif (docids[0] == 7):
             code = 120005
+        elif (docids[0] == 3):
+            code = 120002
         # Define domain for search
         domain = [
             ('move_type', '=', 'out_invoice'),
