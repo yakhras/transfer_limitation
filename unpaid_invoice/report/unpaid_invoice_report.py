@@ -22,7 +22,7 @@ class UnpaidInvoice(models.AbstractModel):
                 ('state', '=', 'posted'),
                 ('payment_state', 'in', ('not_paid', 'partial')),
                 ('invoice_date_due', '<', today.strftime('%Y-%m-%d')),
-                ('partner_id.property_account_receivable_id.code', '=', '120001')
+                ('partner_id.property_account_receivable_id.code', '=', code)
         ]
         # # Define dictionary for partners
         # partners = {}
@@ -58,6 +58,6 @@ class UnpaidInvoice(models.AbstractModel):
         # }
         return {
             # 'today': model,
-            'domain': code,
+            'domain': domain,
         }
         
