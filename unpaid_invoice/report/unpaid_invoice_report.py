@@ -56,6 +56,6 @@ class UnpaidInvoice(models.AbstractModel):
         # }
         return {
             'today': model,
-            'domain': docs,
+            'domain': docids,
         }
         
