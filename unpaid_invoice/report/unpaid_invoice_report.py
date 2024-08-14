@@ -27,11 +27,7 @@ class UnpaidInvoice(models.AbstractModel):
         code = CrmTeam._get_active_id(self)
         # Define domain for search
         domain = []
-        # Define dictionary for partners
-        partners = {}
-        # Define dictionary for invoices
-        invoices = {}
-        match = {}
+        
         if code == 1:
             domain = [
                 ('move_type', '=', 'out_invoice'),
@@ -40,7 +36,11 @@ class UnpaidInvoice(models.AbstractModel):
                     ('invoice_date_due', '<', today.strftime('%Y-%m-%d')),
                     ('partner_id.property_account_receivable_id.code', '=', '120001')
             ]
-            
+            # Define dictionary for partners
+            partners = {}
+            # Define dictionary for invoices
+            invoices = {}
+            match = {}
             # Define table will working with
             table = self.env['account.move'].search(domain)
             # Extract data from table to update the dictionaries
