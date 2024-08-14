@@ -4,16 +4,10 @@
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
                 <div class="act_as_table data_table" style="width: 100%;">
-                    <!-- <span>
-                        <t t-esc="today"/>
-                    </span> -->
-                    <span>
-                        <t t-esc="domain"/>
-                    </span>
                     <!-- Extract data from main dict (Level 1) -->
-                    <!-- <t t-foreach="match.items()" t-as="partner"> -->
+                    <t t-foreach="match.items()" t-as="partner">
                         <!-- Extract data from main dict (Level 2) -->
-                        <!-- <div class="act_as_thead">
+                        <div class="act_as_thead">
                             <span t-att-res-id="partner[0].id"
                                   res-model="res.partner"
                                   view-type="form">
@@ -21,11 +15,11 @@
                             </span>
                         </div>  
                         <t t-call="unpaid_invoice.report_lines_header"></t>
-                        <t t-foreach="partner[1].values()" t-as="account"> -->
+                        <t t-foreach="partner[1].values()" t-as="account">
                             <!-- div for table lines -->
-                            <!-- <div class="act_as_row lines"> -->
+                            <div class="act_as_row lines">
                                 <!-- div for print each value in cell -->
-                                <!-- <div class="act_as_cell">
+                                <div class="act_as_cell">
                                     <span t-att-res-id="partner[1]" 
                                           res-model="account.move"
                                           view-type="form">
@@ -48,10 +42,10 @@
                                     </span>
                                 </div>
                             </div>
-                        </t> -->
+                        </t>
                         <!-- Make a space between each partner -->
                         <br></br>
-                    <!-- </t> -->
+                    </t>
                 </div>
                 <h1>Hello Report</h1>
             </t>
