@@ -46,7 +46,7 @@ class UnpaidInvoice(models.AbstractModel):
             partner_id = raw.partner_id #res.partner object
             inv_id = raw.id #account.move id
             inv_pay_ref = raw.payment_reference #payment reference / invoice number
-            inv_due_date = raw.invoice_date_due #invoice due date
+            inv_due_date = raw.invoice_date_due.strftime('%Y-%m-%d') #invoice due date
             delay = (today - raw.invoice_date_due).days #delay duration from due date to now
             part_name = partner_id.name #partner name
             part_team = partner_id.team_id.name #partner team
