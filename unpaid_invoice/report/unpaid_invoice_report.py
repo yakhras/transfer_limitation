@@ -1,7 +1,7 @@
         # -*- coding: utf-8 -*-
 
 from odoo import models, fields
-from datetime import  date
+from datetime import date
 
 
 class CrmTeam(models.Model):
@@ -23,7 +23,7 @@ class UnpaidInvoice(models.AbstractModel):
     
     def _get_report_values(self, docids, data=None):
         # Define today
-        today = date.today()
+        today = date.day()
         code = CrmTeam._get_active_id(self)
         # Define domain for search
         domain = []
