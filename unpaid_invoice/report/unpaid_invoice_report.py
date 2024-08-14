@@ -1,6 +1,6 @@
         # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import models, api
 from datetime import date
 
 
@@ -8,7 +8,7 @@ class UnpaidInvoice(models.AbstractModel):
     _name = 'report.unpaid_invoice.unpaid_report'
     _description = 'Unpaid Invoices Report'
 
-    
+    @api.model
     def _get_report_values(self, docids, data=None):
         # Define today
         today = date.today()
