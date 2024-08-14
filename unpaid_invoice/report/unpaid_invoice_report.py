@@ -26,6 +26,7 @@ class UnpaidInvoice(models.AbstractModel):
         today = date.today()
         code = CrmTeam._get_active_id(self)
         # Define domain for search
+        domain = []
         if code == 1:
             domain = [
                 ('move_type', '=', 'out_invoice'),
