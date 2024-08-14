@@ -31,6 +31,7 @@ class UnpaidInvoice(models.AbstractModel):
         partners = {}
         # Define dictionary for invoices
         invoices = {}
+        match = {}
         if code == 1:
             domain = [
                 ('move_type', '=', 'out_invoice'),
