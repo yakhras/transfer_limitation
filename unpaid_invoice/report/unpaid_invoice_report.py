@@ -2,7 +2,7 @@
 
 from odoo import models, fields
 from datetime import  date
-import unpaid_invoice
+from models import unpaid_invoice
 
 
 
