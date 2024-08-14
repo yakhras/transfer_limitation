@@ -35,12 +35,13 @@
         <!-- Display table headers for lines -->
         <div class="act_as_thead">
             <div class="act_as_row labels">
-                <!--## date-->
+                <!--# Invoice Number-->
                 <div class="act_as_cell first_column">Invoice Number</div>
-                <!--## move-->
+                <!--# Date-->
                 <div class="act_as_cell">Date</div>
-                <!--## journal-->
-                <div class="act_as_cell">Delay</div>
+                <!--# Delay-->
+                <div class="act_as_cell">Delay - days ago</div>
+                <!--# Team-->
                 <div class="act_as_cell">Team</div>
             </div>
         </div>
