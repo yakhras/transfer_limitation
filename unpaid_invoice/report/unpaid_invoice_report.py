@@ -12,6 +12,7 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # Define today
         today = date.today()
+        activ_id = self.env.context.get('active_id')
         # Define domain for search
         domain = [
             ('move_type', '=', 'out_invoice'),
@@ -53,7 +54,7 @@ class UnpaidInvoice(models.AbstractModel):
         #     'match': match,
         # }
         return {
-            'today': today,
+            'today': activ_id,
             'domain': domain,
         }
         
