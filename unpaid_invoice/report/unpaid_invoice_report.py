@@ -12,6 +12,7 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # Define today
         today = date.today()
+        # Define code
         code = 0
         if (docids[0] == 1):
             code = 120001
@@ -61,8 +62,4 @@ class UnpaidInvoice(models.AbstractModel):
             'partners': partners,
             'match': match,
         }
-        # return {
-        #     # 'today': model,
-        #     'domain': domain,
-        # }
         
