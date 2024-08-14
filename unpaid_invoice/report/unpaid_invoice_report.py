@@ -2,6 +2,7 @@
 
 from odoo import models, fields
 from datetime import  date
+from unpaid_invoice import CrmTeam
 
 
 
@@ -13,14 +14,16 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # Define today
         today = date.today()
+        code = CrmTeam._get_active_id()
         # Define domain for search
-        domain = [
-            ('move_type', '=', 'out_invoice'),
-                ('state', '=', 'posted'),
-                ('payment_state', 'in', ('not_paid', 'partial')),
-                ('invoice_date_due', '<', today.strftime('%Y-%m-%d')),
-                ('partner_id.property_account_receivable_id.code', '=', '120001')
-        ]
+        if code == 1:
+            domain = [
+                ('move_type', '=', 'out_invoice'),
+                    ('state', '=', 'posted'),
+                    ('payment_state', 'in', ('not_paid', 'partial')),
+                    ('invoice_date_due', '<', today.strftime('%Y-%m-%d')),
+                    ('partner_id.property_account_receivable_id.code', '=', '120001')
+            ]
         # Define dictionary for partners
         partners = {}
         # Define dictionary for invoices
