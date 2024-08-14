@@ -25,7 +25,7 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # Define today
         today = date.today()
-        code = CrmTeam._get_active_id()
+        code = CrmTeam._get_active_id(self)
         # Define domain for search
         if code == 1:
             domain = [
