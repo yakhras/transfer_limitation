@@ -23,7 +23,7 @@ class UnpaidInvoice(models.AbstractModel):
     
     def _get_report_values(self, docids, data=None):
         # Define today
-        today = date.day()
+        today = date.today()
         code = CrmTeam._get_active_id(self)
         # Define domain for search
         domain = []
@@ -47,15 +47,15 @@ class UnpaidInvoice(models.AbstractModel):
             inv_id = raw.id #account.move id
             inv_pay_ref = raw.payment_reference #payment reference / invoice number
             inv_due_date = raw.invoice_date_due #invoice due date
-            delay = today - raw.invoice_date_due #delay duration from due date to now
+            #delay = today - raw.invoice_date_due #delay duration from due date to now
             part_name = partner_id.name #partner name
             part_team = partner_id.team_id.name #partner team
-            invoices.update({inv_id: {"id":partner_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date, "dd":delay, "pt":part_team}}) #update dict with value
+            invoices.update({inv_id: {"id":partner_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date, "pt":part_team}}) #update dict with value
             partners.update({partner_id:{"id":partner_id, "name":part_name}}) #update dict with value
         # Define a dictionary contains matched values, will return nested dict
         match = {j['id']:
                  {
-                     z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt'], "delay":d['dd'], "team":d['pt']}
+                     z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt'], "team":d['pt']}
                      for (z,d) in invoices.items()
                      if j['id']==d['id']
                  }

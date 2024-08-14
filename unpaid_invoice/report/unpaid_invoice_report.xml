@@ -31,11 +31,11 @@
                                         <t t-raw="account['date']"/>
                                     </span>
                                 </div>
-                                <div class="act_as_cell">
+                                <!-- <div class="act_as_cell">
                                     <span>
                                         <t t-esc="account['delay']"/>
                                     </span>
-                                </div>
+                                </div> -->
                                 <div class="act_as_cell">
                                     <span>
                                         <t t-esc="account['team']"/>
