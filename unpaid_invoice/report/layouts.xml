@@ -41,6 +41,7 @@
                 <div class="act_as_cell">Date</div>
                 <!--## journal-->
                 <div class="act_as_cell">Delay</div>
+                <div class="act_as_cell">Team</div>
             </div>
         </div>
     </template>
