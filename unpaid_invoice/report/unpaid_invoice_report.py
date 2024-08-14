@@ -2,7 +2,7 @@
 
 from odoo import models, fields
 from datetime import  date
-from unpaid_invoice import CrmTeam
+import unpaid_invoice
 
 
 
@@ -14,7 +14,7 @@ class UnpaidInvoice(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         # Define today
         today = date.today()
-        code = CrmTeam._get_active_id()
+        code = unpaid_invoice._get_active_id()
         # Define domain for search
         if code == 1:
             domain = [
