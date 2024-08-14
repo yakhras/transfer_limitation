@@ -64,9 +64,9 @@ class UnpaidInvoice(models.AbstractModel):
                     for (i,j) in partners.items()
                     }
         
-        return {
-            'invoices': invoices,
-            'partners': partners,
-            'match': match,
-        }
+            return {
+                'invoices': invoices,
+                'partners': partners,
+                'match': match,
+            }
         
