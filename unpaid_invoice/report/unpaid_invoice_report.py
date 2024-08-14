@@ -15,6 +15,8 @@ class UnpaidInvoice(models.AbstractModel):
         #model = self.env.context.get('active_model')
         #docs = self.env[model].browse(self.env.context.get('active_id'))
         # Define domain for search
+        if (docids == 1):
+            code = 120001
         domain = [
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
@@ -56,6 +58,6 @@ class UnpaidInvoice(models.AbstractModel):
         # }
         return {
             # 'today': model,
-            'domain': docids,
+            'domain': code,
         }
         
