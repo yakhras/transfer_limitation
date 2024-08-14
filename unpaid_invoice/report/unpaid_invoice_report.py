@@ -13,9 +13,8 @@ class CrmTeam(models.Model):
          return action
     
     def _get_active_id(self):
-         actv_id = self.env.context.get('active_id')
-         if self.action_unpaid_invoice():
-              return actv_id
+        actv_id = self.env.context.get('active_id')
+        return actv_id
 
 class UnpaidInvoice(models.AbstractModel):
     _name = 'report.unpaid_invoice.unpaid_report'
