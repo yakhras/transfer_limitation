@@ -35,6 +35,7 @@ class UnpaidInvoice(models.AbstractModel):
                     ('invoice_date_due', '<', today.strftime('%Y-%m-%d')),
                     ('partner_id.property_account_receivable_id.code', '=', '120001')
             ]
+            return domain
         # Define dictionary for partners
         partners = {}
         # Define dictionary for invoices
