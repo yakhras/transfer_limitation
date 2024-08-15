@@ -42,9 +42,10 @@
                                     </span>
                                 </div>
                                 <div class="act_as_cell">
-                                    <span>
-                                        <t t-esc="account['amount']"/>
-                                    </span>
+                                    <span
+                                        t-esc="account['amount']"
+                                        t-options="{'widget': 'monetary'}"
+                                    />
                                 </div>
                                 <div class="act_as_cell">
                                     <span>
