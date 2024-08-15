@@ -56,7 +56,7 @@ class UnpaidInvoice(models.AbstractModel):
                 {
                     z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt'],
                        "delay":d['dd'], "team":d['pt'], "amount":d['ar'],
-                       "currency":d[currency]}
+                       "currency":d['ct']}
                     for (z,d) in invoices.items()
                     if j['id']==d['id']
                 }
