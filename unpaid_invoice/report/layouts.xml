@@ -45,6 +45,8 @@
                 <div class="act_as_cell">Team</div>
                 <!--# Amount-->
                 <div class="act_as_cell">Amount</div>
+                <!--# Currency-->
+                <div class="act_as_cell">Currency</div>
             </div>
         </div>
     </template>

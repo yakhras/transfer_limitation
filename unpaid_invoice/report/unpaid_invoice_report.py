@@ -46,12 +46,17 @@ class UnpaidInvoice(models.AbstractModel):
             part_name = partner_id.name #partner name
             part_team = partner_id.team_id.name #partner team
             amount = raw.amount_residual
-            invoices.update({inv_id: {"id":partner_id, "pr":inv_pay_ref, "pn":part_name, "dt":inv_due_date, "dd":delay, "pt":part_team, "ar":amount}}) #update dict with value
+            currency = raw.currency_exchange_currency_id
+            invoices.update({inv_id: {"id":partner_id, "pr":inv_pay_ref, "pn":part_name,
+                                      "dt":inv_due_date, "dd":delay, "pt":part_team,
+                                      "ar":amount, "ct":currency}}) #update dict with value
             partners.update({partner_id:{"id":partner_id, "name":part_name}}) #update dict with value
             # Define a dictionary contains matched values, will return nested dict
         match = {j['id']:
                 {
-                    z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt'], "delay":d['dd'], "team":d['pt'], "amount":d['ar']}
+                    z:{"ref":d['pr'], "partner":d['pn'], "date":d['dt'],
+                       "delay":d['dd'], "team":d['pt'], "amount":d['ar'],
+                       "currency":d[currency]}
                     for (z,d) in invoices.items()
                     if j['id']==d['id']
                 }
