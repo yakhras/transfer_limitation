@@ -43,6 +43,8 @@
                 <div class="act_as_cell">Delay - days ago</div>
                 <!--# Team-->
                 <div class="act_as_cell">Team</div>
+                <!--# Amount-->
+                <div class="act_as_cell">Amount</div>
             </div>
         </div>
     </template>

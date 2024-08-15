@@ -41,6 +41,11 @@
                                         <t t-esc="account['team']"/>
                                     </span>
                                 </div>
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-esc="account['amount']"/>
+                                    </span>
+                                </div>
                             </div>
                         </t>
                         <!-- Make a space between each partner -->
