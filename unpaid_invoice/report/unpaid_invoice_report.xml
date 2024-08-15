@@ -44,7 +44,7 @@
                                 <div class="act_as_cell">
                                     <span
                                         t-esc="account['amount']"
-                                        t-options="{'widget': 'monetary', 'display_currency':env['res.currency'].browse(account['cur_id']}"
+                                        t-options="{'widget': 'monetary', 'display_currency':env['res.currency'].browse(account['cur_id'])}"
                                     />
                                 </div>
                                 <div class="act_as_cell">
