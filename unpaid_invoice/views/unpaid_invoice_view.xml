@@ -56,8 +56,8 @@
                                                 </span>
                                                 <t t-set="today" t-value="Date()"/>
                                                 <span class="o_text_overflow">
-                                                    <a name="action_unpaid_invoice" type="object">
-                                                        <t t-out="today"/>Today
+                                                    <a name="action_unpaid_invoice" type="object" title="Today">
+                                                        <t t-out="today"/>
                                                     </a>
                                                 </span>
                                             </div>
