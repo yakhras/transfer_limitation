@@ -41,8 +41,8 @@
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1"
                     create="false">
                     <field name="team_id" />
-                    <field name="label_date" />
-                    <field name="total_count" />
+                    <!-- <field name="label_date" />
+                    <field name="total_count" /> -->
                     <templates>
                         <t t-name="kanban-box">
                             <div
