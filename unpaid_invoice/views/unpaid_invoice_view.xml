@@ -54,12 +54,11 @@
                                                         <t t-esc="record.name.value" />
                                                     </a>
                                                 </span>
-                                                <t t-set="today" t-value="Date()"/>
-                                                <span class="o_text_overflow">
-                                                    <a name="action_unpaid_invoice" type="object" title="Today">
-                                                        <t t-out="today"/>
-                                                    </a>
-                                                </span>
+                                                <a name="action_unpaid_invoice" type="object">
+                                                    <span class="o_text_overflow" title="Today">
+                                                        <t t-esc="Date()" />Today
+                                                    </span>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
