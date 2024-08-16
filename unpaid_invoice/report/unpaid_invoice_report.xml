@@ -20,7 +20,7 @@
                             <div class="act_as_row lines">
                                 <!-- div for print each value in cell -->
                                 <div class="act_as_cell">
-                                    <span t-att-res-id="partner[1]" 
+                                    <span t-att-res-id="account['inv_id']" 
                                           res-model="account.move"
                                           view-type="form">
                                         <t t-raw="account['ref']" />
