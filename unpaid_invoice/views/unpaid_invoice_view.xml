@@ -56,7 +56,7 @@
                                                 </span>
                                                 <span class="o_text_overflow">
                                                     <a name="action_unpaid_invoice" type="object">
-                                                        <t t-esc="context_timestamp(datetime.date.today()).strftime('%Y-%m-%d')"/>
+                                                        <t t-esc="context_timestamp(datetime.today()).strftime('%Y-%m-%d')"/>
                                                     </a>
                                                 </span>
                                             </div>
