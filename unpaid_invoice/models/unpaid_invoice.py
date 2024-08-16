@@ -8,6 +8,7 @@ class CrmTeam(models.Model):
         default=lambda s: "Today",
         translate=True,
         )
+    total_count = fields.Integer(compute="_count_records", store=True)
     
     def _count_records(self):
           today = date.today()
@@ -18,8 +19,7 @@ class CrmTeam(models.Model):
                 ('invoice_date_due', '=', today.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', 120001)
         ]
-          total_count = self.env['account.move'].search_count(domain)
-          return total_count
+          self.total_count = self.env['account.move'].search_count(domain)
                 
     def action_unpaid_invoice(self):
          action = self.env["ir.actions.actions"]._for_xml_id(
