@@ -4,7 +4,7 @@ class CrmTeam(models.Model):
     _inherit = 'crm.team'
 
     label_date = fields.Char(
-        default=lambda s: _("Tickets"),
+        default=lambda s: "Tickets",
         translate=True,
         )
 
