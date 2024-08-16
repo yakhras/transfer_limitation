@@ -42,6 +42,7 @@
                     create="false">
                     <field name="name" />
                     <field name="label_date" />
+                    <field name="total_count" />
                     <templates>
                         <t t-name="kanban-box">
                             <div
@@ -57,7 +58,7 @@
                                                 </span>
                                                 <a name="action_unpaid_invoice" type="object">
                                                     <span class="o_text_overflow">
-                                                        <t t-esc="record.label_date.value"/>
+                                                        <t t-esc="record.total_count.value"/>
                                                     </span>
                                                 </a>
                                             </div>
