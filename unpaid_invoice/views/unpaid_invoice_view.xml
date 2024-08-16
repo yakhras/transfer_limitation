@@ -41,6 +41,7 @@
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1"
                     create="false">
                     <field name="name" />
+                    <field name="label_date" />
                     <templates>
                         <t t-name="kanban-box">
                             <div
