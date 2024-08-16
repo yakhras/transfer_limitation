@@ -55,8 +55,8 @@
                                                     </a>
                                                 </span>
                                                 <a name="action_unpaid_invoice" type="object">
-                                                    <span class="o_text_overflow" title="Today">
-                                                        <t t-esc="Date()"/>
+                                                    <span class="o_text_overflow">
+                                                        <t t-esc="record.label_date.value"/>
                                                     </span>
                                                 </a>
                                             </div>
