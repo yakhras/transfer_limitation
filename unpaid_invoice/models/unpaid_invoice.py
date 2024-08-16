@@ -7,7 +7,7 @@ class CrmTeam(models.Model):
     label_date = fields.Char(
         default=lambda s: "Today",
         translate=True,
-        )
+        ) 
     total_count = fields.Integer(compute="_count_records", store=True)
     
     def _count_records(self):
