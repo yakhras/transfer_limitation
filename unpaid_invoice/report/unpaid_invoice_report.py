@@ -27,7 +27,7 @@ class UnpaidInvoice(models.AbstractModel):
             ('move_type', '=', 'out_invoice'),
                 ('state', '=', 'posted'),
                 ('payment_state', 'in', ('not_paid', 'partial')),
-                ('invoice_date_due', '<', today.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '=', today.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', code)
         ]
         # Define dictionary for partners
