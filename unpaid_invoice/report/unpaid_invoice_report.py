@@ -8,8 +8,7 @@ class UnpaidInvoice(models.AbstractModel):
     _name = 'report.unpaid_invoice.unpaid_report'
     _description = 'Unpaid Invoices Report'
 
-
-    def _get_report_values(self, docids, data=None):
+    def _get_domain_value(self,docids):
         # Define today
         today = date.today()
         # Define code
@@ -30,6 +29,31 @@ class UnpaidInvoice(models.AbstractModel):
                 ('invoice_date_due', '=', today.strftime('%Y-%m-%d')),
                 ('partner_id.property_account_receivable_id.code', '=', code)
         ]
+        return domain, today
+    
+    def _get_report_values(self, docids, data=None):
+        # # Define today
+        # today = date.today()
+        # Define code
+        # code = 0
+        # if (docids[0] == 1):
+        #     code = 120001
+        # elif (docids[0] == 7):
+        #     code = 120005
+        # elif (docids[0] == 3):
+        #     code = 120002
+        # else:
+        #     code = 120006
+        # # Define domain for search
+        # domain = [
+        #     ('move_type', '=', 'out_invoice'),
+        #         ('state', '=', 'posted'),
+        #         ('payment_state', 'in', ('not_paid', 'partial')),
+        #         ('invoice_date_due', '=', today.strftime('%Y-%m-%d')),
+        #         ('partner_id.property_account_receivable_id.code', '=', code)
+        # ]
+
+        domain, today = self._get_domain_value(docids)
         # Define dictionary for partners
         partners = {}
         # Define dictionary for invoices

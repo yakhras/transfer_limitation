@@ -10,7 +10,7 @@
 
     <record id="action_kanban_unpaid_invoice_view" model="ir.actions.act_window">
         <field name="name">Unpaid Invoice</field>
-        <field name="res_model">account.move</field>
+        <field name="res_model">crm.team</field>
         <field name="view_mode">kanban</field>
         <field name="target">current</field>
         <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_kanban"/>

@@ -36,11 +36,11 @@
 
         <record model="ir.ui.view" id="view_unpaid_invoice_kanban">
             <field name="name">unpaid_invoice.kanban</field>
-            <field name="model">account.move</field>
+            <field name="model">crm.team</field>
             <field name="arch" type="xml">
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1"
                     create="false">
-                    <field name="team_id" />
+                    <field name="name" />
                     <!-- <field name="label_date" />
                     <field name="total_count" /> -->
                     <templates>
@@ -53,7 +53,7 @@
                                             <div class="o_primary">
                                                 <span class="o_text_overflow">
                                                     <a name="action_unpaid_invoice" type="object">
-                                                        <t t-esc="record.team_id.value" />
+                                                        <t t-esc="record.name.value" />
                                                     </a>
                                                 </span>
                                                 <!-- <a name="action_unpaid_invoice" type="object">
