@@ -21,8 +21,8 @@ class CrmTeam(models.Model):
         ]
           self.total_count = self.env['account.move'].search_count(domain)
                 
-    # def action_unpaid_invoice(self):
-    #      action = self.env["ir.actions.actions"]._for_xml_id(
-    #           "unpaid_invoice.action_report_unpaid_invoice_html")
-    #      return action
+    def action_unpaid_invoice(self):
+         action = self.env["ir.actions.actions"]._for_xml_id(
+              "unpaid_invoice.action_report_unpaid_invoice_html")
+         return action
     
