@@ -8,6 +8,10 @@ class UnpaidInvoice(models.AbstractModel):
     _name = 'report.unpaid_invoice.unpaid_report'
     _description = 'Unpaid Invoices Report'
 
+
+    def action_send_email(self):
+        print('Hello')
+
     
     def _get_domain_date(self,docids):
         # Define today

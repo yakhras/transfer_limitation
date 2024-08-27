@@ -3,6 +3,9 @@
     <template id="unpaid_report">
         <t t-call="unpaid_invoice.html_container">
             <t t-call="unpaid_invoice.internal_layout">
+                <div>
+                    <button name="action_send_email" type="object" string="Send"/>
+                </div>
                 <div class="act_as_table data_table" style="width: 100%;">
                     <!-- Extract data from main dict (Level 1) -->
                     <t t-foreach="match.items()" t-as="partner">
