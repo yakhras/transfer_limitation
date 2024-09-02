@@ -20,7 +20,7 @@ odoo.define('owl.call_button', function (require) {
     })
 
 
-    core.action_registry.add('ks_dynamic_report', ksDynamicReportsWidget);
+    core.action_registry.add('kss_dynamic_report', ksDynamicReportsWidget);
     return ksDynamicReportsWidget;
 
 });
