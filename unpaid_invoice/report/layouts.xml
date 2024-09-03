@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<odoo>
-    <data>
+
+   
         <template xml:space="preserve">
             <t t-name="UnpaidInvoiceButton">
                 <button type="button" class="btn btn-primary kss_report_pdf"
@@ -68,6 +68,4 @@
                 </div>
             </div>
         </template>
-    </data>
-    
-</odoo>
+ 
