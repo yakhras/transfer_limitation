@@ -3,7 +3,7 @@
     <template>
         <t t-name="UnpaidInvoiceButton">
             <button type="button" class="btn btn-primary kss_report_pdf"
-            style="position: relative;">Print (Pdf)
+                    style="position: relative;">Print (Pdf)
             </button>
             <button type="button" class="btn btn-primary kss_report_xlsx" 
                     style="position: relative;">
