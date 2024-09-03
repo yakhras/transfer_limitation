@@ -1,21 +1,24 @@
-<?xml version="1.0" encoding="utf-8" ?>   
-<template xml:space="preserve">
-    <t t-name="UnpaidInvoiceButton">
-        <button type="button" class="btn btn-primary kss_report_pdf"
-        style="position: relative;">Print (Pdf)
-        </button>
-        <button type="button" class="btn btn-primary kss_report_xlsx" 
-                style="position: relative;">
-            Export (XLSX)
-        </button>
-        <!--            <t name='new'>-->
-        <button type="button" class="btn btn-primary kss_send_email"
-                style="position: relative;">
-            Send Email
-        </button>
-    </t>
-    <!--            </t>-->
-</template>
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template xml:space="preserve">
+        <t t-name="UnpaidInvoiceButton">
+            <button type="button" class="btn btn-primary kss_report_pdf"
+            style="position: relative;">Print (Pdf)
+            </button>
+            <button type="button" class="btn btn-primary kss_report_xlsx" 
+                    style="position: relative;">
+                Export (XLSX)
+            </button>
+            <!--            <t name='new'>-->
+            <button type="button" class="btn btn-primary kss_send_email"
+                    style="position: relative;">
+                Send Email
+            </button>
+        </t>
+        <!--            </t>-->
+    </template>
+</odoo>   
+
         <!-- <template id="unpaid_invoice.html_container">
             <t t-set="body_classname" t-value="'container'" />
             <t t-call="web.report_layout">
