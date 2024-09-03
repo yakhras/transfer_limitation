@@ -1,4 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="awesome_tshirt.clientaction" owl="1">
+        Hello world
+    </t>
+</templates>
+
+<!-- <?xml version="1.0" encoding="UTF-8"?>
 
 
 <template id="template" xml:space="preserve">
@@ -16,15 +23,15 @@
     </t>
 </template>
 
-<!-- <templates id="template1" xml:space="preserve">
+<templates id="template1" xml:space="preserve">
     <t t-name="unpaid_button.buttons123">
         <div class="page">
             Helooooooooo
         </div>
     </t>
-</templates> -->
+</templates>
 
-<!-- <template id="unpaid_invoice.html_container">
+<template id="unpaid_invoice.html_container">
     <t t-name="unpaid_button.buttons123">
         <t t-set="body_classname" t-value="'container'" />
         <t t-call="web.report_layout">
