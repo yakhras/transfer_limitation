@@ -11,8 +11,8 @@ odoo.define('owl.call_button', function (require) {
     // Add Button Template,
     // Add click Event.
     var kssDynamicReportsWidget = AbstractAction.extend({
-        template: 'awesome_tshirt',
-        xmlDependencies: ['/unpaid_invoice/static/src/xml/unpaid_invoice.xml'],
+        template: 'unpaid_report',
+        // xmlDependencies: ['/unpaid_invoice/static/src/xml/unpaid_invoice.xml'],
         // events: {
         //     'click .kss_report_pdf': 'ksReportPrintPdf',
         //     'click .kss_report_xlsx': 'ksPrintReportXlsx',
