@@ -10,18 +10,18 @@ odoo.define('owl.call_button', function (require) {
     // ListController Inherites,
     // Add Button Template,
     // Add click Event.
-    var ksDynamicReportsWidget = AbstractAction.extend({
+    var kssDynamicReportsWidget = AbstractAction.extend({
         hasControlPanel: true,
         events: {
-            'click .ks_report_pdf': 'ksReportPrintPdf',
-            'click .ks_report_xlsx': 'ksPrintReportXlsx',
-            'click .ks_send_email': "ksReportSendEmail",
+            'click .kss_report_pdf': 'ksReportPrintPdf',
+            'click .kss_report_xlsx': 'ksPrintReportXlsx',
+            'click .kss_send_email': "ksReportSendEmail",
         }
     })
 
 
-    core.action_registry.add('kss_dynamic_report', ksDynamicReportsWidget);
-    return ksDynamicReportsWidget;
+    core.action_registry.add('kss_dynamic_report', kssDynamicReportsWidget);
+    return kssDynamicReportsWidget;
 
 });
     // const UnpaidReportAction = ReportAction.extend({

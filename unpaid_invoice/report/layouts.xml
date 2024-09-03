@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <template id="unpaid_repport_buttons">
-        <button type="button" class="btn btn-primary ks_report_pdf"
+        <button type="button" class="btn btn-primary kss_report_pdf"
                 style="position: relative;">Print (Pdf)
         </button>
-        <button type="button" class="btn btn-primary ks_report_xlsx" 
+        <button type="button" class="btn btn-primary kss_report_xlsx" 
                 style="position: relative;">
             Export (XLSX)
         </button>
         <!--            <t name='new'>-->
-        <button type="button" class="btn btn-primary ks_send_email"
+        <button type="button" class="btn btn-primary kss_send_email"
                 style="position: relative;">
             Send Email
         </button>
