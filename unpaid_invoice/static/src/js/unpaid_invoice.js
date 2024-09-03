@@ -11,7 +11,7 @@ odoo.define('owl.call_button', function (require) {
     // Add Button Template,
     // Add click Event.
     var kssDynamicReportsWidget = AbstractAction.extend({
-        hasControlPanel: false,
+        hasControlPanel: true,
         // events: {
         //     'click .kss_report_pdf': 'ksReportPrintPdf',
         //     'click .kss_report_xlsx': 'ksPrintReportXlsx',
