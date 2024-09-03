@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<templates xml:space="preserve">
-    <t t-name="unpaid_invoice.awesome_tshirt" owl="1">
-        Hello world
-    </t>
+<templates id="yaser" xml:space="preserve">
+<t t-name="awesome_tshirt" owl="1">
+    Hello world
+</t>
 </templates>
 
 <!-- <?xml version="1.0" encoding="UTF-8"?>
