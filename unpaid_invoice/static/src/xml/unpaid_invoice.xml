@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<template id="yaser" xml:space="preserve">
-    <t t-name="awesome_tshirt">
-        Hello world
-    </t>
-</template>
+<odoo>
+    <template id="yaser" xml:space="preserve">
+        <t t-name="awesome_tshirt">
+            Hello world
+        </t>
+    </template>
+</odoo>
+
 
 
 <!-- <?xml version="1.0" encoding="UTF-8"?>
