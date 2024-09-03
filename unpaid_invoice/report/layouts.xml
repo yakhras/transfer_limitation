@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template>
-        <t t-name="UnpaidInvoiceButton">
+    <template t-name="UnpaidInvoiceButton">
             <button type="button" class="btn btn-primary kss_report_pdf"
                     style="position: relative;">Print (Pdf)
             </button>
@@ -14,7 +13,6 @@
                     style="position: relative;">
                 Send Email
             </button>
-        </t>
         <!--            </t>-->
     </template>
 </odoo>   
