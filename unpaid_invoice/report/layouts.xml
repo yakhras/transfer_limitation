@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
    
-        <template xml:space="preserve">
-            <t t-name="UnpaidInvoiceButton">
-                <button type="button" class="btn btn-primary kss_report_pdf"
-                style="position: relative;">Print (Pdf)
-                </button>
-                <button type="button" class="btn btn-primary kss_report_xlsx" 
-                        style="position: relative;">
-                    Export (XLSX)
-                </button>
-                <!--            <t name='new'>-->
-                <button type="button" class="btn btn-primary kss_send_email"
-                        style="position: relative;">
-                    Send Email
-                </button>
-            </t>
-            <!--            </t>-->
-        </template>
-        <template id="unpaid_invoice.html_container">
+<template xml:space="preserve">
+    <t t-name="UnpaidInvoiceButton">
+        <button type="button" class="btn btn-primary kss_report_pdf"
+        style="position: relative;">Print (Pdf)
+        </button>
+        <button type="button" class="btn btn-primary kss_report_xlsx" 
+                style="position: relative;">
+            Export (XLSX)
+        </button>
+        <!--            <t name='new'>-->
+        <button type="button" class="btn btn-primary kss_send_email"
+                style="position: relative;">
+            Send Email
+        </button>
+    </t>
+    <!--            </t>-->
+</template>
+        <!-- <template id="unpaid_invoice.html_container">
             <t t-set="body_classname" t-value="'container'" />
             <t t-call="web.report_layout">
                 <t t-out="0" />
@@ -50,22 +50,22 @@
             </div>
         </template>
         <template id="unpaid_invoice.report_lines_header">
-            <!-- Display table headers for lines -->
+            Display table headers for lines
             <div class="act_as_thead">
                 <div class="act_as_row labels">
-                    <!--# Invoice Number-->
+                    # Invoice Number
                     <div class="act_as_cell first_column">Invoice Number</div>
-                    <!--# Date-->
+                    # Date
                     <div class="act_as_cell">Date</div>
-                    <!--# Delay-->
+                    # Delay
                     <div class="act_as_cell">Delay - days ago</div>
-                    <!--# Team-->
+                    # Team
                     <div class="act_as_cell">Team</div>
-                    <!--# Amount-->
+                    # Amount
                     <div class="act_as_cell">Amount</div>
-                    <!--# Currency-->
+                    # Currency
                     <div class="act_as_cell">Currency</div>
                 </div>
             </div>
-        </template>
+        </template> -->
  
