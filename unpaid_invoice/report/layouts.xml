@@ -1,70 +1,73 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template xml:space="preserve">
-        <t t-name="UnpaidInvoiceButton">
-            <button type="button" class="btn btn-primary kss_report_pdf"
-            style="position: relative;">Print (Pdf)
-            </button>
-            <button type="button" class="btn btn-primary kss_report_xlsx" 
-                    style="position: relative;">
-                Export (XLSX)
-            </button>
-            <!--            <t name='new'>-->
-            <button type="button" class="btn btn-primary kss_send_email"
-                    style="position: relative;">
-                Send Email
-            </button>
-        </t>
-        <!--            </t>-->
-    </template>
-    <template id="unpaid_invoice.html_container">
-        <t t-set="body_classname" t-value="'container'" />
-        <t t-call="web.report_layout">
-            <t t-out="0" />
-        </t>
-    </template>
-    <template id="unpaid_invoice.internal_layout">
-        <div class="article">
-            <t t-out="0" />
-        </div>
-        <div class="footer">
-            <div class="row">
-                <div class="col-6 custom_footer">
-                    <span
-                        t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"
-                    />
-                </div>
-                <div class="col-6 text-right custom_footer">
-                    <ul class="list-inline">
-                        <li class="list-inline-item">
-                            <span class="page" />
-                        </li>
-                        <li class="list-inline-item">/</li>
-                        <li class="list-inline-item">
-                            <span class="topage" />
-                        </li>
-                    </ul>
+    <data>
+        <template xml:space="preserve">
+            <t t-name="UnpaidInvoiceButton">
+                <button type="button" class="btn btn-primary kss_report_pdf"
+                style="position: relative;">Print (Pdf)
+                </button>
+                <button type="button" class="btn btn-primary kss_report_xlsx" 
+                        style="position: relative;">
+                    Export (XLSX)
+                </button>
+                <!--            <t name='new'>-->
+                <button type="button" class="btn btn-primary kss_send_email"
+                        style="position: relative;">
+                    Send Email
+                </button>
+            </t>
+            <!--            </t>-->
+        </template>
+        <template id="unpaid_invoice.html_container">
+            <t t-set="body_classname" t-value="'container'" />
+            <t t-call="web.report_layout">
+                <t t-out="0" />
+            </t>
+        </template>
+        <template id="unpaid_invoice.internal_layout">
+            <div class="article">
+                <t t-out="0" />
+            </div>
+            <div class="footer">
+                <div class="row">
+                    <div class="col-6 custom_footer">
+                        <span
+                            t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"
+                        />
+                    </div>
+                    <div class="col-6 text-right custom_footer">
+                        <ul class="list-inline">
+                            <li class="list-inline-item">
+                                <span class="page" />
+                            </li>
+                            <li class="list-inline-item">/</li>
+                            <li class="list-inline-item">
+                                <span class="topage" />
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-    </template>
-    <template id="unpaid_invoice.report_lines_header">
-        <!-- Display table headers for lines -->
-        <div class="act_as_thead">
-            <div class="act_as_row labels">
-                <!--# Invoice Number-->
-                <div class="act_as_cell first_column">Invoice Number</div>
-                <!--# Date-->
-                <div class="act_as_cell">Date</div>
-                <!--# Delay-->
-                <div class="act_as_cell">Delay - days ago</div>
-                <!--# Team-->
-                <div class="act_as_cell">Team</div>
-                <!--# Amount-->
-                <div class="act_as_cell">Amount</div>
-                <!--# Currency-->
-                <div class="act_as_cell">Currency</div>
+        </template>
+        <template id="unpaid_invoice.report_lines_header">
+            <!-- Display table headers for lines -->
+            <div class="act_as_thead">
+                <div class="act_as_row labels">
+                    <!--# Invoice Number-->
+                    <div class="act_as_cell first_column">Invoice Number</div>
+                    <!--# Date-->
+                    <div class="act_as_cell">Date</div>
+                    <!--# Delay-->
+                    <div class="act_as_cell">Delay - days ago</div>
+                    <!--# Team-->
+                    <div class="act_as_cell">Team</div>
+                    <!--# Amount-->
+                    <div class="act_as_cell">Amount</div>
+                    <!--# Currency-->
+                    <div class="act_as_cell">Currency</div>
+                </div>
             </div>
-        </div>
-    </template>
+        </template>
+    </data>
+    
 </odoo>
