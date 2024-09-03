@@ -11,13 +11,12 @@ odoo.define('owl.call_button', function (require) {
     // Add Button Template,
     // Add click Event.
     var kssDynamicReportsWidget = AbstractAction.extend({
-        hasControlPanel: true,
-        template:'UnpaidInvoiceButton',
-        events: {
-            'click .kss_report_pdf': 'ksReportPrintPdf',
-            'click .kss_report_xlsx': 'ksPrintReportXlsx',
-            'click .kss_send_email': "ksReportSendEmail",
-        }
+        hasControlPanel: false,
+        // events: {
+        //     'click .kss_report_pdf': 'ksReportPrintPdf',
+        //     'click .kss_report_xlsx': 'ksPrintReportXlsx',
+        //     'click .kss_send_email': "ksReportSendEmail",
+        // }
     })
 
 
