@@ -34,12 +34,13 @@
     ],
 
     'assets': {
-        'web.assets_qweb': [
-            'unpaid_invoice/static/src/xml/unpaid_invoice.xml', #buttons template file.
-        ],
         'web.assets_backend': [
             'unpaid_invoice/static/src/js/unpaid_invoice.js', #buttons event function file.
         ],
+        'web.assets_qweb': [
+            'unpaid_invoice/static/src/xml/unpaid_invoice.xml', #buttons template file.
+        ],
+        
     },
     # only loaded in demonstration mode
     'demo': [
