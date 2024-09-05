@@ -25,9 +25,9 @@
 
     # always loaded
     'data': [
-        #"security/security.xml",
+        # "security/security.xml",
         "security/logistics_security.xml",
-        # "security/ir.model.access.csv",
+        "security/ir.model.access.csv",
         # "wizard/transfer_limi_wizard_view.xml",
         "views/lugano_eg_menu_view.xml",
     ],
