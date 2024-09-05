@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_visit_report_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})"/>
+            <div class="page">
+                <div class="oe_structure"/>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <td style="text-align:center">
+                            <strong style="font-size: 20px;">
+                                <span>Visit: </span>
+                                <span t-field="doc.number"/>
+                            </strong>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="row">
+                    <div class="col-1">
+                        <strong>To:</strong>
+                    </div>
+                    <div class="col-4">
+                        <div t-field="doc.partner_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                    </div>
+                    <div class="col-5 col-offset-1">
+                        <strong>Date: </strong> <span t-field="doc.end_date"/>
+                    </div>
+                </div>
+                <br/>
+                <table class="table table-bordered">
+                    <tr>
+                        <td width="50px"><strong>Subject:</strong></td>
+                        <td><span t-raw="doc.name"/></td>
+                    </tr>
+                </table>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td><span t-raw="doc.note"/></td>
+                    </tr>
+                </table>
+
+                Should you have any questions please contact us at your convenience.<br/>
+                <br/>
+                Best regards,<br/>
+                <div class="row" name="total">
+                    <div class="col-4">
+                        <strong>Proposed by:</strong><br/>
+                        <u><strong><span t-field="doc.user_id"/></strong></u><br/>
+                        <!-- <span t-field="doc.user_id"/><br/> -->
+                        <span t-field="doc.user_id.company_id.name"/><br/>
+                    </div>
+                    <div class="col-4 pull-right">
+                        <span style="margin-left:-15px;" class="col-6 pull-left"><strong>Accepted by:</strong></span>
+                        <span class="col-6"><strong>Date:</strong></span><br/>
+                        <span/><br/>
+                        <span/><br/>
+                        <div style="border-top: 1px solid black;">Print Name and Sign</div><br/>
+                    </div>
+                </div>
+                
+                <div class="oe_structure"/>
+                <p style="page-break-before:always;"> </p>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_visit_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="acs_visits.report_visit_report_document" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+    <record id="visit_report" model="ir.actions.report">
+        <field name="name">Visit</field>
+        <field name="model">visit.visit</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">acs_visits.report_visit_report</field>
+        <field name="report_file">acs_visits.report_visit_report</field>
+        <field name="binding_model_id" ref="model_visit_visit"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

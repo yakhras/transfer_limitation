@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+
+    <!-- Task View -->
+    <record model="ir.ui.view" id="view_task_form2_inherited">
+        <field name="name">project.task.form.inherited</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2" />
+        <field name="groups_id" eval="[(4, ref('base.group_user'))]"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button groups="acs_visits.group_visit_user" class="oe_stat_button" type="object"  name="task_visit_action" icon="fa-list"> 
+                    <field name="visit_count" widget="statinfo"/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+    <!-- Project View -->
+    <record id="edit_project_form" model="ir.ui.view">
+        <field name="name">project.project.form</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button groups="acs_visits.group_visit_user" class="oe_stat_button" type="object"  name="project_visit_action" icon="fa-list"> 
+                    <field name="visit_count" widget="statinfo"/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+    <!-- Project Visits -->
+    <record id="visit_visit_search_view" model="ir.ui.view">
+        <field name="name">visit.visit.search</field>
+        <field name="model">visit.visit</field>
+        <field name="arch" type="xml">
+            <search string="Project Visit">
+                <field name="name" string="Project Visits"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>
