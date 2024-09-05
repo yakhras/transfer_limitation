@@ -85,7 +85,7 @@
                         <h1><field name="name" placeholder="e.g. Point Visit"/></h1>
                     </div>
                     <group>
-                        <group>
+                        <group name="point_info" string="Point">
                             <field name="partner_id"/>
                             <!-- <field name="task_id"/>
                             <field name="project_id"/>
