@@ -87,10 +87,8 @@
                     <group>
                         <group name="point_info" string="Point">
                             <field name="partner_id"/>
-                            <!-- <field name="task_id"/>
-                            <field name="project_id"/>
-                            <field name="sale_id"/>
-                            <field name="product_id" domain="[('is_visit', '=', True)]"/> -->
+                            <field name="machine_station"/>
+                            
                         </group>
                         <group name="coffee_type" string="Coffee Type">
                             <field name="beans"/>

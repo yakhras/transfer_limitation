@@ -22,6 +22,16 @@ class LuganoSurvey(models.Model):
     beans = fields.Boolean(string='Beans')
     pod = fields.Boolean(string='Pod')
     capsule = fields.Boolean(string='Capsules')
+    machine_station = fields.Selection(
+        [("no_need", "No Need"),
+         ("repair", "Need Repair"),
+         ("free", "Need Machines for Free"),
+         ("grinder", "Need Machines & Grinder"),],
+        default="no_need",
+        required=True,
+        string="Mandate Format",
+        tracking=20,
+    )
     # start_date = fields.Datetime("Start Date", states=READONLYSTATES, default=fields.Datetime.now)
     # end_date = fields.Datetime("End Date", required=True, states=READONLYSTATES, default=fields.Datetime.now)
     # note = fields.Text('Internal Notes', states=READONLYSTATES)
