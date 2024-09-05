@@ -224,10 +224,8 @@
 
     <menuitem id="main_menu_lugano_survey" name="Lugano" groups="lugano_eg.group_lugano_user" web_icon="lugano_eg,static/description/icon.png" sequence="15"/>
 
-    <menuitem id="action_menu_lugano_survey" name="Visits" groups="lugano_eg.group_lugano_user" sequence="15" action="lugano_survey_action" parent="lugano_eg.main_menu_lugano_survey"/>
+    <menuitem id="action_menu_lugano_survey" name="Points" groups="lugano_eg.group_lugano_user" sequence="1" action="lugano_survey_action" parent="lugano_eg.main_menu_lugano_survey"/>
 
-    <menuitem id="action_menu_lugano_point" name="New Point" groups="lugano_eg.group_lugano_user" sequence="1" action="lugano_survey_action" parent="lugano_eg.action_menu_lugano_survey"/>
-
-    <menuitem id="action_menu_lugano_track" name="Tracking Visit" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.action_menu_lugano_survey"/>
+    <menuitem id="action_menu_lugano_track" name="Visits" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.main_menu_lugano_survey"/>
 
 </odoo>
