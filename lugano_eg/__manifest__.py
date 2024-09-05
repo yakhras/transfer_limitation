@@ -19,7 +19,7 @@
     'name' : 'Lugano Egypt',
     'category' : 'Project',
     'version': '1.0.1',
-    'depends' : ['base'],
+    'depends' : ['base','mail'],
     'author': 'Yaser Akhras',
     'website': 'https://www.yaserakhras.com',
     'license': 'OPL-1',
