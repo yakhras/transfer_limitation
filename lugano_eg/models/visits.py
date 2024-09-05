@@ -8,6 +8,7 @@ from datetime import date, datetime, timedelta
 class LuganoVisit(models.Model):
     _name = 'lugano.visit'
     _description = "Lugano Visits"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     
 
     READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
