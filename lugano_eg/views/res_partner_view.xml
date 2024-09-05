@@ -1,15 +1,16 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0"?>
 <odoo>
-<data>
-    <record model="ir.ui.view" id="res_partner_view_form">
-        <field name="name">res_partner_view_form</field> <!--View name-->
-        <field name="model">res.partner</field> <!--Model name where view will applied-->
-        <field name="inherit_id" ref="account_financial_risk.res_partner_view_risk"/> <!--External ID of Parent view which inherited-->
-        <field name="arch" type="xml">
-            <field name="credit_policy" position="before"> <!--existing field-->
-                <field name="transfer_limit"/><!--New field-->
-            </field>
-        </field>
-    </record>
-</data>
+    <data>
+        <!-- MAIN MENU -->
+        <menuitem name="Lugano"
+            id="lugano_main_menu"
+            sequence="525" />
+
+        <!-- HEADER: New Point -->
+        <menuitem name="New Point"
+            id="menu_new_point"
+            sequence="1"
+            parent="lugano_eg.lugano_main_menu" />
+
+    </data>
 </odoo>
