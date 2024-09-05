@@ -89,6 +89,11 @@
                             <field name="partner_id"/>
                             <field name="machine_station"/>
                             <field name="location_type"/>
+                            <field name="location"/>
+                            <field name="space"/>
+                            <field name="hours"/>
+                            <field name="strength"/>
+                            <field name="result"/>
                             
                         </group>
                         <group name="coffee_type" string="Coffee Type">

@@ -49,6 +49,50 @@ class LuganoSurvey(models.Model):
         string="Location Type",
         tracking=30,
     )
+    location = fields.Selection(
+        [("main", "Main Street"),
+         ("secondary", "Secondary Street"),
+         ("mall", "Shopping Mall"),],
+        default="main",
+        required=True,
+        string="Location",
+        tracking=40,
+    )
+    space = fields.Selection(
+        [("open", "Open"),
+         ("close", "Close"),],
+        default="open",
+        required=True,
+        string="Space",
+        tracking=50,
+    )
+    hours = fields.Selection(
+        [("half", "12 Hours"),
+         ("full", "24 Hours"),],
+        default="half",
+        required=True,
+        string="Working Hours",
+        tracking=60,
+    )
+    strength = fields.Selection(
+        [("guest", "Guest Type"),
+         ("location", "Location"),
+         ("service", "Service"),
+         ("normal", "Normal"),],
+        default="guest",
+        required=True,
+        string="Strength Point",
+        tracking=70,
+    )
+    result = fields.Selection(
+        [("done", "Deal Done"),
+         ("unqualified", "Unqualified Point"),
+         ("revisit", "Revisit Next Time"),],
+        default="done",
+        required=True,
+        string="Visits Result",
+        tracking=80,
+    )
     # start_date = fields.Datetime("Start Date", states=READONLYSTATES, default=fields.Datetime.now)
     # end_date = fields.Datetime("End Date", required=True, states=READONLYSTATES, default=fields.Datetime.now)
     # note = fields.Text('Internal Notes', states=READONLYSTATES)
