@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Product View -->
-    <record id="product_template_form_view" model="ir.ui.view" >
+    <!-- <record id="product_template_form_view" model="ir.ui.view" >
         <field name="name">product.template.form.inherited</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
@@ -13,10 +13,10 @@
                </div>
             </div>
         </field>
-    </record>
+    </record> -->
 
     <!-- Sale View -->
-    <record id="view_order_form" model="ir.ui.view">
+    <!-- <record id="view_order_form" model="ir.ui.view">
         <field name="name">sale.order.form</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
@@ -27,10 +27,10 @@
                 </button>
             </div>
         </field>
-    </record>
+    </record> -->
 
     <!-- Partner View -->
-    <record id="view_partner_form" model="ir.ui.view">
+    <!-- <record id="view_partner_form" model="ir.ui.view">
         <field name="name">res.partner.form</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
@@ -41,7 +41,7 @@
                 </button>
             </div>
         </field>
-    </record>
+    </record> -->
 
     <!-- Visit Views -->
     <record id="visit_search" model="ir.ui.view">
@@ -124,7 +124,7 @@
         </field>
     </record>
 
-    <record id="view_visit_calendar" model="ir.ui.view">
+    <!-- <record id="view_visit_calendar" model="ir.ui.view">
         <field name="name">visit.visit.calendar</field>
         <field name="model">visit.visit</field>
         <field name="arch" type="xml">
@@ -133,9 +133,9 @@
                 <field name="name"/>
             </calendar>
         </field>
-    </record>
+    </record> -->
 
-    <record model="ir.ui.view" id="view_visit_pivot">
+    <!-- <record model="ir.ui.view" id="view_visit_pivot">
         <field name="name">visit.visit.pivot</field>
         <field name="model">visit.visit</field>
         <field name="arch" type="xml">
@@ -144,15 +144,15 @@
                 <field name="state" type="col"/>
             </pivot>
         </field>
-    </record>
+    </record> -->
 
-    <record id="visit_visit_action" model="ir.actions.act_window">
-        <field name="name">Visits</field>
+    <record id="lugano_survey_action" model="ir.actions.act_window">
+        <field name="name">Lugano Survey</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">visit.visit</field>
-        <field name="view_mode">tree,form,calendar,pivot</field>
+        <field name="res_model">lugano_survey</field>
+        <field name="view_mode">tree,form</field>
         <field name="view_id" eval="False"/>
-        <field name="search_view_id" ref="visit_search"/>
+        <field name="search_view_id" ref="lugano_search"/>
         <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">
             Click to define a new Visit.
@@ -160,8 +160,8 @@
         </field>
     </record>
 
-    <menuitem id="main_menu_visit_visit" name="Visits" groups="acs_visits.group_visit_user" web_icon="acs_visits,static/description/icon.png" sequence="10"/>
+    <menuitem id="main_menu_lugano_survey" name="Lugano" groups="lugano_eg.group_lugano_user" web_icon="lugano_eg,static/description/icon.png" sequence="15"/>
 
-    <menuitem id="action_menu_visit_visit" name="Visits" groups="acs_visits.group_visit_user" sequence="10" action="visit_visit_action" parent="acs_visits.main_menu_visit_visit"/>
+    <menuitem id="action_menu_lugano_survey" name="Visits" groups="lugano_eg.group_lugano_user" sequence="15" action="lugano_survey_action" parent="lugano_eg.main_menu_lugano_survey"/>
 
 </odoo>
