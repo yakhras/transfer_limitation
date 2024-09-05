@@ -8,6 +8,7 @@ from datetime import date, datetime, timedelta
 class LuganoPoint(models.Model):
     _name = 'lugano.survey'
     _description = "Lugano Survey"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     
 
     READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
