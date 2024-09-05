@@ -183,16 +183,27 @@
         </field>
     </record> -->
 
-    <!-- <record model="ir.ui.view" id="view_visit_pivot">
-        <field name="name">visit.visit.pivot</field>
-        <field name="model">visit.visit</field>
+    <record model="ir.ui.view" id="view_point_pivot">
+        <field name="name">lugano.survey.pivot</field>
+        <field name="model">lugano.survey</field>
+        <field name="arch" type="xml">
+            <pivot string="Points">
+                <field name="start_date" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_visit_pivot">
+        <field name="name">lugano.visit.pivot</field>
+        <field name="model">lugano.visit</field>
         <field name="arch" type="xml">
             <pivot string="Visits">
                 <field name="start_date" type="row"/>
                 <field name="state" type="col"/>
             </pivot>
         </field>
-    </record> -->
+    </record>
 
     <record id="lugano_survey_action" model="ir.actions.act_window">
         <field name="name">Lugano Survey</field>
