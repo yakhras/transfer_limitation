@@ -156,9 +156,9 @@
         </field>
     </record>
 
-    <!-- <record id="visit_visit_list_view" model="ir.ui.view">
-        <field name="name">visit.visit.list</field>
-        <field name="model">visit.visit</field>
+    <record id="lugano_visit_list_view" model="ir.ui.view">
+        <field name="name">lugano.visit.list</field>
+        <field name="model">lugano.visit</field>
         <field name="priority">1</field>
         <field name="arch" type="xml">
             <tree string="Visits">
@@ -170,7 +170,7 @@
                 <field name="state"/>
             </tree>
         </field>
-    </record> -->
+    </record>
 
     <!-- <record id="view_visit_calendar" model="ir.ui.view">
         <field name="name">visit.visit.calendar</field>
