@@ -5,7 +5,8 @@
         <menuitem name="Lugano"
             id="lugano_main_menu"
             sequence="525"
-            groups="lugano_eg.group_lugano_user"/>
+            groups="lugano_eg.group_lugano_user"
+            web_icon="lugano_eg,static/description/icon.png"/>
 
         <!-- HEADER: New Point -->
         <menuitem name="New Point"
