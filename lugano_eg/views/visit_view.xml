@@ -107,7 +107,46 @@
                             <field name="end_date"/>
                         </group> -->
                     </group>
-                    <!-- <field name="note"/> -->
+                    <field name="note"/>
+                </sheet>
+                <!-- <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div> -->
+            </form>
+        </field>
+    </record>
+
+    <record id="lugano_track_form_view" model="ir.ui.view">
+        <field name="name">lugano.track.form</field>
+        <field name="model">lugano.survey</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_done" string="Visit Done" type="object" class="btn-primary" states="draft"/>
+                    <button name="action_draft" string="Set to Draft" type="object" states="cancel,done"/>
+                    <button name="action_cancel" string="Cancel" type="object" states="draft,visited"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="number" nolable="1"/></h1>
+                        <label for="name" string="Point Title" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="e.g. Point Visit"/></h1>
+                    </div>
+                    <group>
+                        <group name="point_info" string="Point">
+                            <field name="partner_id"/>
+                            <field name="result"/>
+                            
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <field name="note"/>
                 </sheet>
                 <!-- <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
@@ -169,12 +208,26 @@
         </field>
     </record>
 
+    <record id="lugano_survey_track" model="ir.actions.act_window">
+        <field name="name">Tracking Visit</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">lugano.survey</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" eval="lugano_track_form_view"/>
+        <!-- <field name="search_view_id" ref="lugano_search"/> -->
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Click to define a new Visit.
+          </p>
+        </field>
+    </record>
+
     <menuitem id="main_menu_lugano_survey" name="Lugano" groups="lugano_eg.group_lugano_user" web_icon="lugano_eg,static/description/icon.png" sequence="15"/>
 
     <menuitem id="action_menu_lugano_survey" name="Visits" groups="lugano_eg.group_lugano_user" sequence="15" action="lugano_survey_action" parent="lugano_eg.main_menu_lugano_survey"/>
 
     <menuitem id="action_menu_lugano_point" name="New Point" groups="lugano_eg.group_lugano_user" sequence="1" action="lugano_survey_action" parent="lugano_eg.action_menu_lugano_survey"/>
 
-    <menuitem id="action_menu_lugano_track" name="Tracking Visit" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_action" parent="lugano_eg.action_menu_lugano_survey"/>
+    <menuitem id="action_menu_lugano_track" name="Tracking Visit" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.action_menu_lugano_survey"/>
 
 </odoo>
