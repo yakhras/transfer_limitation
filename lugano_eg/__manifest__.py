@@ -28,7 +28,7 @@
         #"security/security.xml",
         # "security/ir.model.access.csv",
         # "wizard/transfer_limi_wizard_view.xml",
-        # "views/res_partner_view.xml",
+        "views/lugano_eg_menu_view.xml",
     ],
     # only loaded in demonstration mode
     'demo': [
