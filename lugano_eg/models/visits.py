@@ -29,8 +29,25 @@ class LuganoSurvey(models.Model):
          ("grinder", "Need Machines & Grinder"),],
         default="no_need",
         required=True,
-        string="Mandate Format",
+        string="Machine Stations",
         tracking=20,
+    )
+    location_type = fields.Selection(
+        [("shop", "Coffee Shop"),
+         ("restaurant", "Restaurant"),
+         ("bar", "Bar"),
+         ("work", "Working Space"),
+         ("kiosk", "Kiosk"),
+         ("beauty", "Beauty Center"),
+         ("hotel", "Hotel"),
+         ("ship", "Ship (Safina)"),
+         ("company", "Company"),
+         ("barber", "Barber"),],
+         ("gold", "Gold Dealers"),
+        default="shop",
+        required=True,
+        string="Location Type",
+        tracking=30,
     )
     # start_date = fields.Datetime("Start Date", states=READONLYSTATES, default=fields.Datetime.now)
     # end_date = fields.Datetime("End Date", required=True, states=READONLYSTATES, default=fields.Datetime.now)

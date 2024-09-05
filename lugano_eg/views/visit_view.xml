@@ -88,6 +88,7 @@
                         <group name="point_info" string="Point">
                             <field name="partner_id"/>
                             <field name="machine_station"/>
+                            <field name="location_type"/>
                             
                         </group>
                         <group name="coffee_type" string="Coffee Type">
