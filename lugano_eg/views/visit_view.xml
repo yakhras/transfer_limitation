@@ -44,7 +44,7 @@
     </record> -->
 
     <!-- Visit Views -->
-    <record id="visit_search" model="ir.ui.view">
+    <!-- <record id="visit_search" model="ir.ui.view">
         <field name="name">visit.visit.search</field>
         <field name="model">visit.visit</field>
         <field name="arch" type="xml">
@@ -65,9 +65,9 @@
                 </group>
             </search>
         </field>
-    </record>
+    </record> -->
 
-    <record id="visit_visit_form_view" model="ir.ui.view">
+    <!-- <record id="visit_visit_form_view" model="ir.ui.view">
         <field name="name">visit.visit.form</field>
         <field name="model">visit.visit</field>
         <field name="arch" type="xml">
@@ -106,9 +106,9 @@
                 </div>
             </form>
         </field>
-    </record>
+    </record> -->
 
-    <record id="visit_visit_list_view" model="ir.ui.view">
+    <!-- <record id="visit_visit_list_view" model="ir.ui.view">
         <field name="name">visit.visit.list</field>
         <field name="model">visit.visit</field>
         <field name="priority">1</field>
@@ -122,7 +122,7 @@
                 <field name="state"/>
             </tree>
         </field>
-    </record>
+    </record> -->
 
     <!-- <record id="view_visit_calendar" model="ir.ui.view">
         <field name="name">visit.visit.calendar</field>
