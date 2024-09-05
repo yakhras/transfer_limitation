@@ -67,9 +67,9 @@
         </field>
     </record> -->
 
-    <!-- <record id="visit_visit_form_view" model="ir.ui.view">
-        <field name="name">visit.visit.form</field>
-        <field name="model">visit.visit</field>
+    <!-- <record id="lugano_survey_form_view" model="ir.ui.view">
+        <field name="name">lugano.survey.form</field>
+        <field name="model">lugano.survey</field>
         <field name="arch" type="xml">
             <form>
                 <header>
@@ -163,5 +163,9 @@
     <menuitem id="main_menu_lugano_survey" name="Lugano" groups="lugano_eg.group_lugano_user" web_icon="lugano_eg,static/description/icon.png" sequence="15"/>
 
     <menuitem id="action_menu_lugano_survey" name="Visits" groups="lugano_eg.group_lugano_user" sequence="15" action="lugano_survey_action" parent="lugano_eg.main_menu_lugano_survey"/>
+
+    <menuitem id="action_menu_lugano_point" name="New Point" groups="lugano_eg.group_lugano_user" sequence="1" action="lugano_survey_action" parent="lugano_eg.action_menu_lugano_survey"/>
+
+    <menuitem id="action_menu_lugano_track" name="Tracking Visit" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_action" parent="lugano_eg.action_menu_lugano_survey"/>
 
 </odoo>
