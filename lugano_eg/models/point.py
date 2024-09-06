@@ -136,3 +136,18 @@ class LuganoPoint(models.Model):
     # def onchange_task_id(self):
     #     if self.beans:
     #         self.name
+
+
+    def _visit_count(self):
+        for rec in self: 
+            rec.visit_count = self.env['lugano.visit'].search_count([('partner_id', '=', rec.id)])
+
+    visit_count = fields.Integer(compute="_visit_count", readonly=True, string="Visits")
+
+    def partner_visit_action(self):
+        action = self.env["ir.actions.actions"]._for_xml_id("lugano_eg.lugano_survey_track")
+        action['domain'] = [('partner_id','=', self.id)]
+        action['context'] = {
+            'default_partner_id': self.id,
+        }
+        return action
