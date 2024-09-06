@@ -98,6 +98,7 @@
                         </group>
                         <group name="coffee_type" string="Coffee Type">
                             <field name="beans"/>
+                            <field name="beans_consume"/>
                             <field name="pod"/>
                             <field name="capsule"/>
                         </group>

@@ -21,6 +21,7 @@ class LuganoPoint(models.Model):
         ('cancel', 'Cancelled'),
     ], string='Status', copy=False, default='draft', states=READONLYSTATES, tracking=1)
     beans = fields.Boolean(string='Beans')
+    beans_consume = fields.Char()
     pod = fields.Boolean(string='Pod')
     capsule = fields.Boolean(string='Capsules')
     machine_station = fields.Selection(
