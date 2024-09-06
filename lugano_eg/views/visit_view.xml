@@ -146,7 +146,7 @@
                             <field name="result"/>
                             
                         </group>
-                        <group>
+                        <group name="visit_info" string="Info">
                             <field name="user_id"/>
                             <field name="start_date"/>
                             <field name="end_date"/>
