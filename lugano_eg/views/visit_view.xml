@@ -82,7 +82,7 @@
                     <div class="oe_title">
                         <h1><field name="number" nolable="1"/></h1>
                         <label for="name" string="Point Title" class="oe_edit_only"/>
-                        <h1><field name="name" placeholder="e.g. Point Name" attrs="{'visible':[('beans', '=', True)]}"/></h1>
+                        <h1><field name="name" placeholder="e.g. Point Name" attrs="{'invisible':[('beans', '=', False)]}"/></h1>
                     </div>
                     <group>
                         <group name="point_info" string="Point">
