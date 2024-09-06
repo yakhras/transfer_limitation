@@ -103,6 +103,7 @@
                             <field name="pod_consume" attrs="{'invisible':[('pod', '=', False)]}"/>
                             <field name="capsules"/>
                             <field name="capsules_consume" attrs="{'invisible':[('capsules', '=', False)]}"/>
+                            <field name="used_price"/>
                         </group>
                         <!-- <group>
                             <field name="user_id"/>
