@@ -23,7 +23,9 @@ class LuganoPoint(models.Model):
     beans = fields.Boolean(string='Beans')
     beans_consume = fields.Char()
     pod = fields.Boolean(string='Pod')
-    capsule = fields.Boolean(string='Capsules')
+    pod_consume = fields.Char()
+    capsules = fields.Boolean(string='Capsules')
+    capsules_consume = fields.Char()
     machine_station = fields.Selection(
         [("no_need", "No Need"),
          ("repair", "Need Repair"),

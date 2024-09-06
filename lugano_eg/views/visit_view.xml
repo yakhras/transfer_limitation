@@ -82,7 +82,7 @@
                     <div class="oe_title">
                         <h1><field name="number" nolable="1"/></h1>
                         <label for="name" string="Point Title" class="oe_edit_only"/>
-                        <h1><field name="name" placeholder="e.g. Point Name" attrs="{'invisible':[('beans', '=', False)]}"/></h1>
+                        <h1><field name="name" placeholder="e.g. Point Name" /></h1>
                     </div>
                     <group>
                         <group name="point_info" string="Point">
@@ -98,9 +98,11 @@
                         </group>
                         <group name="coffee_type" string="Coffee Type">
                             <field name="beans"/>
-                            <field name="beans_consume"/>
-                            <field name="pod"/>
-                            <field name="capsule"/>
+                            <field name="beans_consume" attrs="{'invisible':[('beans', '=', False)]}"/>
+                            <field name="pod" />
+                            <field name="pod_consume" attrs="{'invisible':[('pod', '=', False)]}"/>
+                            <field name="capsules"/>
+                            <field name="capsules_consume" attrs="{'invisible':[('capsules', '=', False)]}"/>
                         </group>
                         <!-- <group>
                             <field name="user_id"/>
