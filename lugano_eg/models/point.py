@@ -144,7 +144,7 @@ class LuganoPoint(models.Model):
 
     visit_count = fields.Integer(compute="_visit_count", readonly=True, string="Visits")
 
-    def partner_visit_action(self):
+    def lugano_visit_action(self):
         action = self.env["ir.actions.actions"]._for_xml_id("lugano_eg.lugano_survey_track")
         action['domain'] = [('partner_id','=', self.id)]
         action['context'] = {
