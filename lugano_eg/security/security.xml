@@ -39,7 +39,7 @@
             <field name="name">Team Visits</field>
             <field ref="model_lugano_survey" name="model_id"/>
             <field name="domain_force">
-                ['|', ('user_id', '=', user.id), ('user_id.crm_team_member_ids.crm_team_id', '=', user.crm_team_member_ids.crm_team_id)]
+                ['|', ('user_id', '=', user.id), ('user_id.crm_team_member_ids.crm_team_id.id', '=', user.crm_team_member_ids.crm_team_id.id)]
             </field>
             <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_leader'))]" />
         </record>
