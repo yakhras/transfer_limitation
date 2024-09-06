@@ -1,6 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_lugano_survey_public_user,lugano_survey,model_lugano_survey,lugano_eg.group_lugano_user,1,1,1,1
-access_lugano_survey_user,lugano_survey_user,model_lugano_survey,lugano_eg.group_lugano_manager,1,1,1,1
 
-access_lugano_visit_public_user,lugano_visit,model_lugano_visit,lugano_eg.group_lugano_user,1,1,1,1
-access_lugano_visit_user,lugano_visit_user,model_lugano_visit,lugano_eg.group_lugano_manager,1,1,1,1
+access_lugano_survey_public_user,lugano_survey,model_lugano_survey,lugano_eg.group_lugano_user,1,1,1,0
+
+access_lugano_visit_public_user,lugano_visit,model_lugano_visit,lugano_eg.group_lugano_user,1,1,1,0
