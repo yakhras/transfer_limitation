@@ -106,7 +106,7 @@ class LuganoPoint(models.Model):
     # task_id = fields.Many2one('project.task', string='Task', states=READONLYSTATES, ondelete="set null")
     # product_id = fields.Many2one('product.product', string='Product', states=READONLYSTATES, ondelete="set null")
     partner_id = fields.Many2one('res.partner', string='Customer', states=READONLYSTATES, ondelete="cascade", required=True)
-    user_id = fields.Many2one('res.users', string='User', states=READONLYSTATES, default=lambda self: self.env.user.id)
+    user_id = fields.Many2one('res.users', string='User', states=READONLYSTATES, default=lambda self: self.env.user.id, readonly=True)
 
     # _sql_constraints = [
     #     ('date_check2', "CHECK (start_date <= end_date)", "The start date must be anterior to the end date."),
