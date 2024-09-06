@@ -13,7 +13,7 @@ class LuganoPoint(models.Model):
 
     READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
 
-    name = fields.Char(string='Point Title')
+    name = fields.Char(string='Point Title' ,states=READONLYSTATES)
     number = fields.Char(string='Number', required=True, readonly=True, default="/")
     state = fields.Selection([
         ('draft', 'Draft'),
