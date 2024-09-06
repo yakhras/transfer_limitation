@@ -125,7 +125,7 @@ class LuganoPoint(models.Model):
 
     def action_done(self):
         self.state = 'done'
-        self.name = self.user_id
+        self.name = self.user_id.team_id
 
     def action_draft(self):
         self.state = 'draft'
