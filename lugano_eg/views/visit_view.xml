@@ -214,7 +214,7 @@
     </record>
 
     <record id="lugano_survey_action" model="ir.actions.act_window">
-        <field name="name">Lugano Survey</field>
+        <field name="name">Lugano Points</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">lugano.survey</field>
         <field name="view_mode">tree,form,pivot</field>
@@ -222,7 +222,7 @@
         <!-- <field name="search_view_id" ref="lugano_search"/> -->
         <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">
-            Click to define a new Point.
+            Click to Define a New Point.
           </p>
         </field>
     </record>
@@ -236,7 +236,7 @@
         <!-- <field name="search_view_id" ref="lugano_search"/> -->
         <field name="help" type="html">
           <p class="o_view_nocontent_smiling_face">
-            Click to define a new Visit.
+            Click to Define a New Visit.
           </p>
         </field>
     </record>
