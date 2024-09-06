@@ -128,7 +128,7 @@ class LuganoPoint(models.Model):
     def action_cancel(self):
         self.state = 'cancel'
 
-    # @api.onchange('task_id')
+    # @api.onchange('beans')
     # def onchange_task_id(self):
-    #     if self.task_id:
-    #         self.product_id = self.task_id.sale_line_id and self.task_id.sale_line_id.product_id.id or False
+    #     if self.beans:
+    #         self.name
