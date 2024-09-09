@@ -2,10 +2,18 @@
 <odoo>
 
     <!-- Sequence Number for Visit-->
-    <record id="lugano_sequence" model="ir.sequence">
-        <field name="name">Lugano</field>
+    <record id="lugano_point_sequence" model="ir.sequence">
+        <field name="name">Lugano Point</field>
         <field name="code">lugano.survey</field>
-        <field name="prefix">LGN</field>
+        <field name="prefix">PNT-</field>
+        <field name="padding">3</field>
+    </record>
+
+    <!-- Sequence Number for Visit-->
+    <record id="lugano_visit_sequence" model="ir.sequence">
+        <field name="name">Lugano Visit</field>
+        <field name="code">lugano.visit</field>
+        <field name="prefix">VST-</field>
         <field name="padding">3</field>
     </record>
 

@@ -51,7 +51,7 @@ class LuganoVisit(models.Model):
 
     @api.model
     def create(self, values):
-        values['number'] = self.env['ir.sequence'].next_by_code('lugano.survey') or '/'
+        values['number'] = self.env['ir.sequence'].next_by_code('lugano.visit') or '/'
         return super(LuganoVisit, self).create(values)
 
     def action_done(self):
