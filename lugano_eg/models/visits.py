@@ -23,7 +23,7 @@ class LuganoVisit(models.Model):
     
     start_date = fields.Datetime("Start Date", states=READONLYSTATES, default=fields.Datetime.now)
     end_date = fields.Datetime("End Date", required=True, states=READONLYSTATES, default=fields.Datetime.now)
-    note = fields.Text('Internal Notes', states=READONLYSTATES)
+    note = fields.Text('Details/ Reasons/ Notes', states=READONLYSTATES)
     # project_id = fields.Many2one('project.project', 'Project', ondelete='restrict', states=READONLYSTATES)
     # sale_id = fields.Many2one('sale.order', string='Sale Order', states=READONLYSTATES, ondelete="set null")
     # task_id = fields.Many2one('project.task', string='Task', states=READONLYSTATES, ondelete="set null")
