@@ -91,7 +91,7 @@
                         <h1><field name="partner_id" placeholder="e.g. Point Name" /></h1>
                     </div>
                     <group>
-                        <group name="point_info" string="Point">
+                        <group name="point_info" string="Point Info">
                             <field name="machine_station"/>
                             <field name="location_type"/>
                             <field name="location"/>
@@ -102,13 +102,14 @@
                             
                         </group>
                         <group name="coffee_type" string="Coffee Type">
+                            <field name="used_price"/>
                             <field name="beans"/>
                             <field name="beans_consume" attrs="{'invisible':[('beans', '=', False)]}"/>
                             <field name="pod" />
                             <field name="pod_consume" attrs="{'invisible':[('pod', '=', False)]}"/>
                             <field name="capsules"/>
                             <field name="capsules_consume" attrs="{'invisible':[('capsules', '=', False)]}"/>
-                            <field name="used_price"/>
+                            
                         </group>
                         <!-- <group>
                             <field name="user_id"/>

@@ -28,7 +28,7 @@ class LuganoVisit(models.Model):
     # sale_id = fields.Many2one('sale.order', string='Sale Order', states=READONLYSTATES, ondelete="set null")
     # task_id = fields.Many2one('project.task', string='Task', states=READONLYSTATES, ondelete="set null")
     # product_id = fields.Many2one('product.product', string='Product', states=READONLYSTATES, ondelete="set null")
-    partner_id = fields.Many2one('res.partner', string='Point', states=READONLYSTATES, ondelete="cascade", required=True)
+    partner_id = fields.Many2one('res.partner', string='Customer', states=READONLYSTATES, ondelete="cascade", required=True)
     user_id = fields.Many2one('res.users', string='User', states=READONLYSTATES, default=lambda self: self.env.user.id, readonly=True)
     result = fields.Selection(
         [("done", "Deal Done"),

@@ -26,7 +26,7 @@ class LuganoPoint(models.Model):
     pod_consume = fields.Char()
     capsules = fields.Boolean(string='Capsules')
     capsules_consume = fields.Char()
-    used_price = fields.Char()
+    used_price = fields.Char(string='Used Coffee Price')
     machine_station = fields.Selection(
         [("no_need", "No Need"),
          ("repair", "Need Repair"),
