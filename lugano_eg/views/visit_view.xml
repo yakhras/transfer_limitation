@@ -79,7 +79,7 @@
                     <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                 </header>
                 <sheet>
-                    <div name="button_box" position="inside">
+                    <div name="button_box" class="oe_button_box">
                         <button groups="lugano_eg.group_lugano_user" class="oe_stat_button" type="object"  name="lugano_visit_action" icon="fa-list"> 
                             <field name="visit_count" widget="statinfo"/>
                         </button>
