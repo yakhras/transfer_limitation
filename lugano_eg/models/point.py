@@ -21,11 +21,11 @@ class LuganoPoint(models.Model):
         ('cancel', 'Cancelled'),
     ], string='Status', copy=False, default='draft', states=READONLYSTATES, tracking=1)
     beans = fields.Boolean(string='Beans')
-    beans_consume = fields.Char()
+    beans_consume = fields.Char(string='Beans Monthly Consumption:')
     pod = fields.Boolean(string='Pod')
-    pod_consume = fields.Char()
+    pod_consume = fields.Char(string='Pod Monthly Consumption:')
     capsules = fields.Boolean(string='Capsules')
-    capsules_consume = fields.Char()
+    capsules_consume = fields.Char(string='Capsules Monthly Consumption:')
     used_price = fields.Char(string='Used Coffee Price')
     machine_station = fields.Selection(
         [("no_need", "No Need"),
@@ -88,15 +88,6 @@ class LuganoPoint(models.Model):
         required=True,
         string="Strength Point",
         tracking=70,
-    )
-    result = fields.Selection(
-        [("done", "Deal Done"),
-         ("unqualified", "Unqualified Point"),
-         ("revisit", "Revisit Next Time"),],
-        default="done",
-        required=True,
-        string="Visits Result",
-        tracking=80,
     )
     start_date = fields.Datetime("Start Date", states=READONLYSTATES, default=fields.Datetime.now)
     end_date = fields.Datetime("End Date", required=True, states=READONLYSTATES, default=fields.Datetime.now)
