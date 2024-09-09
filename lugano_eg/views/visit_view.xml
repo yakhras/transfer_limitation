@@ -179,7 +179,7 @@
                         </group>
                     </group>
                     <group string="Note" name="note">
-                        <field name="note" nolabel="1" string="Details/ Reason/ Notes" />
+                        <field name="note" label="Details/ Reasons/ Notes" />
                     </group>
                 </sheet>
                 <div class="oe_chatter">
