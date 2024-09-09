@@ -19,7 +19,7 @@ class LuganoPoint(models.Model):
     #     ('draft', 'Draft'),
     #     ('done', 'Done'),
     #     ('cancel', 'Cancelled'),
-    # ], string='Status', copy=False, default='draft', tracking=1)
+    # ], string='Status', copy=False, default='draft', states=READONLYSTATES, tracking=1)
     beans = fields.Boolean(string='Beans')
     beans_consume = fields.Char(string='Beans Monthly Consumption:')
     pod = fields.Boolean(string='Pod')
@@ -89,15 +89,15 @@ class LuganoPoint(models.Model):
         string="Strength Point",
         tracking=70,
     )
-    start_date = fields.Datetime("Start Date", states=READONLYSTATES, default=fields.Datetime.now)
-    end_date = fields.Datetime("End Date", required=True, states=READONLYSTATES, default=fields.Datetime.now)
-    note = fields.Text('Internal Notes', states=READONLYSTATES)
+    start_date = fields.Datetime("Start Date", default=fields.Datetime.now)
+    end_date = fields.Datetime("End Date", required=True,  default=fields.Datetime.now)
+    note = fields.Text('Internal Notes')
     # project_id = fields.Many2one('project.project', 'Project', ondelete='restrict', states=READONLYSTATES)
     # sale_id = fields.Many2one('sale.order', string='Sale Order', states=READONLYSTATES, ondelete="set null")
     # task_id = fields.Many2one('project.task', string='Task', states=READONLYSTATES, ondelete="set null")
     # product_id = fields.Many2one('product.product', string='Product', states=READONLYSTATES, ondelete="set null")
-    partner_id = fields.Many2one('res.partner', string='Customer', states=READONLYSTATES, ondelete="cascade", required=True)
-    user_id = fields.Many2one('res.users', string='User', states=READONLYSTATES, default=lambda self: self.env.user.id, readonly=True)
+    partner_id = fields.Many2one('res.partner', string='Customer', ondelete="cascade", required=True)
+    user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user.id, readonly=True)
 
     # _sql_constraints = [
     #     ('date_check2', "CHECK (start_date <= end_date)", "The start date must be anterior to the end date."),
@@ -114,16 +114,16 @@ class LuganoPoint(models.Model):
         values['number'] = self.env['ir.sequence'].next_by_code('lugano.survey') or '/'
         return super(LuganoPoint, self).create(values)
 
-    def action_done(self):
-        self.state = 'done'
-        self.name = self.user_id.crm_team_member_ids.crm_team_id
+    # def action_done(self):
+    #     self.state = 'done'
+    #     self.name = self.user_id.crm_team_member_ids.crm_team_id
         # self.name = self.env.user.crm_team_member_ids.crm_team_id
 
-    def action_draft(self):
-        self.state = 'draft'
+    # def action_draft(self):
+    #     self.state = 'draft'
 
-    def action_cancel(self):
-        self.state = 'cancel'
+    # def action_cancel(self):
+    #     self.state = 'cancel'
 
     # @api.onchange('beans')
     # def onchange_task_id(self):
