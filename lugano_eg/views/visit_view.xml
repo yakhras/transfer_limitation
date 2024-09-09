@@ -223,7 +223,7 @@
         <field name="arch" type="xml">
             <pivot string="Points">
                 <field name="start_date" type="row"/>
-                <field name="state" type="col"/>
+                <!-- <field name="state" type="col"/> -->
             </pivot>
         </field>
     </record>
