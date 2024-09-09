@@ -11,15 +11,15 @@ class LuganoPoint(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     
 
-    READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
+    # READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
 
     name = fields.Char(string='Point Title')
     number = fields.Char(string='Number', required=True, readonly=True, default="/")
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('done', 'Done'),
-        ('cancel', 'Cancelled'),
-    ], string='Status', copy=False, default='draft', states=READONLYSTATES, tracking=1)
+    # state = fields.Selection([
+    #     ('draft', 'Draft'),
+    #     ('done', 'Done'),
+    #     ('cancel', 'Cancelled'),
+    # ], string='Status', copy=False, default='draft', tracking=1)
     beans = fields.Boolean(string='Beans')
     beans_consume = fields.Char(string='Beans Monthly Consumption:')
     pod = fields.Boolean(string='Pod')
