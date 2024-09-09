@@ -145,7 +145,6 @@
                 <field name="location"/>
                 <field name="space"/>
                 <field name="strength"/>
-                <field name="result"/>
             </tree>
         </field>
     </record>
