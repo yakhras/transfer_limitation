@@ -128,7 +128,7 @@
         </field>
     </record>
 
-    <record id="lugano_visit_list_view" model="ir.ui.view">
+    <record id="lugano_point_list_view" model="ir.ui.view">
         <field name="name">lugano.survey.list</field>
         <field name="model">lugano.survey</field>
         <field name="priority">1</field>
