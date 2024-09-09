@@ -37,7 +37,7 @@
 
         <record id="model_res_partner_personal_rule" model="ir.rule">
             <field name="name">Personal Contact</field>
-            <field name="model_id" ref="model_res_partner"/>
+            <field name="model_id" ref="base.model_res_partner"/>
             <field name="domain_force">[('create_uid','=',user.id)]</field>
             <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_user'))]"/>
         </record>
