@@ -4,3 +4,5 @@ access_lugano_survey_public_user,lugano_survey,model_lugano_survey,lugano_eg.gro
 access_lugano_survey_manager_user,lugano_manager,model_lugano_survey,lugano_eg.group_lugano_manager,1,1,1,1
 
 access_lugano_visit_public_user,lugano_visit,model_lugano_visit,lugano_eg.group_lugano_user,1,1,1,0
+
+access_coffee_brand_public_user,coffee_brand,model_coffee_brand,lugano_eg.group_lugano_user,1,1,1,0
