@@ -93,7 +93,7 @@
                     <group>
                         <group name="point_info" string="Point Info">
                             <field name="machine_station"/>
-                            <field name="used_brand_ids" widget="many2many_tags"/>
+                            <field name="used_brand_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                             <field name="location_type"/>
                             <field name="location"/>
                             <field name="space"/>
