@@ -93,12 +93,12 @@
                     <group>
                         <group name="point_info" string="Point Info">
                             <field name="machine_station"/>
-                            <field name="used_brand_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="used_brand_ids" widget="many2many_tags"/>
                             <field name="location_type"/>
                             <field name="location"/>
                             <field name="space"/>
                             <field name="hours"/>
-                            <field name="strength"/>
+                            <field name="strength_ids" widget="many2many_tags"/>
                         </group>
                         <group name="coffee_type" string="Coffee Type">
                             <field name="used_price"/>

@@ -38,6 +38,7 @@ class LuganoPoint(models.Model):
         tracking=20,
     )
     used_brand_ids = fields.Many2many('coffee.brand', string="Used Coffee Brand")
+    strength_ids = fields.Many2many('strength.point', string="Strength Points")
     location_type = fields.Selection(
         [("shop", "Coffee Shop"),
          ("restaurant", "Restaurant"),
@@ -79,16 +80,6 @@ class LuganoPoint(models.Model):
         required=True,
         string="Working Hours",
         tracking=70,
-    )
-    strength = fields.Selection(
-        [("guest", "Guest Type"),
-         ("location", "Location"),
-         ("service", "Service"),
-         ("normal", "Normal"),],
-        default="guest",
-        required=True,
-        string="Strength Point",
-        tracking=80,
     )
     start_date = fields.Datetime("Start Date", default=fields.Datetime.now)
     end_date = fields.Datetime("End Date", required=True,  default=fields.Datetime.now)

@@ -10,3 +10,9 @@ class CoffeeBrand(models.Model):
 
     name = fields.Char(string="Brand")
 
+class StrengthPoint(models.Model):
+    _name = 'strength.point'
+    _description = 'Strength Points'
+
+    name = fields.Char(string="Name")
+
