@@ -2,3 +2,4 @@
 
 from . import point
 from . import visits
+from . import product

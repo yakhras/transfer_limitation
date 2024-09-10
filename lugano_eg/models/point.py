@@ -37,21 +37,7 @@ class LuganoPoint(models.Model):
         string="Machine Stations",
         tracking=20,
     )
-    used_brand = fields.Selection(
-        [("lavazza", "Lavazza"),
-         ("nespresso", "Nespresso"),
-         ("milano", "Milano"),
-         ("moka", "Moka"),
-         ("blend", "Blend"),
-         ("rgb", "RGB"),
-         ("segafrado", "Segafrado"),
-         ("kazaar", "Kazaar"),
-         ("katzalla", "Katzalla"),],
-        default="lavazza",
-        required=True,
-        string="Used Coffee Brand",
-        tracking=30,
-    )
+    used_brand = fields.Many2many('coffee.brand', string="Used Coffee Brand")
     location_type = fields.Selection(
         [("shop", "Coffee Shop"),
          ("restaurant", "Restaurant"),
