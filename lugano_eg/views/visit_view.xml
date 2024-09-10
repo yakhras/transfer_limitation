@@ -93,12 +93,12 @@
                     <group>
                         <group name="point_info" string="Point Info">
                             <field name="machine_station"/>
+                            <field name="used_brand"/>
                             <field name="location_type"/>
                             <field name="location"/>
                             <field name="space"/>
                             <field name="hours"/>
                             <field name="strength"/>
-                            
                         </group>
                         <group name="coffee_type" string="Coffee Type">
                             <field name="used_price"/>

@@ -37,6 +37,21 @@ class LuganoPoint(models.Model):
         string="Machine Stations",
         tracking=20,
     )
+    used_brand = fields.Selection(
+        [("lavazza", "Lavazza"),
+         ("nespresso", "Nespresso"),
+         ("milano", "Milano"),
+         ("moka", "Moka"),
+         ("blend", "Blend"),
+         ("rgb", "RGB"),
+         ("segafrado", "Segafrado"),
+         ("kazaar", "Kazaar"),
+         ("katzalla", "Katzalla"),],
+        default="lavazza",
+        required=True,
+        string="Used Coffee Brand",
+        tracking=30,
+    )
     location_type = fields.Selection(
         [("shop", "Coffee Shop"),
          ("restaurant", "Restaurant"),
@@ -52,7 +67,7 @@ class LuganoPoint(models.Model):
         default="shop",
         required=True,
         string="Location Type",
-        tracking=30,
+        tracking=40,
     )
     location = fields.Selection(
         [("main", "Main Street"),
@@ -61,7 +76,7 @@ class LuganoPoint(models.Model):
         default="main",
         required=True,
         string="Location",
-        tracking=40,
+        tracking=50,
     )
     space = fields.Selection(
         [("open", "Open"),
@@ -69,7 +84,7 @@ class LuganoPoint(models.Model):
         default="open",
         required=True,
         string="Space",
-        tracking=50,
+        tracking=60,
     )
     hours = fields.Selection(
         [("half", "12 Hours"),
@@ -77,7 +92,7 @@ class LuganoPoint(models.Model):
         default="half",
         required=True,
         string="Working Hours",
-        tracking=60,
+        tracking=70,
     )
     strength = fields.Selection(
         [("guest", "Guest Type"),
@@ -87,7 +102,7 @@ class LuganoPoint(models.Model):
         default="guest",
         required=True,
         string="Strength Point",
-        tracking=70,
+        tracking=80,
     )
     start_date = fields.Datetime("Start Date", default=fields.Datetime.now)
     end_date = fields.Datetime("End Date", required=True,  default=fields.Datetime.now)
