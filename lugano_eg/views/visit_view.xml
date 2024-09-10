@@ -144,7 +144,7 @@
                 <field name="location_type"/>
                 <field name="location"/>
                 <field name="space"/>
-                <field name="strength"/>
+                <field name="strength_ids"/>
             </tree>
         </field>
     </record>
