@@ -96,7 +96,7 @@ class LuganoPoint(models.Model):
     # sale_id = fields.Many2one('sale.order', string='Sale Order', states=READONLYSTATES, ondelete="set null")
     # task_id = fields.Many2one('project.task', string='Task', states=READONLYSTATES, ondelete="set null")
     # product_id = fields.Many2one('product.product', string='Product', states=READONLYSTATES, ondelete="set null")
-    partner_id = fields.Many2one('res.partner', string='Customer', ondelete="cascade", required=True)
+    partner_id = fields.Many2one('res.partner', string='Customer', ondelete="cascade", required=True, domain=[('is_company', '=', True)])
     user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user.id, readonly=True)
 
     # _sql_constraints = [
