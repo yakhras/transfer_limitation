@@ -8,5 +8,5 @@ class CoffeeBrand(models.Model):
     _name = 'coffee.brand'
     _description = 'Coffee Brands'
 
-    name = fields.Char("Brand")
+    name = fields.Char(string="Brand")
 
