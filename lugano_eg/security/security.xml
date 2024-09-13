@@ -27,23 +27,33 @@
             <field name="implied_ids" eval="[(4, ref('lugano_eg.group_lugano_leader'))]"/>
         </record>
 
-        <!-- Record Rules -->
+        <!-- Record Rules:  -->
+        
+        <!-- 1- res.partner Model -->
+        <record id="model_res_partner_personal_rule" model="ir.rule">
+            <field name="name">Personal Contacts</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="domain_force">['|',('user_id','=',user.id), ('user_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_user'))]"/>
+        </record>
+
+        <record id="model_res_partner_all_rule" model="ir.rule">
+            <field name="name">All Contacts</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="domain_force">['|',('user_id','=',user.id), ('user_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_leader'))]"/>
+        </record>
+
+        <!-- 2- lugano.survey Model -->
         <record id="model_lugano_survey_personal_rule" model="ir.rule">
-            <field name="name">Personal Visits</field>
+            <field name="name">Personal Points</field>
             <field name="model_id" ref="model_lugano_survey"/>
             <field name="domain_force">['|',('user_id','=',user.id), ('user_id','=',False)]</field>
             <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_user'))]"/>
         </record>
 
-        <record id="model_res_partner_personal_rule" model="ir.rule">
-            <field name="name">Personal Contact</field>
-            <field name="model_id" ref="base.model_res_partner"/>
-            <field name="domain_force">[('create_uid','=',user.id)]</field>
-            <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_user'))]"/>
-        </record>
-
         <record id="model_lugano_survey_team" model="ir.rule">
-            <field name="name">Team Visits</field>
+            <field name="name">Team Points</field>
             <field ref="model_lugano_survey" name="model_id"/>
             <field name="domain_force">
                 ['|', ('user_id', '=', user.id), ('user_id.crm_team_member_ids.crm_team_id.id', '=', user.crm_team_member_ids.crm_team_id.id)]
@@ -52,8 +62,32 @@
         </record>
 
         <record id="model_lugano_survey_see_all" model="ir.rule">
-            <field name="name">All Visits</field>
+            <field name="name">All Points</field>
             <field ref="model_lugano_survey" name="model_id"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_manager'))]"/>
+        </record>
+
+        <!-- 3- logano.visit Model -->
+        <record id="model_lugano_visit_personal_rule" model="ir.rule">
+            <field name="name">Personal Visits</field>
+            <field name="model_id" ref="model_lugano_visit"/>
+            <field name="domain_force">['|',('user_id','=',user.id), ('user_id','=',False)]</field>
+            <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_user'))]"/>
+        </record>
+
+        <record id="model_lugano_visit_team" model="ir.rule">
+            <field name="name">Team Visits</field>
+            <field ref="model_lugano_visit" name="model_id"/>
+            <field name="domain_force">
+                ['|', ('user_id', '=', user.id), ('user_id.crm_team_member_ids.crm_team_id.id', '=', user.crm_team_member_ids.crm_team_id.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_leader'))]" />
+        </record>
+
+        <record id="model_lugano_visit_see_all" model="ir.rule">
+            <field name="name">All Visits</field>
+            <field ref="model_lugano_visit" name="model_id"/>
             <field name="domain_force">[(1,'=',1)]</field>
             <field name="groups" eval="[(4, ref('lugano_eg.group_lugano_manager'))]"/>
         </record>
