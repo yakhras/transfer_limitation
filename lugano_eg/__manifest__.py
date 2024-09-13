@@ -3,7 +3,7 @@
 {
     'name' : 'Lugano Egypt',
     'category' : 'Project',
-    'version': '1.0.1',
+    'version': '15.0.1.0.0',
     'depends' : ['base','mail','crm'],
     'author': 'Yaser Akhras',
     'website': 'https://www.yaserakhras.com',
