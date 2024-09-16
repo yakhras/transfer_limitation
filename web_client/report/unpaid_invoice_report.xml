@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="unpaid_report">
+        <t t-call="unpaid_invoice.html_container">
+            <t t-call="unpaid_invoice.internal_layout">
+                <div class="act_as_table data_table" style="width: 100%;">
+                    <!-- Extract data from main dict (Level 1) -->
+                    <t t-foreach="match.items()" t-as="partner">
+                        <!-- Extract data from main dict (Level 2) -->
+                        <div class="act_as_thead">
+                            <span t-att-res-id="partner[0].id"
+                                  res-model="res.partner"
+                                  view-type="form">
+                                <t t-esc="partner[0].name"/>
+                            </span>
+                        </div>  
+                        <t t-call="unpaid_invoice.report_lines_header"></t>
+                        <t t-foreach="partner[1].values()" t-as="account">
+                            <!-- div for table lines -->
+                            <div class="act_as_row lines">
+                                <!-- div for print each value in cell -->
+                                <div class="act_as_cell">
+                                    <span t-att-res-id="account['inv_id']" 
+                                          res-model="account.move"
+                                          view-type="form">
+                                        <t t-raw="account['ref']" />
+                                    </span>
+                                </div>
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-raw="account['date']"/>
+                                    </span>
+                                </div>
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-esc="account['delay']"/>
+                                    </span>
+                                </div>
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-esc="account['team']"/>
+                                    </span>
+                                </div>
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-esc="account['amount']"/>
+                                    </span>
+                                </div>
+                                <div class="act_as_cell">
+                                    <span>
+                                        <t t-esc="account['currency']"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </t>
+                        <!-- Make a space between each partner -->
+                        <br></br>
+                    </t>
+                </div>
+                <h1>Hello Report</h1>
+            </t>
+        </t>
+    </template>
+</odoo>

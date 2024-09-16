@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="webclient.Page">
+        <Navbar/>
+        <div class="p-3">
+            Hello World
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="unpaid_invoice_view_tree">
+            <field name="name">unpaid_invoice_view_tree</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_out_invoice_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="js_class">unpaid_list</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="unpaid_invoices_action" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoices</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">list</field>
+            <field name="target">current</field>
+            <field name="domain">[
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'posted'),
+                ('payment_state', 'in', ('not_paid', 'partial')),
+                ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')),
+                ('partner_id.property_account_receivable_id.code', '=', '120001')
+                ]
+            </field>
+            <field name="context">{
+                'default_move_type': 'out_invoice',
+                'move_type': 'out_invoice',
+                'journal_type': 'sale',
+                'group_by':'invoice_date_due',
+                }
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_unpaid_invoice_kanban">
+            <field name="name">unpaid_invoice.kanban</field>
+            <field name="model">crm.team</field>
+            <field name="arch" type="xml">
+                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1"
+                    create="false">
+                    <field name="name" />
+                    <!-- <field name="label_date" />
+                    <field name="total_count" /> -->
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div
+                                t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card">
+                                <div class="o_project_kanban_main ">
+                                    <div class="o_kanban_card_content mw-100">
+                                        <div class="o_kanban_primary_left">
+                                            <div class="o_primary">
+                                                <span class="o_text_overflow">
+                                                    <a name="action_unpaid_invoice" type="object">
+                                                        <t t-esc="record.name.value" />
+                                                    </a>
+                                                </span>
+                                                <!-- <a name="action_unpaid_invoice" type="object">
+                                                    <span class="o_text_overflow">
+                                                        <t t-esc="record.total_count.value"/>
+                                                    </span>
+                                                </a> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+    </data>
+</odoo>

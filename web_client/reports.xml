@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="action_report_unpaid_invoice_html" model="ir.actions.report">
+        <field name="name">Unpaid Invoice1</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">unpaid_invoice.unpaid_report</field> <!-- report data view Template id -->
+        <field name="report_file">unpaid_invoice.unpaid_invoice_report</field> <!-- The template file name -->
+    </record>
+
+    <record id="action_kanban_unpaid_invoice_view" model="ir.actions.act_window">
+        <field name="name">Unpaid Invoice</field>
+        <field name="res_model">crm.team</field>
+        <field name="view_mode">kanban</field>
+        <field name="target">current</field>
+        <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_kanban"/>
+    </record>
+
+    <record id="ks_pnl0" model="ir.actions.client">
+            <field name="name">Profit and Loss</field>
+            <field name="tag">unpaid_invoice.kss_dynamic_report</field>
+        </record>
+</odoo>
+
