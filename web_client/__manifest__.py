@@ -35,13 +35,13 @@
 
     'assets': {
         'web.assets_backend': [
-            'unpaid_invoice/static/src/js/main.js',
-            'unpaid_invoice/static/src/js/navbar.js',
-            'unpaid_invoice/static/src/js/web_client.js', #buttons event function file.
+            'web_client/static/src/js/main.js',
+            'web_client/static/src/js/navbar.js',
+            'web_client/static/src/js/web_client.js', #buttons event function file.
         ],
         'web.assets_qweb': [
-            'unpaid_invoice/static/src/xml/navbar.xml',
-            'unpaid_invoice/static/src/xml/web_client.xml', #buttons template file.
+            'web_client/static/src/xml/navbar.xml',
+            'web_client/static/src/xml/web_client.xml', #buttons template file.
         ],
         
     },
