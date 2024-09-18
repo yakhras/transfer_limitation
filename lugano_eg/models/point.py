@@ -14,7 +14,7 @@ class LuganoPoint(models.Model):
     # READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
 
     name = fields.Many2one('res.partner', string='Customer', ondelete="cascade", required=True)
-    number = fields.Char(string='Number', required=True, readonly=True)
+    number = fields.Char(string='Number', readonly=True)
     # state = fields.Selection([
     #     ('draft', 'Draft'),
     #     ('done', 'Done'),
