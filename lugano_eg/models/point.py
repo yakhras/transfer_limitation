@@ -8,13 +8,13 @@ from datetime import date, datetime, timedelta
 class LuganoPoint(models.Model):
     _name = 'lugano.survey'
     _description = "Lugano Survey"
-    _inherit = ["mail.activity.mixin"]
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     
 
     # READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
 
     name = fields.Many2one('res.partner', string='Customer', ondelete="cascade", required=True)
-    number = fields.Char(string='Number', readonly=True)
+    number = fields.Char(string='Number', required=True, readonly=True, default="/")
     # state = fields.Selection([
     #     ('draft', 'Draft'),
     #     ('done', 'Done'),
@@ -32,6 +32,7 @@ class LuganoPoint(models.Model):
          ("repair", "Need Repair"),
          ("free", "Need Machines for Free"),
          ("grinder", "Need Machines & Grinder"),],
+        default="no_need",
         required=True,
         string="Machine Stations",
         tracking=20,
@@ -50,6 +51,7 @@ class LuganoPoint(models.Model):
          ("company", "Company"),
          ("barber", "Barber"),
          ("gold", "Gold Dealers"),],
+        default="shop",
         required=True,
         string="Location Type",
         tracking=40,
@@ -58,6 +60,7 @@ class LuganoPoint(models.Model):
         [("main", "Main Street"),
          ("secondary", "Secondary Street"),
          ("mall", "Shopping Mall"),],
+        default="main",
         required=True,
         string="Location",
         tracking=50,
@@ -65,6 +68,7 @@ class LuganoPoint(models.Model):
     space = fields.Selection(
         [("open", "Open"),
          ("close", "Close"),],
+        default="open",
         required=True,
         string="Space",
         tracking=60,
@@ -72,6 +76,7 @@ class LuganoPoint(models.Model):
     hours = fields.Selection(
         [("half", "12 Hours"),
          ("full", "24 Hours"),],
+        default="half",
         required=True,
         string="Working Hours",
         tracking=70,
@@ -96,10 +101,10 @@ class LuganoPoint(models.Model):
     #             raise UserError(_('You cannot delete an record which is not draft or cancelled.'))
     #     return super(Visit, self).unlink()
 
-    # @api.model
-    # def create(self, values):
-    #     values['number'] = self.env['ir.sequence'].next_by_code('lugano.survey') or '/'
-    #     return super(LuganoPoint, self).create(values)
+    @api.model
+    def create(self, values):
+        values['number'] = self.env['ir.sequence'].next_by_code('lugano.survey') or '/'
+        return super(LuganoPoint, self).create(values)
 
     # def action_done(self):
     #     self.state = 'done'
