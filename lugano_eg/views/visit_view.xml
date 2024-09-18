@@ -67,6 +67,17 @@
         </field>
     </record> -->
 
+    <!-- <record id="view_visit_calendar" model="ir.ui.view">
+        <field name="name">visit.visit.calendar</field>
+        <field name="model">visit.visit</field>
+        <field name="arch" type="xml">
+            <calendar string="Visits" color="user_id" date_start="start_date">
+                <field name="partner_id"/>
+                <field name="name"/>
+            </calendar>
+        </field>
+    </record> -->
+
     <record id="lugano_survey_form_view" model="ir.ui.view">
         <field name="name">lugano.survey.form</field>
         <field name="model">lugano.survey</field>
@@ -149,6 +160,17 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="view_point_pivot">
+        <field name="name">lugano.survey.pivot</field>
+        <field name="model">lugano.survey</field>
+        <field name="arch" type="xml">
+            <pivot string="Points">
+                <field name="start_date" type="row"/>
+                <!-- <field name="state" type="col"/> -->
+            </pivot>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="view_lugano_point_graph">
         <field name="name">lugano.point.graph</field>
         <field name="model">lugano.survey</field>
@@ -160,6 +182,8 @@
         </field>
     </record>
 
+
+    
     <record id="lugano_track_form_view" model="ir.ui.view">
         <field name="name">lugano.track.form</field>
         <field name="model">lugano.visit</field>
@@ -217,28 +241,6 @@
         </field>
     </record>
 
-    <!-- <record id="view_visit_calendar" model="ir.ui.view">
-        <field name="name">visit.visit.calendar</field>
-        <field name="model">visit.visit</field>
-        <field name="arch" type="xml">
-            <calendar string="Visits" color="user_id" date_start="start_date">
-                <field name="partner_id"/>
-                <field name="name"/>
-            </calendar>
-        </field>
-    </record> -->
-
-    <record model="ir.ui.view" id="view_point_pivot">
-        <field name="name">lugano.survey.pivot</field>
-        <field name="model">lugano.survey</field>
-        <field name="arch" type="xml">
-            <pivot string="Points">
-                <field name="start_date" type="row"/>
-                <!-- <field name="state" type="col"/> -->
-            </pivot>
-        </field>
-    </record>
-
     <record model="ir.ui.view" id="view_visit_pivot">
         <field name="name">lugano.visit.pivot</field>
         <field name="model">lugano.visit</field>
@@ -260,6 +262,8 @@
             </graph>
         </field>
     </record>
+
+
 
     <record id="lugano_survey_action" model="ir.actions.act_window">
         <field name="name">Lugano Points</field>
@@ -316,6 +320,9 @@
           </p>
         </field> -->
     </record>
+
+
+
 
     <menuitem id="main_menu_lugano_survey" name="Lugano" groups="lugano_eg.group_lugano_user" web_icon="lugano_eg,static/description/icon.png" sequence="15"/>
 
