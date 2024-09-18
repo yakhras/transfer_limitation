@@ -267,8 +267,22 @@
         </field>
     </record>
 
-    <record id="lugano_survey_report" model="ir.actions.act_window">
-        <field name="name">Lugano Reporting</field>
+    <record id="lugano_point_report" model="ir.actions.act_window">
+        <field name="name">Points Reporting</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">lugano.survey</field>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" eval="False"/>
+        <!-- <field name="search_view_id" ref="lugano_search"/> -->
+        <!-- <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Click to Define a New Visit.
+          </p>
+        </field> -->
+    </record>
+
+    <record id="lugano_visit_report" model="ir.actions.act_window">
+        <field name="name">Visits Reporting</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">lugano.visit</field>
         <field name="view_mode">pivot</field>
@@ -287,8 +301,12 @@
 
     <menuitem id="action_menu_lugano_track" name="Visits" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.main_menu_lugano_survey"/>
 
-    <menuitem id="action_menu_lugano_report" name="Report" groups="lugano_eg.group_lugano_manager" sequence="3" action="lugano_survey_report" parent="lugano_eg.main_menu_lugano_survey"/>
+    <menuitem id="action_menu_lugano_report" name="Reports" groups="lugano_eg.group_lugano_manager" sequence="3" action="lugano_survey_report" parent="lugano_eg.main_menu_lugano_survey"/>
 
-    <menuitem id="action_menu_lugano_config" name="Configuration" groups="lugano_eg.group_lugano_manager" sequence="4" action="base.action_res_users" parent="lugano_eg.main_menu_lugano_survey"/>
+    <menuitem id="action_menu_lugano_point_report" name="Points Report" groups="lugano_eg.group_lugano_manager" sequence="4" action="lugano_point_report" parent="lugano_eg.action_menu_lugano_report"/>
+
+    <menuitem id="action_menu_lugano_visit_report" name="Visits Report" groups="lugano_eg.group_lugano_manager" sequence="5" action="lugano_visit_report" parent="lugano_eg.action_menu_lugano_report"/>
+
+    <menuitem id="action_menu_lugano_config" name="Configuration" groups="lugano_eg.group_lugano_manager" sequence="6" action="base.action_res_users" parent="lugano_eg.main_menu_lugano_survey"/>
 
 </odoo>
