@@ -273,4 +273,6 @@
 
     <menuitem id="action_menu_lugano_track" name="Visits" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.main_menu_lugano_survey"/>
 
+    <menuitem id="action_menu_lugano_config" name="Configuration" groups="lugano_eg.group_lugano_manager" sequence="3" action="base.action_res_users" parent="lugano_eg.main_menu_lugano_survey"/>
+
 </odoo>
