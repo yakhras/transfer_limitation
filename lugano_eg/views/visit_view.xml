@@ -231,7 +231,6 @@
     <record model="ir.ui.view" id="view_visit_pivot">
         <field name="name">lugano.visit.pivot</field>
         <field name="model">lugano.visit</field>
-        <field name="groups_id" eval="[(4, ref('lugano_eg.group_lugano_manager'))]"/>
         <field name="arch" type="xml">
             <pivot string="Visits">
                 <field name="start_date" type="row"/>
@@ -258,6 +257,20 @@
         <field name="name">Tracking Visit</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">lugano.visit</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" eval="False"/>
+        <!-- <field name="search_view_id" ref="lugano_search"/> -->
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Click to Define a New Visit.
+          </p>
+        </field>
+    </record>
+
+    <record id="lugano_survey_track_manager" model="ir.actions.act_window">
+        <field name="name">Tracking Visit</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">lugano.visit</field>
         <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" eval="False"/>
         <!-- <field name="search_view_id" ref="lugano_search"/> -->
@@ -272,7 +285,9 @@
 
     <menuitem id="action_menu_lugano_survey" name="Points" groups="lugano_eg.group_lugano_user" sequence="1" action="lugano_survey_action" parent="lugano_eg.main_menu_lugano_survey"/>
 
-    <menuitem id="action_menu_lugano_track" name="Visits" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.main_menu_lugano_survey"/>
+    <menuitem id="action_menu_lugano_track_user" name="Visits" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.main_menu_lugano_survey"/>
+
+    <menuitem id="action_menu_lugano_track_manager" name="Visits" groups="lugano_eg.group_lugano_manager" sequence="2" action="lugano_survey_track_manager" parent="lugano_eg.main_menu_lugano_survey"/>
 
     <menuitem id="action_menu_lugano_config" name="Configuration" groups="lugano_eg.group_lugano_manager" sequence="3" action="base.action_res_users" parent="lugano_eg.main_menu_lugano_survey"/>
 
