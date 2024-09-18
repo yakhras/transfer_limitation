@@ -101,10 +101,10 @@ class LuganoPoint(models.Model):
     #             raise UserError(_('You cannot delete an record which is not draft or cancelled.'))
     #     return super(Visit, self).unlink()
 
-    @api.model
-    def create(self, values):
-        values['number'] = self.env['ir.sequence'].next_by_code('lugano.survey') or '/'
-        return super(LuganoPoint, self).create(values)
+    # @api.model
+    # def create(self, values):
+    #     values['number'] = self.env['ir.sequence'].next_by_code('lugano.survey') or '/'
+    #     return super(LuganoPoint, self).create(values)
 
     # def action_done(self):
     #     self.state = 'done'
