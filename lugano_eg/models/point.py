@@ -14,7 +14,7 @@ class LuganoPoint(models.Model):
     # READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
 
     name = fields.Many2one('res.partner', string='Customer', ondelete="cascade", required=True)
-    number = fields.Char(string='Number', required=True, readonly=True, default="/")
+    number = fields.Char(string='Number', required=True, readonly=True)
     # state = fields.Selection([
     #     ('draft', 'Draft'),
     #     ('done', 'Done'),
@@ -32,7 +32,6 @@ class LuganoPoint(models.Model):
          ("repair", "Need Repair"),
          ("free", "Need Machines for Free"),
          ("grinder", "Need Machines & Grinder"),],
-        default="no_need",
         required=True,
         string="Machine Stations",
         tracking=20,
@@ -51,7 +50,6 @@ class LuganoPoint(models.Model):
          ("company", "Company"),
          ("barber", "Barber"),
          ("gold", "Gold Dealers"),],
-        default="shop",
         required=True,
         string="Location Type",
         tracking=40,
@@ -60,7 +58,6 @@ class LuganoPoint(models.Model):
         [("main", "Main Street"),
          ("secondary", "Secondary Street"),
          ("mall", "Shopping Mall"),],
-        default="main",
         required=True,
         string="Location",
         tracking=50,
@@ -68,7 +65,6 @@ class LuganoPoint(models.Model):
     space = fields.Selection(
         [("open", "Open"),
          ("close", "Close"),],
-        default="open",
         required=True,
         string="Space",
         tracking=60,
@@ -76,7 +72,6 @@ class LuganoPoint(models.Model):
     hours = fields.Selection(
         [("half", "12 Hours"),
          ("full", "24 Hours"),],
-        default="half",
         required=True,
         string="Working Hours",
         tracking=70,
