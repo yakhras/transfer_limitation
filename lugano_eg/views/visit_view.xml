@@ -285,7 +285,7 @@
 
     <menuitem id="action_menu_lugano_survey" name="Points" groups="lugano_eg.group_lugano_user" sequence="1" action="lugano_survey_action" parent="lugano_eg.main_menu_lugano_survey"/>
 
-    <menuitem id="action_menu_lugano_track_user" name="Visits" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.main_menu_lugano_survey"/>
+    <menuitem id="action_menu_lugano_track" name="Visits" groups="lugano_eg.group_lugano_user" sequence="2" action="lugano_survey_track" parent="lugano_eg.main_menu_lugano_survey"/>
 
     <menuitem id="action_menu_lugano_report" name="Report" groups="lugano_eg.group_lugano_manager" sequence="3" action="lugano_survey_report" parent="lugano_eg.main_menu_lugano_survey"/>
 
