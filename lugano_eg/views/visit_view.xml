@@ -231,7 +231,7 @@
     <record model="ir.ui.view" id="view_visit_pivot">
         <field name="name">lugano.visit.pivot</field>
         <field name="model">lugano.visit</field>
-        <field name="groups_id">lugano_eg.group_lugano_manager</field>
+        <field name="groups">lugano_eg.group_lugano_manager</field>
         <field name="arch" type="xml">
             <pivot string="Visits">
                 <field name="start_date" type="row"/>
