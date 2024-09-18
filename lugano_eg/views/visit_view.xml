@@ -155,7 +155,7 @@
         <field name="arch" type="xml">
             <graph string="Points Graph" sample="1">
                 <field name="start_date"/>
-                <!-- <field name="amount_total" type="measure"/> -->
+                <field name="pod" type="measure"/>
             </graph>
         </field>
     </record>
