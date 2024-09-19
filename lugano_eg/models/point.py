@@ -11,15 +11,15 @@ class LuganoPoint(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     
 
-    # READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
+    READONLYSTATES = {'done': [('readonly', True)], 'cancel': [('readonly', True)]}
 
     name = fields.Many2one('res.partner', string='Customer', ondelete="cascade", required=True)
     number = fields.Char(string='Number', required=True, readonly=True, default="/")
-    # state = fields.Selection([
-    #     ('draft', 'Draft'),
-    #     ('done', 'Done'),
-    #     ('cancel', 'Cancelled'),
-    # ], string='Status', copy=False, default='draft', states=READONLYSTATES, tracking=1)
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('done', 'Done'),
+        ('cancel', 'Cancelled'),
+    ], string='Status', copy=False, default='draft', states=READONLYSTATES, tracking=1)
     beans = fields.Boolean(string='Beans')
     beans_consume = fields.Char(string='Beans Monthly Consumption:')
     pod = fields.Boolean(string='Pod')
@@ -106,16 +106,16 @@ class LuganoPoint(models.Model):
         values['number'] = self.env['ir.sequence'].next_by_code('lugano.survey') or '/'
         return super(LuganoPoint, self).create(values)
 
-    # def action_done(self):
-    #     self.state = 'done'
-    #     self.name = self.user_id.crm_team_member_ids.crm_team_id
-        # self.name = self.env.user.crm_team_member_ids.crm_team_id
+    def action_done(self):
+        self.state = 'done'
+        self.name = self.user_id.crm_team_member_ids.crm_team_id
+        self.name = self.env.user.crm_team_member_ids.crm_team_id
 
-    # def action_draft(self):
-    #     self.state = 'draft'
+    def action_draft(self):
+        self.state = 'draft'
 
-    # def action_cancel(self):
-    #     self.state = 'cancel'
+    def action_cancel(self):
+        self.state = 'cancel'
 
     # @api.onchange('beans')
     # def onchange_task_id(self):

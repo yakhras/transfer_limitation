@@ -83,12 +83,12 @@
         <field name="model">lugano.survey</field>
         <field name="arch" type="xml">
             <form>
-                <!-- <header>
+                <header>
                     <button name="action_done" string="Done" type="object" class="btn-primary" states="draft"/>
                     <button name="action_draft" string="Set to Draft" type="object" states="cancel,done"/>
-                    <button name="action_cancel" string="Cancel" type="object" states="draft,visited"/>
+                    <button name="action_cancel" string="Cancel" type="object" states="draft,done"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
-                </header> -->
+                </header>
                 <sheet>
                     <div name="button_box" class="oe_button_box
                     ">
