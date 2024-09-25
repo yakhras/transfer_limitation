@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "picker",
+    'name': "picker1",
 
     'summary': """
         Transfer Validation Limit.""",
