@@ -12,6 +12,8 @@ class MailingMailing(models.Model):
     @api.onchange('email')
     def _onchange_email(self):
         if (self.email):
-            self.copyvalue = self.contact_list_ids.contact_ids.name
+            contact = self.contact_list_ids.contact_ids
+            for con in contact:
+                self.copyvalue = con.name
         else:
             self.copyvalue = 0.0
