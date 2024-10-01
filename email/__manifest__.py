@@ -44,9 +44,9 @@
     #         'web_client/static/src/xml/web_client.xml', #buttons template file.
     #     ],
         
-    },
+    # },
     # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
-    ],
+    # 'demo': [
+    #     'demo/demo.xml',
+    # ],
 }
