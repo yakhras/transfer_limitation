@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+<data>
+    <record model="ir.ui.view" id="email_view_form">
+        <field name="name">email_view_form</field> <!--View name-->
+        <field name="model">mailing.mailing</field> <!--Model name where view will applied-->
+        <field name="inherit_id" ref="mass_mailing.view_mail_mass_mailing_form"/> <!--External ID of Parent view which inherited-->
+        <field name="arch" type="xml">
+            <field name="copyvalue" position="after"> <!--existing field-->
+                <field name="email"/><!--New field-->
+            </field>
+        </field>
+    </record>
+</data>
+</odoo>
