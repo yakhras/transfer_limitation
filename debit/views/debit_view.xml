@@ -3,7 +3,7 @@
 <data>
 
     <record id="account.action_account_moves_ledger_partner" model="ir.actions.act_window">
-        <field name="domain">["&",("partner_id.property_account_receivable_id.code","=","120002"),("partner_id.users_ids","ilike","Banan")]</field>
+        <field name="domain">[("partner_id.property_account_receivable_id.code","=","120002"),("partner_id.users_ids","ilike","Banan")]</field>
     </record>
 
     <menuitem id="action_menu_pos_debit" name="Debit" groups="point_of_sale.group_pos_user" sequence="5" action="account.action_account_moves_ledger_partner" parent="point_of_sale.menu_point_rep"/>
