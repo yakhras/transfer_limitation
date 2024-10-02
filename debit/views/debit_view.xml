@@ -2,6 +2,6 @@
 <odoo>
 <data>
     
-    <menuitem id="action_menu_pos_debit" name="Debit" groups="point_of_sale.group_pos_user" sequence="3" parent="point_of_sale.menu_point_rep"/>
+    <menuitem id="action_menu_pos_debit" name="Debit" groups="point_of_sale.group_pos_user" sequence="5" parent="point_of_sale.menu_point_rep"/>
 </data>
 </odoo>
