@@ -15,7 +15,7 @@ class SaleOrder(models.Model):
             'partner_id': oderdetails.get('partner_id'),
             'date_order': datetime.date.today(),
             'is_pos_created': True,
-            'state': 'draft',
+            'state': 'done',
             'amount_tax': oderdetails.get('tax_amount'),
             })
         vals['name'] = saleorder_id.name
