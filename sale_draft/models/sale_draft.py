@@ -16,4 +16,4 @@ class SaleOrder(models.Model):
         if (self.purchase):
             self.client_order_ref = order.id
         else:
-            self.client_order_ref = 'no'
+            self.client_order_ref = order
