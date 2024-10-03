@@ -11,7 +11,8 @@ class SaleOrder(models.Model):
 
     @api.onchange('purchase')
     def _onchange_purchase(self):
+        order = self._get_purchase_orders()
         if (self.purchase):
-            self.client_order_ref = 'yes'
+            self.client_order_ref = order
         else:
             self.client_order_ref = 'no'
