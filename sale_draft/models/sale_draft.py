@@ -13,7 +13,7 @@ class SaleOrder(models.Model):
     def _onchange_purchase(self):
         order = self._get_purchase_orders()
         if (self.purchase):
-            self.client_order_ref = order.id
+            self.client_order_ref = order.name
         else:
             order.button_cancel()._unlink_if_cancelled
             self.client_order_ref = order
