@@ -12,8 +12,8 @@ class SaleOrder(models.Model):
     @api.onchange('purchase')
     def _onchange_purchase(self):
         order = self._get_purchase_orders()
-        order.button_cancel()
+        #order.button_cancel()
         if (self.purchase):
-            self.client_order_ref = order.state
+            self.client_order_ref = order.id
         else:
             self.client_order_ref = 'no'
