@@ -1,0 +1,17 @@
+from odoo import models, fields, api
+from datetime import date, timedelta
+from odoo.exceptions import ValidationError
+
+
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'   # Inherit the model
+
+    purchase = fields.Boolean(string='purchase')
+
+    @api.onchange('purchase')
+    def _onchange_purchase(self):
+        if (self.purchase):
+            self.client_order_ref = 'yes'
+        else:
+            self.client_order_ref = 'no'

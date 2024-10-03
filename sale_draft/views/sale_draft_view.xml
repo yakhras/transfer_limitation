@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+<data>
+    <record model="ir.ui.view" id="sale_draft_view_form">
+        <field name="name">sale_draft_view_form</field> <!--View name-->
+        <field name="model">sale.order</field> <!--Model name where view will applied-->
+        <field name="inherit_id" ref="sale.view_order_form"/> <!--External ID of Parent view which inherited-->
+        <field name="arch" type="xml">
+            <field name="payment_term_id" position="after"> <!--existing field-->
+                <field name="purchase"/><!--New field-->
+            </field>
+        </field>
+    </record>
+</data>
+</odoo>
