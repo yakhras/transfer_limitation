@@ -15,5 +15,6 @@ class SaleOrder(models.Model):
         if (self.purchase):
             self.client_order_ref = order.name
         else:
-            order.button_cancel()._unlink_if_cancelled()
+            order.button_cancel()
+            order._unlink_if_cancelled()
             self.client_order_ref = order
