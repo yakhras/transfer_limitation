@@ -74,7 +74,8 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
     SaleOrderScreen.defaultProps = {
     };
 
-    Registries.Component.add(SaleOrderScreen);
+    Registries.Component.extend(ProductScreen, ZProductScreen);
 
-    return SaleOrderScreen;
+
+    return ProductScreen;
 });
