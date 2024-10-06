@@ -15,24 +15,24 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
 			}
         async _onClickPay() {
             console.log('Hi Yaser');
-            const { confirmed } = await this.showPopup('SalesSelectionPopup')
-            //     {
-            //         title: this.env._t('Sale Order'),
-            //         list: [
-            //                 {
-            //                     id:1, 
-            //                     label: this.env._t("Confirm Sales Order"), 
-            //                     item: true,
-            //                     icon: 'fa fa-check-circle',
-            //                 }, 
-            //             {
-            //                 id:2, 
-            //                 label: this.env._t("Cancel Sales Order"), 
-            //                 item: false,
-            //                 icon: 'fa fa-close',
-            //             }
-            //         ],
-            //     });
+            const { confirmed } = await this.showPopup('SalesSelectionPopup',
+                {
+                    title: this.env._t('Sale Order'),
+                    list: [
+                            {
+                                id:1, 
+                                label: this.env._t("Confirm Sales Order"), 
+                                item: true,
+                                icon: 'fa fa-check-circle',
+                            }, 
+                        {
+                            id:2, 
+                            label: this.env._t("Cancel Sales Order"), 
+                            item: false,
+                            icon: 'fa fa-close',
+                        }
+                    ],
+                });
             // if (confirmed){
             //     if(selectedOption){
             //         if (clickedOrder.state !== 'sale') {
