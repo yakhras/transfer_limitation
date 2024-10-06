@@ -17,7 +17,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
             console.log('Hi Yaser');
             const { confirmed } = await this.showPopup('SalesSelectionPopup',
                 {
-                    title: this.env._t('Sale Order'),
+                    title: this.env._t('Select an Invoice'),
                     list: [
                             {
                                 id:1, 
