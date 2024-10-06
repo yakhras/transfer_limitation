@@ -35,26 +35,12 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                 });
             if (confirmed){
                 if(selectedOption){
-                   console.log('True')
+                   console.log('True');
                     }
                 }
-            //         else {
-            //             await this.showPopup('ConfirmPopup', {
-            //                 title: this.env._t('Already Confirmed'),
-            //                 body: this.env._t(
-            //                     'This Sales Order is Already in confirmed state!!!!'
-            //                 ),
-            //             });
-            //         }
-            //     }
-            //     if (!selectedOption){
-            //         if (clickedOrder.state !== 'cancel') {
-            //             var result = await this.rpc({
-            //                 model: 'sale.order',
-            //                 method: 'action_cancel',
-            //                 args: [clickedOrder.id]
-            //             });
-            //         }
+                if (!selectedOption){
+                    console.log('False');
+                    }
             //         else {
             //             await this.showPopup('ConfirmPopup', {
             //                 title: this.env._t('Already Cancelled'),
