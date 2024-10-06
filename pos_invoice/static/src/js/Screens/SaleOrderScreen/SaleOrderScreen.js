@@ -37,6 +37,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                 if(selectedOption){
                    console.log('True')
                     }
+                }
             //         else {
             //             await this.showPopup('ConfirmPopup', {
             //                 title: this.env._t('Already Confirmed'),
