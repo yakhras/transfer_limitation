@@ -15,7 +15,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
 			}
         async _onClickPay() {
             console.log('Hi Yaser');
-            const { confirmed } = await this.showPopup('SalesSelectionPopup',
+            const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
                 {
                     title: this.env._t('Select an Invoice'),
                     list: [
@@ -33,15 +33,10 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                         }
                     ],
                 });
-            // if (confirmed){
-            //     if(selectedOption){
-            //         if (clickedOrder.state !== 'sale') {
-            //             var result = await this.rpc({
-            //                 model: 'sale.order',
-            //                 method: 'action_confirm',
-            //                 args: [clickedOrder.id]
-            //             });
-            //         }
+            if (confirmed){
+                if(selectedOption){
+                   console.log('True')
+                    }
             //         else {
             //             await this.showPopup('ConfirmPopup', {
             //                 title: this.env._t('Already Confirmed'),
