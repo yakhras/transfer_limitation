@@ -9,7 +9,7 @@
     'website': 'http://yaserakhras.com',
     #'support': 'support@warlocktechnologies.com',
     'depends': ['point_of_sale', 'base'],
-    "data": ['views/pos_config.xml'],
+    #"data": ['views/pos_config.xml'],
     'assets': {
         'point_of_sale.assets': [
             #'wt_create_so_from_pos/static/src/js/Screens/ProductScreen/ControlButtons/SaleOrderButton.js',
@@ -20,7 +20,7 @@
             'pos_invoice/static/src/js/Popups/SalesOrderPopup.js',
         ],
         'web.assets_qweb': [
-            'wt_create_so_from_pos/static/src/xml/**/*',
+            'pos_invoice/static/src/xml/**/*',
         ],
     },
     'images': ['static/images/screen_image.png'],
