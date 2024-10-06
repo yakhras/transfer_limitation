@@ -21,13 +21,13 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                     list: [
                             {
                                 id:1, 
-                                label: this.env._t("Confirm Sales Order"), 
+                                label: this.env._t("Formal Invoice"), 
                                 item: true,
                                 icon: 'fa fa-check-circle',
                             }, 
                         {
                             id:2, 
-                            label: this.env._t("Cancel Sales Order"), 
+                            label: this.env._t("Informal Invoice"), 
                             item: false,
                             icon: 'fa fa-close',
                         }
