@@ -15,7 +15,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
 			}
         async _onClickPay() {
             console.log('Hi Yaser');
-            const { confirmed } = await this.showPopup()
+            const { confirmed } = await this.showPopup('SalesSelectionPopup')
             //     {
             //         title: this.env._t('Sale Order'),
             //         list: [
