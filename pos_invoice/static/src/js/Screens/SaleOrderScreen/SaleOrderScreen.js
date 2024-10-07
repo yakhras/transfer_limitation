@@ -38,6 +38,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
             if (confirmed){
                 if(selectedOption){
                    console.log('True');
+                   currentClient.property_is_printed_invoice = true;
                    console.log(currentClient.property_is_printed_invoice);
                     }
                 }
