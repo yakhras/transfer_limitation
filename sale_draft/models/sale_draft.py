@@ -17,4 +17,4 @@ class SaleOrder(models.Model):
         else:
             order.button_cancel()
             order.unlink()
-            self.client_order_ref = order
+            self.client_order_ref = self.qty_delivered
