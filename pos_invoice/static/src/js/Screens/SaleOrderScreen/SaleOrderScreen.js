@@ -39,13 +39,12 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                 if(selectedOption){
                    console.log('True');
                    await this.rpc({
-                    model: 'res.partner',
-                    method: 'formal_invoice',
-                    args: [currentClient.id]
-                });
-                console.log(currentClient.property_is_printed_invoice);
-            }
-        }
+                        model: 'res.partner',
+                        method: 'formal_invoice',
+                        args: [currentClient.id]
+                    });
+                console.log('formal');
+                }
                 if (!selectedOption){
                     console.log('False');
                     await this.rpc({
@@ -53,7 +52,11 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                         method: 'informal_invoice',
                         args: [currentClient.id]
                     });
+                    console.log('informal');
                 }
+            }
+            super._onClickPay();
+                
             
         }
     }
