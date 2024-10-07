@@ -40,8 +40,13 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                    console.log('True');
                    currentClient.property_is_printed_invoice = true;
                    console.log(currentClient.property_is_printed_invoice);
-                    }
-                }
+                   await this.rpc({
+                    model: 'res.partner',
+                    method: 'formal_invoice',
+                    args: [currentClient.id]
+                });
+            }
+        }
                 if (!selectedOption){
                     console.log('False');
                     }
