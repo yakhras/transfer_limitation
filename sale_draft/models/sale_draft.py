@@ -11,8 +11,9 @@ class SaleOrder(models.Model):
 
     def action_unlock(self):
         super().action_unlock()
-        order = self._get_purchase_orders()
         self.action_cancel()
+        self.action_draft()
+        order = self._get_purchase_orders()
         order.button_cancel()
         order.unlink()
         
