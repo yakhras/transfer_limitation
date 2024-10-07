@@ -36,21 +36,14 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
             if (confirmed){
                 if(selectedOption){
                    console.log('True');
+                   let client = self.env.pos.get_client();
+                   console.log(client);
                     }
                 }
                 if (!selectedOption){
                     console.log('False');
                     }
-            //         else {
-            //             await this.showPopup('ConfirmPopup', {
-            //                 title: this.env._t('Already Cancelled'),
-            //                 body: this.env._t(
-            //                     'This Sales Order is Already in Cancel State!!!!'
-            //                 ),
-            //             });
-            //         }
-            //     }
-            // }
+            
         }
     }
     
