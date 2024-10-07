@@ -43,7 +43,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                    await this.rpc({
                     model: 'res.partner',
                     method: 'formal_invoice',
-                    args: [currentClient.id]
+                    args: []
                 });
             }
         }
