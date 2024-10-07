@@ -10,4 +10,4 @@ class ResPartner(models.Model):
 
     @api.model
     def formal_invoice(self):
-        return self.property_is_printed_invoice = True
+        return self.property_is_printed_invoice == True
