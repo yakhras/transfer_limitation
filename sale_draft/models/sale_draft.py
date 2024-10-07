@@ -11,12 +11,12 @@ class SaleOrder(models.Model):
 
     @api.onchange('purchase')
     def _onchange_purchase(self):
-        order = self._get_purchase_orders()
+        # order = self._get_purchase_orders()
         if (self.purchase):
             self.write({'state': 'sale'})
-            self.action_cancel()
-            self.client_order_ref = order.name
+            # self.action_cancel()
+            # self.client_order_ref = order.name
         else:
-            order.button_cancel()
-            order.unlink()
+            # order.button_cancel()
+            # order.unlink()
             self.client_order_ref = 'Yes'
