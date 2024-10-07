@@ -13,7 +13,7 @@ class SaleOrder(models.Model):
     def _onchange_purchase(self):
         # order = self._get_purchase_orders()
         if (self.purchase):
-            self.write({'state': 'sale'})
+            self.action_unlock()
             # self.action_cancel()
             # self.client_order_ref = order.name
         else:
