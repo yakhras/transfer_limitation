@@ -6,14 +6,15 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
     const Registries = require('point_of_sale.Registries');
     const { useListener } = require('web.custom_hooks');
     const ProductScreen = require('point_of_sale.ProductScreen');
+    const ClientScreen = require('point_of_sale.ClientScreen');
 
 
-    const ZProductScreen = (ProductScreen) =>
-		class extends ProductScreen {
+    const ZProductScreen = (ClientScreen) =>
+		class extends ClientScreen {
 			constructor() {
 				super(...arguments);
 			}
-        async _onClickPay() {
+        async cliclNext() {
             console.log('Hi Yaser');
             let order = this.env.pos.get_order();
             let currentClient = order.get_client()
@@ -55,15 +56,15 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                     console.log('informal');
                 }
             }
-            super._onClickPay();
+            super.cliclNext();
                 
             
         }
     }
     
 
-    Registries.Component.extend(ProductScreen, ZProductScreen);
+    Registries.Component.extend(ClientScreen, ZProductScreen);
 
 
-    return ProductScreen;
+    return ClientScreen;
 });
