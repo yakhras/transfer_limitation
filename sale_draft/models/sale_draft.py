@@ -10,7 +10,7 @@ class SaleOrder(models.Model):
     purchase = fields.Boolean(string='purchase')
 
     def action_unlock(self):
-        super(self).action_unlock()
+        super().action_unlock()
         order = self._get_purchase_orders()
         self.action_cancel()
         order.button_cancel()
