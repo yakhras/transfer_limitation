@@ -48,7 +48,12 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
         }
                 if (!selectedOption){
                     console.log('False');
-                    }
+                    await this.rpc({
+                        model: 'res.partner',
+                        method: 'informal_invoice',
+                        args: [currentClient.id]
+                    });
+                }
             
         }
     }
