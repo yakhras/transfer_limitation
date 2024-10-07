@@ -13,8 +13,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
 			constructor() {
 				super(...arguments);
 			}
-        async _onClickCustomer() {
-            super._onClickCustomer;
+        async _onClickPay() {
             console.log('Hi Yaser');
             let order = this.env.pos.get_order();
             let currentClient = order.get_client()
@@ -56,7 +55,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
                     console.log('informal');
                 }
             }
-            
+            super._onClickPay();
                 
             
         }
