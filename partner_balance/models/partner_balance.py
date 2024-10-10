@@ -19,5 +19,5 @@ class ResPartner(models.Model):
         # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
         movlin = self.move_line_ids.filtered(lambda x: x.reconciled == True)
         for one in movlin:
-            return one.credit
+            return one.balance
        
