@@ -25,28 +25,6 @@
 
     # always loaded
     'data': [
-        #"security/security.xml",
         "views/sale_draft_view.xml",
-        # "reports.xml", #action file.
-        # "menuitems.xml", #menu items file.
-        # "report/layouts.xml", #report page templates file. 
-        # "report/unpaid_invoice_report.xml", #report data view file
     ],
-
-    # 'assets': {
-    #     'web.assets_backend': [
-    #         'web_client/static/src/js/main.js',
-    #         'web_client/static/src/js/navbar.js',
-    #         'web_client/static/src/js/web_client.js', #buttons event function file.
-    #     ],
-    #     'web.assets_qweb': [
-    #         'web_client/static/src/xml/navbar.xml',
-    #         'web_client/static/src/xml/web_client.xml', #buttons template file.
-    #     ],
-        
-    # },
-    # only loaded in demonstration mode
-    # 'demo': [
-    #     'demo/demo.xml',
-    # ],
 }

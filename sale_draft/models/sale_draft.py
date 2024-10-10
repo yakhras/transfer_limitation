@@ -7,7 +7,7 @@ from odoo.exceptions import ValidationError
 class SaleOrder(models.Model):
     _inherit = 'sale.order'   # Inherit the model
 
-    purchase = fields.Boolean(string='purchase')
+
 
     def action_unlock(self):
         super().action_unlock()
