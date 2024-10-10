@@ -12,7 +12,7 @@ class ResPartner(models.Model):
 
     @api.onchange('balance_id')
     def on_change_balance_id(self):
-        self.get_balance()
+        self.balance = self.get_balance()
 
     def get_balance(self):
         acmvln = self.env['account.move.line']
