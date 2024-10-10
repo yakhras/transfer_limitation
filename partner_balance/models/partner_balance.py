@@ -15,7 +15,8 @@ class ResPartner(models.Model):
         self.balance = self.get_balance()
 
     def get_balance(self):
-        acmvln = self.env['account.move.line'].search([])
-        filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
-        return filter
+        # acmvln = self.env['account.move.line'].search([])
+        # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
+        movlin = self.move_line_ids
+        return movlin
        
