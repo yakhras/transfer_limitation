@@ -16,4 +16,5 @@ class ResPartner(models.Model):
 
     def get_balance(self):
         acmvln = self.env['account.move.line']
+        return acmvln
        
