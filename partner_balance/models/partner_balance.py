@@ -14,7 +14,7 @@ class ResPartner(models.Model):
     def on_change_balance_id(self):
         credit = self.get_credits()
         debit = self.get_debits()
-        self.balance = self.total_debit(credit) - self.total_credit(credit)
+        self.balance = self.total_debit(debit) - self.total_credit(credit)
 
     def get_debits(self):
         # acmvln = self.env['account.move.line'].search([])
