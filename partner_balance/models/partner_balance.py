@@ -16,8 +16,9 @@ class ResPartner(models.Model):
         self.balance = round(self.total_debit(debit), 2)
 
     def get_debits(self):
+        domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
         ids = []
-        for one in self.move_line_ids.filtered_domain([('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]):
+        for one in self.move_line_ids.filtered_domain(domain):
             ids.append(one.debit)
         return ids
 
@@ -38,5 +39,3 @@ class ResPartner(models.Model):
         for number in list:
             total_credit += number
         return round(total_credit, 2)
-
-       domain="[('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]"
