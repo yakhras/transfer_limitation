@@ -18,8 +18,6 @@ class ResPartner(models.Model):
         # acmvln = self.env['account.move.line'].search([])
         # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
         movlin = self.move_line_ids.filtered(lambda x: x.reconciled)
-        debit = 0.0
         for one in movlin:
-            debit = debit + one.debit
-        return debit
+            return one.id
        
