@@ -12,7 +12,7 @@ class ResPartner(models.Model):
 
     @api.onchange('balance_id')
     def on_change_balance_id(self):
-        list = sef.get_balance()
+        list = self.get_balance()
         self.balance = self.total_debit(list)
 
     def get_balance(self):
