@@ -10,7 +10,6 @@ class ResPartner(models.Model):
     balance = fields.Char()
     balance_id = fields.Boolean()
 
-    
 
     @api.onchange('balance_id')
     def on_change_balance_id(self):
