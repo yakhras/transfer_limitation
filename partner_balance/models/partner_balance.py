@@ -12,15 +12,13 @@ class ResPartner(models.Model):
 
     @api.onchange('balance_id')
     def on_change_balance_id(self):
-        credit = self.get_credits()
         debit = self.get_debits()
-        self.balance = self.total_debit(debit) - self.total_credit(credit)
+        self.balance = round(self.total_debit(debit), 2)
 
     def get_debits(self):
-        # acmvln = self.env['account.move.line'].search([])
-        # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
+        domain="[('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]"
         ids = []
-        for one in self.move_line_ids:
+        for one in self.move_line_ids.filtered_domain(domain):
             ids.append(one.debit)
         return ids
 
@@ -31,8 +29,6 @@ class ResPartner(models.Model):
         return round(total_debit, 2)
 
     def get_credits(self):
-        # acmvln = self.env['account.move.line'].search([])
-        # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
         ids = []
         for one in self.move_line_ids:
             ids.append(one.credit)
@@ -44,4 +40,4 @@ class ResPartner(models.Model):
             total_credit += number
         return round(total_credit, 2)
 
-       
+       domain="[('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]"
