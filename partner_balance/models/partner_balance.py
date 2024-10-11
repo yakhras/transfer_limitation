@@ -12,10 +12,10 @@ class ResPartner(models.Model):
 
     @api.onchange('balance_id')
     def on_change_balance_id(self):
-        list = self.get_balance()
-        self.balance = self.total_debit(list)
+        list = self.get_credits()
+        self.balance = self.total_credit(list)
 
-    def get_balance(self):
+    def get_debits(self):
         # acmvln = self.env['account.move.line'].search([])
         # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
         ids = []
@@ -28,5 +28,19 @@ class ResPartner(models.Model):
         for number in list:
             total_debit += number
         return round(total_debit, 2)
+
+    def get_credits(self):
+        # acmvln = self.env['account.move.line'].search([])
+        # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
+        ids = []
+        for one in self.move_line_ids:
+            ids.append(one.credit)
+        return ids
+
+    def total_credit(self, list):
+        total_credit = 0
+        for number in list:
+            total_credit += number
+        return round(total_credit, 2)
 
        
