@@ -18,7 +18,10 @@ class ResPartner(models.Model):
         # acmvln = self.env['account.move.line'].search([])
         # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
         ids = []
+        total_debit = 0
         for one in self.move_line_ids:
             ids.append(one.debit)
-        return ids
+            for id in ids:
+                total_debit += id
+        return total_debit
        
