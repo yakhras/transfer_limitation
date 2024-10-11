@@ -14,7 +14,7 @@ class ResPartner(models.Model):
 
     @api.onchange('balance_id')
     def on_change_balance_id(self):
-        credit = self.get_credits()
+        credit = self.get_credits(domain)
         self.balance = round(self.total_credit(credit), 2)
 
     def get_debits(self):
