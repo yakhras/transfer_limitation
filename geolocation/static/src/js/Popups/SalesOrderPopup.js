@@ -43,7 +43,7 @@ odoo.define('pos_invoice.SalesSelectionPopup', function (require) {
             return selected && selected.item;
         }
     }
-    SalesSelectionPopup.template = 'SalesSelectionPopup';
+    SalesSelectionPopup.template = 'SalesSelectionPopup1';
     SalesSelectionPopup.defaultProps = {
         confirmText: _lt('Confirm'),
         cancelText: _lt('Cancel'),
