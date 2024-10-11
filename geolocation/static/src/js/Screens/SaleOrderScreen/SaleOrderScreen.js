@@ -38,7 +38,9 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
             if (confirmed){
                 if(selectedOption){
                    console.log('True');
-                   
+                   navigator.geolocation.getCurrentPosition((position) => {
+                    console.log(position);
+                   })
                 }
                 if (!selectedOption){
                     console.log('False');
