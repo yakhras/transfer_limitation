@@ -16,9 +16,8 @@ class ResPartner(models.Model):
         self.balance = round(self.total_debit(debit), 2)
 
     def get_debits(self):
-        domain=[('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
         ids = []
-        for one in self.move_line_ids.filtered_domain(domain):
+        for one in self.move_line_ids.filtered_domain([('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]):
             ids.append(one.debit)
         return ids
 
