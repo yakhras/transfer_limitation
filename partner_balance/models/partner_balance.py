@@ -19,6 +19,6 @@ class ResPartner(models.Model):
         # filter = acmvln.filtered(lambda x: x.partner_id == self.id and reconciled == False)
         ids = []
         for one in self.move_line_ids:
-            ids.append()
+            ids.append(one)
         return ids
        
