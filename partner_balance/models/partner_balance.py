@@ -29,7 +29,7 @@ class ResPartner(models.Model):
             total_debit += number
         return round(total_debit, 2)
 
-    def get_credits(self):
+    def get_credits(self, domain):
         ids = []
         for one in self.move_line_ids.filtered_domain(domain):
             ids.append(one.credit)
