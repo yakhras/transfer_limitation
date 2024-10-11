@@ -21,5 +21,5 @@ class ResPartner(models.Model):
         debit = 0.0
         for one in movlin:
             debit = debit + one.debit
-            return debit
+        return debit
        
