@@ -27,6 +27,6 @@ class ResPartner(models.Model):
         total_debit = 0
         for number in list:
             total_debit += number
-        return total_debit
+        return round(total_debit, 2)
 
        
