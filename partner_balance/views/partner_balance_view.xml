@@ -12,5 +12,16 @@
             </field>
         </field>
     </record>
+
+    <record model="ir.ui.view" id="partner_balance_view_list">
+        <field name="name">partner_balance_view_list</field> <!--View name-->
+        <field name="model">res.partner</field> <!--Model name where view will applied-->
+        <field name="inherit_id" ref="base.view_partner_tree"/> <!--External ID of Parent view which inherited-->
+        <field name="arch" type="xml">
+            <field name="phone" position="after"> <!--existing field-->
+                <field name="balance"/>
+            </field>
+        </field>
+    </record>
 </data>
 </odoo>
