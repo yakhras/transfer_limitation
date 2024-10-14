@@ -39,7 +39,8 @@ odoo.define('geolocation.getLocation', function (require) {
                 if(selectedOption){
                    console.log('True');
                    navigator.geolocation.getCurrentPosition((position) => {
-                    console.log(position.coords);
+                    console.log(position.coords.longitude);
+                    console.log(position.coords.latitude);
                    })
                 }
                 if (!selectedOption){
