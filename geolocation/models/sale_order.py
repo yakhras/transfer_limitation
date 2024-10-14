@@ -9,4 +9,5 @@ class ResPartner(models.Model):
 
     def geo(self, geo):
         # return self.write({'barcode': geo.get('long')})
-        return self.barcode = geo.get(data)
+        for i in geo:
+            return self.barcode = geo.get(data)
