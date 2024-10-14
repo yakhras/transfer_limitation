@@ -1,4 +1,4 @@
-odoo.define('pos_invoice.SalesSelectionPopup', function (require) {
+odoo.define('pos_invoice.geoPopup', function (require) {
     'use strict';
 
     const { useState } = owl.hooks;
