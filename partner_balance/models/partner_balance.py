@@ -8,16 +8,18 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'   # Inherit the model
 
     balance = fields.Float()
-    balance_id = fields.Boolean()
+    
 
+    def get_balance(self):
+        for rec in self:
+            self.balance = self.compute_balance()
 
-    @api.onchange('balance_id')
-    def on_change_balance_id(self):
+    def compute_balance(self):
         credit = self.get_credits()
         total_credits = self.total_credit(credit)
         debit = self.get_debits()
         total_debits = self.total_debit(debit)
-        self.balance = round(total_debits - total_credits, 2)
+        return round(total_debits - total_credits, 2)
 
     def get_debits(self):
         domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
