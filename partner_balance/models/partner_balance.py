@@ -13,11 +13,11 @@ class ResPartner(models.Model):
 
     @api.onchange('balance_id')
     def on_change_balance_id(self):
-        credit = self.get_credits()
-        self.balance = round(self.total_credit(credit), 2)
+        debit = self.get_debits()
+        self.balance = round(self.total_debit(debit), 2)
 
     def get_debits(self):
-        domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
+        domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True), ('account_id.code', '=', self.property_account_receivable_id.code)]
         ids = []
         for one in self.move_line_ids.filtered_domain(domain):
             ids.append(one.debit)
