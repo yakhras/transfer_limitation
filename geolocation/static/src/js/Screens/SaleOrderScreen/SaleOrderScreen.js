@@ -1,4 +1,4 @@
-odoo.define('pos_invoice.SaleOrderScreen', function (require) {
+odoo.define('geolocation.getLocation', function (require) {
     'use strict';
 
     const { useState } = owl.hooks;
