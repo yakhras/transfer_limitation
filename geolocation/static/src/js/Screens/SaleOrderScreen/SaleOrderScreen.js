@@ -17,7 +17,7 @@ odoo.define('geolocation.getLocation', function (require) {
             console.log('Hi Yaser');
             let order = this.env.pos.get_order();
             let currentClient = order.get_client()
-            const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
+            const { confirmed, payload: selectedOption } = await this.showPopup('geoPopup',
                 {
                     title: this.env._t('Select an Invoice'),
                     list: [
@@ -39,7 +39,7 @@ odoo.define('geolocation.getLocation', function (require) {
                 if(selectedOption){
                    console.log('True');
                    navigator.geolocation.getCurrentPosition((position) => {
-                    console.log(position);
+                    console.log(position.coords);
                    })
                 }
                 if (!selectedOption){
