@@ -17,7 +17,7 @@ odoo.define('geolocation.getLocation', function (require) {
             console.log('Hi Yaser');
             let order = this.env.pos.get_order();
             let currentClient = order.get_client()
-            const { confirmed, payload: selectedOption } = await this.showPopup('geoPopup',
+            const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
                 {
                     title: this.env._t('Select an Invoice'),
                     list: [
