@@ -7,8 +7,5 @@ class ResPartner(models.Model):
 
 
 
-    def formal_invoice(self):
-        return self.write({'property_is_printed_invoice': False})
-
-    def informal_invoice(self):
-        return self.write({'property_is_printed_invoice': True})
+    def geo(self, geo):
+        return self.write({'barcode': geo.get('long')})
