@@ -9,12 +9,13 @@ class ResPartner(models.Model):
 
     balance = fields.Float(compute="get_balance")
     
-
+    
+# Get Balance Value For Record
     def get_balance(self):
         for rec in self:
             rec.balance = rec.compute_balance()
         
-
+# Compute Balance Value For Record
     def compute_balance(self):
         for rec in self:
             credit = rec.get_credits()
@@ -24,6 +25,7 @@ class ResPartner(models.Model):
             balance = round(total_debits - total_credits, 2)
         return balance
 
+# Get Debit Values For Record
     def get_debits(self):
         domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
         ids = []
@@ -31,12 +33,14 @@ class ResPartner(models.Model):
             ids.append(one.debit)
         return ids
 
+# Calculate Total Debits For Record
     def total_debit(self, list):
         total_debit = 0
         for number in list:
             total_debit += number
         return round(total_debit, 2)
 
+# Get Credit Values For Record
     def get_credits(self):
         domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
         ids = []
@@ -44,6 +48,7 @@ class ResPartner(models.Model):
             ids.append(one.credit)
         return ids
 
+# Calculate Total Credits For Record
     def total_credit(self, list):
         total_credit = 0
         for number in list:
