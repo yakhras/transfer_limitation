@@ -16,6 +16,8 @@ odoo.define('geolocation.getLocation', function (require) {
         async _onClickPay() {
             console.log('Hi Yaser');
             const geo = {};
+            let long
+            let lat
             let order = this.env.pos.get_order();
             let currentClient = order.get_client()
             const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
