@@ -17,10 +17,10 @@ class ResPartner(models.Model):
 
     def compute_balance(self):
         for rec in self:
-            credit = self.get_credits()
-            total_credits = self.total_credit(credit)
-            debit = self.get_debits()
-            total_debits = self.total_debit(debit)
+            credit = rec.get_credits()
+            total_credits = rec.total_credit(credit)
+            debit = rec.get_debits()
+            total_debits = rec.total_debit(debit)
             balance = round(total_debits - total_credits, 2)
         return balance
 
