@@ -15,6 +15,7 @@ class ResPartner(models.Model):
             self.compute_balance()
 
     def compute_balance(self):
+        self.ensure_one()
         credit = self.get_credits()
         total_credits = self.total_credit(credit)
         debit = self.get_debits()
