@@ -45,7 +45,7 @@ odoo.define('geolocation.getLocation', function (require) {
                         // lat : position.coords.latitude,
                      
                     console.log(long) ;
-                    console.log(lat);
+                    // console.log(lat);
                     
                    });
                    await this.rpc({
