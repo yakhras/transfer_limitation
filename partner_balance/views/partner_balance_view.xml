@@ -19,7 +19,7 @@
         <field name="inherit_id" ref="base.view_partner_tree"/> <!--External ID of Parent view which inherited-->
         <field name="arch" type="xml">
             <field name="phone" position="after"> <!--existing field-->
-                <field name="balance" widget="float" type="char"/>
+                <field name="balance" widget="monetary"/>
             </field>
         </field>
     </record>
