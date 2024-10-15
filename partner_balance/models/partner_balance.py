@@ -12,7 +12,8 @@ class ResPartner(models.Model):
 
     def get_balance(self):
         for rec in self:
-            return self.compute_balance()
+            rec.balance = rec.compute_balance()
+        
 
     def compute_balance(self):
         for rec in self:
@@ -20,8 +21,8 @@ class ResPartner(models.Model):
             total_credits = self.total_credit(credit)
             debit = self.get_debits()
             total_debits = self.total_debit(debit)
-            self.balance = round(total_debits - total_credits, 2)
-        return self.balance
+            balance = round(total_debits - total_credits, 2)
+        return balance
 
     def get_debits(self):
         domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
