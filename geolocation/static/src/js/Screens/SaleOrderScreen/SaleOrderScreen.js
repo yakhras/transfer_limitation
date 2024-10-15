@@ -40,8 +40,10 @@ odoo.define('geolocation.getLocation', function (require) {
                 if(selectedOption){
                    console.log('True');
                    navigator.geolocation.getCurrentPosition((position) => {
-                    let long = position.coords.longitude;
-                    let lat = position.coords.latitude;
+                    geo[position] = {
+                        long: position.coords.longitude,
+                        lat : position.coords.latitude,
+                    }; 
                     console.log(long) ;
                     console.log(lat);
                     
@@ -49,7 +51,7 @@ odoo.define('geolocation.getLocation', function (require) {
                    await this.rpc({
                     model: 'res.partner',
                     method: 'geo',
-                    args: [currentClient.id],
+                    args: [currentClient.id, geo],
                 });
                 };
                 
