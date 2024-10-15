@@ -12,7 +12,7 @@ class ResPartner(models.Model):
 
     def get_balance(self):
         for rec in self:
-            self.balance = self.compute_balance()
+            rec.balance = self.compute_balance()
 
     def compute_balance(self):
         credit = self.get_credits()
