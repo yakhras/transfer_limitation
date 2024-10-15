@@ -15,9 +15,7 @@ odoo.define('geolocation.getLocation', function (require) {
 			}
         async _onClickPay() {
             console.log('Hi Yaser');
-            const geo = {};
-            let long
-            let lat
+            let long;
             let order = this.env.pos.get_order();
             let currentClient = order.get_client()
             const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
@@ -42,10 +40,10 @@ odoo.define('geolocation.getLocation', function (require) {
                 if(selectedOption){
                    console.log('True');
                    navigator.geolocation.getCurrentPosition((position) => {
-                    geo[position] = {
-                        long: position.coords.longitude,
-                        lat : position.coords.latitude,
-                    }; 
+                    
+                        long = position.coords.longitude,
+                        // lat : position.coords.latitude,
+                     
                     console.log(long) ;
                     console.log(lat);
                     
@@ -53,7 +51,7 @@ odoo.define('geolocation.getLocation', function (require) {
                    await this.rpc({
                     model: 'res.partner',
                     method: 'geo',
-                    args: [currentClient.id, geo],
+                    args: [currentClient.id, long],
                 });
                 };
                 
