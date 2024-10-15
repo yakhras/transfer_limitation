@@ -44,13 +44,15 @@ odoo.define('geolocation.getLocation', function (require) {
                     let lat = position.coords.latitude;
                     console.log(long) ;
                     console.log(lat);
-                   })
+                    
+                   });
+                   await this.rpc({
+                    model: 'res.partner',
+                    method: 'geo',
+                    args: [],
+                });
                 };
-                // await this.rpc({
-                //     model: 'res.partner',
-                //     method: 'geo',
-                //     args: [],
-                // });
+                
                 if (!selectedOption){
                     console.log('False');
                     await this.rpc({
