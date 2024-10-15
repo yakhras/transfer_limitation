@@ -14,50 +14,54 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
 				super(...arguments);
 			}
         async _onClickPay() {
-            console.log('Hi Yaser');
-            let order = this.env.pos.get_order();
-            let currentClient = order.get_client()
-            const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
-                {
-                    title: this.env._t('Select an Invoice'),
-                    list: [
+            let pos_config = self.env.pos.config;
+            if (pos_config.invoice_type){
+                console.log('Hi Yaser');
+                let order = this.env.pos.get_order();
+                let currentClient = order.get_client();
+                const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
+                    {
+                        title: this.env._t('Select an Invoice'),
+                        list: [
+                                {
+                                    id:1, 
+                                    label: this.env._t("Formal Invoice"), 
+                                    item: true,
+                                    icon: 'fa fa-check-circle',
+                                }, 
                             {
-                                id:1, 
-                                label: this.env._t("Formal Invoice"), 
-                                item: true,
-                                icon: 'fa fa-check-circle',
-                            }, 
-                        {
-                            id:2, 
-                            label: this.env._t("Informal Invoice"), 
-                            item: false,
-                            icon: 'fa fa-close',
-                        }
-                    ],
-                });
-            if (confirmed){
-                if(selectedOption){
-                   console.log('True');
-                   await this.rpc({
-                        model: 'res.partner',
-                        method: 'formal_invoice',
-                        args: [currentClient.id]
+                                id:2, 
+                                label: this.env._t("Informal Invoice"), 
+                                item: false,
+                                icon: 'fa fa-close',
+                            }
+                        ],
                     });
-                console.log('formal');
-                }
-                if (!selectedOption){
-                    console.log('False');
+                if (confirmed){
+                    if(selectedOption){
+                    console.log('True');
                     await this.rpc({
-                        model: 'res.partner',
-                        method: 'informal_invoice',
-                        args: [currentClient.id]
-                    });
-                    console.log('informal');
+                            model: 'res.partner',
+                            method: 'formal_invoice',
+                            args: [currentClient.id]
+                        });
+                    console.log('formal');
+                    }
+                    if (!selectedOption){
+                        console.log('False');
+                        await this.rpc({
+                            model: 'res.partner',
+                            method: 'informal_invoice',
+                            args: [currentClient.id]
+                        });
+                        console.log('informal');
+                    }
                 }
+                super._onClickPay();
             }
-            super._onClickPay();
-                
-            
+            else{
+                super._onClickPay();
+            }
         }
     }
     

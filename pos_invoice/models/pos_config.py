@@ -5,4 +5,4 @@ class PosConfig(models.Model):
     _inherit = "pos.config"
 
 
-    create_so = fields.Boolean("Create Sales Order", help="Allow to create Sales Order in POS", default=True)
+    invoice_type = fields.Boolean("Select Invoice Type", help="Allow to Select Invoice type: Formal, Informal", default=False)
