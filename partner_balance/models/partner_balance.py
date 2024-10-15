@@ -11,11 +11,10 @@ class ResPartner(models.Model):
     
 
     def get_balance(self):
-        for rec in self:
-            self.compute_balance()
+        self.ensure_one()
+        return self.compute_balance()
 
     def compute_balance(self):
-        self.ensure_one()
         credit = self.get_credits()
         total_credits = self.total_credit(credit)
         debit = self.get_debits()
