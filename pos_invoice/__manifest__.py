@@ -9,7 +9,9 @@
     'website': 'http://yaserakhras.com',
     #'support': 'support@warlocktechnologies.com',
     'depends': ['point_of_sale', 'base'],
-    #"data": ['views/pos_config.xml'],
+    'data': [
+        'views/pos_config.xml',
+    ],
     'assets': {
         'point_of_sale.assets': [
             #'wt_create_so_from_pos/static/src/js/Screens/ProductScreen/ControlButtons/SaleOrderButton.js',
