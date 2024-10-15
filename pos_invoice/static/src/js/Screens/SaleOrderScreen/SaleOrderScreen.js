@@ -14,7 +14,6 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
 				super(...arguments);
 			}
         async _onClickPay() {
-            // var self = this;
             let pos_config = this.env.pos.config;
             if (pos_config.invoice_type){
                 console.log('Hi Yaser');
