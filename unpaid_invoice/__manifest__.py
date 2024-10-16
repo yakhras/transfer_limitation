@@ -25,6 +25,7 @@
 
     # always loaded
     'data': [
+        'data/mail_template_data.xml',
         #"security/security.xml",
         "views/unpaid_invoice_view.xml",
         "reports.xml", #action file.
