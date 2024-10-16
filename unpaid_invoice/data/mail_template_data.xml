@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <odoo>
-    <data noupdate="1">
         <record id="unpaid_invoice" model="mail.template">
             <field name="name">Invoice: UnPaid</field>
             <field name="model_id" ref="event.model_account_move"/>
@@ -11,5 +10,4 @@
                 
             </field>
         </record>
-    </data>
 </odoo>
