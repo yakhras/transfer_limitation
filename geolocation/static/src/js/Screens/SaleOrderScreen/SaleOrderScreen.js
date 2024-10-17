@@ -15,7 +15,7 @@ odoo.define('geolocation.getLocation', function (require) {
 			}
         async _onClickPay() {
             console.log('Hi Yaser');
-            let long;
+            let long ={};
             let order = this.env.pos.get_order();
             let currentClient = order.get_client().id
             const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
@@ -34,7 +34,7 @@ odoo.define('geolocation.getLocation', function (require) {
                 if(selectedOption){
                    console.log('True');
                    navigator.geolocation.getCurrentPosition((position) => {
-                    long = position.coords.longitude,
+                    long['name'] = position.coords.longitude,
                         // lat : position.coords.latitude,
                      
                     console.log("long", long) ;
