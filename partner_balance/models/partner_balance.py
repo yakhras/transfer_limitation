@@ -11,6 +11,7 @@ class ResPartner(models.Model):
     
     
 # Get Balance Value For Record
+    @api.depence('balance')
     def get_balance(self):
         for rec in self:
             rec.balance = rec.compute_balance()
