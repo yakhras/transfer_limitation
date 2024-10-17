@@ -9,7 +9,8 @@ class ResPartner(models.Model):
 
     account_check_ids = fields.One2many(
         comodel_name="account.check",
-        string="Partner Checks")
+        inverse_name="amount",
+        string="Partner Checks",)
     
     #check_amount = fields.Float('Check Amount')
     
