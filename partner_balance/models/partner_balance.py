@@ -24,7 +24,8 @@ class ResPartner(models.Model):
             debit = rec.get_debits()
             total_debits = rec.total_debit(debit)
             balance = round(total_debits - total_credits, 2)
-        return balance
+            if balance != 0 :
+                return balance
 
 # Get Debit Values For Record
     def get_debits(self):
