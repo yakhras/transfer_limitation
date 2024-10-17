@@ -7,5 +7,6 @@ class ResPartner(models.Model):
 
 
     def geo(self, long):
-        return self.write({'barcode': '321'})
+        
+        return self.barcode = long
         
