@@ -11,7 +11,7 @@ class ResPartner(models.Model):
     
     
 # Get Balance Value For Record
-    @api.depence('balance')
+    @api.depends('move_line_ids')
     def get_balance(self):
         for rec in self:
             rec.balance = rec.compute_balance()
