@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import pos_debit
+from . import res_partner
