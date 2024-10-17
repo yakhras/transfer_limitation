@@ -12,7 +12,7 @@ class ResPartner(models.Model):
         inverse_name="source_partner_id",
         string="Partner Checks",)
     
-    check_amount = fields.Float('Check Amount')
+    #check_amount = fields.Float('Check Amount')
     
     
 # # Get Amount Value For Record
