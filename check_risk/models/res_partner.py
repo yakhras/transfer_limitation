@@ -11,7 +11,7 @@ class ResPartner(models.Model):
         comodel_name="account.check",
         inverse_name="source_partner_id",
         string="Partner Checks",)
-    check_amount = fields.Float('Check Amount')
+    check_amount = fields.Float('Check Amount', compute='get_amount')
     
     
 # Get Amount Value For Record
