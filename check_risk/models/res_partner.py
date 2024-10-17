@@ -11,49 +11,33 @@ class ResPartner(models.Model):
         comodel_name="account.check",
         inverse_name="source_partner_id",
         string="Partner Checks",)
+    check_amount = fields.Float('Check Amount')
     
     
-# Get Balance Value For Record
+# Get Amount Value For Record
     def get_balance(self):
         for rec in self:
-            rec.balance = rec.compute_balance()
+            rec.check_amount = rec.compute_amount()
         
-# Compute Balance Value For Record
-    def compute_balance(self):
+# Compute Amount Value For Record
+    def compute_amount(self):
         for rec in self:
-            credit = rec.get_credits()
-            total_credits = rec.total_credit(credit)
-            debit = rec.get_debits()
-            total_debits = rec.total_debit(debit)
-            balance = round(total_debits - total_credits, 2)
-        return balance
+            amounts = rec.get_amounts()
+            total_amount = rec.total_amount(amounts)
+        return total_amount
 
-# Get Debit Values For Record
-    def get_debits(self):
-        domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
+
+# Get Amount Values For Record
+    def get_amounts(self):
+        domain = ["reconciled","=",False]
         ids = []
-        for one in self.move_line_ids.filtered_domain(domain):
-            ids.append(one.debit)
+        for one in self.account_check_ids.filtered_domain(domain):
+            ids.append(one.amount)
         return ids
 
-# Calculate Total Debits For Record
-    def total_debit(self, list):
-        total_debit = 0
+# Calculate Total Amount For Record
+    def total_amount(self, list):
+        total_amount = 0
         for number in list:
-            total_debit += number
-        return round(total_debit, 2)
-
-# Get Credit Values For Record
-    def get_credits(self):
-        domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
-        ids = []
-        for one in self.move_line_ids.filtered_domain(domain):
-            ids.append(one.credit)
-        return ids
-
-# Calculate Total Credits For Record
-    def total_credit(self, list):
-        total_credit = 0
-        for number in list:
-            total_credit += number
-        return round(total_credit, 2)
+            total_amount += number
+        return round(total_amount, 2)
