@@ -15,7 +15,7 @@ class ResPartner(models.Model):
     
     
 # Get Amount Value For Record
-    def get_balance(self):
+    def get_amount(self):
         for rec in self:
             rec.check_amount = rec.compute_amount()
         
