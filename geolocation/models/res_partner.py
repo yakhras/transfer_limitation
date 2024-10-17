@@ -5,7 +5,6 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
 
-    @api.model
     def geo(self,long):
         return self.write({'barcode': 'long'})
         
