@@ -7,11 +7,10 @@ from odoo.exceptions import ValidationError
 class ResPartner(models.Model):
     _inherit = 'res.partner'   # Inherit the model
 
-    balance = fields.Float(compute="get_balance", readonly=True, store=True)
+    balance = fields.Float(compute="get_balance", readonly=True, index=True)
     
     
 # Get Balance Value For Record
-    @api.depends('move_line_ids')
     def get_balance(self):
         for rec in self:
             rec.balance = rec.compute_balance()
