@@ -7,6 +7,5 @@ class ResPartner(models.Model):
 
 
     def geo(self, long):
-        
-        return self.barcode = long
+        self.barcode = long
         
