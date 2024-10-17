@@ -7,7 +7,10 @@ from odoo.exceptions import ValidationError
 class ResPartner(models.Model):
     _inherit = 'res.partner'   # Inherit the model
 
-    balance = fields.Float(compute="get_balance")
+    account_check_ids = fields.One2many(
+        comodel_name="account.check",
+        inverse_name="source_partner_id",
+        string="Partner Checks",)
     
     
 # Get Balance Value For Record
