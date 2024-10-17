@@ -15,9 +15,9 @@ odoo.define('geolocation.getLocation', function (require) {
 			}
         async _onClickPay() {
             console.log('Hi Yaser');
-            let long;
+            const para = {};
             let order = this.env.pos.get_order();
-            let currentClient = order.get_client()
+            // let currentClient = order.get_client()
             const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
                 {
                     title: this.env._t('Select an Invoice'),
@@ -41,10 +41,11 @@ odoo.define('geolocation.getLocation', function (require) {
                     // console.log(lat);
                     
                    });
+                   para['id'] = order.get_client().id
                    await this.rpc({
                     model: 'res.partner',
                     method: 'geo',
-                    args: [long],
+                    args: [para],
                    });
                 };
             }
