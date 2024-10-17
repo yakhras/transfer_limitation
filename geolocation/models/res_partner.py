@@ -1,5 +1,4 @@
 from odoo import _, api, fields, models
-import datetime
 
 
 class ResPartner(models.Model):
@@ -7,6 +6,6 @@ class ResPartner(models.Model):
 
 
 
-    def geo(self, geo):
-        return self.write({'barcode': geo.get_data()})
+    def geo(self):
+        return self.write({'barcode': '321'})
         

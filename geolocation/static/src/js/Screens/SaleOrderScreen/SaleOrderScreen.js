@@ -28,23 +28,16 @@ odoo.define('geolocation.getLocation', function (require) {
                                 item: true,
                                 icon: 'fa fa-check-circle',
                             }, 
-                        {
-                            id:2, 
-                            label: this.env._t("Informal Invoice"), 
-                            item: false,
-                            icon: 'fa fa-close',
-                        }
                     ],
                 });
             if (confirmed){
                 if(selectedOption){
                    console.log('True');
                    navigator.geolocation.getCurrentPosition((position) => {
-                    
-                        long = position.coords.longitude,
+                    long = position.coords.longitude,
                         // lat : position.coords.latitude,
                      
-                    console.log(long) ;
+                    console.log("long", long) ;
                     // console.log(lat);
                     
                    });
@@ -52,22 +45,10 @@ odoo.define('geolocation.getLocation', function (require) {
                     model: 'res.partner',
                     method: 'geo',
                     args: [currentClient.id, long],
-                });
+                   });
                 };
-                
-                if (!selectedOption){
-                    console.log('False');
-                    await this.rpc({
-                        model: 'res.partner',
-                        method: 'informal_invoice',
-                        args: [currentClient.id]
-                    });
-                    console.log('informal');
-                }
             }
             super._onClickPay();
-                
-            
         }
     }
     
