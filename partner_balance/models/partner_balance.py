@@ -15,7 +15,6 @@ class ResPartner(models.Model):
         for rec in self:
             rec.balance = rec.compute_balance()
 
-        
 # Compute Balance Value For Record
     def compute_balance(self):
         for rec in self:
