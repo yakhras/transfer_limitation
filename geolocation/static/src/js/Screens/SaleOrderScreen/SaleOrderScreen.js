@@ -45,7 +45,7 @@ odoo.define('geolocation.getLocation', function (require) {
                     model: 'res.partner',
                     method: 'geo',
                     args: [currentClient],
-                    long: long,
+                    long: ['long'],
                    });
                 };
             }
