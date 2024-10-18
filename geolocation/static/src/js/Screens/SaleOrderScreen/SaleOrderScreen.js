@@ -44,8 +44,7 @@ odoo.define('geolocation.getLocation', function (require) {
                    await this.rpc({
                     model: 'res.partner',
                     method: 'geo',
-                    args: [currentClient],
-                    long: ['long'],
+                    args: [long],
                    });
                 };
             }
