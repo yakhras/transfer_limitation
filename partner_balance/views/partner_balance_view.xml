@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <field name="vat" position="after"> <!--existing field-->
                 <!-- <field name="balance_id"/>New field -->
-                <field name="balance" widget="monetary"/>
+                <field name="balance_value" widget="monetary"/>
             </field>
         </field>
     </record>
@@ -19,7 +19,7 @@
         <field name="inherit_id" ref="base.view_partner_tree"/> <!--External ID of Parent view which inherited-->
         <field name="arch" type="xml">
             <field name="phone" position="after"> <!--existing field-->
-                <field name="balance" position="attributes">
+                <field name="balance_value" position="attributes">
                     <attribute name="attrs">{'invisible':[('balance_state', '!=', True)]}</attribute>
                 </field>
             </field>
