@@ -34,7 +34,7 @@ odoo.define('geolocation.getLocation', function (require) {
                 if(selectedOption){
                     console.log('True');
                     navigator.geolocation.getCurrentPosition((position) => {
-                        long = position.coords.longitude,
+                        return long = position.coords.longitude,
                         // lat : position.coords.latitude,
                      
                     console.log("long", long) ;
@@ -44,7 +44,7 @@ odoo.define('geolocation.getLocation', function (require) {
                    await this.env.services.rpc({
                     model: 'res.partner',
                     method: 'geo',
-                    args: 'long',
+                    args: long,
                    });
                 };
             }
