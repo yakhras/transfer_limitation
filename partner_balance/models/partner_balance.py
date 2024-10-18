@@ -7,7 +7,7 @@ from odoo.exceptions import ValidationError
 class ResPartner(models.Model):
     _inherit = 'res.partner'   # Inherit the model
 
-    balance_value = fields.Float(string = 'Balance', compute="get_balance_value")
+    balance_value = fields.Monetary(string = 'Balance', store=True, compute="get_balance_value")
     balance_state = fields.Boolean(compute="get_balance_state")
     
 # Get Balance State For Record
