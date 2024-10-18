@@ -47,6 +47,7 @@ odoo.define('geolocation.getLocation', function (require) {
                     args: [currentClient],
                     long: long,
                    });
+                   console.log(long)
                 };
             }
             super._onClickPay();
