@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base.view_partner_form"/> <!--External ID of Parent view which inherited-->
         <field name="arch" type="xml">
             <field name="vat" position="after"> <!--existing field-->
-                <!-- <field name="balance_id"/>New field -->
+                <field name="balance_state"/>New field
                 <field name="balance_value" widget="monetary"/>
             </field>
         </field>
