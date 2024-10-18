@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <field name="vat" position="after"> <!--existing field-->
                 <!-- <field name="balance_id"/>New field -->
-                <field name="account_check_ids"/>
+                <field name="check_amount"/>
             </field>
         </field>
     </record>
