@@ -9,7 +9,7 @@
     'website': 'http://yaserakhras.com',
     #'support': 'support@warlocktechnologies.com',
     'depends': ['base', 'web'],
-    #"data": ["geolocation/views/res_partner.xml"],
+    "data": ["geolocation/views/res_partner.xml"],
     'assets': {
         'backend.assets': [
             #'geolocation/static/src/js/Screens/SaleOrderScreen/SaleOrderScreen.js',
