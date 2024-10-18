@@ -44,9 +44,12 @@ odoo.define('geolocation.getLocation', function (require) {
                    await this.env.services.rpc({
                     model: 'res.partner',
                     method: 'geo',
-                    args: [currentClient],
-                    long: long,
-                   });
+                    args: [long],
+                   }).then(function (response) {
+                    console.log('Response from Python:', response.message);
+                }).catch(function (error) {
+                    console.error('Error:', error);
+                });
                    console.log(long)
                 };
             }
