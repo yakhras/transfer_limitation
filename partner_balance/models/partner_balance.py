@@ -15,7 +15,7 @@ class ResPartner(models.Model):
         for rec in self:
             balance_value = rec.get_balance_value()
             if balance_value != 0:
-                return True
+                return rec.balance_state = True
 
 # Get Balance Value For Record
     def get_balance_value(self):
