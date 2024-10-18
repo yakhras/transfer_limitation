@@ -8,14 +8,14 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'   # Inherit the model
 
     balance_value = fields.Float(compute="get_balance_value", readonly=True)
-    balance_state = fields.Boolean(compute="get_balance_state")
+    balance_state = fields.Boolean(compute="get_balance_state" store=True)
     
 # Get Balance State For Record
     def get_balance_state(self):
         for rec in self:
             balance_value = rec.compute_balance()
             if balance_value != 0:
-                rec.balance_state == True
+                rec.balance_state = True
 
 # Get Balance Value For Record
     def get_balance_value(self):
