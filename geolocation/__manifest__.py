@@ -9,10 +9,11 @@
     'website': 'http://yaserakhras.com',
     #'support': 'support@warlocktechnologies.com',
     'depends': ['point_of_sale', 'base', 'web'],
-    #"data": ['views/pos_config.xml'],
+    "data": ["geolocation/views/res_partner.xml"],
     'assets': {
         'point_of_sale.assets': [
             'geolocation/static/src/js/Screens/SaleOrderScreen/SaleOrderScreen.js',
+            'geolocation/static/src/js/Screens/SaleOrderScreen/SaleOrderScreen copy.js',
             'geolocation/static/src/js/Popups/SalesOrderPopup.js',
         ],
         'web.assets_qweb': [
