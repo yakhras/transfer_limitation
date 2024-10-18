@@ -21,7 +21,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account'],
+    'depends': ['base', 'l10n_tr_account_check'],
 
     # always loaded
     'data': [
