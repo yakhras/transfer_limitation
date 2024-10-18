@@ -6,5 +6,5 @@ class ResPartner(models.Model):
 
     @api.model
     def geo(self,long):
-        return self.write({'barcode': long})
+        return {'success': True, 'message': 'Data processed on server-side'}
         
