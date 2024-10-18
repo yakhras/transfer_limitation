@@ -30,7 +30,7 @@ class ResPartner(models.Model):
 
 # Get Amount Values For Record
     def get_amounts(self):
-        domain = ["reconciled","=",False]
+        domain = [("reconciled","=",False)]
         ids = []
         for one in self.account_check_ids.filtered_domain(domain):
             ids.append(one.amount)
