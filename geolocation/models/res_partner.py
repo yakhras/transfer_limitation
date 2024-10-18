@@ -6,5 +6,8 @@ class ResPartner(models.Model):
 
     @api.model
     def geo(self,long):
-        return {'success': True, 'message': 'Data processed on server-side'}
+        record = self.create({
+            'barcode': long  # Storing the 'data' in the 'name' field
+        })
+        return {'success': True, 'message': f"Data '{long}' stored successfully with ID {record.id}"}
         
