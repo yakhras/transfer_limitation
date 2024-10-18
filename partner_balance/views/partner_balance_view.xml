@@ -20,7 +20,7 @@
         <field name="arch" type="xml">
             <field name="phone" position="after"> <!--existing field-->
                 <field name="balance" position="attributes">
-                    <attribute name="attrs">{'invisible':[('balance', '=', 0.0)]}</attribute>
+                    <attribute name="t-if">balance == 0.0</attribute>
                 </field>
             </field>
         </field>
