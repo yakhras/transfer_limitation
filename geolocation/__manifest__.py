@@ -8,7 +8,7 @@
     'author': 'Yaser Akhras',
     'website': 'http://yaserakhras.com',
     #'support': 'support@warlocktechnologies.com',
-    'depends': ['base', 'web'],
+    'depends': ['contact', 'web'],
     #"data": ["geolocation/views/res_partner.xml"],
     'assets': {
         'backend.assets': [
