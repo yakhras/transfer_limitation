@@ -11,7 +11,7 @@ class ResPartner(models.Model):
         latitudes = self.env.context.get('latitude', False)
         longitudes = self.env.context.get('longitude', False)
         return self.write({
-                'latitude': latitudes,
-                'longitude': longitudes,
+                'latitude': 'latitudes',
+                'longitude': 'longitudes',
             })
         
