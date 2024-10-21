@@ -48,10 +48,9 @@ odoo.define('geolocation.getLocation', function (require) {
                                 method: 'geo',
                                 args: [currentClient],
                                 context: ctx,
-                            })
-                            
+                            });
+                            console.log(ctx)
                         });
-                        console.log(session.user_context)
                     }
                     super._onClickPay();
                 }
