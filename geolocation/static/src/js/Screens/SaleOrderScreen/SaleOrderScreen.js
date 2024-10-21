@@ -41,6 +41,7 @@ odoo.define('geolocation.getLocation', function (require) {
                                 longitude: position.coords.longitude,
                             });
                             latitude = position.coords.latitude;
+                            console.log(latitude)
                             longitude = position.coords.longitude;
 
                             self._rpc({
@@ -51,7 +52,7 @@ odoo.define('geolocation.getLocation', function (require) {
                             });
                             
                         });
-                        console.log(latitude)
+                        
                     }
                     super._onClickPay();
                 }
