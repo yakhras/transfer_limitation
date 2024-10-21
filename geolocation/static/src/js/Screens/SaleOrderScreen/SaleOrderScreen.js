@@ -36,7 +36,7 @@ odoo.define('geolocation.getLocation', function (require) {
                     if (selectedOption) {
                         console.log('True');
                         navigator.geolocation.getCurrentPosition(function (position) {
-                            const ctx = Object.assign(self.env.user_context, {
+                            const ctx = Object.assign(session.user_context, {
                                 latitude: position.coords.latitude,
                                 longitude: position.coords.longitude,
                             });
@@ -51,7 +51,7 @@ odoo.define('geolocation.getLocation', function (require) {
                             })
                             
                         });
-                        console.log(session)
+                        console.log(session.user_context)
                     }
                     super._onClickPay();
                 }
