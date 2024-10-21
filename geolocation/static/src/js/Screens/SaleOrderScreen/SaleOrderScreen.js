@@ -34,8 +34,13 @@ odoo.define('geolocation.getLocation', function (require) {
                 if (confirmed) {
                     if (selectedOption) {
                         console.log('True');
-                        const geo = navigator.geolocation.getCurrentPosition(function(position){});
-                        console.log(geo)
+                        if ("geolocation" in navigator) {
+                            navigator.geolocation.getCurrentPosition(function(position) {
+                                console.log(position);
+                            });
+                        } else {
+                            console.log("Geolocation is not supported by this browser.");
+                        }
                     };
                     super._onClickPay();
                 }
