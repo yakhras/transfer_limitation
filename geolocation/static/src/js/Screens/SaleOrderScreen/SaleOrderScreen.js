@@ -7,8 +7,7 @@ odoo.define('geolocation.getLocation', function (require) {
     const session = require("web.session");
     const { useListener } = require('web.custom_hooks');
     const ProductScreen = require('point_of_sale.ProductScreen');
-    var latitude;
-    var longitude;
+    
 
     const ZProductScreen = (ProductScreen) =>
         class extends ProductScreen {
@@ -36,23 +35,8 @@ odoo.define('geolocation.getLocation', function (require) {
                     if (selectedOption) {
                         console.log('True');
                         navigator.geolocation.getCurrentPosition(function(position){
-                            // const ctx = Object.assign(session.user_context, {
-                            //     latitude: position.coords.latitude,
-                            //     longitude: position.coords.longitude,
-                            // });
-                            
-                            console.log(position.coords.latitude);
-                            longitude = position.coords.longitude;
-
-                            // self._rpc({
-                            //     model: 'res.partner',
-                            //     method: 'geo',
-                            //     args: [currentClient],
-                            //     context: ctx,
-                            // });
-                            
-                        });
-                        
+                            console.log(position)
+                        })
                     }
                     super._onClickPay();
                 }
