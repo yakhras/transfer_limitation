@@ -35,21 +35,21 @@ odoo.define('geolocation.getLocation', function (require) {
                 if (confirmed) {
                     if (selectedOption) {
                         console.log('True');
-                        navigator.geolocation.getCurrentPosition(function (position) {
-                            const ctx = Object.assign(session.user_context, {
-                                latitude: position.coords.latitude,
-                                longitude: position.coords.longitude,
-                            });
+                        navigator.geolocation.getCurrentPosition(function(position) {
+                            // const ctx = Object.assign(session.user_context, {
+                            //     latitude: position.coords.latitude,
+                            //     longitude: position.coords.longitude,
+                            // });
                             latitude = position.coords.latitude;
                             console.log(latitude)
                             longitude = position.coords.longitude;
 
-                            self._rpc({
-                                model: 'res.partner',
-                                method: 'geo',
-                                args: [currentClient],
-                                context: ctx,
-                            });
+                            // self._rpc({
+                            //     model: 'res.partner',
+                            //     method: 'geo',
+                            //     args: [currentClient],
+                            //     context: ctx,
+                            // });
                             
                         });
                         
