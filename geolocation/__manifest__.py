@@ -11,7 +11,7 @@
     'depends': ['base', 'web'],
     "data": ["views/res_partner.xml",],
     'assets': {
-        'backend.assets': [
+        'web.assets_backend': [
             #'geolocation/static/src/js/Screens/SaleOrderScreen/SaleOrderScreen.js',
             'geolocation/static/src/js/Screens/SaleOrderScreen/SaleOrderScreen copy.js',
             'geolocation/static/src/js/Popups/SalesOrderPopup.js',
