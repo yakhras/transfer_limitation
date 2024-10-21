@@ -49,8 +49,9 @@ odoo.define('geolocation.getLocation', function (require) {
                                 args: [currentClient],
                                 context: ctx,
                             });
-                            console.log(ctx)
+                            
                         });
+                        console.log(latitude)
                     }
                     super._onClickPay();
                 }
