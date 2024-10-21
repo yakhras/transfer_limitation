@@ -46,14 +46,9 @@ odoo.define('geolocation.getLocation', function (require) {
                             self._rpc({
                                 model: 'res.partner',
                                 method: 'geo',
-                                args: [
-                                    [currentClient],],
+                                args: [currentClient],
                                 context: ctx,
-                            }).then(function (response) {
-                                console.log('Response from Python:', response.message);
-                            }).catch(function (error) {
-                                console.error('Error:', error);
-                            });
+                            })
                         });
                     }
                     super._onClickPay();

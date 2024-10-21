@@ -4,13 +4,13 @@ from odoo import _, api, fields, models
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    latitude = fields.Float(string='Latitude', digits=(16, 5))
-    longitude = fields.Float(string='Longitude', digits=(16, 5))
+    latitude = fields.Char(string='Latitude')
+    longitude = fields.Char(string='Longitude')
 
     def geo(self):
         latitudes = self.env.context.get('latitude', False)
         longitudes = self.env.context.get('longitude', False)
-        self.write({
+        return self.write({
                 'latitude': latitudes,
                 'longitude': longitudes,
             })
