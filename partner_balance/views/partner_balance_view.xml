@@ -39,7 +39,6 @@
         <record id="action_partner_balance" model="ir.actions.act_window">
             <field name="name">Partner Balances</field>
             <field name="res_model">partner.balance</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p>
