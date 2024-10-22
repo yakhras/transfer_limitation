@@ -7,7 +7,7 @@ odoo.define('geolocation.getLocation', function (require) {
     const session = require("web.session");
     const { useListener } = require('web.custom_hooks');
     const ProductScreen = require('point_of_sale.ProductScreen');
-    
+
 
     const ZProductScreen = (ProductScreen) =>
         class extends ProductScreen {
@@ -34,19 +34,19 @@ odoo.define('geolocation.getLocation', function (require) {
                 if (confirmed) {
                     if (selectedOption) {
                         console.log('True');
-                        if ("geolocation" in navigator) {
-                            navigator.geolocation.getCurrentPosition(function(position) {
-                                console.log(position.coords);
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            const ctx = Object.assign(session.user_context, {
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
                             });
-                        } else {
-                            console.log("Geolocation is not supported by this browser.");
-                        }
-                    };
-                    super._onClickPay();
+                        });
+                        console.log(latitude)
+                        super._onClickPay();
+                    }
                 }
             }
         }
-    
+
 
     Registries.Component.extend(ProductScreen, ZProductScreen);
 
