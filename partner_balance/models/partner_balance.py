@@ -15,14 +15,15 @@ class PartnerBalance(models.Model):
     move_line_id = fields.Many2one(
         'account.move.line',
         string='Move Line',
-        required=True,
+        # required=True,
         ondelete='cascade'
     )
     balance = fields.Monetary(
         string='Balance',
         required=True,
         default=0.0,
-        currency_field='currency_id'
+        currency_field='currency_id',
+        compute='get_balance_value'
     )
     currency_id = fields.Many2one(
         'res.currency',
