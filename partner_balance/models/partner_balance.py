@@ -28,7 +28,7 @@ class PartnerBalance(models.Model):
     currency_id = fields.Many2one(
         'res.currency',
         string='Currency',
-        required=True,
+        # required=True,
         related='partner_id.currency_id',
         store=True
     )
