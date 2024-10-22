@@ -25,6 +25,6 @@
 
     # always loaded
     'data': [
-        "views/partner_balance_view.xml",
+        #"views/partner_balance_view.xml",
     ],
 }
