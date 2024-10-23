@@ -12,11 +12,11 @@ class PartnerBalance(models.Model):
         required=True,
         ondelete='cascade'
     )
-    move_line_id = fields.Many2one(
-        'account.move.line',
-        string='Move Line',
-        # required=True,
-        ondelete='cascade'
+    move_line_ids = fields.One2many(
+        'account.move.line', 
+        'partner_id', 
+        string="Related Move Lines",
+        domain=[('full_reconcile_id', '=', False), ('balance', '!=', 0)]
     )
     balance = fields.Monetary(
         string='Balance',
