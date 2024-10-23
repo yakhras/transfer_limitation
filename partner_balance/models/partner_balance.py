@@ -118,7 +118,7 @@ class PartnerBalance(models.Model):
             rec.move_line_ids = move_lines
 
     # Compute balance for the current records only
-    @api.depends('move_line_ids.debit', 'move_line_ids.credit')
+    #@api.depends('move_line_ids.debit', 'move_line_ids.credit')
     def _compute_balance(self):
         for rec in self:
             # Get the domain using the _get_move_line_domain method
