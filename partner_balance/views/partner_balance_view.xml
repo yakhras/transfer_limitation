@@ -8,7 +8,7 @@
             <field name="name">partner.balance.tree</field>
             <field name="model">partner.balance</field>
             <field name="arch" type="xml">
-                <tree string="Partner Balances">
+                <tree string="Partner Balances" create="false">
                     <field name="partner_id"/>
                     <field name="balance"/>
                     <field name="currency_id"/>
