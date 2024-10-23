@@ -87,8 +87,10 @@ class AccountMoveLine(models.Model):
     def create(self, vals):
         move_line = super(AccountMoveLine, self).create(vals)
         if self._has_balance_fields(vals):
-            _logger.info("Creating account.move.line and updating balance for partner_id: %s", move_line.partner_id.id)
-            self._recompute_partner_balance(move_line.partner_id.id)
+            partner_ids = self.mapped('partner_id').ids
+            _logger.info("Updating partner balances for partner_ids: %s", partner_ids)
+            for partner_id in partner_ids:
+                self._recompute_partner_balance(partner_id)
         return move_line
 
     def write(self, vals):
