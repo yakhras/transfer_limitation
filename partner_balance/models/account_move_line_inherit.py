@@ -48,3 +48,17 @@ class AccountMoveLine(models.Model):
                 partner_balance._compute_balance()  # Call the method to recalculate balance
 
         return move_line
+    
+    @api.model
+    def unlink(self):
+        partner_ids = self.mapped('partner_id').ids
+        res = super(AccountMoveLine, self).unlink()
+
+        # Recalculate balances for affected partner balances
+        partner_balances = self.env['partner.balance'].search([
+            ('partner_id', 'in', partner_ids)
+        ])
+        for partner_balance in partner_balances:
+            partner_balance._compute_balance()  # Call the method to recalculate balance
+
+        return res
