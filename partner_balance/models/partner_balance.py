@@ -25,6 +25,7 @@ class PartnerBalance(models.Model):
         default=0.0,
         currency_field='currency_id',
         compute='get_balance_value',
+        store=True,
     )
     currency_id = fields.Many2one(
         'res.currency',
