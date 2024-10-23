@@ -34,9 +34,9 @@
                                 <tree string="Move Lines">
                                     <field name="date"/>
                                     <field name="name"/>
-                                    <field name="debit"/>
-                                    <field name="credit"/>
-                                    <field name="balance"/>
+                                    <field name="debit" sum="Total"/>
+                                    <field name="credit" sum="Total"/>
+                                    <field name="balance" sum="Total"/>
                                 </tree>
                             </field>
                         </group>
