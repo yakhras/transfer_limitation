@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import models, fields, api
 
 class PartnerBalance(models.Model):
     _name = 'partner.balance'
@@ -24,7 +24,7 @@ class PartnerBalance(models.Model):
         required=True,
         default=0.0,
         currency_field='currency_id',
-        compute='get_balance_value',
+        compute='_compute_balance',
         store=True,
     )
     currency_id = fields.Many2one(
@@ -50,6 +50,7 @@ class PartnerBalance(models.Model):
             rec.balance = rec.compute_balance()
 
     # Compute Balance Value For Record
+    @api.depends('move_line_ids.debit', 'move_line_ids.credit')
     def compute_balance(self):
         for rec in self:
             total_credits = rec.get_total_credits()
@@ -116,3 +117,11 @@ class PartnerBalance(models.Model):
         for rec in self:
             move_lines = self.env['account.move.line'].search(self._get_move_line_domain())
             rec.move_line_ids = move_lines
+
+    # Compute balance for the current records only
+    @api.depends('move_line_ids.debit', 'move_line_ids.credit')
+    def _compute_balance(self):
+        for rec in self:
+            debit = sum(line.debit for line in rec.move_line_ids if not line.full_reconcile_id)
+            credit = sum(line.credit for line in rec.move_line_ids if not line.full_reconcile_id)
+            rec.balance = debit - credit
