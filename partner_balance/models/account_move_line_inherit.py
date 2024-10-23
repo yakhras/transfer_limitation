@@ -83,13 +83,13 @@ class AccountMoveLine(models.Model):
             _logger.info("Recalculating balance for partner: %s", partner_balance.partner_id.name)
             partner_balance._compute_balance()
 
-    @api.model
-    def create(self, vals):
-        move_line = super(AccountMoveLine, self).create(vals)
-        if self._has_balance_fields(vals):
-            _logger.info("Creating account.move.line and updating balance for partner_id: %s", move_line.partner_id.id)
-            self._recompute_partner_balance(move_line.partner_id.id)
-        return move_line
+    # @api.model
+    # def create(self, vals):
+    #     move_line = super(AccountMoveLine, self).create(vals)
+    #     if self._has_balance_fields(vals):
+    #         _logger.info("Creating account.move.line and updating balance for partner_id: %s", move_line.partner_id.id)
+    #         self._recompute_partner_balance(move_line.partner_id.id)
+    #     return move_line
 
     def write(self, vals):
         res = super(AccountMoveLine, self).write(vals)
