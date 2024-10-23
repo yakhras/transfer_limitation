@@ -121,6 +121,15 @@ class PartnerBalance(models.Model):
     @api.depends('move_line_ids.debit', 'move_line_ids.credit')
     def _compute_balance(self):
         for rec in self:
-            debit = sum(line.debit for line in rec.move_line_ids if not line.full_reconcile_id)
-            credit = sum(line.credit for line in rec.move_line_ids if not line.full_reconcile_id)
+            # Get the domain using the _get_move_line_domain method
+            domain = rec._get_move_line_domain()
+
+            # Use the domain to search for matching account.move.line records
+            move_lines = self.env['account.move.line'].search(domain)
+
+            # Calculate total debit and credit from the filtered lines
+            debit = sum(line.debit for line in move_lines)
+            credit = sum(line.credit for line in move_lines)
+
+            # Compute balance as debit - credit
             rec.balance = debit - credit
