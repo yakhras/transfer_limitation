@@ -30,7 +30,7 @@
                             <field name="balance"/>
                         </group>
                         <group string="Related Move Lines">
-                            <field name="move_line_ids" context="{'default_partner_id': partner_id}" readonly="1">
+                            <field name="move_line_ids" context="{'default_partner_id': partner_id}" readonly="1" options="{'no_open': True}">
                                 <tree string="Move Lines">
                                     <field name="date"/>
                                     <field name="name"/>
