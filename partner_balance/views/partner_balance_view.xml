@@ -23,25 +23,33 @@
             <field name="model">partner.balance</field>
             <field name="arch" type="xml">
                 <form string="Partner Balance">
+                    <header>
+                        <button name="action_view_move_lines" type="object" string="View Move Lines" class="oe_stat_button"/>
+                        <field name="move_line_count" widget="statinfo" string="Move Lines"/>
+                    </header>
                     <sheet>
                         <group>
                             <field name="partner_id"/>
                             <field name="currency_id"/>
                             <field name="balance"/>
                         </group>
-                        <group string="Related Move Lines">
-                            <field name="move_line_ids">
-                                <tree string="Move Lines">
-                                    <field name="date"/>
-                                    <field name="name"/>
-                                    <field name="debit"/>
-                                    <field name="credit"/>
-                                    <field name="balance"/>
-                                </tree>
-                            </field>
-                        </group>
                     </sheet>
                 </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_move_line_tree" model="ir.ui.view">
+            <field name="name">account.move.line.tree.view</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+                <tree string="Move Lines">
+                    <field name="date"/>
+                    <field name="name"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="balance"/>
+                </tree>
             </field>
         </record>
 
@@ -55,6 +63,13 @@
                     View and manage partner balances.
                 </p>
             </field>
+        </record>
+
+        <record id="action_view_move_lines" model="ir.actions.act_window">
+            <field name="name">Move Lines</field>
+            <field name="res_model">account.move.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
         </record>
 
         <!-- Menu Item -->

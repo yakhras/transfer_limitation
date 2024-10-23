@@ -12,11 +12,10 @@ class PartnerBalance(models.Model):
         required=True,
         ondelete='cascade'
     )
-    move_line_ids = fields.One2many(
-        'account.move.line', 
-        'partner_id', 
-        string="Related Move Lines",
-        domain=[('full_reconcile_id', '=', False), ('balance', '!=', 0)]
+    # Move line count for smart button
+    move_line_count = fields.Integer(
+        string="Move Line Count", 
+        compute='_compute_move_line_count'
     )
     balance = fields.Monetary(
         string='Balance',
@@ -76,3 +75,32 @@ class PartnerBalance(models.Model):
         ]
         total_credit = sum(self.env['account.move.line'].search(domain).mapped('credit'))
         return round(total_credit, 2)
+    
+    def _compute_move_line_count(self):
+        for rec in self:
+            rec.move_line_count = self.env['account.move.line'].search_count(self._get_move_line_domain())
+
+    def _get_move_line_domain(self):
+        """
+        Returns the domain to filter account.move.line records used in the balance computation.
+        """
+        return [
+            ('partner_id', '=', self.partner_id.id),
+            ('full_reconcile_id', '=', False),
+            ('balance', '!=', 0),
+            ('account_id.reconcile', '=', True)
+        ]
+    
+    def action_view_move_lines(self):
+        """
+        Returns an action that opens a tree view displaying the filtered move lines.
+        """
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Move Lines',
+            'res_model': 'account.move.line',
+            'view_mode': 'tree,form',
+            'domain': self._get_move_line_domain(),
+            'context': dict(self.env.context),
+        }
