@@ -89,3 +89,12 @@ class PartnerBalance(models.Model):
             name = record.partner_id.name  # Get the partner name
             result.append((record.id, name))  # Return a tuple of (record_id, name)
         return result
+    
+
+    def _compute_move_lines(self):
+        """
+        Compute the move lines used for balance calculation and set them to the One2many field.
+        """
+        for rec in self:
+            move_lines = self.env['account.move.line'].search(self._get_move_line_domain())
+            rec.move_line_ids = move_lines
