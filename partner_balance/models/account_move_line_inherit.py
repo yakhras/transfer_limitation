@@ -83,7 +83,7 @@ class AccountMoveLine(models.Model):
             _logger.info("Recalculating balance for partner: %s", partner_balance.partner_id.name)
             partner_balance._compute_balance()
 
-    @api.model
+    
     def create(self, vals):
         """Override create method to ensure partner balances are updated."""
         move_line = super(AccountMoveLine, self).create(vals)
@@ -94,7 +94,7 @@ class AccountMoveLine(models.Model):
 
         return move_line
     
-    
+
     def write(self, vals):
         res = super(AccountMoveLine, self).write(vals)
         if self._has_balance_fields(vals):
@@ -103,6 +103,7 @@ class AccountMoveLine(models.Model):
             for partner_id in partner_ids:
                 self._recompute_partner_balance(partner_id)
         return res
+
 
     def unlink(self):
         partner_ids = self.mapped('partner_id').ids
