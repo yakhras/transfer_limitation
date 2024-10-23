@@ -45,6 +45,6 @@ class AccountMoveLine(models.Model):
             partner_balance = self.env['partner.balance'].search([('partner_id', '=', partner_id)], limit=1)
             if partner_balance:
                 _logger.info("Recalculating balance for partner: %s", partner_balance.partner_id.name)
-                partner_balance.get_balance_value()  # Call the method to recalculate balance
+                partner_balance._compute_balance()  # Call the method to recalculate balance
 
         return move_line
