@@ -22,7 +22,7 @@
             <field name="name">partner.balance.form</field>
             <field name="model">partner.balance</field>
             <field name="arch" type="xml">
-                <form string="Partner Balance">
+                <form string="Partner Balance" create="false" edit="false">
                     <sheet>
                         <group>
                             <field name="partner_id"/>
