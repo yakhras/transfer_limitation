@@ -133,3 +133,10 @@ class PartnerBalance(models.Model):
 
             # Compute balance as debit - credit
             rec.balance = debit - credit
+
+
+    @api.model
+    def create(self, vals):
+        record = super(PartnerBalance, self).create(vals)
+        record._compute_balance()  # Compute balance after creation
+        return record
