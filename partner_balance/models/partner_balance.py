@@ -24,7 +24,7 @@ class PartnerBalance(models.Model):
         required=True,
         default=0.0,
         currency_field='currency_id',
-        compute='get_balance_value',
+        compute='_compute_balance',
         store=True,
     )
     currency_id = fields.Many2one(
@@ -118,9 +118,9 @@ class PartnerBalance(models.Model):
             rec.move_line_ids = move_lines
 
     # Compute balance for the current records only
-    # @api.depends('move_line_ids.debit', 'move_line_ids.credit')
-    # def _compute_balance(self):
-    #     for rec in self:
-    #         debit = sum(line.debit for line in rec.move_line_ids if not line.full_reconcile_id)
-    #         credit = sum(line.credit for line in rec.move_line_ids if not line.full_reconcile_id)
-    #         rec.balance = debit - credit
+    @api.depends('move_line_ids.debit', 'move_line_ids.credit')
+    def _compute_balance(self):
+        for rec in self:
+            debit = sum(line.debit for line in rec.move_line_ids if not line.full_reconcile_id)
+            credit = sum(line.credit for line in rec.move_line_ids if not line.full_reconcile_id)
+            rec.balance = debit - credit
