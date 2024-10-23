@@ -23,15 +23,22 @@
             <field name="model">partner.balance</field>
             <field name="arch" type="xml">
                 <form string="Partner Balance">
-                    <header>
-                        <button name="action_view_move_lines" type="object" string="View Move Lines" class="oe_stat_button"/>
-                        <field name="move_line_count" widget="statinfo" string="Move Lines"/>
-                    </header>
                     <sheet>
                         <group>
                             <field name="partner_id"/>
                             <field name="currency_id"/>
                             <field name="balance"/>
+                        </group>
+                        <group string="Related Move Lines">
+                            <field name="move_line_ids" context="{'default_partner_id': partner_id}">
+                                <tree string="Move Lines">
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="debit"/>
+                                    <field name="credit"/>
+                                    <field name="balance"/>
+                                </tree>
+                            </field>
                         </group>
                     </sheet>
                 </form>

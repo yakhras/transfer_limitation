@@ -12,10 +12,12 @@ class PartnerBalance(models.Model):
         required=True,
         ondelete='cascade'
     )
-    # Move line count for smart button
-    move_line_count = fields.Integer(
-        string="Move Line Count", 
-        compute='_compute_move_line_count'
+    # Dynamically filtered One2many field to display related move lines
+    move_line_ids = fields.One2many(
+        'account.move.line', 
+        compute='_compute_move_lines',
+        string="Related Move Lines",
+        readonly=True
     )
     balance = fields.Monetary(
         string='Balance',
@@ -104,3 +106,12 @@ class PartnerBalance(models.Model):
             'domain': self._get_move_line_domain(),
             'context': dict(self.env.context),
         }
+    
+
+    def _compute_move_lines(self):
+        """
+        Compute the move lines used for balance calculation and set them to the One2many field.
+        """
+        for rec in self:
+            move_lines = self.env['account.move.line'].search(self._get_move_line_domain())
+            rec.move_line_ids = move_lines
