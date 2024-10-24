@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <templates id="BalanceListView.buttons" xml:space="preserve">
+    <template id="BalanceListView.buttons" xml:space="preserve">
         <t t-extend="ListView.buttons" t-name="BalanceListView.buttons">
             <t t-jquery="button.o_list_export_xlsx" t-operation="after">
                 <button type="button" class="btn btn-primary call_unpaid">
@@ -8,5 +8,5 @@
                 </button>
             </t>
         </t>
-    </templates>
+    </template>
 </odoo>
