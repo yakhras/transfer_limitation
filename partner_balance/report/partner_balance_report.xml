@@ -9,6 +9,5 @@
         name="partner_balance.partner_balance_report_template"
         file="partner_balance.partner_balance_report_template"
         print_report_name="'Partner_Balance_Report'"
-        encoding="utf-8"
-    />
+        encoding="utf-8"/>
 </odoo>
