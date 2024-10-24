@@ -31,4 +31,10 @@
         'report/partner_balance_report_template.xml',   # Report template
 
     ],
+
+    'assets': {
+        'web.assets_backend': [
+            'partner_balance/src/js/export_pdf_button.js',
+        ],
+    },
 }
