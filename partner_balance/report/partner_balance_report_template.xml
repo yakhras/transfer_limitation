@@ -67,7 +67,7 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Move Line ID</th>
+                                        <th>Date</th>
                                         <th>Debit</th>
                                         <th>Credit</th>
                                     </tr>
@@ -75,7 +75,7 @@
                                 <tbody>
                                     <t t-foreach="record.move_line_ids" t-as="line">
                                         <tr>
-                                            <td><span t-field="line.id"/></td>
+                                            <td><span t-field="line.date"/></td>
                                             <td><span t-field="line.debit" t-field-options='{"widget": "monetary", "display_currency": line.currency_id}'/></td>
                                             <td><span t-field="line.credit" t-field-options='{"widget": "monetary", "display_currency": line.currency_id}'/></td>
                                         </tr>
