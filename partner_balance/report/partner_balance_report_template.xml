@@ -36,34 +36,36 @@
                     <h1>Partner Balance Report</h1>
                     <p>Date: <span t-field="date_today"/></p>
                 </header>
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="record" t-value="doc"/>
+                    <section>
+                        <h2>Partner Information</h2>
+                        <p>Name: <strong><t t-field="record.partner_id.name"/></strong></p>
+                        <p>Currency: <strong><t t-field="record.currency_id.symbol"/></strong></p>
+                    </section>
 
-                <section>
-                    <h2>Partner Information</h2>
-                    <p>Name: <strong><t t-field="record.partner_id.name"/></strong></p>
-                    <p>Currency: <strong><t t-field="record.currency_id.symbol"/></strong></p>
-                </section>
-
-                <section>
-                    <h2>Balance Details</h2>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Move Line Date</th>
-                                <th>Description</th>
-                                <th>Debit</th>
-                                <th>Credit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr t-foreach="record.move_line_ids" t-as="line">
-                                <td t-field="line.date" />
-                                <td t-field="line.name" />
-                                <td t-field="line.debit" />
-                                <td t-field="line.credit" />
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
+                    <section>
+                        <h2>Balance Details</h2>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Move Line Date</th>
+                                    <th>Description</th>
+                                    <th>Debit</th>
+                                    <th>Credit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="record.move_line_ids" t-as="line">
+                                    <td t-field="line.date" />
+                                    <td t-field="line.name" />
+                                    <td t-field="line.debit" />
+                                    <td t-field="line.credit" />
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </t>
 
                 <footer>
                     <p>Page <t t-esc="doc.page_number"/></p>
