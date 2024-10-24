@@ -99,3 +99,13 @@ class PartnerBalance(models.Model):
         for rec in self:
             move_lines = self.env['account.move.line'].search(self._get_move_line_domain())
             rec.move_line_ids = move_lines
+
+    @api.multi
+    def action_export_pdf(self):
+        print('ji')
+        # report = self.env.ref('module_name.action_partner_balance_tree_report')
+        # if not report:
+        #     raise UserError("Report not found.")
+        # pdf = report.render_qweb_pdf(self.ids)[0]
+        # pdfhttpheaders = [('Content-Type', 'application/pdf'), ('Content-Length', len(pdf))]
+        # return request.make_response(pdf, headers=pdfhttpheaders)
