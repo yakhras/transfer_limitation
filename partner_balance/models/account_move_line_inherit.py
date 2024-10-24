@@ -1,6 +1,7 @@
 # # -*- coding: utf-8 -*-
 
 from odoo import models, api
+from odoo.exceptions import UserError
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -31,6 +32,13 @@ class AccountMoveLine(models.Model):
     
     @api.model
     def create(self, vals):
+        # Add custom logic to ensure vals contain balanced debit and credit.
+        debit = vals.get('debit', 0)
+        credit = vals.get('credit', 0)
+
+        if debit != credit:
+            raise UserError(_("The journal entry is unbalanced. Debit: %s, Credit: %s") % (debit, credit))
+        
         # Create the account.move.line record
         move_line = super(AccountMoveLine, self).create(vals)
 
