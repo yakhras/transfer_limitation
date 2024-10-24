@@ -1,43 +1,25 @@
 /** @odoo-module **/
 
-import { useService } from '@web/core/utils/hooks';
-import { ListController } from '@web/views/list/list_controller';
-import { registry } from '@web/core/registry';
+var ListController = require('web.ListController');
+var ListView = require('web.ListView');
+var viewRegistry = require('web.view_registry');
 
-class ExportPdfButtonListController extends ListController {
-    setup() {
-        super.setup();
-        const actionService = useService('action');
-        const { doAction } = actionService;
-
-        this.addExportPdfButton();
+var ExportPdfButtonListController = ListController.extend({}, {
+    buttons_template: 'partnerBalanceListView.buttons',
+    events: _.extend({}, ListController.prototype.events, {
+        'click .call_unpaid': '_onExport',
+    }),
+    _onExport: function(){
+        console.log('kjdfvndfkjbvn')
     }
+});
 
-    addExportPdfButton() {
-        if (this.modelName === 'partner.balance') {
-            const exportPdfButton = {
-                type: 'button',
-                text: 'Export to PDF',
-                class: 'btn btn-primary',
-                icon: 'fa fa-file-pdf-o',
-                handler: () => {
-                    const context = {
-                        active_model: this.modelName,
-                        active_ids: this.model.localIds,
-                    };
-                    doAction({
-                        name: 'Export to PDF',
-                        type: 'ir.actions.report',
-                        report_type: 'qweb-pdf',
-                        report_name: 'partner_balance.partner_balance_tree_report_template',
-                        context,
-                    });
-                },
-            };
 
-            this.actionButtons.push(exportPdfButton);
-        }
-    }
-}
 
-registry.category('view.controllers').add('partner_balance_tree', ExportPdfButtonListController);
+var BalanceListView = ListView.extend({
+    config: _.extend({}, ListView.prototype.config, {
+        Controller: ExportPdfButtonListController,
+    }),
+});
+
+viewRegistry.add('partner_balance', BalanceListView);
