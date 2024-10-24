@@ -9,7 +9,7 @@
                     <t t-set="record" t-value="doc"/>
                     <div class="partner_balance_record">
                         <p><strong>Partner Name:</strong> <span t-field="record.partner_id.name"/></p>
-                        <p><strong>Balance:</strong> <span t-field="record.balance" t-field-options='{"widget": "monetary", "display_currency": record.currency_id}'/></p>
+                        <p><strong>Balance:</strong> <span t-field="record.balance"/></p>
                         <p><strong>Currency:</strong> <span t-field="record.currency_id.name"/></p>
                         <p><strong>Last Updated:</strong> <span t-field="record.date_updated"/></p>
                         <h3>Related Move Lines:</h3>
