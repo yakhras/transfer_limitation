@@ -100,7 +100,7 @@ class PartnerBalance(models.Model):
             move_lines = self.env['account.move.line'].search(self._get_move_line_domain())
             rec.move_line_ids = move_lines
 
-    @api.multi
+    
     def action_export_pdf(self):
         print('ji')
         # report = self.env.ref('module_name.action_partner_balance_tree_report')
