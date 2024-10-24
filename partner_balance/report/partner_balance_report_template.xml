@@ -5,12 +5,21 @@
         <t t-call="web.html_container">
             <div class="page">
                 <h2>Partner Balance Report</h2>
-                <t t-foreach="doc_ids" t-as="doc_id">
-                    <t t-set="record" t-value="doc_id"/>
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="record" t-value="doc"/>
                     <div class="partner_balance_record">
-                        <h2>Partner Balance Report</h2>
-                        <p><strong>Partner Name:</strong> <span t-field="doc.partner_id.name"/></p>
-                        <p><strong>Balance:</strong> <span t-field="doc.balance" t-field-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></p>
+                        <p><strong>Partner Name:</strong> <span t-field="record.partner_id.name"/></p>
+                        <p><strong>Balance:</strong> <span t-field="record.balance" t-field-options='{"widget": "monetary", "display_currency": record.currency_id}'/></p>
+                        <p><strong>Currency:</strong> <span t-field="record.currency_id.name"/></p>
+                        <p><strong>Last Updated:</strong> <span t-field="record.date_updated"/></p>
+                        <h3>Related Move Lines:</h3>
+                        <t t-foreach="record.move_line_ids" t-as="line">
+                            <p>
+                                <strong>Move Line ID:</strong> <span t-field="line.id"/>,
+                                <strong>Debit:</strong> <span t-field="line.debit" t-field-options='{"widget": "monetary", "display_currency": line.currency_id}'/>,
+                                <strong>Credit:</strong> <span t-field="line.credit" t-field-options='{"widget": "monetary", "display_currency": line.currency_id}'/>
+                            </p>
+                        </t>
                     </div>
                 </t>
             </div>
