@@ -30,7 +30,6 @@ class AccountMoveLine(models.Model):
 
         return res
     
-    @api.model
     def create(self, vals):
         # Create the account.move.line record
         move_line = super(AccountMoveLine, self).create(vals)
