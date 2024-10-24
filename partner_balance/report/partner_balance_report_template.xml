@@ -34,7 +34,7 @@
                 <header>
                     <!-- <img src="/your_module/static/description/logo.png" alt="Company Logo"/> -->
                     <h1>Partner Balance Report</h1>
-                    <p>Date: <span t-field="date_today"/></p>
+                    <!-- <p>Date: <span t-field="date_today"/></p> -->
                 </header>
                 <t t-foreach="docs" t-as="doc">
                     <t t-set="record" t-value="doc"/>
