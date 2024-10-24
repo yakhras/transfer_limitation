@@ -1,4 +1,5 @@
-/** @odoo-module **/
+odoo.define('account.upload.bill.mixin', function (require) {
+    "use strict";
 
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
@@ -24,3 +25,4 @@ var BalanceListView = ListView.extend({
 });
 
 viewRegistry.add('partner_balance', BalanceListView);
+});
