@@ -67,9 +67,9 @@
                     </section>
                 </t>
 
-                <footer>
+                <!-- <footer>
                     <p>Page <t t-esc="doc.page_number"/></p>
-                </footer>
+                </footer> -->
             </div>
         </t>
     </template>
