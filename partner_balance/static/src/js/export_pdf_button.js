@@ -6,6 +6,7 @@ var viewRegistry = require('web.view_registry');
 
 var ExportPdfButtonListController = ListController.extend({
     buttons_template: 'BalanceListView.buttons',
+    xmlDependencies: ['partner_balance/static/src/xml/partner_balance_qweb.xml'],
     events: _.extend({}, ListController.prototype.events, {
         'click .call_unpaid': '_onExport',
     }),
