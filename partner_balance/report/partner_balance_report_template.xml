@@ -33,6 +33,41 @@
         <meta charset="UTF-8"/>
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
+                <style>
+                    .company_logo {
+                        width: 150px;
+                        height: auto;
+                    }
+                    .header {
+                        text-align: center;
+                        margin-bottom: 20px;
+                    }
+                    .page h1 {
+                        font-size: 24px;
+                        color: #333;
+                    }
+                    .partner_balance_record, .related_move_lines {
+                        margin-bottom: 20px;
+                    }
+                    .table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    .table th, .table td {
+                        border: 1px solid #ddd;
+                        padding: 8px;
+                    }
+                    .table th {
+                        background-color: #f2f2f2;
+                        text-align: left;
+                    }
+                    .footer {
+                        text-align: right;
+                        font-size: 12px;
+                        color: #888;
+                    }
+                </style>
+                    
                 <div class="page">
                     <div class="oe_structure"/>
                     <h1>Partner Balance Report</h1>
