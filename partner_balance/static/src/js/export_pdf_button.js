@@ -1,4 +1,4 @@
-odoo.define('account.upload.bill.mixin', function (require) {
+odoo.define('partner_balance.listpdf', function (require) {
     "use strict";
 
 var ListController = require('web.ListController');
