@@ -64,7 +64,7 @@
 #         return res
 
 
-from odoo import models, api
+from odoo import models
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -85,13 +85,13 @@ class AccountMoveLine(models.Model):
 
 
     def create(self, vals):
+        """Override create method to ensure partner balances are updated."""
         move_line = super(AccountMoveLine, self).create(vals)
         if self._has_balance_fields(vals):
-            partner_ids = self.mapped('partner_id').ids
-            _logger.info("Updating partner balances for partner_ids: %s", partner_ids)
-            for partner_id in partner_ids:
-                self._recompute_partner_balance(partner_id)
+            _logger.info("Creating account.move.line and updating balance for partner_id: %s", move_line.partner_id.id)
+            self._recompute_partner_balance(move_line.partner_id.id)
         return move_line
+    
 
     def write(self, vals):
         res = super(AccountMoveLine, self).write(vals)
@@ -101,6 +101,7 @@ class AccountMoveLine(models.Model):
             for partner_id in partner_ids:
                 self._recompute_partner_balance(partner_id)
         return res
+    
 
     def unlink(self):
         partner_ids = self.mapped('partner_id').ids
