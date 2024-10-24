@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <templates>
+    <templates id="template" xml:space="preserve">
         <t t-extend="ListView.buttons" t-name="BalanceListView.buttons">
             <t t-jquery="button.o_list_button_add" t-operation="after">
                 <button type="button" class="btn btn-primary call_unpaid">
