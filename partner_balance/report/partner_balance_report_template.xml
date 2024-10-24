@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <odoo>
     <template id="partner_balance_report_template">
@@ -8,6 +8,7 @@
                 <t t-foreach="docs" t-as="doc">
                     <t t-set="record" t-value="doc"/>
                     <div class="partner_balance_record">
+                        <h4>Hello There</h4>
                         <p><strong>Partner Name:</strong> <span t-field="record.partner_id.name"/></p>
                         <p><strong>Balance:</strong> <span t-field="record.balance"/></p>
                         <p><strong>Currency:</strong> <span t-field="record.currency_id.name"/></p>
