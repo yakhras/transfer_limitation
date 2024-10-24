@@ -34,7 +34,7 @@
 
     'assets': {
         'web.assets_backend': [
-            'partner_balance/src/js/export_pdf_button.js',
+            
         ],
     },
 }
