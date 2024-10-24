@@ -119,7 +119,7 @@
                         </div>
                         
                         <div class="footer">
-                            <p>Page <span t-esc="doc.__page_number__"/></p>
+                            <!-- <p>Page <span t-esc="doc.__page_number__"/></p> -->
                             <p>Generated on: <span t-field="record.date_updated"/></p>
                         </div>
                     </t>
