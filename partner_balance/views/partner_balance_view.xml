@@ -82,6 +82,15 @@
             <field name="context">{}</field>
         </record>
 
+        <odoo>
+            <template id="assets_backend" name="partner_balance assets" inherit_id="web.assets_backend">
+                <xpath expr="." position="inside">
+                    <script type="module" src="/partner_balance/static/src/js/export_pdf_button.js"></script>
+                </xpath>
+            </template>
+        </odoo>
+        
+
         <!-- Menu Item -->
         <menuitem id="menu_partner_balance" name="Partner Balances" action="action_partner_balance" parent="point_of_sale.menu_point_rep" sequence="10"/>
         
