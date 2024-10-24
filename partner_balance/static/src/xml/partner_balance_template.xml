@@ -1,29 +1,14 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<odoo>
-    <data>
-        <templates id="template" xml:space="preserve">
-            <t t-extend="ListView.buttons" t-name="BalanceListView.buttons">
-                <t t-jquery="button.o_list_export_xlsx" t-operation="after">
-                    <button type="button" class="btn btn-primary call_unpaid">
-                            PDF
-                    </button>
-                </t>
-            </t>
-        </templates>
-    </data>
-</odoo>
 
-<!-- <?xml version="1.0" encoding="utf-8" ?>
-<odoo>
-    <data>
-        <template id="BalanceListView.buttons" xml:space="preserve">
-            <t t-extend="ListView.buttons">
-                <t t-jquery="button.o_list_export_xlsx" t-operation="after">
-                    <button type="button" class="btn btn-primary call_unpaid">
-                        PDF
-                    </button>
-                </t>
-            </t>
-        </template>
-    </data>
-</odoo> -->
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+
+<t t-extend="ListView.buttons" t-name="PartnerBalance.Buttons">
+    <t t-jquery="button.o_list_export_xlsx" t-operation="after">
+        <button class="btn btn-primary o_button_pdf mr-2" type="button">
+            PDF
+        </button>
+    </t>
+</t>
+
+</templates>
+
