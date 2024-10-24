@@ -31,63 +31,65 @@
 
     <template id="partner_balance_report_template">
         <meta charset="UTF-8"/>
-        <t t-call="web.external_layout">
-            <div class="page">
-                <div class="oe_structure"/>
-                <h1>Partner Balance Report</h1>
-                
-                <t t-foreach="docs" t-as="doc">
-                    <t t-set="record" t-value="doc"/>
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="oe_structure"/>
+                    <h1>Partner Balance Report</h1>
+                    
+                    <t t-foreach="docs" t-as="doc">
+                        <t t-set="record" t-value="doc"/>
 
-                    <div class="partner_balance_record">
-                        <h3 class="mt32 mb8">Partner Details</h3>
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Partner Name</th>
-                                <td><span t-field="record.partner_id.name"/></td>
-                            </tr>
-                            <tr>
-                                <th>Balance</th>
-                                <td><span t-field="record.balance" t-field-options='{"widget": "monetary", "display_currency": record.currency_id}'/></td>
-                            </tr>
-                            <tr>
-                                <th>Currency</th>
-                                <td><span t-field="record.currency_id.name"/></td>
-                            </tr>
-                            <tr>
-                                <th>Last Updated</th>
-                                <td><span t-field="record.date_updated"/></td>
-                            </tr>
-                        </table>
-                    </div>
-                    
-                    <div class="related_move_lines">
-                        <h3 class="mt32 mb8">Related Move Lines</h3>
-                        <table class="table table-hover">
-                            <thead>
+                        <div class="partner_balance_record">
+                            <h3 class="mt32 mb8">Partner Details</h3>
+                            <table class="table table-bordered">
                                 <tr>
-                                    <th>Move Line ID</th>
-                                    <th>Debit</th>
-                                    <th>Credit</th>
+                                    <th>Partner Name</th>
+                                    <td><span t-field="record.partner_id.name"/></td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <t t-foreach="record.move_line_ids" t-as="line">
+                                <tr>
+                                    <th>Balance</th>
+                                    <td><span t-field="record.balance" t-field-options='{"widget": "monetary", "display_currency": record.currency_id}'/></td>
+                                </tr>
+                                <tr>
+                                    <th>Currency</th>
+                                    <td><span t-field="record.currency_id.name"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Last Updated</th>
+                                    <td><span t-field="record.date_updated"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="related_move_lines">
+                            <h3 class="mt32 mb8">Related Move Lines</h3>
+                            <table class="table table-hover">
+                                <thead>
                                     <tr>
-                                        <td><span t-field="line.id"/></td>
-                                        <td><span t-field="line.debit" t-field-options='{"widget": "monetary", "display_currency": line.currency_id}'/></td>
-                                        <td><span t-field="line.credit" t-field-options='{"widget": "monetary", "display_currency": line.currency_id}'/></td>
+                                        <th>Move Line ID</th>
+                                        <th>Debit</th>
+                                        <th>Credit</th>
                                     </tr>
-                                </t>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="footer">
-                        <p>Generated on: <span t-field="record.date_updated"/></p>
-                    </div>
-                </t>
-            </div>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="record.move_line_ids" t-as="line">
+                                        <tr>
+                                            <td><span t-field="line.id"/></td>
+                                            <td><span t-field="line.debit" t-field-options='{"widget": "monetary", "display_currency": line.currency_id}'/></td>
+                                            <td><span t-field="line.credit" t-field-options='{"widget": "monetary", "display_currency": line.currency_id}'/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="footer">
+                            <p>Generated on: <span t-field="record.date_updated"/></p>
+                        </div>
+                    </t>
+                </div>
+            </t>
         </t>
     </template>
 </odoo>
