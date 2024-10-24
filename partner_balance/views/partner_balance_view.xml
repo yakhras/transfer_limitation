@@ -82,13 +82,12 @@
             <field name="context">{}</field>
         </record>
 
-        <odoo>
-            <template id="assets_backend" name="partner_balance assets" inherit_id="web.assets_backend">
-                <xpath expr="." position="inside">
-                    <script type="module" src="/partner_balance/static/src/js/export_pdf_button.js"></script>
-                </xpath>
-            </template>
-        </odoo>
+        
+        <template id="assets_backend" name="partner_balance assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="module" src="/partner_balance/static/src/js/export_pdf_button.js"></script>
+            </xpath>
+        </template>
         
 
         <!-- Menu Item -->
