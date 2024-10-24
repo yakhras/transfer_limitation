@@ -33,11 +33,12 @@
     ],
 
     'assets': {
-        'web.assets_backend': [
-            'partner_balance/static/src/js/export_pdf_button.js',
-        ],
         'web.assets_qweb': [
             'partner_balance/static/src/xml/partner_balance_qweb.xml',
         ],
+        'web.assets_backend': [
+            'partner_balance/static/src/js/export_pdf_button.js',
+        ],
+        
     },
 }
