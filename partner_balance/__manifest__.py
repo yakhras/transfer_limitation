@@ -36,5 +36,8 @@
         'web.assets_backend': [
             'partner_balance/static/src/js/export_pdf_button.js',
         ],
+        'web.assets_qweb': [
+            'account/static/src/xml/**/*',
+        ],
     },
 }

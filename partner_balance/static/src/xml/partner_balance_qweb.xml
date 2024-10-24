@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    
+    <template id="assets_backend" name="partner_balance assets" inherit_id="web.assets_backend">
+        <xpath expr="//link[last()]" position="after">
+            <script type="module" src="/partner_balance/static/src/js/export_pdf_button.js"/>
+        </xpath>
+    </template>
+
+</odoo>
