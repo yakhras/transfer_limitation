@@ -34,10 +34,7 @@
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <style>
-                    .company_logo {
-                        width: 150px;
-                        height: auto;
-                    }
+                    
                     .header {
                         text-align: center;
                         margin-bottom: 20px;
@@ -122,6 +119,7 @@
                         </div>
                         
                         <div class="footer">
+                            <p>Page <span t-esc="doc.__page_number__"/></p>
                             <p>Generated on: <span t-field="record.date_updated"/></p>
                         </div>
                     </t>
