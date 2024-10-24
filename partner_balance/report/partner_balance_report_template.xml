@@ -28,36 +28,42 @@
     </template>
 </odoo> -->
 <odoo>
-    
 
     <template id="partner_balance_report_template">
         <meta charset="UTF-8"/>
-        <t t-call="web.html_container">
+        <t t-call="web.external_layout">
             <div class="page">
+                <div class="oe_structure"/>
+                <h1>Partner Balance Report</h1>
+                
                 <t t-foreach="docs" t-as="doc">
                     <t t-set="record" t-value="doc"/>
-                    
-                    <h2>Partner Balance Report</h2>
-                    
+
                     <div class="partner_balance_record">
-                        <h3>Partner Details</h3>
-                        <p>
-                            <strong>Partner Name:</strong> <span t-field="record.partner_id.name"/>
-                        </p>
-                        <p>
-                            <strong>Balance:</strong> <span t-field="record.balance" t-field-options='{"widget": "monetary", "display_currency": record.currency_id}'/>
-                        </p>
-                        <p>
-                            <strong>Currency:</strong> <span t-field="record.currency_id.name"/>
-                        </p>
-                        <p>
-                            <strong>Last Updated:</strong> <span t-field="record.date_updated"/>
-                        </p>
+                        <h3 class="mt32 mb8">Partner Details</h3>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Partner Name</th>
+                                <td><span t-field="record.partner_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <th>Balance</th>
+                                <td><span t-field="record.balance" t-field-options='{"widget": "monetary", "display_currency": record.currency_id}'/></td>
+                            </tr>
+                            <tr>
+                                <th>Currency</th>
+                                <td><span t-field="record.currency_id.name"/></td>
+                            </tr>
+                            <tr>
+                                <th>Last Updated</th>
+                                <td><span t-field="record.date_updated"/></td>
+                            </tr>
+                        </table>
                     </div>
                     
                     <div class="related_move_lines">
-                        <h3>Related Move Lines</h3>
-                        <table class="table table-sm table-hover">
+                        <h3 class="mt32 mb8">Related Move Lines</h3>
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>Move Line ID</th>
