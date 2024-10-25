@@ -95,14 +95,14 @@
                                                 <span class="o_text_overflow">
                                                     <t t-esc="record.name.value" />
                                                 </span>
-                                                <div class="o_kanban_primary_right">
-                                                    <span>
+                                                <div>
+                                                    <span class="float-right">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">
                                                             Today Unpaid Invoices</a>
                                                     </span>
                                                 </div>
-                                                <div class="o_kanban_primary_right">
-                                                    <span>
+                                                <div>
+                                                    <span class="float-right">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_before_today" type="action">
                                                             Past Unpaid Invoices</a>
                                                     </span>
