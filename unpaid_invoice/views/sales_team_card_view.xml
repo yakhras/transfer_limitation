@@ -96,10 +96,16 @@
                                                     <t t-esc="record.name.value" />
                                                 </span>
                                                 <div>
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">Today Unpaid Invoices</a>
+                                                    <span>
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">
+                                                            Today Unpaid Invoices</a>
+                                                    </span>
                                                 </div>
                                                 <div>
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_before_today" type="action">Past Unpaid Invoices</a>
+                                                    <span>
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_before_today" type="action">
+                                                            Past Unpaid Invoices</a>
+                                                    </span>
                                                 </div>
                                                     <!-- <a name="action_unpaid_invoice" type="object">
                                                         <t t-esc="record.name.value" />
