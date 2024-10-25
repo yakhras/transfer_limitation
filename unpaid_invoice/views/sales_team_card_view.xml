@@ -136,15 +136,15 @@
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
                 ]</field>
-            <field name="context">{
+            <!-- <field name="context">{
                     'search_default_team_id': [active_id],
                     'default_team_id': active_id,
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
                     'journal_type': 'sale',
                 }
-            </field>
-            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            </field> 
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>-->
         </record>
 
         <!-- Menu Item -->
