@@ -179,7 +179,6 @@
                     'journal_type': 'sale',
                 }
             </field> 
-            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
         </record>
 
         <!-- Menu Item -->
