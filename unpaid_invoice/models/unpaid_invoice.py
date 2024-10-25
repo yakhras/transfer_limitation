@@ -53,5 +53,3 @@ class UnpaidInvoice(models.Model):
         # Logic to generate and send the PDF report
         pass
     
-# class CrmTeam(models.Model):
-#     _inherit = 'crm.team'
