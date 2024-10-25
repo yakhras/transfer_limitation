@@ -88,7 +88,7 @@
                                     <div class="o_kanban_card_content mw-100">
                                         <div class="o_kanban_primary_left">
                                             <div class="o_primary">
-                                                <span class="o_text_overflow">
+                                                <span class="o_text_overflow" style="border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px;">
                                                     <t t-esc="record.name.value" />
                                                 </span>
                                                 <div>
