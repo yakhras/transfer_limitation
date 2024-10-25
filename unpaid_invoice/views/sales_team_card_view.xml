@@ -133,7 +133,7 @@
             <field name="domain">[
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ('not_paid', 'partial')),
+                ('payment_state', 'in', ['not_paid', 'partial']),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': [active_id],
