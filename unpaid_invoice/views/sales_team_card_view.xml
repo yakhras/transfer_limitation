@@ -154,7 +154,7 @@
             <field name="model">account.move</field>
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
-                <tree create="false">
+                <tree>
                 </tree>
             </field>
         </record>
