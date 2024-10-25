@@ -26,7 +26,7 @@
     # always loaded
     'data': [
         #"security/security.xml",
-        "unpaid_invoice/views/sales_team_card_view.xml",
+        "views/sales_team_card_view.xml",
         # "reports.xml", #action file.
         # "menuitems.xml", #menu items file.
         # "report/layouts.xml", #report page templates file. 
