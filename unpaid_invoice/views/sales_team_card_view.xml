@@ -97,7 +97,7 @@
                                                     
                                                 </span>
                                                 <div>
-                                                    <a name="%(action_unpaid_invoice_salesteams)d" type="action">Unpaid Invoices</a>
+                                                    <a name="%(unpaid_invoice.action_unpaid_invoice_salesteams)d" type="action">Unpaid Invoices</a>
                                                 </div>
                                                     <!-- <a name="action_unpaid_invoice" type="object">
                                                         <t t-esc="record.name.value" />
