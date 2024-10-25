@@ -87,7 +87,7 @@
                             <div class="o_kanban_card">
                                 <div class="o_kanban_details">
                                     <strong>
-                                        <t t-esc="record.team_id.name"/>  <!-- Sales Team Name -->
+                                        <t t-esc="record.team_id.name.value"/>  <!-- Sales Team Name -->
                                     </strong>
                                     <!-- <div>
                                         <t t-esc="record.amount_due"/>  Amount Due
