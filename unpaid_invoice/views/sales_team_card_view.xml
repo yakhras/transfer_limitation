@@ -130,6 +130,26 @@
                 </tree>
             </field>
         </record>
+
+
+        <record id="view_unpaid_invoice_form" model="ir.ui.view">
+            <field name="name">unpaid.invoice.form</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
+                        <!-- Other form fields go here -->
+                        <group>
+                            <field name="invoice_id"/>
+                            <field name="partner_id"/>
+                            <field name="amount_total"/>
+                            <field name="currency_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
  
         
         

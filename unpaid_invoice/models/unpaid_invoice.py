@@ -46,17 +46,10 @@ class UnpaidInvoice(models.Model):
     amount_total = fields.Monetary(string="Total Amount", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string="Currency")
 
-    @api.model
-    def update_unpaid_invoices(self):
-        # Logic to fetch unpaid invoices and populate this model
-        pass
 
-    def send_daily_report(self):
-        # Logic to generate and send the PDF report
-        pass
-
-    
     def populate_unpaid_invoices(self):
+        
+
         # Define the domain for unpaid invoices
         domain = [
             ('state', '=', 'posted'),
@@ -66,23 +59,18 @@ class UnpaidInvoice(models.Model):
         
         # Fetch records from account.move that meet the domain criteria
         account_moves = self.env['account.move'].search(domain)
-        
+       
+
         # Loop through each fetched record and create a record in unpaid.invoice
         for move in account_moves:
-            vals = {
-                'invoice_id': move.id,
-                'partner_id': move.partner_id.id,
-                'amount_total': move.amount_total,
-                'currency_id': move.currency_id.id,
-            }
-            return self.env['unpaid.balance'].create()
-                
-
-    @api.model
-    def create(self):
-        # Call the populate method to fetch and populate unpaid invoices
-        self.populate_unpaid_invoices()
-        
-        # Proceed with the default create behavior
-        # return super(UnpaidInvoice, self).create(vals)
-    
+          
+            # Check if the invoice already exists to avoid duplicate entries
+            if not self.search([('invoice_id', '=', move.id)]):
+                vals = {
+                    'invoice_id': move.id,
+                    'partner_id': move.partner_id.id,
+                    'amount_total': move.amount_total,
+                    'currency_id': move.currency_id.id,
+                }
+                self.create(vals)  # Pass the vals dictionary to create()
+              
