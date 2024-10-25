@@ -152,10 +152,9 @@
         <record id="view_account_move_tree_unpaid" model="ir.ui.view">
             <field name="name">account.move.tree.unpaid</field>
             <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
-                <tree >
-                    <field name="name" decoration-bf="1"/>
-                </tree>
+                <xpath expr="//field[@name='activity_ids']" position="replace"/>
             </field>
         </record>
 
@@ -165,22 +164,21 @@
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="unpaid_invoice.view_account_move_tree_unpaid"/>
-            <!-- <field name="domain">[
+            <field name="domain">[
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
                 ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d')),
-                ]</field> -->
-            <!-- <field name="context">{
+                ]</field> 
+            <field name="context">{
                     'search_default_team_id': [active_id],
                     'default_team_id': active_id,
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
                     'journal_type': 'sale',
                 }
-            </field>  -->
-            <field name="context">{}</field>
-        </record>
+            </field> 
+            
 
         <!-- Menu Item -->
         <menuitem id="menu_unpaid_invoice_kanban" name="Unpaid Invoices" 
