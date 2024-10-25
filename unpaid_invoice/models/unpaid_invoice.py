@@ -1,8 +1,8 @@
 # from odoo import models, fields
 # from datetime import date
 
-class CrmTeam(models.Model):
-    _inherit = 'crm.team'
+# class CrmTeam(models.Model):
+#     _inherit = 'crm.team'
 
 #     label_date = fields.Char(
 #         default=lambda s: "Today",
@@ -52,3 +52,6 @@ class UnpaidInvoice(models.Model):
     def send_daily_report(self):
         # Logic to generate and send the PDF report
         pass
+    
+class CrmTeam(models.Model):
+    _inherit = 'crm.team'
