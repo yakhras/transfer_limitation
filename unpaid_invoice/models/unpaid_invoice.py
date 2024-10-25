@@ -76,7 +76,7 @@ class UnpaidInvoice(models.Model):
                 'currency_id': move.currency_id.id,
             })
 
-    @api.model
+    
     def create(self, vals):
         # Call the populate method to fetch and populate unpaid invoices
         self.populate_unpaid_invoices()
