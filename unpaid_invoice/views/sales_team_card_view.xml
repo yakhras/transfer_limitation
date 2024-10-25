@@ -117,21 +117,20 @@
             </field>
         </record>
         
-        <odoo>
-            <record id="view_unpaid_invoice_tree" model="ir.ui.view">
-                <field name="name">unpaid.invoice.tree</field>
-                <field name="model">unpaid.invoice</field>
-                <field name="arch" type="xml">
-                    <tree>
-                        
-                        <field name="invoice_id"/>
-                        <field name="partner_id"/>
-                        <field name="amount_total"/>
-                        <field name="currency_id"/>
-                    </tree>
-                </field>
-            </record>
-        </odoo>
+      
+        <record id="view_unpaid_invoice_tree" model="ir.ui.view">
+            <field name="name">unpaid.invoice.tree</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="invoice_id"/>
+                    <field name="partner_id"/>
+                    <field name="amount_total"/>
+                    <field name="currency_id"/>
+                </tree>
+            </field>
+        </record>
+ 
         
         
         <record id="action_unpaid_invoice_kanban" model="ir.actions.act_window">
@@ -179,7 +178,7 @@
         <record id="action_unpaid_invoice_before_today" model="ir.actions.act_window">
             <field name="name">Unpaid Invoices Team</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">account.move</field>
+            <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree</field>
             <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_tree"/>
             <field name="context">{}</field>
