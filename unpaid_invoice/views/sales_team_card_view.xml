@@ -135,7 +135,7 @@
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
-                ('invoice_date_due', '=', today.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': [active_id],
