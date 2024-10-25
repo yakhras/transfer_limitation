@@ -77,10 +77,4 @@ class UnpaidInvoice(models.Model):
             })
 
     
-    def create(self, vals):
-        # Call the populate method to fetch and populate unpaid invoices
-        self.populate_unpaid_invoices()
-        
-        # Proceed with the default create behavior
-        return super(UnpaidInvoice, self).create(vals)
     
