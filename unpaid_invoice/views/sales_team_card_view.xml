@@ -88,17 +88,17 @@
                                     <div class="o_kanban_card_content mw-100">
                                         <div class="o_kanban_primary_left">
                                             <div class="o_primary">
-                                                <span class="o_text_overflow" style="border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px;">
+                                                <span class="o_text_overflow" style="border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 15px;">
                                                     <t t-esc="record.name.value" />
                                                 </span>
-                                                <div>
+                                                <div style="margin-top: 15px;">
                                                     <span class="mb-3" style="display: block;">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="btn btn-outline-primary">
                                                             <i class="fa fa-calendar-check-o"/> Today Unpaid Invoices
                                                         </a>
                                                     </span>
                                                 </div>
-                                                <div>
+                                                <div style="margin-top: 10px;">
                                                     <span class="mb-3" style="display: block;">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_before_today" type="action" class="btn btn-outline-warning">
                                                             <i class="fa fa-calendar-times-o"/> Past Unpaid Invoices
