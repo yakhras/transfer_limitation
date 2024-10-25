@@ -43,6 +43,8 @@ class UnpaidInvoice(models.Model):
     report_attachment_id = fields.Many2one('ir.attachment', string="Report Attachment")
     last_email_sent = fields.Datetime(string="Last Email Sent")
     email_recipients = fields.Char(string="Email Recipients")
+    amount_total = fields.Monetary(string="Total Amount", currency_field='currency_id')
+    currency_id = fields.Many2one('res.currency', string="Currency")
 
     @api.model
     def update_unpaid_invoices(self):
@@ -52,4 +54,34 @@ class UnpaidInvoice(models.Model):
     def send_daily_report(self):
         # Logic to generate and send the PDF report
         pass
+
+    @api.model
+    def populate_unpaid_invoices(self):
+        # Define the domain for unpaid invoices
+        domain = [
+            ('state', '=', 'posted'),
+            ('move_type', 'in', ['out_invoice', 'out_refund']),
+            ('payment_state', 'in', ['not_paid', 'partial'])
+        ]
+        
+        # Fetch records from account.move that meet the domain criteria
+        account_moves = self.env['account.move'].search(domain)
+        
+        # Loop through each fetched record and create a record in unpaid.invoice
+        for move in account_moves:
+            self.create({
+                'name': move.name,
+                'invoice_id': move.id,
+                'partner_id': move.partner_id.id,
+                'amount_total': move.amount_total,
+                'currency_id': move.currency_id.id,
+            })
+
+    @api.model
+    def create(self, vals):
+        # Call the populate method to fetch and populate unpaid invoices
+        self.populate_unpaid_invoices()
+        
+        # Proceed with the default create behavior
+        return super(UnpaidInvoice, self).create(vals)
     
