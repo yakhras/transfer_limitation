@@ -183,7 +183,6 @@
             <field name="view_mode">tree</field>
             <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_tree"/>
             <field name="context">{}</field>
-            </field>
         </record>
             
 
@@ -194,22 +193,3 @@
                   sequence="11"/>
     </data>
 </odoo>
-
-
-<!-- <tree decoration-info="state == 'draft'"
-                decoration-muted="state == 'cancel'">
-                    <field name="name" decoration-bf="1"/>
-                    <field name="invoice_partner_display_name" invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund','out_receipt')" groups="base.group_user" string="Customer" />
-                    <field name="invoice_date" optional="show" invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Invoice Date"/>
-                    <field name="invoice_date_due" widget="remaining_days" optional="show" attrs="{'invisible': [['payment_state', 'in', ('paid', 'in_payment', 'reversed')]]}"/>
-                    <field name="amount_total_signed" string="Total" sum="Total" decoration-bf="1" optional="show"/>
-                    <field name="amount_total_in_currency_signed" string="Total in Currency" groups="base.group_multi_currency"  optional="show"/>
-                    <field name="payment_state"
-                           widget="badge"
-                           decoration-danger="payment_state == 'not_paid'"
-                           decoration-warning="payment_state in ('partial', 'in_payment')"
-                           decoration-success="payment_state in ('paid', 'reversed')"
-                           attrs="{'invisible': [('payment_state', 'in', ('invoicing_legacy'))]}"
-                           optional="show"/>
-                    <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-info="state == 'draft'" optional="show"/>
-                </tree> -->
