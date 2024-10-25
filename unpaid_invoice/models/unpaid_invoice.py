@@ -75,7 +75,7 @@ class UnpaidInvoice(models.Model):
                 'amount_total': move.amount_total,
                 'currency_id': move.currency_id.id,
             }
-            return self.env['unpaid.balance'].create(vals)
+            return self.env['unpaid.balance'].create()
                 
 
     @api.model
