@@ -170,7 +170,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="unpaid_invoice.view_account_move_tree_unpaid"/>
             <field name="domain">[
-                ('state', '=', 'posted'),
+                <!-- ('state', '=', 'posted'), -->
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
                 ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d')),
