@@ -155,6 +155,8 @@
             <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='activity_ids']" position="replace"/>
+                <xpath expr="//field[@name='amount_untaxed_signed']" position="replace"/>
+                <xpath expr="//field[@name='to_check']" position="replace"/>
             </field>
         </record>
 
