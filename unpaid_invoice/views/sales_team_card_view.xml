@@ -97,7 +97,7 @@
                                                     
                                                 </span>
                                                 <div>
-                                                    <a name="%(sale.action_invoice_salesteams)d" type="action">Invoices</a>
+                                                    <a name="%(action_unpaid_invoice_salesteams)d" type="action">Unpaid Invoices</a>
                                                 </div>
                                                     <!-- <a name="action_unpaid_invoice" type="object">
                                                         <t t-esc="record.name.value" />
@@ -126,6 +126,33 @@
             <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_card"/>
         </record>
 
+        <record id="action_unpaid_invoice_salesteams" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoices</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="account.view_move_tree"/>
+            <field name="domain">[
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ('not_paid', 'partial')),
+                ('invoice_date_due', '=', today.strftime('%Y-%m-%d'))]</field>
+            <field name="context">{
+                    'search_default_team_id': [active_id],
+                    'default_team_id': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a customer invoice
+                </p><p>
+                    Create invoices, register payments and keep track of the discussions with your customers.
+                </p>
+            </field>
+        </record>
 
         <!-- Menu Item -->
         <menuitem id="menu_unpaid_invoice_kanban" name="Unpaid Invoices" 
