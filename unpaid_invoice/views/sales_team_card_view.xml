@@ -180,8 +180,6 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_tree"/>
-            <field name="context">{}</field>
         </record>
             
 
