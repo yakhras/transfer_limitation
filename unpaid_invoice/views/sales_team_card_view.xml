@@ -154,7 +154,7 @@
             <field name="model">account.move</field>
             <field name="arch" type="xml">
                 <tree >
-                    <h1>Hello</h1>
+                    Hello
                 </tree>
             </field>
         </record>
