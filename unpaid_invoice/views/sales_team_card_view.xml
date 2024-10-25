@@ -83,12 +83,6 @@
                     <field name="name" />
                     <templates>
                         <t t-name="kanban-box">
-                            <style>
-                                .o_kanban_card:hover {
-                                    transform: scale(1.02);
-                                    transition: transform 0.3s ease;
-                                }
-                            </style>
                             <div t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card o_kanban_card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; border-radius: 8px;">
                                 <div class="o_project_kanban_main">
                                     <div class="o_kanban_card_content mw-100">
