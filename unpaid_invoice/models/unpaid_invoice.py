@@ -75,14 +75,14 @@ class UnpaidInvoice(models.Model):
                 'amount_total': move.amount_total,
                 'currency_id': move.currency_id.id,
             }
-            self.env['unpaid.balance'].create(vals)
+            return self.env['unpaid.balance'].create(vals)
                 
 
-    
-    def create(self, vals):
+    @api.model
+    def create(self):
         # Call the populate method to fetch and populate unpaid invoices
         self.populate_unpaid_invoices()
         
         # Proceed with the default create behavior
-        return super(UnpaidInvoice, self).create(vals)
+        # return super(UnpaidInvoice, self).create(vals)
     
