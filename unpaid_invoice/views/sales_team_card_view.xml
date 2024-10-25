@@ -107,14 +107,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="o_kanban_right">
+                                        <!-- <div class="o_kanban_right">
                                             <div class="o_stat_info">
                                                 <span class="o_stat_value">
                                                     <t t-esc="record.total_count.value" />
                                                 </span>
                                                 <span class="o_stat_text">Invoices</span>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
