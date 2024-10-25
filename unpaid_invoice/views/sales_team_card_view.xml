@@ -130,7 +130,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="account.view_move_tree"/>
+            <field name="view_id" ref="account.view_out_invoice_tree"/>
             <field name="domain">[
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
