@@ -55,7 +55,7 @@ class UnpaidInvoice(models.Model):
         # Logic to generate and send the PDF report
         pass
 
-    @api.model
+    
     def populate_unpaid_invoices(self):
         # Define the domain for unpaid invoices
         domain = [
