@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <record model="ir.ui.view" id="unpaid_invoice_view_tree">
@@ -41,8 +41,8 @@
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1"
                     create="false">
                     <field name="name" />
-                    <!-- <field name="label_date" />
-                    <field name="total_count" /> -->
+                    <field name="label_date" />
+                    <field name="total_count" />
                     <templates>
                         <t t-name="kanban-box">
                             <div
@@ -56,11 +56,11 @@
                                                         <t t-esc="record.name.value" />
                                                     </a>
                                                 </span>
-                                                <!-- <a name="action_unpaid_invoice" type="object">
+                                                <a name="action_unpaid_invoice" type="object">
                                                     <span class="o_text_overflow">
                                                         <t t-esc="record.total_count.value"/>
                                                     </span>
-                                                </a> -->
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -71,5 +71,53 @@
                 </kanban>
             </field>
         </record>
+    </data>
+</odoo> -->
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_unpaid_invoice_card" model="ir.ui.view">
+            <field name="name">unpaid.invoice.card.view</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="o_kanban_card">
+                                <div class="o_kanban_details">
+                                    <strong>
+                                        <t t-esc="record.team_id.name"/>  <!-- Sales Team Name -->
+                                    </strong>
+                                    <!-- <div>
+                                        <t t-esc="record.amount_due"/>  Amount Due
+                                    </div>
+                                    <div>
+                                        <t t-esc="record.due_date"/>  Due Date
+                                    </div>
+                                </div>
+                                <div class="o_kanban_footer">
+                                    <a type="button" class="btn btn-primary" 
+                                       t-att-href="'/web#id=' + str(record.id) + '&view_type=form&model=unpaid.invoice'">
+                                        View Invoices
+                                    </a>
+                                </div> -->
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <record id="action_unpaid_invoice_kanban" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoices</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">kanban</field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_unpaid_invoice_kanban" name="Unpaid Invoices" 
+                  parent="point_of_sale.menu_point_rep" 
+                  action="action_unpaid_invoice_kanban"
+                  sequence="11"/>
     </data>
 </odoo>

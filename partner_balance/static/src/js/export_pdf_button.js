@@ -15,7 +15,7 @@ var ExportPdfButtonListController = ListController.extend({
     _onExport: function(){
         console.log('Hi Yaser')
         var self = this;
-        var domain = self.model.data.domain || [];  // Get the domain of the current tree view
+        var domain = self.model.get('domain');  // Get the domain of the current tree view
         console.log(domain)
         var context = self.model.get('context');  // Get context
         console.log(context)

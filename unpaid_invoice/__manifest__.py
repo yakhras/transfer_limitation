@@ -26,24 +26,22 @@
     # always loaded
     'data': [
         #"security/security.xml",
-        "views/unpaid_invoice_view.xml",
-        "reports.xml", #action file.
-        "menuitems.xml", #menu items file.
-        "report/layouts.xml", #report page templates file. 
-        "report/unpaid_invoice_report.xml", #report data view file
+        "unpaid_invoice/views/sales_team_card_view.xml",
+        # "reports.xml", #action file.
+        # "menuitems.xml", #menu items file.
+        # "report/layouts.xml", #report page templates file. 
+        # "report/unpaid_invoice_report.xml", #report data view file
     ],
 
-    'assets': {
-        'web.assets_backend': [
-            'unpaid_invoice/static/src/js/unpaid_invoice.js', #buttons event function file.
-        ],
-        'web.assets_qweb': [
-            'unpaid_invoice/static/src/xml/unpaid_invoice.xml', #buttons template file.
-        ],
+    # 'assets': {
+    #     'web.assets_backend': [
+    #         'unpaid_invoice/static/src/js/unpaid_invoice.js', #buttons event function file.
+    #     ],
+    #     'web.assets_qweb': [
+    #         'unpaid_invoice/static/src/xml/unpaid_invoice.xml', #buttons template file.
+    #     ],
         
-    },
+    # },
     # only loaded in demonstration mode
-    'demo': [
-        'demo/demo.xml',
-    ],
+    
 }
