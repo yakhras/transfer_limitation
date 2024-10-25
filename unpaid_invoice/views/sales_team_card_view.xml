@@ -90,6 +90,7 @@
                                     <strong>
                                         <t t-esc="record.team_id.name"/>  <!-- Sales Team Name -->
                                     </strong>
+                                </div>
                                     <!-- <div>
                                         <t t-esc="record.amount_due"/>  Amount Due
                                     </div>
