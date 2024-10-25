@@ -79,16 +79,12 @@
             <field name="name">unpaid.invoice.card.view</field>
             <field name="model">crm.team</field>
             <field name="arch" type="xml">
-                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1"
-                    create="false">
+                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
                     <field name="name" />
-                    <!-- <field name="label_date" />
-                    <field name="total_count" /> -->
                     <templates>
                         <t t-name="kanban-box">
-                            <div
-                                t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card">
-                                <div class="o_project_kanban_main ">
+                            <div t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card">
+                                <div class="o_project_kanban_main">
                                     <div class="o_kanban_card_content mw-100">
                                         <div class="o_kanban_primary_left">
                                             <div class="o_primary">
@@ -96,26 +92,27 @@
                                                     <t t-esc="record.name.value" />
                                                 </span>
                                                 <div>
-                                                    <span class="float-right">
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">
-                                                            Today Unpaid Invoices</a>
+                                                    <span>
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="btn btn-outline-primary">
+                                                            <i class="fa fa-calendar-check-o"/> Today Unpaid Invoices
+                                                        </a>
                                                     </span>
                                                 </div>
                                                 <div>
-                                                    <span class="float-right">
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_before_today" type="action">
-                                                            Past Unpaid Invoices</a>
+                                                    <span>
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_before_today" type="action" class="btn btn-outline-warning">
+                                                            <i class="fa fa-calendar-times-o"/> Past Unpaid Invoices
+                                                        </a>
                                                     </span>
                                                 </div>
-                                                    <!-- <a name="action_unpaid_invoice" type="object">
-                                                        <t t-esc="record.name.value" />
-                                                    </a>
-                                                
-                                                <a name="action_unpaid_invoice" type="object">
-                                                    <span class="o_text_overflow">
-                                                        <t t-esc="record.total_count.value"/>
-                                                    </span>
-                                                </a> -->
+                                            </div>
+                                        </div>
+                                        <div class="o_kanban_right">
+                                            <div class="o_stat_info">
+                                                <span class="o_stat_value">
+                                                    <t t-esc="record.total_count.value" />
+                                                </span>
+                                                <span class="o_stat_text">Invoices</span>
                                             </div>
                                         </div>
                                     </div>
@@ -126,6 +123,7 @@
                 </kanban>
             </field>
         </record>
+        
         
         <record id="action_unpaid_invoice_kanban" model="ir.actions.act_window">
             <field name="name">Unpaid Invoices</field>
