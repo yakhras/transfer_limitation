@@ -154,8 +154,7 @@
             <field name="model">account.move</field>
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'"
-                decoration-muted="state == 'cancel'"
-                sample="1">
+                decoration-muted="state == 'cancel'">
                     <field name="name" decoration-bf="1"/>
                     <field name="invoice_partner_display_name" invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund','out_receipt')" groups="base.group_user" string="Customer" />
                     <field name="invoice_date" optional="show" invisible="context.get('default_move_type') not in ('out_invoice', 'out_refund','out_receipt')" string="Invoice Date"/>
