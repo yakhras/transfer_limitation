@@ -152,7 +152,6 @@
         <record id="view_account_move_tree_unpaid" model="ir.ui.view">
             <field name="name">account.move.tree.unpaid</field>
             <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_invoice_tree"/>
             <field name="arch" type="xml">
                 <tree decoration-info="state == 'draft'"
                 decoration-muted="state == 'cancel'"
