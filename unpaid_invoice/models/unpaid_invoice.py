@@ -69,12 +69,14 @@ class UnpaidInvoice(models.Model):
         
         # Loop through each fetched record and create a record in unpaid.invoice
         for move in account_moves:
-            self.env['unpaid.balance'].create({
+            vals = {
                 'invoice_id': move.id,
                 'partner_id': move.partner_id.id,
                 'amount_total': move.amount_total,
                 'currency_id': move.currency_id.id,
-            })
+            }
+            self.env['unpaid.balance'].create(vals)
+                
 
     
     def create(self, vals):
