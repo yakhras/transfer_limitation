@@ -70,7 +70,7 @@ class UnpaidInvoice(models.Model):
         # Loop through each fetched record and create a record in unpaid.invoice
         for move in account_moves:
             self.create({
-                'name': move.name,
+                
                 'invoice_id': move.id,
                 'partner_id': move.partner_id.id,
                 'amount_total': move.amount_total,

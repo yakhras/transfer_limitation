@@ -117,6 +117,21 @@
             </field>
         </record>
         
+        <odoo>
+            <record id="view_unpaid_invoice_tree" model="ir.ui.view">
+                <field name="name">unpaid.invoice.tree</field>
+                <field name="model">unpaid.invoice</field>
+                <field name="arch" type="xml">
+                    <tree>
+                        
+                        <field name="invoice_id"/>
+                        <field name="partner_id"/>
+                        <field name="amount_total"/>
+                        <field name="currency_id"/>
+                    </tree>
+                </field>
+            </record>
+        </odoo>
         
         
         <record id="action_unpaid_invoice_kanban" model="ir.actions.act_window">
@@ -125,6 +140,7 @@
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_card"/>
         </record>
+
 
         <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
             <field name="name">Unpaid Invoices Team</field>
@@ -164,21 +180,9 @@
             <field name="name">Unpaid Invoices Team</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.move</field>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="unpaid_invoice.view_account_move_tree_unpaid"/>
-            <field name="domain">[
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-                ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d')),
-                ]</field> 
-            <field name="context">{
-                    'search_default_team_id': [active_id],
-                    'default_team_id': active_id,
-                    'default_move_type':'out_invoice',
-                    'move_type':'out_invoice',
-                    'journal_type': 'sale',
-                }
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_tree"/>
+            <field name="context">{}</field>
             </field>
         </record>
             
