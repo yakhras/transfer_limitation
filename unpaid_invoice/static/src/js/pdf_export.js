@@ -39,7 +39,7 @@ ListController.include({
             var action = {
                         'type': 'ir.actions.report',
                         'report_type': 'qweb-pdf',
-                        'report_name':'export_view_pdf.export_in_pdf_group_by',
+                        'report_name':'unpaid_invoice.export_in_pdf_group_by',
                         'data':{'length':length_field,'group_len':group_length,'record':data,}
                     };
         }
@@ -47,7 +47,7 @@ ListController.include({
             var action = {
                     'type': 'ir.actions.report',
                     'report_type': 'qweb-pdf',
-                    'report_name':'export_view_pdf.export_in_pdf',
+                    'report_name':'unpaid_invoice.export_in_pdf',
                     'data':{'length':length_field,'data_len':data_len,'record':data}
                 };
         }

@@ -3,7 +3,7 @@
         <field name="name">Export</field>
         <field name="model">ir.exports</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">export_view_pdf.export_in_pdf_group_by</field>
+        <field name="report_name">unpaid_invoice.export_in_pdf_group_by</field>
     </record>
     <template id="export_in_pdf_group_by">
         <t t-call="web.html_container">
