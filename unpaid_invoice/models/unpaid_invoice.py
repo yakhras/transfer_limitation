@@ -78,5 +78,4 @@ class UnpaidInvoice(models.Model):
                     'team_id': move.team_id,
                 }
                 self.create(vals)  # Pass the vals dictionary to create()
-
               
