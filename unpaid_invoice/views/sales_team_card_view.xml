@@ -162,7 +162,8 @@
             <field name="name">unpaid.invoice.select</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <search string="Search Invoice">    
+                <search string="Search Invoice"> 
+                    <field name="team_id" string="Sales Team"/>   
                     <filter name="group_by_team" string="Sales Team" context="{'group_by': 'team_id'}"/>
                     <filter name="filter_team" string="Filter by Team" domain="[('team_id', '=', search_default_team_id)]"/>
                </search>
