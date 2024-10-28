@@ -44,11 +44,11 @@
                             </t>
                         </tr>
                         <!-- Adding the sequence data and other data -->
-                        <t t-foreach="data_len" t-as="record" t-esc="record_index">
+                        <t t-foreach="data_len" t-as="rec">
                             <tr>
                                 <!-- Sequence column -->
                                 <td><t t-esc="record_index + 1"/></td>
-                                <t t-foreach="record" t-as="data">
+                                <t t-foreach="rec" t-as="data">
                                     <td><span t-out="record['data'][rec][ln]"/></td>
                                 </t>
                             </tr>
