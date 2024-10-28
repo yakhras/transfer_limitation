@@ -36,7 +36,7 @@ class UnpaidInvoice(models.Model):
     partner_id = fields.Many2one(related='invoice_id.partner_id', string="Customer")
     amount_due = fields.Monetary(related='invoice_id.amount_residual', string="Amount Due")
     due_date = fields.Date(related='invoice_id.invoice_date_due', string="Due Date")
-    team_id = fields.Many2one(related='invoice_id.team_id', string="Sales Team")
+    team_id = fields.Many2one('crm.team', string="Sales Team")
     team_member_ids = fields.Many2many('res.users', string="Team Members")
     state = fields.Selection(related='invoice_id.state', string="Invoice Status")
     payment_state = fields.Selection(related='invoice_id.payment_state', string="Payment Status")
@@ -75,7 +75,6 @@ class UnpaidInvoice(models.Model):
                     'state': move.stat,
                     'payment_state': move.payment_state,
                     'due_date': move.invoice_date_due,
-                    'team_id': move.team_id,
                 }
                 self.create(vals)  # Pass the vals dictionary to create()
               
