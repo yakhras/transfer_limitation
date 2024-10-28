@@ -123,7 +123,7 @@
             <field name="name">unpaid.invoice.tree</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <tree create="false">
+                <tree>
                     <field name="invoice_id"/>
                     <field name="partner_id"/>
                     <field name="amount_total"/>

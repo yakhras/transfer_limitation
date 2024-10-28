@@ -26,13 +26,19 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        #"security/security.xml",
-        "views/sales_team_card_view.xml",
-        # "reports.xml", #action file.
-        # "menuitems.xml", #menu items file.
-        # "report/layouts.xml", #report page templates file. 
-        # "report/unpaid_invoice_report.xml", #report data view file
+        'views/sales_team_card_view.xml',
+        'views/pdf.xml',
+        'views/pdf_group_by_template.xml'
     ],
+    
+    'assets': {
+        'web.assets_qweb': [
+            'export_view_pdf/static/src/xml/button_view.xml',
+        ],
+        'web.assets_backend': [
+            'export_view_pdf/static/src/js/pdf_export.js'
+        ]
+    },
 
     # 'assets': {
     #     'web.assets_backend': [
