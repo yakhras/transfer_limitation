@@ -153,6 +153,16 @@
                 </form>
             </field>
         </record>
+
+        <!-- unpaid.invoice search view -->
+        <record id="view_unpaid_invoice_filter" model="ir.ui.view">
+            <field name="name">unpaid.invoice.select</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <search string="Search Invoice">    
+               </search>
+            </field>
+        </record>
  
         
         <!-- crm.team kanban action -->
