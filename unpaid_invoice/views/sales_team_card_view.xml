@@ -163,8 +163,7 @@
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
                 <search string="Search Invoice"> 
-                    
-                    
+                    <field name="team_id" string="Sales Team"/>
                     <filter name="filter_team" string="Filter by Team" domain="[('team_id', '=', active_id)]"/>
                </search>
             </field>
