@@ -164,6 +164,7 @@
             <field name="arch" type="xml">
                 <search string="Search Invoice">    
                     <filter name="group_by_team" string="Sales Team" context="{'group_by': 'team_id'}"/>
+                    <filter name="filter_team" string="Filter by Team" domain="[('team_id', '=', search_default_team_id)]"/>
                </search>
             </field>
         </record>
@@ -198,7 +199,7 @@
                 ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
-                    'search_default_team': [active_id],
+                    'search_default_team_id': [active_id],
                     'default_team': active_id,
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
