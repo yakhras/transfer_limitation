@@ -1,4 +1,4 @@
-odoo.define('export_pdf.print_pdf',function(require){
+odoo.define('unpaid_invoice.print_pdf',function(require){
     "use strict";
 var config = require('web.config');
 var core = require('web.core');
