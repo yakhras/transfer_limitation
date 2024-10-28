@@ -130,7 +130,7 @@
                     <field name="state"/>
                     <field name="payment_state"/>
                     <field name="due_date"/>
-                    <field name="team_id"/>
+                    <field name="team"/>
                 </tree>
             </field>
         </record>
@@ -149,7 +149,7 @@
                             <field name="partner_id"/>
                             <field name="amount_total"/>
                             <field name="currency_id"/>
-                            <field name="team_id"/>
+                            <field name="team"/>
                         </group>
                     </sheet>
                 </form>
