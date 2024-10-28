@@ -117,7 +117,7 @@
             </field>
         </record>
         
-      
+      <!-- unpaid.invoice tree view -->
         <record id="view_unpaid_invoice_tree" model="ir.ui.view">
             <field name="name">unpaid.invoice.tree</field>
             <field name="model">unpaid.invoice</field>
@@ -127,11 +127,12 @@
                     <field name="partner_id"/>
                     <field name="amount_total"/>
                     <field name="currency_id"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
 
-
+        <!-- unpaid.invoice form view -->
         <record id="view_unpaid_invoice_form" model="ir.ui.view">
             <field name="name">unpaid.invoice.form</field>
             <field name="model">unpaid.invoice</field>
@@ -152,7 +153,7 @@
         </record>
  
         
-        
+        <!-- crm.team kanban action -->
         <record id="action_unpaid_invoice_kanban" model="ir.actions.act_window">
             <field name="name">Unpaid Invoices</field>
             <field name="res_model">crm.team</field>
@@ -160,7 +161,26 @@
             <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_card"/>
         </record>
 
+        <!-- account.move tree view -->
+        <record id="view_account_move_tree_unpaid" model="ir.ui.view">
+            <field name="name">account.move.tree.unpaid</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='activity_ids']" position="replace"/>
+                <xpath expr="//field[@name='amount_untaxed_signed']" position="replace"/>
+                <xpath expr="//field[@name='to_check']" position="replace"/>
+            </field>
+        </record>
 
+        <!-- unpaid.invoice previous action -->
+        <record id="action_unpaid_invoice_before_today" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoices Team</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- account.move today action -->
         <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
             <field name="name">Unpaid Invoices Team</field>
             <field name="type">ir.actions.act_window</field>
@@ -182,23 +202,6 @@
                 }
             </field> 
             <field name="search_view_id" ref="account.view_account_invoice_filter"/>
-        </record>
-
-        <record id="view_account_move_tree_unpaid" model="ir.ui.view">
-            <field name="name">account.move.tree.unpaid</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_invoice_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='activity_ids']" position="replace"/>
-                <xpath expr="//field[@name='amount_untaxed_signed']" position="replace"/>
-                <xpath expr="//field[@name='to_check']" position="replace"/>
-            </field>
-        </record>
-
-        <record id="action_unpaid_invoice_before_today" model="ir.actions.act_window">
-            <field name="name">Unpaid Invoices Team</field>
-            <field name="res_model">unpaid.invoice</field>
-            <field name="view_mode">tree,form</field>
         </record>
             
 
