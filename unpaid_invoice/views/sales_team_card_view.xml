@@ -190,8 +190,8 @@
         </record>
 
         <!-- unpaid.invoice previous action -->
-        <record id="action_unpaid_invoice_before_today" model="ir.actions.act_window">
-            <field name="name">Unpaid Invoices Team</field>
+        <record id="action_unpaid_invoice_previous" model="ir.actions.act_window">
+            <field name="name">unpaid.invoice.previous</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[
@@ -208,28 +208,24 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
-        <!-- account.move today action -->
+        <!-- unpaid.invoice today action -->
         <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
-            <field name="name">Unpaid Invoices Team</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">account.move</field>
+            <field name="name">unpaid.invoice.today</field>
+            <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="account.view_out_invoice_tree"/>
             <field name="domain">[
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-                ('invoice_date_due', '=', context_today().strftime('%Y-%m-%d')),
+                ('due_date', '=', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
-                    'search_default_team_id': [active_id],
+                    'search_default_team_id': active_id,
                     'default_team_id': active_id,
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
                     'journal_type': 'sale',
                 }
             </field> 
-            <field name="search_view_id" ref="account.view_account_invoice_filter"/>
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
             
 
