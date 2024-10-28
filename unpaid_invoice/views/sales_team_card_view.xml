@@ -191,7 +191,7 @@
 
         <!-- unpaid.invoice previous action -->
         <record id="action_unpaid_invoice_previous" model="ir.actions.act_window">
-            <field name="name">unpaid.invoice.previous</field>
+            <field name="name">Unpaid Invoice Previous</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="unpaid_invoice.action_unpaid_invoice_previous"/>
@@ -211,7 +211,7 @@
 
         <!-- unpaid.invoice today action -->
         <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
-            <field name="name">unpaid.invoice.today</field>
+            <field name="name">Unpaid Invoice Today</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="unpaid_invoice.action_unpaid_invoice_today"/>
