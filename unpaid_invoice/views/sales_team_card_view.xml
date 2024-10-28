@@ -95,7 +95,7 @@
                                                     <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="btn btn-outline-primary">
                                                         <i class="fa fa-calendar-check-o"/> Today
                                                     </a>
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_before_today" type="action" class="btn btn-outline-warning">
+                                                    <a name="unpaid_invoice.action_unpaid_invoice_previous" type="action" class="btn btn-outline-warning">
                                                         <i class="fa fa-calendar-times-o"/> Previous
                                                     </a>
                                                 </div>
@@ -194,7 +194,6 @@
             <field name="name">Unpaid Invoice Previous</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_tree"/>
             <field name="domain">[
                 ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
                 ]</field>
