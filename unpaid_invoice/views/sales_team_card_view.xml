@@ -222,7 +222,7 @@
                 ('invoice_date_due', '=', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
-                    'search_default_team': [active_id],
+                    'search_default_team_id': [active_id],
                     'default_team_id': active_id,
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
