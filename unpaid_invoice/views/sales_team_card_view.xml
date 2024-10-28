@@ -128,6 +128,7 @@
                     <field name="amount_total"/>
                     <field name="currency_id"/>
                     <field name="state"/>
+                    <field name="payment_state"/>
                 </tree>
             </field>
         </record>

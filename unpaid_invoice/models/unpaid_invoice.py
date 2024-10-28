@@ -72,6 +72,7 @@ class UnpaidInvoice(models.Model):
                     'amount_total': move.amount_total,
                     'currency_id': move.currency_id.id,
                     'state': move.stat,
+                    'payment_state': move.payment_state,
                 }
                 self.create(vals)  # Pass the vals dictionary to create()
               
