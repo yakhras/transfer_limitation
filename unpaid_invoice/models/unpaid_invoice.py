@@ -69,6 +69,9 @@ class UnpaidInvoice(models.Model):
             if not self.search([('invoice_id', '=', move.id)]):
                 vals = {
                     'invoice_id': move.id,
+                    'partner_id': move.partner_id.id,
+                    'amount_total': move.amount_total,
+                    'currency_id': move.currency_id.id,
                 }
                 self.create(vals)  # Pass the vals dictionary to create()
               
