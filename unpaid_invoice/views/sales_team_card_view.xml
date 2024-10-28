@@ -128,7 +128,7 @@
                     <field name="partner_id"/>
                     <field name="amount_total"/>
                     <field name="currency_id"/>
-                    <field name="state"/>
+                    <field name="payment_state"/>
                     <field name="due_date"/>
                 </tree>
             </field>
