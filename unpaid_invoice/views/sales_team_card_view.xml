@@ -194,7 +194,6 @@
             <field name="name">Unpaid Invoice Previous</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="action_unpaid_invoice_previous"/>
             <field name="domain">[
                 ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
                 ]</field>
@@ -214,7 +213,6 @@
             <field name="name">Unpaid Invoice Today</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="unpaid_invoice.action_unpaid_invoice_today"/>
             <field name="domain">[
                 ('due_date', '=', context_today().strftime('%Y-%m-%d')),
                 ]</field>
