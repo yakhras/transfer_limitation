@@ -129,6 +129,7 @@
                     <field name="currency_id"/>
                     <field name="state"/>
                     <field name="payment_state"/>
+                    <field name="due_date"/>
                 </tree>
             </field>
         </record>

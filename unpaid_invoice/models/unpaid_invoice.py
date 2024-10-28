@@ -74,6 +74,7 @@ class UnpaidInvoice(models.Model):
                     'currency_id': move.currency_id.id,
                     'state': move.stat,
                     'payment_state': move.payment_state,
+                    'due_date': move.invoice_date_due,
                 }
                 self.create(vals)  # Pass the vals dictionary to create()
               
