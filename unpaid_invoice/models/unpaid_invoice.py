@@ -39,6 +39,7 @@ class UnpaidInvoice(models.Model):
     team_id = fields.Many2one('crm.team', string="Sales Team")
     team_member_ids = fields.Many2many('res.users', string="Team Members")
     state = fields.Selection(related='invoice_id.state', string="Invoice Status")
+    payment_state = fields.Selection(related='invoice_id.payment_state', string="Payment Status")
     currency_id = fields.Many2one(related='invoice_id.currency_id', string="Currency")
     report_attachment_id = fields.Many2one('ir.attachment', string="Report Attachment")
     last_email_sent = fields.Datetime(string="Last Email Sent")
