@@ -33,10 +33,10 @@
     
     'assets': {
         'web.assets_qweb': [
-            'export_view_pdf/static/src/xml/button_view.xml',
+            'unpaid_invoice/static/src/xml/button_view.xml',
         ],
         'web.assets_backend': [
-            'export_view_pdf/static/src/js/pdf_export.js'
+            'unpaid_invoice/static/src/js/pdf_export.js'
         ]
     },
 
