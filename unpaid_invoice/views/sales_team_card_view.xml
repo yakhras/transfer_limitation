@@ -201,6 +201,7 @@
                     'journal_type': 'sale',
                 }
             </field>
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
         <!-- account.move today action -->
