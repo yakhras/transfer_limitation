@@ -188,6 +188,7 @@
                     'default_team_id': active_id,
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
+                    'journal_type': 'sale',
                 }
             </field>
         </record>
