@@ -40,7 +40,7 @@
                         <thead>
                             <tr>
                                 <th>Sequence</th> <!-- Dynamic Sequence header -->
-                                <t t-foreach="range(length)" t-as="length">
+                                <t t-foreach="length" t-as="length">
                                     <th>
                                         <span t-esc="record['header'][length]"/>
                                     </th>
@@ -48,12 +48,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="range(data_len)" t-as="rec" t-index="row_index">
+                            <t t-foreach="data_len" t-as="rec" t-index="row_index">
                                 <tr>
                                     <td>
                                         <span t-esc="row_index + 1"/> <!-- Dynamic sequence based on row index -->
                                     </td>
-                                    <t t-foreach="range(length)" t-as="ln">
+                                    <t t-foreach="length" t-as="ln">
                                         <td>
                                             <span t-esc="record['data'][rec][ln]"/>
                                         </td>
