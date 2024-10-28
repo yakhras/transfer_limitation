@@ -39,8 +39,8 @@
                         <!-- Adding the sequence header -->
                         <tr>
                             <th>#</th>
-                            <t t-foreach="record['header']" t-as="header">
-                                <th><span t-out="header"/></th>
+                            <t t-foreach="length" t-as="length">
+                                <th><span t-out="record['header'][length]"/></th>
                             </t>
                         </tr>
                         <!-- Adding the sequence data and other data -->
@@ -48,7 +48,7 @@
                             <tr>
                                 <!-- Sequence column -->
                                 <td><t t-esc="record_index + 1"/></td>
-                                <t t-foreach="rec" t-as="data">
+                                <t t-foreach="length+1" t-as="ln">
                                     <td><span t-out="record['data'][rec][ln]"/></td>
                                 </t>
                             </tr>
