@@ -61,3 +61,6 @@ class UnpaidInvoice(models.Model):
                 }
                 self.create(vals)  # Pass the vals dictionary to create()
               
+
+    def send_email_unpaid_invoices(self):
+        ...
