@@ -9,7 +9,9 @@
             <field name="report_template" ref="unpaid_invoice.export_pdf"/>
             <field name="report_name">Test</field>
             <field name="body_html" type="html">
-                <h1> Hello Template </h1>
+                <h1> Dear Neslihan Hanim </h1>
+                <p>This is a reminder that the following invoices for our customers is due today. </p>
+                <p>Please review the details and reach out to the customers to confirm payment or offer assistance as needed.</p>
             </field>
         </record>
 </odoo>
