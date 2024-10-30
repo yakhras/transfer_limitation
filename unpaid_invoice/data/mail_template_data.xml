@@ -9,8 +9,6 @@
             <field name="report_template" ref="unpaid_invoice.export_pdf"/>
             <field name="report_name">Test</field>
             <field name="body_html" type="html">
-              
-
             </field>
         </record>
 </odoo>
