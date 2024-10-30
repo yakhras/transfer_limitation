@@ -32,6 +32,7 @@ class UnpaidInvoice(models.Model):
     email_recipients = fields.Char(string="Email Recipients")
     amount_total = fields.Monetary(string="Total Amount", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string="Currency")
+    unpaid_invoice_count = fields.Integer(string="Unpaid Invoice Count", compute="_compute_unpaid_invoice_count", store=True)
 
 
     def populate_unpaid_invoices(self):
@@ -66,3 +67,26 @@ class UnpaidInvoice(models.Model):
         template = self.env.ref('unpaid_invoice.unpaid_invoice')
         for rec in self:
             template.send_mail(rec.id, force_send=True)
+
+
+
+    
+
+    @api.depends_context('search_default_team_id')
+    def _compute_unpaid_invoice_count(self):
+        """Compute the count of unpaid invoices for the current sales team if provided in context."""
+        for record in self:
+            # Define the base domain for unpaid invoices due today
+            domain = [
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+            ]
+            
+            # Check context for 'search_default_team_id' and filter by team_id if provided
+            team_id = self.env.context.get('search_default_team_id')
+            if team_id:
+                domain.append(('team_id', '=', team_id))
+            
+            # Use search_count to get the count of matching records
+            record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(domain)
