@@ -2,12 +2,12 @@
 <odoo>
         <record id="unpaid_invoice" model="mail.template">
             <field name="name">Invoice: UnPaid</field>
-            <field name="model_id" ref="event.model_account_move"/>
+            <field name="model_id" ref="unpaid_invoice.model_unpaid_invoice"/>
             <field name="subject">Your Unpaid Invoices for {{ object.today }}</field>
             <field name="email_from">{{ (object.company_id.email_formatted) }}</field>
             <field name="email_to">{{ (object.email and '"%s" &lt;%s&gt;' % (object.name, object.email) or object.partner_id.email_formatted or '') }}</field>
             <field name="body_html" type="html">
-                
+                <h1> Hello Template </h1>
             </field>
         </record>
 </odoo>
