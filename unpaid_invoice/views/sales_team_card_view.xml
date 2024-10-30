@@ -92,6 +92,7 @@
             <field name="arch" type="xml">
                 <search string="Search Invoice"> 
                     <field name="team_id" string="Sales Team"/>
+                    <filter string="Customer" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
                </search>
             </field>
         </record>
