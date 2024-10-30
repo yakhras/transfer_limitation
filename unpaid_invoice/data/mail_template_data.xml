@@ -4,18 +4,12 @@
             <field name="name">Invoice: UnPaid</field>
             <field name="model_id" ref="unpaid_invoice.model_unpaid_invoice"/>
             <field name="subject">Reminder: Review Due Invoices Action Required</field>
-            <field name="email_from">yaser.akhras@menagate.com.tr</field>
-            <field name="email_to">yaser.akhras@menagate.com.tr</field>
+            <field name="email_from"></field>
+            <field name="email_to"></field>
             <field name="report_template" ref="unpaid_invoice.export_pdf"/>
             <field name="report_name">Test</field>
             <field name="body_html" type="html">
                 <h1> Dear Neslihan Hanim </h1>
-                <p>This is a reminder that the following invoices for our customers is due today. </p>
-                <p>Please review the attached report for a summary of outstanding payments.</p>
-                <p>The attached report provides an overview of all invoices currently due.</p>
-                <p>For a more in-depth view or specific details about any invoice, click the button below.</p>
-                <p>Thank you for your attention to these important accounts.</p>
-                <p>Best regards,</p>
             </field>
         </record>
 </odoo>
