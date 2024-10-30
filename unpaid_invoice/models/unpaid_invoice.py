@@ -19,7 +19,7 @@ class UnpaidInvoice(models.Model):
 
     invoice_id = fields.Many2one('account.move', string='Invoice', required=True)
     document_id = fields.Char(related='invoice_id.document_number', string='Invoice')
-    partner_id = fields.Many2one(related='invoice_id.partner_id', string="Customer")
+    partner_id = fields.Many2one(related='invoice_id.partner_id', string="Customer", store=True)
     amount_due = fields.Monetary(related='invoice_id.amount_residual', string="Amount Due")
     due_date = fields.Date(related='invoice_id.invoice_date_due', string="Due Date")
     team_id = fields.Many2one(related='invoice_id.team_id', string="Sales Team", store=True)
