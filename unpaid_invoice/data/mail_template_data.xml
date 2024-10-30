@@ -9,9 +9,9 @@
             <field name="report_template" ref="unpaid_invoice.export_pdf"/>
             <field name="report_name">Test</field>
             <field name="body_html" type="html">
-                <p style="margin-bottom: 0px;">
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <p style="margin-bottom: 0px;"></p>
+                    <meta charset="UTF-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;family=Montserrat:wght@700;family=Playfair+Display:wght@700;display=swap');
                 
@@ -93,7 +93,7 @@
                         }
                     </style>
                     <title>Unpaid Invoice Reminder</title>
-                </p>
+                
                     <div class="container">
                         <div class="header">Unpaid Invoice Reminder</div>
                         <div class="content">
