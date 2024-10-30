@@ -89,4 +89,4 @@ class UnpaidInvoice(models.Model):
                 domain.append(('team_id', '=', team_id))
             
             # Use search_count to get the count of matching records
-            record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(domain)
+            record.unpaid_invoice_count = self.env['account.move'].search_count(domain)
