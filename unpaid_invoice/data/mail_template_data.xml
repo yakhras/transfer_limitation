@@ -3,7 +3,7 @@
         <record id="unpaid_invoice" model="mail.template">
             <field name="name">Invoice: UnPaid</field>
             <field name="model_id" ref="unpaid_invoice.model_unpaid_invoice"/>
-            <field name="subject">Your Unpaid Invoices for</field>
+            <field name="subject">Reminder: Review Due Invoices – Action Required</field>
             <field name="email_from"></field>
             <field name="email_to"></field>
             <field name="report_template" ref="unpaid_invoice.export_pdf"/>
@@ -11,7 +11,11 @@
             <field name="body_html" type="html">
                 <h1> Dear Neslihan Hanim </h1>
                 <p>This is a reminder that the following invoices for our customers is due today. </p>
-                <p>Please review the details and reach out to the customers to confirm payment or offer assistance as needed.</p>
+                <p>Please review the attached report for a summary of outstanding payments.</p>
+                <p>The attached report provides an overview of all invoices currently due.</p>
+                <p>For a more in-depth view or specific details about any invoice, click the button below.</p>
+                <p>Thank you for your attention to these important accounts.</p>
+                <p>Best regards,</p>
             </field>
         </record>
 </odoo>
