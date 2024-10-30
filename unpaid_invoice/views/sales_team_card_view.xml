@@ -1,80 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data>
-        <record model="ir.ui.view" id="unpaid_invoice_view_tree">
-            <field name="name">unpaid_invoice_view_tree</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_out_invoice_tree" />
-            <field name="arch" type="xml">
-                <xpath expr="//tree" position="attributes">
-                    <attribute name="js_class">unpaid_list</attribute>
-                </xpath>
-            </field>
-        </record>
-
-        <record id="unpaid_invoices_action" model="ir.actions.act_window">
-            <field name="name">Unpaid Invoices</field>
-            <field name="res_model">account.move</field>
-            <field name="view_mode">list</field>
-            <field name="target">current</field>
-            <field name="domain">[
-                ('move_type', '=', 'out_invoice'),
-                ('state', '=', 'posted'),
-                ('payment_state', 'in', ('not_paid', 'partial')),
-                ('invoice_date_due', '&lt;', time.strftime('%Y-%m-%d')),
-                ('partner_id.property_account_receivable_id.code', '=', '120001')
-                ]
-            </field>
-            <field name="context">{
-                'default_move_type': 'out_invoice',
-                'move_type': 'out_invoice',
-                'journal_type': 'sale',
-                'group_by':'invoice_date_due',
-                }
-            </field>
-        </record>
-
-        
-    </data>
-</odoo> -->
 
 <odoo>
     <data>
-        <!-- <record id="view_unpaid_invoice_card" model="ir.ui.view">
-            <field name="name">unpaid.invoice.card.view</field>
-            <field name="model">unpaid.invoice</field>
-            <field name="arch" type="xml">
-                <kanban>
-                    <field name="team_id" />
-                    <templates>
-                        <t t-name="kanban-box">
-                            <div class="o_kanban_card">
-                                <div class="o_kanban_details">
-                                    <strong>
-                                        <t t-esc="record.team_id.name"/>  Sales Team Name
-                                    </strong>
-                                </div>
-                                    <div>
-                                        <t t-esc="record.amount_due"/>  Amount Due
-                                    </div>
-                                    <div>
-                                        <t t-esc="record.due_date"/>  Due Date
-                                    </div>
-                                </div>
-                                <div class="o_kanban_footer">
-                                    <a type="button" class="btn btn-primary" 
-                                       t-att-href="'/web#id=' + str(record.id) + '&view_type=form&model=unpaid.invoice'">
-                                        View Invoices
-                                    </a>
-                                </div>
-                            </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-        </record> -->
-
         <record model="ir.ui.view" id="view_unpaid_invoice_card">
             <field name="name">unpaid.invoice.card.view</field>
             <field name="model">crm.team</field>
@@ -118,13 +45,14 @@
             </field>
         </record>
         
+
       <!-- unpaid.invoice tree view -->
         <record id="view_unpaid_invoice_tree" model="ir.ui.view">
             <field name="name">unpaid.invoice.tree</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="invoice_id"/>
+                    <field name="document_id"/>
                     <field name="partner_id"/>
                     <field name="amount_total"/>
                     <field name="currency_id"/>
@@ -133,6 +61,7 @@
                 </tree>
             </field>
         </record>
+
 
         <!-- unpaid.invoice form view -->
         <record id="view_unpaid_invoice_form" model="ir.ui.view">
@@ -155,6 +84,7 @@
             </field>
         </record>
 
+
         <!-- unpaid.invoice search view -->
         <record id="view_unpaid_invoice_filter" model="ir.ui.view">
             <field name="name">unpaid.invoice.select</field>
@@ -175,17 +105,6 @@
             <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_card"/>
         </record>
 
-        <!-- account.move tree view -->
-        <record id="view_account_move_tree_unpaid" model="ir.ui.view">
-            <field name="name">account.move.tree.unpaid</field>
-            <field name="model">account.move</field>
-            <field name="inherit_id" ref="account.view_invoice_tree"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='activity_ids']" position="replace"/>
-                <xpath expr="//field[@name='amount_untaxed_signed']" position="replace"/>
-                <xpath expr="//field[@name='to_check']" position="replace"/>
-            </field>
-        </record>
 
         <!-- unpaid.invoice previous action -->
         <record id="action_unpaid_invoice_previous" model="ir.actions.act_window">
@@ -206,6 +125,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+        
         <!-- unpaid.invoice today action -->
         <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today</field>
