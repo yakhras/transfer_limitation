@@ -4,8 +4,8 @@
             <field name="name">Invoice: UnPaid</field>
             <field name="model_id" ref="unpaid_invoice.model_unpaid_invoice"/>
             <field name="subject">Reminder: Review Due Invoices Action Required</field>
-            <field name="email_from"></field>
-            <field name="email_to"></field>
+            <field name="email_from">yaser.akhras@menagate.com.tr</field>
+            <field name="email_to">yaser.akhras@menagate.com.tr</field>
             <field name="report_template" ref="unpaid_invoice.export_pdf"/>
             <field name="report_name">Test</field>
             <field name="body_html" type="html">
