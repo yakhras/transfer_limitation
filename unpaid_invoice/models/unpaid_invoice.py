@@ -89,3 +89,43 @@ class UnpaidInvoice(models.Model):
             
             # Use search_count to get the count of matching records
             record.unpaid_invoice_count = self.env['account.move'].search_count(domain)
+
+    def generate_pdf_report_attachment(self):
+        # Define the fields to export
+        export_fields = [
+            {'name': 'invoice_id', 'label': 'Invoice ID'},
+            {'name': 'partner_id', 'label': 'Customer'},
+            {'name': 'amount_due', 'label': 'Amount Due'},
+            {'name': 'due_date', 'label': 'Due Date'}
+            # Add other fields as needed
+        ]
+
+        for record in self:
+            report_action = record._generate_pdf_report_action(export_fields)
+            pdf_content, _ = self.env['ir.actions.report'].sudo()._render_qweb_pdf(
+                report_action['report_name'], [record.id]
+            )
+
+            # Create and save the PDF as an attachment
+            attachment = self.env['ir.attachment'].create({
+                'name': f'Unpaid_Invoice_Report_{record.id}.pdf',
+                'type': 'binary',
+                'datas': base64.b64encode(pdf_content),
+                'res_model': 'unpaid.invoice',
+                'res_id': record.id,
+                'mimetype': 'application/pdf'
+            })
+
+            # Optional: Notify the user in Odoo
+            record.message_post(body="PDF Report generated and attached.")
+
+    def _generate_pdf_report_action(self, export_fields):
+        return {
+            'type': 'ir.actions.report',
+            'report_type': 'qweb-pdf',
+            'report_name': 'unpaid_invoice.export_in_pdf',  # Replace with actual report XML ID
+            'data': {
+                'exported_fields': export_fields,
+                'domain': [('state', '=', 'posted'), ('payment_state', '=', 'not_paid')],
+            },
+        }
