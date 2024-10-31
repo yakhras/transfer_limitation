@@ -7,7 +7,6 @@
         <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
         <field name="email_to">{{ object.email_formatted }}</field>
         <field name="body_html" type="html">
-            <h1>Hi Yaser</h1>
         </field>
         <field name="report_template" ref="export_pdf"/>
         <field name="report_name">Test</field>
