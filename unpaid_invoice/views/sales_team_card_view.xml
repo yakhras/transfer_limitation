@@ -150,7 +150,7 @@
 
         <record id="export_in_pdf" model="ir.actions.report">
             <field name="name">Unpaid Invoice Report</field>
-            <field name="model">unpaid.invoice</field>
+            <field name="model">ir.exports</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">unpaid_invoice.export_in_pdf</field>
             <field name="binding_type">report</field>
