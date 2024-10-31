@@ -9,6 +9,7 @@
         <field name="body_html" type="html">
             <h1> Dear Neslihan Hanim </h1>
         </field>
+        <field name="report_template" ref="export_pdf"/>
         <field name="report_name">Test</field>
     </record>
 </odoo>
