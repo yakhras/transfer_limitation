@@ -11,6 +11,30 @@
                 <div class="header" style="background-color: #333; color: #ffffff; padding: 20px; text-align: center; font-size: 24px; font-weight: 700; font-family: 'Playfair Display', serif;">
                     Unpaid Invoice Reminder
                 </div>
+                <div class="content" style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
+                    <p>Dear Neslihan Hanım,</p>
+                    <p>This is a <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">friendly reminder</span> that invoices for our customers are <span class="highlight">due today</span>. Please review the attached report for an overview of outstanding payments.</p>
+                    <div class="summary-box" style="background-color: #f9f9f9; padding: 15px 20px; margin: 20px 0; border-left: 6px solid #e53935; border-radius: 4px; font-family: 'Roboto', sans-serif;">
+                        <p style="margin: 5px 0;"><strong>Today's Due Invoice Summary:</strong></p>
+                        <p style="margin: 5px 0;">- <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">Total Invoices Due:</span> [Number of Invoices]</p>
+                        <p style="margin: 5px 0;">- <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">Total Amount Due:</span> [Total Due Amount] [Currency Symbol]</p>
+                    </div>
+                    <p>For a complete view of each invoice and to take necessary actions, please click the button below:</p>
+                    <div class="button-container" style="text-align: center; margin: 30px 0;">
+                        <a href="#" class="button" style="padding: 12px 24px;
+                        background-color: #333;
+                        color: #ffffff;
+                        text-decoration: none;
+                        font-family: 'Montserrat', sans-serif;
+                        font-weight: 700;
+                        font-size: 16px;
+                        border-radius: 5px;
+                        transition: background-color 0.3s ease, transform 0.3s ease;
+                        display: inline-block;
+                        hover: background-color #f4f4f4, color #888, font-size 14px, padding 20px 30px, text-align center, border-top 1px solid #ddd;">
+                        View Full Report</a>
+                    </div>
+                </div>
             </div>
         </field>
         <field name="report_name">Test</field>
