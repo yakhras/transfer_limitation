@@ -111,7 +111,6 @@ class UnpaidInvoice(models.Model):
             record.message_post(body="PDF Report generated and attached.")
 
 
-    @api.multi
     def action_generate_pdf(self):
         for record in self:
             # This will call the method to generate the PDF
