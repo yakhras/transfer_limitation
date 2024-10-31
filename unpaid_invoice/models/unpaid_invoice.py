@@ -93,10 +93,10 @@ class UnpaidInvoice(models.Model):
     def action_generate_pdf(self):
         for record in self:
             # Generate PDF report for the current record
-            pdf_content, _ = self.env['ir.actions.report'].sudo()._render_qweb_pdf(
-                'unpaid_invoice.export_in_pdf',  # Use the correct report XML ID
+            report_action = self.env.ref('unpaid_invoice.export_in_pdf')  # Use the correct report XML ID
+            pdf_content, _ = report_action._render_qweb_pdf(
                 [record.id],  # List of record IDs to include in the report
-                data={'key': 'value'}  # Replace with any additional data if needed
+                data={}  # Additional data if needed
             )
             
             # Create the PDF attachment
