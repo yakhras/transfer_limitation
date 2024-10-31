@@ -57,32 +57,3 @@ class ExportData(http.Controller):
             'other': grouped_result
         }
     
-    @http.route('/send_email_unpaid_invoices', type='json', auth='user')
-    def send_email_unpaid_invoices(self, template_id, report_name, records):
-        # Fetch the email template
-        template = request.env.ref(template_id)
-        
-        if not template:
-            return {'success': False, 'error': 'Template not found.'}
-        
-        for record_id in records:
-            record = request.env['unpaid.invoice'].browse(record_id)
-            if record:
-                # Generate the PDF content as attachment
-                pdf_content, _ = request.env['ir.actions.report'].sudo()._render_qweb_pdf(record.id, {'report_type': 'pdf'})
-
-                # Create an attachment
-                attachment = request.env['ir.attachment'].create({
-                    'name': f"Unpaid Invoice Report {record.document_id}.pdf",
-                    'type': 'binary',
-                    'datas': base64.b64encode(pdf_content),
-                    'res_model': 'unpaid.invoice',
-                    'res_id': record.id,
-                    'mimetype': 'application/pdf',
-                })
-
-                # Send email
-                template.send_mail(record.id, force_send=True, email_values={'attachment_ids': [(4, attachment.id)]})
-
-        return {'success': True}
-    
