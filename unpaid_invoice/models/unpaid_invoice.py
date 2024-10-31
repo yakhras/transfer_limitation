@@ -101,6 +101,7 @@ class UnpaidInvoice(models.Model):
         ]
 
         for record in self:
+            # Ensure the action data is passed as a dictionary
             report_action = record._generate_pdf_report_action(export_fields)
             pdf_content, _ = self.env['ir.actions.report'].sudo()._render_qweb_pdf(
                 report_action['report_name'], [record.id]
