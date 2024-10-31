@@ -101,26 +101,27 @@ ListController.include({
     
             // Generate PDF and send to the server
             return self.do_action(action).then(function (report) {
+                console.log(report)
                 // After the PDF is generated, send it to the server
-                if (report && report.pdf) {
-                    // Send the PDF data to the server to send an email
-                    return self._rpc({
-                        route: '/your_endpoint_to_send_pdf',
-                        params: {
-                            pdf_data: report.pdf, // PDF binary content
-                            // Add any other parameters if necessary
-                        },
-                    }).then(function (response) {
-                        // Logging the response
-                        console.log("Response from server:", response);
+                // if (report && report.pdf) {
+                //     // Send the PDF data to the server to send an email
+                //     return self._rpc({
+                //         route: '/your_endpoint_to_send_pdf',
+                //         params: {
+                //             pdf_data: report.pdf, // PDF binary content
+                //             // Add any other parameters if necessary
+                //         },
+                //     }).then(function (response) {
+                //         // Logging the response
+                //         console.log("Response from server:", response);
     
-                        if (response.success) {
-                            alert("PDF sent successfully!");
-                        } else {
-                            alert("Failed to send PDF: " + response.error);
-                        }
-                    })
-                }
+                //         if (response.success) {
+                //             alert("PDF sent successfully!");
+                //         } else {
+                //             alert("Failed to send PDF: " + response.error);
+                //         }
+                //     })
+                // }
             });
         });
     }
