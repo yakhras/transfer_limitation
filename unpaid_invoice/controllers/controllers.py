@@ -3,6 +3,11 @@
 from odoo import http
 from odoo.http import request
 from odoo.exceptions import UserError
+import base64
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class ExportData(http.Controller):
 
@@ -58,17 +63,23 @@ class ExportData(http.Controller):
         }
     
     @http.route('/your_endpoint_to_send_pdf', type='json', auth='user')
-    def send_pdf_email(self, pdf_data):
-        # Decode the PDF data
-        pdf_content = base64.b64decode(pdf_data)
-        
-        # Create attachment
-        attachment = request.env['ir.attachment'].create({
-            'name': 'Unpaid_Invoices.pdf',
-            'type': 'binary',
-            'datas': base64.b64encode(pdf_content),
-            'res_model': 'unpaid.invoice',
-            # Specify the record if needed
-        })
+    def send_pdf(self, pdf_data):
+        # Log the receipt of PDF data
+        _logger.info("Received PDF data for email sending.")
 
-        return {'success': True}
+        try:
+            # Here you can save the PDF data or send it via email
+            pdf_content = base64.b64decode(pdf_data)  # Decode if necessary
+
+            # Optionally save it as an attachment
+            request.env['ir.attachment'].create({
+                'name': 'Generated_PDF.pdf',
+                'type': 'binary',
+                'datas': base64.b64encode(pdf_content),
+                'res_model': 'your.model',  # Replace with the correct model
+            })
+
+            return {'success': True}
+        except Exception as e:
+            _logger.error("Error handling PDF data: %s", e)
+            return {'success': False, 'error': str(e)}
