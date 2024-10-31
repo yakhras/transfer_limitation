@@ -72,7 +72,7 @@
                     <sheet>
                         <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
                         <button name="send_email_unpaid_invoices" string="Send Email" type="object" class="btn-primary"/>
-                        <button name="generate_pdf_report_attachment" type="object" string="Generate PDF Report" class="btn-primary"/>
+                        <button name="action_generate_pdf" type="object" string="Generate PDF Report" class="btn-primary"/>
                         <!-- Other form fields go here -->
                         <group>
                             <field name="invoice_id"/>

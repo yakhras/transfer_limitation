@@ -91,24 +91,15 @@ class UnpaidInvoice(models.Model):
             record.unpaid_invoice_count = self.env['account.move'].search_count(domain)
 
     def generate_pdf_report_attachment(self):
-        # Define the fields to export
-        export_fields = [
-            {'name': 'invoice_id', 'label': 'Invoice ID'},
-            {'name': 'partner_id', 'label': 'Customer'},
-            {'name': 'amount_due', 'label': 'Amount Due'},
-            {'name': 'due_date', 'label': 'Due Date'}
-            # Add other fields as needed
-        ]
-
         for record in self:
-            # Ensure the action data is passed as a dictionary
-            report_action = record._generate_pdf_report_action(export_fields)
+            # Call the method to generate the PDF report
             pdf_content, _ = self.env['ir.actions.report'].sudo()._render_qweb_pdf(
-                report_action['report_name'], [record.id]
+                'unpaid_invoice.export_in_pdf',  # Replace with your actual report XML ID
+                [record.id]
             )
-
-            # Create and save the PDF as an attachment
-            attachment = self.env['ir.attachment'].create({
+            
+            # Create the PDF attachment
+            self.env['ir.attachment'].create({
                 'name': f'Unpaid_Invoice_Report_{record.id}.pdf',
                 'type': 'binary',
                 'datas': base64.b64encode(pdf_content),
@@ -116,17 +107,12 @@ class UnpaidInvoice(models.Model):
                 'res_id': record.id,
                 'mimetype': 'application/pdf'
             })
-
-            # Optional: Notify the user in Odoo
+            # Notify the user (optional)
             record.message_post(body="PDF Report generated and attached.")
 
-    def _generate_pdf_report_action(self, export_fields):
-        return {
-            'type': 'ir.actions.report',
-            'report_type': 'qweb-pdf',
-            'report_name': 'unpaid_invoice.export_in_pdf',  # Replace with actual report XML ID
-            'data': {
-                'exported_fields': export_fields,
-                'domain': [('state', '=', 'posted'), ('payment_state', '=', 'not_paid')],
-            },
-        }
+
+    @api.multi
+    def action_generate_pdf(self):
+        for record in self:
+            # This will call the method to generate the PDF
+            record.generate_pdf_report_attachment()
