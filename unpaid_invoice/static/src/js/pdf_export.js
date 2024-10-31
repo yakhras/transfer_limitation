@@ -101,7 +101,7 @@ ListController.include({
     
             // Generate PDF and send to the server
             return self.do_action(action).then(function (report) {
-                console.log(report)
+                console.log(report.pdf)
                 // After the PDF is generated, send it to the server
                 // if (report && report.pdf) {
                 //     // Send the PDF data to the server to send an email
