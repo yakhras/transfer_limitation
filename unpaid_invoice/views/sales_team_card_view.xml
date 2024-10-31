@@ -148,16 +148,16 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
-        <record id="export_in_pdf" model="ir.actions.report">
+        <record id="action_unpaid_invoice_pdf" model="ir.actions.report">
             <field name="name">Unpaid Invoice Report</field>
-            <field name="model">ir.exports</field>
+            <field name="model">unpaid.invoice</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">unpaid_invoice.export_in_pdf</field>
+            <field name="report_file">unpaid_invoice.unpaid_invoice_report_pdf</field> <!-- This should match your QWeb template ID -->
             <field name="binding_type">report</field>
-            <field name="binding_model_id" ref="model_unpaid_invoice"/>
+            <field name="binding_model_id" ref="unpaid_invoice.model_unpaid_invoice"/>
         </record>
 
-        <template id="export_pdf">
+        <template id="unpaid_invoice_report_pdf">
             <t t-call="web.html_container">
                 <t t-call="web.external_layout">
                     <div class="page">
