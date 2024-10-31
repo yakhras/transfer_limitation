@@ -111,15 +111,15 @@ ListController.include({
                             // Add any other parameters if necessary
                         },
                     }).then(function (response) {
+                        // Logging the response
+                        console.log("Response from server:", response);
+    
                         if (response.success) {
-                            console.log("Email sent successfully!");
+                            alert("PDF sent successfully!");
                         } else {
-                            console.log("Failed to send email.");
+                            alert("Failed to send PDF: " + response.error);
                         }
-                    }).catch(function (error) {
-                        console.error("Error sending PDF data:", error);
-                        console.log("An error occurred while sending the email.");
-                    });
+                    })
                 }
             });
         });
