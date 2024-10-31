@@ -92,21 +92,27 @@ class UnpaidInvoice(models.Model):
 
     def action_generate_pdf(self):
         for record in self:
-            # Generate PDF report for the current record
-            report_action = self.env.ref('unpaid_invoice.export_in_pdf')  # Use the correct report XML ID
-            pdf_content, _ = report_action._render_qweb_pdf(
-                [record.id],  # List of record IDs to include in the report
-                data={}  # Additional data if needed
-            )
-            
-            # Create the PDF attachment
-            self.env['ir.attachment'].create({
-                'name': f'Unpaid_Invoice_Report_{record.id}.pdf',
-                'type': 'binary',
-                'datas': base64.b64encode(pdf_content),
-                'res_model': 'unpaid.invoice',
-                'res_id': record.id,
-                'mimetype': 'application/pdf'
-            })
-            # Notify the user (optional)
-            record.message_post(body="PDF Report generated and attached.")
+            # Ensure to reference the correct report action
+            report_action = self.env.ref('unpaid_invoice.export_in_pdf')  # Adjust this ID accordingly
+
+            if report_action:
+                # Generate PDF report for the current record
+                pdf_content, _ = report_action._render_qweb_pdf(
+                    [record.id],  # List of record IDs to include in the report
+                    data={}  # Additional data if needed
+                )
+                
+                # Create the PDF attachment
+                self.env['ir.attachment'].create({
+                    'name': f'Unpaid_Invoice_Report_{record.id}.pdf',
+                    'type': 'binary',
+                    'datas': base64.b64encode(pdf_content),
+                    'res_model': 'unpaid.invoice',
+                    'res_id': record.id,
+                    'mimetype': 'application/pdf'
+                })
+                
+                # Notify the user (optional)
+                record.message_post(body="PDF Report generated and attached.")
+            else:
+                raise ValueError("Report action not found!")
