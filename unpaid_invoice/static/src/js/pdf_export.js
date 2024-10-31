@@ -112,13 +112,13 @@ ListController.include({
                         },
                     }).then(function (response) {
                         if (response.success) {
-                            alert("Email sent successfully!");
+                            console.log("Email sent successfully!");
                         } else {
-                            alert("Failed to send email.");
+                            console.log("Failed to send email.");
                         }
                     }).catch(function (error) {
                         console.error("Error sending PDF data:", error);
-                        alert("An error occurred while sending the email.");
+                        console.log("An error occurred while sending the email.");
                     });
                 }
             });
