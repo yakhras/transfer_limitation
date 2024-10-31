@@ -152,41 +152,12 @@
             <field name="name">Unpaid Invoice Report</field>
             <field name="model">unpaid.invoice</field>
             <field name="report_type">qweb-pdf</field>
+            <field name="report_name">unpaid_invoice.export_in_pdf</field>
             <field name="report_file">unpaid_invoice.export_in_pdf</field>
             <field name="binding_type">report</field>
             <field name="binding_model_id" ref="model_unpaid_invoice"/>
         </record>
 
-        <template id="export_in_pdf">
-            <t t-call="web.html_container">
-                <t t-call="web.external_layout">
-                    <div class="page">
-                        <h1>Unpaid Invoice Report</h1>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Invoice Number</th>
-                                    <th>Customer</th>
-                                    <th>Amount Due</th>
-                                    <th>Due Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <t t-foreach="docs" t-as="doc">
-                                    <tr>
-                                        <td><span t-field="doc.document_id"/></td>
-                                        <td><span t-field="doc.partner_id.name"/></td>
-                                        <td><span t-field="doc.amount_due"/></td>
-                                        <td><span t-field="doc.due_date"/></td>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
-                    </div>
-                </t>
-            </t>
-        </template>
-            
 
         <!-- Menu Item -->
         <menuitem id="menu_unpaid_invoice_kanban" name="Unpaid Invoices" 
