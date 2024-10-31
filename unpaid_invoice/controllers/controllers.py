@@ -57,3 +57,18 @@ class ExportData(http.Controller):
             'other': grouped_result
         }
     
+    @http.route('/your_endpoint_to_send_pdf', type='json', auth='user')
+    def send_pdf_email(self, pdf_data):
+        # Decode the PDF data
+        pdf_content = base64.b64decode(pdf_data)
+        
+        # Create attachment
+        attachment = request.env['ir.attachment'].create({
+            'name': 'Unpaid_Invoices.pdf',
+            'type': 'binary',
+            'datas': base64.b64encode(pdf_content),
+            'res_model': 'unpaid.invoice',
+            # Specify the record if needed
+        })
+
+        return {'success': True}
