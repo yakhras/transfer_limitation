@@ -90,12 +90,13 @@ class UnpaidInvoice(models.Model):
             # Use search_count to get the count of matching records
             record.unpaid_invoice_count = self.env['account.move'].search_count(domain)
 
-    def generate_pdf_report_attachment(self):
+    def action_generate_pdf(self):
         for record in self:
-            # Call the method to generate the PDF report
+            # Generate PDF report for the current record
             pdf_content, _ = self.env['ir.actions.report'].sudo()._render_qweb_pdf(
-                'unpaid_invoice.export_in_pdf',  # Replace with your actual report XML ID
-                [record.id]
+                'unpaid_invoice.export_in_pdf',  # Use the correct report XML ID
+                [record.id],  # List of record IDs to include in the report
+                data={'key': 'value'}  # Replace with any additional data if needed
             )
             
             # Create the PDF attachment
@@ -109,9 +110,3 @@ class UnpaidInvoice(models.Model):
             })
             # Notify the user (optional)
             record.message_post(body="PDF Report generated and attached.")
-
-
-    def action_generate_pdf(self):
-        for record in self:
-            # This will call the method to generate the PDF
-            record.generate_pdf_report_attachment()
