@@ -36,7 +36,6 @@ class UnpaidInvoice(models.Model):
 
 
     def populate_unpaid_invoices(self):
-        
 
         # Define the domain for unpaid invoices
         domain = [
