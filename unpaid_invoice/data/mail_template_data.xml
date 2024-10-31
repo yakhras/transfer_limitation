@@ -7,7 +7,9 @@
         <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
         <field name="email_to">{{ object.email_formatted }}</field>
         <field name="body_html" type="html">
-            <h2>Hi there</h2>
+            <head>
+                <title>Unpaid Invoice Reminder</title>
+            </head>
         </field>
         <field name="report_name">Test</field>
     </record>
