@@ -26,6 +26,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'unpaid_invoice/static/src/css/custom_styles.css'
         'data/mail_template_data.xml',
         'views/sales_team_card_view.xml',
         'views/pdf.xml',
@@ -37,7 +38,7 @@
             'unpaid_invoice/static/src/xml/button_view.xml',
         ],
         'web.assets_backend': [
-            'unpaid_invoice/static/src/css/custom_styles.css'
+            
             'unpaid_invoice/static/src/js/pdf_export.js'
         ]
     },
