@@ -71,7 +71,7 @@ class UnpaidInvoice(models.Model):
 
     
 
-    @api.depends_context('search_default_team_id')
+    
     def _compute_unpaid_invoice_count(self):
         """Compute the count of unpaid invoices for the current sales team if provided in context."""
         for record in self:
