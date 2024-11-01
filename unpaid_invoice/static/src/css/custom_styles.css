@@ -15,7 +15,7 @@
     margin: 0 auto; /* Center align the sheet */
 }
 
-.custom-header {
+.modern-form header {
     background-color: #4CAF50;
     padding: 10px;
     border-radius: 8px 8px 0 0;
@@ -54,37 +54,39 @@
     background-color: #45a049;
 }
 
-/* Custom Styles for Status Field */
-.custom-status {
+/* Custom Styles for State Field with Bar */
+.state-bar .o_field_widget {
     display: flex;
-    justify-content: space-around;
     align-items: center;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 20px;
-}
-
-.custom-status .o_field_widget {
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 5px;
+    border-radius: 4px;
     font-weight: bold;
     text-transform: uppercase;
-    transition: background-color 0.3s ease;
 }
 
-.custom-status .o_field_widget.draft {
+.state-bar .o_field_widget.draft {
     background-color: #ffc107;
     color: #fff;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }
 
-.custom-status .o_field_widget.sent {
+.state-bar .o_field_widget.sent {
     background-color: #17a2b8;
     color: #fff;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }
 
-.custom-status .o_field_widget.sale {
+.state-bar .o_field_widget.sale {
     background-color: #28a745;
     color: #fff;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
 }

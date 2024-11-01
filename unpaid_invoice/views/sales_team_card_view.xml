@@ -70,7 +70,7 @@
             <field name="arch" type="xml">
                 <form create="false" class="modern-form">
                     <header>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale" class="custom-statusbar"/>
+                        <field name="state" class="state-bar"/>
                         <!-- <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/> -->
                         <button name="send_email_unpaid_invoices" string="Send Email" type="object" class="btn-primary"/>
                     <!-- <button name="get_current_action_domain" string="Count" type="object" class="btn-primary"/> -->
