@@ -80,7 +80,7 @@
                             <field name="amount_total"/>
                             <field name="currency_id"/>
                             <field name="team_id"/>
-                            <field name="unpaid_invoice_count"/>
+                            <!-- <field name="unpaid_invoice_count"/> -->
                         </group>
                     </sheet>
                 </form>
