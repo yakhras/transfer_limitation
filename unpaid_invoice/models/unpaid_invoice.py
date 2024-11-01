@@ -12,6 +12,7 @@
 
     
 from odoo import models, fields, api
+from odoo.tools import context_today
 
 class UnpaidInvoice(models.Model):
     _name = 'unpaid.invoice'
@@ -84,7 +85,7 @@ class UnpaidInvoice(models.Model):
             if action_id:
                 action = self.env['ir.actions.act_window'].sudo().browse(action_id)
                 action_domain = eval(action.domain) if action.domain else []
-                record.action_domain = action_domain
+                record.action_domain = str(action_domain)
             else:
                 record.action_domain = '[]'
 
@@ -93,6 +94,7 @@ class UnpaidInvoice(models.Model):
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
+                ('invoice_date_due', '=', context_today(self))
             ]
 
             # Append the domain with team_id and action_domain
@@ -103,5 +105,4 @@ class UnpaidInvoice(models.Model):
             combined_domain = base_domain + action_domain
 
             record.unpaid_invoice_count = self.env['account.move'].search_count(combined_domain)
-
     
