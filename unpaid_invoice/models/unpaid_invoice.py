@@ -100,7 +100,7 @@ class UnpaidInvoice(models.Model):
             if team_id:
                 base_domain.append(('team_id', '=', team_id))
             if action_domain:
-                base_domain.extend(eval(action_domain))
+                base_domain.extend(action_domain)
 
             record.unpaid_invoice_count = self.env['account.move'].search_count(base_domain)
 
