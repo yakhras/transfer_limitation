@@ -83,7 +83,7 @@ class UnpaidInvoice(models.Model):
             action_domain = []
             if action_id:
                 action = self.env['ir.actions.act_window'].sudo().browse(action_id)
-                action_domain = eval(action.name) if action.name else []
+                action_domain = action.name if action.name else []
                 record.action_domain = str(action_domain)
             else:
                 record.action_domain = '[]'
