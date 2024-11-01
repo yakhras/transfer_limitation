@@ -102,6 +102,6 @@ class UnpaidInvoice(models.Model):
             if action_domain:
                 base_domain.extend(action_domain)
 
-            record.unpaid_invoice_count = self.env['account.move'].search_count(base_domain)
+            record.unpaid_invoice_count = base_domain #self.env['account.move'].search_count(base_domain)
 
     
