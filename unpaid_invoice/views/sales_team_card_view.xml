@@ -51,7 +51,7 @@
             <field name="name">unpaid.invoice.tree</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree create="false">
                     <field name="document_id"/>
                     <field name="partner_id"/>
                     <field name="amount_total"/>
@@ -68,9 +68,9 @@
             <field name="name">unpaid.invoice.form</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <form>
+                <form create="false">
                     <sheet>
-                        <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
+                        <!-- <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/> -->
                         <button name="send_email_unpaid_invoices" string="Send Email" type="object" class="btn-primary"/>
                         <!-- <button name="get_current_action_domain" string="Count" type="object" class="btn-primary"/> -->
                         <!-- Other form fields go here -->
