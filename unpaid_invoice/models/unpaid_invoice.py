@@ -92,9 +92,9 @@ class UnpaidInvoice(models.Model):
             base_domain = []
 
             # Append the domain with team_id and action_domain
-            # team_id = self.env.context.get('search_default_team_id')
-            # if team_id:
-            #     base_domain.append(('team_id', '=', team_id))
+            team_id = self.env.context.get('search_default_team_id')
+            if team_id:
+                base_domain.append(('team_id', '=', team_id))
 
             if 'Today' in action_domain:
                 base_domain.append(('due_date', '=', fields.Date.today().strftime('%Y-%m-%d')))
