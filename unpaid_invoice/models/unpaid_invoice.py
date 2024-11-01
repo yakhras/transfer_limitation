@@ -36,7 +36,6 @@ class UnpaidInvoice(models.Model):
 
 
     def populate_unpaid_invoices(self):
-
         # Define the domain for unpaid invoices
         domain = [
             ('state', '=', 'posted'),
@@ -47,7 +46,6 @@ class UnpaidInvoice(models.Model):
         # Fetch records from account.move that meet the domain criteria
         account_moves = self.env['account.move'].search(domain)
        
-
         # Loop through each fetched record and create a record in unpaid.invoice
         for move in account_moves:
           
@@ -62,6 +60,7 @@ class UnpaidInvoice(models.Model):
                 self.create(vals)  # Pass the vals dictionary to create()
               
 
+
     def send_email_unpaid_invoices(self):
         template = self.env.ref('unpaid_invoice.unpaid_invoice')
         for rec in self:
@@ -74,25 +73,26 @@ class UnpaidInvoice(models.Model):
     @api.depends_context('action', 'search_default_team_id')
     def _compute_details(self):
         for record in self:
-            # Compute Action ID and Domain
+            domain = []
+
+            # Compute Action ID and Name
             action_id = self.env.context.get('action', 0)
-            # action_domain = []
-            base_domain = []
             if action_id:
                 action = self.env['ir.actions.act_window'].sudo().browse(action_id)
-                action_domain = action.name if action.name else []
-                if 'Today' in action_domain:
-                    base_domain.append(('due_date', '=', fields.Date.today().strftime('%Y-%m-%d')))
-                else:
-                    base_domain.append(('due_date', '<', fields.Date.today().strftime('%Y-%m-%d')))
-            
+                action_name = action.name if action.name else []
 
-            # Append the domain with team_id and action_domain
+                # Append the domain with action_name
+                if 'Today' in action_name:
+                    domain.append(('due_date', '=', fields.Date.today().strftime('%Y-%m-%d')))
+                else:
+                    domain.append(('due_date', '<', fields.Date.today().strftime('%Y-%m-%d')))
+            
+            # Append the domain with team_id 
             team_id = self.env.context.get('search_default_team_id')
             if team_id:
-                base_domain.append(('team_id', '=', team_id))
+                domain.append(('team_id', '=', team_id))
 
-            
-            record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(base_domain)
+            # Assign the record count to unpaid_invoice_count field
+            record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(domain)
 
     
