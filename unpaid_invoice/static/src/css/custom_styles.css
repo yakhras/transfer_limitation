@@ -74,4 +74,12 @@
     color: #fff;
 }
 
-.custom
+.custom-statusbar .o_statusbar_status.sent {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.custom-statusbar .o_statusbar_status.sale {
+    background-color: #28a745;
+    color: #fff;
+}
