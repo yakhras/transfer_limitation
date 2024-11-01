@@ -89,22 +89,18 @@ class UnpaidInvoice(models.Model):
                 record.action_domain = '[]'
 
             # Compute Unpaid Invoice Count
-            base_domain = [
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-            ]
+            base_domain = []
 
             # Append the domain with team_id and action_domain
-            team_id = self.env.context.get('search_default_team_id')
-            if team_id:
-                base_domain.append(('team_id', '=', team_id))
+            # team_id = self.env.context.get('search_default_team_id')
+            # if team_id:
+            #     base_domain.append(('team_id', '=', team_id))
 
             if 'Today' in action_domain:
                 base_domain.append(('invoice_date_due', '=', fields.Date.today().strftime('%Y-%m-%d')))
             else:
                 base_domain.append(('invoice_date_due', '<', fields.Date.today().strftime('%Y-%m-%d')))
 
-            record.unpaid_invoice_count = self.env['account.move'].search_count(base_domain)
+            record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(base_domain)
 
     
