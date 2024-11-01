@@ -37,7 +37,7 @@
             'unpaid_invoice/static/src/xml/button_view.xml',
         ],
         'web.assets_backend': [
-            'static/src/css/custom_styles.css',
+            'unpaid_invoice/static/src/css/custom_styles.css',
             'unpaid_invoice/static/src/js/pdf_export.js'
         ]
     },
