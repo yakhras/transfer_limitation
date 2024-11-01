@@ -116,7 +116,7 @@ class UnpaidInvoice(models.Model):
     @api.depends('action_id')
     def _compute_action_domain(self):
         for record in self:
-            action = self.env['ir.actions.actions'].sudo().browse(record.action_id)
+            action = self.env['ir.actions.act_window'].sudo().browse(record.action_id)
             record.action_domain = str(action.domain) if action.domain else '[]'
 
     
