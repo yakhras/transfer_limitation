@@ -60,6 +60,15 @@ class UnpaidInvoice(models.Model):
                 self.create(vals)  # Pass the vals dictionary to create()
               
 
+    # to display the partner’s name instead of the default object name
+    def name_get(self):
+        result = []
+        for record in self:
+            name = record.invoice_id.name  # Get the partner name
+            result.append((record.id, name))  # Return a tuple of (record_id, name)
+        return result
+    
+
 
     def send_email_unpaid_invoices(self):
         template = self.env.ref('unpaid_invoice.unpaid_invoice')
