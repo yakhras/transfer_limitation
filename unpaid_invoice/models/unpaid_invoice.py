@@ -101,9 +101,9 @@ class UnpaidInvoice(models.Model):
                 base_domain.append(('team_id', '=', team_id))
 
             if 'Today' in action_domain:
-                base_domain.append(('due_date', '&lt;', fields.today().strftime('%Y-%m-%d')))
+                base_domain.append(('due_date', '&lt;', fields.Date.today().strftime('%Y-%m-%d')))
             else:
-                base_domain.append(('due_date', '&lt;', fields.today().strftime('%Y-%m-%d')-1))
+                base_domain.append(('due_date', '&lt;', fields.Date.today().strftime('%Y-%m-%d')-1))
 
             record.unpaid_invoice_count = self.env['account.move'].search_count(base_domain)
 
