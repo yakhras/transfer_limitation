@@ -32,9 +32,9 @@ class UnpaidInvoice(models.Model):
     email_recipients = fields.Char(string="Email Recipients")
     amount_total = fields.Monetary(string="Total Amount", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string="Currency")
-    unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count", store=True)
-    action_id = fields.Integer(string='Action ID', compute='_compute_action_details')
-    action_domain = fields.Char(string='Action Domain', compute='_compute_action_details')
+    unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count",compute='_compute_details', store=True)
+    action_id = fields.Integer(string='Action ID', compute='_compute_details')
+    action_domain = fields.Char(string='Action Domain', compute='_compute_details')
 
 
     def populate_unpaid_invoices(self):
@@ -73,44 +73,10 @@ class UnpaidInvoice(models.Model):
 
     
 
-    @api.depends_context('search_default_team_id')
-    def compute_unpaid_invoice_count(self):
-        """Compute the count of unpaid invoices for the current sales team if provided in context."""
+    @api.depends_context('action', 'search_default_team_id')
+    def _compute_details(self):
         for record in self:
-            # Define the base domain for unpaid invoices due today
-            domain = [
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-            ]
-            
-            # Check context for 'search_default_team_id' and filter by team_id if provided
-            team_id = self.env.context.get('search_default_team_id')
-            if team_id:
-                domain.append(('team_id', '=', team_id))
-            
-            # Use search_count to get the count of matching records
-            record.unpaid_invoice_count = self.env['account.move'].search_count(domain)
-
-
-    def get_current_action_domain(self):
-        # Retrieve the action ID from the context
-        action_id = self.env.context.get('current_action_id')
-        
-        if action_id:
-            # Fetch the action record using the action ID
-            action = self.env['ir.actions.act_window'].browse(action_id)
-            
-            # Get the domain from the action
-            domain = action.domain if action else []
-            self.unpaid_invoice_count =  domain
-        else:
-            return []
-        
-
-    @api.depends_context('action')
-    def _compute_action_details(self):
-        for record in self:
+            # Compute Action ID and Domain
             action_id = self.env.context.get('action', 0)
             record.action_id = action_id
             if action_id:
@@ -118,5 +84,18 @@ class UnpaidInvoice(models.Model):
                 record.action_domain = str(action.domain) if action.domain else '[]'
             else:
                 record.action_domain = '[]'
+
+            # Compute Unpaid Invoice Count
+            domain = [
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+            ]
+
+            team_id = self.env.context.get('search_default_team_id')
+            if team_id:
+                domain.append(('team_id', '=', team_id))
+
+            record.unpaid_invoice_count = self.env['account.move'].search_count(domain)
 
     
