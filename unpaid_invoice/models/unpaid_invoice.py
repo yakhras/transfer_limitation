@@ -76,7 +76,7 @@ class UnpaidInvoice(models.Model):
         for record in self:
             # Compute Action ID and Domain
             action_id = self.env.context.get('action', 0)
-            action_domain = []
+            # action_domain = []
             base_domain = []
             if action_id:
                 action = self.env['ir.actions.act_window'].sudo().browse(action_id)
