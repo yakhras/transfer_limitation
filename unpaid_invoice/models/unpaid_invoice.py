@@ -102,7 +102,7 @@ class UnpaidInvoice(models.Model):
 
             combined_domain = base_domain + action_domain
 
-            domain_1= self.env['account.move'].search_count(base_domain)
+            domain_1= self.env['account.move'].browse(base_domain)
             record.unpaid_invoice_count = domain_1.search_count(action_domain)
 
     
