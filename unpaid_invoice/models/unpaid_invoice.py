@@ -93,7 +93,6 @@ class UnpaidInvoice(models.Model):
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
-                ('invoice_date_due', '=', context_today(self))
             ]
 
             # Append the domain with team_id and action_domain
