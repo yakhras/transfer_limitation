@@ -16,7 +16,7 @@
                     <p>This is a <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">friendly reminder</span> that invoices for our customers are <span class="highlight">due today</span>. Please review the attached report for an overview of outstanding payments.</p>
                     <div class="summary-box" style="background-color: #f9f9f9; padding: 15px 20px; margin: 20px 0; border-left: 6px solid #e53935; border-radius: 4px; font-family: 'Roboto', sans-serif;">
                         <p style="margin: 5px 0;"><strong>Today's Due Invoice Summary:</strong></p>
-                        <p style="margin: 5px 0;">- <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">Total Invoices Due:</span> {{ object.action_domain }}</p>
+                        <p style="margin: 5px 0;">- <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">Total Invoices Due:</span> <span t-out="object.unpaid_invoice_count"/></p>
                         <p style="margin: 5px 0;">- <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">Total Amount Due:</span> [Total Due Amount] [Currency Symbol]</p>
                     </div>
                     <p>For a complete view of each invoice and to take necessary actions, please click the button below:</p>
