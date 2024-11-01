@@ -15,11 +15,11 @@
     margin: 0 auto; /* Center align the sheet */
 }
 
-.modern-form header {
+.custom-header {
     background-color: #4CAF50;
     padding: 10px;
     border-radius: 8px 8px 0 0;
-    border: 2px solid #4CAF50;
+    border: 2px solid #4CAF50; /* Updated to match the new green theme */
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%; /* Ensure header takes full width */
     box-sizing: border-box; /* Include padding and border in width calculation */
@@ -54,8 +54,8 @@
     background-color: #45a049;
 }
 
-/* Custom Styles for Statusbar Widget */
-.custom-statusbar .o_statusbar {
+/* Custom Styles for Status Field */
+.custom-status {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -65,7 +65,7 @@
     margin-bottom: 20px;
 }
 
-.custom-statusbar .o_statusbar_status {
+.custom-status .o_field_widget {
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 14px;
@@ -74,17 +74,17 @@
     transition: background-color 0.3s ease;
 }
 
-.custom-statusbar .o_statusbar_status.draft {
+.custom-status .o_field_widget.draft {
     background-color: #ffc107;
     color: #fff;
 }
 
-.custom-statusbar .o_statusbar_status.sent {
+.custom-status .o_field_widget.sent {
     background-color: #17a2b8;
     color: #fff;
 }
 
-.custom-statusbar .o_statusbar_status.sale {
+.custom-status .o_field_widget.sale {
     background-color: #28a745;
     color: #fff;
 }
