@@ -34,6 +34,7 @@ class UnpaidInvoice(models.Model):
     currency_id = fields.Many2one('res.currency', string="Currency")
     unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count", store=True)
     action_id = fields.Integer(string='Action ID', compute='_compute_action_id')
+    action_domain = fields.Char(string='Action Domain', compute='_compute_action_domain')
 
 
     def populate_unpaid_invoices(self):
@@ -111,5 +112,11 @@ class UnpaidInvoice(models.Model):
     def _compute_action_id(self):
         for record in self:
             record.action_id = self.env.context.get('action', 0)
+
+    @api.depends('action_id')
+    def _compute_action_domain(self):
+        for record in self:
+            action = self.env['ir.actions.actions'].sudo().browse(record.action_id)
+            record.action_domain = str(action.domain) if action.domain else '[]'
 
     
