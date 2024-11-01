@@ -16,7 +16,7 @@
     background-color: #4CAF50;
     padding: 10px;
     border-radius: 8px 8px 0 0;
-    border: 2px solid #007BFF;
+    border: 2px solid #4CAF50; /* Updated to match the new green theme */
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -27,12 +27,12 @@
 .modern-form .o_group .o_field_widget {
     font-size: 16px;
     margin-bottom: 10px;
-    border-bottom: 1px solid #ddd; /* Line separator under fields */
+    border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
 }
 
 .modern-form .btn-primary {
-    background-color: #007BFF;
+    background-color: #4CAF50; /* Changed button color to green */
     border: none;
     color: white;
     padding: 10px 20px;
@@ -46,7 +46,7 @@
 }
 
 .modern-form .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #45a049; /* Darker green for hover effect */
 }
 
 /* Custom Styles for Statusbar Widget */
@@ -74,12 +74,4 @@
     color: #fff;
 }
 
-.custom-statusbar .o_statusbar_status.sent {
-    background-color: #17a2b8;
-    color: #fff;
-}
-
-.custom-statusbar .o_statusbar_status.sale {
-    background-color: #28a745;
-    color: #fff;
-}
+.custom
