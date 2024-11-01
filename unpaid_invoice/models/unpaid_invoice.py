@@ -32,7 +32,7 @@ class UnpaidInvoice(models.Model):
     email_recipients = fields.Char(string="Email Recipients")
     amount_total = fields.Monetary(string="Total Amount", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string="Currency")
-    unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count",compute='_compute_details', store=True)
+    unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count",compute='_compute_details')
     action_id = fields.Integer(string='Action ID', compute='_compute_details')
     action_domain = fields.Char(string='Action Domain', compute='_compute_details')
 
@@ -79,23 +79,29 @@ class UnpaidInvoice(models.Model):
             # Compute Action ID and Domain
             action_id = self.env.context.get('action', 0)
             record.action_id = action_id
+            
+            action_domain = '[]'
             if action_id:
                 action = self.env['ir.actions.act_window'].sudo().browse(action_id)
-                record.action_domain = str(action.domain) if action.domain else '[]'
+                action_domain = str(action.domain) if action.domain else '[]'
+                record.action_domain = action_domain
             else:
                 record.action_domain = '[]'
 
             # Compute Unpaid Invoice Count
-            domain = [
+            base_domain = [
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
             ]
 
+            # Append the domain with team_id and action_domain
             team_id = self.env.context.get('search_default_team_id')
             if team_id:
-                domain.append(('team_id', '=', team_id))
+                base_domain.append(('team_id', '=', team_id))
+            if action_domain:
+                base_domain.extend(eval(action_domain))
 
-            record.unpaid_invoice_count = self.env['account.move'].search_count(domain)
+            record.unpaid_invoice_count = self.env['account.move'].search_count(base_domain)
 
     
