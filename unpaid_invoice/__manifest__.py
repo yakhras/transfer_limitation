@@ -31,7 +31,7 @@
         'views/pdf.xml',
         'views/pdf_group_by_template.xml'
     ],
-    'css': ['static/src/css/crm.css'],
+    'css': ['static/src/css/custom_styles.css'],
     
     'assets': {
         'web.assets_qweb': [
