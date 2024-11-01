@@ -31,13 +31,13 @@
         'views/pdf.xml',
         'views/pdf_group_by_template.xml'
     ],
-    'css': ['static/src/css/custom_styles.css'],
     
     'assets': {
         'web.assets_qweb': [
             'unpaid_invoice/static/src/xml/button_view.xml',
         ],
         'web.assets_backend': [
+            'unpaid_invoice/static/src/css/custom_styles.css'
             'unpaid_invoice/static/src/js/pdf_export.js'
         ]
     },
