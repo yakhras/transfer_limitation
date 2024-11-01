@@ -14,7 +14,7 @@
 
 .modern-form header {
     background-color: #4CAF50;
-    padding: 20px;
+    padding: 10px;
     border-radius: 8px 8px 0 0;
     border: 2px solid #007BFF;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -48,7 +48,7 @@
 }
 
 /* Custom Styles for Statusbar Widget */
-.o_statusbar {
+.custom-statusbar .o_statusbar {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -58,7 +58,7 @@
     margin-bottom: 20px;
 }
 
-.o_statusbar .o_statusbar_status {
+.custom-statusbar .o_statusbar_status {
     border-radius: 8px;
     padding: 8px 12px;
     font-size: 14px;
@@ -67,17 +67,17 @@
     transition: background-color 0.3s ease;
 }
 
-.o_statusbar .o_statusbar_status.draft {
+.custom-statusbar .o_statusbar_status.draft {
     background-color: #ffc107;
     color: #fff;
 }
 
-.o_statusbar .o_statusbar_status.sent {
+.custom-statusbar .o_statusbar_status.sent {
     background-color: #17a2b8;
     color: #fff;
 }
 
-.o_statusbar .o_statusbar_status.sale {
+.custom-statusbar .o_statusbar_status.sale {
     background-color: #28a745;
     color: #fff;
 }
