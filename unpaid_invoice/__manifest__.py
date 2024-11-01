@@ -26,7 +26,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'unpaid_invoice/static/src/css/custom_styles.css',
+        'static/src/css/custom_styles.css',
         'data/mail_template_data.xml',
         'views/sales_team_card_view.xml',
         'views/pdf.xml',
