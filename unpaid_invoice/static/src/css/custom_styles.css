@@ -4,20 +4,25 @@
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Ensure form takes full width */
 }
 
 .modern-form .o_form_sheet {
     background-color: #ffffff;
     border-radius: 8px;
     padding: 20px;
+    width: calc(100% - 40px); /* Adjust width to align with form */
+    margin: 0 auto; /* Center align the sheet */
 }
 
 .modern-form header {
     background-color: #4CAF50;
     padding: 10px;
     border-radius: 8px 8px 0 0;
-    border: 2px solid #4CAF50; /* Updated to match the new green theme */
+    border: 2px solid #4CAF50;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Ensure header takes full width */
+    box-sizing: border-box; /* Include padding and border in width calculation */
 }
 
 .modern-form .o_group {
@@ -32,7 +37,7 @@
 }
 
 .modern-form .btn-primary {
-    background-color: #4CAF50; /* Changed button color to green */
+    background-color: #4CAF50;
     border: none;
     color: white;
     padding: 10px 20px;
@@ -46,7 +51,7 @@
 }
 
 .modern-form .btn-primary:hover {
-    background-color: #45a049; /* Darker green for hover effect */
+    background-color: #45a049;
 }
 
 /* Custom Styles for Statusbar Widget */
