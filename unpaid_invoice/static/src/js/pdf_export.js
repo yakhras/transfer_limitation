@@ -63,7 +63,7 @@ odoo.define('unpaid_invoice.console_printer', function (require) {
     "use strict";
 
     // This ensures your code only runs once the Odoo web client is ready
-    const { Component } = require('web.OwlMixin');
+    // const { Component } = require('web.OwlMixin');
 
     // Print a message on the console every 1 minute (60000 milliseconds)
     setInterval(() => {
