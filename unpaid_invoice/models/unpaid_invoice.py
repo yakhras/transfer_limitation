@@ -33,8 +33,6 @@ class UnpaidInvoice(models.Model):
     amount_total = fields.Monetary(string="Total Amount", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string="Currency")
     unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count",compute='_compute_details')
-    action_id = fields.Integer(string='Action ID', compute='_compute_details')
-    action_domain = fields.Char(string='Action Domain', compute='_compute_details')
 
 
     def populate_unpaid_invoices(self):
