@@ -33,6 +33,13 @@ class UnpaidInvoice(models.Model):
     amount_total = fields.Monetary(string="Total Amount", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string="Currency")
     unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count",compute='_compute_details')
+    state = fields.Selection([
+        ('draft', 'Quotation'),
+        ('sent', 'Quotation Sent'),
+        ('sale', 'Sales Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled'),
+        ], string='Status', readonly=True, copy=False, index=True, tracking=3, default='draft')
 
 
     def populate_unpaid_invoices(self):
