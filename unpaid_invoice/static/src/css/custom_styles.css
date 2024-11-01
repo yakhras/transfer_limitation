@@ -27,6 +27,8 @@
 .modern-form .o_group .o_field_widget {
     font-size: 16px;
     margin-bottom: 10px;
+    border-bottom: 1px solid #ddd; /* Line separator under fields */
+    padding-bottom: 10px;
 }
 
 .modern-form .btn-primary {
