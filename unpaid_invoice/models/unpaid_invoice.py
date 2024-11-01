@@ -78,29 +78,23 @@ class UnpaidInvoice(models.Model):
         for record in self:
             # Compute Action ID and Domain
             action_id = self.env.context.get('action', 0)
-            record.action_id = action_id
-
             action_domain = []
+            base_domain = []
             if action_id:
                 action = self.env['ir.actions.act_window'].sudo().browse(action_id)
                 action_domain = action.name if action.name else []
-                record.action_domain = str(action_domain)
-            else:
-                record.action_domain = '[]'
-
-            # Compute Unpaid Invoice Count
-            base_domain = []
+                if 'Today' in action_domain:
+                    base_domain.append(('due_date', '=', fields.Date.today().strftime('%Y-%m-%d')))
+                else:
+                    base_domain.append(('due_date', '<', fields.Date.today().strftime('%Y-%m-%d')))
+            
 
             # Append the domain with team_id and action_domain
             team_id = self.env.context.get('search_default_team_id')
             if team_id:
                 base_domain.append(('team_id', '=', team_id))
 
-            if 'Today' in action_domain:
-                base_domain.append(('due_date', '=', fields.Date.today().strftime('%Y-%m-%d')))
-            else:
-                base_domain.append(('due_date', '<', fields.Date.today().strftime('%Y-%m-%d')))
-
+            
             record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(base_domain)
 
     
