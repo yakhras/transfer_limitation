@@ -1,0 +1,47 @@
+/* Custom Styles for Modern and Attractive Form View */
+.modern-form {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modern-form .o_form_sheet {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.modern-form header {
+    background-color: #e0e0e0;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modern-form .o_group {
+    margin-bottom: 20px;
+}
+
+.modern-form .o_group .o_field_widget {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.modern-form .btn-primary {
+    background-color: #007BFF;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.modern-form .btn-primary:hover {
+    background-color: #0056b3;
+}

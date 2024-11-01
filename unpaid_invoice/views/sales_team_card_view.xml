@@ -68,7 +68,7 @@
             <field name="name">unpaid.invoice.form</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <form create="false">
+                <form create="false" class="modern-form">
                     <header>
                         <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
                         <!-- <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/> -->
