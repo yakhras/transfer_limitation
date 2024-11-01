@@ -81,8 +81,6 @@
                             <field name="currency_id"/>
                             <field name="team_id"/>
                             <field name="unpaid_invoice_count"/>
-                            <field name="action_id"/>
-                            <field name="action_domain"/>
                         </group>
                     </sheet>
                 </form>
