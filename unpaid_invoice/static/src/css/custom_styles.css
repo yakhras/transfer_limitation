@@ -1,19 +1,19 @@
 /* Custom Styles for Modern and Attractive Form View */
 .modern-form {
-    background-color: #f0f0f0; /* New background color for the form */
+    background-color: #f0f0f0;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .modern-form .o_form_sheet {
-    background-color: #ffffff; /* New background color for the sheet */
+    background-color: #ffffff;
     border-radius: 8px;
     padding: 20px;
 }
 
 .modern-form header {
-    background-color: #4CAF50; /* New background color for the header */
+    background-color: #4CAF50;
     padding: 10px;
     border-radius: 8px 8px 0 0;
     border: 2px solid #007BFF;
@@ -45,4 +45,39 @@
 
 .modern-form .btn-primary:hover {
     background-color: #0056b3;
+}
+
+/* Custom Styles for Statusbar Widget */
+.o_statusbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.o_statusbar .o_statusbar_status {
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.o_statusbar .o_statusbar_status.draft {
+    background-color: #ffc107;
+    color: #fff;
+}
+
+.o_statusbar .o_statusbar_status.sent {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.o_statusbar .o_statusbar_status.sale {
+    background-color: #28a745;
+    color: #fff;
 }
