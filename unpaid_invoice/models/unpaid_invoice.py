@@ -90,4 +90,19 @@ class UnpaidInvoice(models.Model):
             # Use search_count to get the count of matching records
             record.unpaid_invoice_count = self.env['account.move'].search_count(domain)
 
+
+    def get_current_action_domain(self):
+        # Retrieve the action ID from the context
+        action_id = self.env.context.get('current_action_id')
+        
+        if action_id:
+            # Fetch the action record using the action ID
+            action = self.env['ir.actions.act_window'].browse(action_id)
+            
+            # Get the domain from the action
+            domain = action.domain if action else []
+            self.unpaid_invoice_count =  domain
+        else:
+            return []
+
     
