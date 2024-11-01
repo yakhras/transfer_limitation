@@ -83,7 +83,7 @@ class UnpaidInvoice(models.Model):
             action_domain = []
             if action_id:
                 action = self.env['ir.actions.act_window'].sudo().browse(action_id)
-                action_domain = eval(action.domain) if action.domain else []
+                action_domain = eval(action.name) if action.name else []
                 record.action_domain = str(action_domain)
             else:
                 record.action_domain = '[]'
@@ -100,9 +100,11 @@ class UnpaidInvoice(models.Model):
             if team_id:
                 base_domain.append(('team_id', '=', team_id))
 
-            combined_domain = base_domain + action_domain
+            if 'Today' in action_domain:
+                base_domain.append(('due_date', '&lt;', fields.today().strftime('%Y-%m-%d')))
+            else:
+                base_domain.append(('due_date', '&lt;', fields.today().strftime('%Y-%m-%d')-1))
 
-            domain_1= self.env['account.move'].browse(base_domain)
-            record.unpaid_invoice_count = domain_1.search_count(action_domain)
+            record.unpaid_invoice_count = self.env['account.move'].search_count(base_domain)
 
     
