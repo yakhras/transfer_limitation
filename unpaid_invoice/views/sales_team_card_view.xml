@@ -144,7 +144,6 @@
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
                     'journal_type': 'sale',
-                    'current_action_id': action,
                 }
             </field> 
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
