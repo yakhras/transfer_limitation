@@ -32,7 +32,7 @@ class UnpaidInvoice(models.Model):
     email_recipients = fields.Char(string="Email Recipients")
     amount_total = fields.Monetary(string="Total Amount", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string="Currency")
-    unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count", compute="_compute_unpaid_invoice_count", store=True)
+    unpaid_invoice_count = fields.Char(string="Unpaid Invoice Count", store=True)
 
 
     def populate_unpaid_invoices(self):
