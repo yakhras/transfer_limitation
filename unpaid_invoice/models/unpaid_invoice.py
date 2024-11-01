@@ -12,7 +12,6 @@
 
     
 from odoo import models, fields, api
-from odoo.tools import context_today
 
 class UnpaidInvoice(models.Model):
     _name = 'unpaid.invoice'
