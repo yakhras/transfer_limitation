@@ -36,7 +36,7 @@
                 </div>
             </div>
         </field>
-        <field name="report_template" ref="export_pdf"/>
+        <!-- <field name="report_template" ref="export_pdf"/> -->
         <field name="report_name">Test</field>
     </record>
 </odoo>
