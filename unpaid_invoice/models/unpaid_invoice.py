@@ -49,13 +49,25 @@ class UnpaidInvoice(models.Model):
         today = datetime.today()
         first_day_of_month = today.replace(day=1)
         last_day_of_month = first_day_of_month + relativedelta(months=1, days=-1)
+
+        first_day_of_previous_month = (today.replace(day=1) - relativedelta(months=1)).replace(day=1)
+        last_day_of_previous_month = first_day_of_previous_month + relativedelta(months=1, days=-1)
         # Define the domain for unpaid invoices
+        # domain = [
+        #     ('state', '=', 'posted'),
+        #     ('move_type', 'in', ['out_invoice', 'out_refund']),
+        #     ('payment_state', 'in', ['not_paid', 'partial']),
+        #     ('invoice_date_due', '>=', first_day_of_month.strftime('%Y-%m-%d')),
+        #     ('invoice_date_due', '<=', last_day_of_month.strftime('%Y-%m-%d'))
+        # ]
+
+        # Update the domain with the additional date criteria for the previous month
         domain = [
             ('state', '=', 'posted'),
             ('move_type', 'in', ['out_invoice', 'out_refund']),
             ('payment_state', 'in', ['not_paid', 'partial']),
-            ('invoice_date_due', '>=', first_day_of_month.strftime('%Y-%m-%d')),
-            ('invoice_date_due', '<=', last_day_of_month.strftime('%Y-%m-%d'))
+            ('invoice_date_due', '>=', first_day_of_previous_month.strftime('%Y-%m-%d')),
+            ('invoice_date_due', '<=', last_day_of_previous_month.strftime('%Y-%m-%d'))
         ]
         
         # Fetch records from account.move that meet the domain criteria
