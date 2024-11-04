@@ -142,7 +142,7 @@
             <!-- <field name="domain">[
                 ('due_date', '=', context_today().strftime('%Y-%m-%d')),
                 ]</field> -->
-            <!-- <field name="context">{
+            <field name="context">{
                     'search_default_team_id': active_id,
                     'default_team_id': active_id,
                     'default_move_type':'out_invoice',
@@ -150,7 +150,7 @@
                     'journal_type': 'sale',
                 }
             </field> 
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/> -->
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>   
 
         <!-- Menu Item -->
