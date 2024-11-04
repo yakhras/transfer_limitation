@@ -51,7 +51,7 @@
             <field name="name">unpaid.invoice.tree</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <tree create="false">
+                <tree>
                     <field name="document_id"/>
                     <field name="partner_id"/>
                     <field name="amount_total"/>
@@ -69,7 +69,7 @@
             <field name="name">unpaid.invoice.form</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <form class="modern-form">
+                <form create="false" class="modern-form">
                     <header>
                         <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
                         <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
