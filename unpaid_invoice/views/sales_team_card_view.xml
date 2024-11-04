@@ -55,6 +55,7 @@
                     <field name="document_id"/>
                     <field name="partner_id"/>
                     <field name="amount_total"/>
+                    <field name="amount_due"/>
                     <field name="currency_id"/>
                     <field name="payment_state"/>
                     <field name="due_date"/>
