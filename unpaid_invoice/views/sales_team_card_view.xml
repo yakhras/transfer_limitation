@@ -139,9 +139,9 @@
             <field name="name">Unpaid Invoice Today</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[
+            <!-- <field name="domain">[
                 ('due_date', '=', context_today().strftime('%Y-%m-%d')),
-                ]</field>
+                ]</field> -->
             <field name="context">{
                     'search_default_team_id': active_id,
                     'default_team_id': active_id,
