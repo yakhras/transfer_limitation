@@ -62,8 +62,8 @@
                 <tree>
                     <field name="document_id"/>
                     <field name="partner_id"/>
-                    <field name="amount_total"/>
-                    <field name="amount_due"/>
+                    <field name="amount_total" sum="Total Amount"/>
+                    <field name="amount_due" sum="Total Due"/>
                     <field name="currency_id"/>
                     <field name="payment_state"/>
                     <field name="due_date"/>
