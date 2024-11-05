@@ -18,7 +18,7 @@
                                                 <span class="o_text_overflow" style="border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 15px;">
                                                     <t t-esc="record.name.value" />
                                                 </span>
-                                                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                                <!-- <div style="display: flex; gap: 10px; margin-top: 15px;">
                                                     <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="btn btn-outline-primary">
                                                         <i class="fa fa-calendar-check-o"/> Today
                                                     </a>
@@ -32,6 +32,20 @@
                                                     </a>
                                                     <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="btn btn-outline-danger">
                                                         <i class="fa fa-calendar-times-o"/> Month
+                                                    </a>
+                                                </div> -->
+                                                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                                                    <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" title="Today">
+                                                        <i class="fa fa-calendar-check-o" style="font-size: 24px; color: #007bff;"></i>
+                                                    </a>
+                                                    <a name="unpaid_invoice.action_unpaid_invoice_week" type="action" title="Week">
+                                                        <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #ffc107;"></i>
+                                                    </a>
+                                                    <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" title="2 Weeks">
+                                                        <i class="fa fa-calendar-minus" style="font-size: 24px; color: #6c757d;"></i>
+                                                    </a>
+                                                    <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" title="Month">
+                                                        <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #dc3545;"></i>
                                                     </a>
                                                 </div>
                                             </div>
