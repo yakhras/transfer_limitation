@@ -46,12 +46,9 @@ class UnpaidInvoice(models.Model):
 
     def populate_unpaid_invoices(self):
         # Calculate the first and last day of the current month
-        today = datetime.today()
-        first_day_of_month = today.replace(day=1)
-        last_day_of_month = first_day_of_month + relativedelta(months=1, days=-1)
-
-        first_day_of_previous_month = (today.replace(day=1) - relativedelta(months=1)).replace(day=1)
-        last_day_of_previous_month = first_day_of_previous_month + relativedelta(months=1, days=-1)
+        # today = datetime.today()
+        # first_day_of_month = today.replace(day=1)
+        # last_day_of_month = first_day_of_month + relativedelta(months=1, days=-1)
         # Define the domain for unpaid invoices
         # domain = [
         #     ('state', '=', 'posted'),
@@ -60,16 +57,23 @@ class UnpaidInvoice(models.Model):
         #     ('invoice_date_due', '>=', first_day_of_month.strftime('%Y-%m-%d')),
         #     ('invoice_date_due', '<=', last_day_of_month.strftime('%Y-%m-%d'))
         # ]
-
+        # first_day_of_previous_month = (today.replace(day=1) - relativedelta(months=1)).replace(day=1)
+        # last_day_of_previous_month = first_day_of_previous_month + relativedelta(months=1, days=-1)
         # Update the domain with the additional date criteria for the previous month
+        # domain = [
+        #     ('state', '=', 'posted'),
+        #     ('move_type', 'in', ['out_invoice', 'out_refund']),
+        #     ('payment_state', 'in', ['not_paid', 'partial']),
+        #     ('invoice_date_due', '>=', first_day_of_previous_month.strftime('%Y-%m-%d')),
+        #     ('invoice_date_due', '<=', last_day_of_previous_month.strftime('%Y-%m-%d'))
+        # ]
+
         domain = [
             ('state', '=', 'posted'),
             ('move_type', 'in', ['out_invoice', 'out_refund']),
             ('payment_state', 'in', ['not_paid', 'partial']),
-            ('invoice_date_due', '>=', first_day_of_previous_month.strftime('%Y-%m-%d')),
-            ('invoice_date_due', '<=', last_day_of_previous_month.strftime('%Y-%m-%d'))
         ]
-        
+
         # Fetch records from account.move that meet the domain criteria
         account_moves = self.env['account.move'].search(domain)
        
@@ -103,8 +107,6 @@ class UnpaidInvoice(models.Model):
             template.send_mail(rec.id, force_send=True)
 
 
-
-    
 
     @api.depends_context('action', 'search_default_team_id')
     def _compute_details(self):

@@ -120,7 +120,7 @@
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[
-                ('due_date', '=', (context_today() + relativedelta(weeks=+2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': active_id,
@@ -139,10 +139,10 @@
             <field name="name">Unpaid Invoice Today</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
-            <!-- <field name="domain">[
+            <field name="domain">[
                 ('due_date', '=', context_today().strftime('%Y-%m-%d')),
-                ]</field> -->
-            <!-- <field name="context">{
+                ]</field>
+            <field name="context">{
                     'search_default_team_id': active_id,
                     'default_team_id': active_id,
                     'default_move_type':'out_invoice',
@@ -150,7 +150,7 @@
                     'journal_type': 'sale',
                 }
             </field> 
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/> -->
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>   
 
         <!-- Menu Item -->
