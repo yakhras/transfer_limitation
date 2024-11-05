@@ -27,7 +27,7 @@
                                                     </a>
                                                 </div>
                                                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" class="btn btn-outline-light">
+                                                    <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" class="btn btn-outline-info">
                                                         <i class="fa fa-calendar-minus"/> 2 Weeks
                                                     </a>
                                                     <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="btn btn-outline-dark">
