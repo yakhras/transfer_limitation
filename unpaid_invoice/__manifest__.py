@@ -26,10 +26,10 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'data/mail_template_data.xml',
         'views/sales_team_card_view.xml',
         'views/pdf.xml',
-        'views/pdf_group_by_template.xml'
+        'views/pdf_group_by_template.xml',
+        'data/mail_template_data.xml',
     ],
     
     'assets': {
