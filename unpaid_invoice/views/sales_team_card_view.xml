@@ -36,16 +36,16 @@
                                                 </div> -->
                                                 <div style="display: flex; gap: 15px; margin-top: 15px;">
                                                     <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" title="Today">
-                                                        <i class="fa fa-calendar-check-o" style="font-size: 24px; color: #007bff;"></i>
+                                                        <i class="fa fa-calendar-check-o" style="font-size: 24px; color: #007bff;">Today</i>
                                                     </a>
                                                     <a name="unpaid_invoice.action_unpaid_invoice_week" type="action" title="Week">
-                                                        <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #ffc107;"></i>
+                                                        <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #ffc107;">Week</i>
                                                     </a>
                                                     <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" title="2 Weeks">
-                                                        <i class="fa fa-calendar-minus" style="font-size: 24px; color: #6c757d;"></i>
+                                                        <i class="fa fa-calendar-minus" style="font-size: 24px; color: #6c757d;">2 Weeks</i>
                                                     </a>
                                                     <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" title="Month">
-                                                        <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #dc3545;"></i>
+                                                        <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #dc3545;">Month</i>
                                                     </a>
                                                 </div>
                                             </div>
