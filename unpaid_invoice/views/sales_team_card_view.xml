@@ -37,22 +37,22 @@
                                                 <ul class="list-group" style="width: 200px; margin-top: 15px;">
                                                     <li class="list-group-item">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">
-                                                            <i class="fa fa-calendar-check-o"></i> Today
+                                                            Today
                                                         </a>
                                                     </li>
                                                     <li class="list-group-item">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_week" type="action">
-                                                            <i class="fa fa-calendar-times-o"></i> Week
+                                                            Week
                                                         </a>
                                                     </li>
                                                     <li class="list-group-item">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action">
-                                                            <i class="fa fa-calendar-minus"></i> 2 Weeks
+                                                            2 Weeks
                                                         </a>
                                                     </li>
                                                     <li class="list-group-item">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_month" type="action">
-                                                            <i class="fa fa-calendar-times-o"></i> Month
+                                                            Month
                                                         </a>
                                                     </li>
                                                 </ul>
