@@ -34,18 +34,26 @@
                                                         <i class="fa fa-calendar-times-o"/> Month
                                                     </a>
                                                 </div> -->
-                                                <ul class="list-group" style="width: 200px; margin-top: 15px;">
-                                                    <li class="list-group-item" onclick="unpaid_invoice.action_unpaid_invoice_today">
-                                                        <i class="fa fa-calendar-check-o"></i> Today
+                                                <ul class="nav nav-tabs" style="margin-top: 15px;">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" href="#" onclick="action_today()">
+                                                            <i class="fa fa-calendar-check-o"></i> Today
+                                                        </a>
                                                     </li>
-                                                    <li class="list-group-item" onclick="action_week()">
-                                                        <i class="fa fa-calendar-times-o"></i> Week
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="#" onclick="action_week()">
+                                                            <i class="fa fa-calendar-times-o"></i> Week
+                                                        </a>
                                                     </li>
-                                                    <li class="list-group-item" onclick="action_2weeks()">
-                                                        <i class="fa fa-calendar-minus"></i> 2 Weeks
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="#" onclick="action_2weeks()">
+                                                            <i class="fa fa-calendar-minus"></i> 2 Weeks
+                                                        </a>
                                                     </li>
-                                                    <li class="list-group-item" onclick="action_month()">
-                                                        <i class="fa fa-calendar-times-o"></i> Month
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" href="#" onclick="action_month()">
+                                                            <i class="fa fa-calendar-times-o"></i> Month
+                                                        </a>
                                                     </li>
                                                 </ul>
                                             </div>
