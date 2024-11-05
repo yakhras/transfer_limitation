@@ -47,6 +47,18 @@
                                                             <p>Week</p>
                                                         </div>
                                                     </div>
+                                                    <div class="card" style="width: 150px; text-align: center; cursor: pointer;" onclick="action_today()">
+                                                        <div class="card-body">
+                                                            <i class="fa fa-calendar-check-o" style="font-size: 24px; color: #007bff;"></i>
+                                                            <p>Today</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card" style="width: 150px; text-align: center; cursor: pointer;" onclick="action_week()">
+                                                        <div class="card-body">
+                                                            <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #ffc107;"></i>
+                                                            <p>Week</p>
+                                                        </div>
+                                                    </div>
                                                     <!-- Add more cards as needed -->
                                                 </div>
                                             </div>
