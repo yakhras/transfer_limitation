@@ -34,33 +34,20 @@
                                                         <i class="fa fa-calendar-times-o"/> Month
                                                     </a>
                                                 </div> -->
-                                                <div style="display: flex; gap: 15px; margin-top: 15px;">
-                                                    <div class="card" style="width: 150px; text-align: center; cursor: pointer;" onclick="action_today()">
-                                                        <div class="card-body">
-                                                            <i class="fa fa-calendar-check-o" style="font-size: 24px; color: #007bff;"></i>
-                                                            <p>Today</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card" style="width: 150px; text-align: center; cursor: pointer;" onclick="action_week()">
-                                                        <div class="card-body">
-                                                            <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #ffc107;"></i>
-                                                            <p>Week</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card" style="width: 150px; text-align: center; cursor: pointer;" onclick="action_today()">
-                                                        <div class="card-body">
-                                                            <i class="fa fa-calendar-check-o" style="font-size: 24px; color: #007bff;"></i>
-                                                            <p>Today</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card" style="width: 150px; text-align: center; cursor: pointer;" onclick="action_week()">
-                                                        <div class="card-body">
-                                                            <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #ffc107;"></i>
-                                                            <p>Week</p>
-                                                        </div>
-                                                    </div>
-                                                    <!-- Add more cards as needed -->
-                                                </div>
+                                                <ul class="list-group" style="width: 200px; margin-top: 15px;">
+                                                    <li class="list-group-item" onclick="action_today()">
+                                                        <i class="fa fa-calendar-check-o"></i> Today
+                                                    </li>
+                                                    <li class="list-group-item" onclick="action_week()">
+                                                        <i class="fa fa-calendar-times-o"></i> Week
+                                                    </li>
+                                                    <li class="list-group-item" onclick="action_2weeks()">
+                                                        <i class="fa fa-calendar-minus"></i> 2 Weeks
+                                                    </li>
+                                                    <li class="list-group-item" onclick="action_month()">
+                                                        <i class="fa fa-calendar-times-o"></i> Month
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                         <!-- <div class="o_kanban_right">
