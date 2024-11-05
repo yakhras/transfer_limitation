@@ -34,20 +34,20 @@
                                                         <i class="fa fa-calendar-times-o"/> Month
                                                     </a>
                                                 </div> -->
-                                                <div style="display: flex; gap: 15px; margin-top: 15px;">
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" title="Today">
-                                                        <i class="fa fa-calendar-check-o" style="font-size: 24px; color: #007bff;">Today</i>
-                                                    </a>
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_week" type="action" title="Week">
-                                                        <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #ffc107;">Week</i>
-                                                    </a>
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" title="2 Weeks">
-                                                        <i class="fa fa-calendar-minus" style="font-size: 24px; color: #6c757d;">2 Weeks</i>
-                                                    </a>
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" title="Month">
-                                                        <i class="fa fa-calendar-times-o" style="font-size: 24px; color: #dc3545;">Month</i>
-                                                    </a>
-                                                </div>
+                                                <ul class="list-group" style="width: 200px; margin-top: 15px;">
+                                                    <li class="list-group-item" onclick="action_today()">
+                                                        <i class="fa fa-calendar-check-o"></i> Today
+                                                    </li>
+                                                    <li class="list-group-item" onclick="action_week()">
+                                                        <i class="fa fa-calendar-times-o"></i> Week
+                                                    </li>
+                                                    <li class="list-group-item" onclick="action_2weeks()">
+                                                        <i class="fa fa-calendar-minus"></i> 2 Weeks
+                                                    </li>
+                                                    <li class="list-group-item" onclick="action_month()">
+                                                        <i class="fa fa-calendar-times-o"></i> Month
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                         <!-- <div class="o_kanban_right">
