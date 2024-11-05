@@ -40,14 +40,20 @@
                                                             <i class="fa fa-calendar-check-o"></i> Today
                                                         </a>
                                                     </li>
-                                                    <li class="list-group-item" onclick="action_week()">
-                                                        <i class="fa fa-calendar-times-o"></i> Week
+                                                    <li class="list-group-item">
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_week" type="action">
+                                                            <i class="fa fa-calendar-times-o"></i> Week
+                                                        </a>
                                                     </li>
-                                                    <li class="list-group-item" onclick="action_2weeks()">
-                                                        <i class="fa fa-calendar-minus"></i> 2 Weeks
+                                                    <li class="list-group-item">
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action">
+                                                            <i class="fa fa-calendar-minus"></i> 2 Weeks
+                                                        </a>
                                                     </li>
-                                                    <li class="list-group-item" onclick="action_month()">
-                                                        <i class="fa fa-calendar-times-o"></i> Month
+                                                    <li class="list-group-item">
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_month" type="action">
+                                                            <i class="fa fa-calendar-times-o"></i> Month
+                                                        </a>
                                                     </li>
                                                 </ul>
                                             </div>
