@@ -35,7 +35,7 @@
                                                     </a>
                                                 </div> -->
                                                 <ul class="list-group" style="width: 200px; margin-top: 15px;">
-                                                    <li class="list-group-item" onclick="action_today()">
+                                                    <li class="list-group-item" onclick="unpaid_invoice.action_unpaid_invoice_today">
                                                         <i class="fa fa-calendar-check-o"></i> Today
                                                     </li>
                                                     <li class="list-group-item" onclick="action_week()">
