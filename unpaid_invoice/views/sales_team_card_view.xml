@@ -30,7 +30,7 @@
                                                     <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" class="btn btn-outline-primary">
                                                         <i class="fa fa-calendar-minus"/> 2 Weeks
                                                     </a>
-                                                    <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="btn btn-outline-warning">
+                                                    <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="btn btn-outline-dark">
                                                         <i class="fa fa-calendar-times-o"/> Month
                                                     </a>
                                                 </div>
