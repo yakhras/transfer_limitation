@@ -55,6 +55,9 @@
                                                         <a name="unpaid_invoice.action_unpaid_invoice_month" type="action">
                                                             Month
                                                         </a>
+                                                        <span class="o_stat_value">
+                                                            <t t-esc="record.unpaid_invoice_total_month.value" />
+                                                        </span>
                                                     </li>
                                                 </ul>
                                             </div>
