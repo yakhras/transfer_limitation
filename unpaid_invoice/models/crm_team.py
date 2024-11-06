@@ -1,25 +1,28 @@
+from datetime import relativedelta
 from odoo import models, fields, api
 
 class CrmTeam(models.Model):
     _inherit = 'crm.team'
 
-    unpaid_invoice_total_today = fields.Float(
-        compute='_compute_unpaid_invoice_total_today',
-        string="Unpaid Invoices Today", 
+    unpaid_invoice_total_month = fields.Float(
+        compute='_compute_unpaid_invoice_total_month',
+        string="Unpaid Invoices This Month", 
         store=True
     )
 
-   
-    def _compute_unpaid_invoice_total_today(self):
-        today = fields.Date.today()  # Calculate today's date once
+    @api.depends('unpaid_invoice_ids.amount_due', 'unpaid_invoice_ids.due_date')
+    def _compute_unpaid_invoice_total_month(self):
+        today = fields.Date.today()
+        month_ago = (today  + relativedelta(months=-1)).strftime('%Y-%m-%d')  # Calculate the date 30 days ago
 
         for team in self:
-            # Retrieve unpaid invoices for today's due date specific to this team
+            # Retrieve unpaid invoices due within the last 30 days specific to this team
             invoices = self.env['unpaid.invoice'].search([
-                ('due_date', '=', today),
+                ('due_date', '>=', month_ago),
+                ('due_date', '<', today),
                 ('team_id', '=', team.id)
             ])
             
-            # Sum the unpaid amounts for this team's invoices
+            # Sum the unpaid amounts for this team's invoices due in the last month
             total_due = sum(invoice.amount_due for invoice in invoices)
-            team.unpaid_invoice_total_today = total_due
+            team.unpaid_invoice_total_month = total_due
