@@ -82,7 +82,6 @@
             <field name="arch" type="xml">
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
                     <field name="name" />
-                    <field name="unpaid_invoice_totals_json"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card o_kanban_card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; border-radius: 8px;">
@@ -92,72 +91,28 @@
                                             <div class="o_primary">
                                                 <span class="o_text_overflow" style="border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 15px;">
                                                     <t t-esc="record.name.value" />
-                                                    <t t-esc="record.unpaid_invoice_totals_json[0].value"/>
                                                 </span>
+                                                <!-- Display totals dynamically -->
                                                 <ul class="list-group" style="width: 200px; margin-top: 15px;">
                                                     <li class="list-group-item">
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">
-                                                            Today
-                                                        </a>
-                                                        <!-- Display total for Today -->
-                                                        <div t-if="record.unpaid_invoice_totals_json">
-                                                            <t t-set="totals" t-value="eval(record.unpaid_invoice_totals_json)"/>
-                                                            <t t-if="totals['unpaid_invoice.action_unpaid_invoice_today' + record.id]">
-                                                                <t t-foreach="totals['unpaid_invoice.action_unpaid_invoice_today' + record.id]" t-as="currency_totals">
-                                                                    <div>
-                                                                        <span t-esc="currency_totals[0].value" />: <span t-esc="currency_totals[1].value" />
-                                                                    </div>
-                                                                </t>
-                                                            </t>
-                                                        </div>
+                                                        <t t-if="record.unpaid_invoice_totals_json.get('today')">
+                                                            <span><strong>Today:</strong> <t t-esc="record.unpaid_invoice_totals_json['today']" /></span>
+                                                        </t>
                                                     </li>
                                                     <li class="list-group-item">
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_week" type="action">
-                                                            Week
-                                                        </a>
-                                                        <!-- Display total for Week -->
-                                                        <div t-if="record.unpaid_invoice_totals_json">
-                                                            <t t-set="totals" t-value="eval(record.unpaid_invoice_totals_json)"/>
-                                                            <t t-if="totals['unpaid_invoice.action_unpaid_invoice_week_team_' + record.id]">
-                                                                <t t-foreach="totals['unpaid_invoice.action_unpaid_invoice_week_team_' + record.id]" t-as="currency_totals">
-                                                                    <div>
-                                                                        <span t-esc="currency_totals[0]" />: <span t-esc="currency_totals[1]" />
-                                                                    </div>
-                                                                </t>
-                                                            </t>
-                                                        </div>
+                                                        <t t-if="record.unpaid_invoice_totals_json.get('week')">
+                                                            <span><strong>Week:</strong> <t t-esc="record.unpaid_invoice_totals_json['week']" /></span>
+                                                        </t>
                                                     </li>
                                                     <li class="list-group-item">
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action">
-                                                            2 Weeks
-                                                        </a>
-                                                        <!-- Display total for 2 Weeks -->
-                                                        <div t-if="record.unpaid_invoice_totals_json">
-                                                            <t t-set="totals" t-value="eval(record.unpaid_invoice_totals_json)"/>
-                                                            <t t-if="totals['unpaid_invoice.action_unpaid_invoice_2weeks_team_' + record.id]">
-                                                                <t t-foreach="totals['unpaid_invoice.action_unpaid_invoice_2weeks_team_' + record.id]" t-as="currency_totals">
-                                                                    <div>
-                                                                        <span t-esc="currency_totals[0]" />: <span t-esc="currency_totals[1]" />
-                                                                    </div>
-                                                                </t>
-                                                            </t>
-                                                        </div>
+                                                        <t t-if="record.unpaid_invoice_totals_json.get('2weeks')">
+                                                            <span><strong>2 Weeks:</strong> <t t-esc="record.unpaid_invoice_totals_json['2weeks']" /></span>
+                                                        </t>
                                                     </li>
                                                     <li class="list-group-item">
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_month" type="action">
-                                                            Month
-                                                        </a>
-                                                        <!-- Display total for Month -->
-                                                        <div t-if="record.unpaid_invoice_totals_json">
-                                                            <t t-set="totals" t-value="eval(record.unpaid_invoice_totals_json)"/>
-                                                            <t t-if="totals['unpaid_invoice.action_unpaid_invoice_month_team_' + record.id]">
-                                                                <t t-foreach="totals['unpaid_invoice.action_unpaid_invoice_month_team_' + record.id]" t-as="currency_totals">
-                                                                    <div>
-                                                                        <span t-esc="currency_totals[0]" />: <span t-esc="currency_totals[1]" />
-                                                                    </div>
-                                                                </t>
-                                                            </t>
-                                                        </div>
+                                                        <t t-if="record.unpaid_invoice_totals_json.get('month')">
+                                                            <span><strong>Month:</strong> <t t-esc="record.unpaid_invoice_totals_json['month']" /></span>
+                                                        </t>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -170,6 +125,7 @@
                 </kanban>
             </field>
         </record>
+        
         
 
         
