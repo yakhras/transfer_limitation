@@ -39,7 +39,7 @@ class CrmTeam(models.Model):
         Computes the total amount_due for unpaid invoices based on the given domain.
         Returns a dictionary with currency as key and total amount due as value.
         """
-        total_due_by_currency = defaultdict(float)
+        total_due_by_currency = {}
 
         # Fetch the unpaid invoices that match the domain filter
         unpaid_invoices = self.env['unpaid.invoice'].search(domain)
