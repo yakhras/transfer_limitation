@@ -59,13 +59,13 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                         <!-- <div class="o_kanban_right">
+                                        <div class="o_kanban_right">
                                             <div class="o_stat_info">
                                                 <span class="o_stat_value">
                                                     <t t-esc="record.unpaid_invoice_totals_json.value" />
                                                 </span>
                                             </div>
-                                        </div> -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
