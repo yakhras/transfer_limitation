@@ -75,8 +75,6 @@
             </field>
         </record> -->
 
-        
-
         <record id="view_unpaid_invoice_formtotal" model="ir.ui.view">
             <field name="name">unpaid.invoice.form.total</field>
             <field name="model">crm.team</field>
