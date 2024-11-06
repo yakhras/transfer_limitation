@@ -6,7 +6,7 @@ class CrmTeam(models.Model):
 
     unpaid_invoice_totals_json = fields.Char(
         string="Unpaid Invoice Totals",
-        compute='_compute_unpaid_invoice_totals_json',
+        compute='_get_action_domain',
         store=True
     )
 
