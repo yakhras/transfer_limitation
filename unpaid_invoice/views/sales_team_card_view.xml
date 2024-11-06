@@ -56,22 +56,23 @@
                                                     <li class="list-group-item">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_month" type="action">
                                                             Month
+                                                            <t t-if="record.unpaid_invoice_total_usd.value != 0">
+                                                                <span class="o_stat_value">
+                                                                    <t t-esc="record.unpaid_invoice_total_usd.value"/> $
+                                                                </span>
+                                                            </t>
+                                                            <t t-if="record.unpaid_invoice_total_eur.value != 0">
+                                                                <span class="o_stat_value">
+                                                                    <t t-esc="record.unpaid_invoice_total_eur.value"/> €
+                                                                </span>
+                                                            </t>
+                                                            <t t-if="record.unpaid_invoice_total_try.value != 0">
+                                                                <span class="o_stat_value">
+                                                                    <t t-esc="record.unpaid_invoice_total_try.value"/> ₺
+                                                                </span>
+                                                            </t>
                                                         </a>
-                                                        <t t-if="record.unpaid_invoice_total_usd.value != 0">
-                                                            <span class="o_stat_value">
-                                                                <t t-esc="record.unpaid_invoice_total_usd.value"/> $
-                                                            </span>
-                                                        </t>
-                                                        <t t-if="record.unpaid_invoice_total_eur.value != 0">
-                                                            <span class="o_stat_value">
-                                                                <t t-esc="record.unpaid_invoice_total_eur.value"/> €
-                                                            </span>
-                                                        </t>
-                                                        <t t-if="record.unpaid_invoice_total_try.value != 0">
-                                                            <span class="o_stat_value">
-                                                                <t t-esc="record.unpaid_invoice_total_try.value"/> ₺
-                                                            </span>
-                                                        </t>
+                                                        
                                                     </li>
                                                 </ul>
                                             </div>
