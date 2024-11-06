@@ -63,7 +63,6 @@
                                                 <span class="o_stat_value">
                                                     <t t-esc="record.unpaid_invoice_totals_json" />
                                                 </span>
-                                                <span class="o_stat_text">Invoices</span>
                                             </div>
                                         </div>
                                     </div>
