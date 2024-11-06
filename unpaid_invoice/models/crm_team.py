@@ -20,7 +20,7 @@ class CrmTeam(models.Model):
     # Currency fields for multi-currency support
     currency_usd = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD').id, readonly=True)
     currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.EUR').id, readonly=True)
-    currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.TRY').id, readonly=True)
+    currency_try = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.TRY').id, readonly=True)
 
    
     def _compute_unpaid_invoice_totals(self):
