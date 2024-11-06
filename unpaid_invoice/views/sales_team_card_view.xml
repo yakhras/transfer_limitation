@@ -49,7 +49,7 @@
                                                             Today
                                                         </a>
                                                     </li>
-                                                    <li class="list-group-item">
+                                                    <li>
                                                         <a name="unpaid_invoice.action_unpaid_invoice_week" type="action">
                                                             Week
                                                         </a>
