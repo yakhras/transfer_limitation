@@ -132,5 +132,3 @@ class UnpaidInvoice(models.Model):
 
             # Assign the record count to unpaid_invoice_count field
             record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(domain)
-
-    
