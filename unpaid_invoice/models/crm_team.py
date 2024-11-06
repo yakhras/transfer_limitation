@@ -17,6 +17,13 @@ class CrmTeam(models.Model):
         string="Unpaid Invoices Total (TRY)"
     )
 
+    unpaid_invoice_total_2weeks_usd = fields.Float(
+        string='Total Due in USD for Last 2 Weeks', compute='_compute_unpaid_invoice_totals_2weeks')
+    unpaid_invoice_total_2weeks_eur = fields.Float(
+        string='Total Due in EUR for Last 2 Weeks', compute='_compute_unpaid_invoice_totals_2weeks')
+    unpaid_invoice_total_2weeks_try = fields.Float(
+        string='Total Due in TRY for Last 2 Weeks', compute='_compute_unpaid_invoice_totals_2weeks')
+
     # Currency fields for multi-currency support
     currency_usd = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD').id, readonly=True)
     currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.EUR').id, readonly=True)
@@ -54,3 +61,31 @@ class CrmTeam(models.Model):
             team.unpaid_invoice_total_eur = total_eur
             team.unpaid_invoice_total_try = total_try
             # Set values for other currency fields if they exist.
+
+    def _compute_unpaid_invoice_totals_2weeks(self):
+        today = fields.Date.today()
+        two_weeks_ago = (today  + date_utils.relativedelta(weeks=-2)).strftime('%Y-%m-%d')  # Calculate the date 15 days ago
+
+        for team in self:
+            total_usd = total_eur = total_try = 0.0  # Initialize totals for each currency
+            
+            domain = [
+                ('due_date', '>=', two_weeks_ago),
+                ('due_date', '<', today),
+                ('team_id', '=', team.id),
+            ]
+            invoices = self.env['unpaid.invoice'].search(domain)
+
+            # Sum amounts by currency
+            for invoice in invoices:
+                if invoice.currency_id == team.currency_usd:
+                    total_usd += invoice.amount_due
+                elif invoice.currency_id == team.currency_eur:
+                    total_eur += invoice.amount_due
+                elif invoice.currency_id == team.currency_try:
+                    total_try += invoice.amount_due
+
+            # Assign totals to the respective fields
+            team.unpaid_invoice_total_2weeks_usd = total_usd
+            team.unpaid_invoice_total_2weeks_eur = total_eur
+            team.unpaid_invoice_total_2weeks_try = total_try
