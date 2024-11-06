@@ -1,56 +1,55 @@
+import re
 from collections import defaultdict
-import json
 from datetime import datetime
-from odoo import models, fields, api
-
-
+from odoo import models, fields
 
 class CrmTeam(models.Model):
     _inherit = 'crm.team'
 
-    unpaid_invoice_totals_json = fields.Text(
-        string="Unpaid Invoice Totals (JSON)",
-        compute='_compute_unpaid_invoice_totals'
-    )
+    unpaid_invoice_totals_json = fields.Text(compute='_compute_unpaid_invoice_totals_json')
 
-    @api.depends()
-    def _compute_unpaid_invoice_totals(self):
-        # Retrieve all active sales team IDs dynamically
-        all_sales_team_ids = self.env['crm.team'].search([]).ids
+    def _compute_unpaid_invoice_totals_json(self):
+        # Initialize a defaultdict to store totals by team and currency
+        totals_by_team_and_currency = defaultdict(lambda: defaultdict(int))
 
-        # List of action external IDs to fetch dynamically
-        action_external_ids = [
-            'unpaid_invoice.action_unpaid_invoice_today',
-            'unpaid_invoice.action_unpaid_invoice_week',
-            'unpaid_invoice.action_unpaid_invoice_2weeks',
-            'unpaid_invoice.action_unpaid_invoice_month'
-        ]
-        
-        # Retrieve domains dynamically for each action by its external ID
+        # Get all active CRM teams
+        teams = self.env['crm.team'].search([]).ids  # Retrieves all crm.team records
+
+        # Dynamically fetch actions related to unpaid invoices
+        actions = self.env['ir.actions.act_window'].search([
+            ('name', 'ilike', 'unpaid_invoice')  # Filter actions related to unpaid invoices
+        ])
+
+        # Dynamically fetch domains based on the action's domain field
         action_domains = {}
-        for action_id in action_external_ids:
-            action = self.env.ref(action_id)
-            if action and action.domain:
-                action_domains[action_id] = eval(action.domain)
+        for action in actions:
+            if action.domain:
+                # Use eval to execute the domain expression (you may want to sanitize this in real-world apps)
+                action_domains[action.id] = eval(action.domain)
 
-        for team in self:
-            totals = {}
-            for action_key, date_domain in action_domains.items():
-                for team_id in all_sales_team_ids:
-                    # Combine the action's domain with the sales team ID
-                    domain = date_domain + [('team_id', '=', team_id)]
-                    invoices = self.env['unpaid.invoice'].search(domain)
-                    
-                    # Calculate totals for each currency
-                    currency_totals = defaultdict(float)
-                    for inv in invoices:
-                        currency_totals[inv.currency_id] += inv.amount_due
-                    
-                    # Format the key to include both the action and the team ID
-                    key = f"{action_key}_team_{team_id}"
-                    totals[key] = {
-                        currency.name: f"{amount:.2f}" for currency, amount in currency_totals.items()
-                    }
+        # Function to replace context_today() with the current date in the domain
+        def replace_context_today(domain_str):
+            return re.sub(r'context_today\(\)', f"'{datetime.today().date()}'", domain_str)
 
-            # Store totals as JSON
-            team.unpaid_invoice_totals_json = json.dumps(totals)
+        # Loop through each team and apply the domain logic for each
+        for team in teams:
+            # Loop through each action domain
+            for action_id, domain in action_domains.items():
+                # Replace any context_today() in the domain string
+                domain_str = str(domain)  # Convert the domain to a string for replacement
+                domain_str = replace_context_today(domain_str)
+                domain = eval(domain_str)  # Re-parse the domain after replacement
+                
+                # Now, add the dynamic team ID filter
+                team_domain = domain + [('team_id', '=', team.id)]
+
+                # Fetch the unpaid invoices based on the domain and sum their amounts due by currency
+                unpaid_invoices = self.env['unpaid.invoice'].search(team_domain)
+
+                # Sum the amounts due by currency
+                for invoice in unpaid_invoices:
+                    currency = invoice.currency_id.name
+                    totals_by_team_and_currency[team.id][currency] += invoice.amount_due
+
+        # Now, store the totals in a JSON field for easy retrieval
+        self.unpaid_invoice_totals_json = str(totals_by_team_and_currency)
