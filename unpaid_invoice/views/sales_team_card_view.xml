@@ -75,15 +75,6 @@
             </field>
         </record> -->
 
-        <record id="view_unpaid_invoice_formtotal" model="ir.ui.view">
-            <field name="name">unpaid.invoice.form.total</field>
-            <field name="model">crm.team</field>
-            <field name="inherit_id" ref="sales_team.crm_team_view_form"/>
-            <field name="company_id" position="after">
-                <field name="unpaid_invoice_totals_json"/>
-            </field>
-        </record>
-
 
         <record model="ir.ui.view" id="view_unpaid_invoice_card">
             <field name="name">unpaid.invoice.card.view</field>
