@@ -249,8 +249,8 @@
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[
-                ('due_date', '&gt;=', (DateTime.today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
-                ('due_date', '&lt;', DateTime.today().strftime('%Y-%m-%d')),
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': active_id,
@@ -269,8 +269,8 @@
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[
-                ('due_date', '&gt;=', (DateTime.today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
-                ('due_date', '&lt;', DateTime.today().strftime('%Y-%m-%d')),
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': active_id,
@@ -289,8 +289,8 @@
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[
-                ('due_date', '&gt;=', (DateTime.today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
-                ('due_date', '&lt;', DateTime.today().strftime('%Y-%m-%d')),
+                ('due_date', '&gt;=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': active_id,
@@ -310,7 +310,7 @@
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[
-                ('due_date', '=', DateTime.today().strftime('%Y-%m-%d')),
+                ('due_date', '=', context_today().strftime('%Y-%m-%d')),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': active_id,
