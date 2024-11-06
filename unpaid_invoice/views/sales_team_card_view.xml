@@ -117,17 +117,17 @@
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
                                                             <t t-if="record.unpaid_invoice_total_usd.value != 0">
                                                                 <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_usd.value"/> $
+                                                                    <t t-esc="record.unpaid_invoice_total_usd.value"/> USD
                                                                 </span>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_eur.value != 0">
                                                                 <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_eur.value"/> €
+                                                                    <t t-esc="record.unpaid_invoice_total_eur.value"/> EUR
                                                                 </span>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_try.value != 0">
                                                                 <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_try.value"/> ₺
+                                                                    <t t-esc="record.unpaid_invoice_total_try.value"/> TRY
                                                                 </span>
                                                             </t>
                                                         </div>
