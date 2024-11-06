@@ -73,13 +73,13 @@
                                                             </span>
                                                         </t>
                                                     </li> -->
-                                                    <li class="list-group-item">
+                                                    <!-- <li class="list-group-item">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="d-flex justify-content-between align-items-center">
                                                             <span>Month</span>
                                                         </a>
                                                         
                                                         <div class="d-flex justify-content-around mt-2">
-                                                            <!-- USD Total -->
+                                                            USD Total
                                                             <t t-if="record.unpaid_invoice_total_usd.value != 0">
                                                                 <div class="currency-total text-primary">
                                                                     <i class="fa fa-dollar-sign"></i>
@@ -89,7 +89,7 @@
                                                                 </div>
                                                             </t>
                                                     
-                                                            <!-- EUR Total -->
+                                                            EUR Total
                                                             <t t-if="record.unpaid_invoice_total_eur.value != 0">
                                                                 <div class="currency-total text-success">
                                                                     <i class="fa fa-euro-sign"></i>
@@ -99,7 +99,7 @@
                                                                 </div>
                                                             </t>
                                                     
-                                                            <!-- TRY Total -->
+                                                            TRY Total
                                                             <t t-if="record.unpaid_invoice_total_try.value != 0">
                                                                 <div class="currency-total text-warning">
                                                                     <i class="fa fa-lira-sign"></i>
@@ -109,7 +109,30 @@
                                                                 </div>
                                                             </t>
                                                         </div>
+                                                    </li> -->
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="action-link" style="font-weight: bold; color: #007BFF; text-decoration: none; transition: color 0.3s ease;">
+                                                            Month
+                                                        </a>
+                                                        <div class="stat-values" style="display: flex; gap: 10px;">
+                                                            <t t-if="record.unpaid_invoice_total_usd.value != 0">
+                                                                <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <t t-esc="record.unpaid_invoice_total_usd.value"/> $
+                                                                </span>
+                                                            </t>
+                                                            <t t-if="record.unpaid_invoice_total_eur.value != 0">
+                                                                <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <t t-esc="record.unpaid_invoice_total_eur.value"/> €
+                                                                </span>
+                                                            </t>
+                                                            <t t-if="record.unpaid_invoice_total_try.value != 0">
+                                                                <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <t t-esc="record.unpaid_invoice_total_try.value"/> ₺
+                                                                </span>
+                                                            </t>
+                                                        </div>
                                                     </li>
+                                                    
                                                 </ul>
                                             </div>
                                         </div>
