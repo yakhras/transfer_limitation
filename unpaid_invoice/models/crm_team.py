@@ -30,7 +30,7 @@ class CrmTeam(models.Model):
 
         if action and action.domain:
             # Replace 'context_today()' with equivalent Python logic (today's date)
-            domain = eval(action.domain, {"context_today": fields.Date.today()})
+            domain = eval(action.domain, {"context_today()": fields.Date.today()})
             return domain
         return []
 
