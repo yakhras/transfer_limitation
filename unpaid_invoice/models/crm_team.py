@@ -6,7 +6,7 @@ from odoo import models, fields
 class CrmTeam(models.Model):
     _inherit = 'crm.team'
 
-    unpaid_invoice_totals_json = fields.Json(compute='_compute_unpaid_invoice_totals_json', store=True)
+    unpaid_invoice_totals_json = fields.Char(compute='_compute_unpaid_invoice_totals_json', store=True)
 
     def _compute_unpaid_invoice_totals_json(self):
         # Initialize a defaultdict to store totals by team and currency
