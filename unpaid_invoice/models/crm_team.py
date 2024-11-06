@@ -12,7 +12,7 @@ class CrmTeam(models.Model):
         compute='_compute_unpaid_invoice_totals'
     )
 
-    @api.depends('unpaid_invoice_ids')
+    @api.depends()
     def _compute_unpaid_invoice_totals(self):
         # Retrieve all active sales team IDs dynamically
         all_sales_team_ids = self.env['crm.team'].search([]).ids
