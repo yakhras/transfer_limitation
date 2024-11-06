@@ -63,9 +63,11 @@
                                                         <span class="o_stat_value">
                                                             <t t-esc="record.unpaid_invoice_total_eur.value"/> €
                                                         </span>
-                                                        <span class="o_stat_value">
-                                                            <t t-esc="record.unpaid_invoice_total_try.value"/> ₺
-                                                        </span>
+                                                        <t t-if="record.unpaid_invoice_total_try">
+                                                            <span class="o_stat_value">
+                                                                <t t-esc="record.unpaid_invoice_total_try.value"/> ₺
+                                                            </span>
+                                                        </t>
                                                     </li>
                                                 </ul>
                                             </div>
