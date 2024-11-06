@@ -104,7 +104,7 @@
                                                             <t t-if="totals['unpaid_invoice.action_unpaid_invoice_today_team_' + record.id]">
                                                                 <t t-foreach="totals['unpaid_invoice.action_unpaid_invoice_today_team_' + record.id]" t-as="currency_totals">
                                                                     <div>
-                                                                        <span t-esc="currency_totals[0]" />: <span t-esc="currency_totals[1]" />
+                                                                        <span t-esc="currency_totals[0].value" />: <span t-esc="currency_totals[1].value" />
                                                                     </div>
                                                                 </t>
                                                             </t>
