@@ -57,10 +57,10 @@
                                                             Month
                                                         </a>
                                                         <span class="o_stat_value">
-                                                            <t t-esc="record.unpaid_invoice_total_usd.value"/>$
+                                                            <t t-esc="record.unpaid_invoice_total_usd.value"/> $
                                                         </span>
                                                         <span class="o_stat_value">
-                                                            <t t-esc="record.unpaid_invoice_total_eur.value"/>
+                                                            <t t-esc="record.unpaid_invoice_total_eur.value"/> €
                                                         </span>
                                                     </li>
                                                 </ul>
