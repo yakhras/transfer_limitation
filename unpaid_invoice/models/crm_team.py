@@ -9,7 +9,7 @@ class CrmTeam(models.Model):
         store=True
     )
 
-    @api.depends('unpaid_invoice_ids.amount_due', 'unpaid_invoice_ids.due_date')
+   
     def _compute_unpaid_invoice_total_today(self):
         today = fields.Date.today()  # Calculate today's date once
 
