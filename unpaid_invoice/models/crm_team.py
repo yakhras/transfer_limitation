@@ -18,7 +18,7 @@ class CrmTeam(models.Model):
     currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.EUR').id, readonly=True)
 
    
-    def _compute_unpaid_invoice_total_month(self):
+    def _compute_unpaid_invoice_totals(self):
         today = fields.Date.today()
         month_ago = (today  + date_utils.relativedelta(months=-1)).strftime('%Y-%m-%d')  # Calculate the date 30 days ago
 
