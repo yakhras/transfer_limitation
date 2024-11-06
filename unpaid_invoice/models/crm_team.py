@@ -1,4 +1,4 @@
-from datetime import relativedelta
+from odoo.tools import date_utils
 from odoo import models, fields, api
 
 class CrmTeam(models.Model):
@@ -13,7 +13,7 @@ class CrmTeam(models.Model):
     @api.depends('unpaid_invoice_ids.amount_due', 'unpaid_invoice_ids.due_date')
     def _compute_unpaid_invoice_total_month(self):
         today = fields.Date.today()
-        month_ago = (today  + relativedelta(months=-1)).strftime('%Y-%m-%d')  # Calculate the date 30 days ago
+        month_ago = (today  + date_utils.relativedelta(months=-1)).strftime('%Y-%m-%d')  # Calculate the date 30 days ago
 
         for team in self:
             # Retrieve unpaid invoices due within the last 30 days specific to this team
