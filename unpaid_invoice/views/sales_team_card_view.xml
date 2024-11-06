@@ -37,7 +37,7 @@
                                                         <i class="fa fa-calendar-times-o"/> Month
                                                     </a>
                                                 </div>  -->
-                                                <ul class="list-group" style="margin-top: 15px;">
+                                                <ul>
                                                     <li class="list-group-item">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">
                                                             Today
