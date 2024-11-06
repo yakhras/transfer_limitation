@@ -18,7 +18,7 @@ class CrmTeam(models.Model):
         # Retrieve unpaid invoices where the due date is today
         invoices = self.env['unpaid.invoice'].search([
             ('due_date', '=', today),  # Filter by today's due date
-            ('team_id', '=', self.id)  # Filter by the current sales team
+            ('team_id', '=', 1)  # Filter by the current sales team
         ])
         
         for invoice in invoices:
