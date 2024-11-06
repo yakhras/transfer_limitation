@@ -52,4 +52,4 @@ class CrmTeam(models.Model):
                     totals_by_team_and_currency[team.id][currency] += invoice.amount_due
 
         # Now, store the totals in a JSON field for easy retrieval
-        self.unpaid_invoice_totals_json = str(totals_by_team_and_currency)
+        self.unpaid_invoice_totals_json = totals_by_team_and_currency
