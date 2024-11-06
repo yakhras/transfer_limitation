@@ -12,10 +12,15 @@ class CrmTeam(models.Model):
         compute='_compute_unpaid_invoice_totals', currency_field='currency_eur',
         string="Unpaid Invoices Total (EUR)"
     )
+    unpaid_invoice_total_try = fields.Monetary(
+        compute='_compute_unpaid_invoice_totals', currency_field='currency_try',
+        string="Unpaid Invoices Total (TRY)"
+    )
 
     # Currency fields for multi-currency support
     currency_usd = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD').id, readonly=True)
     currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.EUR').id, readonly=True)
+    currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.TRY').id, readonly=True)
 
    
     def _compute_unpaid_invoice_totals(self):
@@ -25,7 +30,7 @@ class CrmTeam(models.Model):
         
 
         for team in self:
-            total_usd = total_eur = 0.0  # Initialize totals for each currency
+            total_usd = total_eur = total_try = 0.0  # Initialize totals for each currency
 
             # Retrieve unpaid invoices within the last 30 days for the team
             invoices = self.env['unpaid.invoice'].search([
@@ -40,9 +45,12 @@ class CrmTeam(models.Model):
                     total_usd += invoice.amount_due
                 elif invoice.currency_id == team.currency_eur:
                     total_eur += invoice.amount_due
+                elif invoice.currency_id == team.currency_try:
+                    total_try += invoice.amount_due
                 # Add more conditions if other currencies are needed.
 
             # Assign computed values to each field
             team.unpaid_invoice_total_usd = total_usd
             team.unpaid_invoice_total_eur = total_eur
+            team.unpaid_invoice_total_try = total_try
             # Set values for other currency fields if they exist.
