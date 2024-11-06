@@ -51,8 +51,8 @@
                                                             Week
                                                         </a>
                                                     </li>
-                                                    <li class="list-group-item">
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action">
+                                                    <li>
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" class="action-link" style="font-weight: bold; color: #007BFF; text-decoration: none; transition: color 0.3s ease;">
                                                             2 Weeks
                                                         </a>
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
