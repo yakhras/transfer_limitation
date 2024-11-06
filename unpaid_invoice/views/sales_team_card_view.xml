@@ -8,7 +8,8 @@
             <field name="arch" type="xml">
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
                     <field name="name" />
-                    <field name="unpaid_invoice_total_month"/>
+                    <field name="unpaid_invoice_total_usd"/>
+                    <field name="unpaid_invoice_total_eur"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card o_kanban_card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; border-radius: 8px;">
@@ -56,7 +57,10 @@
                                                             Month
                                                         </a>
                                                         <span class="o_stat_value">
-                                                            <t t-esc="record.unpaid_invoice_total_month.value" />
+                                                            <t t-esc="record.unpaid_invoice_total_usd.value" />
+                                                        </span>
+                                                        <span class="o_stat_value">
+                                                            <t t-esc="record.unpaid_invoice_total_eur.value" />
                                                         </span>
                                                     </li>
                                                 </ul>
