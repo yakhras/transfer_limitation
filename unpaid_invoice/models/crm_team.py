@@ -10,7 +10,7 @@ class CrmTeam(models.Model):
         store=True
     )
 
-    @api.depends('unpaid_invoice_ids.amount_due', 'unpaid_invoice_ids.due_date')
+   
     def _compute_unpaid_invoice_total_month(self):
         today = fields.Date.today()
         month_ago = (today  + date_utils.relativedelta(months=-1)).strftime('%Y-%m-%d')  # Calculate the date 30 days ago
