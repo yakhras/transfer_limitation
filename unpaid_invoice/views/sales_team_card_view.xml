@@ -62,7 +62,7 @@
                                                         </a>
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
                                                             <t t-if="record.unpaid_invoice_total_week_usd.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_week_usd" type="action">
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_week_usd" type="action" style="background-color: #f0f0f0; color: #333;">
                                                                     <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
                                                                         <t t-esc="record.unpaid_invoice_total_week_usd.value"/> USD
                                                                     </span>
