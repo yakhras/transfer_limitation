@@ -28,7 +28,7 @@ class UnpaidInvoice(models.Model):
     due_date = fields.Date(related='invoice_id.invoice_date_due', string="Due Date")
     team_id = fields.Many2one(related='invoice_id.team_id', string="Sales Team", store=True)
     sales_person = fields.Many2one(related='invoice_id.invoice_user_id', string="Sales Person", store=True)
-    sale_order_ids = fields.Many2many('sale.order', related='invoice_id.sale_ids', string="Sale Orders", store=True)
+    sale_order_ids = fields.Many2many('sale.order', string="Sale Orders", compute='_compute_sale_orders', store=False)
     team_member_ids = fields.Many2many('res.users', string="Team Members")
     state = fields.Selection(related='invoice_id.state', string="Invoice Status")
     payment_state = fields.Selection(related='invoice_id.payment_state', string="Payment Status")
@@ -136,3 +136,11 @@ class UnpaidInvoice(models.Model):
 
             # Assign the record count to unpaid_invoice_count field
             record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(domain)
+
+    @api.depends('invoice_id')
+    def _compute_sale_orders(self):
+        for record in self:
+            if record.invoice_id:
+                record.sale_order_ids = record.invoice_id.sale_ids
+            else:
+                record.sale_order_ids = False
