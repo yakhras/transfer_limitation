@@ -30,6 +30,13 @@ class CrmTeam(models.Model):
         string='Total Due in EUR for Last Week', compute='_compute_unpaid_invoice_totals_week')
     unpaid_invoice_total_week_try = fields.Float(
         string='Total Due in TRY for Last Week', compute='_compute_unpaid_invoice_totals_week')
+    
+    unpaid_invoice_total_today_usd = fields.Float(
+        string='Total Due in USD for Today', compute='_compute_unpaid_invoice_totals_today')
+    unpaid_invoice_total_today_eur = fields.Float(
+        string='Total Due in EUR for Today', compute='_compute_unpaid_invoice_totals_today')
+    unpaid_invoice_total_today_try = fields.Float(
+        string='Total Due in TRY for Today', compute='_compute_unpaid_invoice_totals_today')
 
     # Currency fields for multi-currency support
     currency_usd = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD').id, readonly=True)

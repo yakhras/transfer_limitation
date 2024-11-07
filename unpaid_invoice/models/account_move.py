@@ -16,7 +16,8 @@ class AccountMove(models.Model):
             # Check if due today and unpaid or partially paid
             move.is_due_and_unpaid = (
                 move.invoice_date_due == date.today() and
-                move.payment_state in ['not_paid', 'partial']
+                move.payment_state in ['not_paid', 'partial'] and
+                move.move_type in ['out_invoice', 'out_refund']
             )
 
             # Trigger creation in unpaid.invoice if condition met
