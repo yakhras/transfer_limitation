@@ -311,6 +311,7 @@
                                     <field name="partner_id" class="line-separator"/>
                                     <field name="partner_mail" class="line-separator"/>
                                     <field name="partner_phone" class="line-separator"/>
+                                    <field name="partner_term" class="line-separator"/>
                                 </group>
                             </sheet>
                         </div>
