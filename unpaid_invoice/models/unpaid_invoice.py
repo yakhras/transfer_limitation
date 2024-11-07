@@ -21,6 +21,7 @@ class UnpaidInvoice(models.Model):
 
     invoice_id = fields.Many2one('account.move', string='Invoice', required=True)
     document_id = fields.Char(related='invoice_id.document_number', string='Invoice Number')
+    invoice_date = fields.Date(related='invoice_id.invoice_date', string='Invoice Date')
     partner_id = fields.Many2one(related='invoice_id.partner_id', string="Customer", store=True)
     partner_mail = fields.Char(related='partner_id.email', string="Email")
     partner_phone = fields.Char(related='partner_id.phone', string="Phone")
