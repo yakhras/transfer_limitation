@@ -24,7 +24,7 @@ class UnpaidInvoice(models.Model):
     partner_id = fields.Many2one(related='invoice_id.partner_id', string="Customer", store=True)
     partner_mail = fields.Char(related='partner_id.email', string="Email")
     partner_phone = fields.Char(related='partner_id.phone', string="Phone")
-    partner_phone = fields.Many2one(related='partner_id.property_paument_term_id', string="Payment Term")
+    partner_term = fields.Many2one(related='partner_id.property_payment_term_id', string="Payment Term")
     amount_due = fields.Monetary(related='invoice_id.amount_residual', string="Amount Due")
     due_date = fields.Date(related='invoice_id.invoice_date_due', string="Due Date")
     team_id = fields.Many2one(related='invoice_id.team_id', string="Sales Team", store=True)
