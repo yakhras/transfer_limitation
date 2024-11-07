@@ -69,21 +69,21 @@
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
                                                             <t t-if="record.unpaid_invoice_total_week_usd.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_week_usd" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
                                                                         <t t-esc="record.unpaid_invoice_total_week_usd.value"/> USD
                                                                     </span>
                                                                 </a>    
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_week_eur.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_week_eur" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
                                                                         <t t-esc="record.unpaid_invoice_total_week_eur.value"/> EUR
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_week_try.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_week_try" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
                                                                         <t t-esc="record.unpaid_invoice_total_week_try.value"/> TRY
                                                                     </span>
                                                                 </a>
@@ -99,21 +99,21 @@
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
                                                             <t t-if="record.unpaid_invoice_total_2weeks_usd.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_2weeks_usd" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
                                                                         <t t-esc="record.unpaid_invoice_total_2weeks_usd.value"/> USD
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_2weeks_eur.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_2weeks_eur" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
                                                                         <t t-esc="record.unpaid_invoice_total_2weeks_eur.value"/> EUR
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_2weeks_try.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_2weeks_try" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
                                                                         <t t-esc="record.unpaid_invoice_total_2weeks_try.value"/> TRY
                                                                     </span>
                                                                 </a>
@@ -129,22 +129,22 @@
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
                                                             <t t-if="record.unpaid_invoice_total_usd.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_month_usd" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                        <t t-esc="record.unpaid_invoice_total_usd.value"/> USD
+                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
+                                                                        <t t-esc="record.unpaid_invoice_total_usd.value"/> $
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_eur.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_month_eur" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                        <t t-esc="record.unpaid_invoice_total_eur.value"/> EUR
+                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
+                                                                        <t t-esc="record.unpaid_invoice_total_eur.value"/> €
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_try.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_month_try" type="action" style="background-color: #f0f0f0; color: #333;">
-                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                        <t t-esc="record.unpaid_invoice_total_try.value"/> TRY
+                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
+                                                                        <t t-esc="record.unpaid_invoice_total_try.value"/> ₺
                                                                     </span>
                                                                 </a>
                                                             </t>
