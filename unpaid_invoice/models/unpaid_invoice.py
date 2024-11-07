@@ -29,6 +29,7 @@ class UnpaidInvoice(models.Model):
     team_id = fields.Many2one(related='invoice_id.team_id', string="Sales Team", store=True)
     sales_person = fields.Many2one(related='invoice_id.invoice_user_id', string="Sales Person", store=True)
     sale_order_ids = fields.Many2many('sale.order', string="Sale Orders", compute='_compute_sale_orders', store=False)
+    sale_order = fields.Char(related='sale_order_ids.name', string="Phone")
     team_member_ids = fields.Many2many('res.users', string="Team Members")
     state = fields.Selection(related='invoice_id.state', string="Invoice Status")
     payment_state = fields.Selection(related='invoice_id.payment_state', string="Payment Status")
