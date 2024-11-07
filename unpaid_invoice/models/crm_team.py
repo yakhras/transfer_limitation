@@ -44,6 +44,7 @@ class CrmTeam(models.Model):
    
     def _compute_unpaid_invoice_totals(self):
         today = fields.Date.today()
+        two_weeks_ago = (today  + date_utils.relativedelta(weeks=-2)).strftime('%Y-%m-%d')  # Calculate the date 15 days ago
         month_ago = (today  + date_utils.relativedelta(months=-1)).strftime('%Y-%m-%d')  # Calculate the date 30 days ago
        
         for team in self:
@@ -52,6 +53,7 @@ class CrmTeam(models.Model):
             # Retrieve unpaid invoices within the last 30 days for the team
             invoices = self.env['unpaid.invoice'].search([
                 ('due_date', '>=', month_ago),
+                ('due_date', '<', two_weeks_ago),
                 ('team_id', '=', team.id)
             ])
 
