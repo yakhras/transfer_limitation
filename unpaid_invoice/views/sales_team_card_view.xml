@@ -137,7 +137,8 @@
                                                             <t t-if="record.unpaid_invoice_total_eur.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_month_eur" type="action" style="background-color: #f0f0f0; color: #333;">
                                                                     <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; ">
-                                                                        <t t-esc="record.unpaid_invoice_total_eur.value"/> €
+                                                                        <t t-esc="record.unpaid_invoice_total_eur.value"/> 
+                                                                        <t t-esc="€"/>
                                                                     </span>
                                                                 </a>
                                                             </t>
