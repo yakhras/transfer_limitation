@@ -301,6 +301,7 @@
                                     <field name="amount_due" class="line-separator"/>
                                     <field name="currency_id" class="line-separator"/>
                                     <field name="sales_person" class="line-separator"/>
+                                    <field name="origin" class="line-separator"/>
                                 </group>
                             </sheet>
         
@@ -310,9 +311,6 @@
                                     <field name="partner_id" class="line-separator"/>
                                     <field name="partner_mail" class="line-separator"/>
                                     <field name="partner_phone" class="line-separator"/>
-                                    <field name="amount_due" class="line-separator"/>
-                                    <field name="currency_id" class="line-separator"/>
-                                    <field name="team_id" class="line-separator"/>
                                 </group>
                             </sheet>
                         </div>
