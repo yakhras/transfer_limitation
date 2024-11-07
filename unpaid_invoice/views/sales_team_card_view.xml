@@ -48,7 +48,7 @@
                                                 </div>  -->
                                                 <ul>
                                                     <li>
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="action-link" style="font-weight: bold; color: #007BFF; text-decoration: none; transition: color 0.3s ease;">
                                                             Today
                                                         </a>
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
@@ -70,7 +70,7 @@
                                                         </div>
                                                     </li>
                                                     <li>
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_week" type="action">
+                                                        <a name="unpaid_invoice.action_unpaid_invoice_week" type="action" class="action-link" style="font-weight: bold; color: #007BFF; text-decoration: none; transition: color 0.3s ease;">
                                                             Week
                                                         </a>
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
