@@ -291,18 +291,16 @@
                         <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
                         <button name="send_email_unpaid_invoices" string="Send Email" type="object" class="btn-primary"/>
                     </header>
-                    
                         <!-- Wrapper for the horizontal layout -->
                         <div style="display: flex; gap: 20px;">
                             <!-- First sheet -->
                             <sheet style="flex: 1;">
                                 <group>
                                     <field name="invoice_id" class="line-separator"/>
-                                    <field name="partner_id" class="line-separator"/>
                                     <field name="amount_total" class="line-separator"/>
                                     <field name="amount_due" class="line-separator"/>
                                     <field name="currency_id" class="line-separator"/>
-                                    <field name="team_id" class="line-separator"/>
+                                    <field name="sales_person" class="line-separator"/>
                                 </group>
                             </sheet>
         
@@ -318,7 +316,6 @@
                                 </group>
                             </sheet>
                         </div>
-                    
                 </form>
             </field>
         </record>
