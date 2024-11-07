@@ -17,6 +17,9 @@
                     <field name="unpaid_invoice_total_week_usd"/>
                     <field name="unpaid_invoice_total_week_eur"/>
                     <field name="unpaid_invoice_total_week_try"/>
+                    <field name="unpaid_invoice_total_today_usd"/>
+                    <field name="unpaid_invoice_total_today_eur"/>
+                    <field name="unpaid_invoice_total_today_try"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card o_kanban_card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; border-radius: 8px;">
@@ -44,10 +47,27 @@
                                                     </a>
                                                 </div>  -->
                                                 <ul>
-                                                    <li class="list-group-item">
+                                                    <li>
                                                         <a name="unpaid_invoice.action_unpaid_invoice_today" type="action">
                                                             Today
                                                         </a>
+                                                        <div class="stat-values" style="display: flex; gap: 10px;">
+                                                            <t t-if="record.unpaid_invoice_total_today_usd.value != 0">
+                                                                <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <t t-esc="record.unpaid_invoice_total_today_usd.value"/> USD
+                                                                </span>
+                                                            </t>
+                                                            <t t-if="record.unpaid_invoice_total_today_eur.value != 0">
+                                                                <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <t t-esc="record.unpaid_invoice_total_today_eur.value"/> EUR
+                                                                </span>
+                                                            </t>
+                                                            <t t-if="record.unpaid_invoice_total_today_try.value != 0">
+                                                                <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                    <t t-esc="record.unpaid_invoice_total_today_try.value"/> TRY
+                                                                </span>
+                                                            </t>
+                                                        </div>
                                                     </li>
                                                     <li>
                                                         <a name="unpaid_invoice.action_unpaid_invoice_week" type="action">
