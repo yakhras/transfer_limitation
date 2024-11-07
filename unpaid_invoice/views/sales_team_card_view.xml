@@ -56,7 +56,7 @@
                                                     </li>
                                                 </t>
                                                 <t t-if="record.unpaid_invoice_total_week_usd.value != 0 or record.unpaid_invoice_total_week_eur.value != 0 or record.unpaid_invoice_total_week_try.value != 0">
-                                                    <li>
+                                                    <li style="padding: 5px">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_week" type="action" class="action-link" style="font-weight: bold; color: #007BFF; text-decoration: none; transition: color 0.3s ease;">
                                                             Week
                                                         </a>
@@ -80,7 +80,7 @@
                                                     </li>
                                                 </t>
                                                 <t t-if="record.unpaid_invoice_total_2weeks_usd.value != 0 or record.unpaid_invoice_total_2weeks_eur.value != 0 or record.unpaid_invoice_total_2weeks_try.value != 0">
-                                                    <li>
+                                                    <li style="padding: 5px"> 
                                                         <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" class="action-link" style="font-weight: bold; color: #007BFF; text-decoration: none; transition: color 0.3s ease;">
                                                             2 Weeks
                                                         </a>
@@ -104,7 +104,7 @@
                                                     </li>
                                                 </t>
                                                 <t t-if="record.unpaid_invoice_total_usd.value != 0 or record.unpaid_invoice_total_eur.value != 0 or record.unpaid_invoice_total_try.value != 0">
-                                                    <li>
+                                                    <li style="padding: 5px">
                                                         <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="action-link" style="font-weight: bold; color: #007BFF; text-decoration: none; transition: color 0.3s ease;">
                                                             Month
                                                         </a>
