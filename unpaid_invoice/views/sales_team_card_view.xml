@@ -224,6 +224,7 @@
             <field name="domain">[
                 ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
                 ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'USD'),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': active_id,
