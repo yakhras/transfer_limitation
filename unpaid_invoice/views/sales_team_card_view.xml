@@ -259,6 +259,19 @@
                             <field name="invoice_id" class="line-separator"/>
                             <field name="partner_id" class="line-separator"/>
                             <field name="amount_total" class="line-separator"/>
+                            <field name="amount_due" class="line-separator"/>
+                            <field name="currency_id" class="line-separator"/>
+                            <field name="team_id" class="line-separator"/>
+                            <!-- <field name="unpaid_invoice_count"/> -->
+                        </group>
+                    </sheet>
+                    <sheet>
+                        <!-- Other form fields go here -->
+                        <group>
+                            <field name="invoice_id" class="line-separator"/>
+                            <field name="partner_id" class="line-separator"/>
+                            <field name="amount_total" class="line-separator"/>
+                            <field name="amount_due" class="line-separator"/>
                             <field name="currency_id" class="line-separator"/>
                             <field name="team_id" class="line-separator"/>
                             <!-- <field name="unpaid_invoice_count"/> -->
