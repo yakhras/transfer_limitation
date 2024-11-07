@@ -297,6 +297,7 @@
                             <sheet style="flex: 1;">
                                 <group>
                                     <field name="invoice_id" class="line-separator"/>
+                                    <field name="invoice_date" class="line-separator"/>
                                     <field name="amount_total" class="line-separator"/>
                                     <field name="amount_due" class="line-separator"/>
                                     <field name="currency_id" class="line-separator"/>
