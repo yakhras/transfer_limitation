@@ -12,8 +12,10 @@
 
     
 from odoo import models, fields, api
-
 from dateutil.relativedelta import relativedelta
+from datetime import date
+
+
 
 class UnpaidInvoice(models.Model):
     _name = 'unpaid.invoice'
@@ -32,6 +34,7 @@ class UnpaidInvoice(models.Model):
     sales_person = fields.Many2one(related='invoice_id.invoice_user_id', string="Sales Person", store=True)
     sale_order_ids = fields.Many2many('sale.order', string="Sale Orders", compute='_compute_sale_orders', store=False)
     sale_order = fields.Char(related='sale_order_ids.name', string="Sale Order")
+    days_since_invoice = fields.Integer(string='Days Since Invoice', compute='_compute_days_since_invoice', store=True)
     team_member_ids = fields.Many2many('res.users', string="Team Members")
     state = fields.Selection(related='invoice_id.state', string="Invoice Status")
     payment_state = fields.Selection(related='invoice_id.payment_state', string="Payment Status")
@@ -147,3 +150,11 @@ class UnpaidInvoice(models.Model):
                 record.sale_order_ids = record.invoice_id.sale_ids
             else:
                 record.sale_order_ids = False
+
+    @api.depends('invoice_date')
+    def _compute_days_since_invoice(self):
+        for record in self:
+            if record.invoice_date:
+                record.days_since_invoice = (date.today() - record.invoice_date).days
+            else:
+                record.days_since_invoice = 0

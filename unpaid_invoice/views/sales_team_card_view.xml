@@ -301,6 +301,7 @@
                                     <field name="amount_total" class="line-separator"/>
                                     <field name="amount_due" class="line-separator"/>
                                     <field name="currency_id" class="line-separator"/>
+                                    <field name="days_since_invoice" class="line-separator"/>
                                     <field name="sales_person" class="line-separator"/>
                                     <field name="sale_order" class="line-separator"/>
                                 </group>
