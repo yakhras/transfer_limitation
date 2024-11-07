@@ -38,19 +38,25 @@
                                                         </a>
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
                                                             <t t-if="record.unpaid_invoice_total_today_usd.value != 0">
-                                                                <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_today_usd.value"/> USD
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_today_usd" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_today_usd.value"/> USD
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_today_eur.value != 0">
-                                                                <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_today_eur.value"/> EUR
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_today_eur" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_today_eur.value"/> EUR
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_today_try.value != 0">
-                                                                <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_today_try.value"/> TRY
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_today_try" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_today_try.value"/> TRY
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                         </div>
                                                     </li>
@@ -92,19 +98,25 @@
                                                         </a>
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
                                                             <t t-if="record.unpaid_invoice_total_2weeks_usd.value != 0">
-                                                                <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_2weeks_usd.value"/> USD
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_2weeks_usd" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_2weeks_usd.value"/> USD
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_2weeks_eur.value != 0">
-                                                                <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_2weeks_eur.value"/> EUR
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_2weeks_eur" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_2weeks_eur.value"/> EUR
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_2weeks_try.value != 0">
-                                                                <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_2weeks_try.value"/> TRY
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_2weeks_try" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_2weeks_try.value"/> TRY
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                         </div>
                                                     </li>
@@ -116,19 +128,25 @@
                                                         </a>
                                                         <div class="stat-values" style="display: flex; gap: 10px;">
                                                             <t t-if="record.unpaid_invoice_total_usd.value != 0">
-                                                                <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_usd.value"/> USD
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_month_usd" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value usd" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_usd.value"/> USD
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_eur.value != 0">
-                                                                <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_eur.value"/> EUR
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_month_eur" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value eur" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_eur.value"/> EUR
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                             <t t-if="record.unpaid_invoice_total_try.value != 0">
-                                                                <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
-                                                                    <t t-esc="record.unpaid_invoice_total_try.value"/> TRY
-                                                                </span>
+                                                                <a name="unpaid_invoice.action_unpaid_invoice_month_try" type="action" style="background-color: #f0f0f0; color: #333;">
+                                                                    <span class="o_stat_value try" style="font-size: 14px; font-weight: bold; padding: 5px 10px; border-radius: 5px; background-color: #f0f0f0; color: #333;">
+                                                                        <t t-esc="record.unpaid_invoice_total_try.value"/> TRY
+                                                                    </span>
+                                                                </a>
                                                             </t>
                                                         </div>
                                                     </li>
@@ -325,6 +343,69 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+        <!-- unpaid.invoice 2 weeks USD action -->
+        <record id="action_unpaid_invoice_2weeks_usd" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice 2 Weeks USD</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'USD'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
+
+        <!-- unpaid.invoice 2 weeks EUR action -->
+        <record id="action_unpaid_invoice_2weeks_eur" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice 2 Weeks EUR</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'EUR'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
+
+        <!-- unpaid.invoice 2 weeks TRY action -->
+        <record id="action_unpaid_invoice_2weeks_try" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice 2 Weeks TRY</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'TRY'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
+
         <!-- unpaid.invoice month action -->
         <record id="action_unpaid_invoice_month" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Month</field>
@@ -333,6 +414,69 @@
             <field name="domain">[
                 ('due_date', '&gt;=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
                 ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
+
+        <!-- unpaid.invoice month USD action -->
+        <record id="action_unpaid_invoice_month_usd" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Month USD</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'USD'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
+
+        <!-- unpaid.invoice month EUR action -->
+        <record id="action_unpaid_invoice_month_eur" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Month EUR</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'EUR'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
+
+        <!-- unpaid.invoice month TRY action -->
+        <record id="action_unpaid_invoice_month_try" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Month TRY</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'TRY'),
                 ]</field>
             <field name="context">{
                     'search_default_team_id': active_id,
@@ -363,7 +507,67 @@
                 }
             </field> 
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
-        </record>   
+        </record>
+        
+        <!-- unpaid.invoice today USD action -->
+        <record id="action_unpaid_invoice_today_usd" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Today USD</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '=', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'USD'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team_id': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field> 
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
+
+        <!-- unpaid.invoice today EUR action -->
+        <record id="action_unpaid_invoice_today_eur" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Today EUR</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '=', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'EUR'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team_id': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field> 
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
+
+        <!-- unpaid.invoice today TRY action -->
+        <record id="action_unpaid_invoice_today_try" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Today TRY</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '=', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'TRY'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team_id': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field> 
+            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+        </record>
 
         <!-- Menu Item -->
         <menuitem id="menu_unpaid_invoice_kanban" name="Unpaid Invoices" 
