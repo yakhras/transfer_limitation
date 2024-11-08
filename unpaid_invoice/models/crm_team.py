@@ -1,5 +1,6 @@
 from odoo.tools import date_utils
 from odoo import models, fields, api
+from datetime import date
 
 class CrmTeam(models.Model):
     _inherit = 'crm.team'
