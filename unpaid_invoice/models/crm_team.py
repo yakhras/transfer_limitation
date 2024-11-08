@@ -35,6 +35,10 @@ class CrmTeam(models.Model):
     currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.EUR').id, readonly=True)
     currency_try = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.TRY').id, readonly=True)
 
+    @property
+    def today(self):
+        return date.today()
+    
 
     def _get_currency_totals(self, invoices, team):
         """Helper method to sum amounts by currency."""
@@ -51,20 +55,20 @@ class CrmTeam(models.Model):
 
     def _get_date_range(self, weeks=0):
         """Helper method to calculate date range."""
-        today = date.today()  # Keep it as a date object
+        today = self.today()  # Keep it as a date object
         start_date = today + date_utils.relativedelta(weeks=weeks)  # Apply relativedelta
         return start_date  # Convert both to string in the correct format
 
 
     def _compute_unpaid_invoice_totals_today(self):
-        today = fields.Date.today()
+        today = self.today()
         for team in self:
             invoices = self.env['unpaid.invoice'].search([('due_date', '=', today), ('team_id', '=', team.id)])
             team.unpaid_invoice_total_today_usd, team.unpaid_invoice_total_today_eur, team.unpaid_invoice_total_today_try = self._get_currency_totals(invoices, team)
 
 
     def _compute_unpaid_invoice_totals_week(self):
-        today = fields.Date.today()
+        today = self.today()
         for team in self:
             one_week_ago = self._get_date_range(weeks=-1)
             invoices = self.env['unpaid.invoice'].search([('due_date', '>=', one_week_ago), ('due_date', '<', today), ('team_id', '=', team.id)])
