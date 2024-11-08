@@ -80,7 +80,7 @@ class CrmTeam(models.Model):
     def _compute_unpaid_invoice_totals_week(self):
         for team in self:
             one_week_ago = self._get_date_range(weeks=-1)
-            self._get_invoices_by_date_range(team_id=self.id, start_date=one_week_ago, end_date=self.today)
+            self._get_invoices_by_date_range(team_id=team.id, start_date=one_week_ago, end_date=self.today)
             # invoices = self.env['unpaid.invoice'].search([('due_date', '>=', one_week_ago), ('due_date', '<', self.today), ('team_id', '=', team.id)])
             team.unpaid_invoice_total_week_usd, team.unpaid_invoice_total_week_eur, team.unpaid_invoice_total_week_try = self._get_currency_totals(invoices, team)
 
