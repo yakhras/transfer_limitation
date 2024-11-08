@@ -20,6 +20,7 @@
                     <field name="unpaid_invoice_total_today_usd"/>
                     <field name="unpaid_invoice_total_today_eur"/>
                     <field name="unpaid_invoice_total_today_try"/>
+                    <field name="unpaid_invoice_today_usd"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card o_kanban_card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; border-radius: 8px;">
@@ -29,6 +30,7 @@
                                             <div class="o_primary">
                                                 <span class="o_text_overflow" style="border-bottom: 1px solid #ccc; display: inline-block; padding-bottom: 5px; margin-bottom: 15px;">
                                                     <t t-esc="record.name.value" />
+                                                    <t t-esc="record.unpaid_invoice_today_usd.value" />
                                                 </span>
                                                 
                                                 <t t-if="record.unpaid_invoice_total_today_usd.value != 0 or record.unpaid_invoice_total_today_eur.value != 0 or record.unpaid_invoice_total_today_try.value != 0">
@@ -314,7 +316,6 @@
                                     <field name="partner_mail" class="line-separator"/>
                                     <field name="partner_phone" class="line-separator"/>
                                     <field name="partner_term" class="line-separator"/>
-                                    <field name="unpaid_invoice_today_usd" class="line-separator"/>
                                 </group>
                             </sheet>
                         </div>
