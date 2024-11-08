@@ -7,36 +7,6 @@ class CrmTeam(models.Model):
 
     today = date.today()
 
-    # Today #
-    # unpaid_invoice_total_today_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_usd')
-    # unpaid_invoice_total_today_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_eur')
-    # unpaid_invoice_total_today_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_try')
-
-
-    # Week #
-    # unpaid_invoice_total_week_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_usd')
-    # unpaid_invoice_total_week_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_eur')
-    # unpaid_invoice_total_week_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_try')
-    
-
-    # 2Weeks #
-    # unpaid_invoice_total_2weeks_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_usd')
-    # unpaid_invoice_total_2weeks_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_eur')
-    # unpaid_invoice_total_2weeks_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_try')
-    
-
-    # Month #
-    # unpaid_invoice_total_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_usd')
-    # unpaid_invoice_total_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_eur')
-    # unpaid_invoice_total_try = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_try')
-    
-    
-    # Currency fields for multi-currency support
-    currency_usd = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD').id, readonly=True)
-    currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.EUR').id, readonly=True)
-    currency_try = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.TRY').id, readonly=True)
-
-
     # Define the dictionary with field names as keys and compute methods as values
     unpaid_invoice_fields = {
         'unpaid_invoice_total_today_usd': '_compute_unpaid_invoice_totals_today',
@@ -52,6 +22,11 @@ class CrmTeam(models.Model):
         'unpaid_invoice_total_eur': '_compute_unpaid_invoice_totals',
         'unpaid_invoice_total_try': '_compute_unpaid_invoice_totals',
     }
+    
+    # Currency fields for multi-currency support
+    currency_usd = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD').id, readonly=True)
+    currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.EUR').id, readonly=True)
+    currency_try = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.TRY').id, readonly=True)
 
     # Dynamically create the field for testing
     for field_name, compute_method in unpaid_invoice_fields.items():
@@ -76,10 +51,30 @@ class CrmTeam(models.Model):
         """Helper method to calculate date range."""
         start_date = self.today + date_utils.relativedelta(weeks=weeks)  # Apply relativedelta
         return start_date
+    
+    def _get_invoices_by_date_range(self, team_id, start_date=None, end_date=None):
+        """Fetch unpaid invoices within a specified date range for a given team.
+        
+        :param team_id: Sales team ID
+        :param start_date: Start of the due_date range (inclusive)
+        :param end_date: End of the due_date range (exclusive)
+        :return: Recordset of unpaid.invoice matching the date range and team
+        """
+        domain = [('team_id', '=', team_id)]
+        
+        # Set due_date range based on provided dates
+        if start_date:
+            domain.append(('due_date', '>=', start_date))
+        if end_date:
+            domain.append(('due_date', '<', end_date))
+        
+        return self.env['unpaid.invoice'].search(domain)
+    
 
     def _compute_unpaid_invoice_totals_today(self):
         for team in self:
-            invoices = self.env['unpaid.invoice'].search([('due_date', '=', self.today), ('team_id', '=', team.id)])
+            # invoices = self.env['unpaid.invoice'].search([('due_date', '=', self.today), ('team_id', '=', team.id)])
+            invoices = self._get_invoices_by_date_range(team_id=self.id, start_date=self.today, end_date=self.today)
             team.unpaid_invoice_total_today_usd, team.unpaid_invoice_total_today_eur, team.unpaid_invoice_total_today_try = self._get_currency_totals(invoices, team)
 
 
