@@ -20,15 +20,15 @@ class CrmTeam(models.Model):
     
 
     # 2Weeks #
-    unpaid_invoice_total_2weeks_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_usd')
-    unpaid_invoice_total_2weeks_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_eur')
-    unpaid_invoice_total_2weeks_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_try')
+    # unpaid_invoice_total_2weeks_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_usd')
+    # unpaid_invoice_total_2weeks_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_eur')
+    # unpaid_invoice_total_2weeks_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_try')
     
 
     # Month #
-    unpaid_invoice_total_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_usd')
-    unpaid_invoice_total_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_eur')
-    unpaid_invoice_total_try = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_try')
+    # unpaid_invoice_total_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_usd')
+    # unpaid_invoice_total_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_eur')
+    # unpaid_invoice_total_try = fields.Monetary(compute='_compute_unpaid_invoice_totals', currency_field='currency_try')
     
     
     # Currency fields for multi-currency support
@@ -45,6 +45,12 @@ class CrmTeam(models.Model):
         'unpaid_invoice_total_week_usd': '_compute_unpaid_invoice_totals_week',
         'unpaid_invoice_total_week_eur': '_compute_unpaid_invoice_totals_week',
         'unpaid_invoice_total_week_try': '_compute_unpaid_invoice_totals_week',
+        'unpaid_invoice_total_2weeks_usd': '_compute_unpaid_invoice_totals_2weeks',
+        'unpaid_invoice_total_2weeks_eur': '_compute_unpaid_invoice_totals_2weeks',
+        'unpaid_invoice_total_2weeks_try': '_compute_unpaid_invoice_totals_2weeks',
+        'unpaid_invoice_total_usd': '_compute_unpaid_invoice_totals',
+        'unpaid_invoice_total_eur': '_compute_unpaid_invoice_totals',
+        'unpaid_invoice_total_try': '_compute_unpaid_invoice_totals',
     }
 
     # Dynamically create the field for testing
