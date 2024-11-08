@@ -29,12 +29,16 @@ class CrmTeam(models.Model):
         string='Total Due in TRY for Last Week', compute='_compute_unpaid_invoice_totals_week')
     
     # Today #
-    unpaid_invoice_total_today_usd = fields.Float(
-        string='Total Due in USD for Today', compute='_compute_unpaid_invoice_totals_today')
-    unpaid_invoice_total_today_eur = fields.Float(
-        string='Total Due in EUR for Today', compute='_compute_unpaid_invoice_totals_today')
-    unpaid_invoice_total_today_try = fields.Float(
-        string='Total Due in TRY for Today', compute='_compute_unpaid_invoice_totals_today')
+    # unpaid_invoice_total_today_usd = fields.Float(
+    #     string='Total Due in USD for Today', compute='_compute_unpaid_invoice_totals_today')
+    # unpaid_invoice_total_today_eur = fields.Float(
+    #     string='Total Due in EUR for Today', compute='_compute_unpaid_invoice_totals_today')
+    # unpaid_invoice_total_today_try = fields.Float(
+    #     string='Total Due in TRY for Today', compute='_compute_unpaid_invoice_totals_today')
+    
+    unpaid_invoice_total_today_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_usd')
+    unpaid_invoice_total_today_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_eur')
+    unpaid_invoice_total_today_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_try')
 
     # Currency fields for multi-currency support
     currency_usd = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD').id, readonly=True)
@@ -156,31 +160,27 @@ class CrmTeam(models.Model):
     #         team.unpaid_invoice_total_today_eur = total_eur
     #         team.unpaid_invoice_total_today_try = total_try
 
+    def _get_currency_totals(self, invoices, team):
+        """Helper method to sum amounts by currency."""
+        total_usd = total_eur = total_try = 0.0
+        for invoice in invoices:
+            if invoice.currency_id == team.currency_usd:
+                total_usd += invoice.amount_due
+            elif invoice.currency_id == team.currency_eur:
+                total_eur += invoice.amount_due
+            elif invoice.currency_id == team.currency_try:
+                total_try += invoice.amount_due
+        return total_usd, total_eur, total_try
+
+    def _get_date_range(self, weeks=0, days=0):
+        """Helper method to calculate date range."""
+        today = fields.Date.today()
+        start_date = today + date_utils.relativedelta(weeks=weeks, days=days)
+        return start_date, today
+
 
     def _compute_unpaid_invoice_totals_today(self):
         today = fields.Date.today()
-
         for team in self:
-            # Initialize total amounts
-            total_usd = total_eur = total_try = 0.0
-
-            # Use read_group to aggregate unpaid invoice amounts by currency for today's date
-            results = self.env['unpaid.invoice'].read_group(
-                [('due_date', '=', today), ('team_id', '=', team.id)],
-                ['amount_due:sum', 'currency_id'],
-                ['currency_id']
-            )
-
-            # Map results to currency totals
-            for result in results:
-                if result['currency_id'][0] == team.currency_usd.id:
-                    total_usd = result['amount_due']
-                elif result['currency_id'][0] == team.currency_eur.id:
-                    total_eur = result['amount_due']
-                elif result['currency_id'][0] == team.currency_try.id:
-                    total_try = result['amount_due']
-
-            # Assign computed values to each field
-            team.unpaid_invoice_total_today_usd = total_usd
-            team.unpaid_invoice_total_today_eur = total_eur
-            team.unpaid_invoice_total_today_try = total_try
+            invoices = self.env['unpaid.invoice'].search([('due_date', '=', today), ('team_id', '=', team.id)])
+            team.unpaid_invoice_total_today_usd, team.unpaid_invoice_total_today_eur, team.unpaid_invoice_total_today_try = self._get_currency_totals(invoices, team)
