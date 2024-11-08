@@ -14,9 +14,9 @@ class CrmTeam(models.Model):
 
 
     # Week #
-    unpaid_invoice_total_week_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_usd')
-    unpaid_invoice_total_week_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_eur')
-    unpaid_invoice_total_week_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_try')
+    # unpaid_invoice_total_week_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_usd')
+    # unpaid_invoice_total_week_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_eur')
+    # unpaid_invoice_total_week_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_week', currency_field='currency_try')
     
 
     # 2Weeks #
@@ -42,6 +42,9 @@ class CrmTeam(models.Model):
         'unpaid_invoice_total_today_usd': '_compute_unpaid_invoice_totals_today',
         'unpaid_invoice_total_today_eur': '_compute_unpaid_invoice_totals_today',
         'unpaid_invoice_total_today_try': '_compute_unpaid_invoice_totals_today',
+        'unpaid_invoice_total_week_usd': '_compute_unpaid_invoice_totals_week',
+        'unpaid_invoice_total_week_eur': '_compute_unpaid_invoice_totals_week',
+        'unpaid_invoice_total_week_try': '_compute_unpaid_invoice_totals_week',
     }
 
     # Dynamically create the field for testing
