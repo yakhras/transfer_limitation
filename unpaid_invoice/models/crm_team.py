@@ -64,7 +64,7 @@ class CrmTeam(models.Model):
         
         # Set due_date range based on provided dates
         if start_date:
-            domain.append(('due_date', '>=', start_date))
+            domain.append(('due_date', '=', start_date))
         if end_date:
             domain.append(('due_date', '<', end_date))
         
@@ -74,7 +74,7 @@ class CrmTeam(models.Model):
     def _compute_unpaid_invoice_totals_today(self):
         for team in self:
             # invoices = self.env['unpaid.invoice'].search([('due_date', '=', self.today), ('team_id', '=', team.id)])
-            invoices = self._get_invoices_by_date_range(team_id=team.id, start_date=self.today, end_date=self.today)
+            invoices = self._get_invoices_by_date_range(team_id=team.id, start_date=self.today)
             team.unpaid_invoice_total_today_usd, team.unpaid_invoice_total_today_eur, team.unpaid_invoice_total_today_try = self._get_currency_totals(invoices, team)
 
 
