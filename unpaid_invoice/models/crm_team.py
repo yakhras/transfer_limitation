@@ -1,5 +1,5 @@
 from odoo.tools import date_utils
-from odoo import models, fields, api
+from odoo import models, fields
 from datetime import date
 
 class CrmTeam(models.Model):
@@ -52,7 +52,7 @@ class CrmTeam(models.Model):
         start_date = self.today + date_utils.relativedelta(weeks=weeks)  # Apply relativedelta
         return start_date
     
-    
+
     def _get_invoices_by_date_range(self, team_id, start_date=None, end_date=None):
         """Fetch unpaid invoices within a specified date range for a given team.
         
