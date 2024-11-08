@@ -81,14 +81,13 @@ class CrmTeam(models.Model):
         for team in self:
             one_week_ago = self._get_date_range(weeks=-1)
             invoices = self._get_invoices_by_date_range(team_id=team.id, start_date=one_week_ago, end_date=self.today)
-            # invoices = self.env['unpaid.invoice'].search([('due_date', '>=', one_week_ago), ('due_date', '<', self.today), ('team_id', '=', team.id)])
             team.unpaid_invoice_total_week_usd, team.unpaid_invoice_total_week_eur, team.unpaid_invoice_total_week_try = self._get_currency_totals(invoices, team)
 
 
     def _compute_unpaid_invoice_totals_2weeks(self):
         for team in self:
             two_weeks_ago, one_week_ago = self._get_date_range(weeks=-2), self._get_date_range(weeks=-1)
-            invoices = self.env['unpaid.invoice'].search([('due_date', '>=', two_weeks_ago), ('due_date', '<', one_week_ago), ('team_id', '=', team.id)])
+            invoices = self._get_invoices_by_date_range(team_id=team.id, start_date=two_weeks_ago, end_date=one_week_ago)
             team.unpaid_invoice_total_2weeks_usd, team.unpaid_invoice_total_2weeks_eur, team.unpaid_invoice_total_2weeks_try = self._get_currency_totals(invoices, team)
 
 
@@ -97,5 +96,5 @@ class CrmTeam(models.Model):
         for team in self:
             # Monthly totals (or any other specific period you need)
             month_ago, two_weeks_ago = self._get_date_range(weeks=-4), self._get_date_range(weeks=-2)
-            invoices = self.env['unpaid.invoice'].search([('due_date', '>=', month_ago), ('due_date', '<', two_weeks_ago), ('team_id', '=', team.id)])
+            invoices = self._get_invoices_by_date_range(team_id=team.id, start_date=month_ago, end_date=two_weeks_ago)
             team.unpaid_invoice_total_usd, team.unpaid_invoice_total_eur, team.unpaid_invoice_total_try = self._get_currency_totals(invoices, team)
