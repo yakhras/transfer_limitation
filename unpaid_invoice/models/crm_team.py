@@ -102,7 +102,6 @@ class CrmTeam(models.Model):
             team.unpaid_invoice_total_2weeks_eur = total_eur
             team.unpaid_invoice_total_2weeks_try = total_try
 
-
     def _compute_unpaid_invoice_totals_week(self):
         today = fields.Date.today()
         one_week_ago = (today  + date_utils.relativedelta(weeks=-1)).strftime('%Y-%m-%d')  # Calculate the date 7 days ago
@@ -132,27 +131,56 @@ class CrmTeam(models.Model):
             team.unpaid_invoice_total_week_eur = total_eur
             team.unpaid_invoice_total_week_try = total_try
 
+    # def _compute_unpaid_invoice_totals_today(self):
+    #     today = fields.Date.today()
+
+    #     for team in self:
+    #         total_usd = total_eur = total_try = 0.0  # Initialize totals for each currency
+            
+    #         domain = [
+    #             ('due_date', '=', today),
+    #             ('team_id', '=', team.id),
+    #         ]
+    #         invoices = self.env['unpaid.invoice'].search(domain)
+
+    #         for invoice in invoices:
+    #             if invoice.currency_id == team.currency_usd:
+    #                 total_usd += invoice.amount_due
+    #             elif invoice.currency_id == team.currency_eur:
+    #                 total_eur += invoice.amount_due
+    #             elif invoice.currency_id == team.currency_try:
+    #                 total_try += invoice.amount_due
+
+    #         # Assign totals to the respective fields
+    #         team.unpaid_invoice_total_today_usd = total_usd
+    #         team.unpaid_invoice_total_today_eur = total_eur
+    #         team.unpaid_invoice_total_today_try = total_try
+
+
     def _compute_unpaid_invoice_totals_today(self):
         today = fields.Date.today()
 
         for team in self:
-            total_usd = total_eur = total_try = 0.0  # Initialize totals for each currency
-            
-            domain = [
-                ('due_date', '=', today),
-                ('team_id', '=', team.id),
-            ]
-            invoices = self.env['unpaid.invoice'].search(domain)
+            # Initialize total amounts
+            total_usd = total_eur = total_try = 0.0
 
-            for invoice in invoices:
-                if invoice.currency_id == team.currency_usd:
-                    total_usd += invoice.amount_due
-                elif invoice.currency_id == team.currency_eur:
-                    total_eur += invoice.amount_due
-                elif invoice.currency_id == team.currency_try:
-                    total_try += invoice.amount_due
+            # Use read_group to aggregate unpaid invoice amounts by currency for today's date
+            results = self.env['unpaid.invoice'].read_group(
+                [('due_date', '=', today), ('team_id', '=', team.id)],
+                ['currency_id', 'amount_due:sum'],
+                ['currency_id']
+            )
 
-            # Assign totals to the respective fields
+            # Map results to currency totals
+            for result in results:
+                if result['currency_id'][0] == team.currency_usd.id:
+                    total_usd = result['amount_due']
+                elif result['currency_id'][0] == team.currency_eur.id:
+                    total_eur = result['amount_due']
+                elif result['currency_id'][0] == team.currency_try.id:
+                    total_try = result['amount_due']
+
+            # Assign computed values to each field
             team.unpaid_invoice_total_today_usd = total_usd
             team.unpaid_invoice_total_today_eur = total_eur
             team.unpaid_invoice_total_today_try = total_try
