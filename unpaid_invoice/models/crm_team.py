@@ -29,13 +29,6 @@ class CrmTeam(models.Model):
         string='Total Due in TRY for Last Week', compute='_compute_unpaid_invoice_totals_week')
     
     # Today #
-    # unpaid_invoice_total_today_usd = fields.Float(
-    #     string='Total Due in USD for Today', compute='_compute_unpaid_invoice_totals_today')
-    # unpaid_invoice_total_today_eur = fields.Float(
-    #     string='Total Due in EUR for Today', compute='_compute_unpaid_invoice_totals_today')
-    # unpaid_invoice_total_today_try = fields.Float(
-    #     string='Total Due in TRY for Today', compute='_compute_unpaid_invoice_totals_today')
-    
     unpaid_invoice_total_today_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_usd')
     unpaid_invoice_total_today_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_eur')
     unpaid_invoice_total_today_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_try')
@@ -106,47 +99,21 @@ class CrmTeam(models.Model):
             team.unpaid_invoice_total_2weeks_eur = total_eur
             team.unpaid_invoice_total_2weeks_try = total_try
 
-    def _compute_unpaid_invoice_totals_week(self):
-        today = fields.Date.today()
-        one_week_ago = (today  + date_utils.relativedelta(weeks=-1)).strftime('%Y-%m-%d')  # Calculate the date 7 days ago
-
-        for team in self:
-            total_usd = total_eur = total_try = 0.0  # Initialize totals for each currency
-            
-            domain = [
-                ('due_date', '>=', one_week_ago),
-                ('due_date', '<', today),
-                ('team_id', '=', team.id),
-            ]
-            invoices = self.env['unpaid.invoice'].search(domain)
-
-            # Sum amounts by currency
-            for invoice in invoices:
-                if invoice.currency_id == team.currency_usd:
-                    total_usd += invoice.amount_due
-                elif invoice.currency_id == team.currency_eur:
-                    total_eur += invoice.amount_due
-                elif invoice.currency_id == team.currency_try:
-                    total_try += invoice.amount_due
-
-
-            # Assign totals to the respective fields
-            team.unpaid_invoice_total_week_usd = total_usd
-            team.unpaid_invoice_total_week_eur = total_eur
-            team.unpaid_invoice_total_week_try = total_try
-
-    # def _compute_unpaid_invoice_totals_today(self):
+    # def _compute_unpaid_invoice_totals_week(self):
     #     today = fields.Date.today()
+    #     one_week_ago = (today  + date_utils.relativedelta(weeks=-1)).strftime('%Y-%m-%d')  # Calculate the date 7 days ago
 
     #     for team in self:
     #         total_usd = total_eur = total_try = 0.0  # Initialize totals for each currency
             
     #         domain = [
-    #             ('due_date', '=', today),
+    #             ('due_date', '>=', one_week_ago),
+    #             ('due_date', '<', today),
     #             ('team_id', '=', team.id),
     #         ]
     #         invoices = self.env['unpaid.invoice'].search(domain)
 
+    #         # Sum amounts by currency
     #         for invoice in invoices:
     #             if invoice.currency_id == team.currency_usd:
     #                 total_usd += invoice.amount_due
@@ -155,10 +122,12 @@ class CrmTeam(models.Model):
     #             elif invoice.currency_id == team.currency_try:
     #                 total_try += invoice.amount_due
 
+
     #         # Assign totals to the respective fields
-    #         team.unpaid_invoice_total_today_usd = total_usd
-    #         team.unpaid_invoice_total_today_eur = total_eur
-    #         team.unpaid_invoice_total_today_try = total_try
+    #         team.unpaid_invoice_total_week_usd = total_usd
+    #         team.unpaid_invoice_total_week_eur = total_eur
+    #         team.unpaid_invoice_total_week_try = total_try
+
 
     def _get_currency_totals(self, invoices, team):
         """Helper method to sum amounts by currency."""
@@ -172,10 +141,11 @@ class CrmTeam(models.Model):
                 total_try += invoice.amount_due
         return total_usd, total_eur, total_try
 
-    def _get_date_range(self, weeks=0, days=0):
+
+    def _get_date_range(self, weeks=0):
         """Helper method to calculate date range."""
         today = fields.Date.today()
-        start_date = today + date_utils.relativedelta(weeks=weeks, days=days)
+        start_date = today + date_utils.relativedelta(weeks=weeks)
         return start_date, today
 
 
@@ -184,3 +154,10 @@ class CrmTeam(models.Model):
         for team in self:
             invoices = self.env['unpaid.invoice'].search([('due_date', '=', today), ('team_id', '=', team.id)])
             team.unpaid_invoice_total_today_usd, team.unpaid_invoice_total_today_eur, team.unpaid_invoice_total_today_try = self._get_currency_totals(invoices, team)
+
+
+    def _compute_unpaid_invoice_totals_week(self):
+        for team in self:
+            one_week_ago, today = self._get_date_range(weeks=-1)
+            invoices = self.env['unpaid.invoice'].search([('due_date', '>=', one_week_ago), ('due_date', '<', today), ('team_id', '=', team.id)])
+            team.unpaid_invoice_total_week_usd, team.unpaid_invoice_total_week_eur, team.unpaid_invoice_total_week_try = self._get_currency_totals(invoices, team)
