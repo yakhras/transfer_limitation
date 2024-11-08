@@ -94,7 +94,6 @@ class CrmTeam(models.Model):
     def _compute_unpaid_invoice_totals(self):
         """Compute unpaid invoice totals by date range."""
         for team in self:
-            # Monthly totals (or any other specific period you need)
             month_ago, two_weeks_ago = self._get_date_range(weeks=-4), self._get_date_range(weeks=-2)
             invoices = self._get_invoices_by_date_range(team_id=team.id, start_date=month_ago, end_date=two_weeks_ago)
             team.unpaid_invoice_total_usd, team.unpaid_invoice_total_eur, team.unpaid_invoice_total_try = self._get_currency_totals(invoices, team)
