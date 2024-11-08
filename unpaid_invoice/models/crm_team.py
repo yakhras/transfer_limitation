@@ -167,7 +167,7 @@ class CrmTeam(models.Model):
             # Use read_group to aggregate unpaid invoice amounts by currency for today's date
             results = self.env['unpaid.invoice'].read_group(
                 [('due_date', '=', today), ('team_id', '=', team.id)],
-                ['currency_id', 'amount_due:sum'],
+                ['amount_due:sum', 'currency_id'],
                 ['currency_id']
             )
 
