@@ -8,9 +8,9 @@
             <field name="arch" type="xml">
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
                     <field name="name" />
-                    <!-- <field name="unpaid_invoice_total_usd"/>
+                    <field name="unpaid_invoice_total_usd"/>
                     <field name="unpaid_invoice_total_eur"/>
-                    <field name="unpaid_invoice_total_try"/> -->
+                    <field name="unpaid_invoice_total_try"/>
                     <field name="unpaid_invoice_total_2weeks_usd"/>
                     <field name="unpaid_invoice_total_2weeks_eur"/>
                     <field name="unpaid_invoice_total_2weeks_try"/>
@@ -160,17 +160,17 @@
                                                     </div>
                                                 </t>
                                                 
-                                                <!-- <t t-if="record.unpaid_invoice_total_usd.value != 0 or record.unpaid_invoice_total_eur.value != 0 or record.unpaid_invoice_total_try.value != 0">
+                                                <t t-if="record.unpaid_invoice_total_usd.value != 0 or record.unpaid_invoice_total_eur.value != 0 or record.unpaid_invoice_total_try.value != 0">
                                                     <div style="padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; margin-bottom: 12px; background-color: #fafafa;">
-                                                        Month Title
+                                                        <!-- Month Title -->
                                                         <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="action-link"
                                                            style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                                             Month
                                                         </a>
                                                         
-                                                        Currency Values Section
+                                                        <!-- Currency Values Section -->
                                                         <div class="stat-values" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;">
-                                                            USD Value
+                                                            <!-- USD Value -->
                                                             <t t-if="record.unpaid_invoice_total_usd.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_month_usd" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #e3f2fd; border-radius: 6px; display: flex; align-items: center;">
@@ -180,7 +180,7 @@
                                                                 </a>
                                                             </t>
                                                             
-                                                            EUR Value
+                                                            <!-- EUR Value -->
                                                             <t t-if="record.unpaid_invoice_total_eur.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_month_eur" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #f5f5f5; border-radius: 6px; display: flex; align-items: center;">
@@ -190,7 +190,7 @@
                                                                 </a>
                                                             </t>
                                                             
-                                                            TRY Value
+                                                            <!-- TRY Value -->
                                                             <t t-if="record.unpaid_invoice_total_try.value != 0">
                                                                 <a name="unpaid_invoice.action_unpaid_invoice_month_try" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #ffebee; border-radius: 6px; display: flex; align-items: center;">
@@ -201,7 +201,7 @@
                                                             </t>
                                                         </div>
                                                     </div>
-                                                </t>   -->
+                                                </t>  
                                             </div>
                                         </div>
                                         <!-- <div class="o_kanban_right">
