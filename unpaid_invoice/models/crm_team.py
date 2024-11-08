@@ -36,6 +36,22 @@ class CrmTeam(models.Model):
     currency_eur = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.EUR').id, readonly=True)
     currency_try = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.TRY').id, readonly=True)
 
+
+    # Define the dictionary with field names as keys and compute methods as values
+    unpaid_invoice_fields = {
+        'unpaid_invoice_today_usd': '_compute_unpaid_invoice_today',
+    }
+
+    # Dynamically create the field for testing
+    for field_name, compute_method in unpaid_invoice_fields.items():
+        locals()[field_name] = fields.Monetary(compute=compute_method, currency_field='currency_usd')
+
+    def _compute_unpaid_invoice_today(self):
+        for team in self:
+            # This is where your computation logic for 'today' unpaid invoices will go
+            team.unpaid_invoice_today_usd = 1000.0  # Dummy value for testing
+
+
     
 
     def _get_currency_totals(self, invoices, team):
@@ -54,8 +70,7 @@ class CrmTeam(models.Model):
     def _get_date_range(self, weeks=0):
         """Helper method to calculate date range."""
         start_date = self.today + date_utils.relativedelta(weeks=weeks)  # Apply relativedelta
-        return start_date  # Convert both to string in the correct format
-
+        return start_date
 
     def _compute_unpaid_invoice_totals_today(self):
         for team in self:
