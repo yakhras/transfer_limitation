@@ -48,9 +48,8 @@ class CrmTeam(models.Model):
 
     def _compute_unpaid_invoice_today(self):
         for team in self:
-            # This is where your computation logic for 'today' unpaid invoices will go
-            team.unpaid_invoice_today_usd = 1000.0  # Dummy value for testing
-
+            invoices = self.env['unpaid.invoice'].search([('due_date', '=', self.today), ('team_id', '=', team.id)])
+            team.unpaid_invoice_today_usd, team.unpaid_invoice_total_today_eur, team.unpaid_invoice_total_today_try = self._get_currency_totals(invoices, team)
 
     
 
