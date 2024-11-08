@@ -19,9 +19,9 @@ class CrmTeam(models.Model):
     
 
     # 2Weeks #
-    unpaid_invoice_total_2weeks_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_usd')
-    unpaid_invoice_total_2weeks_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_eur')
-    unpaid_invoice_total_2weeks_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_try')
+    # unpaid_invoice_total_2weeks_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_usd')
+    # unpaid_invoice_total_2weeks_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_eur')
+    # unpaid_invoice_total_2weeks_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_2weeks', currency_field='currency_try')
     
 
     # Month #
@@ -70,11 +70,11 @@ class CrmTeam(models.Model):
             team.unpaid_invoice_total_week_usd, team.unpaid_invoice_total_week_eur, team.unpaid_invoice_total_week_try = self._get_currency_totals(invoices, team)
 
 
-    def _compute_unpaid_invoice_totals_2weeks(self):
-        for team in self:
-            two_weeks_ago, one_week_ago = self._get_date_range(weeks=-2), self._get_date_range(weeks=-1)
-            invoices = self.env['unpaid.invoice'].search([('due_date', '>=', two_weeks_ago), ('due_date', '<', one_week_ago), ('team_id', '=', team.id)])
-            team.unpaid_invoice_total_2weeks_usd, team.unpaid_invoice_total_2weeks_eur, team.unpaid_invoice_total_2weeks_try = self._get_currency_totals(invoices, team)
+    # def _compute_unpaid_invoice_totals_2weeks(self):
+    #     for team in self:
+    #         two_weeks_ago, one_week_ago = self._get_date_range(weeks=-2), self._get_date_range(weeks=-1)
+    #         invoices = self.env['unpaid.invoice'].search([('due_date', '>=', two_weeks_ago), ('due_date', '<', one_week_ago), ('team_id', '=', team.id)])
+    #         team.unpaid_invoice_total_2weeks_usd, team.unpaid_invoice_total_2weeks_eur, team.unpaid_invoice_total_2weeks_try = self._get_currency_totals(invoices, team)
 
 
     # def _compute_unpaid_invoice_totals(self):
