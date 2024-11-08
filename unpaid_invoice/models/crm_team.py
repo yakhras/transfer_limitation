@@ -17,9 +17,9 @@ class CrmTeam(models.Model):
         'unpaid_invoice_total_2weeks_usd': ('week', -2, 'usd'),
         'unpaid_invoice_total_2weeks_eur': ('week', -2, 'eur'),
         'unpaid_invoice_total_2weeks_try': ('week', -2, 'try'),
-        'unpaid_invoice_total_usd': ('week', -4, 'usd'),
-        'unpaid_invoice_total_eur': ('week', -4, 'eur'),
-        'unpaid_invoice_total_try': ('week', -4, 'try'),
+        # 'unpaid_invoice_total_usd': ('week', -4, 'usd'),
+        # 'unpaid_invoice_total_eur': ('week', -4, 'eur'),
+        # 'unpaid_invoice_total_try': ('week', -4, 'try'),
     }
 
     currency_usd = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.USD').id, readonly=True)
