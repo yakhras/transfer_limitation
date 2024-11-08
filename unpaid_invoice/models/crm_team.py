@@ -50,7 +50,7 @@ class CrmTeam(models.Model):
 
     def _get_date_range(self, weeks=0):
         """Helper method to calculate date range."""
-        today = fields.Date.today()
+        today = fields.Date.today().strftime('%Y-%m-%d')
         start_date = (today + date_utils.relativedelta(weeks=weeks)).strftime('%Y-%m-%d')
         return start_date, today
 
