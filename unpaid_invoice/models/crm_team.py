@@ -8,9 +8,9 @@ class CrmTeam(models.Model):
     today = date.today()
 
     # Today #
-    unpaid_invoice_total_today_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_usd')
-    unpaid_invoice_total_today_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_eur')
-    unpaid_invoice_total_today_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_try')
+    # unpaid_invoice_total_today_usd = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_usd')
+    # unpaid_invoice_total_today_eur = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_eur')
+    # unpaid_invoice_total_today_try = fields.Monetary(compute='_compute_unpaid_invoice_totals_today', currency_field='currency_try')
 
 
     # Week #
@@ -39,17 +39,14 @@ class CrmTeam(models.Model):
 
     # Define the dictionary with field names as keys and compute methods as values
     unpaid_invoice_fields = {
-        'unpaid_invoice_today_usd': '_compute_unpaid_invoice_today',
+        'unpaid_invoice_total_today_usd': '_compute_unpaid_invoice_totals_today',
+        'unpaid_invoice_total_today_eur': '_compute_unpaid_invoice_totals_today',
+        'unpaid_invoice_total_today_try': '_compute_unpaid_invoice_totals_today',
     }
 
     # Dynamically create the field for testing
     for field_name, compute_method in unpaid_invoice_fields.items():
-        locals()[field_name] = fields.Monetary(compute=compute_method, currency_field='currency_usd')
-
-    def _compute_unpaid_invoice_today(self):
-        for team in self:
-            invoices = self.env['unpaid.invoice'].search([('due_date', '=', self.today), ('team_id', '=', team.id)])
-            team.unpaid_invoice_today_usd, team.unpaid_invoice_total_today_eur, team.unpaid_invoice_total_today_try = self._get_currency_totals(invoices, team)
+        locals()[field_name] = fields.Monetary(compute=compute_method, currency_field=f'currency_{field_name[-3:]}')
 
     
 
