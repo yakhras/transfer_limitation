@@ -214,7 +214,7 @@
         </record>
 
 
-      <!-- unpaid.invoice tree view -->
+        <!-- unpaid.invoice tree view -->
         <record id="view_unpaid_invoice_tree" model="ir.ui.view">
             <field name="name">unpaid.invoice.tree</field>
             <field name="model">unpaid.invoice</field>
