@@ -2,6 +2,7 @@
 
 <odoo>
     <data>
+        <!-- Views -->
         <record model="ir.ui.view" id="view_unpaid_invoice_card">
             <field name="name">unpaid.invoice.card.view</field>
             <field name="model">crm.team</field>
@@ -326,7 +327,7 @@
             </field>
         </record>
  
-        
+        <!-- Actions -->
         <!-- crm.team kanban action -->
         <record id="action_unpaid_invoice_kanban" model="ir.actions.act_window">
             <field name="name">Unpaid Invoices</field>
