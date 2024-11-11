@@ -49,7 +49,7 @@ odoo.define('unpaid_invoice.print_pdf', function (require) {
                             'type': 'ir.actions.report',
                             'report_type': 'qweb-pdf',
                             'report_name': 'unpaid_invoice.export_in_pdf',
-                            'data': { 'length': length_field, 'data_len': data_len, 'record': data }
+                            // 'data': { 'length': length_field, 'data_len': data_len, 'record': data }
                         };
                     }
                     return self.do_action(action);
