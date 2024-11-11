@@ -219,7 +219,7 @@
             <field name="name">unpaid.invoice.tree</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree js_class="Pdf_tree">
                     <field name="document_id"/>
                     <field name="partner_id"/>
                     <field name="amount_total" sum="Total Amount"/>
