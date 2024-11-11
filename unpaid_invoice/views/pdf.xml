@@ -12,7 +12,7 @@
     </template>
     <template id="export_in_pdf">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+            <t t-call="unpaid_invoice.tvo_invoice">
                 <div class="page">
                     <table class="table table-bordered"
                            style="table-layout: fixed">
