@@ -3,7 +3,7 @@
         <field name="name">Export</field>
         <field name="model">ir.exports</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">unpaid_invoice.tvo_invoice</field>
+        <field name="report_name">unpaid_invoice.export_in_pdf</field>
     </record>
     <template id="tvo_invoice">
         <div>
