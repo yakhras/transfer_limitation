@@ -6,7 +6,6 @@
         <field name="report_name">unpaid_invoice.export_in_pdf</field>
     </record>
     <template id="tvo_invoice">
-        <t t-call="web.external_layout">
             <div class="page">
                 <!-- Header Section -->
                 <div t-attf-class="o_company_#{company.id}_layout header" t-att-style="report_header_style">
@@ -96,7 +95,6 @@
                     <p>Albaraka Türk Katılım Bankası: TR05 0020 3000 0162 4618 0000 01</p>
                 </div>
             </div>
-        </t>
     </template>
     
     <template id="export_in_pdf">
