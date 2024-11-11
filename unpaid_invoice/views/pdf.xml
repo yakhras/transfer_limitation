@@ -6,7 +6,7 @@
         <field name="report_name">unpaid_invoice.export_in_pdf</field>
     </record>
     <template id="tvo_invoice">
-            <div class="page">
+            <div>
                 <!-- Header Section -->
                 <div t-attf-class="o_company_#{company.id}_layout header" t-att-style="report_header_style">
                     <h1>TVO Proforma Fatura</h1>
