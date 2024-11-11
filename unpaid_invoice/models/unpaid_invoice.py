@@ -1,16 +1,3 @@
-# from odoo import models, fields
-# from datetime import date
-
-# class CrmTeam(models.Model):
-#     _inherit = 'crm.team'
-
-#     total_count = fields.Integer(compute="_count_records", store=True)
-    
-#     def _count_records(self):
-#           self.total_count = self.env['account.move'].search_count(domain)
-                
-
-    
 from odoo import models, fields, api
 from dateutil.relativedelta import relativedelta
 from datetime import date
@@ -107,15 +94,13 @@ class UnpaidInvoice(models.Model):
         for record in self:
             name = record.invoice_id.name  # Get the partner name
             result.append((record.id, name))  # Return a tuple of (record_id, name)
-        return result
-    
+        return result    
 
 
     def send_email_unpaid_invoices(self):
         template = self.env.ref('unpaid_invoice.unpaid_invoice')
         for rec in self:
             template.send_mail(rec.id, force_send=True)
-
 
 
     @api.depends_context('action', 'search_default_team_id')
@@ -143,6 +128,7 @@ class UnpaidInvoice(models.Model):
             # Assign the record count to unpaid_invoice_count field
             record.unpaid_invoice_count = self.env['unpaid.invoice'].search_count(domain)
 
+    
     @api.depends('invoice_id')
     def _compute_sale_orders(self):
         for record in self:
@@ -151,6 +137,7 @@ class UnpaidInvoice(models.Model):
             else:
                 record.sale_order_ids = False
 
+    
     @api.depends('invoice_date')
     def _compute_days_since_invoice(self):
         for record in self:

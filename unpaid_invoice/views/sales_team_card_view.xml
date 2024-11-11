@@ -204,13 +204,6 @@
                                                 </t>  
                                             </div>
                                         </div>
-                                        <!-- <div class="o_kanban_right">
-                                            <div class="o_stat_info">
-                                                <span class="o_stat_value">
-                                                    <t t-esc="record.unpaid_invoice_total_month.value" />
-                                                </span>
-                                            </div>
-                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -220,8 +213,6 @@
             </field>
         </record>
 
-
-        
 
       <!-- unpaid.invoice tree view -->
         <record id="view_unpaid_invoice_tree" model="ir.ui.view">
@@ -281,6 +272,7 @@
             </field>
         </record> -->
 
+
         <record id="view_unpaid_invoice_form" model="ir.ui.view">
             <field name="name">unpaid.invoice.form</field>
             <field name="model">unpaid.invoice</field>
@@ -301,7 +293,7 @@
                                     <field name="amount_total" class="line-separator"/>
                                     <field name="amount_due" class="line-separator"/>
                                     <field name="currency_id" class="line-separator"/>
-                                    <field name="days_since_invoice" class="line-separator"> /days </field>
+                                    <field name="days_since_invoice" class="line-separator"/>
                                     <field name="sales_person" class="line-separator"/>
                                     <field name="sale_order" class="line-separator"/>
                                 </group>
@@ -321,7 +313,6 @@
             </field>
         </record>
         
-
 
         <!-- unpaid.invoice search view -->
         <record id="view_unpaid_invoice_filter" model="ir.ui.view">
@@ -365,6 +356,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+
         <!-- unpaid.invoice week USD action -->
         <record id="action_unpaid_invoice_week_usd" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Week USD</field>
@@ -385,6 +377,7 @@
             </field>
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
+
 
         <!-- unpaid.invoice week EUR action -->
         <record id="action_unpaid_invoice_week_eur" model="ir.actions.act_window">
@@ -407,6 +400,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+
         <!-- unpaid.invoice week TRY action -->
         <record id="action_unpaid_invoice_week_try" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Week TRY</field>
@@ -428,6 +422,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+
         <!-- unpaid.invoice 2 weeks action -->
         <record id="action_unpaid_invoice_2weeks" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice 2 Weeks</field>
@@ -447,6 +442,7 @@
             </field>
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
+
 
         <!-- unpaid.invoice 2 weeks USD action -->
         <record id="action_unpaid_invoice_2weeks_usd" model="ir.actions.act_window">
@@ -469,6 +465,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+
         <!-- unpaid.invoice 2 weeks EUR action -->
         <record id="action_unpaid_invoice_2weeks_eur" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice 2 Weeks EUR</field>
@@ -489,6 +486,7 @@
             </field>
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
+
 
         <!-- unpaid.invoice 2 weeks TRY action -->
         <record id="action_unpaid_invoice_2weeks_try" model="ir.actions.act_window">
@@ -511,6 +509,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+
         <!-- unpaid.invoice month action -->
         <record id="action_unpaid_invoice_month" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Month</field>
@@ -530,6 +529,7 @@
             </field>
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
+
 
         <!-- unpaid.invoice month USD action -->
         <record id="action_unpaid_invoice_month_usd" model="ir.actions.act_window">
@@ -552,6 +552,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+
         <!-- unpaid.invoice month EUR action -->
         <record id="action_unpaid_invoice_month_eur" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Month EUR</field>
@@ -572,6 +573,7 @@
             </field>
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
+
 
         <!-- unpaid.invoice month TRY action -->
         <record id="action_unpaid_invoice_month_try" model="ir.actions.act_window">
@@ -614,6 +616,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
         
+
         <!-- unpaid.invoice today USD action -->
         <record id="action_unpaid_invoice_today_usd" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today USD</field>
@@ -633,6 +636,7 @@
             </field> 
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
+
 
         <!-- unpaid.invoice today EUR action -->
         <record id="action_unpaid_invoice_today_eur" model="ir.actions.act_window">
@@ -654,6 +658,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+
         <!-- unpaid.invoice today TRY action -->
         <record id="action_unpaid_invoice_today_try" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today TRY</field>
@@ -674,6 +679,7 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+        
         <!-- Menu Item -->
         <menuitem id="menu_unpaid_invoice_kanban" name="Unpaid Invoices" 
                   parent="point_of_sale.menu_point_rep" 
