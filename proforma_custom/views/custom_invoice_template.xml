@@ -5,18 +5,28 @@
             <div class="page">
                 <!-- Header Section -->
                 
-                    <t t-foreach="docs" t-as="doc">
-                        <div class="raw">
-                            <div class="col-6">
-                                <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/>
-                            </div>
-                            <div class="col-6">
-                                <p t-field="doc.company_id.name"></p>
-                                <!-- <p style="font-size: 14px; margin: 0;">Deposı̇te İş Mer. A Blok No. 311 İkitelli osb. Başakşehir İstanbul-Türkı̇ye</p>
-                                <p style="font-size: 14px; margin: 0;">Vergi No. 8831154019</p> -->
-                            </div>
+                <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+                    <div class="o_clean_header">
+                    <div class="row">
+                        <div class="col-6">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
                         </div>
-                    </t>
+                        <div class="col-5 offset-1" name="company_address">
+                            <ul class="list-unstyled">
+                                <strong><li t-if="company.name"><span t-field="company.name"/></li></strong>
+                                <li t-if="forced_vat or company.vat">
+                                    <t t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                                    <span t-if="forced_vat" t-esc="forced_vat"/>
+                                    <span t-else="" t-field="company.vat"/>
+                                </li>
+                                <li t-if="company.phone">Tel: <span class="o_force_ltr" t-field="company.phone"/></li>
+                                <li t-if="company.email"><span t-field="company.email"/></li>
+                                <li t-if="company.website"><span t-field="company.website"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                    </div>
+                </div>
                 
                 
             </div>
