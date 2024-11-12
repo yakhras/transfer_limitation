@@ -5,17 +5,9 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">unpaid_invoice.export_in_pdf</field>
     </record>
-
-    <template id="tvo_invoice">
-        <div t-attf-class="o_company_#{company.id}_layout header" t-att-style="report_header_style">
-            Hi Every One.
-        </div>
-    </template>
-    
-    
     <template id="export_in_pdf">
         <t t-call="web.html_container">
-            <t t-call="unpaid_invoice.tvo_invoice">
+            <t t-call="web.external_layout">
                 <div class="page">
                     <table class="table table-bordered"
                            style="table-layout: fixed">
