@@ -10,9 +10,9 @@
                             <div class="row align-items-center">
                                 <!-- Company Name -->
                                 <div class="col-6">
-                                    <h2 t-if="doc.company_id.name" style="margin: 0; font-size: 24px;">
+                                    <strong t-if="doc.company_id.name" style="font-size: 20px;">
                                         <span t-field="doc.company_id.name"/>
-                                    </h2>
+                                    </strong>
                                 </div>
     
                                 <!-- Company Logo -->
@@ -28,6 +28,6 @@
                 </div>
             </div>
         </t>
-    </template>    
+    </template>        
     
 </odoo>
