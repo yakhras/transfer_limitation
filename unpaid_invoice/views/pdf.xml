@@ -8,6 +8,7 @@
 
     <template id="tvo_invoice">
         <div t-attf-class="o_company_#{company.id}_layout header" t-att-style="report_header_style">
+            Hi Every One.
         </div>
     </template>
     
