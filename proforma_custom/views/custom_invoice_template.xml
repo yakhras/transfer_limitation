@@ -23,12 +23,23 @@
                                          style="width: 250px; height: 125px; margin: 0; padding: 0;"/>
                                 </div>
                             </div>
+                            
+                            <!-- Address Section -->
+                            <div class="row">
+                                <div class="col-12" style="margin-top: 20px;">
+                                    <p style="font-size: 12px; margin-bottom: 5px;">
+                                        Deposı̇te İş Mer. A Blok No. 311<br/>
+                                        İkitelli osb. Başakşehir İstanbul-Türkiye<br/>
+                                        Vergi No. 8831154019
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </t>
                 </div>
             </div>
         </t>
-    </template>                        
+    </template>                            
                                      
     
 </odoo>
