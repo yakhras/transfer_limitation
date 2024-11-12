@@ -28,18 +28,29 @@
                             <div class="row">
                                 <div class="col-12" style="margin-top: 10px;">
                                     <p style="font-size: 14px; line-height: 1.5; font-weight: 400; margin-bottom: 10px; color: #333;">
-                                        <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311 İkitelli osb.</span><br/>
+                                        <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311, İkitelli osb.</span><br/>
                                         Başakşehir İstanbul-Türkiye<br/>
                                         Vergi No. 8831154019
                                     </p>
                                 </div>
                             </div>
+    
+                            <!-- Proforma Invoice Section (Styled with large, blue, bold text) -->
+                            <div class="row">
+                                <div class="col-12" style="text-align: center; margin-top: 20px;">
+                                    <strong style="font-size: 30px; color: blue;">
+                                        Proforma Invoice
+                                    </strong>
+                                </div>
+                            </div>
+    
                         </div>
                     </t>
                 </div>
             </div>
         </t>
-    </template>                                           
+    </template>
+                                               
                                      
     
 </odoo>
