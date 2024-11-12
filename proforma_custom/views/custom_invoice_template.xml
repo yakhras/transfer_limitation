@@ -8,6 +8,9 @@
                 <div class="header" t-att-style="report_header_style">
                     <t t-foreach="docs" t-as="doc">
                         <p t-field="doc.company_id.name"/>
+                        <p t-field="doc.company_id.street"/>
+                        <p t-field="doc.company_id.street2"/>
+                        <p t-field="doc.company_id.city"/>
                     </t>
                 </div>
             </div>
