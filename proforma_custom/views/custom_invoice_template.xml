@@ -8,19 +8,19 @@
                     <t t-foreach="docs" t-as="doc">
                         <div class="o_simple_header">
                             <div class="row align-items-center" style="display: flex; align-items: center;">
-                                <!-- Company Name (8 columns, moved down more, with font size) -->
+                                <!-- Company Name (8 columns, moved down more, with reduced font size) -->
                                 <div class="col-8" style="margin-top: 40px;">
-                                    <strong t-if="doc.company_id.name" style="font-size: 24px;">
+                                    <strong t-if="doc.company_id.name" style="font-size: 20px;">
                                         <span t-field="doc.company_id.name"/>
                                     </strong>
                                 </div>
                                 
-                                <!-- Company Logo (4 columns, no margin or padding) -->
+                                <!-- Company Logo (4 columns, with reduced size) -->
                                 <div class="col-4 text-right" style="margin: 0; padding: 0;">
                                     <img t-if="doc.company_id.logo" 
                                          t-att-src="image_data_uri(doc.company_id.logo)" 
                                          alt="Company Logo" 
-                                         style="width: 250px; height: 125px; margin: 0; padding: 0;"/>
+                                         style="width: 200px; height: 100px; margin: 0; padding: 0;"/>
                                 </div>
                             </div>
                             
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </t>
-    </template>                                
+    </template>                                    
                                      
     
 </odoo>
