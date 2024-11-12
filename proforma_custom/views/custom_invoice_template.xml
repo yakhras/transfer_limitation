@@ -7,17 +7,16 @@
                 <!-- Header Section -->
                 <div class="header" t-att-style="report_header_style" style="display: flex; align-items: center; justify-content: space-between;">
                     <t t-foreach="docs" t-as="doc">
-                        <div class="company-details" style="flex: 1; text-align: right; padding-left: 20px;">
+                        <div class="company-details" style="flex: 1; text-align: left;">
                             <p t-field="doc.company_id.name" style="font-weight: bold; font-size: 18px; text-transform: capitalize;"></p>
                             <p>Deposı̇te İş Mer. A Blok No. 311 İkitelli osb. Başakşehir İstanbul-Türkı̇ye</p>
                             <p>Vergi No. 8831154019</p>
                         </div>
-                        <div class="logo" style="flex: 0 0 auto;">
+                        <div class="logo" style="flex: 0 0 auto; padding-left: 20px;">
                             <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/>
                         </div>
                     </t>
                 </div>
-                
             </div>
         </t>
     </template>
