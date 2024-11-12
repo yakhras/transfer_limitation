@@ -8,8 +8,8 @@
                     <t t-foreach="docs" t-as="doc">
                         <div class="o_simple_header">
                             <div class="row align-items-center" style="display: flex; align-items: center;">
-                                <!-- Company Name (8 columns, moved down more, with reduced font size) -->
-                                <div class="col-8" style="margin-top: 40px;">
+                                <!-- Company Name (8 columns, moved up a little) -->
+                                <div class="col-8" style="margin-top: 20px;">
                                     <strong t-if="doc.company_id.name" style="font-size: 20px;">
                                         <span t-field="doc.company_id.name"/>
                                     </strong>
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </t>
-    </template>                                    
+    </template>                                        
                                      
     
 </odoo>
