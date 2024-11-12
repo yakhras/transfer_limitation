@@ -6,12 +6,12 @@
                 <!-- Header Section -->
                 
                     <t t-foreach="docs" t-as="doc">
-                        <div>
-                            <div class="right-column" style="text-align: right;">
-                                <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/>
+                        <div class="raw">
+                            <div class="col-6">
+                                <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)"/>
                             </div>
-                            <div class="left-column" style= "text-align: left; width: 50%;">
-                                <p t-field="doc.company_id.name" style="font-weight: bold;" ></p>
+                            <div class="col-6">
+                                <p t-field="doc.company_id.name"></p>
                                 <!-- <p style="font-size: 14px; margin: 0;">Deposı̇te İş Mer. A Blok No. 311 İkitelli osb. Başakşehir İstanbul-Türkı̇ye</p>
                                 <p style="font-size: 14px; margin: 0;">Vergi No. 8831154019</p> -->
                             </div>
