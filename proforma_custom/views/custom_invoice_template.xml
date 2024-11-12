@@ -6,24 +6,22 @@
                 <!-- Header Section -->
                 <div class="header" t-att-style="report_header_style">
                     <t t-foreach="docs" t-as="doc">
-                        <div class="o_simple_header" style="padding-bottom: 20px;">
-                            <div class="row align-items-center">
-                                <!-- Company Name (8 columns) -->
-                                <div class="col-8">
-                                    <strong t-if="doc.company_id.name" style="font-size: 20px;">
-                                        <span t-field="doc.company_id.name"/>
-                                    </strong>
+                        <div class="o_simple_header">
+                            <div class="row">
+                                <!-- Company Logo -->
+                                <div class="col-6">
+                                    <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Company Logo"/>
                                 </div>
-    
-                                <!-- Company Logo (4 columns) -->
-                                <div class="col-4 text-right">
-                                    <img t-if="doc.company_id.logo" 
-                                         t-att-src="image_data_uri(doc.company_id.logo)" 
-                                         alt="Company Logo" 
-                                         style="max-width: 300px; max-height: 150px;"/>
+                                
+                                <!-- Company Name -->
+                                <div class="col-6 text-right">
+                                    <h2 t-if="doc.company_id.name">
+                                        <span t-field="doc.company_id.name"/>
+                                    </h2>
                                 </div>
                             </div>
                         </div>
+                        
                     </t>
                 </div>
             </div>
