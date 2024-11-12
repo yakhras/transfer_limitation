@@ -7,7 +7,7 @@
                 <div class="header" t-att-style="report_header_style" style="display: flex; width: 100%;">
                     <t t-foreach="docs" t-as="doc">
                         <div class="left-column" style= "text-align: left;">
-                            <!-- <p t-field="doc.company_id.name" style="font-weight: bold; padding: 10px; margin:10px"></p> -->
+                            <p t-field="doc.company_id.name" style="font-weight: bold; width: 50%; padding: 10px;"></p>
                             <!-- <p style="font-size: 14px; margin: 0;">Deposı̇te İş Mer. A Blok No. 311 İkitelli osb. Başakşehir İstanbul-Türkı̇ye</p>
                             <p style="font-size: 14px; margin: 0;">Vergi No. 8831154019</p> -->
                         </div>
