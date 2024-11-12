@@ -6,10 +6,10 @@
                 New Template
                 <!-- Header Section -->
                 <div class="header" t-att-style="report_header_style">
-                    <h1>TVO Proforma Fatura</h1>
-                    <p>TVO BİTKİSEL YAĞ SANAYİ TİCARET A.Ş.</p>
-                    <p>Deposı̇te İş Mer. A Blok No. 311, İkitelli OSB, Başakşehir, İstanbul-Türkiye</p>
-                    <p>Vergi No: 8831154019</p>
+                    <p t-field="o.company_id.name"/>
+                    <p t-field="o.company_id.street"/> <p t-field="o.company_id.street2"/>
+                    <p t-field="o.company_id.city"/>, <p t-field="o.company_id.state_id.name"/>, <p t-field="o.company_id.country_id.name"/>
+                    <p>Vergi No: <span t-field="o.company_id.vat"/></p>
                 </div>
             </div>
         </t>
