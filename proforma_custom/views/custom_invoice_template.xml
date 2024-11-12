@@ -12,7 +12,7 @@
                             <p>Deposı̇te İş Mer. A Blok No. 311 İkitelli osb. Başakşehir İstanbul-Türkı̇ye</p>
                             <p>Vergi No. 8831154019</p>
                         </div>
-                        <div class="logo" style="flex: 0 0 auto; padding-left: 20px;">
+                        <div class="logo" style="padding-left: 20px;">
                             <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/>
                         </div>
                     </t>
