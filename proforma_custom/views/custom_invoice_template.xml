@@ -18,9 +18,9 @@
                                 
                                 <!-- Company Name (6 columns) -->
                                 <div class="col-6 text-right">
-                                    <h2 t-if="doc.company_id.name">
+                                    <strong t-if="doc.company_id.name">
                                         <span t-field="doc.company_id.name"/>
-                                    </h2>
+                                    </strong>
                                 </div>
                             </div>
                         </div>
@@ -28,6 +28,6 @@
                 </div>
             </div>
         </t>
-    </template>                           
+    </template>                               
     
 </odoo>
