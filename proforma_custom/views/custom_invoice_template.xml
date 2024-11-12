@@ -24,11 +24,11 @@
                                 </div>
                             </div>
                             
-                            <!-- Address Section -->
+                            <!-- Address Section (Styled for readability) -->
                             <div class="row">
                                 <div class="col-12" style="margin-top: 10px;">
-                                    <p style="font-size: 12px; margin-bottom: 5px;">
-                                        Deposı̇te İş Mer. A Blok No. 311 İkitelli osb.<br/>
+                                    <p style="font-size: 14px; line-height: 1.5; font-weight: 400; margin-bottom: 10px; color: #333;">
+                                        <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311 İkitelli osb.</span><br/>
                                         Başakşehir İstanbul-Türkiye<br/>
                                         Vergi No. 8831154019
                                     </p>
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </t>
-    </template>                                        
+    </template>                                           
                                      
     
 </odoo>
