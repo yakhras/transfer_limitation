@@ -6,7 +6,9 @@
                 New Template
                 <!-- Header Section -->
                 <div class="header" t-att-style="report_header_style">
-                    <p t-field="doc.partner_id"/>
+                    <t t-foreach="docs" t-as="doc">
+                        <p t-field="doc.partner_id"/>
+                    </t>
                 </div>
             </div>
         </t>
