@@ -8,8 +8,8 @@
                     <t t-foreach="docs" t-as="doc">
                         <div class="o_simple_header">
                             <div class="row align-items-center">
-                                <!-- Company Name (8 columns, centered) -->
-                                <div class="col-8 text-center">
+                                <!-- Company Name (8 columns, with margin to move it down) -->
+                                <div class="col-8" style="margin-top: 20px;">
                                     <strong t-if="doc.company_id.name">
                                         <span t-field="doc.company_id.name"/>
                                     </strong>
@@ -29,6 +29,7 @@
             </div>
         </t>
     </template>
+    
                                            
     
 </odoo>
