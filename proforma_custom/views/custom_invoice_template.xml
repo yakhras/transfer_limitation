@@ -6,8 +6,7 @@
                 New Template
                 <!-- Header Section -->
                 <div class="header" t-att-style="report_header_style">
-                    <p t-field="o.company_id.name"/>
-                    <p>Vergi No: <span t-field="o.company_id.vat"/></p>
+                    <p t-field="company_id.name"/>
                 </div>
             </div>
         </t>
