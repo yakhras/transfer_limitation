@@ -7,13 +7,16 @@
                 <div class="header" t-att-style="report_header_style">
                     <t t-foreach="docs" t-as="doc">
                         <div class="o_simple_header">
-                            <div class="row">
-                                <!-- Company Logo -->
+                            <div class="row align-items-center">
+                                <!-- Company Logo (6 columns) -->
                                 <div class="col-6">
-                                    <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Company Logo"/>
+                                    <img t-if="doc.company_id.logo" 
+                                         t-att-src="image_data_uri(doc.company_id.logo)" 
+                                         alt="Company Logo" 
+                                         style="max-width: 150px; max-height: 80px;"/>
                                 </div>
                                 
-                                <!-- Company Name -->
+                                <!-- Company Name (6 columns) -->
                                 <div class="col-6 text-right">
                                     <h2 t-if="doc.company_id.name">
                                         <span t-field="doc.company_id.name"/>
@@ -25,6 +28,6 @@
                 </div>
             </div>
         </t>
-    </template>                       
+    </template>                           
     
 </odoo>
