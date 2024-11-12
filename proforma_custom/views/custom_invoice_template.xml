@@ -13,7 +13,7 @@
                                     <img t-if="doc.company_id.logo" 
                                          t-att-src="image_data_uri(doc.company_id.logo)" 
                                          alt="Company Logo" 
-                                         style="max-width: 150px; max-height: 80px;"/>
+                                         style="max-width: 200px; max-height: 100px;"/>
                                 </div>
                                 
                                 <!-- Company Name (6 columns) -->
