@@ -2,9 +2,19 @@
 <odoo>
     <template id="custom_invoice_template">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout_bold">
-                HI
-            </t>
+            <div class="page">
+                <!-- Header Section -->
+                <div class="header" t-att-style="report_header_style">
+                    <t t-foreach="docs" t-as="doc">
+                        <div class="left-column" style="flex: 1; padding: 10px; text-align: left;">
+                            Heelo World
+                        </div>
+                        <div class="right-column" style="flex: 1; padding: 10px; text-align: right; display: flex; align-items: center; justify-content: flex-end;">
+                            <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
         </t>
     </template>
 </odoo>
