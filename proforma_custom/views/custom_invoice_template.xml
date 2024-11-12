@@ -20,7 +20,7 @@
                                     <img t-if="doc.company_id.logo" 
                                          t-att-src="image_data_uri(doc.company_id.logo)" 
                                          alt="Company Logo" 
-                                         style="width: 200px; height: 100px;"/>
+                                         style="width: 250px; height: 125px;"/>
                                 </div>
                             </div>
                         </div>
@@ -28,8 +28,7 @@
                 </div>
             </div>
         </t>
-    </template>
-    
-                                           
+    </template>    
+                                     
     
 </odoo>
