@@ -7,16 +7,17 @@
                 <!-- Header Section -->
                 <div class="header" t-att-style="report_header_style" style="display: flex; align-items: center; width: 100%;">
                     <t t-foreach="docs" t-as="doc">
-                        <div class="company-details" style="flex: 0 0 auto; text-align: left; display: flex; flex-direction: column; justify-content: center;">
-                            <p t-field="doc.company_id.name" style="font-weight: bold; font-size: 15px; text-transform: capitalize;"></p>
+                        <div class="company-details" style="flex: 1; text-align: left; display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                            <p t-field="doc.company_id.name" style="font-weight: bold; font-size: 15px; text-transform: capitalize; margin: 0;"></p>
                             <!-- <p style="font-size: 14px; margin: 0;">Deposı̇te İş Mer. A Blok No. 311 İkitelli osb. Başakşehir İstanbul-Türkı̇ye</p>
                             <p style="font-size: 14px; margin: 0;">Vergi No. 8831154019</p> -->
                         </div>
-                        <div class="logo" style="flex: 0 0 auto; padding-left: 20px; text-align: right;"> 
-                            <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/> 
+                        <div class="logo" style="flex: 0 0 auto; display: flex; align-items: center; padding-left: 20px; height: 100%;">
+                            <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/>
                         </div>
                     </t>
                 </div>
+                
             </div>
         </t>
     </template>
