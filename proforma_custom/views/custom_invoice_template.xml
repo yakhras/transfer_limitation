@@ -8,7 +8,7 @@
                     <t t-foreach="docs" t-as="doc">
                         <div class="raw">
                             <div class="col-6">
-                                <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)"/>
+                                <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/>
                             </div>
                             <div class="col-6">
                                 <p t-field="doc.company_id.name"></p>
