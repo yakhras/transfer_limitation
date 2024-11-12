@@ -15,12 +15,12 @@
                                     </strong>
                                 </div>
                                 
-                                <!-- Company Logo (4 columns) -->
-                                <div class="col-4 text-right">
+                                <!-- Company Logo (4 columns, no margin or padding) -->
+                                <div class="col-4 text-right" style="margin: 0; padding: 0;">
                                     <img t-if="doc.company_id.logo" 
                                          t-att-src="image_data_uri(doc.company_id.logo)" 
                                          alt="Company Logo" 
-                                         style="width: 250px; height: 125px;"/>
+                                         style="width: 250px; height: 125px; margin: 0; padding: 0;"/>
                                 </div>
                             </div>
                         </div>
@@ -28,7 +28,7 @@
                 </div>
             </div>
         </t>
-    </template>    
+    </template>        
                                      
     
 </odoo>
