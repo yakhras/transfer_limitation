@@ -6,7 +6,7 @@
                 <!-- Header Section -->
                 
                     <t t-foreach="docs" t-as="doc">
-                        <div class="header" t-att-style="report_header_style" style="display: flex; width: 100%;">
+                        <div class="header" style="display: flex; width: 100%;">
                             <div class="right-column" style="text-align: right;">
                                 <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px;"/>
                             </div>
