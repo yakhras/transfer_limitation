@@ -8,19 +8,19 @@
                     <t t-foreach="docs" t-as="doc">
                         <div class="o_simple_header" style="padding-bottom: 20px;">
                             <div class="row align-items-center">
-                                <!-- Company Logo -->
+                                <!-- Company Name -->
                                 <div class="col-6">
+                                    <h2 t-if="doc.company_id.name" style="margin: 0; font-size: 24px;">
+                                        <span t-field="doc.company_id.name"/>
+                                    </h2>
+                                </div>
+    
+                                <!-- Company Logo -->
+                                <div class="col-6 text-right">
                                     <img t-if="doc.company_id.logo" 
                                          t-att-src="image_data_uri(doc.company_id.logo)" 
                                          alt="Company Logo" 
                                          style="max-width: 150px; max-height: 80px;"/>
-                                </div>
-                                
-                                <!-- Company Name -->
-                                <div class="col-6 text-right">
-                                    <h2 t-if="doc.company_id.name" style="margin: 0; font-size: 24px;">
-                                        <span t-field="doc.company_id.name"/>
-                                    </h2>
                                 </div>
                             </div>
                         </div>
@@ -28,6 +28,6 @@
                 </div>
             </div>
         </t>
-    </template>
+    </template>    
     
 </odoo>
