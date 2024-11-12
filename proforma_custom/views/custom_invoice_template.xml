@@ -12,7 +12,7 @@
                             <p style="font-size: 14px; margin: 0;">Vergi No. 8831154019</p> -->
                         </div>
                         <div class="right-column" style="text-align: right;">
-                            <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px; margin: 0;"/>
+                            <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" alt="Logo" style="max-width: 150px; max-height: 150px; margin: -10;"/>
                         </div>
                     </t>
                 </div>
