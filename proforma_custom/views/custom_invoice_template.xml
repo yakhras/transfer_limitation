@@ -80,7 +80,7 @@
                                     <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
-                                    <div><strong>Expiration: </strong> <span style="color: red;" t-esc="(doc.validity_date.strftime('%d.%m.%Y')) - doc.date_order.strftime('%d.%m.%Y'))"/></div>
+                                    <div><strong>Expiration: </strong> <span style="color: red;" t-esc="(doc.validity_date.strftime('%d.%m.%Y')) - (doc.date_order.strftime('%d.%m.%Y'))"/></div>
                                 </div>
                             </div>
                             <!-- Border Line Before Title -->
