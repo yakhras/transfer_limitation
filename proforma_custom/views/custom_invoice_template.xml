@@ -38,11 +38,9 @@
         </div>
 
         <div t-attf-class="footer">
-            <div class="row">
-                <div class="col-1">
-                    <ul t-if="report_type == 'pdf'" class="list-inline pagenumber float-right text-center">
-                        <li class="list-inline-item"><strong><span class="page"/></strong></li>
-                    </ul>
+            <div class="text-center" style="border-top: 1px solid black;">
+                <div t-if="report_type == 'pdf'" class="text-muted">
+                    Page: <span class="page"/> / <span class="topage"/>
                 </div>
             </div>
         </div>
