@@ -63,7 +63,7 @@
 
                                 <!-- Right Column (col-4) -->
                                 <div class="col-4">
-                                    <div style="margin-bottom: 5px;"><span t-field="doc.name"/></div>
+                                    <div style="margin-bottom: 5px;"><strong>Proforma No.:</strong> <span t-field="doc.name"/></div>
                                     <div style="margin-bottom: 5px;">Row 2 Content (Right)</div>
                                     <div style="margin-bottom: 5px;">Row 3 Content (Right)</div>
                                     <div>Row 4 Content (Right)</div>
