@@ -71,7 +71,7 @@
                                             <span t-field="doc.partner_shipping_id.country_id.name"/>
                                         </span>
                                     </div>
-                                    <div>Row 4 Content (Left)</div>
+                                    <div><strong>VAT:</strong> <span t-field="doc.vat"/></div>
                                 </div>
 
                                 <!-- Right Column (col-4) -->
