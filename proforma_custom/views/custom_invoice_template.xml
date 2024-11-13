@@ -43,14 +43,7 @@
                                     </strong>
                                 </div>
                             </div>
-                            <!-- Today's Date Section -->
-                            <div class="row">
-                                <div class="col-12" style="text-align: left; color: red; font-size: 16px; margin-top: 10px;">
-                                    <strong>
-                                        <span t-field="doc.date_order" t-options='{"widget": "date"}'/> <!-- Use `t-field` to show the date -->
-                                    </strong>
-                                </div>
-                            </div>
+                            
                             <!-- New Row with Two Columns -->
                             <div class="row" style="margin-top: 20px;">
                                 <!-- Left Column (col-8) -->
@@ -63,10 +56,10 @@
 
                                 <!-- Right Column (col-4) -->
                                 <div class="col-4">
+                                    <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-field="doc.date_order"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
-                                    <div style="margin-bottom: 5px;"><strong>Expiration: </strong> <span t-field="doc.validity_date"/></div>
-                                    <div>Row 4 Content (Right)</div>
+                                    <div><strong>Expiration: </strong> <span t-field="doc.validity_date"/></div>
                                 </div>
                             </div>
     
