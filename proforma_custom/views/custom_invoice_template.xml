@@ -57,16 +57,16 @@
                                             <span t-field="doc.partner_shipping_id.street2"/> 
                                         </span>
                                         <span t-if="doc.partner_shipping_id.city">
-                                            ,<span t-field="doc.partner_shipping_id.city"/>
+                                            <span t-field="doc.partner_shipping_id.city"/>
                                         </span>
                                         <span t-if="doc.partner_shipping_id.state_id">
-                                            , <span t-field="doc.partner_shipping_id.state_id.name"/>
+                                            <span t-field="doc.partner_shipping_id.state_id.name"/>
                                         </span>
                                         <span t-if="doc.partner_shipping_id.zip">
-                                            , <span t-field="doc.partner_shipping_id.zip"/>
+                                            <span t-field="doc.partner_shipping_id.zip"/>
                                         </span>
                                         <span t-if="doc.partner_shipping_id.country_id">
-                                            , <span t-field="doc.partner_shipping_id.country_id.name"/>
+                                            <span t-field="doc.partner_shipping_id.country_id.name"/>
                                         </span>
                                     </div>
                                     <div style="margin-bottom: 5px;">Row 3 Content (Left)</div>
