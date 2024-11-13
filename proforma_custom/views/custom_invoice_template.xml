@@ -49,7 +49,20 @@
                                 <!-- Left Column (col-8) -->
                                 <div class="col-8">
                                     <div style="margin-bottom: 5px;"><span t-field="doc.partner_id.name"/></div>
-                                    <div style="margin-bottom: 5px;"><span t-field="doc.partner_shipping_id"/></div>
+                                    <div style="margin-bottom: 5px;">
+                                        <div t-if="doc.partner_shipping_id.street">
+                                            <span t-field="doc.partner_shipping_id.street"/>
+                                        </div>
+                                        <div t-if="doc.partner_shipping_id.city">
+                                            <span t-field="doc.partner_shipping_id.city"/>
+                                        </div>
+                                        <div t-if="doc.partner_shipping_id.state_id">
+                                            <span t-field="doc.partner_shipping_id.state_id.name"/>
+                                        </div>
+                                        <div t-if="doc.partner_shipping_id.country_id">
+                                            <span t-field="doc.partner_shipping_id.country_id.name"/>
+                                        </div>
+                                    </div>
                                     <div style="margin-bottom: 5px;">Row 3 Content (Left)</div>
                                     <div>Row 4 Content (Left)</div>
                                 </div>
