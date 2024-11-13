@@ -7,10 +7,23 @@
                 <div class="header" t-att-style="report_header_style">
                     <t t-foreach="docs" t-as="doc">
                         <div class="o_simple_header">
+                            
+                            <!-- Address Section (Moved above) -->
+                            <div class="row">
+                                <div class="col-12" style="margin-bottom: 10px;">
+                                    <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333;">
+                                        <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311, İkitelli osb.</span><br/>
+                                        Başakşehir İstanbul-Türkiye<br/>
+                                        Vergi No. 8831154019
+                                    </p>
+                                </div>
+                            </div>
+    
+                            <!-- Company Name and Logo Section -->
                             <div class="row align-items-center" style="display: flex; align-items: center;">
-                                <!-- Company Name (8 columns, moved up a little) -->
-                                <div class="col-8" style="margin-top: 20px;">
-                                    <strong t-if="doc.company_id.name" style="font-size: 20px;">
+                                <!-- Company Name (8 columns) -->
+                                <div class="col-8" style="margin-top: 10px;">
+                                    <strong t-if="doc.company_id.name" style="font-size: 18px;">
                                         <span t-field="doc.company_id.name"/>
                                     </strong>
                                 </div>
@@ -20,25 +33,14 @@
                                     <img t-if="doc.company_id.logo" 
                                          t-att-src="image_data_uri(doc.company_id.logo)" 
                                          alt="Company Logo" 
-                                         style="width: 200px; height: 100px; margin: 0; padding: 0;"/>
+                                         style="width: 180px; height: 90px; margin: 0; padding: 0;"/>
                                 </div>
                             </div>
                             
-                            <!-- Address Section (Styled for readability) -->
-                            <div class="row">
-                                <div class="col-12" style="margin-top: 10px;">
-                                    <p style="font-size: 14px; line-height: 1.5; font-weight: 400; margin-bottom: 10px; color: #333;">
-                                        <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311, İkitelli osb.</span><br/>
-                                        Başakşehir İstanbul-Türkiye<br/>
-                                        Vergi No. 8831154019
-                                    </p>
-                                </div>
-                            </div>
-    
-                            <!-- Proforma Invoice Section (Styled with large, blue, bold text) -->
+                            <!-- Proforma Invoice Section -->
                             <div class="row">
                                 <div class="col-12" style="text-align: center; margin-top: 20px;">
-                                    <strong style="font-size: 30px; color: blue;">
+                                    <strong style="font-size: 28px; color: blue;">
                                         Proforma Invoice
                                     </strong>
                                 </div>
@@ -49,8 +51,6 @@
                 </div>
             </div>
         </t>
-    </template>
-                                               
-                                     
+    </template>                            
     
 </odoo>
