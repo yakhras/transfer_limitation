@@ -48,7 +48,7 @@
                             <div class="row" style="margin-top: 20px;">
                                 <!-- Left Column (col-8) -->
                                 <div class="col-8">
-                                    <div style="margin-bottom: 5px;">Row 1 Content (Left)</div>
+                                    <div style="margin-bottom: 5px;"><span t-field="doc.partner_id.name"/></div>
                                     <div style="margin-bottom: 5px;">Row 2 Content (Left)</div>
                                     <div style="margin-bottom: 5px;">Row 3 Content (Left)</div>
                                     <div>Row 4 Content (Left)</div>
