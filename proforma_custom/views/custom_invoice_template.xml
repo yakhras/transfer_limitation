@@ -65,7 +65,7 @@
                                 <div class="col-4">
                                     <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
-                                    <div style="margin-bottom: 5px;">Row 3 Content (Right)</div>
+                                    <div style="margin-bottom: 5px;"><strong>Expiration: </strong> <span t-field="doc.validity_date"/></div>
                                     <div>Row 4 Content (Right)</div>
                                 </div>
                             </div>
