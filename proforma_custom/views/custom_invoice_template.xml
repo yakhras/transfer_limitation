@@ -100,8 +100,13 @@
 
                                 <!-- Second Row in Footer -->
                                 <div class="row">
-                                    <div class="col-12" style="text-align: center;">
-                                        <p style="color: #555;">For more details, visit our website at <a href="http://www.companywebsite.com" target="_blank">www.companywebsite.com</a></p>
+                                    <div class="col-12" style="text-align: left;">
+                                        <p style="font-size: 12px; line-height: 1.6; color: #333;">
+                                            <strong>Banka Bilgileri:</strong><br/>
+                                            Vakıf Katılım Bankası TR08 0021 0000 0001 9638 4000 01<br/>
+                                            Kuveyt Türk Katılım Bankası TR08 0020 5000 0970 4803 0000 01<br/>
+                                            Albaraka Türk Katılım Bankası TR05 0020 3000 0162 4618 0000 01
+                                        </p>
                                     </div>
                                 </div>
                             </div>
