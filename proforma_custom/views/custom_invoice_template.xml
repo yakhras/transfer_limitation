@@ -4,9 +4,9 @@
         <t t-call="web.html_container">
             <div class="page">
                 <!-- Header Section -->
-                
-                <t t-foreach="docs" t-as="doc">
-                    <div class="o_simple_header">
+                <div class="header" t-att-style="report_header_style">
+                    <t t-foreach="docs" t-as="doc">
+                        
                         <div class="row align-items-center" style="display: flex; align-items: center;">
                             <!-- Company Name (8 columns) -->
                             <div class="col-8" style="margin-top: 10px;">
@@ -158,9 +158,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </t>
-                
+                        
+                    </t>
+                </div>
                 
             </div>
         </t>
