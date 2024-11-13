@@ -83,38 +83,38 @@
                                 </div>
                             </div>
                             
-    
+                            <!-- Footer Section -->
+                            <div class="row">
+                                <!-- First Row in Footer (Temel Koşullar) -->
+                                <div class="row">
+                                    <div class="col-12" style="text-align: left;">
+                                        <p style="font-size: 12px; line-height: 1.6; color: #333;">
+                                            <strong>Temel Koşullar:</strong><br/>
+                                            1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
+                                            2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
+                                            3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
+                                            4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
+                                            5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında % 3 vade farkı ilave edilecektir.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Second Row in Footer (Banka Bilgileri) -->
+                                <div class="row">
+                                    <div class="col-12" style="text-align: left;">
+                                        <p style="font-size: 12px; line-height: 1.6; color: #333;">
+                                            <strong>Banka Bilgileri:</strong><br/>
+                                            Vakıf Katılım Bankası TR08 0021 0000 0001 9638 4000 01<br/>
+                                            Kuveyt Türk Katılım Bankası TR08 0020 5000 0970 4803 0000 01<br/>
+                                            Albaraka Türk Katılım Bankası TR05 0020 3000 0162 4618 0000 01
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </t>
                 </div>
-                <!-- Footer Section -->
-                <div class="row">
-                    <!-- First Row in Footer (Temel Koşullar) -->
-                    <div class="row">
-                        <div class="col-12" style="text-align: left;">
-                            <p style="font-size: 12px; line-height: 1.6; color: #333;">
-                                <strong>Temel Koşullar:</strong><br/>
-                                1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
-                                2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
-                                3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
-                                4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
-                                5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında % 3 vade farkı ilave edilecektir.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Second Row in Footer (Banka Bilgileri) -->
-                    <div class="row">
-                        <div class="col-12" style="text-align: left;">
-                            <p style="font-size: 12px; line-height: 1.6; color: #333;">
-                                <strong>Banka Bilgileri:</strong><br/>
-                                Vakıf Katılım Bankası TR08 0021 0000 0001 9638 4000 01<br/>
-                                Kuveyt Türk Katılım Bankası TR08 0020 5000 0970 4803 0000 01<br/>
-                                Albaraka Türk Katılım Bankası TR05 0020 3000 0162 4618 0000 01
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </t>
     </template>    
