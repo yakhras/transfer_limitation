@@ -90,7 +90,7 @@
                             <!-- Table Section -->
                             <div style="margin-top: 20px;">
                                 <table style="width: 100%; border-collapse: collapse;">
-                                    <thead style="background-color: #333; color: white;">
+                                    <thead style="background-color: black; color: white;">
                                         <tr>
                                             <th style="border: 1px solid #ccc; padding: 5px; text-align: left;">Product</th>
                                             <th style="border: 1px solid #ccc; padding: 5px; text-align: center;">Quantity</th>
@@ -100,7 +100,7 @@
                                             <th style="border: 1px solid #ccc; padding: 5px; text-align: center;">Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody style="background-color: #444; color: white;">
+                                    <tbody style="background-color: #f4f4f4; color: white;">
                                         <!-- Loop through order line items -->
                                         <t t-foreach="doc.order_line" t-as="line">
                                             <tr>
