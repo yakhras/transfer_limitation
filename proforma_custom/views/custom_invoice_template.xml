@@ -77,8 +77,8 @@
 
                                 <!-- Right Column (col-4) -->
                                 <div class="col-4">
-                                    <t t-set="date_order" t-value="doc.date_order"/>
-                                    <t t-set="validity_date" t-value="doc.validity_date"/>
+                                    <t t-set="date_order" t-value="doc.date_order.strftime('%d.%m.%Y')"/>
+                                    <t t-set="validity_date" t-value="doc.validity_date.strftime('%d.%m.%Y')"/>
                                     
                                     <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
