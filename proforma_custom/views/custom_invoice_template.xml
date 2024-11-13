@@ -82,7 +82,8 @@
                                     <div><strong>Expiration: </strong> <span style="color: red;" t-esc="doc.validity_date.strftime('%Y.%m.%d')"/></div>
                                 </div>
                             </div>
-
+                            <!-- Table Title -->
+                            <h4 style="text-align: left; margin-bottom: 10px; color: #333;">Proforma Invoice Details</h4>
                             <!-- Table Section -->
                             <div style="margin-top: 20px;">
                                 <table style="width: 100%; border-collapse: collapse;">
