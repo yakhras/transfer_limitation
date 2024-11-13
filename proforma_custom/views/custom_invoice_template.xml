@@ -47,7 +47,7 @@
                             <div class="row">
                                 <div class="col-12" style="text-align: left; color: red; font-size: 16px; margin-top: 10px;">
                                     <strong>
-                                        <span t-field="o.date_today" t-options='{"widget": "date"}'/> <!-- Use `t-field` to show the date -->
+                                        <span t-esc="context_today().strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/> <!-- Use `t-field` to show the date -->
                                     </strong>
                                 </div>
                             </div>
