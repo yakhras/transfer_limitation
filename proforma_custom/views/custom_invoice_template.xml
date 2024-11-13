@@ -90,36 +90,36 @@
                             <!-- Table Section -->
                             <div style="margin-top: 20px;">
                                 <table style="width: 100%; border-collapse: collapse;">
-                                    <thead>
+                                    <thead style="background-color: #333; color: white;">
                                         <tr>
-                                            <th style="border: 1px solid #000; padding: 5px; text-align: left;">Product</th>
-                                            <th style="border: 1px solid #000; padding: 5px; text-align: center;">Quantity</th>
-                                            <th style="border: 1px solid #000; padding: 5px; text-align: center;">UOM</th>
-                                            <th style="border: 1px solid #000; padding: 5px; text-align: center;">Unit Price</th>
-                                            <th style="border: 1px solid #000; padding: 5px; text-align: center;">Tax</th>
-                                            <th style="border: 1px solid #000; padding: 5px; text-align: center;">Total</th>
+                                            <th style="border: 1px solid #ccc; padding: 5px; text-align: left;">Product</th>
+                                            <th style="border: 1px solid #ccc; padding: 5px; text-align: center;">Quantity</th>
+                                            <th style="border: 1px solid #ccc; padding: 5px; text-align: center;">UOM</th>
+                                            <th style="border: 1px solid #ccc; padding: 5px; text-align: center;">Unit Price</th>
+                                            <th style="border: 1px solid #ccc; padding: 5px; text-align: center;">Tax</th>
+                                            <th style="border: 1px solid #ccc; padding: 5px; text-align: center;">Total</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody style="background-color: #444; color: white;">
                                         <!-- Loop through order line items -->
                                         <t t-foreach="doc.order_line" t-as="line">
                                             <tr>
-                                                <td style="border: 1px solid #000; padding: 5px;">
+                                                <td style="border: 1px solid #ccc; padding: 5px;">
                                                     <span t-field="line.product_id.name"/>
                                                 </td>
-                                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
                                                     <span t-field="line.product_uom_qty"/>
                                                 </td>
-                                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
                                                     <span t-field="line.product_uom.name"/>
                                                 </td>
-                                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
                                                     <span t-esc="('%.4f' % line.price_unit)"/>
                                                 </td>
-                                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
                                                     <span t-esc="('%.2f' % line.tax_id.amount)"/> %
                                                 </td>
-                                                <td style="border: 1px solid #000; padding: 5px; text-align: center;">
+                                                <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">
                                                     <span t-field="line.price_subtotal"/>
                                                 </td>
                                             </tr>
