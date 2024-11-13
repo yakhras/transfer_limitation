@@ -1,43 +1,57 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+    <template id="external_layout_yaser">
+        <div t-attf-class="header" t-att-style="report_header_style">
+            <div class="o_clean_header">
+                <div class="row align-items-center" style="display: flex; align-items: center;">
+                    <!-- Company Name (8 columns) -->
+                    <div class="col-8" style="margin-top: 10px;">
+                        <strong t-if="doc.company_id.name" style="font-size: 18px;">
+                            <span t-field="doc.company_id.name"/>
+                        </strong>
+                    </div>
+                    
+                    <!-- Company Logo (4 columns, with reduced size) -->
+                    <div class="col-4 text-right" style="margin: 0; padding: 0;">
+                        <img t-if="doc.company_id.logo" 
+                                t-att-src="image_data_uri(doc.company_id.logo)" 
+                                alt="Company Logo" 
+                                style="width: 180px; height: 90px; margin: 0; padding: 0;"/>
+                    </div>
+                </div>
+                
+                <!-- Address Section (Returned to original position below name and logo) -->
+                <div class="row">
+                    <div class="col-12" style="margin-top: 10px;">
+                        <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333;">
+                            <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311, İkitelli osb.</span><br/>
+                            Başakşehir İstanbul-Türkiye<br/>
+                            Vergi No. 8831154019
+                        </p>
+                    </div>
+                </div> 
+            </div>
+        </div>
+
+        <div t-attf-class="article">
+            <t t-out="0"/>
+        </div>
+
+        <div t-attf-class="footer">
+            <div class="row">
+                <div class="col-1">
+                    <ul t-if="report_type == 'pdf'" class="list-inline pagenumber float-right text-center">
+                        <li class="list-inline-item"><strong><span class="page"/></strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </template>
     <template id="custom_invoice_template">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
-                <div class="page">
-                    <!-- Header Section -->
-                    <div class="header" t-att-style="report_header_style">
-                        
-                            
-                            <div class="row align-items-center" style="display: flex; align-items: center;">
-                                <!-- Company Name (8 columns) -->
-                                <div class="col-8" style="margin-top: 10px;">
-                                    <strong t-if="doc.company_id.name" style="font-size: 18px;">
-                                        <span t-field="doc.company_id.name"/>
-                                    </strong>
-                                </div>
-                                
-                                <!-- Company Logo (4 columns, with reduced size) -->
-                                <div class="col-4 text-right" style="margin: 0; padding: 0;">
-                                    <img t-if="doc.company_id.logo" 
-                                            t-att-src="image_data_uri(doc.company_id.logo)" 
-                                            alt="Company Logo" 
-                                            style="width: 180px; height: 90px; margin: 0; padding: 0;"/>
-                                </div>
-                            </div>
-                            
-                            <!-- Address Section (Returned to original position below name and logo) -->
-                            <div class="row">
-                                <div class="col-12" style="margin-top: 10px;">
-                                    <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333;">
-                                        <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311, İkitelli osb.</span><br/>
-                                        Başakşehir İstanbul-Türkiye<br/>
-                                        Vergi No. 8831154019
-                                    </p>
-                                </div>
-                            </div>    
-                        
-                    </div>
-                    <div t-attf-class="article">
+                <t t-call="proforma_custom.external_layout_yaser">
+                    <div class="page">
                         <!-- Proforma Invoice Section -->
                         <div class="row">
                             <div class="col-12" style="text-align: left; margin-top: 20px;">
@@ -162,14 +176,7 @@
                             </div>
                         </div>
                     </div>
-                    <div t-attf-class="footer o_standard_footer">
-                        <div class="text-center" style="border-top: 1px solid black;">
-                            <div t-if="report_type == 'pdf'" class="text-muted">
-                                Page: <span class="page"/> / <span class="topage"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </t>
             </t>
         </t>
     </template>    
