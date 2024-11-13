@@ -77,10 +77,13 @@
 
                                 <!-- Right Column (col-4) -->
                                 <div class="col-4">
+                                    <t t-set="date_order" t-value="doc.date_order"/>
+                                    <t t-set="validity_date" t-value="doc.validity_date"/>
+                                    
                                     <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
-                                    <div><strong>Expiration: </strong> <span style="color: red;" t-esc="(doc.validity_date.strftime('%d.%m.%Y')) - (doc.date_order.strftime('%d.%m.%Y'))"/></div>
+                                    <div><strong>Expiration: </strong> <t t-if="date_order and validity_date"> <t t-esc="(fields.Datetime.from_string(validity_date) - fields.Datetime.from_string(date_order)).days"/></t></div>
                                 </div>
                             </div>
                             <!-- Border Line Before Title -->
