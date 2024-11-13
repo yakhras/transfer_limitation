@@ -59,7 +59,7 @@
                                     <div style="margin-bottom: 5px; color: red;"><strong>Proforma Date: </strong> <span t-field="doc.date_order" t-options='{"widget": "date"}'/></div>
                                     <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
-                                    <div style="color: red;"><strong>Expiration: </strong> <span t-field="doc.validity_date"/></div>
+                                    <div><strong>Expiration: </strong> <span style="color: red;" t-field="doc.validity_date"/></div>
                                 </div>
                             </div>
     
