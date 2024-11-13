@@ -59,7 +59,7 @@
                                     <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span style="color: red;" t-field="doc.date_order" t-options='{"widget": "date"}'/></div>
                                     <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
                                     <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
-                                    <div><strong>Expiration: </strong> <span style="color: red;" t-esc="format_date(doc.validity_date, 'YYYY.MM.DD')"/></div>
+                                    <div><strong>Expiration: </strong> <span style="color: red;" t-esc="doc.validity_date.strftime('%Y.%m.%d')"/></div>
                                 </div>
                             </div>
     
