@@ -124,6 +124,12 @@
                                                 </td>
                                             </tr>
                                         </t>
+                                        <tr>
+                                            <td colspan="4" style="text-align: right; font-weight: bold;">Total Amount</td>
+                                            <td style="text-align: right;">
+                                                <t t-esc="doc.tax_totals_json" />
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
