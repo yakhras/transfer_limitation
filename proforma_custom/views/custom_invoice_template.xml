@@ -85,7 +85,7 @@
                             <!-- Border Line Before Title -->
                             <div style="border-bottom: 2px solid #333; margin-bottom: 15px;"></div>
                             <!-- Table Title -->
-                            <h4 style="text-align: left; margin-bottom: 10px; color: #333;">Proforma Invoice Details</h4>
+                            <h4 style="text-align: left; margin-top: 10px; margin-bottom: 5px; color: #333;">Proforma Invoice Details</h4>
                             <!-- Table Section -->
                             <div style="margin-top: 20px;">
                                 <table style="width: 100%; border-collapse: collapse;">
