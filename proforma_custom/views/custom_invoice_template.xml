@@ -123,7 +123,7 @@
                             <!-- Footer Section -->
                             <div class="footer" style="margin-top: 40px; font-size: 12px;">
                                 <!-- First Row in Footer (Temel Koşullar) -->
-                                <div class="row">
+                                <div class="row" style="margin-bottom: 20px;">
                                     <div class="col-12" style="text-align: left;">
                                         <p style="font-size: 12px; line-height: 1.6; color: #333;">
                                             <strong>Temel Koşullar:</strong><br/>
@@ -137,7 +137,7 @@
                                 </div>
 
                                 <!-- Second Row in Footer (Banka Bilgileri) -->
-                                <div class="row">
+                                <div class="row" style="margin-top: 20px;">
                                     <div class="col-12" style="text-align: left;">
                                         <p style="font-size: 12px; line-height: 1.6; color: #333;">
                                             <strong>Banka Bilgileri:</strong><br/>
