@@ -20,7 +20,7 @@
                     </div>
                     <p>For a complete view of each invoice and to take necessary actions, please click the button below:</p>
                     <div class="button-container" style="text-align: center; margin: 30px 0;">
-                        <a href="/web#menu_id=356&amp;action=340&amp;model=account.move&amp;view_type=list" class="button" style="padding: 12px 24px;
+                        <a href="/web#menu_id=356&amp;action=1883&amp;model=account.move&amp;view_type=list" class="button" style="padding: 12px 24px;
                         background-color: #333;
                         color: #ffffff;
                         text-decoration: none;
