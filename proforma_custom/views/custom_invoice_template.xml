@@ -28,8 +28,7 @@
         </div>
 
         <div t-attf-class="footer">
-            <!-- Address Section (Returned to original position below name and logo) -->
-            <div class="row">
+            <div class="text-center" style="border-top: 1px solid black;">
                 <div class="col-12" style="margin-top: 10px;">
                     <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333;">
                         <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311, İkitelli osb.</span><br/>
@@ -37,8 +36,10 @@
                         Vergi No. 8831154019
                     </p>
                 </div>
+                
             </div>
-            <div class="text-center" style="border-top: 1px solid black;">
+            <!-- Address Section (Returned to original position below name and logo) -->
+            <div class="row">
                 <div t-if="report_type == 'pdf'" class="text-muted">
                     Page: <span class="page"/> / <span class="topage"/>
                 </div>
