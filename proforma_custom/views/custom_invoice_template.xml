@@ -151,8 +151,8 @@
                             </table>
                         </div>
 
-                        <!-- Note Section (only displayed if doc.note exists) -->
-                        <t t-if="doc.note">
+                        <!-- Note Section (only displayed if doc.note has meaningful content) -->
+                        <t t-if="doc.note and doc.note.strip()">
                             <div class="row" style="margin-top: 20px;">
                                 <div class="col-12" style="text-align: left;">
                                     <!-- Styled Header for "Note" Section -->
@@ -167,7 +167,6 @@
                                 </div>
                             </div>
                         </t>
-
                         
                         <!-- Terms Section -->
                         <div style="margin-top: 10px; page-break-inside: avoid;">
