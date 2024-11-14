@@ -605,6 +605,9 @@
             <field name="view_mode">tree,form</field>
             <field name="domain">[
                 ('invoice_date_due', '=', context_today().strftime('%Y-%m-%d')),
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
                 ]</field>
             <field name="context">{
                     'default_move_type':'out_invoice',
