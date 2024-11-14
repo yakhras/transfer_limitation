@@ -39,7 +39,7 @@
                 
             </div>
             <!-- Address Section (Returned to original position below name and logo) -->
-            <div class="row">
+            <div class="row text-left">
                 <div t-if="report_type == 'pdf'" class="text-muted">
                     Page: <span class="page"/> / <span class="topage"/>
                 </div>
