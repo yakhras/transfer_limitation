@@ -140,7 +140,7 @@
                                                 <span t-esc="('%.4f' % line.price_unit)"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 5px; text-align: center;">
-                                                <span t-esc="('%.2f' % line.tax_id.amount)"/> %
+                                                <span t-esc="int(line.tax_id.amount)"/> %
                                             </td>
                                             <td style="border: 1px none black; padding: 5px; text-align: center;">
                                                 <span t-field="line.price_subtotal"/>
