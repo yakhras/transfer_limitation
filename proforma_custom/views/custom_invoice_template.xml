@@ -10,7 +10,6 @@
                             <span t-field="doc.company_id.name"/>
                         </strong>
                     </div>
-                    
                     <!-- Company Logo (4 columns, with reduced size) -->
                     <div class="col-4 text-right" style="margin: 0; padding: 0;">
                         <img t-if="doc.company_id.logo" 
@@ -19,14 +18,12 @@
                                 style="width: 180px; height: 90px; margin: 0; padding: 0;"/>
                     </div>
                 </div>
-                 
             </div>
         </div>
 
         <div t-attf-class="article">
             <t t-out="0" />
         </div>
-
         <div t-attf-class="footer">
             <div class="text-center" style="border-top: 1px solid black; padding-top: 10px;">
                 <div class="row align-items-center">
