@@ -33,10 +33,6 @@
             </div>
         </div>
 
-        <div t-attf-class="article">
-            <t t-out="0"/>
-        </div>
-
         <div t-attf-class="footer">
             <div class="text-center" style="border-top: 1px solid black;">
                 <div t-if="report_type == 'pdf'" class="text-muted">
