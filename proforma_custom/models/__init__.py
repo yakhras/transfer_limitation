@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import email_market
+from . import sale_order
