@@ -83,3 +83,25 @@ class ExportData(http.Controller):
         except Exception as e:
             _logger.error("Error handling PDF data: %s", e)
             return {'success': False, 'error': str(e)}
+        
+
+
+class AccountMoveController(http.Controller):
+
+    @http.route('/custom/fetch_account_moves', type='http', auth='user')
+    def fetch_account_moves(self):
+        # Define the domain as specified
+        domain = [
+            ('state', '=', 'posted'),
+            ('move_type', 'in', ['out_invoice', 'out_refund']),
+            ('payment_state', 'in', ['not_paid', 'partial']),
+        ]
+        
+        # Search for records in account.move that meet the criteria
+        account_moves = request.env['account.move'].search(domain)
+        
+        # Perform actions on the filtered records if necessary
+        # For example, here we just log the fetched records' names
+        
+        # Redirect to a relevant page in Odoo, such as the list view of account moves
+        return request.redirect('/web#action=account.action_move_out_invoice_type')
