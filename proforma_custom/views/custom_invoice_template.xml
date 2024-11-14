@@ -19,17 +19,7 @@
                                 style="width: 180px; height: 90px; margin: 0; padding: 0;"/>
                     </div>
                 </div>
-                
-                <!-- Address Section (Returned to original position below name and logo) -->
-                <div class="row">
-                    <div class="col-12" style="margin-top: 10px;">
-                        <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333;">
-                            <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311, İkitelli osb.</span><br/>
-                            Başakşehir İstanbul-Türkiye<br/>
-                            Vergi No. 8831154019
-                        </p>
-                    </div>
-                </div> 
+                 
             </div>
         </div>
 
@@ -41,6 +31,16 @@
             <div class="text-center" style="border-top: 1px solid black;">
                 <div t-if="report_type == 'pdf'" class="text-muted">
                     Page: <span class="page"/> / <span class="topage"/>
+                </div>
+            </div>
+            <!-- Address Section (Returned to original position below name and logo) -->
+            <div class="row">
+                <div class="col-12" style="margin-top: 10px;">
+                    <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333;">
+                        <span style="font-weight: 600;">Deposı̇te İş Mer. A Blok No. 311, İkitelli osb.</span><br/>
+                        Başakşehir İstanbul-Türkiye<br/>
+                        Vergi No. 8831154019
+                    </p>
                 </div>
             </div>
         </div>
