@@ -61,7 +61,7 @@
                         <!-- Proforma Invoice Section -->
                         <div class="row">
                             <div class="col-12" style="text-align: left;">
-                                <strong style="font-size: 28px; color: blue; font-family: Arial, sans-serif;">
+                                <strong style="font-size: 28px; color: red; font-family: Arial, sans-serif;">
                                     Proforma Invoice
                                 </strong>
                             </div>
@@ -150,17 +150,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!-- <div class="clearfix" name="so_total_summary">
-                            <div id="total" class="row" name="total">
-                                <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
-                                    <table class="table table-sm">
-                                        Tax totals
-                                        <t t-set="tax_totals" t-value="json.loads(doc.tax_totals_json)"/>
-                                        <t t-call="account.document_tax_totals"/>
-                                    </table>
-                                </div>
-                            </div>
-                        </div> -->
+                    
                         <div class="clearfix" name="so_total_summary" style="margin-top: 20px;">
                             <div id="total" class="row" name="total">
                                 <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
