@@ -12,12 +12,8 @@
                     Unpaid Invoice Reminder
                 </div>
                 <div class="content" style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
-                    <p class="bold-text" style="font-weight: bold;">Dear Neslihan Hanım,</p>
-                    <p>This is a <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">friendly reminder</span> that invoices for our customers are <span class="highlight">due today</span>. Please review the attached report for an overview of outstanding payments.</p>
-                    <div class="summary-box" style="background-color: #f9f9f9; padding: 15px 20px; margin: 20px 0; border-left: 6px solid #e53935; border-radius: 4px; font-family: 'Roboto', sans-serif;">
-                        <p style="margin: 5px 0;"><strong>Today's Due Invoice Summary:</strong></p>
-                        <p style="margin: 5px 0;">- <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">Total Invoices Due: </span> </p>
-                    </div>
+                    <p class="bold-text" style="font-weight: bold;">Hello,</p>
+                    <p>This is a <span class="highlight" style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;">friendly reminder</span> that invoices for our customers are <span class="highlight">due today</span>. Please review the an overview of outstanding payments.</p>
                     <p>For a complete view of each invoice and to take necessary actions, please click the button below:</p>
                     <div class="button-container" style="text-align: center; margin: 30px 0;">
                         <a href="/web#menu_id=356&amp;action=1883&amp;model=account.move&amp;view_type=list" class="button" style="padding: 12px 24px;
