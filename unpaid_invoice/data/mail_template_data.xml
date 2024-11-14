@@ -9,7 +9,7 @@
         <field name="body_html" type="html">
             <div class="container" style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
                 <div class="header" style="background-color: #333; color: #ffffff; padding: 20px; text-align: center; font-size: 24px; font-weight: 700; font-family: 'Playfair Display', serif;">
-                    Unpaid Invoice Reminder
+                    Ödenmemiş Fatura Hatırlatması
                 </div>
                 <div class="content" style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
                     <p class="bold-text" style="font-weight: bold;">Merhaba,</p>
