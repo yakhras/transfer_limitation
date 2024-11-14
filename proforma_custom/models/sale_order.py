@@ -12,4 +12,4 @@ class SaleOrder(models.Model):
     def _compute_has_note(self):
         for record in self:
             # Check if `note` has meaningful content (ignoring whitespace and empty HTML tags)
-            record.has_note = bool(record.note and record.note.strip())
+            record.has_note = bool(record.note)
