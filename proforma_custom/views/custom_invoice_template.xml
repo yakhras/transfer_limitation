@@ -36,12 +36,10 @@
                         Vergi No. 8831154019
                     </p>
                 </div>
-                
-            </div>
-            <!-- Address Section (Returned to original position below name and logo) -->
-            <div class="row text-left">
-                <div t-if="report_type == 'pdf'" class="text-muted">
-                    Page: <span class="page"/> / <span class="topage"/>
+                <div class="row">
+                    <div t-if="report_type == 'pdf'" class="text-muted">
+                        Page: <span class="page"/> / <span class="topage"/>
+                    </div>
                 </div>
             </div>
         </div>
