@@ -27,7 +27,7 @@
                         transition: background-color 0.3s ease, transform 0.3s ease;
                         display: inline-block;
                         hover: background-color #f4f4f4, color #888, font-size 14px, padding 20px 30px, text-align center, border-top 1px solid #ddd;">
-                        View Full Report</a>
+                        Tam Raporu Görüntüle</a>
                     </div>
                 </div>
             </div>
