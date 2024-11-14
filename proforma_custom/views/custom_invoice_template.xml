@@ -28,11 +28,6 @@
         </div>
 
         <div t-attf-class="footer">
-            <div class="text-center" style="border-top: 1px solid black;">
-                <div t-if="report_type == 'pdf'" class="text-muted">
-                    Page: <span class="page"/> / <span class="topage"/>
-                </div>
-            </div>
             <!-- Address Section (Returned to original position below name and logo) -->
             <div class="row">
                 <div class="col-12" style="margin-top: 10px;">
@@ -41,6 +36,11 @@
                         Başakşehir İstanbul-Türkiye<br/>
                         Vergi No. 8831154019
                     </p>
+                </div>
+            </div>
+            <div class="text-center" style="border-top: 1px solid black;">
+                <div t-if="report_type == 'pdf'" class="text-muted">
+                    Page: <span class="page"/> / <span class="topage"/>
                 </div>
             </div>
         </div>
