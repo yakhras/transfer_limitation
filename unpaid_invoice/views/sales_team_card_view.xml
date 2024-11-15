@@ -244,7 +244,7 @@
                     <field name="invoice_date" string="Invoice Date"/>
                     <field name="invoice_date_due"/>
                     <field name="amount_total_signed" string="Total" options="{'widget': 'monetary', 'currency_field': 'currency_id'}" sum="Total"/>
-                    <field name="tax_totals_json" string="Total" options="{'widget': 'monetary', 'currency_field': 'currency_id'}" sum="Total"/>
+                    <field name="amount_residual" string="Amount Due" sum="Total"/>
                     <field name="payment_state"/>
                     <field name="state"/>
                 </tree>
