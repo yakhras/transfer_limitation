@@ -703,6 +703,18 @@
             <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
+        <!-- account.move schedual action -->
+        <record id="ir_cron_send_due_invoices_email" model="ir.cron">
+            <field name="name">Send Due Invoices Email</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">model.send_due_invoices_email()</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">15</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+        </record>
+
         
         <!-- Menu Item -->
         <menuitem id="menu_unpaid_invoice_kanban" name="Unpaid Invoices" 

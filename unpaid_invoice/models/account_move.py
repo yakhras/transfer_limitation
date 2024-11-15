@@ -1,8 +1,11 @@
 from odoo import models, fields, api
 from datetime import date
+import logging
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
+
+    _logger = logging.getLogger(__name__)
 
     is_due_and_unpaid = fields.Boolean(
         compute='_compute_due_and_unpaid',
@@ -32,3 +35,15 @@ class AccountMove(models.Model):
                         'team_id': move.team_id.id,
                         'currency_id': move.currency_id.id,
                     })
+
+
+
+    @api.model
+    def send_due_invoices_email(self):
+        """Directly trigger the email action for predefined conditions."""
+        try:
+            # Trigger the email-sending action directly
+            self.env['account.move'].action_send_email()
+        except Exception as e:
+            _logger.error(f"Failed to send due invoices email: {e}")
+
