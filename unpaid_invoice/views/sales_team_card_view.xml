@@ -240,10 +240,11 @@
                 <tree string="Account Moves (Custom)">
                     <field name="name"/>
                     <field name="document_number"/>
-                    <field name="invoice_partner_display_name"/>
-                    <field name="invoice_date"/>
+                    <field name="invoice_partner_display_name" string="Customer"/>
+                    <field name="invoice_date" string="Invoice Date"/>
                     <field name="invoice_date_due"/>
-                    <field name="amount_total_signed" options="{'widget': 'monetary', 'currency_field': 'currency_id'}"/>
+                    <field name="amount_total_signed" string="Total" options="{'widget': 'monetary', 'currency_field': 'currency_id'}" sum="Total"/>
+                    <field name="tax_totals_json" string="Total" options="{'widget': 'monetary', 'currency_field': 'currency_id'}" sum="Total"/>
                     <field name="payment_state"/>
                     <field name="state"/>
                 </tree>
