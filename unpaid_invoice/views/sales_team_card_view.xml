@@ -617,11 +617,12 @@
         </record>
 
         
-        <!-- unpaid.invoice today action -->
+        <!-- account.move today action -->
         <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_move_custom_list"/>
             <field name="domain">[
                 ('invoice_date_due', '=', context_today().strftime('%Y-%m-%d')),
                 ('state', '=', 'posted'),
