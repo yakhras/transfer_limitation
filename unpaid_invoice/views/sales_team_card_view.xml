@@ -232,6 +232,25 @@
             </field>
         </record>
 
+        <!-- account.move tree view -->
+        <record id="view_account_move_custom_list" model="ir.ui.view">
+            <field name="name">account.move.custom.list</field>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <tree string="Account Moves (Custom)">
+                    <field name="name"/>
+                    <field name="document_number"/>
+                    <field name="invoice_partner_display_name"/>
+                    <field name="invoice_date"/>
+                    <field name="invoice_date_due"/>
+                    <field name="amount_total_signed" options="{'widget': 'monetary', 'currency_field': 'currency_id'}"/>
+                    <field name="payment_state"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+
 
         <!-- unpaid.invoice form view -->
         <!-- <record id="view_unpaid_invoice_form" model="ir.ui.view">
