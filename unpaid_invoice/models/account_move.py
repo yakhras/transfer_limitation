@@ -40,10 +40,24 @@ class AccountMove(models.Model):
 
     @api.model
     def send_due_invoices_email(self):
-        """Directly trigger the email action for predefined conditions."""
+        """Send an email template without linking it to a specific record."""
         try:
-            # Trigger the email-sending action directly
-            self.env['account.move'].action_send_email()
+            # Define the email template
+            template_id = self.env.ref('unpaid_invoice.unpaid_invoices', raise_if_not_found=False)
+            if not template_id:
+                self._logger.error("Email template 'email_template_due_invoices' not found.")
+                return
+            
+            # Use the template's model, or set a dummy model if needed
+            # Set context to bypass requiring a specific record
+            mail = self.env['mail.mail'].create({
+                'subject': template_id.subject,
+                'body_html': template_id.body_html,
+                'email_to': template_id.email_to,  # Replace with your desired email address
+                'email_from': template_id.email_from or self.env.user.email,
+            })
+            mail.send()
+            self._logger.info("Email sent successfully.")
         except Exception as e:
-            _logger.error(f"Failed to send due invoices email: {e}")
+            self._logger.error(f"Failed to send email: {e}")
 
