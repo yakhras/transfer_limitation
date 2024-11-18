@@ -50,13 +50,13 @@ class AccountMove(models.Model):
             
             # Use the template's model, or set a dummy model if needed
             # Set context to bypass requiring a specific record
-            mail = self.env['mail.mail'].create({
+            mail = self.env['mail.mail'].sudo().create({
                 'subject': template_id.subject,
                 'body_html': template_id.body_html,
                 'email_to': template_id.email_to,  # Replace with your desired email address
                 'email_from': template_id.email_from or self.env.user.email,
             })
-            mail.send()
+            mail.send(force_send=True)
             self._logger.info("Email sent successfully.")
         except Exception as e:
             self._logger.error(f"Failed to send email: {e}")
