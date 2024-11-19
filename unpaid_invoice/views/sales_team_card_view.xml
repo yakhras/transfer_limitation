@@ -618,6 +618,7 @@
         </record>
 
         
+        <!-- ('amount_residual_signed',"!=",0), -->
         <!-- account.move today action -->
         <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today</field>
