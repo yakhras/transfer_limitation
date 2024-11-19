@@ -243,10 +243,11 @@
                     <field name="invoice_partner_display_name" string="Customer"/>
                     <field name="invoice_user_id"/>
                     <field name="invoice_date" string="Invoice Date"/>
-                    <field name="invoice_date_due" widget="remaining_days"/>
+                    <field name="invoice_date_due"/>
                     <field name="amount_total_signed" string="Total" sum="Total Amount"/>
                     <field name="amount_residual_signed" string="Amount Due" sum="Total Due"/>
                     <field name="payment_state"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
@@ -618,7 +619,6 @@
         </record>
 
         
-        <!-- ('amount_residual_signed',"!=",0), -->
         <!-- account.move today action -->
         <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today</field>
@@ -631,6 +631,7 @@
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
                 ('line_ids.account_id.code',"=",120001),
+                ('amount_residual_signed',"!=",0),
                 ]</field>
             <field name="context">{
                     'default_move_type':'out_invoice',
