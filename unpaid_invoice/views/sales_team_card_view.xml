@@ -246,7 +246,7 @@
                     <field name="invoice_date_due" widget="remaining_days"/>
                     <field name="amount_total_signed" string="Total" sum="Total Amount"/>
                     <field name="amount_residual_signed" string="Amount Due" sum="Total Due"/>
-                    <field name="payment_state" widget="badge"/>
+                    <field name="payment_state"/>
                 </tree>
             </field>
         </record>
