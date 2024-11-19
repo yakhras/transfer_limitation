@@ -247,7 +247,6 @@
                     <field name="amount_total_signed" string="Total" sum="Total Amount"/>
                     <field name="amount_residual_signed" string="Amount Due" sum="Total Due"/>
                     <field name="payment_state"/>
-                    <field name="state"/>
                 </tree>
             </field>
         </record>
