@@ -244,7 +244,7 @@
                     <field name="invoice_date" string="Invoice Date"/>
                     <field name="invoice_date_due"/>
                     <field name="amount_total_signed" string="Total" sum="Total Amount"/>
-                    <field name="amount_residual" string="Amount Due" sum="Total Due"/>
+                    <field name="amount_residual_signed" string="Amount Due" sum="Total Due"/>
                     <field name="payment_state"/>
                     <field name="state"/>
                 </tree>
