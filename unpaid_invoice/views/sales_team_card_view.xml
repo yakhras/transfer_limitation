@@ -241,6 +241,7 @@
                     <field name="name"/>
                     <field name="document_number"/>
                     <field name="invoice_partner_display_name" string="Customer"/>
+                    <field name="invoice_user_id"/>
                     <field name="invoice_date" string="Invoice Date"/>
                     <field name="invoice_date_due"/>
                     <field name="amount_total_signed" string="Total" sum="Total Amount"/>
