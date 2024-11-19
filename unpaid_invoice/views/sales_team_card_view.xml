@@ -247,7 +247,7 @@
                     <field name="amount_total_signed" string="Total" sum="Total Amount"/>
                     <field name="amount_residual_signed" string="Amount Due" sum="Total Due"/>
                     <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')"/>
-                    <field name="state"/>
+                    <field name="state" optional="hide"/>
                 </tree>
             </field>
         </record>
