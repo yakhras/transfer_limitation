@@ -38,7 +38,7 @@ class AccountMove(models.Model):
 
 
 
-    @api.model
+    
     def send_due_invoices_email(self):
         """Send an email template without linking it to a specific record."""
         try:
@@ -56,7 +56,7 @@ class AccountMove(models.Model):
                 'email_to': template_id.email_to,  # Replace with your desired email address
                 'email_from': template_id.email_from or self.env.user.email,
             })
-            mail.send(force_send=True)
+            mail.send()
             self._logger.info("Email sent successfully.")
         except Exception as e:
             self._logger.error(f"Failed to send email: {e}")
