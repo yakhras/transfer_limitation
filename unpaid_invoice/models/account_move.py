@@ -38,23 +38,22 @@ class AccountMove(models.Model):
 
 
 
-    
     def send_due_invoices_email(self):
         """Send an email template without linking it to a specific record."""
         try:
             # Define the email template
-            template_id = self.env.ref('unpaid_invoice.unpaid_invoice', False)
+            template_id = self.env.ref('your_module_name.email_template_due_invoices', raise_if_not_found=False)
             if not template_id:
                 self._logger.error("Email template 'email_template_due_invoices' not found.")
                 return
             
             # Use the template's model, or set a dummy model if needed
             # Set context to bypass requiring a specific record
-            mail = self.env['mail.compose.message'].sudo().create({
+            mail = self.env['mail.mail'].create({
                 'subject': template_id.subject,
                 'body_html': template_id.body_html,
-                'email_to': template_id.email_to,  # Replace with your desired email address
-                'email_from': template_id.email_from or self.env.user.email,
+                'email_to': 'yaser.akhras@menagate.com.tr',  # Replace with your desired email address
+                'email_from': 'yaser.akhras@menagate.com.tr'
             })
             mail.send()
             self._logger.info("Email sent successfully.")
