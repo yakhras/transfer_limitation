@@ -42,7 +42,7 @@ class AccountMove(models.Model):
         """Send an email template without linking it to a specific record."""
         try:
             # Define the email template
-            template_id = self.env.ref('your_module_name.email_template_due_invoices', raise_if_not_found=False)
+            template_id = self.env.ref('unpaid_invoice.unpaid_invoice', raise_if_not_found=False)
             if not template_id:
                 self._logger.error("Email template 'email_template_due_invoices' not found.")
                 return
