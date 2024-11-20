@@ -237,7 +237,7 @@
             <field name="name">account.move.custom.list</field>
             <field name="model">account.move</field>
             <field name="arch" type="xml">
-                <tree string="Account Moves (Custom)">
+                <tree string="Account Moves (Custom)" create="false">
                     <field name="name"/>
                     <field name="document_number"/>
                     <field name="invoice_partner_display_name" string="Customer"/>
@@ -247,7 +247,6 @@
                     <field name="amount_total_signed" string="Total" sum="Total Amount"/>
                     <field name="amount_residual_signed" string="Amount Due" sum="Total Due"/>
                     <field name="amount_residual"/>
-                    <field name="amount_total_company_currency"/>
                     <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')"/>
                     <field name="state" optional="hide"/>
                 </tree>
