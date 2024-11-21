@@ -70,6 +70,7 @@ class UnpaidInvoice(models.Model):
             ('state', '=', 'posted'),
             ('move_type', 'in', ['out_invoice', 'out_refund']),
             ('payment_state', 'in', ['not_paid', 'partial']),
+            ('amount_residual_signed',"!=",0),
         ]
 
         # Fetch records from account.move that meet the domain criteria
