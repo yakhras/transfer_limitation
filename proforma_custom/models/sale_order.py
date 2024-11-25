@@ -24,7 +24,9 @@ class SaleOrder(models.Model):
     def _compute_expiration_days(self):
         for order in self:
             if order.validity_date and order.date_order:
-                delta = order.validity_date - order.date_order
+                # Convert date_order to a date if it's a datetime field
+                date_order = order.date_order.date() if hasattr(order.date_order, 'date') else order.date_order
+                delta = order.validity_date - date_order
                 order.expiration_days = f"{delta.days} Days"
             else:
                 order.expiration_days = "N/A"
