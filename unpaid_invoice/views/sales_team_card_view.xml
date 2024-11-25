@@ -629,6 +629,7 @@
             <field name="view_id" ref="view_account_move_custom_list"/>
             <field name="domain">[
                 ('invoice_date_due', '&gt;=', "2024-11-01"),
+                ('invoice_date_due', '&lt;=', context_today().strftime('%Y-%m-%d')),
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
