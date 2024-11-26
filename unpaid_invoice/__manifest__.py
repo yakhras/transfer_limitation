@@ -30,7 +30,6 @@
         'views/pdf.xml',
         'views/pdf_group_by_template.xml',
         'data/mail_template_data.xml',
-        'data/month_card_data.xml',
     ],
     
     'assets': {
