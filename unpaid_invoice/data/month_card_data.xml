@@ -3,26 +3,21 @@
     <!-- Define the month cards records -->
     <record id="month_card_january" model="unpaid.invoice">
         <field name="month">January</field>
-        
     </record>
 
     <record id="month_card_february" model="unpaid.invoice">
         <field name="month">February</field>
-        
     </record>
 
     <record id="month_card_march" model="unpaid.invoice">
         <field name="month">March</field>
-       
     </record>
 
     <record id="month_card_april" model="unpaid.invoice">
         <field name="month">April</field>
-        
     </record>
 
     <record id="month_card_may" model="unpaid.invoice">
         <field name="month">May</field>
-        
     </record>
 </odoo>
