@@ -12,7 +12,7 @@
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card">
                                 <div class="oe_kanban_content">
-                                    <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="action-link"
+                                    <a name="unpaid_invoice.action_unpaid_invoice_today_try" type="action" class="action-link"
                                     style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                     <h3><t t-esc="record.name.value"/></h3>
                                     </a>
