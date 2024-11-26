@@ -3,28 +3,28 @@
 <odoo>
     <data>
         <!-- Create a static Kanban view with empty cards for each month -->
-    <record id="view_month_card_kanban" model="ir.ui.view">
-        <field name="name">unpaid.invoice.month.kanban</field>
-        <field name="model">unpaid.invoice</field>
-        <field name="arch" type="xml">
-            <kanban>
-                <!-- Iterate over static months -->
-                <templates>
-                    <t t-name="kanban-box">
-                        <div class="oe_kanban_card">
-                            <!-- Create a card for each month -->
-                            <t t-foreach="['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']" t-as="month">
-                                <div class="oe_kanban_month_card">
-                                    <h3><t t-esc="month"/></h3>
-                                    <p>No data available</p>
-                                </div>
-                            </t>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record>
+        <record id="view_month_card_kanban" model="ir.ui.view">
+            <field name="name">unpaid.invoice.month.kanban</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <!-- Iterate over static months -->
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card">
+                                <!-- Create a card for each month -->
+                                <t t-foreach="['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']" t-as="month">
+                                    <div class="oe_kanban_month_card">
+                                        <h3><t t-esc="month"/></h3>
+                                        <p>No data available</p>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
 
 
 
