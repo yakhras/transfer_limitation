@@ -12,7 +12,7 @@
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card">
                                 <div class="oe_kanban_content">
-                                    <h3><t t-esc="record.name"/></h3>
+                                    <h3><t t-esc="record.name.value"/></h3>
                                 </div>
                             </div>
                         </t>
