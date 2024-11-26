@@ -2,6 +2,25 @@
 
 <odoo>
     <data>
+        <record id="view_month_card_kanban" model="ir.ui.view">
+            <field name="name">month.card.kanban</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card">
+                                <strong><field name="name"/></strong>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+
         <!-- Views -->
         <record model="ir.ui.view" id="view_unpaid_invoice_card">
             <field name="name">unpaid.invoice.card.view</field>
@@ -356,7 +375,7 @@
             <field name="name">Unpaid Invoices</field>
             <field name="res_model">crm.team</field>
             <field name="view_mode">kanban</field>
-            <field name="view_id" ref="unpaid_invoice.view_unpaid_invoice_card"/>
+            <field name="view_id" ref="unpaid_invoice.view_month_card_kanban"/>
         </record>
 
 

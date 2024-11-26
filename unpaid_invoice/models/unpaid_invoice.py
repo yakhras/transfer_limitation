@@ -40,6 +40,7 @@ class UnpaidInvoice(models.Model):
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
         ], string='Status', readonly=True, copy=False, index=True, tracking=3, default='draft')
+    month = fields.Char(string="Month Name")
 
 
     def populate_unpaid_invoices(self):
