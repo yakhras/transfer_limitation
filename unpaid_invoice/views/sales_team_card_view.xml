@@ -373,7 +373,7 @@
         <!-- crm.team kanban action -->
         <record id="action_unpaid_invoice_kanban" model="ir.actions.act_window">
             <field name="name">Unpaid Invoices</field>
-            <field name="res_model">crm.team</field>
+            <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="unpaid_invoice.view_month_card_kanban"/>
         </record>
