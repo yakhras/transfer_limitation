@@ -6,7 +6,7 @@
             <field name="name">month.record.kanban</field>
             <field name="model">month.record</field>
             <field name="arch" type="xml">
-                <kanban>
+                <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
                     <field name="name" />
                     <templates>
                         <t t-name="kanban-box">
