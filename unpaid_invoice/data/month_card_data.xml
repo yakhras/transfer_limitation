@@ -7,35 +7,5 @@
         <record id="month_february" model="month.record">
             <field name="name">This Month</field>
         </record>
-        <record id="month_march" model="month.record">
-            <field name="name">March</field>
-        </record>
-        <record id="month_april" model="month.record">
-            <field name="name">April</field>
-        </record>
-        <record id="month_may" model="month.record">
-            <field name="name">May</field>
-        </record>
-        <record id="month_june" model="month.record">
-            <field name="name">June</field>
-        </record>
-        <record id="month_july" model="month.record">
-            <field name="name">July</field>
-        </record>
-        <record id="month_august" model="month.record">
-            <field name="name">August</field>
-        </record>
-        <record id="month_september" model="month.record">
-            <field name="name">September</field>
-        </record>
-        <record id="month_october" model="month.record">
-            <field name="name">October</field>
-        </record>
-        <record id="month_november" model="month.record">
-            <field name="name">November</field>
-        </record>
-        <record id="month_december" model="month.record">
-            <field name="name">December</field>
-        </record>
     </data>
 </odoo>
