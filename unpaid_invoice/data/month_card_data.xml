@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <odoo>
     <!-- Define the month cards records -->
-    <record id="month_card_january" model="month.card">
-        <field name="name">January</field>
-        <field name="description">Start the year with January</field>
+    <record id="month_card_january" model="unpaid.invoice">
+        <field name="month">January</field>
+        
     </record>
 
-    <record id="month_card_february" model="month.card">
-        <field name="name">February</field>
-        <field name="description">The second month of the year</field>
+    <record id="month_card_february" model="unpaid.invoice">
+        <field name="month">February</field>
+        
     </record>
 
-    <record id="month_card_march" model="month.card">
-        <field name="name">March</field>
-        <field name="description">Spring begins in March</field>
+    <record id="month_card_march" model="unpaid.invoice">
+        <field name="month">March</field>
+       
     </record>
 
-    <record id="month_card_april" model="month.card">
-        <field name="name">April</field>
-        <field name="description">April showers bring May flowers</field>
+    <record id="month_card_april" model="unpaid.invoice">
+        <field name="month">April</field>
+        
     </record>
 
-    <record id="month_card_may" model="month.card">
-        <field name="name">May</field>
-        <field name="description">Spring is in full bloom in May</field>
+    <record id="month_card_may" model="unpaid.invoice">
+        <field name="month">May</field>
+        <
     </record>
 </odoo>

@@ -7,11 +7,11 @@
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
                 <kanban>
-                    <field name="name"/>
+                    <field name="month"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card">
-                                <strong><field name="name"/></strong>
+                                <strong><field name="month"/></strong>
                             </div>
                         </t>
                     </templates>
