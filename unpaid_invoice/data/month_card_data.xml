@@ -23,6 +23,6 @@
 
     <record id="month_card_may" model="unpaid.invoice">
         <field name="month">May</field>
-        <
+        
     </record>
 </odoo>
