@@ -7,6 +7,7 @@
             <field name="model">month.record</field>
             <field name="arch" type="xml">
                 <kanban>
+                    <field name="name" />
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card">
@@ -376,7 +377,7 @@
             <field name="name">Unpaid Invoices</field>
             <field name="res_model">month.record</field>
             <field name="view_mode">kanban</field>
-            <field name="view_id" ref="month_record.view_month_record_kanban"/>
+            <field name="view_id" ref="unpaid_invoice.view_month_record_kanban"/>
         </record>
 
 
