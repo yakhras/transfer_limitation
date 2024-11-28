@@ -2,6 +2,7 @@
 
 <odoo>
     <data>
+        <!-- month.record kanban view -->
         <record id="view_month_record_kanban" model="ir.ui.view">
             <field name="name">month.record.kanban</field>
             <field name="model">month.record</field>
