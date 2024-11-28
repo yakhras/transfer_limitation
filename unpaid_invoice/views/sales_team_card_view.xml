@@ -25,7 +25,7 @@
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                             <span style="color: #d9534f; font-weight: 600; font-size: 14px;">
-                                                <t t-esc="record.november_total.value"/>
+                                                <t t-esc="record.november_total.value"/> ₺
                                             </span>
                                         </a>
                                     </t>
@@ -34,7 +34,7 @@
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                             <span style="color: #5cb85c; font-weight: 600; font-size: 14px;">
-                                                <t t-esc="record.december_total.value"/>
+                                                <t t-esc="record.december_total.value"/> ₺
                                             </span>
                                         </a>
                                     </t>
