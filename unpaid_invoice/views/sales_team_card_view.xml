@@ -13,13 +13,19 @@
                             <div class="oe_kanban_card">
                                 <div class="oe_kanban_content">
                                     <t t-if="record.name.value == 'Kasım'">
-                                        <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="action-link"
+                                        <a name="unpaid_invoice.action_unpaid_invoice_nov" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                         </a>
                                     </t>
                                     <t t-if="record.name.value == 'Bugün'">
                                         <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="action-link"
+                                        style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
+                                            <h3><t t-esc="record.name.value"/></h3>
+                                        </a>
+                                    </t>
+                                    <t t-if="record.name.value == 'Aralık'">
+                                        <a name="unpaid_invoice.action_unpaid_invoice_dec" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                         </a>
@@ -678,15 +684,40 @@
         </record>
 
 
-        <!-- account.move today action -->
-        <record id="action_unpaid_invoice_month" model="ir.actions.act_window">
-            <field name="name">Unpaid Invoice Today</field>
+        <!-- account.move november action -->
+        <record id="action_unpaid_invoice_nov" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice November</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_account_move_custom_list"/>
             <field name="domain">[
                 ('invoice_date_due', '&gt;=', "2024-11-01"),
                 ('invoice_date_due', '&lt;=', context_today().strftime('%Y-%m-%d')),
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('line_ids.account_id.code',"=",120001),
+                ('amount_residual_signed',"!=",0),
+                ]</field>
+            <field name="context">{
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by': ['invoice_user_id','partner_id'],
+                }
+            </field> 
+            <field name="search_view_id" ref="account.view_out_invoice_tree"/>
+        </record>
+
+        <!-- account.move December action -->
+        <record id="action_unpaid_invoice_dec" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice November</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_move_custom_list"/>
+            <field name="domain">[
+                ('invoice_date_due', '&gt;=', "2024-12-01"),
+                ('invoice_date_due', '&lt;=', "2024-12-31"),
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
