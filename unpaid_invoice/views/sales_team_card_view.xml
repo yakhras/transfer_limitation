@@ -12,14 +12,14 @@
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card">
                                 <div class="oe_kanban_content">
-                                    <t t-if="record.name.value == 'Kasım'">
-                                        <a name="unpaid_invoice.action_unpaid_invoice_nov" type="action" class="action-link"
+                                    <t t-if="record.name.value == 'Bugün'">
+                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                         </a>
                                     </t>
-                                    <t t-if="record.name.value == 'Bugün'">
-                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="action-link"
+                                    <t t-if="record.name.value == 'Kasım'">
+                                        <a name="unpaid_invoice.action_unpaid_invoice_nov" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                         </a>
