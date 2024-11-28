@@ -692,7 +692,7 @@
             <field name="view_id" ref="view_account_move_custom_list"/>
             <field name="domain">[
                 ('invoice_date_due', '&gt;=', "2024-11-01"),
-                ('invoice_date_due', '&lt;=', context_today().strftime('%Y-%m-%d')),
+                ('invoice_date_due', '&lt;=', "2024-11-30"),
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
@@ -711,7 +711,7 @@
 
         <!-- account.move December action -->
         <record id="action_unpaid_invoice_dec" model="ir.actions.act_window">
-            <field name="name">Unpaid Invoice November</field>
+            <field name="name">Unpaid Invoice December</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_account_move_custom_list"/>
