@@ -12,7 +12,7 @@ class MonthRecord(models.Model):
 
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
-    @api.depends('name')  # Add any relevant triggers
+    
     def _compute_month_totals(self):
         month_to_date_map = {
             'November': ('2024-11-01', '2024-11-30'),
