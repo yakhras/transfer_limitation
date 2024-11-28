@@ -2,10 +2,10 @@
 <odoo>
     <data noupdate="0">
         <record id="month_january" model="month.record">
-            <field name="name">Today</field>
+            <field name="name">Bugün</field>
         </record>
         <record id="month_february" model="month.record">
-            <field name="name">This Month</field>
+            <field name="name">Kasım</field>
         </record>
     </data>
 </odoo>
