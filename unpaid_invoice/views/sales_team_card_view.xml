@@ -8,7 +8,8 @@
             <field name="arch" type="xml">
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
                     <field name="name" />
-                    <field name="total_residual_signed_december" />
+                    <field name="november_total" />
+                    <field name="december_total" />
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card">
@@ -30,7 +31,7 @@
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                             <span style="color: #d9534f; font-weight: 600; font-size: 14px;">
-                                                <t t-esc="record.total_residual_signed_december.value"/>
+                                                <t t-esc="record.december_total.value"/>
                                             </span>
                                         </a>
                                     </t>
