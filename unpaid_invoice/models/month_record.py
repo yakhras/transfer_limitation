@@ -11,6 +11,8 @@ class MonthRecord(models.Model):
    
     # Add fields for other months similarly...
     today_total = fields.Monetary(string="Today Total", compute="_compute_month_totals", currency_field='currency_id')
+    november_total_paid = fields.Monetary(string="November Paid Total", compute="_compute_november_totals", currency_field='currency_id')
+    november_total_unpaid = fields.Monetary(string="November Unpaid/Partial Total", compute="_compute_november_totals", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
     
@@ -53,3 +55,29 @@ class MonthRecord(models.Model):
             today_domain = base_domain + [('invoice_date_due', '=', today_date)]
             today_invoices = self.env['account.move'].search(today_domain)
             record.today_total = sum(today_invoices.mapped('amount_residual_signed'))
+
+
+    def _compute_november_totals(self):
+        for record in self:
+            if record.name == 'November':
+                # Define the date range for November
+                domain = [
+                    ('invoice_date_due', '>=', '2024-11-01'),
+                    ('invoice_date_due', '<=', '2024-11-30'),
+                    ('state', '=', 'posted'),
+                    ('move_type', 'in', ['out_invoice', 'out_refund']),
+                    ('line_ids.account_id.code', '=', '120001'),
+                ]
+
+                # Paid Invoices
+                paid_domain = domain + [('payment_state', '=', 'paid')]
+                paid_invoices = self.env['account.move'].search(paid_domain)
+                record.november_total_paid = sum(paid_invoices.mapped('amount_residual_signed'))
+
+                # Unpaid or Partial Invoices
+                unpaid_domain = domain + [('payment_state', 'in', ['not_paid', 'partial'])]
+                unpaid_invoices = self.env['account.move'].search(unpaid_domain)
+                record.november_total_unpaid = sum(unpaid_invoices.mapped('amount_residual_signed'))
+            else:
+                record.november_total_paid = 0
+                record.november_total_unpaid = 0
