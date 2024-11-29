@@ -128,7 +128,7 @@
                                     <t t-foreach="doc.order_line" t-as="line">
                                         <tr>
                                             <td style="border: 1px none black; padding: 6px;">
-                                                <span t-field="line.name"/>
+                                                <span t-esc="line.name.split(']', 1)[1].strip() if '[' in line.name and ']' in line.name else line.name"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
                                                 <span t-field="line.product_uom_qty"/>
