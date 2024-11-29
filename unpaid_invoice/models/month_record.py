@@ -14,6 +14,9 @@ class MonthRecord(models.Model):
     november_total_paid = fields.Monetary(string="November Paid Total", compute="_compute_november_totals", currency_field='currency_id')
     november_total_unpaid = fields.Monetary(string="November Unpaid/Partial Total", compute="_compute_november_totals", currency_field='currency_id')
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
+    november_total_immediate = fields.Monetary(string="November Immediate Total", compute="_compute_november_payment_terms", currency_field='currency_id')
+    november_total_transfer = fields.Monetary(string="November Transfer Total", compute="_compute_november_payment_terms", currency_field='currency_id')
+    november_total_check = fields.Monetary(string="November Check Total", compute="_compute_november_payment_terms", currency_field='currency_id')
 
     
     def _compute_month_totals(self):
@@ -81,3 +84,35 @@ class MonthRecord(models.Model):
             else:
                 record.november_total_paid = 0
                 record.november_total_unpaid = 0
+
+
+    def _compute_november_payment_terms(self):
+        for record in self:
+            if record.name == 'November':
+                # Define the date range for November
+                domain = [
+                    ('invoice_date_due', '>=', '2024-11-01'),
+                    ('invoice_date_due', '<=', '2024-11-30'),
+                    ('state', '=', 'posted'),
+                    ('move_type', 'in', ['out_invoice', 'out_refund']),
+                    ('line_ids.account_id.code', '=', '120001'),
+                ]
+
+                # Immediate Payment Term
+                immediate_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'immediate')]
+                immediate_invoices = self.env['account.move'].search(immediate_domain)
+                record.november_total_immediate = sum(immediate_invoices.mapped('amount_residual_signed'))
+
+                # Transfer Payment Term
+                transfer_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'transfer')]
+                transfer_invoices = self.env['account.move'].search(transfer_domain)
+                record.november_total_transfer = sum(transfer_invoices.mapped('amount_residual_signed'))
+
+                # Check Payment Term
+                check_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'check')]
+                check_invoices = self.env['account.move'].search(check_domain)
+                record.november_total_check = sum(check_invoices.mapped('amount_residual_signed'))
+            else:
+                record.november_total_immediate = 0
+                record.november_total_transfer = 0
+                record.november_total_check = 0

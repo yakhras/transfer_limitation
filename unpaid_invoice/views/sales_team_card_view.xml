@@ -11,8 +11,9 @@
                     <field name="name" />
                     <field name="november_total" />
                     <field name="december_total" />
-                    <field name="november_total_unpaid" />
-                    <field name="november_total_paid" />
+                    <field name="november_total_immediate" />
+                    <field name="november_total_transfer" />
+                    <field name="november_total_check" />
                     <field name="today_total" />
                     <templates>
                         <t t-name="kanban-box">
@@ -41,17 +42,17 @@
                                         <div style="margin-top: 10px; display: flex; justify-content: space-between;">
                                             <div style="color: #333; font-size: 12px; margin-right: 10px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
                                                 Peşin<span style="color: #d9534f; font-weight: 600; font-size: 14px; margin-left: 10px;">
-                                                    <t t-esc="record.november_total_paid.value"/> ₺
+                                                    <t t-esc="record.november_total_immediate.value"/> ₺
                                                 </span>
                                             </div>
                                             <div style="color: #333; font-size: 12px; margin-right: 10px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
                                                 Havale<span style="color: #d9534f; font-weight: 600; font-size: 14px; margin-left: 10px;">
-                                                    <t t-esc="record.november_total_unpaid.value"/> ₺
+                                                    <t t-esc="record.november_total_transfer.value"/> ₺
                                                 </span>
                                             </div>
                                             <div style="color: #333; font-size: 12px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
                                                 Çek<span style="color: #d9534f; font-weight: 600; font-size: 14px; margin-left: 10px;">
-                                                    <t t-esc="record.november_total.value"/> ₺
+                                                    <t t-esc="record.november_total_check.value"/> ₺
                                                 </span>
                                             </div>
                                         </div>
