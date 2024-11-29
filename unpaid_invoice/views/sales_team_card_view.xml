@@ -35,9 +35,9 @@
                                                 </span>
                                             </div>
                                             <!-- Additional Information Section -->
-                                            <div style="margin-top: 10px;">
-                                                <div style="color: #333; font-size: 12px; margin-bottom: 5px;">Random Info 1: Lorem ipsum dolor</div>
-                                                <div style="color: #333; font-size: 12px; margin-bottom: 5px;">Random Info 2: Sit amet consectetur</div>
+                                            <div style="margin-top: 10px; display: flex; justify-content: space-between;">
+                                                <div style="color: #333; font-size: 12px; margin-right: 10px;">Random Info 1: Lorem ipsum dolor</div>
+                                                <div style="color: #333; font-size: 12px; margin-right: 10px;">Random Info 2: Sit amet consectetur</div>
                                                 <div style="color: #333; font-size: 12px;">Random Info 3: Adipiscing elit</div>
                                             </div>
                                         </a>
