@@ -99,17 +99,17 @@ class MonthRecord(models.Model):
                 ]
 
                 # Immediate Payment Term
-                immediate_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'immediate')]
+                immediate_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'Immediate')]
                 immediate_invoices = self.env['account.move'].search(immediate_domain)
                 record.november_total_immediate = sum(immediate_invoices.mapped('amount_residual_signed'))
 
                 # Transfer Payment Term
-                transfer_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'transfer')]
+                transfer_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'Transfer')]
                 transfer_invoices = self.env['account.move'].search(transfer_domain)
                 record.november_total_transfer = sum(transfer_invoices.mapped('amount_residual_signed'))
 
                 # Check Payment Term
-                check_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'check')]
+                check_domain = domain + [('invoice_payment_term_id.name', 'ilike', 'Check')]
                 check_invoices = self.env['account.move'].search(check_domain)
                 record.november_total_check = sum(check_invoices.mapped('amount_residual_signed'))
             else:
