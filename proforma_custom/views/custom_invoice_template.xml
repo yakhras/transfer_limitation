@@ -95,7 +95,7 @@
                                         <span t-field="doc.partner_shipping_id.country_id.name"/>
                                     </span>
                                 </div>
-                                <div><strong>VAT:</strong> <span t-field="doc.partner_id.vat"/></div>
+                                <div><strong>VAT:</strong> <span t-esc="doc.partner_id.vat[2:] if doc.partner_id.vat and doc.partner_id.vat.startswith('TR') else doc.partner_id.vat"/></div>
                             </div>
 
                             <!-- Right Column (col-4) -->
