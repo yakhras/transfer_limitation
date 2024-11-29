@@ -30,3 +30,7 @@ class SaleOrder(models.Model):
                 order.expiration_days = f"{delta.days} Days"
             else:
                 order.expiration_days = "N/A"
+
+
+    def get_partner_name_title_case(self):
+        return self.partner_id.name.title() if self.partner_id.name else ''
