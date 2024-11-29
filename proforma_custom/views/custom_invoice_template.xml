@@ -71,7 +71,7 @@
                         <div class="row" style="margin-top: 20px;">
                             <!-- Left Column (col-8) -->
                             <div class="col-8">
-                                <div style="margin-bottom: 5px;"><strong>Firma: </strong><span t-esc="doc.partner_name_title_case"/></div>
+                                <div style="margin-bottom: 5px;"><strong>Firma: </strong><span t-field="doc.partner_name_title_case"/></div>
                                 <div style="margin-bottom: 5px;">
                                     <strong>Address: </strong>
                                     <span t-if="doc.partner_shipping_id.street">
