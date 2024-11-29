@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<odoo>
+    <data noupdate="0">
+        <record id="pay" model="payment.term">
+            <field name="name">Peşin</field>
+        </record>
+        <record id="transfer" model="payment.term">
+            <field name="name">Havale</field>
+        </record>
+        <record id="check" model="payment.term">
+            <field name="name">Çek</field>
+        </record>
+    </data>
+</odoo>

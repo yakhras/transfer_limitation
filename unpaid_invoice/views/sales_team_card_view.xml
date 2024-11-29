@@ -26,7 +26,7 @@
                                         </a>
                                     </t>
                                     <t t-if="record.name.value == 'Kasım'">
-                                        <a name="unpaid_invoice.action_unpaid_invoice_nov" type="action" class="action-link"
+                                        <a name="unpaid_invoice.action_payment_term_kanban" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                             <span style="color: #d9534f; font-weight: 600; font-size: 14px;">
@@ -50,6 +50,25 @@
                 </kanban>
             </field>
         </record>
+
+
+        <record id="view_payment_term_kanban" model="ir.ui.view">
+        <field name="name">payment.term.kanban</field>
+        <field name="model">payment.term</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_content">
+                                <h3><t t-esc="record.name"/></h3>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
 
 
 
@@ -408,6 +427,14 @@
             <field name="res_model">month.record</field>
             <field name="view_mode">kanban</field>
             <field name="view_id" ref="unpaid_invoice.view_month_record_kanban"/>
+        </record>
+
+        <!-- payment.term kanban action -->
+        <record id="action_payment_term_kanban" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoices Payment</field>
+            <field name="res_model">payment.term</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="unpaid_invoice.view_payment_term_kanban"/>
         </record>
 
 
