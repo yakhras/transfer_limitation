@@ -40,3 +40,6 @@ class SaleOrder(models.Model):
     def _compute_partner_name_title_case(self):
         for record in self:
             record.partner_name_title_case = record.partner_id.name.title() if record.partner_id.name else ''
+
+    def get_partner_name_title_case(self):
+        return self.partner_id.name.title() if self.partner_id.name else ''
