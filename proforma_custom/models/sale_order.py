@@ -1,6 +1,5 @@
 from odoo import models, fields, api
 from datetime import date, timedelta
-import unicodedata
 from odoo.exceptions import ValidationError
 
 
@@ -43,14 +42,4 @@ class SaleOrder(models.Model):
             record.partner_name_title_case = record.partner_id.name.title() if record.partner_id.name else ''
 
     def get_partner_name_title_case(self):
-        if not self.partner_id.name:
-            return ''
-
-        # Normalize the text to handle Turkish-specific cases
-        name = unicodedata.normalize('NFKD', self.partner_id.name)
-        name = name.replace('i', 'İ').replace('ı', 'I')  # Handle Turkish-specific i/ı cases
-        name = name.replace('ç', 'Ç').replace('ğ', 'Ğ')
-        name = name.replace('ö', 'Ö').replace('ş', 'Ş').replace('ü', 'Ü')
-
-        # Split and capitalize each word while respecting Turkish rules
-        return ' '.join(word.capitalize() for word in name.split())
+        return self.partner_id.name.title() if self.partner_id.name else ''
