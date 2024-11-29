@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_unpaid_invoice_manager,access_unpaid_invoice_manager,model_unpaid_invoice,point_of_sale.group_pos_manager,1,1,1,1
 access_month_record_manager,access_month_record_manager,model_month_record,point_of_sale.group_pos_manager,1,1,1,1
+access_payment_term_manager,access_payment_term_manager,model_payment_term,point_of_sale.group_pos_manager,1,1,1,1
