@@ -42,4 +42,10 @@ class SaleOrder(models.Model):
             record.partner_name_title_case = record.partner_id.name.title() if record.partner_id.name else ''
 
     def get_partner_name_title_case(self):
-        return self.partner_id.name.title() if self.partner_id.name else ''
+        if not self.partner_id.name:
+            return ''
+        # Replace Turkish-specific characters
+        name = self.partner_id.name.lower()  # Ensure all letters are lowercase
+        name = name.replace('i', 'İ').replace('ı', 'I').replace('ç', 'Ç').replace('ğ', 'Ğ')
+        name = name.replace('ö', 'Ö').replace('ş', 'Ş').replace('ü', 'Ü')
+        return ' '.join(word.capitalize() for word in name.split())
