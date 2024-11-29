@@ -56,12 +56,13 @@
         <field name="name">payment.term.kanban</field>
         <field name="model">payment.term</field>
         <field name="arch" type="xml">
-            <kanban>
+            <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
+                <field name="name" />
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_card">
                             <div class="oe_kanban_content">
-                                <h3><t t-esc="record.name"/></h3>
+                                <h3><t t-esc="record.name.value"/></h3>
                             </div>
                         </div>
                     </t>
