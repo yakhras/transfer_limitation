@@ -28,27 +28,25 @@
                                     <t t-if="record.name.value == 'Kasım'">
                                         <a name="unpaid_invoice.action_payment_term_kanban" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
-                                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                                <h3 style="margin: 0;"><t t-esc="record.name.value"/></h3>
-                                                <span style="color: #d9534f; font-weight: 600; font-size: 14px; margin-left: 10px;">
-                                                    <t t-esc="record.november_total.value"/> ₺
-                                                </span>
-                                            </div>
-                                            <!-- Additional Information Section -->
-                                            <div style="margin-top: 10px; display: flex; justify-content: space-between;">
-                                                <div style="color: #333; font-size: 12px; margin-right: 10px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
-                                                    Random Info 1: Lorem ipsum dolor
-                                                </div>
-                                                <div style="color: #333; font-size: 12px; margin-right: 10px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
-                                                    Random Info 2: Sit amet consectetur
-                                                </div>
-                                                <div style="color: #333; font-size: 12px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
-                                                    Random Info 3: Adipiscing elit
-                                                </div>
-                                            </div>
-
+                                            <h3><t t-esc="record.name.value"/></h3>
+                                            <span style="color: #d9534f; font-weight: 600; font-size: 14px;">
+                                                <t t-esc="record.november_total.value"/> ₺
+                                            </span>
                                         </a>
+                                        <!-- Additional Information -->
+                                        <div style="margin-top: 10px; display: flex; justify-content: space-between;">
+                                            <div style="color: #333; font-size: 12px; margin-right: 10px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
+                                                Random Info 1: Lorem ipsum dolor
+                                            </div>
+                                            <div style="color: #333; font-size: 12px; margin-right: 10px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
+                                                Random Info 2: Sit amet consectetur
+                                            </div>
+                                            <div style="color: #333; font-size: 12px; border: 1px solid #ccc; padding: 5px; border-radius: 4px;">
+                                                Random Info 3: Adipiscing elit
+                                            </div>
+                                        </div>
                                     </t>
+
                                     <t t-if="record.name.value == 'Aralık'">
                                         <a name="unpaid_invoice.action_unpaid_invoice_dec" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
