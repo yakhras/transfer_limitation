@@ -6,6 +6,8 @@ class MonthRecord(models.Model):
     _description = 'Month Record'
 
     name = fields.Char('Month Name', required=True)
+    totals = fields.Json(string="Totals", compute="_compute_totals")
+
     november_total = fields.Monetary(string="January Total", compute="_compute_month_totals", currency_field='currency_id')
     december_total = fields.Monetary(string="February Total", compute="_compute_month_totals", currency_field='currency_id')
    
@@ -113,3 +115,50 @@ class MonthRecord(models.Model):
             check_invoices = self.env['account.move'].search(check_domain)
             record.november_total_check = sum(check_invoices.mapped('amount_residual_signed'))
         
+
+    def _compute_totals(self):
+        today = datetime.today()
+        week_start = today - timedelta(days=today.weekday() + 1)  # Last Saturday
+        week_end = week_start + timedelta(days=6)  # Next Friday
+        month_start = today.replace(day=1)
+        month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
+
+        for record in self:
+            record.totals = {
+                "today": {
+                    "immediate": self._calculate_total(today, today, 'Immediate'),
+                    "transfer": self._calculate_total(today, today, 'Transfer'),
+                    "check": self._calculate_total(today, today, 'Check'),
+                },
+                "this_week": {
+                    "immediate": self._calculate_total(week_start, week_end, 'Immediate'),
+                    "transfer": self._calculate_total(week_start, week_end, 'Transfer'),
+                    "check": self._calculate_total(week_start, week_end, 'Check'),
+                },
+                "this_month": {
+                    "immediate": self._calculate_total(month_start, month_end, 'Immediate'),
+                    "transfer": self._calculate_total(month_start, month_end, 'Transfer'),
+                    "check": self._calculate_total(month_start, month_end, 'Check'),
+                },
+                "other": {
+                    "immediate": self._calculate_total(month_end + timedelta(days=1), None, 'Immediate'),
+                    "transfer": self._calculate_total(month_end + timedelta(days=1), None, 'Transfer'),
+                    "check": self._calculate_total(month_end + timedelta(days=1), None, 'Check'),
+                }
+            }
+
+    def _calculate_total(self, start_date, end_date, term):
+        domain = [
+            ('invoice_date_due', '>=', start_date),
+            ('state', '=', 'posted'),
+            ('move_type', 'in', ['out_invoice', 'out_refund']),
+            ('payment_state', 'in', ['not_paid', 'partial']),
+            ('line_ids.account_id.code', '=', '120001'),
+            ('amount_residual_signed', '!=', 0),
+            ('invoice_payment_term_id.name', 'ilike', term)
+        ]
+        if end_date:
+            domain.append(('invoice_date_due', '<=', end_date))
+
+        invoices = self.env['account.move'].search(domain)
+        return sum(invoices.mapped('amount_residual_signed'))
