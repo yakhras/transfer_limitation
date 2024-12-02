@@ -17,8 +17,9 @@
                                     <t t-esc="record.name.value" />
                                 </h3>
                                 <div>
-                                    <!-- Card Sections -->
-                                    <t t-foreach="record.totals.value.items()" t-as="section">
+                                    <!-- Deserialize and display totals -->
+                                    <t t-set="totals" t-value="json.loads(record.totals.value or '{}')" />
+                                    <t t-foreach="totals.items()" t-as="section">
                                         <div style="margin-bottom: 10px;">
                                             <h4 style="font-size: 16px; margin-bottom: 5px; color: #333;">
                                                 <t t-esc="section[0].capitalize()" />
@@ -43,6 +44,7 @@
                 </kanban>
             </field>
         </record>
+
 
 
         <!-- month.record kanban view -->

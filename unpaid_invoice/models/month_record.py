@@ -1,12 +1,13 @@
 from odoo import models, fields
-from datetime import datetime
+from datetime import datetime, timedelta
+import json
 
 class MonthRecord(models.Model):
     _name = 'month.record'
     _description = 'Month Record'
 
     name = fields.Char('Month Name', required=True)
-    totals = fields.Json(string="Totals", compute="_compute_totals")
+    totals = fields.Text(string="Totals", compute="_compute_totals")
 
     november_total = fields.Monetary(string="January Total", compute="_compute_month_totals", currency_field='currency_id')
     december_total = fields.Monetary(string="February Total", compute="_compute_month_totals", currency_field='currency_id')
@@ -124,7 +125,7 @@ class MonthRecord(models.Model):
         month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
 
         for record in self:
-            record.totals = {
+            totals_data = {
                 "today": {
                     "immediate": self._calculate_total(today, today, 'Immediate'),
                     "transfer": self._calculate_total(today, today, 'Transfer'),
@@ -146,6 +147,8 @@ class MonthRecord(models.Model):
                     "check": self._calculate_total(month_end + timedelta(days=1), None, 'Check'),
                 }
             }
+            # Serialize totals to JSON
+            record.totals = json.dumps(totals_data)
 
     def _calculate_total(self, start_date, end_date, term):
         domain = [
