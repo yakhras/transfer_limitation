@@ -18,7 +18,7 @@
                                 </h3>
                                 <div>
                                     <!-- Deserialize and display totals -->
-                                    <t t-set="totals" t-value="json.loads(record.totals.value or '{}')" />
+                                    <t t-set="totals" t-value="record.totals.value" />
                                     <t t-foreach="totals.items()" t-as="section">
                                         <div style="margin-bottom: 10px;">
                                             <h4 style="font-size: 16px; margin-bottom: 5px; color: #333;">
