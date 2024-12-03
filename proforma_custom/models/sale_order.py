@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from datetime import date, timedelta
 from odoo.exceptions import ValidationError
+import re
 
 
 
@@ -17,11 +18,12 @@ class SaleOrder(models.Model):
 
     def _compute_has_note(self):
         for record in self:
-            # Check if `note` has meaningful content (ignoring whitespace and empty HTML tags)
             if record.note:
-                record.has_note == True
+                # Remove HTML tags and check for meaningful text
+                stripped_note = re.sub('<[^<]+?>', '', record.note)  # Remove HTML tags
+                record.has_note = bool(stripped_note.strip())  # Check if non-whitespace content exists
             else:
-                record.has_note == False
+                record.has_note = False
 
 
     def _compute_expiration_days(self):
