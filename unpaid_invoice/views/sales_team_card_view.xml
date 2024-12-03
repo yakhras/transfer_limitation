@@ -17,8 +17,8 @@
                                     <t t-esc="record.name.value" />
                                     <t t-esc="record.totals.value" />
                                 </h3>
-                                <div>
-                                    <!-- Deserialize and display totals -->
+                                <!-- <div>
+                                    Deserialize and display totals
                                     <t t-set="totals" t-value="record.totals.value" />
                                     <t t-foreach="totals.items()" t-as="section">
                                         <div style="margin-bottom: 10px;">
@@ -38,7 +38,7 @@
                                             </div>
                                         </div>
                                     </t>
-                                </div>
+                                </div> -->
                             </div>
                         </t>
                     </templates>
