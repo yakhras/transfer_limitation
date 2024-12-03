@@ -22,17 +22,17 @@
                                     <t t-set="total" t-value="eval(record.totals)" />
                                     <t t-set="categories" t-value="['today', 'this_week', 'this_month', 'other']" />
                                     <t t-set="methods" t-value="['immediate', 'transfer', 'check']" />
-                                        <t t-foreach="categories" t-as="category">
-                                            <div>
-                                                <h3><t t-esc="category.capitalize()" /></h3>
-                                                <t t-foreach="methods" t-as="method">
-                                                    <div>
-                                                        <span><t t-esc="method.capitalize()" />: </span>
-                                                        <span><t t-esc="total[category][method]" /></span>
-                                                    </div>
-                                                </t>
-                                            </div>
-                                        </t>
+                                    <t t-foreach="categories" t-as="category">
+                                        <div>
+                                            <h3><t t-esc="category" /></h3>
+                                            <t t-foreach="methods" t-as="method">
+                                                <div>
+                                                    <span><t t-esc="method" />: </span>
+                                                    <span><t t-esc="total[category][method]" /></span>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
                                 </div>
                             </div>
                         </t>
