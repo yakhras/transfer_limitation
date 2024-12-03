@@ -19,25 +19,20 @@
                                 </h3>
                                 <div>
                                     <!-- Deserialize and display totals -->
-                                    <t t-set="totals" t-value="eval(record.totals_data.raw_value)" />
-                                    <!-- <t t-foreach="totals.items()" t-as="section"> -->
-                                        <div style="margin-bottom: 10px;">
-                                            <h4 style="font-size: 16px; margin-bottom: 5px; color: #333;">
-                                                <t t-esc="section[0].capitalize()" />
-                                            </h4>
-                                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-                                                <div style="background-color: #f5f5f5; padding: 5px 10px; border-radius: 5px;">
-                                                    Immediate: <span><t t-esc="totals['today']['immediate']" /> ₺</span>
-                                                </div>
-                                                <div style="background-color: #f5f5f5; padding: 5px 10px; border-radius: 5px;">
-                                                    Transfer: <span><t t-esc="totals['today']['transfer']" /> ₺</span>
-                                                </div>
-                                                <div style="background-color: #f5f5f5; padding: 5px 10px; border-radius: 5px;">
-                                                    Check: <span><t t-esc="totals['today']['check']" /> ₺</span>
-                                                </div>
+                                    <t t-set="total" t-value="eval(record.totals)" />
+                                    <t t-set="categories" t-value="['today', 'this_week', 'this_month', 'other']" />
+                                    <t t-set="methods" t-value="['immediate', 'transfer', 'check']" />
+                                        <t t-foreach="categories" t-as="category">
+                                            <div>
+                                                <h3><t t-esc="category.capitalize()" /></h3>
+                                                <t t-foreach="methods" t-as="method">
+                                                    <div>
+                                                        <span><t t-esc="method.capitalize()" />: </span>
+                                                        <span><t t-esc="total[category][method]" /></span>
+                                                    </div>
+                                                </t>
                                             </div>
-                                        </div>
-                                    <!-- </t> -->
+                                        </t>
                                 </div>
                             </div>
                         </t>
