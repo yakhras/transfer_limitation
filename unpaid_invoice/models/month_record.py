@@ -148,8 +148,7 @@ class MonthRecord(models.Model):
                 }
             }
             # Serialize totals to JSON
-            # record.totals = json.dumps(totals_data)
-        return totals_data
+            record.totals = json.dumps(totals_data)
 
     def _calculate_total(self, start_date, end_date, term):
         domain = [
