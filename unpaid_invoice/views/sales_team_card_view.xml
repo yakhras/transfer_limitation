@@ -17,28 +17,28 @@
                                     <t t-esc="record.name.value" />
                                     <t t-esc="record.totals.value" />
                                 </h3>
-                                <!-- <div>
-                                    Deserialize and display totals
-                                    <t t-set="totals" t-value="record.totals.value" />
-                                    <t t-foreach="totals.items()" t-as="section">
+                                <div>
+                                    <!-- Deserialize and display totals -->
+                                    <t t-set="totals" t-value="eval(record.totals_data.raw_value)" />
+                                    <!-- <t t-foreach="totals.items()" t-as="section"> -->
                                         <div style="margin-bottom: 10px;">
                                             <h4 style="font-size: 16px; margin-bottom: 5px; color: #333;">
                                                 <t t-esc="section[0].capitalize()" />
                                             </h4>
                                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
                                                 <div style="background-color: #f5f5f5; padding: 5px 10px; border-radius: 5px;">
-                                                    Immediate: <span><t t-esc="section[1]['immediate']" /> ₺</span>
+                                                    Immediate: <span><t t-esc="totals['today']['immediate']" /> ₺</span>
                                                 </div>
                                                 <div style="background-color: #f5f5f5; padding: 5px 10px; border-radius: 5px;">
-                                                    Transfer: <span><t t-esc="section[1]['transfer']" /> ₺</span>
+                                                    Transfer: <span><t t-esc="totals['today']['transfer']" /> ₺</span>
                                                 </div>
                                                 <div style="background-color: #f5f5f5; padding: 5px 10px; border-radius: 5px;">
-                                                    Check: <span><t t-esc="section[1]['check']" /> ₺</span>
+                                                    Check: <span><t t-esc="totals['today']['check']" /> ₺</span>
                                                 </div>
                                             </div>
                                         </div>
-                                    </t>
-                                </div> -->
+                                    <!-- </t> -->
+                                </div>
                             </div>
                         </t>
                     </templates>
