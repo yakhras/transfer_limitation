@@ -15,6 +15,7 @@
                             <div class="oe_kanban_card" style="border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
                                 <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
                                     <t t-esc="record.name.value" />
+                                    <t t-esc="record.totals.value" />
                                 </h3>
                                 <div>
                                     <!-- Deserialize and display totals -->
