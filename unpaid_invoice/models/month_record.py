@@ -52,9 +52,6 @@ class MonthRecord(models.Model):
 
 
     def _calculate_total(self, start_date, end_date, term):
-        """
-        Replace this method with logic to calculate totals based on dates and payment terms.
-        """
         
         domain = [('invoice_date_due', "=", start_date),
                   ('invoice_payment_term_id.name', "ilike", term),
@@ -66,4 +63,4 @@ class MonthRecord(models.Model):
                   ]
         if end_date:
             domain.append(('invoice_date_due', "=", end_date))
-        return sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
+        return sum(self.env['account.move'].search(domain).mapped('amount_residual'))
