@@ -56,7 +56,7 @@ class MonthRecord(models.Model):
         Replace this method with logic to calculate totals based on dates and payment terms.
         """
         
-        domain = [('invoice_date_due', ">=", start_date),
+        domain = [('invoice_date_due', "=", start_date),
                   ('invoice_payment_term_id.name', "ilike", term),
                   ('state', "=", 'posted'),
                   ('move_type', "in", ['out_invoice', 'out_refund']),
@@ -65,5 +65,5 @@ class MonthRecord(models.Model):
                   ('amount_residual_signed',"!=",0),
                   ]
         if end_date:
-            domain.append(('invoice_date_due', "<=", end_date))
+            domain.append(('invoice_date_due', "=", end_date))
         return sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
