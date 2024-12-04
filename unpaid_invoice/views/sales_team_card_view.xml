@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <kanban class="oe_kanban_dashboard" create="false">
                     <field name="name" />
-                    <field name="today_transfer" />
+                    <field name="today_check" />
                     <!-- <field name="this_month_check" /> -->
                     <templates>
                         <t t-name="kanban-box">
@@ -18,7 +18,7 @@
                                 </h3>
                                 <div>
                                     <div>
-                                        <h3><t t-esc="record.today_transfer.value" /></h3>
+                                        <h3><t t-esc="record.today_check.value" /></h3>
                                         <!-- <h3><t t-esc="record.this_month_check.value" /></h3> -->
                                     </div>
                                 </div>
