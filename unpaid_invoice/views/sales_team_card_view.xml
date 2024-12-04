@@ -23,7 +23,7 @@
                                     <t t-set="methods" t-value="['immediate', 'transfer', 'check']" />
                                     <t t-foreach="categories" t-as="category">
                                         <div>
-                                            <h3><t t-esc="category" /></h3>
+                                            <h3><t t-esc="total" /></h3>
                                             <!-- <t t-foreach="methods" t-as="method">
                                                 <div>
                                                     <span><t t-esc="method" />: </span>
