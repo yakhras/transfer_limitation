@@ -1,5 +1,5 @@
 from odoo import models, fields
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 import json
 
 class MonthRecord(models.Model):
@@ -27,7 +27,7 @@ class MonthRecord(models.Model):
  
 
     def _compute_totals(self):
-        today = datetime.today()
+        today = date.today()
         week_start = today - timedelta(days=today.weekday() + 1)  # Last Saturday
         week_end = week_start + timedelta(days=6)  # Next Friday
         month_start = today.replace(day=1)
