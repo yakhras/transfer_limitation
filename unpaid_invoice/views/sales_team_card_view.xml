@@ -24,12 +24,12 @@
                                     <t t-foreach="categories" t-as="category">
                                         <div>
                                             <h3><t t-esc="category" /></h3>
-                                            <t t-foreach="methods" t-as="method">
+                                            <!-- <t t-foreach="methods" t-as="method">
                                                 <div>
                                                     <span><t t-esc="method" />: </span>
                                                     <span><t t-esc="total[category][method]" /></span>
                                                 </div>
-                                            </t>
+                                            </t> -->
                                         </div>
                                     </t>
                                 </div>
