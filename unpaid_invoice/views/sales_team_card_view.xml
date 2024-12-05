@@ -28,20 +28,34 @@
                                     <t t-esc="record.name.value" />
                                 </h3>
                                 <div>
-                                    <div>
-                                        <h3><t t-esc="record.today_immediate.value" /></h3>
-                                        <h3><t t-esc="record.today_transfer.value" /></h3>
-                                        <h3><t t-esc="record.today_check.value" /></h3>
-                                        <h3><t t-esc="record.this_week_immediate.value" /></h3>
-                                        <h3><t t-esc="record.this_week_transfer.value" /></h3>
-                                        <h3><t t-esc="record.this_week_check.value" /></h3>
-                                        <h3><t t-esc="record.this_month_immediate.value" /></h3>
-                                        <h3><t t-esc="record.this_month_transfer.value" /></h3>
-                                        <h3><t t-esc="record.this_month_check.value" /></h3>
-                                        <h3><t t-esc="record.other_immediate.value" /></h3>
-                                        <h3><t t-esc="record.other_transfer.value" /></h3>
-                                        <h3><t t-esc="record.other_check.value" /></h3>
-                                    </div>
+                                    <t t-if="record.name.value == 'today'">
+                                        <div>
+                                            <h3><t t-esc="record.today_immediate.value" /></h3>
+                                            <h3><t t-esc="record.today_transfer.value" /></h3>
+                                            <h3><t t-esc="record.today_check.value" /></h3>
+                                        </div>
+                                    </t>
+                                    <t t-if="record.name.value == 'this_week'">
+                                        <div>
+                                            <h3><t t-esc="record.this_week_immediate.value" /></h3>
+                                            <h3><t t-esc="record.this_week_transfer.value" /></h3>
+                                            <h3><t t-esc="record.this_week_check.value" /></h3>
+                                        </div>
+                                    </t>
+                                    <t t-if="record.name.value == 'this_month'">
+                                        <div>
+                                            <h3><t t-esc="record.this_month_immediate.value" /></h3>
+                                            <h3><t t-esc="record.this_month_transfer.value" /></h3>
+                                            <h3><t t-esc="record.this_month_check.value" /></h3>
+                                        </div>
+                                    </t>
+                                    <t t-if="record.name.value == 'other'">
+                                        <div>
+                                            <h3><t t-esc="record.other_immediate.value" /></h3>
+                                            <h3><t t-esc="record.other_transfer.value" /></h3>
+                                            <h3><t t-esc="record.other_check.value" /></h3>
+                                        </div>
+                                    </t>
                                 </div>
                             </div>
                         </t>
