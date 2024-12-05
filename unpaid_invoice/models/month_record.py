@@ -52,14 +52,15 @@ class MonthRecord(models.Model):
 
 
     def _calculate_total(self):
+        for record in self:
         
-        domain = [('invoice_date_due', ">=", "2024-12-01"),
-                  ('invoice_date_due', "<=", "2024-12-31"),
-                  ('invoice_payment_term_id.name', "ilike", 'Transfer'),
-                  ('state', "=", 'posted'),
-                  ('move_type', "in", ['out_invoice', 'out_refund']),
-                  ('payment_state', "in", ['not_paid', 'partial']),
-                  ('line_ids.account_id.code',"=",120001),
-                  ('amount_residual_signed',"!=",0),
-                  ]
-        return sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
+            domain = [('invoice_date_due', ">=", "2024-12-01"),
+                    ('invoice_date_due', "<=", "2024-12-31"),
+                    ('invoice_payment_term_id.name', "ilike", 'Transfer'),
+                    ('state', "=", 'posted'),
+                    ('move_type', "in", ['out_invoice', 'out_refund']),
+                    ('payment_state', "in", ['not_paid', 'partial']),
+                    ('line_ids.account_id.code',"=",120001),
+                    ('amount_residual_signed',"!=",0),
+                    ]
+            record.this_month_transfer = sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
