@@ -62,6 +62,6 @@ class MonthRecord(models.Model):
                     ('line_ids.account_id.code',"=",120001),
                     ('amount_residual_signed',"!=",0),
                     ]
-            recs = self.env['account.move'].search(domain)
+            recs = self.env['account.move'].browse(domain)
             record.this_month_transfer = self.env['account.move'].search_count(recs)
             
