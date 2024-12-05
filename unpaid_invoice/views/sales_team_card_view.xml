@@ -27,7 +27,7 @@
                                 <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
                                     <t t-esc="record.name.value" />
                                 </h3>
-                                <div>
+                                <div style="display: flex;">
                                     <t t-if="record.name.value == 'today'">
                                         <div>
                                             <h3><t t-esc="record.today_immediate.value" /></h3>
