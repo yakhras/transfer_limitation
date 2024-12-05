@@ -30,29 +30,23 @@
                                 <div style="display: flex;">
                                     <t t-if="record.name.value == 'Today'">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                                            <thead>
-                                                <tr style="border-bottom: 2px solid #007BFF;">
-                                                    <th style="padding: 8px; font-size: 16px; color: #333;">Payment Term</th>
-                                                    <th style="padding: 8px; font-size: 16px; color: #333;">Amount (₺)</th>
-                                                </tr>
-                                            </thead>
                                             <tbody>
                                                 <tr>
                                                     <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">
-                                                        <t t-esc="record.today_immediate.value" />
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.today_immediate.value" /> ₺
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">
-                                                        <t t-esc="record.today_transfer.value" />
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.today_transfer.value" /> ₺
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">
-                                                        <t t-esc="record.today_check.value" />
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.today_check.value" /> ₺
                                                     </td>
                                                 </tr>
                                             </tbody>
