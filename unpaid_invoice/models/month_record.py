@@ -63,4 +63,4 @@ class MonthRecord(models.Model):
                     ]
             if end_date:
                 domain.append(('invoice_date_due', "=", end_date))
-            record.this_month_transfer = sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
+            return sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
