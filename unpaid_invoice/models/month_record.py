@@ -18,7 +18,7 @@ class MonthRecord(models.Model):
     this_week_check = fields.Float(string="This Week Check", compute="_compute_totals", store=True)
 
     this_month_immediate = fields.Float(string="This Month Immediate", compute="_compute_totals", store=True)
-    this_month_transfer = fields.Float(string="This Month Transfer", compute="_compute_totals", store=True)
+    this_month_transfer = fields.Float(string="This Month Transfer", compute="_calculate_total", store=True)
     this_month_check = fields.Float(string="This Month Check", compute="_compute_totals", store=True)
 
     other_immediate = fields.Float(string="Other Immediate", compute="_compute_totals", store=True)
@@ -51,16 +51,15 @@ class MonthRecord(models.Model):
             # record.other_check = self._calculate_total(month_end + timedelta(days=1), None, 'Check')
 
 
-    def _calculate_total(self, start_date, end_date, term):
+    def _calculate_total(self):
         
-        domain = [('invoice_date_due', "=", start_date),
-                  ('invoice_payment_term_id.name', "ilike", term),
+        domain = [('invoice_date_due', ">=", "2024-12-01"),
+                  ('invoice_date_due', "<=", "2024-12-31"),
+                  ('invoice_payment_term_id.name', "ilike", 'Transfer'),
                   ('state', "=", 'posted'),
                   ('move_type', "in", ['out_invoice', 'out_refund']),
                   ('payment_state', "in", ['not_paid', 'partial']),
                   ('line_ids.account_id.code',"=",120001),
                   ('amount_residual_signed',"!=",0),
                   ]
-        if end_date:
-            domain.append(('invoice_date_due', "=", end_date))
-        return sum(self.env['account.move'].search(domain).mapped('amount_residual'))
+        return sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
