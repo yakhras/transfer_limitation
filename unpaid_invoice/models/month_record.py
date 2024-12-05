@@ -18,7 +18,7 @@ class MonthRecord(models.Model):
     this_week_check = fields.Float(string="This Week Check", compute="_compute_totals", store=True)
 
     this_month_immediate = fields.Float(string="This Month Immediate", compute="_compute_totals", store=True)
-    this_month_transfer = fields.Integer(string="This Month Transfer", compute="_calculate_total", store=True)
+    this_month_transfer = fields.Integer(string="This Month Transfer", compute="_calculate_total")
     this_month_check = fields.Float(string="This Month Check", compute="_compute_totals", store=True)
 
     other_immediate = fields.Float(string="Other Immediate", compute="_compute_totals", store=True)
@@ -56,6 +56,7 @@ class MonthRecord(models.Model):
             domain = [
                 ('invoice_date_due', ">=", "2024-12-01"),
                 ('invoice_date_due', "<=", "2024-12-31"),
+                ('invoice_payment_term_id.name', "ilike", 'Transfer'),
                 ('state', "=", 'posted'),
                 ('move_type', "in", ['out_invoice', 'out_refund']),
                 ('payment_state', "in", ['not_paid', 'partial']),
