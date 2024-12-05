@@ -28,28 +28,28 @@
                                     <t t-esc="record.name.value" />
                                 </h3>
                                 <div style="display: flex;">
-                                    <t t-if="record.name.value == 'today'">
+                                    <t t-if="record.name.value == 'Today'">
                                         <div>
                                             <h3>Immediate: <t t-esc="record.today_immediate.value" /> ₺</h3>
                                             <h3>Transfer: <t t-esc="record.today_transfer.value" /> ₺</h3>
                                             <h3>Check: <t t-esc="record.today_check.value" /> ₺</h3>
                                         </div>
                                     </t>
-                                    <t t-if="record.name.value == 'this_week'">
+                                    <t t-if="record.name.value == 'This week'">
                                         <div>
                                             <h3>Immediate: <t t-esc="record.this_week_immediate.value" /> ₺</h3>
                                             <h3>Transfer: <t t-esc="record.this_week_transfer.value" /> ₺</h3>
                                             <h3>Check: <t t-esc="record.this_week_check.value" /> ₺</h3>
                                         </div>
                                     </t>
-                                    <t t-if="record.name.value == 'this_month'">
+                                    <t t-if="record.name.value == 'This month'">
                                         <div>
                                             <h3>Immediate: <t t-esc="record.this_month_immediate.value" /> ₺</h3>
                                             <h3>Transfer: <t t-esc="record.this_month_transfer.value" /> ₺</h3>
                                             <h3>Check: <t t-esc="record.this_month_check.value" /> ₺</h3>
                                         </div>
                                     </t>
-                                    <t t-if="record.name.value == 'other'">
+                                    <t t-if="record.name.value == 'Other'">
                                         <div>
                                             <h3>Immediate: <t t-esc="record.other_immediate.value" /> ₺</h3>
                                             <h3>Transfer: <t t-esc="record.other_transfer.value" /> ₺</h3>
