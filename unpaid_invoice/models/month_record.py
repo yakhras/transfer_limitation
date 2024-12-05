@@ -56,7 +56,6 @@ class MonthRecord(models.Model):
             domain = [
                 ('invoice_date_due', ">=", "2024-12-01"),
                 ('invoice_date_due', "<=", "2024-12-31"),
-                ('invoice_payment_term_id.name', "ilike", 'Transfer'),
                 ('state', "=", 'posted'),
                 ('move_type', "in", ['out_invoice', 'out_refund']),
                 ('payment_state', "in", ['not_paid', 'partial']),
