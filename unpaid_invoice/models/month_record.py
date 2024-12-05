@@ -9,7 +9,7 @@ class MonthRecord(models.Model):
     name = fields.Char('Month Name', required=True)
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
-    today_immediate = fields.Monetary(string="Today Immediate", compute="_compute_totals")
+    today_immediate = fields.Monetary(string="Today Immediate", compute="_compute_totals", currency=currency_id)
     today_transfer = fields.Monetary(string="Today Transfer", compute="_compute_totals")
     today_check = fields.Monetary(string="Today Check", compute="_compute_totals")
 
