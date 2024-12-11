@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, _
 from datetime import date, timedelta
 import json
 
@@ -71,9 +71,14 @@ class MonthRecord(models.Model):
         week_start = today - timedelta(days=today.weekday() + 1)  # Previous Saturday
         week_end = week_start + timedelta(days=6)  # Following Friday
 
-        action = self.env.ref('unpaid_invoice.action_unpaid_invoice_nov')  # Reference your action
-        if action:
-            action['domain'] = [
+        action = {
+            "name": _("Unpaid Invoice November"),
+            "type": "ir.actions.act_window",
+            "res_model": "account.move",
+            "view_mode": "tree,form",
+            "view_id": self.env.ref("account_move.view_account_move_custom_list").id,
+            "target": "current",
+            "domain":[
                 ('invoice_date_due', '>=', week_start.strftime('%Y-%m-%d')),
                 ('invoice_date_due', '<=', week_end.strftime('%Y-%m-%d')),
                 ('state', '=', 'posted'),
@@ -81,5 +86,15 @@ class MonthRecord(models.Model):
                 ('payment_state', 'in', ['not_paid', 'partial']),
                 ('line_ids.account_id.code',"=",120001),
                 ('amount_residual_signed',"!=",0),
-            ]
+            ],
+            "context": {
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by': ['invoice_user_id','partner_id'],
+                },
+            "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
+        }
         return action
+
+

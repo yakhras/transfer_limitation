@@ -884,7 +884,7 @@
 
 
         <!-- account.move november action -->
-        <record id="action_unpaid_invoice_nov" model="ir.actions.act_window">
+        <!-- <record id="action_unpaid_invoice_nov" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice November</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
@@ -897,7 +897,7 @@
                 }
             </field> 
             <field name="search_view_id" ref="account.view_out_invoice_tree"/>
-        </record>
+        </record> -->
 
         <!-- account.move December action -->
         <record id="action_unpaid_invoice_dec" model="ir.actions.act_window">
