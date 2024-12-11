@@ -64,3 +64,24 @@ class MonthRecord(models.Model):
             domain.append(('invoice_date_due', "<=", end_date))
         res = sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
         return res
+    
+
+    def action_saturday_to_friday(self):
+        today = date.today()
+        weekday = today.weekday()
+        saturday = today - timedelta(days=weekday + 1)  # Previous Saturday
+        friday = saturday + timedelta(days=6)  # Following Friday
+
+        action = self.env.ref('unpaid_invoice.action_unpaid_invoice_nov')  # Reference your action
+        if action:
+            action['domain'] = [
+                ('invoice_date_due', '>=', saturday.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '<=', friday.strftime('%Y-%m-%d')),
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('line_ids.account_id.code',"=",120001),
+                ('amount_residual_signed',"!=",0),
+                # Add other domain filters as needed
+            ]
+        return action

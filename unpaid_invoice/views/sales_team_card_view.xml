@@ -77,28 +77,30 @@
                                         </table>
                                     </t>
                                     <t t-if="record.name.value == 'This month'">
-                                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                                            <tbody>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.this_month_immediate.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.this_month_transfer.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.this_month_check.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <a name="unpaid_invoice.action_unpaid_invoice_nov" type="action">
+                                            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                            <t t-esc="record.this_month_immediate.value" /> ₺
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                            <t t-esc="record.this_month_transfer.value" /> ₺
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                            <t t-esc="record.this_month_check.value" /> ₺
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </a>
                                     </t>
                                     <t t-if="record.name.value == 'Other'">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -887,15 +889,6 @@
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_account_move_custom_list"/>
-            <field name="domain">[
-                ('invoice_date_due', '&gt;=', "2024-11-01"),
-                ('invoice_date_due', '&lt;=', "2024-11-30"),
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-                ('line_ids.account_id.code',"=",120001),
-                ('amount_residual_signed',"!=",0),
-                ]</field>
             <field name="context">{
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
