@@ -82,6 +82,5 @@ class MonthRecord(models.Model):
                 ('payment_state', 'in', ['not_paid', 'partial']),
                 ('line_ids.account_id.code',"=",120001),
                 ('amount_residual_signed',"!=",0),
-                # Add other domain filters as needed
             ]
         return action
