@@ -68,15 +68,14 @@ class MonthRecord(models.Model):
 
     def action_saturday_to_friday(self):
         today = date.today()
-        weekday = today.weekday()
-        saturday = today - timedelta(days=weekday + 1)  # Previous Saturday
-        friday = saturday + timedelta(days=6)  # Following Friday
+        week_start = today - timedelta(days=today.weekday() + 1)  # Previous Saturday
+        week_end = week_start + timedelta(days=6)  # Following Friday
 
         action = self.env.ref('unpaid_invoice.action_unpaid_invoice_nov')  # Reference your action
         if action:
             action['domain'] = [
-                ('invoice_date_due', '>=', saturday.strftime('%Y-%m-%d')),
-                ('invoice_date_due', '<=', friday.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '>=', week_start.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '<=', week_end.strftime('%Y-%m-%d')),
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
