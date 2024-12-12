@@ -77,7 +77,7 @@
                                         </table>
                                     </t>
                                     <t t-if="record.name.value == 'This month'">
-                                        <a name="unpaid_invoice.action_unpaid_invoice_nov" type="action">
+                                        <a name="action_saturday_to_friday" type="action">
                                             <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                                 <tbody>
                                                     <tr>
