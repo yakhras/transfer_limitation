@@ -53,7 +53,7 @@
                                         </table>
                                     </t>
                                     <t t-if="record.name.value == 'This week'">
-                                        <a name="action_saturday_to_friday" type="object" style="text-align: right;">
+                                        <a name="action_saturday_to_friday" type="object" style="width: 100%;">
                                             <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                                 <tbody>
                                                     <tr>
