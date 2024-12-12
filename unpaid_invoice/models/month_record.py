@@ -1,6 +1,6 @@
 from odoo import models, fields, _
 from datetime import date, timedelta
-import json
+
 
 class MonthRecord(models.Model):
     _name = 'month.record'
@@ -8,6 +8,8 @@ class MonthRecord(models.Model):
 
     name = fields.Char('Month Name', required=True)
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
+
+    today_total = fields.Float(compute="_compute_totals")
 
     today_immediate = fields.Float(string="Today Immediate", compute="_compute_totals")
     today_transfer = fields.Float(string="Today Transfer", compute="_compute_totals")
@@ -34,6 +36,8 @@ class MonthRecord(models.Model):
         month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
 
         for record in self:
+            record.today_total = self._calculate_total(today, today, None)
+
             record.today_immediate = self._calculate_total(today, today, 'Immediate')
             record.today_transfer = self._calculate_total(today, today, 'Transfer')
             record.today_check = self._calculate_total(today, today, 'Check')
@@ -53,7 +57,6 @@ class MonthRecord(models.Model):
 
     def _calculate_total(self, start_date, end_date, term):
         domain = [('invoice_date_due', ">=", start_date),
-                ('invoice_payment_term_id.name', "ilike", term),
                 ('state', "=", 'posted'),
                 ('move_type', "in", ['out_invoice', 'out_refund']),
                 ('payment_state', "in", ['not_paid', 'partial']),
@@ -62,6 +65,8 @@ class MonthRecord(models.Model):
                 ]
         if end_date:
             domain.append(('invoice_date_due', "<=", end_date))
+        if term:
+            domain.append('invoice_payment_term_id.name', "ilike", term)
         res = sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
         return res
     
@@ -72,7 +77,7 @@ class MonthRecord(models.Model):
         week_end = week_start + timedelta(days=6)  # Following Friday
 
         return {
-            "name": _("Unpaid Invoice November"),
+            "name": _("Unpaid Invoice This Week"),
             "type": "ir.actions.act_window",
             "res_model": "account.move",
             "view_mode": "tree",
@@ -103,7 +108,7 @@ class MonthRecord(models.Model):
         month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
 
         return {
-            "name": _("Unpaid Invoice November"),
+            "name": _("Unpaid Invoice This Month"),
             "type": "ir.actions.act_window",
             "res_model": "account.move",
             "view_mode": "tree",
