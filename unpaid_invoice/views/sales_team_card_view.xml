@@ -25,10 +25,7 @@
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card" style="border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
                                 <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
-                                    
-                                    <a name="action_saturday_to_friday" type="object">
-                                        <t t-esc="record.name.value" />
-                                    </a>
+                                    <t t-esc="record.name.value" />
                                 </h3>
                                 <div style="display: flex;">
                                     <t t-if="record.name.value == 'Today'">
@@ -56,31 +53,33 @@
                                         </table>
                                     </t>
                                     <t t-if="record.name.value == 'This week'">
-                                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                                            <tbody>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.this_week_immediate.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.this_week_transfer.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.this_week_check.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <a name="action_saturday_to_friday" type="object">
+                                            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                            <t t-esc="record.this_week_immediate.value" /> ₺
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                            <t t-esc="record.this_week_transfer.value" /> ₺
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
+                                                        <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                            <t t-esc="record.this_week_check.value" /> ₺
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </a>
                                     </t>
                                     <t t-if="record.name.value == 'This month'">
-                                        
+                                        <a name="action_this_month" type="object">
                                             <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                                 <tbody>
                                                     <tr>
@@ -103,6 +102,7 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                        </a>
                                     </t>
                                     <t t-if="record.name.value == 'Other'">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">

@@ -75,7 +75,7 @@ class MonthRecord(models.Model):
             "name": _("Unpaid Invoice November"),
             "type": "ir.actions.act_window",
             "res_model": "account.move",
-            "view_mode": "tree",
+            "view_mode": "tree, form",
             "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
             "target": "current",
             "domain":[
@@ -97,3 +97,32 @@ class MonthRecord(models.Model):
         }
 
 
+    def action_this_month(self):
+        today = date.today()
+        month_start = today.replace(day=1)
+        month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
+
+        return {
+            "name": _("Unpaid Invoice November"),
+            "type": "ir.actions.act_window",
+            "res_model": "account.move",
+            "view_mode": "tree, form",
+            "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
+            "target": "current",
+            "domain":[
+                ('invoice_date_due', '>=', month_start.strftime('%Y-%m-%d')),
+                ('invoice_date_due', '<=', month_end.strftime('%Y-%m-%d')),
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('line_ids.account_id.code',"=",120001),
+                ('amount_residual_signed',"!=",0),
+            ],
+            "context": {
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by': ['invoice_user_id','partner_id'],
+                },
+            "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
+        }
