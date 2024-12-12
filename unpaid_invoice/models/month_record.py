@@ -76,7 +76,7 @@ class MonthRecord(models.Model):
             "type": "ir.actions.act_window",
             "res_model": "account.move",
             "view_mode": "tree,form",
-            "view_id": self.env.ref("account.view_account_move_custom_list").id,
+            "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
             "target": "current",
             "domain":[
                 ('invoice_date_due', '>=', week_start.strftime('%Y-%m-%d')),
