@@ -79,40 +79,40 @@
                                         </a>
                                     </t>
                                     <t t-if="record.name.value == 'This month'">
-                                        <div style="display: inline-block;">
-                                            <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
-                                                <t t-esc="record.name.value" />
-                                                <t t-esc="record.month_total.value"/>
-                                            </h3>
+                                        <div style="display: flex;">
+                                            <div style="margin-right: 20px;">
+                                                <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
+                                                    <t t-esc="record.name.value" />
+                                                    <t t-esc="record.month_total.value"/>
+                                                </h3>
+                                            </div>
+                                            <div>
+                                                <a name="action_this_month" type="object" style="width: 100%;">
+                                                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                                <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                                    <t t-esc="record.this_month_immediate.value" /> ₺
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
+                                                                <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                                    <t t-esc="record.this_month_transfer.value" /> ₺
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
+                                                                <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                                    <t t-esc="record.this_month_check.value" /> ₺
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </a>
+                                            </div>
                                         </div>
-
-                                        <div style="display: inline-block;">
-                                            <a name="action_this_month" type="object" style="width: 100%; display: block;">
-                                                <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
-                                                            <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                                <t t-esc="record.this_month_immediate.value" /> ₺
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
-                                                            <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                                <t t-esc="record.this_month_transfer.value" /> ₺
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
-                                                            <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                                <t t-esc="record.this_month_check.value" /> ₺
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </a>
-                                        </div>
-
                                     </t>
                                     <t t-if="record.name.value == 'Other'">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
