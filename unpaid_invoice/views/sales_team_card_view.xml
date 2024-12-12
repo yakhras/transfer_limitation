@@ -79,7 +79,7 @@
                                         </a>
                                     </t>
                                     <t t-if="record.name.value == 'This month'">
-                                        <a name="action_this_month" type="object">
+                                        <a name="action_this_month" type="object" style="width: 100%;">
                                             <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                                 <tbody>
                                                     <tr>
