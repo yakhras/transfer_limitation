@@ -68,7 +68,7 @@ class MonthRecord(models.Model):
 
     def action_saturday_to_friday(self):
         today = date.today()
-        week_start = today - timedelta(days=today.weekday() + 1)  # Previous Saturday
+        week_start = today - timedelta(days=today.weekday() + 2)  # Previous Saturday
         week_end = week_start + timedelta(days=6)  # Following Friday
 
         return {
