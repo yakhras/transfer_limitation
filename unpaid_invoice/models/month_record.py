@@ -71,7 +71,7 @@ class MonthRecord(models.Model):
         week_start = today - timedelta(days=today.weekday() + 1)  # Previous Saturday
         week_end = week_start + timedelta(days=6)  # Following Friday
 
-        action = self.env['ir.actions.act_window'].create({
+        return {
             "name": _("Unpaid Invoice November"),
             "type": "ir.actions.act_window",
             "res_model": "account.move",
@@ -94,7 +94,6 @@ class MonthRecord(models.Model):
                     'group_by': ['invoice_user_id','partner_id'],
                 },
             "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
-        })
-        return action
+        }
 
 
