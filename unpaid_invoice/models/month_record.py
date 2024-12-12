@@ -10,6 +10,7 @@ class MonthRecord(models.Model):
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
     today_total = fields.Float(compute="_compute_totals")
+    month_total = fields.Float(compute="_compute_totals")
 
     today_immediate = fields.Float(string="Today Immediate", compute="_compute_totals")
     today_transfer = fields.Float(string="Today Transfer", compute="_compute_totals")
@@ -37,6 +38,7 @@ class MonthRecord(models.Model):
 
         for record in self:
             record.today_total = self._calculate_total(today, today, None)
+            record.month_total = self._calculate_total(month_start, month_end, None)
 
             record.today_immediate = self._calculate_total(today, today, 'Immediate')
             record.today_transfer = self._calculate_total(today, today, 'Transfer')
