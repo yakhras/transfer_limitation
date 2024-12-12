@@ -66,7 +66,7 @@ class MonthRecord(models.Model):
         if end_date:
             domain.append(('invoice_date_due', "<=", end_date))
         if term:
-            domain.append('invoice_payment_term_id.name', "ilike", term)
+            domain.append(('invoice_payment_term_id.name', "ilike", term))
         res = sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
         return res
     
