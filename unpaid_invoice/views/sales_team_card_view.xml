@@ -79,14 +79,15 @@
                                         </a>
                                     </t>
                                     <t t-if="record.name.value == 'This month'">
-                                        <div>
+                                        <div style="display: inline-block;">
                                             <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
                                                 <t t-esc="record.name.value" />
                                                 <t t-esc="record.month_total.value"/>
                                             </h3>
                                         </div>
-                                        <div>
-                                            <a name="action_this_month" type="object" style="width: 100%;">
+
+                                        <div style="display: inline-block;">
+                                            <a name="action_this_month" type="object" style="width: 100%; display: block;">
                                                 <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                                     <tbody>
                                                         <tr>
@@ -111,6 +112,7 @@
                                                 </table>
                                             </a>
                                         </div>
+
                                     </t>
                                     <t t-if="record.name.value == 'Other'">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
