@@ -98,7 +98,7 @@ class MonthRecord(models.Model):
                     'default_move_type':'out_invoice',
                     'move_type':'out_invoice',
                     'journal_type': 'sale',
-                    'group_by': ['invoice_user_id','partner_id'],
+                    'group_by': ['invoice_user_id','partner_id', 'invoice_payment_term_id'],
                 },
             "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
         }
