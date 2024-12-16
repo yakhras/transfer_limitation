@@ -9,7 +9,9 @@
                 <kanban class="oe_kanban_dashboard" create="false">
                     <field name="name" />
                     <field name="today_total" />
+                    <field name="week_total" />
                     <field name="month_total" />
+                    <field name="other_total" />
                     <field name="today_immediate" />
                     <field name="today_transfer" />
                     <field name="today_check" />
@@ -113,6 +115,12 @@
                                         </div>
                                     </t>
                                     <t t-if="record.name.value == 'Other'">
+                                        <div style="display: block; margin-bottom: 20px;">
+                                            <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
+                                                <t t-esc="record.name.value" />
+                                                <t t-esc="record.other_total.value"/>
+                                            </h3>
+                                        </div>
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                             <tbody>
                                                 <tr>
