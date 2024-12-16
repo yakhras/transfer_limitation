@@ -35,7 +35,7 @@
                                             <t t-esc="record.name.value" />
                                             <t t-esc="record.today_total.value"/>
                                         </h3>
-                                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                        <!-- <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                             <tbody>
                                                 <tr>
                                                     <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
@@ -56,7 +56,7 @@
                                                     </td>
                                                 </tr>
                                             </tbody>
-                                        </table>
+                                        </table> -->
                                     </t>
                                     <t t-if="record.name.value == 'This week'">
                                         <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
