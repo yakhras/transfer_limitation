@@ -33,7 +33,7 @@ class MonthRecord(models.Model):
 
     def _compute_totals(self):
         today = date.today()
-        week_start = today - timedelta(days=today.weekday() + 1)  # Last Saturday
+        week_start = today - timedelta(days=today.weekday() + 2)  # Last Saturday
         week_end = week_start + timedelta(days=6)  # Next Friday
         month_start = today.replace(day=1)
         month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
