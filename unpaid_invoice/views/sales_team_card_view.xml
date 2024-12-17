@@ -24,14 +24,13 @@
                     <field name="other_immediate" />
                     <field name="other_transfer" />
                     <field name="other_check" />
-                    <!-- <field name="this_month_check" /> -->
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card" style="border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
                                 <t t-if="record.name.value == 'Today'">
                                     <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
                                         <span><t t-esc="record.name.value" /></span>
-                                        <span><t t-esc="record.today_total.value" /></span>
+                                        <span><t t-esc="record.today_total.value" /> ₺</span>
                                     </h3>
                                     <a name="action_today" type="object" style="width: 100%;">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -61,7 +60,7 @@
                                 <t t-if="record.name.value == 'This week'">
                                     <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
                                         <span><t t-esc="record.name.value" /></span>
-                                        <span><t t-esc="record.week_total.value"/></span>
+                                        <span><t t-esc="record.week_total.value"/> ₺</span>
                                     </h3>
                                     <a name="action_saturday_to_friday" type="object" style="width: 100%;">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -91,7 +90,7 @@
                                 <t t-if="record.name.value == 'This month'">
                                     <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
                                         <span><t t-esc="record.name.value" /></span>
-                                        <span><t t-esc="record.month_total.value"/></span>
+                                        <span><t t-esc="record.month_total.value"/> ₺</span>
                                     </h3>
                                     <a name="action_this_month" type="object" style="width: 100%; display: block;">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -121,7 +120,7 @@
                                 <t t-if="record.name.value == 'Other'">
                                     <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
                                         <span><t t-esc="record.name.value" /></span>
-                                        <span><t t-esc="record.other_total.value"/></span>
+                                        <span><t t-esc="record.other_total.value"/> ₺</span>
                                     </h3>
                                     <a name="action_other" type="object" style="width: 100%; display: block;">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">

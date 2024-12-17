@@ -142,7 +142,7 @@ class MonthRecord(models.Model):
         today = date.today()
 
         return {
-            "name": _("Unpaid Invoice This Month"),
+            "name": _("Unpaid Invoice Today"),
             "type": "ir.actions.act_window",
             "res_model": "account.move",
             "view_mode": "tree",
