@@ -30,8 +30,8 @@
                             <div class="oe_kanban_card" style="border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
                                 <t t-if="record.name.value == 'Today'">
                                     <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
-                                        <t t-esc="record.name.value" />
-                                        <t t-esc="record.today_total.value" style="text-align: right"/>
+                                        <span><t t-esc="record.name.value" /></span>
+                                        <span><t t-esc="record.today_total.value" style="text-align: right"/></span>
                                     </h3>
                                     <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                         <tbody>
