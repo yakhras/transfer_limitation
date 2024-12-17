@@ -137,3 +137,58 @@ class MonthRecord(models.Model):
                 },
             "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
         }
+    
+    def action_today(self):
+        today = date.today()
+
+        return {
+            "name": _("Unpaid Invoice This Month"),
+            "type": "ir.actions.act_window",
+            "res_model": "account.move",
+            "view_mode": "tree",
+            "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
+            "target": "current",
+            "domain":[
+                ('invoice_date_due', '=', today.strftime('%Y-%m-%d')),
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('line_ids.account_id.code',"=",120001),
+                ('amount_residual_signed',"!=",0),
+            ],
+            "context": {
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by': ['invoice_user_id','partner_id', 'invoice_payment_term_id'],
+                },
+            "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
+        }
+    
+
+    def action_other(self):
+
+        return {
+            "name": _("Unpaid Invoice This Month"),
+            "type": "ir.actions.act_window",
+            "res_model": "account.move",
+            "view_mode": "tree",
+            "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
+            "target": "current",
+            "domain":[
+                ('invoice_date_due', '>=', "2024-01-01"),
+                ('invoice_date_due', '<=', "2024-11-30"),
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('line_ids.account_id.code',"=",120001),
+                ('amount_residual_signed',"!=",0),
+            ],
+            "context": {
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by': ['invoice_user_id','partner_id', 'invoice_payment_term_id'],
+                },
+            "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
+        }
