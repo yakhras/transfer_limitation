@@ -28,36 +28,33 @@
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card" style="border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-                                
                                 <t t-if="record.name.value == 'Today'">
-                                    <div class="container" style="display: flex; justify-content: center;">
-                                        <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
-                                            <t t-esc="record.name.value" />
-                                            <t t-esc="record.today_total.value" style="text-align: right"/>
-                                        </h3>
-                                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                                            <tbody>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.today_immediate.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.today_transfer.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
-                                                        <t t-esc="record.today_check.value" /> ₺
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
+                                        <t t-esc="record.name.value" />
+                                        <t t-esc="record.today_total.value" style="text-align: right"/>
+                                    </h3>
+                                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                    <t t-esc="record.today_immediate.value" /> ₺
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
+                                                <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                    <t t-esc="record.today_transfer.value" /> ₺
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
+                                                <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                    <t t-esc="record.today_check.value" /> ₺
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </t>
                                 <t t-if="record.name.value == 'This week'">
                                     <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
