@@ -57,9 +57,9 @@
                                     </table>
                                 </t>
                                 <t t-if="record.name.value == 'This week'">
-                                    <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
-                                        <t t-esc="record.name.value" />
-                                        <t t-esc="record.week_total.value"/>
+                                    <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                                        <span><t t-esc="record.name.value" /></span>
+                                        <span><t t-esc="record.week_total.value"/></span>
                                     </h3>
                                     <a name="action_saturday_to_friday" type="object" style="width: 100%;">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
@@ -88,9 +88,9 @@
                                 </t>
                                 <t t-if="record.name.value == 'This month'">
                                     <div style="display: block; margin-bottom: 20px;">
-                                        <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
-                                            <t t-esc="record.name.value" />
-                                            <t t-esc="record.month_total.value"/>
+                                        <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                                            <span><t t-esc="record.name.value" /></span>
+                                            <span><t t-esc="record.month_total.value"/></span>
                                         </h3>
                                     </div>
                                     <div style="display: block;">
@@ -122,9 +122,9 @@
                                 </t>
                                 <t t-if="record.name.value == 'Other'">
                                     <div style="display: block; margin-bottom: 20px;">
-                                        <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px;">
-                                            <t t-esc="record.name.value" />
-                                            <t t-esc="record.other_total.value"/>
+                                        <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                                            <span><t t-esc="record.name.value" /></span>
+                                            <span><t t-esc="record.other_total.value"/></span>
                                         </h3>
                                     </div>
                                     <table style="width: 100%; border-collapse: collapse; text-align: left;">
