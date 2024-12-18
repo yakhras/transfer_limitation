@@ -65,7 +65,7 @@ class MonthRecord(models.Model):
 
     def _calculate_total(self, start_date, end_date, term):
         domain = [('invoice_date_due', ">=", start_date),
-                  ('invoice_date_due', ">=", end_date),
+                  ('invoice_date_due', "<=", end_date),
                 ('state', "=", 'posted'),
                 ('move_type', "in", ['out_invoice', 'out_refund']),
                 ('payment_state', "in", ['not_paid', 'partial']),
