@@ -169,6 +169,9 @@ class MonthRecord(models.Model):
     
 
     def action_other(self):
+        today = date.today()
+        other_start = today.replace(month=1, day=1)
+        other_end = (today.replace(day=1) - timedelta(days=1))
 
         return {
             "name": _("Unpaid Invoice This Month"),
@@ -178,8 +181,8 @@ class MonthRecord(models.Model):
             "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
             "target": "current",
             "domain":[
-                ('invoice_date_due', '>=', "2024-01-01"),
-                ('invoice_date_due', '<=', "2024-11-30"),
+                ('invoice_date_due', '>=', other_start),
+                ('invoice_date_due', '<=', other_end),
                 ('state', '=', 'posted'),
                 ('move_type', 'in', ['out_invoice', 'out_refund']),
                 ('payment_state', 'in', ['not_paid', 'partial']),
