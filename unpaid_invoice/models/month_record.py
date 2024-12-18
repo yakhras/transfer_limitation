@@ -44,7 +44,7 @@ class MonthRecord(models.Model):
             record.today_total = self._calculate_total(today, today, None)
             record.week_total = self._calculate_total(week_start, week_end, None)
             record.month_total = self._calculate_total(month_start, month_end, None)
-            record.other_total = self._calculate_total(month_end + timedelta(days=1), None, None)
+            record.other_total = self._calculate_total(other_start, other_end, None)
 
             record.today_immediate = self._calculate_total(today, today, 'Immediate')
             record.today_transfer = self._calculate_total(today, today, 'Transfer')
