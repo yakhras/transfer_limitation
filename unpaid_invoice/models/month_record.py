@@ -37,6 +37,8 @@ class MonthRecord(models.Model):
         week_end = week_start + timedelta(days=6)  # Next Friday
         month_start = today.replace(day=1)
         month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
+        other_start = today.replace(month=1, day=1)
+        other_end = (today.replace(day=1) - timedelta(days=1))
 
         for record in self:
             record.today_total = self._calculate_total(today, today, None)
@@ -56,21 +58,20 @@ class MonthRecord(models.Model):
             record.this_month_transfer = self._calculate_total(month_start, month_end, 'Transfer')
             record.this_month_check = self._calculate_total(month_start, month_end, 'Check')
 
-            record.other_immediate = self._calculate_total(month_end + timedelta(days=1), None, 'Immediate')
-            record.other_transfer = self._calculate_total(month_end + timedelta(days=1), None, 'Transfer')
-            record.other_check = self._calculate_total(month_end + timedelta(days=1), None, 'Check')
+            record.other_immediate = self._calculate_total(other_start, other_end, 'Immediate')
+            record.other_transfer = self._calculate_total(other_start, other_end, 'Transfer')
+            record.other_check = self._calculate_total(other_start, other_end, 'Check')
 
 
     def _calculate_total(self, start_date, end_date, term):
         domain = [('invoice_date_due', ">=", start_date),
+                  ('invoice_date_due', ">=", end_date),
                 ('state', "=", 'posted'),
                 ('move_type', "in", ['out_invoice', 'out_refund']),
                 ('payment_state', "in", ['not_paid', 'partial']),
                 ('line_ids.account_id.code',"=",120001),
                 ('amount_residual_signed',"!=",0),
                 ]
-        if end_date:
-            domain.append(('invoice_date_due', "<=", end_date))
         if term:
             domain.append(('invoice_payment_term_id.name', "ilike", term))
         res = sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
