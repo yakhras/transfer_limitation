@@ -92,6 +92,7 @@ class MonthRecord(models.Model):
             ('amount_residual_signed', "!=", 0),
         ]
 
+
     def _get_action_context(self):
         """Helper method to construct context."""
         return {
@@ -100,6 +101,7 @@ class MonthRecord(models.Model):
             'journal_type': 'sale',
             'group_by': ['invoice_user_id', 'partner_id'],
         }
+
 
     def _prepare_action(self, name, date_start, date_end):
         """Helper method to prepare action dictionary."""
@@ -115,6 +117,7 @@ class MonthRecord(models.Model):
             "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
         }
 
+
     def action_saturday_to_friday(self):
         today = self.today
         week_start = today - timedelta(days=today.weekday() + 2)  # Previous Saturday
@@ -124,6 +127,7 @@ class MonthRecord(models.Model):
             week_start.strftime('%Y-%m-%d'),
             week_end.strftime('%Y-%m-%d'),
         )
+
 
     def action_this_month(self):
         today = self.today
@@ -135,6 +139,7 @@ class MonthRecord(models.Model):
             month_end.strftime('%Y-%m-%d'),
         )
 
+
     def action_today(self):
         today = self.today
         return self._prepare_action(
@@ -142,6 +147,7 @@ class MonthRecord(models.Model):
             today.strftime('%Y-%m-%d'),
             today.strftime('%Y-%m-%d'),
         )
+
 
     def action_other(self):
         today = self.today
