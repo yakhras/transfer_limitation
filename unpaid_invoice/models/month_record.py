@@ -9,7 +9,7 @@ class MonthRecord(models.Model):
     name = fields.Char('Month Name', required=True)
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
-    today = date.today().strftime('%Y-%m-%d')
+    today = date.today()
 
     today_total = fields.Float(compute="_compute_totals")
     week_total = fields.Float(compute="_compute_totals")
@@ -139,8 +139,8 @@ class MonthRecord(models.Model):
         today = self.today
         return self._prepare_action(
             _("Unpaid Invoice Today"),
-            today,
-            today,
+            today.strftime('%Y-%m-%d'),
+            today.strftime('%Y-%m-%d'),
         )
 
     def action_other(self):
