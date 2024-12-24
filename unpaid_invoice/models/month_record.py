@@ -78,122 +78,196 @@ class MonthRecord(models.Model):
         return res
     
 
-    def action_saturday_to_friday(self):
-        today = date.today()
-        week_start = today - timedelta(days=today.weekday() + 2)  # Previous Saturday
-        week_end = week_start + timedelta(days=6)  # Following Friday
+    # def action_saturday_to_friday(self):
+    #     today = date.today()
+    #     week_start = today - timedelta(days=today.weekday() + 2)  # Previous Saturday
+    #     week_end = week_start + timedelta(days=6)  # Following Friday
 
+    #     return {
+    #         "name": _("Unpaid Invoice This Week"),
+    #         "type": "ir.actions.act_window",
+    #         "res_model": "account.move",
+    #         "view_mode": "tree",
+    #         "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
+    #         "target": "current",
+    #         "domain":[
+    #             ('invoice_date_due', '>=', week_start.strftime('%Y-%m-%d')),
+    #             ('invoice_date_due', '<=', week_end.strftime('%Y-%m-%d')),
+    #             ('state', '=', 'posted'),
+    #             ('move_type', 'in', ['out_invoice', 'out_refund']),
+    #             ('payment_state', 'in', ['not_paid', 'partial']),
+    #             ('line_ids.account_id.code',"=",120001),
+    #             ('amount_residual_signed',"!=",0),
+    #         ],
+    #         "context": {
+    #                 'default_move_type':'out_invoice',
+    #                 'move_type':'out_invoice',
+    #                 'journal_type': 'sale',
+    #                 'group_by': ['invoice_user_id','partner_id'],
+    #             },
+    #         "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
+    #     }
+
+
+    # def action_this_month(self):
+    #     today = date.today()
+    #     month_start = today.replace(day=1)
+    #     month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
+
+    #     return {
+    #         "name": _("Unpaid Invoice This Month"),
+    #         "type": "ir.actions.act_window",
+    #         "res_model": "account.move",
+    #         "view_mode": "tree",
+    #         "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
+    #         "target": "current",
+    #         "domain":[
+    #             ('invoice_date_due', '>=', month_start.strftime('%Y-%m-%d')),
+    #             ('invoice_date_due', '<=', month_end.strftime('%Y-%m-%d')),
+    #             ('state', '=', 'posted'),
+    #             ('move_type', 'in', ['out_invoice', 'out_refund']),
+    #             ('payment_state', 'in', ['not_paid', 'partial']),
+    #             ('line_ids.account_id.code',"=",120001),
+    #             ('amount_residual_signed',"!=",0),
+    #         ],
+    #         "context": {
+    #                 'default_move_type':'out_invoice',
+    #                 'move_type':'out_invoice',
+    #                 'journal_type': 'sale',
+    #                 'group_by': ['invoice_user_id','partner_id'],
+    #             },
+    #         "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
+    #     }
+    
+    
+    # def action_today(self):
+    #     today = date.today()
+
+    #     return {
+    #         "name": _("Unpaid Invoice Today"),
+    #         "type": "ir.actions.act_window",
+    #         "res_model": "account.move",
+    #         "view_mode": "tree",
+    #         "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
+    #         "target": "current",
+    #         "domain":[
+    #             ('invoice_date_due', '=', today.strftime('%Y-%m-%d')),
+    #             ('state', '=', 'posted'),
+    #             ('move_type', 'in', ['out_invoice', 'out_refund']),
+    #             ('payment_state', 'in', ['not_paid', 'partial']),
+    #             ('line_ids.account_id.code',"=",120001),
+    #             ('amount_residual_signed',"!=",0),
+    #         ],
+    #         "context": {
+    #                 'default_move_type':'out_invoice',
+    #                 'move_type':'out_invoice',
+    #                 'journal_type': 'sale',
+    #                 'group_by': ['invoice_user_id','partner_id'],
+    #             },
+    #         "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
+    #     }
+    
+
+    # def action_other(self):
+    #     today = date.today()
+    #     other_start = today.replace(month=1, day=1)
+    #     other_end = (today.replace(day=1) - timedelta(days=1))
+
+    #     return {
+    #         "name": _("Unpaid Invoice This Month"),
+    #         "type": "ir.actions.act_window",
+    #         "res_model": "account.move",
+    #         "view_mode": "tree",
+    #         "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
+    #         "target": "current",
+    #         "domain":[
+    #             ('invoice_date_due', '>=', other_start),
+    #             ('invoice_date_due', '<=', other_end),
+    #             ('state', '=', 'posted'),
+    #             ('move_type', 'in', ['out_invoice', 'out_refund']),
+    #             ('payment_state', 'in', ['not_paid', 'partial']),
+    #             ('line_ids.account_id.code',"=",120001),
+    #             ('amount_residual_signed',"!=",0),
+    #         ],
+    #         "context": {
+    #                 'default_move_type':'out_invoice',
+    #                 'move_type':'out_invoice',
+    #                 'journal_type': 'sale',
+    #                 'group_by': ['invoice_user_id','partner_id'],
+    #             },
+    #         "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
+    #     }
+
+
+    def _get_action_domain(self, date_start, date_end):
+        """Helper method to construct domain for unpaid invoices."""
+        return [
+            ('invoice_date_due', '>=', date_start),
+            ('invoice_date_due', '<=', date_end),
+            ('state', '=', 'posted'),
+            ('move_type', 'in', ['out_invoice', 'out_refund']),
+            ('payment_state', 'in', ['not_paid', 'partial']),
+            ('line_ids.account_id.code', "=", 120001),
+            ('amount_residual_signed', "!=", 0),
+        ]
+
+    def _get_action_context(self):
+        """Helper method to construct context."""
         return {
-            "name": _("Unpaid Invoice This Week"),
+            'default_move_type': 'out_invoice',
+            'move_type': 'out_invoice',
+            'journal_type': 'sale',
+            'group_by': ['invoice_user_id', 'partner_id'],
+        }
+
+    def _prepare_action(self, name, date_start, date_end):
+        """Helper method to prepare action dictionary."""
+        return {
+            "name": name,
             "type": "ir.actions.act_window",
             "res_model": "account.move",
             "view_mode": "tree",
             "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
             "target": "current",
-            "domain":[
-                ('invoice_date_due', '>=', week_start.strftime('%Y-%m-%d')),
-                ('invoice_date_due', '<=', week_end.strftime('%Y-%m-%d')),
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-                ('line_ids.account_id.code',"=",120001),
-                ('amount_residual_signed',"!=",0),
-            ],
-            "context": {
-                    'default_move_type':'out_invoice',
-                    'move_type':'out_invoice',
-                    'journal_type': 'sale',
-                    'group_by': ['invoice_user_id','partner_id'],
-                },
+            "domain": self._get_action_domain(date_start, date_end),
+            "context": self._get_action_context(),
             "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
         }
 
+    def action_saturday_to_friday(self):
+        today = date.today()
+        week_start = today - timedelta(days=today.weekday() + 2)  # Previous Saturday
+        week_end = week_start + timedelta(days=6)  # Following Friday
+        return self._prepare_action(
+            _("Unpaid Invoice This Week"),
+            week_start.strftime('%Y-%m-%d'),
+            week_end.strftime('%Y-%m-%d'),
+        )
 
     def action_this_month(self):
         today = date.today()
         month_start = today.replace(day=1)
         month_end = (month_start + timedelta(days=31)).replace(day=1) - timedelta(days=1)
+        return self._prepare_action(
+            _("Unpaid Invoice This Month"),
+            month_start.strftime('%Y-%m-%d'),
+            month_end.strftime('%Y-%m-%d'),
+        )
 
-        return {
-            "name": _("Unpaid Invoice This Month"),
-            "type": "ir.actions.act_window",
-            "res_model": "account.move",
-            "view_mode": "tree",
-            "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
-            "target": "current",
-            "domain":[
-                ('invoice_date_due', '>=', month_start.strftime('%Y-%m-%d')),
-                ('invoice_date_due', '<=', month_end.strftime('%Y-%m-%d')),
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-                ('line_ids.account_id.code',"=",120001),
-                ('amount_residual_signed',"!=",0),
-            ],
-            "context": {
-                    'default_move_type':'out_invoice',
-                    'move_type':'out_invoice',
-                    'journal_type': 'sale',
-                    'group_by': ['invoice_user_id','partner_id'],
-                },
-            "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
-        }
-    
-    
     def action_today(self):
-        today = date.today()
-
-        return {
-            "name": _("Unpaid Invoice Today"),
-            "type": "ir.actions.act_window",
-            "res_model": "account.move",
-            "view_mode": "tree",
-            "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
-            "target": "current",
-            "domain":[
-                ('invoice_date_due', '=', today.strftime('%Y-%m-%d')),
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-                ('line_ids.account_id.code',"=",120001),
-                ('amount_residual_signed',"!=",0),
-            ],
-            "context": {
-                    'default_move_type':'out_invoice',
-                    'move_type':'out_invoice',
-                    'journal_type': 'sale',
-                    'group_by': ['invoice_user_id','partner_id'],
-                },
-            "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
-        }
-    
+        today = date.today().strftime('%Y-%m-%d')
+        return self._prepare_action(
+            _("Unpaid Invoice Today"),
+            today,
+            today,
+        )
 
     def action_other(self):
         today = date.today()
-        other_start = today.replace(month=1, day=1)
-        other_end = (today.replace(day=1) - timedelta(days=1))
-
-        return {
-            "name": _("Unpaid Invoice This Month"),
-            "type": "ir.actions.act_window",
-            "res_model": "account.move",
-            "view_mode": "tree",
-            "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
-            "target": "current",
-            "domain":[
-                ('invoice_date_due', '>=', other_start),
-                ('invoice_date_due', '<=', other_end),
-                ('state', '=', 'posted'),
-                ('move_type', 'in', ['out_invoice', 'out_refund']),
-                ('payment_state', 'in', ['not_paid', 'partial']),
-                ('line_ids.account_id.code',"=",120001),
-                ('amount_residual_signed',"!=",0),
-            ],
-            "context": {
-                    'default_move_type':'out_invoice',
-                    'move_type':'out_invoice',
-                    'journal_type': 'sale',
-                    'group_by': ['invoice_user_id','partner_id'],
-                },
-            "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
-        }
+        other_start = today.replace(month=1, day=1).strftime('%Y-%m-%d')  # Start of the year
+        other_end = (today.replace(day=1) - timedelta(days=1)).strftime('%Y-%m-%d')  # End of previous month
+        return self._prepare_action(
+            _("Unpaid Invoice Other"),
+            other_start,
+            other_end,
+        )
