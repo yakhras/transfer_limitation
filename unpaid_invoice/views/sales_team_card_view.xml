@@ -472,6 +472,7 @@
                 <tree js_class="Pdf_tree">
                     <field name="document_id"/>
                     <field name="partner_id"/>
+                    <field name="sales_person"/>
                     <field name="amount_total" sum="Total Amount"/>
                     <field name="amount_due" sum="Total Due"/>
                     <field name="amount_due_signed" sum="Total Due"/>
