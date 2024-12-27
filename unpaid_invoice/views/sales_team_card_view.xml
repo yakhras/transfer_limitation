@@ -32,7 +32,7 @@
                                         <span><t t-esc="record.name.value" /></span>
                                         <span><t t-esc="record.today_total.value" /> ₺</span>
                                     </h3>
-                                    <a name="unpaid_invoice.action_unpaid_invoice_week_usd" type="object" style="width: 100%;">
+                                    <a name="unpaid_invoice.action_unpaid_invoice_week_usd" type="action" style="width: 100%;">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                             <tbody>
                                                 <tr>
