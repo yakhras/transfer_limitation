@@ -109,7 +109,7 @@ class MonthRecord(models.Model):
             "name": name,
             "type": "ir.actions.act_window",
             "res_model": "account.move",
-            "view_mode": "tree",
+            "view_mode": "tree,form",
             "view_id": self.env.ref("unpaid_invoice.view_account_move_custom_list").id,
             "target": "current",
             "domain": self._get_action_domain(date_start, date_end),
