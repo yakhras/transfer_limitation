@@ -503,8 +503,7 @@
             </field>
         </record>
 
-        <!-- neslihan.arslan@menagate.com.tr, ismail.sengoz@menagate.com.tr, enes@menagate.com.tr, mehmet.inaloz@menagate.com.tr, b.lutfi@menagate.com.tr, abdullah.mansour@menagate.com.tr -->
-
+        
         <!-- unpaid.invoice form view -->
         <!-- <record id="view_unpaid_invoice_form" model="ir.ui.view">
             <field name="name">unpaid.invoice.form</field>
