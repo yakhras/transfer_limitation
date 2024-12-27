@@ -81,14 +81,14 @@ class UnpaidInvoice(models.Model):
         for move in account_moves:
           
             # Check if the invoice already exists to avoid duplicate entries
-            if not self.search([('invoice_id', '=', move.id)]):
-                vals = {
-                    'invoice_id': move.id,
-                    'partner_id': move.partner_id.id,
-                    'amount_total': move.amount_total,
-                    'currency_id': move.currency_id.id,
-                }
-                self.create(vals)  # Pass the vals dictionary to create()
+            # if not self.search([('invoice_id', '=', move.id)]):
+            vals = {
+                'invoice_id': move.id,
+                'partner_id': move.partner_id.id,
+                'amount_total': move.amount_total,
+                'currency_id': move.currency_id.id,
+            }
+            self.create(vals)  # Pass the vals dictionary to create()
               
 
     # to display the partner’s name instead of the default object name
