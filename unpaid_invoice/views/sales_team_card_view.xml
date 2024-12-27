@@ -32,7 +32,7 @@
                                         <span><t t-esc="record.name.value" /></span>
                                         <span><t t-esc="record.today_total.value" /> ₺</span>
                                     </h3>
-                                    <a name="action_today" type="object" style="width: 100%;">
+                                    <a name="unpaid_invoice.action_unpaid_invoice_week_usd" type="object" style="width: 100%;">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                             <tbody>
                                                 <tr>
@@ -494,7 +494,6 @@
                     <field name="invoice_user_id"/>
                     <field name="invoice_date" string="Invoice Date"/>
                     <field name="invoice_date_due" widget="remaining_days"/>
-                    <field name="amount_total_signed" string="Total" sum="Total Amount"/>
                     <field name="amount_residual_signed" string="Amount Due" sum="Total Due"/>
                     <field name="amount_residual"/>
                     <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')"/>
@@ -549,7 +548,7 @@
             <field name="name">unpaid.invoice.form</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
-                <form create="false" class="modern-form">
+                <form class="modern-form">
                     <header>
                         <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
                         <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
@@ -642,20 +641,6 @@
             <field name="name">Unpaid Invoice Week USD</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
-            <field name="domain">[
-                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
-                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
-                ('currency_id.name', '=', 'USD'),
-                ]</field>
-            <field name="context">{
-                    'search_default_team_id': active_id,
-                    'default_team': active_id,
-                    'default_move_type':'out_invoice',
-                    'move_type':'out_invoice',
-                    'journal_type': 'sale',
-                }
-            </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
         </record>
 
 
