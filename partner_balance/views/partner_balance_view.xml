@@ -53,9 +53,9 @@
                 <tree string="Move Lines">
                     <field name="date"/>
                     <field name="name"/>
-                    <field name="debit"/>
-                    <field name="credit"/>
-                    <field name="balance"/>
+                    <field name="debit" sum_total="Debit Total"/>
+                    <field name="credit" sum_total="Credit Total"/>
+                    <field name="balance" sum_total="Balance Total"/>
                 </tree>
             </field>
         </record>
