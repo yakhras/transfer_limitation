@@ -10,7 +10,7 @@
             <field name="arch" type="xml">
                 <tree string="Partner Balances" create="false" js_class="partner_balance">
                     <field name="partner_id"/>
-                    <field name="balance"/>
+                    <field name="balance" sum="Total"/>
                     <field name="currency_id"/>
                     <field name="date_updated"/>
                 </tree>
@@ -53,9 +53,9 @@
                 <tree string="Move Lines">
                     <field name="date"/>
                     <field name="name"/>
-                    <field name="debit" sum_total="Debit Total"/>
-                    <field name="credit" sum_total="Credit Total"/>
-                    <field name="balance" sum_total="Balance Total"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="balance"/>
                 </tree>
             </field>
         </record>
