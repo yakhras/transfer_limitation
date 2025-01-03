@@ -45,20 +45,6 @@
             </field>
         </record>
 
-        <!-- Tree View -->
-        <record id="view_move_line_tree" model="ir.ui.view">
-            <field name="name">account.move.line.tree.view</field>
-            <field name="model">account.move.line</field>
-            <field name="arch" type="xml">
-                <tree string="Move Lines">
-                    <field name="date"/>
-                    <field name="name"/>
-                    <field name="debit"/>
-                    <field name="credit"/>
-                    <field name="balance"/>
-                </tree>
-            </field>
-        </record>
 
         <!-- Action -->
         <record id="action_partner_balance" model="ir.actions.act_window">
@@ -79,10 +65,6 @@
             <field name="context">{}</field>
         </record>
 
-        
-        
-        
-        
         
         
 
