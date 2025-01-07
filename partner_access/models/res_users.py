@@ -18,5 +18,12 @@ class Users(models.Model):
             team_partners = self.env['res.partner'].search([('user_id', 'in', team_members.ids)])
             partner_ids += team_members.mapped('partner_id.id') + team_partners.ids
 
+        # Add partner IDs of active internal users
+        internal_users = self.env['res.users'].search([
+            ('active', '=', True),
+            ('groups_id', 'in', self.env.ref('base.group_user').id)
+        ])
+        partner_ids += internal_users.mapped('partner_id.id')
+
             
         return partner_ids
