@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_customer_sale_person,customer.sale.person,model_customer_sale_person,,1,1,1,1
+
+
