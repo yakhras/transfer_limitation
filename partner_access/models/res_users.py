@@ -12,13 +12,13 @@ class Users(models.Model):
             partner_ids.append(bot_user_id.partner_id.id)
 
         # Add partner IDs of sales team members if the user is a team leader
-        sales_teams = self.env['crm.team'].search([('user_id', '=', self.id)])
-        for team in sales_teams:
-            team_members = team.member_ids
-            team_partners = self.env['res.partner'].search(['|',
-            ('user_id', 'in', team_members.ids),
-            ('users_ids', 'in', team_members.id)])
-            partner_ids += team_members.mapped('partner_id.id') + team_partners.ids
+        # sales_teams = self.env['crm.team'].search([('user_id', '=', self.id)])
+        # for team in sales_teams:
+        #     team_members = team.member_ids
+        #     team_partners = self.env['res.partner'].search(['|',
+        #     ('user_id', 'in', team_members.ids),
+        #     ('users_ids', 'in', team_members.id)])
+        #     partner_ids += team_members.mapped('partner_id.id') + team_partners.ids
 
         # Add partner IDs of active internal users
         internal_users = self.env['res.users'].search([
