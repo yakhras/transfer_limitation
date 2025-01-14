@@ -55,7 +55,7 @@
         <record id="rule_partner_access_leader" model="ir.rule">
             <field name="name">View Team Leader Partners</field>
             <field ref="model_res_partner" name="model_id"/>
-            <field name="domain_force">['|', ('user_id', '=', user.id), ('id', 'in', [rec for rec in user._get_sales_team_partner()])]</field>
+            <field name="domain_force">['|', ('user_id', '=', user.id), ('id', 'in', [rec for rec in user._get_employee_partner()])]</field>
             <field name="groups" eval="[(4, ref('group_partner_access_leader'))]"/>
         </record>
 
@@ -63,7 +63,7 @@
         <record id="rule_partner_access_manager" model="ir.rule">
             <field name="name">View Team Manager Partners</field>
             <field ref="model_res_partner" name="model_id"/>
-            <field name="domain_force">['|',('user_id','=',user.id),('id', 'in', [rec for rec in user._get_employee_partner()])]</field>
+            <field name="domain_force">['|',('user_id','=',user.id),('id', 'in', [rec for rec in user._get_sales_team_partner()])]</field>
             <field name="groups" eval="[(4, ref('group_partner_access_manager'))]"/>
         </record>
         
