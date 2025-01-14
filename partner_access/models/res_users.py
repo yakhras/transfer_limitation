@@ -12,7 +12,7 @@ class Users(models.Model):
             partner_ids.add(bot_user.partner_id.id)
 
         # Add partner IDs for users managed by the current user
-        manager_users = self.env['hr.employee'].search([('parent_id.user_id', '=', self.id)]).mapped('user_id.partner_id.id')
+        manager_users = self.env['hr.employee'].search([('parent_id.user_id', '=', self.env.user.id)]).mapped('user_id.partner_id.id')
         partner_ids.update(manager_users)
 
         # Add partner IDs of active internal users
