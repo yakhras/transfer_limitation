@@ -4,28 +4,26 @@ class Users(models.Model):
     _inherit = 'res.users'
 
     def get_partner_ids(self):
-        partner_ids = []
+        partner_ids = set()
 
         # Add the bot user's partner ID
-        bot_user_id = self.env['res.users'].search([('id', '=', 1), ('active', '=', False)], limit=1)
-        if bot_user_id and bot_user_id.partner_id:
-            partner_ids.append(bot_user_id.partner_id.id)
+        bot_user = self.env['res.users'].sudo().browse(1)
+        if not bot_user.active and bot_user.partner_id:
+            partner_ids.add(bot_user.partner_id.id)
 
-        # Add partner IDs of sales team members if the user is a team leader
-        # sales_teams = self.env['crm.team'].search([('user_id', '=', self.id)])
-        # for team in sales_teams:
-        #     team_members = team.member_ids
-        #     team_partners = self.env['res.partner'].search(['|',
-        #     ('user_id', 'in', team_members.ids),
-        #     ('users_ids', 'in', team_members.id)])
-        #     partner_ids += team_members.mapped('partner_id.id') + team_partners.ids
+        # Add partner IDs for users managed by the current user
+        manager_users = self.env['hr.employee'].search([('parent_id.user_id', '=', self.id)]).mapped('user_id.partner_id.id')
+        partner_ids.update(manager_users)
 
         # Add partner IDs of active internal users
         internal_users = self.env['res.users'].search([
             ('active', '=', True),
             ('groups_id', 'in', self.env.ref('base.group_user').id)
-        ])
-        partner_ids += internal_users.mapped('partner_id.id')
+        ]).mapped('partner_id.id')
+        partner_ids.update(internal_users)
+
+        # Convert the set to a list
+        partner_ids = list(partner_ids)
 
             
         return partner_ids
