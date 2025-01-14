@@ -17,7 +17,7 @@ class Users(models.Model):
         # Fetch employees managed by the current user
         employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)]).mapped('user_id')
         for emp in employees:
-            employee_partners = self.env['res.partner'].search([('user_id', 'in', emp.ids)])
+            employee_partners = self.env['res.partner'].search([('user_id', '=', emp.id)])
         # manager_users = employees.mapped('user_id')
 
 
