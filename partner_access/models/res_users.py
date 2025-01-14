@@ -47,9 +47,6 @@ class ResUsers(models.Model):
         direct_partners = self.env['res.partner'].search([('user_id', 'in', employees)])
         partner_ids.update(direct_partners.ids)
 
-        # Add partner IDs from sales teams
-        partner_ids.update(self._get_sales_team_partner())
-
         return list(partner_ids)
 
 
