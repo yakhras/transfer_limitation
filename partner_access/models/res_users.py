@@ -15,7 +15,7 @@ class Users(models.Model):
             partner_ids.add(bot_user.partner_id.id)
 
         # Fetch employees managed by the current user
-        employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)]).mapped('user_id')
+        employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)])
         
 
         # Retrieve partner IDs of the managed employees
