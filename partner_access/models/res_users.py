@@ -19,7 +19,7 @@ class Users(models.Model):
         
 
         # Retrieve partner IDs of the managed employees
-        direct_partners = self.env['res.partner'].search([('user_id', 'in', employees)])
+        direct_partners = self.env['res.partner'].search([('user_id', 'in', employees.ids)])
         partner_ids.update(direct_partners)
 
         # Add partner IDs of active internal users
