@@ -15,11 +15,11 @@ class Users(models.Model):
             partner_ids.add(bot_user.partner_id.id)
 
         # Fetch employees managed by the current user
-        employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)])
+        employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)]).mapped('user_id').id
         
 
         # Retrieve partner IDs of the managed employees
-        direct_partners = self.env['res.partner'].search([('user_id', 'in', employees.ids)])
+        direct_partners = self.env['res.partner'].search([('user_id', 'in', employees)])
         partner_ids.update(direct_partners.ids)
 
         # Add partner IDs of active internal users
