@@ -31,7 +31,7 @@ class ResUsers(models.Model):
         sales_teams = self.env['crm.team'].search([('user_id', '=', self.env.user.id)])
         for team in sales_teams:
             team_members = team.member_ids
-            team_partners = self.env['res.partner'].search([('user_id', 'in', team_members.ids)])
+            team_partners = self.env['res.partner'].search([('user_id', 'in', team_members.ids)]).ids
             partner_ids.update(team_partners)
 
         return list(partner_ids)
