@@ -16,20 +16,19 @@ class Users(models.Model):
 
         # Fetch employees managed by the current user
         employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)])
-        manager_users = employees.mapped('user_id.id')
+        manager_users = employees.mapped('user_id')
 
-        self.env['res.partner'].phone = manager_users
 
         # Retrieve partner IDs of the managed employees
         direct_partners = self.env['res.partner'].search([('user_id', 'in', manager_users.ids)])
         partner_ids.update(direct_partners.ids)
 
         # Add partner IDs of active internal users
-        # internal_users = self.env['res.users'].search([
-        #     ('active', '=', True),
-        #     ('groups_id', 'in', self.env.ref('base.group_user').id)
-        # ]).mapped('partner_id.id')
-        # partner_ids.update(internal_users)
+        internal_users = self.env['res.users'].search([
+            ('active', '=', True),
+            ('groups_id', 'in', self.env.ref('base.group_user').id)
+        ]).mapped('partner_id.id')
+        partner_ids.update(internal_users)
 
         # Convert the set to a list
         partner_ids = list(partner_ids)
