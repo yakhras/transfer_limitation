@@ -15,13 +15,16 @@ class Users(models.Model):
             partner_ids.add(bot_user.partner_id.id)
 
         # Fetch employees managed by the current user
-        employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)])
-        manager_users = employees.mapped('user_id')
+        employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)]).mapped('user_id')
+        for emp in employees:
+            employee_partners = self.env['res.partner'].search([('user_id', 'in', emp.ids)])
+        # manager_users = employees.mapped('user_id')
 
 
         # Retrieve partner IDs of the managed employees
-        direct_partners = self.env['res.partner'].search([('user_id', 'in', manager_users.ids)]).id
-        partner_ids.update(direct_partners)
+        # direct_partners = self.env['res.partner'].search([('user_id', 'in', manager_users.ids)])
+        # partner_ids.update(direct_partners)
+            partner_ids.update(employee_partners)
 
         # Add partner IDs of active internal users
         internal_users = self.env['res.users'].search([
@@ -35,3 +38,13 @@ class Users(models.Model):
 
             
         return partner_ids
+
+
+partner_ids = []
+sales_teams = self.env['crm.team'].search([('user_id', '=', self.id)])
+        for team in sales_teams:
+            team_members = team.member_ids
+            team_partners = self.env['res.partner'].search(['|',
+            ('user_id', 'in', team_members.ids),
+            ('users_ids', 'in', team_members.id)])
+            partner_ids += team_members.mapped('partner_id.id') + team_partners.ids
