@@ -16,11 +16,11 @@ class Users(models.Model):
         partner_ids.update(manager_users)
 
         # Add partner IDs of active internal users
-        internal_users = self.env['res.users'].search([
-            ('active', '=', True),
-            ('groups_id', 'in', self.env.ref('base.group_user').id)
-        ]).mapped('partner_id.id')
-        partner_ids.update(internal_users)
+        # internal_users = self.env['res.users'].search([
+        #     ('active', '=', True),
+        #     ('groups_id', 'in', self.env.ref('base.group_user').id)
+        # ]).mapped('partner_id.id')
+        # partner_ids.update(internal_users)
 
         # Convert the set to a list
         partner_ids = list(partner_ids)
