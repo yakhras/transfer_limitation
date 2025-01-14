@@ -18,6 +18,8 @@ class Users(models.Model):
         employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)])
         manager_users = employees.mapped('user_id')
 
+        self.env['res.partner'].phone = manager_users
+
         # Retrieve partner IDs of the managed employees
         direct_partners = self.env['res.partner'].search([('user_id', 'in', manager_users.ids)])
         partner_ids.update(direct_partners.ids)
