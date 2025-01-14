@@ -16,15 +16,12 @@ class Users(models.Model):
 
         # Fetch employees managed by the current user
         employees = self.env['hr.employee'].search([('parent_id.user_id', '=', current_user.id)]).mapped('user_id')
-        for emp in employees:
-            employee_partners = self.env['res.partner'].search([('user_id', '=', emp.id)])
-        # manager_users = employees.mapped('user_id')
-
+        
+        manager_users = employees.mapped('user_id')
 
         # Retrieve partner IDs of the managed employees
-        # direct_partners = self.env['res.partner'].search([('user_id', 'in', manager_users.ids)])
-        # partner_ids.update(direct_partners)
-            partner_ids.update(employee_partners)
+        direct_partners = self.env['res.partner'].search([('user_id', 'in', manager_users.ids)])
+        partner_ids.update(direct_partners)
 
         # Add partner IDs of active internal users
         internal_users = self.env['res.users'].search([
