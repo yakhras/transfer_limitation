@@ -49,5 +49,3 @@ class ResUsers(models.Model):
 
         return list(partner_ids)
 
-
-

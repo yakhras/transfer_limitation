@@ -26,6 +26,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'security/partner_balance_security.xml',
         "views/partner_balance_view.xml",
         'report/partner_balance_report.xml',    # Report action
         'report/partner_balance_report_template.xml',   # Report template

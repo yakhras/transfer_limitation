@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+    <data>
+        <record id="rule_partner_balance_access_user" model="ir.rule">
+            <field name="name">View User Partner Balances</field>
+            <field name="model_id" ref="model_partner_balance"/> <!-- Adjust if the model ID differs -->
+            <field name="domain_force">
+                ['|', 
+                ('partner_id.user_id', '=', user.id), 
+                ('partner_id.id', 'in', [rec for rec in user._bot_internal_partner()])]
+            </field>
+            <field name="groups" eval="[(4, ref('group_partner_access_user'))]"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+            <field name="perm_write" eval="False"/>
+        </record>
+    </data>
+</odoo>
