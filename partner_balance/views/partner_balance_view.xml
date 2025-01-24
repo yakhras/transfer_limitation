@@ -10,6 +10,7 @@
             <field name="arch" type="xml">
                 <tree string="Partner Balances" create="false" js_class="partner_balance">
                     <field name="partner_id"/>
+                    <field name="sales_user"/>
                     <field name="balance" sum="Total"/>
                     <field name="currency_id"/>
                     <field name="date_updated"/>
@@ -26,6 +27,7 @@
                     <sheet>
                         <group>
                             <field name="partner_id"/>
+                            <field name="sales_user"/>
                             <field name="currency_id"/>
                             <field name="balance"/>
                         </group>
