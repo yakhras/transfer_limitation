@@ -14,7 +14,8 @@ class PartnerBalance(models.Model):
     )
     sales_user = fields.Many2one(
         related= 'partner_id.user_id', 
-        string= 'Sales Person'
+        string= 'Sales Person',
+        store=True
     )
     move_line_ids = fields.One2many(
         'account.move.line', 
