@@ -63,6 +63,7 @@
             }</field>
             <field name="domain">[
                 ("partner_id.category_id","not ilike","Personel"),
+                ("partner_id.id","=",1),
                 ]</field>
         </record>
 
