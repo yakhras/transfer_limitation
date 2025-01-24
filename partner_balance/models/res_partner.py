@@ -1,57 +1,35 @@
-from odoo import models, fields, api
-from datetime import date, timedelta
-from odoo.exceptions import ValidationError
+from odoo import api, models
 
 
 
 class ResPartner(models.Model):
-    _inherit = 'res.partner'   # Inherit the model
+    _inherit = "res.partner"
 
-    balance_value = fields.Monetary(string = 'Balance', compute="get_balance_value")
-    
-    
+    def create(self, vals_list):
+        partners = super().create(vals_list)
+        # Create corresponding partner.balance records
+        balances = [{
+            'partner_id': partner.id,
+            'balance': 0.0,  # Default balance, adjust as necessary
+            'currency_id': partner.currency_id.id,  # Ensure currency is handled
+        } for partner in partners]
+        self.env['partner.balance'].create(balances)
+        return partners
 
-# Get Balance Value For Record
-    def get_balance_value(self):
-        for rec in self:
-            rec.balance_value = rec.compute_balance()
+    def write(self, vals):
+    # Track changes to balance-related fields
+        res = super().write(vals)
+        if 'name' in vals or 'currency_id' in vals:
+            for partner in self:
+                balance = self.env['partner.balance'].search([('partner_id', '=', partner.id)], limit=1)
+                if balance:
+                    balance.write({
+                        'partner_id': partner.id,  # Use the actual partner ID
+                        'currency_id': vals.get('currency_id', balance.currency_id.id),  # Update currency if changed
+                    })
+        return res
 
-# Compute Balance Value For Record
-    def compute_balance(self):
-        for rec in self:
-            credit = rec.get_credits()
-            total_credits = rec.total_credit(credit)
-            debit = rec.get_debits()
-            total_debits = rec.total_debit(debit)
-            balance = round(total_debits - total_credits, 2)
-            return balance
-
-# Get Debit Values For Record
-    def get_debits(self):
-        domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
-        ids = []
-        for one in self.move_line_ids.filtered_domain(domain):
-            ids.append(one.debit)
-        return ids
-
-# Calculate Total Debits For Record
-    def total_debit(self, list):
-        total_debit = 0
-        for number in list:
-            total_debit += number
-        return round(total_debit, 2)
-
-# Get Credit Values For Record
-    def get_credits(self):
-        domain = [('full_reconcile_id', '=', False), ('balance', '!=', 0), ('account_id.reconcile', '=', True)]
-        ids = []
-        for one in self.move_line_ids.filtered_domain(domain):
-            ids.append(one.credit)
-        return ids
-
-# Calculate Total Credits For Record
-    def total_credit(self, list):
-        total_credit = 0
-        for number in list:
-            total_credit += number
-        return round(total_credit, 2)
+    def unlink(self):
+        # Remove corresponding partner.balance records
+        self.env['partner.balance'].search([('partner_id', 'in', self.ids)]).unlink()
+        return super().unlink()
