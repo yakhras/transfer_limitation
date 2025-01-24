@@ -12,7 +12,10 @@ class PartnerBalance(models.Model):
         required=True,
         ondelete='cascade'
     )
-    sales_user = fields.Many2one(related= 'partner_id.user_id', string= 'Sales Person')
+    sales_user = fields.Many2one(
+        related= 'partner_id.user_id', 
+        string= 'Sales Person'
+    )
     move_line_ids = fields.One2many(
         'account.move.line', 
         compute='_compute_move_lines',
