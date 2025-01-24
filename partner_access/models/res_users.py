@@ -23,20 +23,8 @@ class ResUsers(models.Model):
 
         return list(partner_ids)
 
-    def _get_sales_team_partner(self):
-        """Retrieve partner IDs from bot user, internal users, and sales teams."""
-        partner_ids = set(self._bot_internal_partner())
 
-        # Fetch sales teams managed by the current user
-        sales_teams = self.env['crm.team'].search([('user_id', '=', self.env.user.id)])
-        for team in sales_teams:
-            team_members = team.member_ids
-            team_partners = self.env['res.partner'].search([('user_id', 'in', team_members.ids)]).ids
-            partner_ids.update(team_partners)
-
-        return list(partner_ids)
-
-    def _get_employee_partner(self):
+    def _get_coach_partner(self):
         """Retrieve partner IDs from bot user, internal users, sales teams, and managed employees."""
         partner_ids = set(self._bot_internal_partner())
 
@@ -49,3 +37,16 @@ class ResUsers(models.Model):
 
         return list(partner_ids)
 
+
+    def _get_manager_partner(self):
+        """Retrieve partner IDs from bot user, internal users, sales teams, and managed employees."""
+        partner_ids = set(self._bot_internal_partner())
+
+        # Fetch employees managed by the current user
+        employees = self.env['hr.employee'].search([('parent_id.user_id', '=', self.env.user.id)]).mapped('user_id').ids
+        
+        # Retrieve partner IDs of the managed employees
+        direct_partners = self.env['res.partner'].search([('user_id', 'in', employees)])
+        partner_ids.update(direct_partners.ids)
+
+        return list(partner_ids)
