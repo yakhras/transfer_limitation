@@ -61,6 +61,9 @@
             <field name="context">{
                 'group_by': ['sales_user'],
             }</field>
+            <field name="domain">[
+                ("partner_id.category_id","not ilike","Personal"),
+                ]</field>
         </record>
 
         <record id="action_view_move_lines" model="ir.actions.act_window">
