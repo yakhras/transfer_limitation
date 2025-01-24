@@ -62,7 +62,7 @@
                 'group_by': ['sales_user'],
             }</field>
             <field name="domain">[
-                ("partner_id.category_id","not ilike","Personal"),
+                ("partner_id.category_id","not ilike","Personel"),
                 ]</field>
         </record>
 
