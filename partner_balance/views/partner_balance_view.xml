@@ -58,15 +58,16 @@
                     View and manage partner balances.
                 </p>
             </field>
+            <field name="context">{
+                'group_by': ['sales_user'],
+            }</field>
         </record>
 
         <record id="action_view_move_lines" model="ir.actions.act_window">
             <field name="name">Move Lines</field>
             <field name="res_model">account.move.line</field>
             <field name="view_mode">tree,form</field>
-            <field name="context">{
-                'group_by': ['sales_user'],
-            }</field>
+            <field name="context">{}</field>
         </record>
 
         
