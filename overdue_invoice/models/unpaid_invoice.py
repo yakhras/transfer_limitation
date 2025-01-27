@@ -42,7 +42,7 @@ class UnpaidInvoice(models.Model):
         ], string='Status', readonly=True, copy=False, index=True, tracking=3, default='draft')
 
 
-    def populate_unpaid_invoices(self):
+    def populate_overdue_invoices(self):
         # Calculate the first and last day of the current month
         # today = datetime.today()
         # first_day_of_month = today.replace(day=1)
