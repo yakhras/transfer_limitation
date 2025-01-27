@@ -32,7 +32,7 @@
                                         <span><t t-esc="record.name.value" /></span>
                                         <span><t t-esc="record.today_total.value" /> ₺</span>
                                     </h3>
-                                    <a name="unpaid_invoice.action_unpaid_invoice_week_usd" type="action" style="width: 100%;">
+                                    <a name="overdue_invoice.action_overdue_invoice_week_usd" type="action" style="width: 100%;">
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                             <tbody>
                                                 <tr>
@@ -174,7 +174,7 @@
                             <div class="oe_kanban_card">
                                 <div class="oe_kanban_content">
                                     <t t-if="record.name.value == 'Bugün'">
-                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="action-link"
+                                        <a name="overdue_invoice.action_overdue_invoice_today" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                             <span style="color: #007bff; font-weight: 600; font-size: 14px;">
@@ -183,7 +183,7 @@
                                         </a>
                                     </t>
                                     <t t-if="record.name.value == 'Kasım'">
-                                        <a name="unpaid_invoice.action_payment_term_kanban" type="action" class="action-link"
+                                        <a name="overdue_invoice.action_payment_term_kanban" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                                 <h3 style="margin: 0;"><t t-esc="record.name.value"/></h3>
@@ -213,7 +213,7 @@
                                     </t>
 
                                     <t t-if="record.name.value == 'Aralık'">
-                                        <a name="unpaid_invoice.action_unpaid_invoice_dec" type="action" class="action-link"
+                                        <a name="overdue_invoice.action_overdue_invoice_dec" type="action" class="action-link"
                                         style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                             <h3><t t-esc="record.name.value"/></h3>
                                             <span style="color: #5cb85c; font-weight: 600; font-size: 14px;">
@@ -252,24 +252,24 @@
 
 
         <!-- Views -->
-        <record model="ir.ui.view" id="view_unpaid_invoice_card">
+        <record model="ir.ui.view" id="view_overdue_invoice_card">
             <field name="name">unpaid.invoice.card.view</field>
             <field name="model">crm.team</field>
             <field name="arch" type="xml">
                 <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors" sample="1" create="false">
                     <field name="name" />
-                    <field name="unpaid_invoice_total_usd"/>
-                    <field name="unpaid_invoice_total_eur"/>
-                    <field name="unpaid_invoice_total_try"/>
-                    <field name="unpaid_invoice_total_2weeks_usd"/>
-                    <field name="unpaid_invoice_total_2weeks_eur"/>
-                    <field name="unpaid_invoice_total_2weeks_try"/>
-                    <field name="unpaid_invoice_total_week_usd"/>
-                    <field name="unpaid_invoice_total_week_eur"/>
-                    <field name="unpaid_invoice_total_week_try"/>
-                    <field name="unpaid_invoice_total_today_usd"/>
-                    <field name="unpaid_invoice_total_today_eur"/>
-                    <field name="unpaid_invoice_total_today_try"/>
+                    <field name="overdue_invoice_total_usd"/>
+                    <field name="overdue_invoice_total_eur"/>
+                    <field name="overdue_invoice_total_try"/>
+                    <field name="overdue_invoice_total_2weeks_usd"/>
+                    <field name="overdue_invoice_total_2weeks_eur"/>
+                    <field name="overdue_invoice_total_2weeks_try"/>
+                    <field name="overdue_invoice_total_week_usd"/>
+                    <field name="overdue_invoice_total_week_eur"/>
+                    <field name="overdue_invoice_total_week_try"/>
+                    <field name="overdue_invoice_total_today_usd"/>
+                    <field name="overdue_invoice_total_today_eur"/>
+                    <field name="overdue_invoice_total_today_try"/>
                     <templates>
                         <t t-name="kanban-box">
                             <div t-attf-class="oe_kanban_global_click o_has_icon oe_kanban_content oe_kanban_card o_kanban_card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; border-radius: 8px;">
@@ -281,10 +281,10 @@
                                                     <t t-esc="record.name.value" />
                                                 </span>
                                                 
-                                                <t t-if="record.unpaid_invoice_total_today_usd.value != 0 or record.unpaid_invoice_total_today_eur.value != 0 or record.unpaid_invoice_total_today_try.value != 0">
+                                                <t t-if="record.overdue_invoice_total_today_usd.value != 0 or record.overdue_invoice_total_today_eur.value != 0 or record.overdue_invoice_total_today_try.value != 0">
                                                     <div style="padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; margin-bottom: 12px; background-color: #fafafa;">
                                                         <!-- Today Title -->
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_today" type="action" class="action-link"
+                                                        <a name="overdue_invoice.action_overdue_invoice_today" type="action" class="action-link"
                                                            style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                                             Today
                                                         </a>
@@ -292,31 +292,31 @@
                                                         <!-- Currency Values Section -->
                                                         <div class="stat-values" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;">
                                                             <!-- USD Value -->
-                                                            <t t-if="record.unpaid_invoice_total_today_usd.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_today_usd" type="action"
+                                                            <t t-if="record.overdue_invoice_total_today_usd.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_today_usd" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #e3f2fd; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #007BFF; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_today_usd.value"/> USD
+                                                                        <t t-esc="record.overdue_invoice_total_today_usd.value"/> USD
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             
                                                             <!-- EUR Value -->
-                                                            <t t-if="record.unpaid_invoice_total_today_eur.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_today_eur" type="action"
+                                                            <t t-if="record.overdue_invoice_total_today_eur.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_today_eur" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #f5f5f5; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #333; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_today_eur.value"/> EUR
+                                                                        <t t-esc="record.overdue_invoice_total_today_eur.value"/> EUR
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             
                                                             <!-- TRY Value -->
-                                                            <t t-if="record.unpaid_invoice_total_today_try.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_today_try" type="action"
+                                                            <t t-if="record.overdue_invoice_total_today_try.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_today_try" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #ffebee; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #d9534f; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_today_try.value"/> TRY
+                                                                        <t t-esc="record.overdue_invoice_total_today_try.value"/> TRY
                                                                     </span>
                                                                 </a>
                                                             </t>
@@ -324,10 +324,10 @@
                                                     </div>
                                                 </t>
                                                 
-                                                <t t-if="record.unpaid_invoice_total_week_usd.value != 0 or record.unpaid_invoice_total_week_eur.value != 0 or record.unpaid_invoice_total_week_try.value != 0">
+                                                <t t-if="record.overdue_invoice_total_week_usd.value != 0 or record.overdue_invoice_total_week_eur.value != 0 or record.overdue_invoice_total_week_try.value != 0">
                                                     <div style="padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; margin-bottom: 12px; background-color: #fafafa;">
                                                         <!-- Week Title -->
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_week" type="action" class="action-link"
+                                                        <a name="overdue_invoice.action_overdue_invoice_week" type="action" class="action-link"
                                                            style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                                             Week
                                                         </a>
@@ -335,31 +335,31 @@
                                                         <!-- Currency Values Section -->
                                                         <div class="stat-values" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;">
                                                             <!-- USD Value -->
-                                                            <t t-if="record.unpaid_invoice_total_week_usd.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_week_usd" type="action"
+                                                            <t t-if="record.overdue_invoice_total_week_usd.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_week_usd" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #e3f2fd; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #007BFF; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_week_usd.value"/> USD
+                                                                        <t t-esc="record.overdue_invoice_total_week_usd.value"/> USD
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             
                                                             <!-- EUR Value -->
-                                                            <t t-if="record.unpaid_invoice_total_week_eur.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_week_eur" type="action"
+                                                            <t t-if="record.overdue_invoice_total_week_eur.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_week_eur" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #f5f5f5; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #333; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_week_eur.value"/> EUR
+                                                                        <t t-esc="record.overdue_invoice_total_week_eur.value"/> EUR
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             
                                                             <!-- TRY Value -->
-                                                            <t t-if="record.unpaid_invoice_total_week_try.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_week_try" type="action"
+                                                            <t t-if="record.overdue_invoice_total_week_try.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_week_try" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #ffebee; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #d9534f; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_week_try.value"/> TRY
+                                                                        <t t-esc="record.overdue_invoice_total_week_try.value"/> TRY
                                                                     </span>
                                                                 </a>
                                                             </t>
@@ -367,10 +367,10 @@
                                                     </div>
                                                 </t>
                                                 
-                                                <t t-if="record.unpaid_invoice_total_2weeks_usd.value != 0 or record.unpaid_invoice_total_2weeks_eur.value != 0 or record.unpaid_invoice_total_2weeks_try.value != 0">
+                                                <t t-if="record.overdue_invoice_total_2weeks_usd.value != 0 or record.overdue_invoice_total_2weeks_eur.value != 0 or record.overdue_invoice_total_2weeks_try.value != 0">
                                                     <div style="padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; margin-bottom: 12px; background-color: #fafafa;">
                                                         <!-- 2 Weeks Title -->
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_2weeks" type="action" class="action-link"
+                                                        <a name="overdue_invoice.action_overdue_invoice_2weeks" type="action" class="action-link"
                                                            style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                                             2 Weeks
                                                         </a>
@@ -378,31 +378,31 @@
                                                         <!-- Currency Values Section -->
                                                         <div class="stat-values" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;">
                                                             <!-- USD Value -->
-                                                            <t t-if="record.unpaid_invoice_total_2weeks_usd.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_2weeks_usd" type="action"
+                                                            <t t-if="record.overdue_invoice_total_2weeks_usd.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_2weeks_usd" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #e3f2fd; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #007BFF; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_2weeks_usd.value"/> USD
+                                                                        <t t-esc="record.overdue_invoice_total_2weeks_usd.value"/> USD
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             
                                                             <!-- EUR Value -->
-                                                            <t t-if="record.unpaid_invoice_total_2weeks_eur.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_2weeks_eur" type="action"
+                                                            <t t-if="record.overdue_invoice_total_2weeks_eur.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_2weeks_eur" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #f5f5f5; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #333; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_2weeks_eur.value"/> EUR
+                                                                        <t t-esc="record.overdue_invoice_total_2weeks_eur.value"/> EUR
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             
                                                             <!-- TRY Value -->
-                                                            <t t-if="record.unpaid_invoice_total_2weeks_try.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_2weeks_try" type="action"
+                                                            <t t-if="record.overdue_invoice_total_2weeks_try.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_2weeks_try" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #ffebee; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #d9534f; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_2weeks_try.value"/> TRY
+                                                                        <t t-esc="record.overdue_invoice_total_2weeks_try.value"/> TRY
                                                                     </span>
                                                                 </a>
                                                             </t>
@@ -410,10 +410,10 @@
                                                     </div>
                                                 </t>
                                                 
-                                                <t t-if="record.unpaid_invoice_total_usd.value != 0 or record.unpaid_invoice_total_eur.value != 0 or record.unpaid_invoice_total_try.value != 0">
+                                                <t t-if="record.overdue_invoice_total_usd.value != 0 or record.overdue_invoice_total_eur.value != 0 or record.overdue_invoice_total_try.value != 0">
                                                     <div style="padding: 12px; border: 1px solid #d0d0d0; border-radius: 10px; margin-bottom: 12px; background-color: #fafafa;">
                                                         <!-- Month Title -->
-                                                        <a name="unpaid_invoice.action_unpaid_invoice_month" type="action" class="action-link"
+                                                        <a name="overdue_invoice.action_overdue_invoice_month" type="action" class="action-link"
                                                            style="display: inline-block; font-weight: bold; color: #007BFF; font-size: 16px; text-decoration: none;">
                                                             Month
                                                         </a>
@@ -421,31 +421,31 @@
                                                         <!-- Currency Values Section -->
                                                         <div class="stat-values" style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;">
                                                             <!-- USD Value -->
-                                                            <t t-if="record.unpaid_invoice_total_usd.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_month_usd" type="action"
+                                                            <t t-if="record.overdue_invoice_total_usd.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_month_usd" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #e3f2fd; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #007BFF; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_usd.value"/> USD
+                                                                        <t t-esc="record.overdue_invoice_total_usd.value"/> USD
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             
                                                             <!-- EUR Value -->
-                                                            <t t-if="record.unpaid_invoice_total_eur.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_month_eur" type="action"
+                                                            <t t-if="record.overdue_invoice_total_eur.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_month_eur" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #f5f5f5; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #333; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_eur.value"/> EUR
+                                                                        <t t-esc="record.overdue_invoice_total_eur.value"/> EUR
                                                                     </span>
                                                                 </a>
                                                             </t>
                                                             
                                                             <!-- TRY Value -->
-                                                            <t t-if="record.unpaid_invoice_total_try.value != 0">
-                                                                <a name="unpaid_invoice.action_unpaid_invoice_month_try" type="action"
+                                                            <t t-if="record.overdue_invoice_total_try.value != 0">
+                                                                <a name="overdue_invoice.action_overdue_invoice_month_try" type="action"
                                                                    style="text-decoration: none; padding: 6px 14px; background-color: #ffebee; border-radius: 6px; display: flex; align-items: center;">
                                                                     <span style="color: #d9534f; font-weight: 600; font-size: 14px;">
-                                                                        <t t-esc="record.unpaid_invoice_total_try.value"/> TRY
+                                                                        <t t-esc="record.overdue_invoice_total_try.value"/> TRY
                                                                     </span>
                                                                 </a>
                                                             </t>
@@ -465,7 +465,7 @@
 
 
         <!-- unpaid.invoice tree view -->
-        <record id="view_unpaid_invoice_tree" model="ir.ui.view">
+        <record id="view_overdue_invoice_tree" model="ir.ui.view">
             <field name="name">unpaid.invoice.tree</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
@@ -504,15 +504,15 @@
 
         
         <!-- unpaid.invoice form view -->
-        <!-- <record id="view_unpaid_invoice_form" model="ir.ui.view">
+        <!-- <record id="view_overdue_invoice_form" model="ir.ui.view">
             <field name="name">unpaid.invoice.form</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
                 <form create="false" class="modern-form">
                     <header>
                         <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
-                        <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
-                        <button name="send_email_unpaid_invoices" string="Send Email" type="object" class="btn-primary"/>
+                        <button name="populate_overdue_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
+                        <button name="send_email_overdue_invoices" string="Send Email" type="object" class="btn-primary"/>
                     <button name="get_current_action_domain" string="Count" type="object" class="btn-primary"/>
                     </header>
                     <sheet>
@@ -524,7 +524,7 @@
                             <field name="amount_due" class="line-separator"/>
                             <field name="currency_id" class="line-separator"/>
                             <field name="team_id" class="line-separator"/>
-                            <field name="unpaid_invoice_count"/>
+                            <field name="overdue_invoice_count"/>
                         </group>
                     </sheet>
                     <sheet>
@@ -536,7 +536,7 @@
                             <field name="amount_due" class="line-separator"/>
                             <field name="currency_id" class="line-separator"/>
                             <field name="team_id" class="line-separator"/>
-                            <field name="unpaid_invoice_count"/>
+                            <field name="overdue_invoice_count"/>
                         </group>
                     </sheet>
                 </form>
@@ -544,15 +544,15 @@
         </record> -->
 
 
-        <record id="view_unpaid_invoice_form" model="ir.ui.view">
+        <record id="view_overdue_invoice_form" model="ir.ui.view">
             <field name="name">unpaid.invoice.form</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
                 <form class="modern-form">
                     <header>
                         <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
-                        <button name="populate_unpaid_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
-                        <button name="send_email_unpaid_invoices" string="Send Email" type="object" class="btn-primary"/>
+                        <button name="populate_overdue_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
+                        <button name="send_email_overdue_invoices" string="Send Email" type="object" class="btn-primary"/>
                     </header>
                         <!-- Wrapper for the horizontal layout -->
                         <div style="display: flex; gap: 20px;">
@@ -586,7 +586,7 @@
         
 
         <!-- unpaid.invoice search view -->
-        <record id="view_unpaid_invoice_filter" model="ir.ui.view">
+        <record id="view_overdue_invoice_filter" model="ir.ui.view">
             <field name="name">unpaid.invoice.select</field>
             <field name="model">unpaid.invoice</field>
             <field name="arch" type="xml">
@@ -599,11 +599,11 @@
  
         <!-- Actions -->
         <!-- month.record kanban action -->
-        <record id="action_unpaid_invoice_kanban" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_kanban" model="ir.actions.act_window">
             <field name="name">Unpaid Invoices</field>
             <field name="res_model">month.record</field>
             <field name="view_mode">kanban</field>
-            <field name="view_id" ref="unpaid_invoice.view_month_record_kanban"/>
+            <field name="view_id" ref="overdue_invoice.view_month_record_kanban"/>
         </record>
 
         <!-- payment.term kanban action -->
@@ -611,12 +611,12 @@
             <field name="name">Unpaid Invoices Payment</field>
             <field name="res_model">payment.term</field>
             <field name="view_mode">kanban</field>
-            <field name="view_id" ref="unpaid_invoice.view_payment_term_kanban"/>
+            <field name="view_id" ref="overdue_invoice.view_payment_term_kanban"/>
         </record>
 
 
         <!-- unpaid.invoice week action -->
-        <record id="action_unpaid_invoice_week" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_week" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Week</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -632,12 +632,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice week USD action -->
-        <record id="action_unpaid_invoice_week_usd" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_week_usd" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Week USD</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -645,7 +645,7 @@
 
 
         <!-- unpaid.invoice week EUR action -->
-        <record id="action_unpaid_invoice_week_eur" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_week_eur" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Week EUR</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -662,12 +662,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice week TRY action -->
-        <record id="action_unpaid_invoice_week_try" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_week_try" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Week TRY</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -684,12 +684,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice 2 weeks action -->
-        <record id="action_unpaid_invoice_2weeks" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_2weeks" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice 2 Weeks</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -705,12 +705,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice 2 weeks USD action -->
-        <record id="action_unpaid_invoice_2weeks_usd" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_2weeks_usd" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice 2 Weeks USD</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -727,12 +727,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice 2 weeks EUR action -->
-        <record id="action_unpaid_invoice_2weeks_eur" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_2weeks_eur" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice 2 Weeks EUR</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -749,12 +749,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice 2 weeks TRY action -->
-        <record id="action_unpaid_invoice_2weeks_try" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_2weeks_try" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice 2 Weeks TRY</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -771,12 +771,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice month action -->
-        <!-- <record id="action_unpaid_invoice_month" model="ir.actions.act_window">
+        <!-- <record id="action_overdue_invoice_month" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Month</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -792,12 +792,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record> -->
 
 
         <!-- unpaid.invoice month USD action -->
-        <record id="action_unpaid_invoice_month_usd" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_month_usd" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Month USD</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -814,12 +814,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice month EUR action -->
-        <record id="action_unpaid_invoice_month_eur" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_month_eur" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Month EUR</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -836,12 +836,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice month TRY action -->
-        <record id="action_unpaid_invoice_month_try" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_month_try" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Month TRY</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -858,12 +858,12 @@
                     'journal_type': 'sale',
                 }
             </field>
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
         
         <!-- account.move today action -->
-        <record id="action_unpaid_invoice_today" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_today" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
@@ -886,7 +886,7 @@
             <field name="search_view_id" ref="account.view_out_invoice_tree"/>
         </record>
 
-        <record id="action_unpaid_invoice_week" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_week" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice This Week</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
@@ -916,7 +916,7 @@
 
 
         <!-- account.move november action -->
-        <!-- <record id="action_unpaid_invoice_nov" model="ir.actions.act_window">
+        <!-- <record id="action_overdue_invoice_nov" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice November</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
@@ -932,7 +932,7 @@
         </record> -->
 
         <!-- account.move December action -->
-        <record id="action_unpaid_invoice_dec" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_dec" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice December</field>
             <field name="res_model">account.move</field>
             <field name="view_mode">tree,form</field>
@@ -958,7 +958,7 @@
         
 
         <!-- unpaid.invoice today USD action -->
-        <record id="action_unpaid_invoice_today_usd" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_today_usd" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today USD</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -974,12 +974,12 @@
                     'journal_type': 'sale',
                 }
             </field> 
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice today EUR action -->
-        <record id="action_unpaid_invoice_today_eur" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_today_eur" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today EUR</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -995,12 +995,12 @@
                     'journal_type': 'sale',
                 }
             </field> 
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
 
         <!-- unpaid.invoice today TRY action -->
-        <record id="action_unpaid_invoice_today_try" model="ir.actions.act_window">
+        <record id="action_overdue_invoice_today_try" model="ir.actions.act_window">
             <field name="name">Unpaid Invoice Today TRY</field>
             <field name="res_model">unpaid.invoice</field>
             <field name="view_mode">tree,form</field>
@@ -1016,7 +1016,7 @@
                     'journal_type': 'sale',
                 }
             </field> 
-            <field name="search_view_id" ref="view_unpaid_invoice_filter"/>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
         </record>
 
         <!-- account.move schedual action -->
@@ -1034,9 +1034,9 @@
 
         
         <!-- Menu Item -->
-        <menuitem id="menu_unpaid_invoice_kanban" name="Unpaid Invoices" 
+        <menuitem id="menu_overdue_invoice_kanban" name="Unpaid Invoices" 
                   parent="point_of_sale.menu_point_rep" 
-                  action="action_unpaid_invoice_kanban"
+                  action="action_overdue_invoice_kanban"
                   sequence="11"/>
     </data>
 </odoo>
