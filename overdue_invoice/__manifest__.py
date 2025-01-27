@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "unpaid_invoice",
+    'name': "overdue_invoice",
 
     'summary': """
         cretae a pdf report for unpaid invoices.""",
@@ -36,20 +36,20 @@
     
     'assets': {
         'web.assets_qweb': [
-            'unpaid_invoice/static/src/xml/button_view.xml',
+            'overdue_invoice/static/src/xml/button_view.xml',
         ],
         'web.assets_backend': [
-            'unpaid_invoice/static/src/css/custom_styles.css',
-            'unpaid_invoice/static/src/js/pdf_export.js'
+            'overdue_invoice/static/src/css/custom_styles.css',
+            'overdue_invoice/static/src/js/pdf_export.js'
         ]
     },
 
     # 'assets': {
     #     'web.assets_backend': [
-    #         'unpaid_invoice/static/src/js/unpaid_invoice.js', #buttons event function file.
+    #         'overdue_invoice/static/src/js/overdue_invoice.js', #buttons event function file.
     #     ],
     #     'web.assets_qweb': [
-    #         'unpaid_invoice/static/src/xml/unpaid_invoice.xml', #buttons template file.
+    #         'overdue_invoice/static/src/xml/overdue_invoice.xml', #buttons template file.
     #     ],
         
     # },
