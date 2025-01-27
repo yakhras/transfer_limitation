@@ -100,7 +100,7 @@ class UnpaidInvoice(models.Model):
         return result    
 
 
-    def send_email_unpaid_invoices(self):
+    def send_email_overdue_invoices(self):
         template = self.env.ref('unpaid_invoice.unpaid_invoice')
         for rec in self:
             template.send_mail(rec.id, force_send=True)
