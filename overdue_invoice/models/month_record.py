@@ -67,17 +67,16 @@ class MonthRecord(models.Model):
 
     def _calculate_total(self, start_date, end_date, term):
         user = self.env.user  
-        team_id = user.sale_team_id.id if user.sale_team_id else False
+        team_id = user.sale_team_id.id
         domain = [('invoice_date_due', ">=", start_date),
                   ('invoice_date_due', "<=", end_date),
                 ('state', "=", 'posted'),
                 ('move_type', "in", ['out_invoice', 'out_refund']),
                 ('payment_state', "in", ['not_paid', 'partial']),
                 ('line_ids.account_id.code',"=",120001),
-                ('team_id', '=', user.sale_team_id.id),
                 ('amount_residual_signed',"!=",0),
                 ]
-        if team_id:  # Only add the condition if team_id is valid
+        if user.sale_team_id:  # Only add the condition if team_id is valid
             domain.append(('team_id', '=', team_id))
         if term:
             domain.append(('invoice_payment_term_id.name', "ilike", term))
