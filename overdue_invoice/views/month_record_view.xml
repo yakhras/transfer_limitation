@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <!-- Views -->
+
+        <!-- month.record kanban view -->
+        <record id="view_month_record_kanban" model="ir.ui.view">
+            <field name="name">month.record.kanban</field>
+            <field name="model">month.record</field>
+            <field name="arch" type="xml">
+                <kanban class="oe_kanban_dashboard" create="false">
+                    <field name="name" />
+                    <field name="today_total" />
+                    <field name="week_total" />
+                    <field name="month_total" />
+                    <field name="other_total" />
+                    <field name="today_immediate" />
+                    <field name="today_transfer" />
+                    <field name="today_check" />
+                    <field name="this_week_immediate" />
+                    <field name="this_week_transfer" />
+                    <field name="this_week_check" />
+                    <field name="this_month_immediate" />
+                    <field name="this_month_transfer" />
+                    <field name="this_month_check" />
+                    <field name="other_immediate" />
+                    <field name="other_transfer" />
+                    <field name="other_check" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card" style="border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                                <t t-if="record.name.value == 'Today'">
+                                    <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                                        <span><t t-esc="record.name.value" /></span>
+                                        <span><t t-esc="record.today_total.value" /> ₺</span>
+                                    </h3>
+                                    <a name="overdue_invoice.action_overdue_invoice_week_usd" type="action" style="width: 100%;">
+                                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.today_immediate.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.today_transfer.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.today_check.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </a>
+                                </t>
+                                <t t-if="record.name.value == 'This week'">
+                                    <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                                        <span><t t-esc="record.name.value" /></span>
+                                        <span><t t-esc="record.week_total.value"/> ₺</span>
+                                    </h3>
+                                    <a name="action_saturday_to_friday" type="object" style="width: 100%;">
+                                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.this_week_immediate.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.this_week_transfer.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.this_week_check.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </a>
+                                </t>
+                                <t t-if="record.name.value == 'This month'">
+                                    <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                                        <span><t t-esc="record.name.value" /></span>
+                                        <span><t t-esc="record.month_total.value"/> ₺</span>
+                                    </h3>
+                                    <a name="action_this_month" type="object" style="width: 100%; display: block;">
+                                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.this_month_immediate.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.this_month_transfer.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.this_month_check.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </a>
+                                </t>
+                                <t t-if="record.name.value == 'Other'">
+                                    <h3 style="font-weight: bold; color: #007BFF; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                                        <span><t t-esc="record.name.value" /></span>
+                                        <span><t t-esc="record.other_total.value"/> ₺</span>
+                                    </h3>
+                                    <a name="action_other" type="object" style="width: 100%; display: block;">
+                                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.other_immediate.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Transfer</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.other_transfer.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Check</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
+                                                        <t t-esc="record.other_check.value" /> ₺
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </a>
+                                </t>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <!-- Actions -->
+
+        <!-- month.record kanban action -->
+        <record id="action_overdue_invoice_kanban" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoices</field>
+            <field name="res_model">month.record</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="overdue_invoice.view_month_record_kanban"/>
+        </record>
+
+    
+        <!-- account.move schedual action -->
+        <record id="ir_cron_send_due_invoices_email" model="ir.cron">
+            <field name="name">Send Due Invoices Email</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="code">model.send_due_invoices_email()</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+            <field name="numbercall">-1</field>
+        </record>
+
+        
+        <!-- Menu Item -->
+        <menuitem id="menu_overdue_invoice_kanban" name="Unpaid Invoices" 
+                  parent="point_of_sale.menu_point_rep" 
+                  action="action_overdue_invoice_kanban"
+                  sequence="11"/>
+    </data>
+</odoo>

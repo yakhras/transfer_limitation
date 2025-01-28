@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+       
+        <!-- Views -->
+        
+        <!-- account.move tree view -->
+        <record id="view_account_move_custom_list" model="ir.ui.view">
+            <field name="name">account.move.custom.list</field>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <tree string="Account Moves (Custom)" create="false">
+                    <field name="name"/>
+                    <field name="document_number"/>
+                    <field name="invoice_partner_display_name" string="Customer"/>
+                    <field name="invoice_user_id"/>
+                    <field name="invoice_date" string="Invoice Date"/>
+                    <field name="invoice_date_due" widget="remaining_days"/>
+                    <field name="amount_residual_signed" string="Amount Due" sum="Total Due"/>
+                    <field name="amount_residual"/>
+                    <field name="payment_state" widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')"/>
+                    <field name="state" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        
+        <!-- account.move today action -->
+        <record id="action_overdue_invoice_today" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Today</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_move_custom_list"/>
+            <field name="domain">[
+                ('invoice_date_due', '=', context_today().strftime('%Y-%m-%d')),
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('line_ids.account_id.code',"=",120001),
+                ('amount_residual_signed',"!=",0),
+                ]</field>
+            <field name="context">{
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by': ['invoice_user_id','partner_id'],
+                }
+            </field> 
+            <field name="search_view_id" ref="account.view_out_invoice_tree"/>
+        </record>
+
+        <!-- account.move week action -->
+        <record id="action_overdue_invoice_week" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice This Week</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_move_custom_list"/>
+            <field name="domain">
+                [
+                    ('invoice_date_due', '&gt;=', (context_today() - relativedelta(days=(context_today().weekday=-2))).strftime('%Y-%m-%d')),
+                    ('invoice_date_due', '&lt;=', (context_today() - relativedelta(days=(context_today().weekday=-2)) + relativedelta(days=6)).strftime('%Y-%m-%d')),
+                    ('state', '=', 'posted'),
+                    ('move_type', 'in', ['out_invoice', 'out_refund']),
+                    ('payment_state', 'in', ['not_paid', 'partial']),
+                    ('line_ids.account_id.code', '=', 120001),
+                    ('amount_residual_signed', '!=', 0),
+                ]
+            </field>
+            <field name="context">
+                {
+                    'default_move_type': 'out_invoice',
+                    'move_type': 'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by': ['invoice_user_id', 'partner_id'],
+                }
+            </field>
+            <field name="search_view_id" ref="account.view_out_invoice_tree"/>
+        </record>
+
+
+        <!-- account.move December action -->
+        <record id="action_overdue_invoice_dec" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice December</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_move_custom_list"/>
+            <field name="domain">[
+                ('invoice_date_due', '&gt;=', "2024-12-01"),
+                ('invoice_date_due', '&lt;=', "2024-12-31"),
+                ('state', '=', 'posted'),
+                ('move_type', 'in', ['out_invoice', 'out_refund']),
+                ('payment_state', 'in', ['not_paid', 'partial']),
+                ('line_ids.account_id.code',"=",120001),
+                ('amount_residual_signed',"!=",0),
+                ]</field>
+            <field name="context">{
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                    'group_by': ['invoice_user_id','partner_id'],
+                }
+            </field> 
+            <field name="search_view_id" ref="account.view_out_invoice_tree"/>
+        </record>
+        
+    </data>
+</odoo>

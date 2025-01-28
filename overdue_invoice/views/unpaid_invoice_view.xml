@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        
+        <!-- Views -->
+        
+        <!-- unpaid.invoice tree view -->
+        <record id="view_overdue_invoice_tree" model="ir.ui.view">
+            <field name="name">unpaid.invoice.tree</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <tree js_class="Pdf_tree">
+                    <field name="document_id"/>
+                    <field name="partner_id"/>
+                    <field name="amount_total" sum="Total Amount"/>
+                    <field name="amount_due" sum="Total Due"/>
+                    <field name="amount_due_signed" sum="Total Due"/>
+                    <field name="currency_id"/>
+                    <field name="payment_state"/>
+                    <field name="due_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- unpaid.invoice form view -->
+        <record id="view_overdue_invoice_form" model="ir.ui.view">
+            <field name="name">unpaid.invoice.form</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <form class="modern-form">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,sent,sale"/>
+                        <button name="populate_overdue_invoices" string="Populate Unpaid Invoices" type="object" class="btn-primary"/>
+                        <button name="send_email_overdue_invoices" string="Send Email" type="object" class="btn-primary"/>
+                    </header>
+                        <!-- Wrapper for the horizontal layout -->
+                        <div style="display: flex; gap: 20px;">
+                            <!-- First sheet -->
+                            <sheet style="flex: 1;">
+                                <group>
+                                    <field name="invoice_id" class="line-separator"/>
+                                    <field name="invoice_date" class="line-separator"/>
+                                    <field name="amount_total" class="line-separator"/>
+                                    <field name="amount_due" class="line-separator"/>
+                                    <field name="currency_id" class="line-separator"/>
+                                    <field name="days_since_invoice" class="line-separator"/>
+                                    <field name="sales_person" class="line-separator"/>
+                                    <field name="sale_order" class="line-separator"/>
+                                </group>
+                            </sheet>
+        
+                            <!-- Second sheet -->
+                            <sheet style="flex: 1;">
+                                <group>
+                                    <field name="partner_id" class="line-separator"/>
+                                    <field name="partner_mail" class="line-separator"/>
+                                    <field name="partner_phone" class="line-separator"/>
+                                    <field name="partner_term" class="line-separator"/>
+                                </group>
+                            </sheet>
+                        </div>
+                </form>
+            </field>
+        </record>
+        
+
+        <!-- unpaid.invoice search view -->
+        <record id="view_overdue_invoice_filter" model="ir.ui.view">
+            <field name="name">unpaid.invoice.select</field>
+            <field name="model">unpaid.invoice</field>
+            <field name="arch" type="xml">
+                <search string="Search Invoice"> 
+                    <field name="team_id" string="Sales Team"/>
+                    <filter string="Customer" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+               </search>
+            </field>
+        </record>
+ 
+        <!-- Actions -->
+
+
+        <!-- unpaid.invoice week action -->
+        <record id="action_overdue_invoice_week" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Week</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice week USD action -->
+        <record id="action_overdue_invoice_week_usd" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Week USD</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- unpaid.invoice week EUR action -->
+        <record id="action_overdue_invoice_week_eur" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Week EUR</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'EUR'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice week TRY action -->
+        <record id="action_overdue_invoice_week_try" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Week TRY</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'TRY'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice 2 weeks action -->
+        <record id="action_overdue_invoice_2weeks" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice 2 Weeks</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', (context_today()+ relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice 2 weeks USD action -->
+        <record id="action_overdue_invoice_2weeks_usd" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice 2 Weeks USD</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', (context_today()+ relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'USD'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice 2 weeks EUR action -->
+        <record id="action_overdue_invoice_2weeks_eur" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice 2 Weeks EUR</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', (context_today()+ relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'EUR'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice 2 weeks TRY action -->
+        <record id="action_overdue_invoice_2weeks_try" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice 2 Weeks TRY</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', (context_today()+ relativedelta(weeks=-1)).strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'TRY'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice month USD action -->
+        <record id="action_overdue_invoice_month_usd" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Month USD</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'USD'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice month EUR action -->
+        <record id="action_overdue_invoice_month_eur" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Month EUR</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'EUR'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice month TRY action -->
+        <record id="action_overdue_invoice_month_try" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Month TRY</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '&gt;=', (context_today() + relativedelta(months=-1)).strftime('%Y-%m-%d')),
+                ('due_date', '&lt;', (context_today() + relativedelta(weeks=-2)).strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'TRY'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field>
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+       
+        <!-- unpaid.invoice today USD action -->
+        <record id="action_overdue_invoice_today_usd" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Today USD</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '=', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'USD'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team_id': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field> 
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice today EUR action -->
+        <record id="action_overdue_invoice_today_eur" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Today EUR</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '=', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'EUR'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team_id': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field> 
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+
+        <!-- unpaid.invoice today TRY action -->
+        <record id="action_overdue_invoice_today_try" model="ir.actions.act_window">
+            <field name="name">Unpaid Invoice Today TRY</field>
+            <field name="res_model">unpaid.invoice</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('due_date', '=', context_today().strftime('%Y-%m-%d')),
+                ('currency_id.name', '=', 'TRY'),
+                ]</field>
+            <field name="context">{
+                    'search_default_team_id': active_id,
+                    'default_team_id': active_id,
+                    'default_move_type':'out_invoice',
+                    'move_type':'out_invoice',
+                    'journal_type': 'sale',
+                }
+            </field> 
+            <field name="search_view_id" ref="view_overdue_invoice_filter"/>
+        </record>
+
+    </data>
+</odoo>
