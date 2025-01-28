@@ -72,6 +72,7 @@ class MonthRecord(models.Model):
                 ('move_type', "in", ['out_invoice', 'out_refund']),
                 ('payment_state', "in", ['not_paid', 'partial']),
                 ('line_ids.account_id.code',"=",120001),
+                ('team_id', '=', self.user.sale_team_id.id),
                 ('amount_residual_signed',"!=",0),
                 ]
         if term:
