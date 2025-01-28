@@ -135,6 +135,7 @@ class MonthRecord(models.Model):
             "search_view_id": self.env.ref("account.view_out_invoice_tree").id,
         }
 
+
     def action_saturday_to_friday(self):
         today = self.today
         week_start = today - timedelta(days=today.weekday() + 2)  # Previous Saturday
