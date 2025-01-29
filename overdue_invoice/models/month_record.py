@@ -79,7 +79,7 @@ class MonthRecord(models.Model):
         if term:
             term_ids = self.env['account.payment.term'].search([('name', 'ilike', term)]).ids
             if term_ids:
-                domain.append(('invoice_payment_term_id.name', "in", term_ids))
+                domain.append(('invoice_payment_term_id.id', "in", term_ids))
         if user.sale_team_id:  # Only add the condition if user in team_id
             domain.append(('team_id', '=', team_id))
         
