@@ -176,3 +176,27 @@ class MonthRecord(models.Model):
             other_start,
             other_end,
         )
+
+
+    debug_domain = fields.Char(compute="_compute_debug_info")
+    debug_record_count = fields.Integer(compute="_compute_debug_info")
+
+    def _compute_debug_info(self):
+        today = self.today
+        week_start = today - timedelta(days=today.weekday() + 2)
+        week_end = week_start + timedelta(days=6)
+        domain = [
+            ('invoice_date_due', '>=', week_start),
+            ('invoice_date_due', '<=', week_end),
+            ('state', '=', 'posted'),
+            ('move_type', 'in', ['out_invoice', 'out_refund']),
+            ('payment_state', 'in', ['not_paid', 'partial']),
+            ('line_ids.account_id.code', '=', 120001),
+            ('amount_residual_signed', '!=', 0),
+        ]
+        if self.env.user.sale_team_id:
+            domain.append(('team_id', '=', self.env.user.sale_team_id.id))
+        records = self.env['account.move'].search(domain)
+        for record in self:
+            record.debug_domain = str(domain)
+            record.debug_record_count = len(records)
