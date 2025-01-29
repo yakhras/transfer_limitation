@@ -29,7 +29,7 @@
         'views/month_record_view.xml',
         'views/unpaid_invoice_view.xml',
         'views/account_move_view.xml',
-        'views/sales_team_card_view.xml',
+        # 'views/sales_team_card_view.xml',
         'views/pdf.xml',
         'views/pdf_group_by_template.xml',
         'data/mail_template_data.xml',
