@@ -198,5 +198,5 @@ class MonthRecord(models.Model):
             domain.append(('team_id', '=', self.env.user.sale_team_id.id))
         records = self.env['account.move'].search(domain)
         for record in self:
-            record.debug_domain = 1
-            record.debug_record_count = 2
+            record.debug_domain = str(domain)
+            record.debug_record_count = len(records)
