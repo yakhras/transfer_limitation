@@ -42,7 +42,7 @@
                                         <table style="width: 100%; border-collapse: collapse; text-align: left;">
                                             <tbody>
                                                 <tr>
-                                                    <td style="padding: 8px; font-size: 14px; color: #555;">Immediate</td>
+                                                    <td style="padding: 8px; font-size: 14px; color: #555;">HI</td>
                                                     <td style="padding: 8px; font-size: 14px; color: #555; text-align: right;">
                                                         <t t-esc="record.today_immediate.value" /> ₺
                                                     </td>
