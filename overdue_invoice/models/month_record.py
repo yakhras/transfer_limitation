@@ -76,10 +76,13 @@ class MonthRecord(models.Model):
                 ('line_ids.account_id.code',"=",120001),
                 ('amount_residual_signed',"!=",0),
                 ]
+        if term:
+            term_ids = self.env['account.payment.term'].search([('name', 'ilike', term)]).ids
+            if term_ids:
+                domain.append(('invoice_payment_term_id.name', "in", term_ids))
         if user.sale_team_id:  # Only add the condition if user in team_id
             domain.append(('team_id', '=', team_id))
-        if term:
-            domain.append(('invoice_payment_term_id.name', "ilike", term))
+        
         res = sum(self.env['account.move'].search(domain).mapped('amount_residual_signed'))
         return res
     
