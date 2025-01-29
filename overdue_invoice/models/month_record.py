@@ -52,7 +52,7 @@ class MonthRecord(models.Model):
             record.today_transfer = self._calculate_total(today, today, 'Transfer')
             record.today_check = self._calculate_total(today, today, 'Check')
 
-            record.this_week_immediate = self._calculate_total(week_start, week_end, 'Immediate')
+            record.this_week_immediate = self._calculate_total(week_start, week_end, 'Peşin')
             record.this_week_transfer = self._calculate_total(week_start, week_end, 'Transfer')
             record.this_week_check = self._calculate_total(week_start, week_end, 'Check')
 
