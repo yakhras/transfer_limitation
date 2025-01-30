@@ -62,7 +62,7 @@
                         <div class="row">
                             <div class="col-12" style="text-align: left;">
                                 <strong style="font-size: 28px; color: red; font-family: Arial, sans-serif;">
-                                    <t t-esc="_('Proforma Invoice')"/>
+                                    Proforma Invoice
                                 </strong>
                             </div>
                         </div>
