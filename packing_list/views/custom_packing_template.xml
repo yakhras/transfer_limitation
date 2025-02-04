@@ -137,7 +137,7 @@
                                                 <span t-esc="('%.4f' % line.price_unit).rstrip('0').rstrip('.')"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                                <span t-esc="int(line.product_id)"/>%
+                                                <span t-esc="line.product_id"/>%
                                             </td>
                                         </tr>
                                     </t>
