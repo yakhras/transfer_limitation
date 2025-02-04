@@ -23,7 +23,7 @@
             <field name="model">product.product</field>
             <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//div[1][@class='o_row']" position="after">
+                <xpath expr="//div[@class='o_row'][1]" position="after">
                     <label for="gross_weight"/>
                     <div class="o_row" name="gross_weight">
                         <field name="gross_weight"/>
