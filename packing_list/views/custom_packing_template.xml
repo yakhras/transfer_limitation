@@ -116,8 +116,8 @@
                                         <th style="border: 1px none #ccc; padding: 6px; text-align: left;">Product</th>
                                         <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Quantity</th>
                                         <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Type</th>
-                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Net Weight</th>
-                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Gross Weight</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Net Weight / KG</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Gross Weight / KG</th>
                                     </tr>
                                 </thead>
                                 <tbody style="background-color: #f4f4f4; color: black;">
@@ -134,10 +134,10 @@
                                                 <span t-field="line.product_uom.name"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                                <span t-esc="('%.4f' % line.price_unit).rstrip('0').rstrip('.')"/>
+                                                <span t-field="line.product_id.weight"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                                <span t-esc="line.product_id.weight"/>%
+                                                <span t-field="line.product_id.gross_weight"/>
                                             </td>
                                         </tr>
                                     </t>
