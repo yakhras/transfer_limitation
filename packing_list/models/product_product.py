@@ -5,3 +5,10 @@ class ProductProduct(models.Model):
     
     
     gross_weight = fields.Float('Cross Weight', digits='Stock Weight')
+
+
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+    
+    
+    gross_weight = fields.Float('Cross Weight', digits='Stock Weight')
