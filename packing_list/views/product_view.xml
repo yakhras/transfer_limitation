@@ -16,5 +16,21 @@
                 </xpath>
             </field>
         </record>
+
+        <!-- product.product -->
+        <record id="product_variant_form_view" model="ir.ui.view">
+            <field name="name">product.variant.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//label[@for='weight']" position="after">
+                    <label for="gross_weight" attrs="{'invisible':[('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}"/>
+                    <div class="o_row" name="gross_weight" attrs="{'invisible':[('product_variant_count', '>', 1), ('is_product_variant', '=', False)]}">
+                        <field name="gross_weight"/>
+                        <span><field name="weight_uom_name"/></span>
+                    </div>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
