@@ -6,10 +6,8 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//tree" position="inside">
-                <group string="Weight Details">
-                    <field name="gross_weight"/>
-                    <field name="net_weight"/>
-                </group>
+                <field name="gross_weight"/>
+                <field name="net_weight"/>
             </xpath>
         </field>
     </record>
