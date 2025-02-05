@@ -144,7 +144,7 @@
                                 </tbody>
                             </table>
                             <tfoot>
-                                <tr style="background-color: #f8f8f8; font-weight: bold;">
+                                <tr style="background-color: black; color: white;">
                                     <tf style="padding: 8px; text-align: left; border: 1px solid #ccc;">Total</tf>
                                     <tf style="padding: 8px; text-align: right; border: 1px solid #ccc;">100</tf>
                                     <tf style="padding: 8px; text-align: right; border: 1px solid #ccc;">Packaging</tf>
