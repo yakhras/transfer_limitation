@@ -160,6 +160,7 @@
                                     <tr>
                                         <td style="padding: 8px; border: 1px solid #ccc;">Total</td>
                                         <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">100</td>
+                                        <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">Packaging</td>
                                         <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">200</td>
                                         <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">300</td>
                                     </tr>
