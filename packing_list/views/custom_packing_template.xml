@@ -184,30 +184,6 @@
                                 </div>
                             </div>
                         </t>
-                        
-                        
-                        <!-- Terms Section -->
-                        <div style="margin-top: 10px; page-break-inside: avoid;">
-                            
-                            <!-- First Row in Terms (Temel Koşullar) -->
-                            <div class="row" style="margin-bottom: 20px;">
-                                <div class="col-12" style="text-align: left;">
-                                    <!-- Styled Header for "Temel Koşullar" -->
-                                    <div style="background-color: #333; color: #fff; padding: 8px; border: 1px solid #ccc; font-weight: bold;">
-                                        Temel Koşullar:
-                                    </div>
-                                    
-                                    <!-- Terms Content -->
-                                    <p style="font-size: 13px; line-height: 1.6; color: #333; margin-top: 10px;">
-                                        1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
-                                        2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
-                                        3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
-                                        4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
-                                        5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında % 3 vade farkı ilave edilecektir.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
 
                     </div>
                 </t>
