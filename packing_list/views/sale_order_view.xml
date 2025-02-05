@@ -9,6 +9,9 @@
                 <field name="net_weight" optional="hide"/>
                 <field name="gross_weight" optional="hide"/>
             </xpath>
+            <xpath expr="//tree//field[@name='product_packaging_id']" position="attributes">
+                <attribute name="options">{'no_create': True, 'no_edit': True}</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>
