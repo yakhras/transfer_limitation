@@ -5,7 +5,7 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//tree" position="inside">
+            <xpath expr="//tree//field[@name='price_subtotal']" position="before">
                 <field name="net_weight" optional="hide"/>
                 <field name="gross_weight" optional="hide"/>
             </xpath>
