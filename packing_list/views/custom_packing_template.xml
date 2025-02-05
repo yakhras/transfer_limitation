@@ -134,10 +134,10 @@
                                                 <span t-field="line.product_uom.name"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                                <span t-field="line.product_id.weight"/>
+                                                <span t-field="line.net_weight"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                                <span t-field="line.product_id.gross_weight"/>
+                                                <span t-field="line.gross_weight"/>
                                             </td>
                                         </tr>
                                     </t>
