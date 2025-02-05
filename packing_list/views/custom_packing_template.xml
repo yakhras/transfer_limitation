@@ -131,7 +131,7 @@
                                                 <span t-field="line.product_uom_qty"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                                <span t-field="line.product_uom.name"/>
+                                                <span t-field="line.product_packaging_id"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
                                                 <span t-field="line.net_weight"/>
