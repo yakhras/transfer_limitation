@@ -28,6 +28,7 @@
         #"security/security.xml",
         "views/report_invoice_template.xml",
         "views/custom_packing_template.xml",
+        "views/sale_order_view.xml",
         #"views/product_view.xml",
         # "reports.xml", #action file.
         # "menuitems.xml", #menu items file.
