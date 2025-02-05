@@ -159,8 +159,11 @@
                         
                                         <!-- Tax Totals -->
                                         <tbody>
-                                            <t t-set="tax_totals" t-value="json.loads(doc.tax_totals_json)"/>
-                                            <t t-call="account.document_tax_totals"/>
+                                            <tr>
+                                                <td>
+                                                    <span t-esc="Total Quantity"/>
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
