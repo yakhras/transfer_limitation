@@ -146,29 +146,25 @@
                         </div>
                     
                         <div class="clearfix" name="so_total_summary" style="margin-top: 20px;">
-                            <div id="total" class="row" name="total">
-                                <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
-                                    <table class="table table-sm" style="border: 1px solid #ccc; color: #333; border-collapse: collapse;">
-                                        <!-- Table Header for Totals -->
-                                        <!-- <thead>
-                                            <tr style="background-color: #333; color: #fff;">
-                                                <th style="padding: 8px; text-align: left; border: 1px solid #ccc;">Description</th>
-                                                <th style="padding: 8px; text-align: right; border: 1px solid #ccc;">Amount</th>
-                                            </tr>
-                                        </thead> -->
-                        
-                                        <!-- Tax Totals -->
-                                        <tbody>
-                                            <tr>
-                                                <td style="padding: 8px; border: 1px solid #ccc;">Total</td>
-                                                <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">100</td>
-                                                <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">200</td>
-                                                <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">300</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                            <table class="table table-sm" style="border: 1px solid #ccc; color: #333; border-collapse: collapse;">
+                                <!-- Table Header for Totals -->
+                                <!-- <thead>
+                                    <tr style="background-color: #333; color: #fff;">
+                                        <th style="padding: 8px; text-align: left; border: 1px solid #ccc;">Description</th>
+                                        <th style="padding: 8px; text-align: right; border: 1px solid #ccc;">Amount</th>
+                                    </tr>
+                                </thead> -->
+                
+                                <!-- Tax Totals -->
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">Total</td>
+                                        <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">100</td>
+                                        <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">200</td>
+                                        <td style="padding: 8px; text-align: right; border: 1px solid #ccc;">300</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                         
 
