@@ -60,7 +60,7 @@
                     <div class="page">
                         <!-- Proforma Invoice Section -->
                         <div class="row">
-                            <div class="col-12" style="text-align: left;">
+                            <div class="col-12" style="text-align: center;">
                                 <strong style="font-size: 28px; color: red; font-family: Arial, sans-serif;">
                                     Packing List
                                 </strong>
@@ -71,7 +71,7 @@
                                 <div style="margin-bottom: 5px;"><strong>Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
                             </div>
                             <div class="col-6">
-                                <div style="margin-bottom: 5px;"><strong>Invoice No.: </strong> <span t-field="doc.name"/></div>
+                                <div style="margin-bottom: 5px;"><strong>Order No.: </strong> <span t-field="doc.name"/></div>
                             </div>
                         </div>
                         
@@ -138,7 +138,7 @@
                             </div>
                         </div>
                         <!-- Border Line Before Title -->
-                        <div style="border-bottom: 2px solid #333; margin-bottom: 15px;"></div>
+                        <div style="border-bottom: 2px solid #333; margin-bottom: 15px; margin-top: 15px;"></div>
                         <!-- Table Title -->
                         <h4 style="text-align: left; margin-top: 10px; margin-bottom: 5px; color: #333;">Packing List Details</h4>
                         <!-- Table Section -->
