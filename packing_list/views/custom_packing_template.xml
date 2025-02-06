@@ -65,13 +65,15 @@
                                     Packing List
                                 </strong>
                             </div>
+                            <div style="margin-bottom: 5px;"><strong>Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
+                            <div style="margin-bottom: 5px;"><strong>Invoice No.: </strong> <span t-field="doc.name"/></div>
                         </div>
                         
                         <!-- New Row with Two Columns -->
                         <div class="row" style="margin-top: 20px;">
                             <!-- Left Column (col-8) -->
-                            <div class="col-8">
-                                <div style="margin-bottom: 5px;"><strong>Firma: </strong><span t-esc="doc.get_partner_name_title_case()"/></div>
+                            <div class="col-6">
+                                <div style="margin-bottom: 5px;"><strong>Buyer: </strong><span t-esc="doc.get_partner_name_title_case()"/></div>
                                 <div style="margin-bottom: 5px;">
                                     <strong>Address: </strong>
                                     <span t-if="doc.partner_shipping_id.street">
@@ -99,9 +101,33 @@
                             </div>
 
                             <!-- Right Column (col-4) -->
-                            <div class="col-4">
-                                <div style="margin-bottom: 5px;"><strong>Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
-                                <div style="margin-bottom: 5px;"><strong>Invoice No.: </strong> <span t-field="doc.name"/></div>
+                            <div class="col-6">
+                                <div style="margin-bottom: 5px;"><strong>Seller: </strong><span t-esc="doc.company_id.name"/></div>
+                                <div style="margin-bottom: 5px;">
+                                    <strong>Address: </strong>
+                                    <span t-if="doc.partner_shipping_id.street">
+                                        <span t-field="doc.partner_shipping_id.street"/> 
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.street2">
+                                        <span t-field="doc.partner_shipping_id.street2"/> 
+                                    </span>
+                                </div>
+                                <div style="margin-bottom: 5px;">
+                                    <span t-if="doc.partner_shipping_id.city">
+                                        <span t-field="doc.partner_shipping_id.city"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.state_id">
+                                        <span t-field="doc.partner_shipping_id.state_id.name"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.zip">
+                                        <span t-field="doc.partner_shipping_id.zip"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.country_id">
+                                        <span t-field="doc.partner_shipping_id.country_id.name"/>
+                                    </span>
+                                </div>
+                                <div><strong>VAT:</strong> <span t-esc="doc.partner_id.vat[2:] if doc.partner_id.vat and doc.partner_id.vat.startswith('TR') else doc.partner_id.vat"/></div>
+                                
                             </div>
                         </div>
                         <!-- Border Line Before Title -->
