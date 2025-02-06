@@ -66,8 +66,11 @@
                                 </strong>
                             </div>
                         </div>
-                        <div style="margin-bottom: 5px;"><strong>Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
-                        <div style="margin-bottom: 5px;"><strong>Invoice No.: </strong> <span t-field="doc.name"/></div>
+                        <div class="row" style="margin-top: 20px;">
+                            <div style="margin-bottom: 5px;"><strong>Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
+                            <div style="margin-bottom: 5px;"><strong>Invoice No.: </strong> <span t-field="doc.name"/></div>
+                        </div>
+                        
                         
                         <!-- New Row with Two Columns -->
                         <div class="row" style="margin-top: 20px;">
