@@ -76,25 +76,25 @@
                                 <div style="margin-bottom: 5px;"><strong>Seller: </strong><span t-esc="doc.company_id.name"/></div>
                                 <div style="margin-bottom: 5px;">
                                     <strong>Address: </strong>
-                                    <span t-if="doc.partner_shipping_id.street">
-                                        <span t-field="doc.partner_shipping_id.street"/> 
+                                    <span t-if="doc.company_id.street">
+                                        <span t-field="doc.company_id.street"/> 
                                     </span>
-                                    <span t-if="doc.partner_shipping_id.street2">
-                                        <span t-field="doc.partner_shipping_id.street2"/> 
+                                    <span t-if="doc.company_id.street2">
+                                        <span t-field="doc.company_id.street2"/> 
                                     </span>
                                 </div>
                                 <div style="margin-bottom: 5px;">
-                                    <span t-if="doc.partner_shipping_id.city">
-                                        <span t-field="doc.partner_shipping_id.city"/>
+                                    <span t-if="doc.company_id.city">
+                                        <span t-field="doc.company_id.city"/>
                                     </span>
-                                    <span t-if="doc.partner_shipping_id.state_id">
-                                        <span t-field="doc.partner_shipping_id.state_id.name"/>
+                                    <span t-if="doc.company_id.state_id">
+                                        <span t-field="doc.company_id.state_id.name"/>
                                     </span>
-                                    <span t-if="doc.partner_shipping_id.zip">
-                                        <span t-field="doc.partner_shipping_id.zip"/>
+                                    <span t-if="doc.company_id.zip">
+                                        <span t-field="doc.company_id.zip"/>
                                     </span>
-                                    <span t-if="doc.partner_shipping_id.country_id">
-                                        <span t-field="doc.partner_shipping_id.country_id.name"/>
+                                    <span t-if="doc.company_id.country_id">
+                                        <span t-field="doc.company_id.country_id.name"/>
                                     </span>
                                 </div>
                                 <div><strong>Phone:</strong> <span t-esc="doc.company_id.phone"/></div>
@@ -102,7 +102,7 @@
 
                             <!-- Right Column (col-4) -->
                             <div class="col-6">
-                                <div style="margin-bottom: 5px;"><strong>Seller: </strong><span t-esc="doc.get_partner_name_title_case()"/></div>
+                                <div style="margin-bottom: 5px;"><strong>Buyer: </strong><span t-esc="doc.get_partner_name_title_case()"/></div>
                                 <div style="margin-bottom: 5px;">
                                     <strong>Address: </strong>
                                     <span t-if="doc.partner_shipping_id.street">
