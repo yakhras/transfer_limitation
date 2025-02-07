@@ -36,7 +36,8 @@
                     <div class="col-4 text-center">
                         <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333; margin: 0;">
                             <span style="font-weight: 400; white-space: nowrap;">
-                                <span t-field="doc.company_id.street2"/>,<br/> <span t-field="doc.company_id.street"/>
+                                <span t-field="doc.company_id.street2"/>,<br/>
+                                <span t-field="doc.company_id.street"/>
                             </span><br/>
                             <span t-field="doc.company_id.city"/> <span t-field="doc.company_id.state_id.name"/>-<span t-field="doc.company_id.country_id.name"/>
                         </p>
@@ -73,7 +74,7 @@
                         <div class="row" style="margin-top: 20px;">
                             <!-- Left Column (col-8) -->
                             <div class="col-8">
-                                <div style="margin-bottom: 5px;"><strong>Firma: </strong><span t-esc="doc.get_partner_name_title_case()"/></div>
+                                <div style="margin-bottom: 5px;"><strong>Firma: </strong><span t-esc="doc.partner_id.name"/></div>
                                 <div style="margin-bottom: 5px;">
                                     <strong>Address: </strong>
                                     <span t-if="doc.partner_shipping_id.street">
