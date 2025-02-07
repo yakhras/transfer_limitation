@@ -35,7 +35,7 @@
                     <!-- Address (Center) -->
                     <div class="col-4 text-center">
                         <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333; margin: 0;">
-                            <span style="font-weight: 600; white-space: nowrap;">
+                            <span style="font-weight: 400; white-space: nowrap;">
                                 <span t-field="doc.company_id.street2"/>,<br/>
                                 <span t-field="doc.company_id.street"/>
                             </span><br/>
