@@ -182,7 +182,7 @@
                                         <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">
                                             <span t-esc="sum(doc.order_line.mapped('product_uom_qty'))"/>
                                         </td>
-                                        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">-</td>
+                                        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">Packaging</td>
                                         <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">
                                             <span t-esc="sum(doc.order_line.mapped('net_weight'))"/>
                                         </td>
