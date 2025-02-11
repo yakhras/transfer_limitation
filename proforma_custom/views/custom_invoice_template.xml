@@ -56,210 +56,213 @@
     </template >
         
     <template id="custom_invoice_template">
-        <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="doc">
-                <t t-call="proforma_custom.external_layout_yaser">
-                    <t t-if="doc.partner_id.language == 'tr-TR'">
-                        <t t-call="proforma_custom.custom_invoice_template_Arabic"/>
-                    </t>
-                </t>
+        <t t-foreach="docs" t-as="doc">
+            <t t-if="doc.partner_id.language == 'tr-TR'">
+                <t t-call="proforma_custom.custom_invoice_template_Arabic"/>
             </t>
         </t>
     </template>
 
     <template id="custom_invoice_template_Arabic">
-        <div class="page">
-            <!-- Proforma Invoice Section -->
-            <div class="row">
-                <div class="col-12" style="text-align: center;">
-                    <strong style="font-size: 28px; color: red; font-family: Arial, sans-serif;">
-                        الفاتورة النموذجية
-                    </strong>
-                </div>
-            </div>
-            <!-- Border Line Before info -->
-            <div style="border-bottom: 2px solid #333; margin-bottom: 15px; margin-top: 15px;"></div>
-            <!-- New Row with Two Columns -->
-            <div class="row" style="margin-top: 20px;">
-                <!-- Left Column (col-8) -->
-                <div class="col-8">
-                    <div style="margin-bottom: 5px;"><strong>العميل: </strong><span t-esc="doc.partner_id.name"/></div>
-                    <div style="margin-bottom: 5px;">
-                        <strong>Address: </strong>
-                        <span t-if="doc.partner_shipping_id.street">
-                            <span t-field="doc.partner_shipping_id.street"/> 
-                        </span>
-                        <span t-if="doc.partner_shipping_id.street2">
-                            <span t-field="doc.partner_shipping_id.street2"/> 
-                        </span>
-                    </div>
-                    <div style="margin-bottom: 5px;">
-                        <span t-if="doc.partner_shipping_id.city">
-                            <span t-field="doc.partner_shipping_id.city"/>
-                        </span>
-                        <span t-if="doc.partner_shipping_id.state_id">
-                            <span t-field="doc.partner_shipping_id.state_id.name"/>
-                        </span>
-                        <span t-if="doc.partner_shipping_id.zip">
-                            <span t-field="doc.partner_shipping_id.zip"/>
-                        </span>
-                        <span t-if="doc.partner_shipping_id.country_id">
-                            <span t-field="doc.partner_shipping_id.country_id.name"/>
-                        </span>
-                    </div>
-                    <div><strong>الرقم الضريبي:</strong> <span t-esc="doc.partner_id.vat[2:] if doc.partner_id.vat and doc.partner_id.vat.startswith('TR') else doc.partner_id.vat"/></div>
-                </div>
-
-                <!-- Right Column (col-4) -->
-                <div class="col-4">
-                    <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
-                    <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
-                    <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
-                    <div><strong>Expiration: </strong> <span t-field="doc.expiration_days" style="color: red;"/></div>
-                </div>
-            </div>
-            <!-- Border Line Before Title -->
-            <div style="border-bottom: 2px solid #333; margin-bottom: 15px;"></div>
-            <!-- Table Title -->
-            <h4 style="text-align: left; margin-top: 10px; margin-bottom: 5px; color: #333;">Proforma Invoice Details</h4>
-            <!-- Table Section -->
-            <div style="margin-top: 20px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead style="background-color: black; color: white;">
-                        <tr>
-                            <th style="border: 1px none #ccc; padding: 6px; text-align: left;">Product</th>
-                            <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Quantity</th>
-                            <th style="border: 1px none #ccc; padding: 6px; text-align: center;">UOM</th>
-                            <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Unit Price</th>
-                            <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Tax</th>
-                            <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody style="background-color: #f4f4f4; color: black;">
-                        <!-- Loop through order line items -->
-                        <t t-foreach="doc.order_line" t-as="line">
-                            <tr>
-                                <td style="border: 1px none black; padding: 6px;">
-                                    <span t-esc="line.name.split(']', 1)[1].strip() if '[' in line.name and ']' in line.name else line.name"/>
-                                </td>
-                                <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                    <span t-field="line.product_uom_qty"/>
-                                </td>
-                                <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                    <span t-field="line.product_uom.name"/>
-                                </td>
-                                <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                    <span t-esc="('%.4f' % line.price_unit).rstrip('0').rstrip('.')"/>
-                                </td>
-                                <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                    <span t-esc="int(line.tax_id.amount)"/>%
-                                </td>
-                                <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                    <span t-field="line.price_subtotal"/>
-                                </td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
-            </div>
-        
-            <div class="clearfix" name="so_total_summary" style="margin-top: 20px;">
-                <div id="total" class="row" name="total">
-                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
-                        <table class="table table-sm" style="border: 1px solid #ccc; color: #333; border-collapse: collapse;">
-                            <!-- Table Header for Totals -->
-                            <thead>
-                                <tr style="background-color: #333; color: #fff;">
-                                    <th style="padding: 8px; text-align: left; border: 1px solid #ccc;">Description</th>
-                                    <th style="padding: 8px; text-align: right; border: 1px solid #ccc;">Amount</th>
-                                </tr>
-                            </thead>
-            
-                            <!-- Tax Totals -->
-                            <tbody>
-                                <t t-set="tax_totals" t-value="json.loads(doc.tax_totals_json)"/>
-                                <t t-call="account.document_tax_totals"/>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-
-            <t t-if="doc.has_note">
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-12" style="text-align: left;">
-                        <!-- Styled Header for "Note" Section -->
-                        <div style="background-color: #333; color: #fff; padding: 8px; border: 1px solid #ccc; font-weight: bold;">
-                            Not:
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="proforma_custom.external_layout_yaser">
+                    <div class="page">
+                        <!-- Proforma Invoice Section -->
+                        <div class="row">
+                            <div class="col-12" style="text-align: center;">
+                                <strong style="font-size: 28px; color: red; font-family: Arial, sans-serif;">
+                                    الفاتورة النموذجية
+                                </strong>
+                            </div>
                         </div>
-            
-                        <!-- Display HTML Note Content -->
-                        <div style="margin-top: 10px; font-size: 13px; line-height: 1.6; color: #333;">
-                            <t t-raw="doc.note"/>
-                        </div>
-                    </div>
-                </div>
-            </t>
-            
+                        <!-- Border Line Before info -->
+                        <div style="border-bottom: 2px solid #333; margin-bottom: 15px; margin-top: 15px;"></div>
+                        <!-- New Row with Two Columns -->
+                        <div class="row" style="margin-top: 20px;">
+                            <!-- Left Column (col-8) -->
+                            <div class="col-8">
+                                <div style="margin-bottom: 5px;"><strong>العميل: </strong><span t-esc="doc.partner_id.name"/></div>
+                                <div style="margin-bottom: 5px;">
+                                    <strong>Address: </strong>
+                                    <span t-if="doc.partner_shipping_id.street">
+                                        <span t-field="doc.partner_shipping_id.street"/> 
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.street2">
+                                        <span t-field="doc.partner_shipping_id.street2"/> 
+                                    </span>
+                                </div>
+                                <div style="margin-bottom: 5px;">
+                                    <span t-if="doc.partner_shipping_id.city">
+                                        <span t-field="doc.partner_shipping_id.city"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.state_id">
+                                        <span t-field="doc.partner_shipping_id.state_id.name"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.zip">
+                                        <span t-field="doc.partner_shipping_id.zip"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.country_id">
+                                        <span t-field="doc.partner_shipping_id.country_id.name"/>
+                                    </span>
+                                </div>
+                                <div><strong>الرقم الضريبي:</strong> <span t-esc="doc.partner_id.vat[2:] if doc.partner_id.vat and doc.partner_id.vat.startswith('TR') else doc.partner_id.vat"/></div>
+                            </div>
 
-            <!-- Terms Section -->
-            <div style="margin-top: 10px; page-break-inside: avoid;">
-                
-                <!-- First Row in Terms (Temel Koşullar) -->
-                <div class="row" style="margin-bottom: 20px;">
-                    <div class="col-12" style="text-align: left;">
-                        <!-- Styled Header for "Temel Koşullar" -->
-                        <div style="background-color: #333; color: #fff; padding: 8px; border: 1px solid #ccc; font-weight: bold;">
-                            Temel Koşullar:
+                            <!-- Right Column (col-4) -->
+                            <div class="col-4">
+                                <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
+                                <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
+                                <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
+                                <div><strong>Expiration: </strong> <span t-field="doc.expiration_days" style="color: red;"/></div>
+                            </div>
+                        </div>
+                        <!-- Border Line Before Title -->
+                        <div style="border-bottom: 2px solid #333; margin-bottom: 15px;"></div>
+                        <!-- Table Title -->
+                        <h4 style="text-align: left; margin-top: 10px; margin-bottom: 5px; color: #333;">Proforma Invoice Details</h4>
+                        <!-- Table Section -->
+                        <div style="margin-top: 20px;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead style="background-color: black; color: white;">
+                                    <tr>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: left;">Product</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Quantity</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">UOM</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Unit Price</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Tax</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="background-color: #f4f4f4; color: black;">
+                                    <!-- Loop through order line items -->
+                                    <t t-foreach="doc.order_line" t-as="line">
+                                        <tr>
+                                            <td style="border: 1px none black; padding: 6px;">
+                                                <span t-esc="line.name.split(']', 1)[1].strip() if '[' in line.name and ']' in line.name else line.name"/>
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-field="line.product_uom_qty"/>
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-field="line.product_uom.name"/>
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-esc="('%.4f' % line.price_unit).rstrip('0').rstrip('.')"/>
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-esc="int(line.tax_id.amount)"/>%
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-field="line.price_subtotal"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                        <div class="clearfix" name="so_total_summary" style="margin-top: 20px;">
+                            <div id="total" class="row" name="total">
+                                <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
+                                    <table class="table table-sm" style="border: 1px solid #ccc; color: #333; border-collapse: collapse;">
+                                        <!-- Table Header for Totals -->
+                                        <thead>
+                                            <tr style="background-color: #333; color: #fff;">
+                                                <th style="padding: 8px; text-align: left; border: 1px solid #ccc;">Description</th>
+                                                <th style="padding: 8px; text-align: right; border: 1px solid #ccc;">Amount</th>
+                                            </tr>
+                                        </thead>
+                        
+                                        <!-- Tax Totals -->
+                                        <tbody>
+                                            <t t-set="tax_totals" t-value="json.loads(doc.tax_totals_json)"/>
+                                            <t t-call="account.document_tax_totals"/>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                         
-                        <!-- Terms Content -->
-                        <p style="font-size: 13px; line-height: 1.6; color: #333; margin-top: 10px;">
-                            1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
-                            2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
-                            3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
-                            4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
-                            5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında % 3 vade farkı ilave edilecektir.
-                        </p>
-                    </div>
-                </div>
 
-                <!-- Second Row in Terms (Banka Bilgileri) -->
-                <div class="row" style="margin-top: 20px;">
-                    <div class="col-12" style="text-align: left;">
-                        <!-- Bank Information Table -->
-                        <table style="width: 100%; font-size: 13px; line-height: 1.6; color: #333; border-collapse: collapse;">
-                            <!-- Table Header -->
-                            <thead>
-                                <tr style="background-color: #333; color: #fff;">
-                                    <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Banka</th>
-                                    <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Hesap Bilgileri</th>
-                                </tr>
-                            </thead>
+                        <t t-if="doc.has_note">
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-12" style="text-align: left;">
+                                    <!-- Styled Header for "Note" Section -->
+                                    <div style="background-color: #333; color: #fff; padding: 8px; border: 1px solid #ccc; font-weight: bold;">
+                                        Not:
+                                    </div>
+                        
+                                    <!-- Display HTML Note Content -->
+                                    <div style="margin-top: 10px; font-size: 13px; line-height: 1.6; color: #333;">
+                                        <t t-raw="doc.note"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                        
+
+                        <!-- Terms Section -->
+                        <div style="margin-top: 10px; page-break-inside: avoid;">
                             
-                            <!-- Table Body -->
-                            <tbody>
-                                <tr>
-                                    <td style="padding: 8px; border: 1px solid #ccc;">Vakıf Katılım Bankası</td>
-                                    <td style="padding: 8px; border: 1px solid #ccc;">TR08 0021 0000 0001 9638 4000 01</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 8px; border: 1px solid #ccc;">Kuveyt Türk Katılım Bankası</td>
-                                    <td style="padding: 8px; border: 1px solid #ccc;">TR08 0020 5000 0970 4803 0000 01</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 8px; border: 1px solid #ccc;">Albaraka Türk Katılım Bankası</td>
-                                    <td style="padding: 8px; border: 1px solid #ccc;">TR05 0020 3000 0162 4618 0000 01</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            <!-- First Row in Terms (Temel Koşullar) -->
+                            <div class="row" style="margin-bottom: 20px;">
+                                <div class="col-12" style="text-align: left;">
+                                    <!-- Styled Header for "Temel Koşullar" -->
+                                    <div style="background-color: #333; color: #fff; padding: 8px; border: 1px solid #ccc; font-weight: bold;">
+                                        Temel Koşullar:
+                                    </div>
+                                    
+                                    <!-- Terms Content -->
+                                    <p style="font-size: 13px; line-height: 1.6; color: #333; margin-top: 10px;">
+                                        1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
+                                        2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
+                                        3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
+                                        4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
+                                        5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında % 3 vade farkı ilave edilecektir.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Second Row in Terms (Banka Bilgileri) -->
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-12" style="text-align: left;">
+                                    <!-- Bank Information Table -->
+                                    <table style="width: 100%; font-size: 13px; line-height: 1.6; color: #333; border-collapse: collapse;">
+                                        <!-- Table Header -->
+                                        <thead>
+                                            <tr style="background-color: #333; color: #fff;">
+                                                <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Banka</th>
+                                                <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Hesap Bilgileri</th>
+                                            </tr>
+                                        </thead>
+                                        
+                                        <!-- Table Body -->
+                                        <tbody>
+                                            <tr>
+                                                <td style="padding: 8px; border: 1px solid #ccc;">Vakıf Katılım Bankası</td>
+                                                <td style="padding: 8px; border: 1px solid #ccc;">TR08 0021 0000 0001 9638 4000 01</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px; border: 1px solid #ccc;">Kuveyt Türk Katılım Bankası</td>
+                                                <td style="padding: 8px; border: 1px solid #ccc;">TR08 0020 5000 0970 4803 0000 01</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px; border: 1px solid #ccc;">Albaraka Türk Katılım Bankası</td>
+                                                <td style="padding: 8px; border: 1px solid #ccc;">TR05 0020 3000 0162 4618 0000 01</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
-                </div>
-            </div>
-
-        </div>
+                </t>
+            </t>
+        </t>
+        
                 
     </template>    
 </odoo>
