@@ -112,7 +112,7 @@
                     <div class="col-4">
                         <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
                         <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
-                        <div style="margin-bottom: 5px;"><strong t-translation="off">Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
+                        <div style="margin-bottom: 5px;"><strong t-translation="on">Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
                         <div><strong>Expiration: </strong> <span t-field="doc.expiration_days" style="color: red;"/></div>
                     </div>
                 </div>
