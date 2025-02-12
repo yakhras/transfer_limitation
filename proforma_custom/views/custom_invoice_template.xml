@@ -81,7 +81,7 @@
                 <div class="row" style="margin-top: 20px;">
                     <!-- Left Column (col-8) -->
                     <div class="col-8">
-                        <div style="margin-bottom: 5px;"><strong>CUSTOMER: </strong><span t-esc="doc.partner_id.name"/></div>
+                        <div style="margin-bottom: 5px;"><strong><span t-esc="Customer"/></strong><span t-esc="doc.partner_id.name"/></div>
                         <div style="margin-bottom: 5px;">
                             <strong>Address: </strong>
                             <span t-if="doc.partner_shipping_id.street">
