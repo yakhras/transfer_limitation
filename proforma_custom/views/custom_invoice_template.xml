@@ -46,7 +46,7 @@
                     <!-- Tax Number (Right) -->
                     <div class="col-4 text-right">
                         <p style="font-size: 14px; font-weight: 400; color: #333; margin: 0;">
-                            Vergi No.<span t-esc="doc.company_id.vat[2:] if doc.company_id.vat and doc.company_id.vat.startswith('TR') else doc.company_id.vat"/>
+                            Tax No.<span t-esc="doc.company_id.vat[2:] if doc.company_id.vat and doc.company_id.vat.startswith('TR') else doc.company_id.vat"/>
                         </p>
                     </div>
                 </div>
