@@ -231,8 +231,8 @@
                                 <!-- Table Header -->
                                 <thead>
                                     <tr style="background-color: #333; color: #fff;">
-                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Banka</th>
-                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Hesab</th>
+                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Bank</th>
+                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Account</th>
                                         <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">IBAN</th>
                                     </tr>
                                 </thead>
