@@ -234,6 +234,7 @@
                                         <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Bank</th>
                                         <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Account</th>
                                         <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">IBAN</th>
+                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Swift Code</th>
                                     </tr>
                                 </thead>
                                 
@@ -243,31 +244,37 @@
                                         <td style="padding: 8px; border: 1px solid #ccc;">Kuveyt Türk Katılım Bankası</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">TL IBAN</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">TR40 0020 5000 0988 3129 1000 01</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">KTEFTRIS</td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px; border: 1px solid #ccc;">Kuveyt Türk Katılım Bankası</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">USD IBAN</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">TR56 0020 5000 0988 3129 1001 01</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">KTEFTRIS</td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 8px; border: 1px solid #ccc;">Kuveyt Türk Katılım Bankası</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">EUR IBAN</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">TR29 0020 5000 0988 3129 1001 02</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">KTEFTRIS</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Vakıf Katılım Bankası</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">TL IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR130001500158007341887416</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">TR13 0001 5001 5800 7341 8874 16</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">TVBATR2AXXX</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Vakıf Katılım Bankası</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">USD IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR600001500158048024584984</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">TR60 0001 5001 5804 8024 5849 84</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">TVBATR2AXXX</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Vakıf Katılım Bankası</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">EUR IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR660001500158048024584973</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">TR66 0001 5001 5804 8024 5849 73</td>
+                                        <td style="padding: 8px; border: 1px solid #ccc;">TVBATR2AXXX</td>
                                     </tr>
                                 </tbody>
                             </table>
