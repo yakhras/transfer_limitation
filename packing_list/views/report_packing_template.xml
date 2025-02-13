@@ -3,7 +3,7 @@
     <report 
         id="action_report_packing_sale_order"
         model="sale.order"
-        string="Sales Packing List"
+        string="TVO Packing List"
         report_type="qweb-pdf"
         file="packing_list.custom_packing_template"
         name="packing_list.custom_packing_template"

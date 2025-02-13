@@ -26,7 +26,7 @@
     # always loaded
     'data': [
         #"security/security.xml",
-        "views/report_invoice_template.xml",
+        "views/report_packing_template.xml",
         "views/custom_packing_template.xml",
         "views/sale_order_view.xml",
         "views/product_view.xml",
