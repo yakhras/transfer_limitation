@@ -69,8 +69,8 @@
             <div class="page">
                 <!-- Proforma Invoice Section -->
                 <div class="row">
-                    <div class="col-12" style="text-align: center;">
-                        <strong style="font-size: 28px; color: red; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+                    <div class="col-12" style="text-align: center; background-color: #f4f4f4;">
+                        <strong style="font-size: 28px; color: red; font-family: Arial, sans-serif; ">
                          PROFORMA INVOICE
                         </strong>
                     </div>
