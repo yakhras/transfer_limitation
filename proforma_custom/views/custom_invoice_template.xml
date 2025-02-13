@@ -232,6 +232,7 @@
                                 <thead>
                                     <tr style="background-color: #333; color: #fff;">
                                         <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Banka</th>
+                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Hesab No.</th>
                                         <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Hesap Bilgileri</th>
                                     </tr>
                                 </thead>
@@ -240,7 +241,6 @@
                                 <tbody>
                                     <tr>
                                         <td style="padding: 8px; border: 1px solid #ccc;">Vakıf Katılım Bankası</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Hesab No.</td>
                                         <td style="padding: 8px; border: 1px solid #ccc;">TR08 0021 0000 0001 9638 4000 01</td>
                                     </tr>
                                     <tr>
