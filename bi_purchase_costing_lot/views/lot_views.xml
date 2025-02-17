@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="real_cost_stock_production_lot_view_form" model="ir.ui.view">
+			<field name="name">real.cost.stock.production.lot.view.form</field>
+			<field name="model">stock.production.lot</field>
+			<field name="inherit_id" ref="stock.view_production_lot_form"></field>
+			<field name="arch" type="xml">
+				<group name="main_group" position="after">
+					<group name="sub_mrp_group" >
+						<group name="Purchase Costing" string="Purchase Costing" >
+							<group>
+								<field name="currency_id" invisible="1"/>
+								<field name="real_cost" />
+								<field name="total_purchased_qty" invisible="1"/>
+								<field name="real_cost_available_stock"  invisible="1"/>
+								<field name = "real_actual_cost"  invisible="1"/>
+								<field name = "landed_cost_amount" />
+								<field name = "real_cost_per_unit" invisible="1"/>
+								<field name = "cost_based_avail_stock"/>
+							</group>
+					    </group>
+					</group>
+				</group>
+			</field>
+		</record>
+
+	</data>
+</odoo>
