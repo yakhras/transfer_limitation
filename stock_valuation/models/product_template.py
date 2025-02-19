@@ -7,7 +7,7 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
 
-    result = fields.Char('Result')
+    result = fields.Char('Result', compute='_prepare_out_svl_vals')
     
     def _prepare_out_svl_vals(self, quantity, company):
         """Prepare the values for a stock valuation layer created by a delivery,
