@@ -1,4 +1,5 @@
 from odoo import models, fields
+from odoo.tools import float_is_zero, float_repr
 
 
 
@@ -7,7 +8,20 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
 
-    result = fields.Char('Result', compute='_prepare_out_svl_vals')
+    result = fields.Char('Result')
+
+    def yes(self, quantity=None, company=None):
+        """Prepare the values for a stock valuation layer created by a delivery."""
+        self.ensure_one()
+        
+        # Call the original method with `super()`
+        original_vals = super(ProductProduct, self)._prepare_out_svl_vals(quantity, company)
+
+        # Capture the result in the custom field (storing as string)
+        self.result = original_vals  # You can customize the format
+
+        # Return the original values to preserve original behavior
+        return original_vals
     
     def _prepare_out_svl_vals(self, quantity, company):
         """Prepare the values for a stock valuation layer created by a delivery,
