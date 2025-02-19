@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="product_product_form">
+        <field name="name">product_product_form</field> <!--View name-->
+        <field name="model">product.product</field> <!--Model name where view will applied-->
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/> <!--External ID of Parent view which inherited-->
+        <field name="arch" type="xml">
+            <field name="default_code" position="after"> <!--existing field-->
+                <field name="result"/>
+            </field>
+        </field>
+    </record>
+</odoo>
