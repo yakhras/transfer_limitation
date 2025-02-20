@@ -10,6 +10,8 @@ class ProductProduct(models.Model):
 
 
     result = fields.Text('Result')
+    quant = fields.Many2one('stock.quant')
+    quantity = fields.Float(related='quant.quantity')
 
     
     def _prepare_out_svl_vals(self, quantity, company):
