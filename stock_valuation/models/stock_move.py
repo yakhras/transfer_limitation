@@ -151,7 +151,7 @@ class StockMove(models.Model):
                                   and float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)):
             move.product_id.with_company(move.company_id.id).sudo().write({'standard_price': move._get_price_unit()})
 
-    def _action_done(self, cancel_backorder=False):
+    def _action_done(self, location, cancel_backorder=False):
         # Init a dict that will group the moves by valuation type, according to `move._is_valued_type`.
         valued_moves = {valued_type: self.env['stock.move'] for valued_type in self._get_valued_types()}
         for move in self:
@@ -162,18 +162,19 @@ class StockMove(models.Model):
                     valued_moves[valued_type] |= move
 
         # AVCO application
+        location = self.location_dest_id
         valued_moves['in'].product_price_update_before_done(self.location_dest_id)
 
-        # res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
+        res = super(StockMove, self)._action_done(location, cancel_backorder=cancel_backorder)
 
         # '_action_done' might have deleted some exploded stock moves
         valued_moves = {value_type: moves.exists() for value_type, moves in valued_moves.items()}
 
         # '_action_done' might have created an extra move to be valued
-        # for move in res - self:
-        #     for valued_type in self._get_valued_types():
-        #         if getattr(move, '_is_%s' % valued_type)():
-        #             valued_moves[valued_type] |= move
+        for move in res - self:
+            for valued_type in self._get_valued_types():
+                if getattr(move, '_is_%s' % valued_type)():
+                    valued_moves[valued_type] |= move
 
         stock_valuation_layers = self.env['stock.valuation.layer'].sudo()
         # Create the valuation layers in batch by calling `moves._create_valued_type_svl`.
