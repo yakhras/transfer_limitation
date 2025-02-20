@@ -9,7 +9,7 @@ from odoo.tools import float_is_zero, OrderedSet
 
 
 
-class StockMove(models.Model):
+class StockMovee(models.Model):
     _inherit = "stock.move"
 
 
@@ -164,7 +164,7 @@ class StockMove(models.Model):
         # AVCO application
         valued_moves['in'].product_price_update_before_done(self.location_dest_id)
 
-        
+        res = super(StockMovee, self)._action_done(cancel_backorder=cancel_backorder)
 
         # '_action_done' might have deleted some exploded stock moves
         valued_moves = {value_type: moves.exists() for value_type, moves in valued_moves.items()}
