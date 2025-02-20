@@ -53,3 +53,16 @@ class StockMove(models.Model):
             svl_vals['description'] += svl_vals.pop('rounding_adjustment', '')
             svl_vals_list.append(svl_vals)
         return self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
+    
+
+    def _is_out(self):
+        """Check if the move should be considered as leaving the company so that the cost method
+        will be able to apply the correct logic.
+
+        :returns: True if the move is leaving the company else False
+        :rtype: bool
+        """
+        self.ensure_one()
+        if self._get_out_move_lines(self.location_id) and not self._is_dropshipped():
+            return True
+        return False
