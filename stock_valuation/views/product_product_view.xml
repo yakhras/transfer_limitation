@@ -8,7 +8,7 @@
             <xpath expr="//page[last()]" position="after">
                 <page name="cost" string="Cost">
                     <tree>
-                        <field name="location_id" domain="[('usage', 'in', ['internal', 'transit'])]" attrs="{'readonly': [('id', '!=', False)]}" invisible="context.get('hide_location', False)" options="{'no_create': True}"/>
+                        <field name="location_id" domain="[('usage', 'in', ['internal', 'transit'])]" attrs="{'readonly': [('id', '!=', False)]}"/>
                         <field name="name" attrs="{'readonly': [('id', '!=', False)]}" readonly="context.get('single_product', False)" force_save="1" options="{'no_create': True}"/>
                         <field name="quantity" optional="show" string="On Hand Quantity"/>
                         <field name="uom_id" groups="uom.group_uom" string="UoM"/>
