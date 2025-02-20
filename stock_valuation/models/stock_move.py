@@ -196,3 +196,4 @@ class StockMove(models.Model):
             product_to_vacuum._run_fifo_vacuum(company)
 
         return res
+    
