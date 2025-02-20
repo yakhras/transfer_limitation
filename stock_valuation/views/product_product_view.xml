@@ -5,9 +5,12 @@
         <field name="model">product.product</field> <!--Model name where view will applied-->
         <field name="inherit_id" ref="product.product_normal_form_view"/> <!--External ID of Parent view which inherited-->
         <field name="arch" type="xml">
-            <field name="default_code" position="after"> <!--existing field-->
-                <field name="result"/>
-            </field>
+            <xpath expr="//page[last()]" position="after">
+                <page name="cost" string="Cost">
+                    <field name="result">
+                    </field>
+                </page>
+            </xpath>
         </field>
     </record>
 </odoo>
