@@ -33,7 +33,8 @@ class Picking(models.Model):
                 if picking.owner_id:
                     picking.move_lines.write({'restrict_partner_id': picking.owner_id.id})
                     picking.move_line_ids.write({'owner_id': picking.owner_id.id})
-            todo_moves._action_done(self.location_dest_id, cancel_backorder=self.env.context.get('cancel_backorder'))
+            location = self.location_dest_id
+            todo_moves._action_done(location, cancel_backorder=self.env.context.get('cancel_backorder'))
             self.write({'date_done': fields.Datetime.now(), 'priority': '0'})
 
             # if incoming moves make other confirmed/partially_available moves available, assign them
