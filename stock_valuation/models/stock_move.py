@@ -116,7 +116,6 @@ class StockMove(models.Model):
             return True
         return False
     
-    
     def product_price_update_before_done(self, location, forced_qty=None):
         tmpl_dict = defaultdict(lambda: 0.0)
         # adapt standard price on incomming moves if the product cost_method is 'average'
@@ -163,7 +162,7 @@ class StockMove(models.Model):
                     valued_moves[valued_type] |= move
 
         # AVCO application
-        valued_moves['in'].product_price_update_before_done(self.location_id)
+        valued_moves['in'].product_price_update_before_done(self.location_dest_id)
 
         res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
 
