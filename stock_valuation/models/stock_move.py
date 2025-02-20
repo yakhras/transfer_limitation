@@ -9,7 +9,7 @@ from odoo.tools import float_is_zero, OrderedSet
 
 
 
-class StockMovee(models.Model):
+class StockMove(models.Model):
     _inherit = "stock.move"
 
 
@@ -164,16 +164,16 @@ class StockMovee(models.Model):
         # AVCO application
         valued_moves['in'].product_price_update_before_done(self.location_dest_id)
 
-        res = super(StockMovee, self)._action_done(cancel_backorder=cancel_backorder)
+        # res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
 
         # '_action_done' might have deleted some exploded stock moves
         valued_moves = {value_type: moves.exists() for value_type, moves in valued_moves.items()}
 
         # '_action_done' might have created an extra move to be valued
-        for move in res - self:
-            for valued_type in self._get_valued_types():
-                if getattr(move, '_is_%s' % valued_type)():
-                    valued_moves[valued_type] |= move
+        # for move in res - self:
+        #     for valued_type in self._get_valued_types():
+        #         if getattr(move, '_is_%s' % valued_type)():
+        #             valued_moves[valued_type] |= move
 
         stock_valuation_layers = self.env['stock.valuation.layer'].sudo()
         # Create the valuation layers in batch by calling `moves._create_valued_type_svl`.
