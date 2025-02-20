@@ -10,7 +10,6 @@
                     <tree>
                         <field name="location_id" domain="[('usage', 'in', ['internal', 'transit'])]" attrs="{'readonly': [('id', '!=', False)]}" invisible="context.get('hide_location', False)" options="{'no_create': True}"/>
                         <field name="name" attrs="{'readonly': [('id', '!=', False)]}" readonly="context.get('single_product', False)" force_save="1" options="{'no_create': True}"/>
-                        <field name="available_quantity" string="Available Quantity" decoration-danger="available_quantity &lt; 0" optional="hidden"/>
                         <field name="quantity" optional="show" string="On Hand Quantity"/>
                         <field name="product_uom_id" groups="uom.group_uom" string="UoM"/>
                         <field name="inventory_date" optional="show"/>
