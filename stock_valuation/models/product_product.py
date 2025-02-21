@@ -58,9 +58,30 @@ class ProductProduct(models.Model):
     #     return vals
 
 
+    
+        
+
+
     @api.depends('stock_valuation_layer_ids')
     @api.depends_context('to_date', 'company')
     def _compute_value_svl(self):
-        self.ensure_one()
-        super(ProductProduct, self)._compute_value_svl()
-        self.result = self.quantity_svl
+        """Compute `value_svl` and `quantity_svl`."""
+        company_id = self.env.company.id
+        domain = [
+            ('product_id', 'in', self.ids),
+            ('company_id', '=', company_id),
+        ]
+        if self.env.context.get('to_date'):
+            to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
+            domain.append(('create_date', '<=', to_date))
+        groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
+        self.result = self.groups
+        products = self.browse()
+        for group in groups:
+            product = self.browse(group['product_id'][0])
+            product.value_svl = self.env.company.currency_id.round(group['value'])
+            product.quantity_svl = group['quantity']
+            products |= product
+        remaining = (self - products)
+        remaining.value_svl = 0
+        remaining.quantity_svl = 0
