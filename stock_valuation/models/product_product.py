@@ -9,7 +9,7 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
 
-    result = fields.Text('Result')
+    result = fields.Float('Result')
     quant = fields.Many2one('stock.quant')
     quantity = fields.Float(related='quant.quantity')
 
@@ -61,5 +61,6 @@ class ProductProduct(models.Model):
     @api.depends('stock_valuation_layer_ids')
     @api.depends_context('to_date', 'company')
     def _compute_value_svl(self):
+        self.ensure_one()
         super(ProductProduct, self)._compute_value_svl()
         self.result = self.quantity_svl
