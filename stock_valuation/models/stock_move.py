@@ -124,6 +124,7 @@ class StockMove(models.Model):
         std_price_update = {}
         for move in self.filtered(lambda move: move._is_in() and move.with_company(move.company_id).product_id.cost_method == 'average'):
             product_tot_qty_available = move.product_id.sudo().with_company(move.company_id).quantity_svl + tmpl_dict[move.product_id.id]
+            self.result = product_tot_qty_available
             rounding = move.product_id.uom_id.rounding
 
             valued_move_lines = move._get_in_move_lines(self.location_id)
@@ -166,7 +167,6 @@ class StockMove(models.Model):
         # AVCO application
         
         valued_moves['in'].product_price_update_before_done()
-        self.result = valued_moves
 
         res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
         
