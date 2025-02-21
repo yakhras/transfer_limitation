@@ -118,11 +118,11 @@ class StockMove(models.Model):
             return True
         return False
     
-    def product_price_update_before_done(self, location, forced_qty=None):
+    def product_price_update_before_done(self, forced_qty=None):
         tmpl_dict = defaultdict(lambda: 0.0)
         # adapt standard price on incomming moves if the product cost_method is 'average'
         std_price_update = {}
-        for move in self.filtered(lambda move: move._is_in() and move.with_company(move.company_id).product_id.cost_method == 'average' and move.location_dest_id == location):
+        for move in self.filtered(lambda move: move._is_in() and move.with_company(move.company_id).product_id.cost_method == 'average'):
             product_tot_qty_available = move.product_id.sudo().with_company(move.company_id).quantity_svl + tmpl_dict[move.product_id.id]
             rounding = move.product_id.uom_id.rounding
 
@@ -153,7 +153,7 @@ class StockMove(models.Model):
                                   and float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)):
             move.product_id.with_company(move.company_id.id).sudo().write({'standard_price': move._get_price_unit()})
 
-    def _action_done(self, location, cancel_backorder=False):
+    def _action_done(self, cancel_backorder=False):
         # Init a dict that will group the moves by valuation type, according to `move._is_valued_type`.
         valued_moves = {valued_type: self.env['stock.move'] for valued_type in self._get_valued_types()}
         for move in self:
@@ -165,7 +165,7 @@ class StockMove(models.Model):
 
         # AVCO application
         
-        valued_moves['in'].product_price_update_before_done(self.location_dest_id)
+        valued_moves['in'].product_price_update_before_done()
 
         res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
         self.result = res
