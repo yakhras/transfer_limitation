@@ -166,7 +166,7 @@ class StockMove(models.Model):
         # AVCO application
         
         valued_moves['in'].product_price_update_before_done()
-        self.result = valued_moves['in']
+        self.result = valued_moves
 
         res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
         
