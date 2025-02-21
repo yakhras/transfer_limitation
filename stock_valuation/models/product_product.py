@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 from odoo.tools import float_is_zero, float_repr
 import json
 
@@ -56,3 +56,10 @@ class ProductProduct(models.Model):
     #             vals.update(fifo_vals)
     #     self.result = json.dumps(vals)
     #     return vals
+
+
+    @api.depends('stock_valuation_layer_ids')
+    @api.depends_context('to_date', 'company')
+    def _compute_value_svl(self):
+        super(ProductProduct, self)._compute_value_svl()
+        self.result = self.quantity_svl
