@@ -132,10 +132,11 @@ class StockMove(models.Model):
             qty_done = 0
             for valued_move_line in valued_move_lines:
                 qty_done += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
-                self.result = qty_done
+                
             qty = forced_qty or qty_done
             if float_is_zero(product_tot_qty_available, precision_rounding=rounding):
                 new_std_price = move._get_price_unit()
+                self.result = new_std_price
             elif float_is_zero(product_tot_qty_available + move.product_qty, precision_rounding=rounding) or \
                     float_is_zero(product_tot_qty_available + qty, precision_rounding=rounding):
                 new_std_price = move._get_price_unit()
