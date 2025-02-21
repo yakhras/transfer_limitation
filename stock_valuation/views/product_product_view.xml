@@ -5,17 +5,9 @@
         <field name="model">product.product</field> <!--Model name where view will applied-->
         <field name="inherit_id" ref="product.product_normal_form_view"/> <!--External ID of Parent view which inherited-->
         <field name="arch" type="xml">
-            <xpath expr="//page[last()]" position="after">
-                <page name="cost" string="Cost">
-                    <tree>
-                        <field name="location_id" domain="[('usage', 'in', ['internal', 'transit'])]" attrs="{'readonly': [('id', '!=', False)]}"/>
-                        <field name="name" attrs="{'readonly': [('id', '!=', False)]}" readonly="context.get('single_product', False)" force_save="1" options="{'no_create': True}"/>
-                        <field name="quantity" optional="show" string="On Hand Quantity"/>
-                        <field name="uom_id" groups="uom.group_uom" string="UoM"/>
-                        <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-                    </tree>
-                </page>
-            </xpath>
+            <field name="default_code" position="after">
+                <field name="result"/>
+            </field>
         </field>
     </record>
 
