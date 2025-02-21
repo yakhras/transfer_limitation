@@ -12,6 +12,8 @@ from odoo.tools import float_is_zero, OrderedSet
 class StockMove(models.Model):
     _inherit = "stock.move"
 
+    result = fields.Char('Result')
+
 
     def _get_in_move_lines(self, location):
         """ Returns the `stock.move.line` records of `self` considered as incoming. It is done thanks
@@ -162,10 +164,11 @@ class StockMove(models.Model):
                     valued_moves[valued_type] |= move
 
         # AVCO application
-        location = self.location_dest_id
+        
         valued_moves['in'].product_price_update_before_done(self.location_dest_id)
 
-        res = super(StockMove, self)._action_done(location, cancel_backorder=cancel_backorder)
+        res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
+        self.result = res
 
         # '_action_done' might have deleted some exploded stock moves
         valued_moves = {value_type: moves.exists() for value_type, moves in valued_moves.items()}
