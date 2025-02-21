@@ -140,12 +140,12 @@ class StockMove(models.Model):
             elif float_is_zero(product_tot_qty_available + move.product_qty, precision_rounding=rounding) or \
                     float_is_zero(product_tot_qty_available + qty, precision_rounding=rounding):
                 new_std_price = move._get_price_unit()
-                self.result = new_std_price
+                
             else:
                 # Get the standard price
                 amount_unit = std_price_update.get((move.company_id.id, move.product_id.id)) or move.product_id.with_company(move.company_id).standard_price
                 new_std_price = ((amount_unit * product_tot_qty_available) + (move._get_price_unit() * qty)) / (product_tot_qty_available + qty)
-
+                self.result = new_std_price
             tmpl_dict[move.product_id.id] += qty_done
             # Write the standard price, as SUPERUSER_ID because a warehouse manager may not have the right to write on products
             move.product_id.with_company(move.company_id.id).with_context(disable_auto_svl=True).sudo().write({'standard_price': new_std_price})
