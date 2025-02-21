@@ -166,9 +166,10 @@ class StockMove(models.Model):
         # AVCO application
         
         valued_moves['in'].product_price_update_before_done()
+        self.result = valued_moves['in']
 
         res = super(StockMove, self)._action_done(cancel_backorder=cancel_backorder)
-        self.result = res
+        
 
         # '_action_done' might have deleted some exploded stock moves
         valued_moves = {value_type: moves.exists() for value_type, moves in valued_moves.items()}
