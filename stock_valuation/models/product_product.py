@@ -9,7 +9,7 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
 
-    result = fields.Float('Result')
+    result = fields.Char('Result')
     quant = fields.Many2one('stock.quant')
     quantity = fields.Float(related='quant.quantity')
 
