@@ -26,6 +26,7 @@
         <field name="arch" type="xml">
             <field name="reference" position="after">
                 <field name="resut"/>
+            </field>
         </field>
     </record>
 </odoo>
