@@ -122,12 +122,9 @@ class StockMove(models.Model):
         tmpl_dict = defaultdict(lambda: 0.0)
         # adapt standard price on incomming moves if the product cost_method is 'average'
         std_price_update = {}
-        test = self.filtered(lambda move: move._is_in() and move.with_company(move.company_id).product_id.cost_method == 'average')
-        self.result = test
-        for move in test:
-            
-            product_tot_qty_available = move.product_id.sudo().with_company(move.company_id).quantity_svl + tmpl_dict[move.product_id.id]
-            
+        for move in self.filtered(lambda move: move._is_in() and move.with_company(move.company_id).product_id.cost_method == 'average'):
+            product_tot_qty_available = move.product_id.sudo().with_company(move.company_id).quantity_svl #+ tmpl_dict[move.product_id.id]
+            self.result = product_tot_qty_available
             rounding = move.product_id.uom_id.rounding
 
             valued_move_lines = move._get_in_move_lines(self.location_id)
