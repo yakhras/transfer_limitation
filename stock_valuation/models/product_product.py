@@ -75,7 +75,7 @@ class ProductProduct(models.Model):
             to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
             domain.append(('create_date', '<=', to_date))
         groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
-        quants = self.env['stock.quant'].filtered(lambda x: x.product_id.id == self.id)
+        quants = self.env['stock.quant'].browse().filtered(lambda x: x.product_id == self)
         self.result = quants.location_id.id
         products = self.browse()
         for group in groups:
