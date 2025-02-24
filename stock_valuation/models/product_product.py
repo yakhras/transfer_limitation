@@ -76,7 +76,7 @@ class ProductProduct(models.Model):
             domain.append(('create_date', '<=', to_date))
         groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
         quants = self.env['stock.quant'].browse()
-        self.result = self.quantity_available_total
+        self.result = self.qty_available_total
         products = self.browse()
         for group in groups:
             product = self.browse(group['product_id'][0])
