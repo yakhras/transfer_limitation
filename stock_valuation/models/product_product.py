@@ -10,7 +10,7 @@ class ProductProduct(models.Model):
 
 
     result = fields.Char('Result')
-    # quant = fields.Many2one('stock.quant')
+    quant = fields.Many2one('stock.quant')
     quantity = fields.Float(related='quant.quantity')
 
     
