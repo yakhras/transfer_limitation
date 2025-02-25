@@ -76,7 +76,7 @@ class ProductProduct(models.Model):
             domain.append(('create_date', '<=', to_date))
         domain.append(('stock_move_id.location_dest_id.id', '=', 186))
         groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
-        self.result = self.env.context
+        self.result = self.env.context.get(['button_validate_picking_ids'])
         products = self.browse()
         for group in groups:
             product = self.browse(group['product_id'][0])
@@ -86,3 +86,29 @@ class ProductProduct(models.Model):
         remaining = (self - products)
         remaining.value_svl = 0
         remaining.quantity_svl = 0
+
+
+
+
+
+        # {'lang': 'en_GB', 
+        #  'tz': 'Europe/Istanbul', 
+        #  'system': None, 
+        #  'subsystem': None, 
+        #  'uid': 17, 
+        #  'allowed_company_ids': [1, 5], 
+        #  'params': {'menu_id': 401, 'action': 521}, 
+        #  'quotation_only': True, 
+        #  'action': 521, 
+        #  'active_model': 'purchase.order', 
+        #  'active_id': 4919, 
+        #  'active_ids': [4919], 
+        #  'default_partner_id': 25, 
+        #  'default_origin': 'P04904', 
+        #  'default_picking_type_id': 69, 
+        #  'button_validate_picking_ids': [59238], 
+        #  'default_show_transfers': False, 
+        #  'default_pick_ids': [[4, 59238]], 
+        #  'skip_immediate': True, 
+        #  'cancel_backorder': False, 
+        #  'advance_accounting_pick_type_id': 69}
