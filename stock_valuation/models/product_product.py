@@ -75,7 +75,7 @@ class ProductProduct(models.Model):
             to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
             domain.append(('create_date', '<=', to_date))
         id = self.env.context.get('location_dest_id')
-        domain.append(('stock_move_id.location_dest_id.id', '=', id))
+        domain.append(('stock_move_id.location_dest_id.id', '=', 8))
         groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
         
         products = self.browse()
@@ -85,7 +85,6 @@ class ProductProduct(models.Model):
             product.quantity_svl = group['quantity']
             products |= product
         remaining = (self - products)
-        self.result = remaining
         remaining.value_svl = 0
         remaining.quantity_svl = 0
 
