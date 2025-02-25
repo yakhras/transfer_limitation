@@ -76,7 +76,7 @@ class ProductProduct(models.Model):
             domain.append(('create_date', '<=', to_date))
         domain.append(('stock_move_id.location_dest_id.id', '=', 186))
         groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
-        self.result = self.env.context
+        self.result = self.env.context.get('location_dest_id')
         products = self.browse()
         for group in groups:
             product = self.browse(group['product_id'][0])
@@ -89,7 +89,7 @@ class ProductProduct(models.Model):
 
 
 
-
+# _should_be_valued
 
         # {'lang': 'en_GB', 
         #  'tz': 'Europe/Istanbul', 
