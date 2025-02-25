@@ -12,7 +12,7 @@ from odoo.tools import float_is_zero, OrderedSet
 class StockMove(models.Model):
     _inherit = "stock.move"
 
-    result = fields.Char('Result')
+    result = fields.Float('Result')
 
 
     def _get_in_move_lines(self, location):
