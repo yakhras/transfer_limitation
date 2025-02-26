@@ -10,7 +10,7 @@ class ProductProduct(models.Model):
 
 
     result = fields.Char('Result')
-    location_ids = fields.One2many('product.cost')
+    location_ids = fields.One2many('product.cost', 'name')
     
 
     
@@ -95,6 +95,5 @@ class ProductCost(models.Model):
 
 
     
-    name = fields.One2many('stock.location')
+    name = fields.One2many('stock.location', 'name')
     cost = fields.Float('Cost', default=0.0, digits='Product Price')
-    
