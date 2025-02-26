@@ -12,7 +12,7 @@ from odoo.tools import float_is_zero, OrderedSet
 class StockMove(models.Model):
     _inherit = "stock.move"
 
-    result = fields.Float('Result')
+    result = fields.Text('Result')
 
 
     def _get_in_move_lines(self, location):
@@ -123,9 +123,9 @@ class StockMove(models.Model):
         # adapt standard price on incomming moves if the product cost_method is 'average'
         std_price_update = {}
         for move in self.filtered(lambda move: move._is_in() and move.with_company(move.company_id).product_id.cost_method == 'average'):
-            product_tot_qty_available = move.product_id.sudo().with_company(move.company_id).quantity_svl #+ tmpl_dict[move.product_id.id]
+            product_tot_qty_available = move.product_id.sudo().with_company(move.company_id).quantity_svl + tmpl_dict[move.product_id.id]
             rounding = move.product_id.uom_id.rounding
-            self.result = product_tot_qty_available
+            
             
             valued_move_lines = move._get_in_move_lines(self.location_id)
             
@@ -148,6 +148,7 @@ class StockMove(models.Model):
                 new_std_price = ((amount_unit * product_tot_qty_available) + (move._get_price_unit() * qty)) / (product_tot_qty_available + qty)
                 
             tmpl_dict[move.product_id.id] += qty_done
+            self.result = tmpl_dict
             # Write the standard price, as SUPERUSER_ID because a warehouse manager may not have the right to write on products
             move.product_id.with_company(move.company_id.id).with_context(disable_auto_svl=True).sudo().write({'standard_price': new_std_price})
             std_price_update[move.company_id.id, move.product_id.id] = new_std_price
