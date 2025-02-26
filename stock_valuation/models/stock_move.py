@@ -50,8 +50,9 @@ class StockMove(models.Model):
             tmpl_dict[move.product_id.id] += qty_done
             
             # Write the standard price, as SUPERUSER_ID because a warehouse manager may not have the right to write on products
-            move.product_id.with_company(move.company_id.id).with_context(disable_auto_svl=True).sudo().write({'standard_price': new_std_price})
             std_price_update[move.company_id.id, move.product_id.id, move.location_dest_id.id] = new_std_price
+            move.product_id.with_company(move.company_id.id).with_context(disable_auto_svl=True).sudo().write({'standard_price': new_std_price})
+            
             self.result = std_price_update
             
         # adapt standard price on incomming moves if the product cost_method is 'fifo'
