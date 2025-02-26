@@ -10,8 +10,8 @@
                     <page name="costs" string="Costs">
                         <field name="location_cost_ids" widget="one2many_list">
                             <tree string="Costs" editable="bottom">
-                                <field name="location_id"/>
-                                <field name="cost"/>
+                                <field name="location_id" readonly="1"/>
+                                <field name="cost" readonly="1"/>
                             </tree>
                         </field>
                     </page>
