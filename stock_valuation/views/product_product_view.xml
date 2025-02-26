@@ -8,9 +8,10 @@
             <field name="arch" type="xml">
                 <xpath expr="//page[last()]" position="after">
                     <page name="costs" string="Costs">
-                        <field name="location_ids" widget="one2many_list">
+                        <field name="location_cost_ids" widget="one2many_list">
                             <tree string="Costs" editable="bottom">
-                                <field name="name"/>
+                                <field name="location_id"/>
+                                <field name="cost"/>
                             </tree>
                         </field>
                     </page>

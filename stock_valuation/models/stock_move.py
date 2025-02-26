@@ -53,6 +53,26 @@ class StockMove(models.Model):
             std_price_update[move.company_id.id, move.product_id.id, move.location_dest_id.id] = new_std_price
             move.product_id.with_company(move.company_id.id).with_context(disable_auto_svl=True).sudo().write({'standard_price': new_std_price})
             
+            for key, cost in std_price_update.items():
+                company_id, product_id, location_id = key
+                product = self.env['product.product'].browse(product_id)
+                location = self.env['stock.location'].browse(location_id)
+
+                if product and location:
+                    # Check if a record already exists
+                    existing_record = self.env['product.location.cost'].search([
+                        ('product_id', '=', product.id),
+                        ('location_id', '=', location.id)
+                    ], limit=1)
+
+                    if existing_record:
+                        existing_record.cost = cost
+                    else:
+                        self.env['product.location.cost'].create({
+                            'product_id': product.id,
+                            'location_id': location.id,
+                            'cost': cost,
+                        })
             self.result = std_price_update
             
         # adapt standard price on incomming moves if the product cost_method is 'fifo'

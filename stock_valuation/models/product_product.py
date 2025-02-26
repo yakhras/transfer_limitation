@@ -10,7 +10,7 @@ class ProductProduct(models.Model):
 
 
     result = fields.Char('Result')
-    location_ids = fields.One2many('product.cost', 'name')
+    location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
     
 
     
@@ -90,10 +90,10 @@ class ProductProduct(models.Model):
 
 
 
-class ProductCost(models.Model):
-    _name = 'product.cost'
+class ProductLocationCost(models.Model):
+    _name = 'product.location.cost'
+    _description = 'Product Location Cost'
 
-
-    
-    name = fields.One2many('stock.location', 'name')
-    cost = fields.Float('Cost', default=0.0, digits='Product Price')
+    product_id = fields.Many2one('product.product', string='Product', required=True, ondelete='cascade')
+    location_id = fields.Many2one('stock.location', string='Location', required=True)
+    cost = fields.Float('Cost', digits='Product Price')
