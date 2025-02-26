@@ -100,6 +100,7 @@ class ProductProduct(models.Model):
         company_id = self.env.context.get('force_company', self.env.company.id)
         company = self.env['res.company'].browse(company_id)
         currency = company.currency_id
+        id = self.env.context.get('location_id')
         # Quantity is negative for out valuation layers.
         quantity = -1 * quantity
         vals = {
@@ -128,7 +129,7 @@ class ProductProduct(models.Model):
                         )
             if self.product_tmpl_id.cost_method == 'fifo':
                 vals.update(fifo_vals)
-        self.result = self.env.context
+        self.result = id
         return vals
 
 
