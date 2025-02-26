@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
-        <!-- <record model="ir.ui.view" id="product_product_form">
+        <record model="ir.ui.view" id="product_product_form">
             <field name="name">product_product_form</field> 
             <field name="model">product.product</field> 
             <field name="inherit_id" ref="product.product_normal_form_view"/> 
@@ -17,7 +17,7 @@
                     </page>
                 </xpath>
             </field>
-        </record> -->
+        </record>
 
         <record model="ir.ui.view" id="stock_move_form">
             <field name="name">stock_move_form</field> 
