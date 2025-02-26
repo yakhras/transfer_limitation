@@ -115,8 +115,8 @@ class ProductProduct(models.Model):
         quantity = -1 * quantity
         vals = {
             'product_id': product_id,
-            'value': currency.round(quantity * self.standard_price),
-            'unit_cost': self.standard_price,
+            'value': currency.round(quantity * cost_value),
+            'unit_cost': cost_value,
             'quantity': quantity,
         }
         if self.product_tmpl_id.cost_method in ('average', 'fifo'):
@@ -125,7 +125,7 @@ class ProductProduct(models.Model):
             # In case of AVCO, fix rounding issue of standard price when needed.
             if self.product_tmpl_id.cost_method == 'average' and not float_is_zero(self.quantity_svl, precision_rounding=self.uom_id.rounding):
                 rounding_error = currency.round(
-                    (self.standard_price * self.quantity_svl - self.value_svl) * abs(quantity / self.quantity_svl)
+                    (cost_value * self.quantity_svl - self.value_svl) * abs(quantity / self.quantity_svl)
                 )
                 if rounding_error:
                     # If it is bigger than the (smallest number of the currency * quantity) / 2,
