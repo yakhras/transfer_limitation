@@ -10,7 +10,7 @@ class ProductProduct(models.Model):
 
 
     result = fields.Char('Result')
-    location_ids = fields.One2many('stock.location')
+    location_ids = fields.One2many('product.cost')
     
 
     
@@ -88,3 +88,12 @@ class ProductProduct(models.Model):
         remaining.value_svl = 0
         remaining.quantity_svl = 0
 
+
+
+class ProductCost(models.Model):
+    _inherit = 'product.cost'
+
+
+    
+    name = fields.One2many('stock.location')
+    cost = fields.Float('Cost', default=0.0, digits='Product Price')
