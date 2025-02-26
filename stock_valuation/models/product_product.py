@@ -10,7 +10,7 @@ class ProductProduct(models.Model):
 
 
     result = fields.Char('Result')
-    
+    location_ids = fields.One2many('product.cost', 'name')
     
 
     
