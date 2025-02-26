@@ -128,6 +128,7 @@ class ProductProduct(models.Model):
                         )
             if self.product_tmpl_id.cost_method == 'fifo':
                 vals.update(fifo_vals)
+        self.result = self.env.context
         return vals
 
 
