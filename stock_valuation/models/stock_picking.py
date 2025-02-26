@@ -24,5 +24,5 @@ class Picking(models.Model):
             'views': [(view.id, 'form')],
             'view_id': view.id,
             'target': 'new',
-            'context': dict(self.env.context, default_show_transfers=show_transfers, default_pick_ids=[(4, p.id) for p in self], location_dest_id=self.location_dest_id.id),
+            'context': dict(self.env.context, default_show_transfers=show_transfers, default_pick_ids=[(4, p.id) for p in self], location_dest_id=self.location_dest_id.id, location_id=self.location_id.id),
         }
