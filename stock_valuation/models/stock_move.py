@@ -127,7 +127,7 @@ class StockMove(models.Model):
             rounding = move.product_id.uom_id.rounding
             
             
-            valued_move_lines = move._get_in_move_lines(self.location_id)
+            valued_move_lines = move._get_in_move_lines()
             
 
             qty_done = 0
