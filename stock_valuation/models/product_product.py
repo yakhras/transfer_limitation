@@ -100,11 +100,21 @@ class ProductProduct(models.Model):
         company_id = self.env.context.get('force_company', self.env.company.id)
         company = self.env['res.company'].browse(company_id)
         currency = company.currency_id
-        id = self.env.context.get('location_id')
+        
+        product_id = self.id  # Assuming this method runs in the product.product model
+        location_id = self.env.context.get('location_id')
+
+        if location_id and product_id:
+            location_cost = self.env['product.location.cost'].search([
+                ('product_id', '=', product_id),
+                ('location_id', '=', location_id)
+            ], order='id desc', limit=1)  # Get the most recent record
+
+            cost_value = location_cost.cost if location_cost else 0.0
         # Quantity is negative for out valuation layers.
         quantity = -1 * quantity
         vals = {
-            'product_id': self.id,
+            'product_id': product_id,
             'value': currency.round(quantity * self.standard_price),
             'unit_cost': self.standard_price,
             'quantity': quantity,
@@ -129,7 +139,7 @@ class ProductProduct(models.Model):
                         )
             if self.product_tmpl_id.cost_method == 'fifo':
                 vals.update(fifo_vals)
-        self.result = id
+        self.result = cost_value
         return vals
 
 
