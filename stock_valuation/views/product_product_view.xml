@@ -16,6 +16,9 @@
                         </field>
                     </page>
                 </xpath>
+                <field name="default_code" position="after">
+                    <field name="result"/>
+                </field>
             </field>
         </record>
 
