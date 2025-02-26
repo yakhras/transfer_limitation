@@ -91,9 +91,10 @@ class ProductProduct(models.Model):
 
 
 class ProductCost(models.Model):
-    _inherit = 'product.cost'
+    _name = 'product.cost'
 
 
     
     name = fields.One2many('stock.location')
     cost = fields.Float('Cost', default=0.0, digits='Product Price')
+    
