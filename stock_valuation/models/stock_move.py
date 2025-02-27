@@ -83,7 +83,28 @@ class StockMove(models.Model):
                                   #and float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)):
             
             #move.product_id.with_company(move.company_id.id).sudo().write({'standard_price': move._get_price_unit()})
-            self.result = float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)
+            std_price_update[move.company_id.id, move.product_id.id, move.location_dest_id.id] = move._get_price_unit()
+            for key, cost in std_price_update.items():
+                company_id, product_id, location_id = key
+                product = self.env['product.product'].browse(product_id)
+                location = self.env['stock.location'].browse(location_id)
+
+                if product and location:
+                    # Check if a record already exists
+                    existing_record = self.env['product.location.cost'].search([
+                        ('product_id', '=', product.id),
+                        ('location_id', '=', location.id)
+                    ], limit=1)
+
+                    if existing_record:
+                        existing_record.cost = cost
+                    else:
+                        self.env['product.location.cost'].create({
+                            'product_id': product.id,
+                            'location_id': location.id,
+                            'cost': cost,
+                        })
+            
 
         # end_time = time.time()
         # execution_time = end_time - start_time
