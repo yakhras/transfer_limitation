@@ -19,7 +19,7 @@ class StockMove(models.Model):
     
 
     def product_price_update_before_done(self, forced_qty=None):
-        start_time = time.time()
+        # start_time = time.time()
         tmpl_dict = defaultdict(lambda: 0.0)
         # adapt standard price on incomming moves if the product cost_method is 'average'
         std_price_update = {}
@@ -84,11 +84,11 @@ class StockMove(models.Model):
             self.result = move.product_id.sudo().quantity_svl
             move.product_id.with_company(move.company_id.id).sudo().write({'standard_price': move._get_price_unit()})
 
-        end_time = time.time()
-        execution_time = end_time - start_time
+        # end_time = time.time()
+        # execution_time = end_time - start_time
 
-        # Store the result
-        self.result = f"Execution Time: {execution_time:.5f} seconds"
+        # # Store the result
+        # self.result = f"Execution Time: {execution_time:.5f} seconds"
 
 
 
