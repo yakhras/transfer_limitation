@@ -77,7 +77,7 @@ class ProductProduct(models.Model):
         id = self.env.context.get('location_dest_id')
         domain.append(('stock_move_id.location_dest_id.id', '=', id))
         groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
-        self.result = groups
+        
         
         products = self.browse()
         for group in groups:
@@ -155,6 +155,7 @@ class ProductProduct(models.Model):
                 ('company_id', '=', company.id),
                 ('stock_move_id.location_dest_id.id', '=', id)
             ])
+            self.result = candidates
             new_standard_price = 0
             tmp_value = 0  # to accumulate the value taken on the candidates
             for candidate in candidates:
