@@ -90,20 +90,11 @@ class StockMove(models.Model):
                 location = self.env['stock.location'].browse(location_id)
 
                 if product and location:
-                    # Check if a record already exists
-                    existing_record = self.env['product.location.cost'].search([
-                        ('product_id', '=', product.id),
-                        ('location_id', '=', location.id)
-                    ], limit=1)
-
-                    if existing_record:
-                        existing_record.cost = cost
-                    else:
-                        self.env['product.location.cost'].create({
-                            'product_id': product.id,
-                            'location_id': location.id,
-                            'cost': cost,
-                        })
+                    self.env['product.location.cost'].create({
+                        'product_id': product.id,
+                        'location_id': location.id,
+                        'cost': cost,
+                    })
             
 
         # end_time = time.time()
