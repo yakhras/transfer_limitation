@@ -13,7 +13,7 @@ from odoo.tools import float_is_zero, OrderedSet
 class StockMove(models.Model):
     _inherit = "stock.move"
 
-    result = fields.Char('Result')
+    result = fields.Boolean('Result')
 
 
     
