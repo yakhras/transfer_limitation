@@ -9,7 +9,7 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
 
-    # result = fields.Char('Result')
+    result = fields.Char('Result')
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
     
 
@@ -77,6 +77,7 @@ class ProductProduct(models.Model):
         id = self.env.context.get('location_dest_id')
         domain.append(('stock_move_id.location_dest_id.id', '=', id))
         groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
+        self.result = groups
         
         products = self.browse()
         for group in groups:
