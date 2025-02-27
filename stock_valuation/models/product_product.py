@@ -155,7 +155,7 @@ class ProductProduct(models.Model):
                 ('company_id', '=', company.id),
                 ('stock_move_id.location_dest_id.id', '=', id)
             ])
-            self.result = candidates
+            self.result = self.env.context
             new_standard_price = 0
             tmp_value = 0  # to accumulate the value taken on the candidates
             for candidate in candidates:
