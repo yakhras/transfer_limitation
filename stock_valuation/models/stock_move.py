@@ -76,13 +76,14 @@ class StockMove(models.Model):
                             'cost': cost,
                         })
             
-        self.result = float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)
+        
         # adapt standard price on incomming moves if the product cost_method is 'fifo'
         for move in self.filtered(lambda move:
-                                  move.with_company(move.company_id).product_id.cost_method == 'fifo'
-                                  and float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)):
+                                  move.with_company(move.company_id).product_id.cost_method == 'fifo'):
+                                  #and float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)):
             
-            move.product_id.with_company(move.company_id.id).sudo().write({'standard_price': move._get_price_unit()})
+            #move.product_id.with_company(move.company_id.id).sudo().write({'standard_price': move._get_price_unit()})
+            self.result = float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)
 
         # end_time = time.time()
         # execution_time = end_time - start_time
