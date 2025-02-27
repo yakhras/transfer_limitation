@@ -9,7 +9,7 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
 
-    result = fields.Char('Result')
+    # result = fields.Char('Result')
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
     
 
@@ -151,30 +151,3 @@ class ProductLocationCost(models.Model):
     location_id = fields.Many2one('stock.location', string='Location', required=True)
     cost = fields.Float('Cost', digits='Product Price')
 
-
-
-
-
-    # {'lang': 'en_GB', 
-    #  'tz': 'Europe/Istanbul', 
-    #  'system': None, 
-    #  'subsystem': None, 
-    #  'uid': 17, 
-    #  'allowed_company_ids': [1, 5], 
-    #  'params': {'menu_id': 616, 'action': 838}, 
-    #  'action': 838, 
-    #  'active_model': 'sale.order', 
-    #  'active_id': 10246, 
-    #  'active_ids': [10246], 
-    #  'search_default_my_quotation': 1, 
-    #  'default_partner_id': 54487, 
-    #  'default_picking_type_id': 2, 
-    #  'default_origin': 'S10245', 
-    #  'default_group_id': 9276, 
-    #  'button_validate_picking_ids': [59279], 
-    #  'default_show_transfers': False, 
-    #  'default_pick_ids': [[4, 59279]], 
-    #  'location_dest_id': 5, 
-    #  'skip_immediate': True, 
-    #  'cancel_backorder': False, 
-    #  'advance_accounting_pick_type_id': 2}
