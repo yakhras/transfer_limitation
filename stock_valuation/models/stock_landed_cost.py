@@ -19,6 +19,7 @@ class StockLandedCost(models.Model):
     def button_validate(self):
         self._check_can_validate()
         cost_without_adjusment_lines = self.filtered(lambda c: not c.valuation_adjustment_lines)
+        self.result = cost_without_adjusment_lines
         if cost_without_adjusment_lines:
             cost_without_adjusment_lines.compute_landed_cost()
         if not self._check_sum():
@@ -99,8 +100,3 @@ class StockLandedCost(models.Model):
         return True
     
 
-
-    def _get_targeted_move_ids(self):
-        res = self.picking_ids.move_lines
-        self.result = res
-        return res
