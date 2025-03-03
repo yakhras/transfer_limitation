@@ -17,8 +17,7 @@ class StockLandedCost(models.Model):
     result = fields.Char('Result')
 
     def button_validate(self):
-        self.result = self._check_can_validate()
-         
+        self._check_can_validate()
         cost_without_adjusment_lines = self.filtered(lambda c: not c.valuation_adjustment_lines)
         if cost_without_adjusment_lines:
             cost_without_adjusment_lines.compute_landed_cost()
@@ -98,3 +97,10 @@ class StockLandedCost(models.Model):
                     all_amls.filtered(lambda aml: aml.account_id == input_account and not aml.reconciled).reconcile()
 
         return True
+    
+
+
+    def _get_targeted_move_ids(self):
+        res = self.picking_ids.move_lines
+        self.result = res
+        return res
