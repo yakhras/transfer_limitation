@@ -19,13 +19,13 @@ class StockLandedCost(models.Model):
     def button_validate(self):
         self._check_can_validate()
         cost_without_adjusment_lines = self.filtered(lambda c: not c.valuation_adjustment_lines)
-        self.result = cost_without_adjusment_lines
         if cost_without_adjusment_lines:
             cost_without_adjusment_lines.compute_landed_cost()
         if not self._check_sum():
             raise UserError(_('Cost and adjustments lines do not match. You should maybe recompute the landed costs.'))
 
         for cost in self:
+            self.result = self
             cost = cost.with_company(cost.company_id)
             move = self.env['account.move']
             move_vals = {
