@@ -21,7 +21,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['stock_account'],
+    'depends': ['stock_landed_costs'],
 
     # always loaded
     'data': [
