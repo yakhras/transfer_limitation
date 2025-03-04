@@ -35,7 +35,7 @@
 
         <record id="action_product_info" model="ir.actions.act_window">
             <field name="name">Product Info</field>
-            <field name="res_model">partner.info</field>
+            <field name="res_model">product.info</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
                 <p>
@@ -49,6 +49,6 @@
         </record>
 
         <!-- Menu Item -->
-        <menuitem id="menu_partner_info" name="Product Info" action="action_product_info" parent="point_of_sale.menu_point_rep" sequence="10"/>
+        <menuitem id="menu_product_info" name="Product Info" action="action_product_info" parent="point_of_sale.menu_point_rep" sequence="11"/>
     </data>
 </odoo>
