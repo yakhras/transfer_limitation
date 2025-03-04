@@ -25,7 +25,6 @@ class StockLandedCost(models.Model):
             raise UserError(_('Cost and adjustments lines do not match. You should maybe recompute the landed costs.'))
 
         for cost in self:
-            self.result = self
             cost = cost.with_company(cost.company_id)
             move = self.env['account.move']
             move_vals = {
@@ -99,4 +98,6 @@ class StockLandedCost(models.Model):
 
         return True
     
+
+
 

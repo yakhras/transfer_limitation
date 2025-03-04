@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="view_product_reader_form" model="ir.ui.view">
+            <field name="name">product.info.form</field>
+            <field name="model">product.info</field>
+            <field name="arch" type="xml">
+                <form string="Product Information">
+                    <sheet>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="name"/>
+                            <field name="default_code"/>
+                            <field name="categ_id"/>
+                            <field name="document_ids"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_product_reader_tree" model="ir.ui.view">
+            <field name="name">product.info.tree</field>
+            <field name="model">product.info</field>
+            <field name="arch" type="xml">
+                <tree string="Product Information">
+                    <field name="product_id"/>
+                    <field name="name"/>
+                    <field name="default_code"/>
+                    <field name="categ_id"/>
+                    <field name="document_ids"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_product_info" model="ir.actions.act_window">
+            <field name="name">Product Info</field>
+            <field name="res_model">partner.info</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p>
+                    View Products.
+                </p>
+            </field>
+            <field name="context">{
+                'group_by': ['categ_id'],
+            }</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_partner_info" name="Product Info" action="action_product_info" parent="point_of_sale.menu_point_rep" sequence="10"/>
+    </data>
+</odoo>
