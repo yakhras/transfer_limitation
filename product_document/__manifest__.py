@@ -25,7 +25,7 @@
 
     # always loaded
     'data': [
-        #"security/security.xml",
+        "security/ir.model.access.csv",
         "views/product_product_view.xml",
         # "reports.xml", #action file.
         # "menuitems.xml", #menu items file.
