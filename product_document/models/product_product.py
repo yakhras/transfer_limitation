@@ -12,16 +12,6 @@ class ProductInfo(models.Model):
     product_id = fields.Many2one('product.product', string='Product', required=True)
     default_code = fields.Char(related='product_id.default_code', string='Internal Reference', store=True)
     categ_id = fields.Many2one(related='product_id.categ_id', string='Product Category', store=True)
-    document_ids = fields.One2many('ir.attachment', 'res_id', compute='_compute_attachments', string='Documents', store=True)
+    document_ids = fields.One2many('ir.attachment', 'res_id', string='Documents', store=True)
 
 
-
-    def _compute_attachments(self):
-        for record in self:
-            if record.product_id:
-                record.document_ids = self.env['ir.attachment'].search([
-                    ('res_model', '=', 'product.product'),
-                    ('res_id', '=', record.product_id.id)
-                ])
-            else:
-                record.document_ids = False
