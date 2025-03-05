@@ -13,6 +13,9 @@
                             <field name="categ_id"/>
                             <field name="document_ids"/>
                         </group>
+                        <group>
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </group>
                     </sheet>
                 </form>
             </field>

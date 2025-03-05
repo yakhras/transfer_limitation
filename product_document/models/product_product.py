@@ -12,6 +12,16 @@ class ProductInfo(models.Model):
     product_id = fields.Many2one('product.product', string='Product', required=True)
     default_code = fields.Char(related='product_id.default_code', string='Internal Reference', store=True)
     categ_id = fields.Many2one(related='product_id.categ_id', string='Product Category', store=True)
-    document_ids = fields.One2many('ir.attachment', 'res_id', string='Documents', store=True)
+    attachment_ids = fields.One2many('ir.attachment', 'res_id',compute='_compute_attachments', string='Documents', store=True)
 
 
+    def _compute_attachments(self):
+        """Fetch attachments linked to the selected product."""
+        for record in self:
+            if record.product_id:
+                record.attachment_ids = self.env['ir.attachment'].search([
+                    ('res_model', '=', 'product.product'),  # Look for product attachments
+                    ('res_id', '=', record.product_id.id)  # Match with selected product
+                ])
+            else:
+                record.attachment_ids = False
