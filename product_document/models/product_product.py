@@ -15,8 +15,6 @@ class ProductInfo(models.Model):
     categ_id = fields.Many2one(related='product_id.categ_id', string='Category', store=True, readonly=True)
     categ_name = fields.Char(related='categ_id.name', string='Product Category', store=True)
     attachment_ids = fields.Many2many('ir.attachment', 'res_id',compute='_compute_attachments')
-    attachment_count = fields.Integer(string='Attachment Count', compute='_compute_attachment_count')
-    attachment_urls = fields.Char(compute='_compute_attachment_urls', string="Attachment URLs")
 
 
     def _compute_attachments(self):
@@ -30,27 +28,8 @@ class ProductInfo(models.Model):
             else:
                 record.attachment_ids = False
 
-    def _compute_attachment_count(self):
-        """Compute the number of attachments linked to the selected product."""
-        for record in self:
-            if record.product_id:
-                record.attachment_count = self.env['ir.attachment'].search_count([
-                    ('res_model', '=', 'product.product'),  # Ensure it's an attachment for a product
-                    ('res_id', '=', record.product_id.id)  # Match the selected product
-                ])
-            else:
-                record.attachment_count = 0
+    
 
-
-    def _compute_attachment_urls(self):
-        for record in self:
-            urls = []
-            for attachment in record.attachment_ids:
-                # Construct the URL for each attachment
-                url = f'/web/content/{attachment.id}?download=true'
-                urls.append(url)
-            # Store the URLs as a comma-separated string
-            record.attachment_urls = ', '.join(urls)
 
 
     # to display the partner’s name instead of the default object name
