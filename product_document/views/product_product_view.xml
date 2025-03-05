@@ -21,7 +21,7 @@
                                     height: 24px !important;
                                 }
                             </style>
-                            <field name="attachment_ids" widget="many2many_binary" class="my-small-attachments"/>
+                            <field name="attachment_ids" widget="many2many_binary" class="my-small-attachments" options="{'preview': 'true'}"/>
                         </group>
                     </sheet>
                 </form>
