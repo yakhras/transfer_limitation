@@ -49,3 +49,12 @@ class ProductInfo(models.Model):
                 urls.append(url)
             # Store the URLs as a comma-separated string
             record.attachment_urls = ', '.join(urls)
+
+
+    # to display the partner’s name instead of the default object name
+    def name_get(self):
+        result = []
+        for record in self:
+            name = record.partner_id.name  # Get the partner name
+            result.append((record.id, name))  # Return a tuple of (record_id, name)
+        return result
