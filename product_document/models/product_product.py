@@ -9,7 +9,7 @@ class ProductInfo(models.Model):
 
 
 
-    product_id = fields.Many2one('product.product', string='Product', required=True, readonly=True)
+    product_id = fields.Many2one('product.product', string='Product', required=True)
     default_code = fields.Char(related='product_id.default_code', string='Internal Reference', store=True)
     categ_id = fields.Many2one(related='product_id.categ_id', string='Product Category', store=True, readonly=True)
     attachment_ids = fields.Many2many('ir.attachment', 'res_id',compute='_compute_attachments')
