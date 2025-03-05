@@ -23,6 +23,13 @@
                                 }
                             </style>
                             <field name="attachment_ids" widget="many2many_binary" class="my-small-attachments" options="{'preview': 'true'}"/>
+                            <!-- Loop through attachment_ids and show PDF previews -->
+                            <t t-foreach="attachment_ids" t-as="attachment">
+                                <t t-if="attachment.mimetype == 'application/pdf'">
+                                    <!-- Embed the PDF in an iframe -->
+                                    <iframe t-att-src="'/web/content/' + str(attachment.id) + '?download=true'" width="100%" height="500px"></iframe>
+                                </t>
+                            </t>
                         </group>
                     </sheet>
                 </form>
