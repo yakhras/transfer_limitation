@@ -23,6 +23,16 @@
                                 </tree>
                             </field>
                         </group>
+                        <group string="Product Attachments">
+                            <!-- Apply the custom CSS inline -->
+                            <style>
+                                .my-small-attachments img {
+                                    width: 24px !important;
+                                    height: 24px !important;
+                                }
+                            </style>
+                            <field name="attachment_ids" widget="many2many_binary" class="my-small-attachments"/>
+                        </group>
                     </sheet>
                 </form>
             </field>
