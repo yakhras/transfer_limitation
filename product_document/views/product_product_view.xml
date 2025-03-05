@@ -11,6 +11,7 @@
                             <field name="product_id"/>
                             <field name="default_code"/>
                             <field name="categ_id"/>
+                            <field name="attachment_count" readonly="1" widget="statinfo"/>
                         </group>
                         <group string="Product Attachments">
                             <field name="attachment_ids">

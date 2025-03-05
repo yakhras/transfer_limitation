@@ -13,6 +13,7 @@ class ProductInfo(models.Model):
     default_code = fields.Char(related='product_id.default_code', string='Internal Reference', store=True)
     categ_id = fields.Many2one(related='product_id.categ_id', string='Product Category', store=True)
     attachment_ids = fields.One2many('ir.attachment', 'res_id',compute='_compute_attachments', string='Documents', store=True)
+    attachment_count = fields.Integer(string='Attachment Count', compute='_compute_attachment_count')
 
 
     def _compute_attachments(self):
@@ -25,3 +26,14 @@ class ProductInfo(models.Model):
                 ])
             else:
                 record.attachment_ids = False
+
+    def _compute_attachment_count(self):
+        """Compute the number of attachments linked to the selected product."""
+        for record in self:
+            if record.product_id:
+                record.attachment_count = self.env['ir.attachment'].search_count([
+                    ('res_model', '=', 'product.product'),  # Ensure it's an attachment for a product
+                    ('res_id', '=', record.product_id.id)  # Match the selected product
+                ])
+            else:
+                record.attachment_count = 0
