@@ -24,7 +24,7 @@
                             </field>
                         </group>
                         <group string="Product Attachments">
-                            <field name="attachment_ids" nolabel="1" widget="many2many_binary"/>
+                            <field name="attachment_ids" widget="many2many_binary"/>
                         </group>
                     </sheet>
                 </form>
