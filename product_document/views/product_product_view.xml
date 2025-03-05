@@ -14,16 +14,6 @@
                             <field name="attachment_count" readonly="1" widget="statinfo"/>
                         </group>
                         <group string="Product Attachments">
-                            <field name="attachment_ids">
-                                <tree editable="false">
-                                    <field name="name"/>
-                                    <field name="raw"/>
-                                    <field name="type"/>
-                                    <field name="datas" widget="attachment"/>
-                                </tree>
-                            </field>
-                        </group>
-                        <group string="Product Attachments">
                             <!-- Apply the custom CSS inline -->
                             <style>
                                 .my-small-attachments img {
