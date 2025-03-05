@@ -14,6 +14,7 @@ class ProductInfo(models.Model):
     categ_id = fields.Many2one(related='product_id.categ_id', string='Product Category', store=True)
     attachment_ids = fields.Many2many('ir.attachment', 'res_id',compute='_compute_attachments')
     attachment_count = fields.Integer(string='Attachment Count', compute='_compute_attachment_count')
+    attachment_urls = fields.Char(compute='_compute_attachment_urls', string="Attachment URLs")
 
 
     def _compute_attachments(self):
@@ -37,3 +38,14 @@ class ProductInfo(models.Model):
                 ])
             else:
                 record.attachment_count = 0
+
+
+    def _compute_attachment_urls(self):
+        for record in self:
+            urls = []
+            for attachment in record.attachment_ids:
+                # Construct the URL for each attachment
+                url = f'/web/content/{attachment.id}?download=true'
+                urls.append(url)
+            # Store the URLs as a comma-separated string
+            record.attachment_urls = ', '.join(urls)
