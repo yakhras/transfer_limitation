@@ -9,7 +9,7 @@
                     <sheet>
                         <group col="2">  <!-- This ensures the two groups are side by side -->
                             <group>
-                                <field name="product_id"/>
+                                <field name="display_name"/>
                                 <field name="default_code"/>
                                 <field name="categ_id" readonly="1"/>
                             </group>
