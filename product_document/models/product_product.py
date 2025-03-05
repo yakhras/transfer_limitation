@@ -55,6 +55,6 @@ class ProductInfo(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            name = record.product_id.product_id  # Get the partner name
+            name = record.product_id  # Get the partner name
             result.append((record.id, name))  # Return a tuple of (record_id, name)
         return result
