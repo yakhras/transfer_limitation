@@ -24,7 +24,7 @@ class ProductInfo(models.Model):
         for record in self:
             if record.product_id:
                 quant = StockQuant.search([
-                    ('product_id', '=', record.product_id.id),
+                    ('product_id.id', '=', record.product_id.id),
                     ('location_id.id', '=', 8)  
                 ], limit=1)
                 record.available_qty_location_8 = quant.available_quantity if quant else 0.0
