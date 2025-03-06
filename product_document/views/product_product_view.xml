@@ -30,8 +30,8 @@
                 <tree string="Product Information" create="0">
                     <field name="product_id"/>
                     <field name="default_code"/>
-                    <field name="categ_id"/>
                     <field name="available_qty_location_8"/>
+                    <field name="categ_id"/>
                 </tree>
             </field>
         </record>
