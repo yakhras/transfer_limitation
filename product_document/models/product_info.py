@@ -16,6 +16,7 @@ class ProductInfo(models.Model):
     categ_name = fields.Char(related='categ_id.name', string='Product Category', store=True)
     attachment_ids = fields.Many2many('ir.attachment', 'res_id',compute='_compute_attachments')
     available_qty_location_8 = fields.Float(string="Available Qty", compute="_compute_available_qty", store=True)
+    company_ids = fields.Many2many(related='product_id.company_ids')
 
     
     def _compute_available_qty(self):
