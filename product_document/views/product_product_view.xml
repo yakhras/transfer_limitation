@@ -5,7 +5,7 @@
             <field name="name">product.info.form</field>
             <field name="model">product.info</field>
             <field name="arch" type="xml">
-                <form string="Product Information" create="false">
+                <form string="Product Information" create="0">
                     <sheet>
                         <group col="2">  <!-- This ensures the two groups are side by side -->
                             <group>
@@ -26,7 +26,7 @@
             <field name="name">product.info.tree</field>
             <field name="model">product.info</field>
             <field name="arch" type="xml">
-                <tree string="Product Information" create="false">
+                <tree string="Product Information" create="0">
                     <field name="product_id"/>
                     <field name="default_code"/>
                     <field name="categ_id"/>
