@@ -46,7 +46,7 @@
                 </p>
             </field>
             <field name="context">{
-                'group_by': ['categ_name'],
+                'group_by': ['categ_id.parent_id.name'],
             }</field>
             <field name="domain">[('product_id.type', '=', 'product')]</field>
         </record>
