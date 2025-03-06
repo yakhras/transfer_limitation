@@ -50,6 +50,6 @@
         </record>
 
         <!-- Menu Item -->
-        <menuitem id="menu_product_info" name="Products" action="action_product_info" parent="sale.product_menu_catalog" sequence="1"/>
+        <menuitem id="menu_product_info" name="Sales Products" action="action_product_info" parent="sale.product_menu_catalog" sequence="1"/>
     </data>
 </odoo>
