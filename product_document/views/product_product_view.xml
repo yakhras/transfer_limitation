@@ -41,7 +41,7 @@
             <field name="model">product.info</field>
             <field name="arch" type="xml">
                 <search string="Product">
-                    <field name="display_name" string="Product" filter_domain="['|', '|', '|', ('product_id', 'ilike', self), ('default_code', 'ilike', self),('display_name', 'ilike', self)]"/>
+                    <field name="product_id" string="Product" filter_domain="['|', '|', '|', ('product_id', 'ilike', self), ('default_code', 'ilike', self),('display_name', 'ilike', self)]"/>
                     <field name="categ_name" filter_domain="[('categ_name', 'child_of', raw_value)]"/>
                 </search>
             </field>
