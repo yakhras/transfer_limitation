@@ -21,7 +21,6 @@
                         </group>
                         <group string="Logistics">
                             <field name="weight" readonly="1"/>
-                            <field name="gross_weight" readonly="1"/>
                         </group>
                     </sheet>
                 </form>
