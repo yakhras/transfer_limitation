@@ -14,6 +14,9 @@ class ProductInfo(models.Model):
     categ_name = fields.Char(related='categ_id.name', string='Product Category', store=True)
     attachment_ids = fields.Many2many('ir.attachment', 'res_id',compute='_compute_attachments')
     available_qty_location_8 = fields.Float(string="Available Qty", compute="_compute_available_qty", store=True)
+    weight = fields.Float(related='product_id.weight', string="Net Weight", store=True, readonly=True)
+    gross_weight = fields.Float(related='product_id.gross_weight', string="Gross Weight", store=True, readonly=True)
+    uom_name = fields.Char(related='product_id.uom_id.name', string="Unit of Measure", store=True, readonly=True)
     
 
     

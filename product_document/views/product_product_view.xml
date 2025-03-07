@@ -13,10 +13,15 @@
                                 <field name="default_code"/>
                                 <field name="categ_name" readonly="1"/>
                                 <field name="available_qty_location_8" readonly="1"/>
+                                <field name="uom_name" readonly="1"/>
                             </group>
                             <group>
                                 <field name="attachment_ids" widget="many2many_binary"/>
                             </group>
+                        </group>
+                        <group string="Logistics">
+                            <field name="weight" readonly="1"/>
+                            <field name="gross_weight" readonly="1"/>
                         </group>
                     </sheet>
                 </form>
@@ -31,6 +36,7 @@
                     <field name="product_id"/>
                     <field name="default_code"/>
                     <field name="available_qty_location_8"/>
+                    <field name="uom_name"/>
                     <field name="categ_id"/>
                 </tree>
             </field>
