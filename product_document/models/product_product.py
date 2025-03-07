@@ -23,8 +23,9 @@ class ProductProduct(models.Model):
     def write(self, vals):
         res = super(ProductProduct, self).write(vals)
         
-        if 'active' in vals:  # Check if the record is being archived/unarchived
-            for product in self:
+          # Check if the record is being archived/unarchived
+        for product in self:
+            if 'active' in vals:
                 info_records = self.env['product.info'].search([('product_id.id', '=', product.id)])
                 if info_records:
                     info_records.write({'active': vals['active']})  # Sync the active state
