@@ -54,7 +54,6 @@ class ProductInfo(models.Model):
         result = []
         for record in self:
             name = record.product_id.display_name  # Get the partner name
-            record.gross_weight = record.product_id.gross_weight
             result.append((record.id, name))  # Return a tuple of (record_id, name)
         return result
     
