@@ -28,7 +28,7 @@ class ProductProduct(models.Model):
             if 'active' in vals:
                 info_records = self.env['product.info'].search([('product_id.id', '=', product.id)])
                 if info_records:
-                    info_records.write({'active': vals['active']})  # Sync the active state
+                    info_records.write({'active': vals.get('active', info_records.active)})  # Sync the active state
                 
         return res
 
