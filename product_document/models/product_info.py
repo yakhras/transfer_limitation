@@ -17,6 +17,7 @@ class ProductInfo(models.Model):
     weight = fields.Float(related='product_id.weight', string="Net Weight", store=True, readonly=True)
     gross_weight = fields.Float(string="Gross Weight", store=True, readonly=True)
     uom_name = fields.Char(related='product_id.uom_id.name', string="Unit of Measure", store=True, readonly=True)
+    active = fields.Boolean(default=True)
     
 
     
