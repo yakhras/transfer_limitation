@@ -25,7 +25,7 @@ class ProductProduct(models.Model):
         
         if 'active' in vals:  # Check if the record is being archived/unarchived
             for product in self:
-                info_records = self.env['product.info'].search([('product_id', '=', product)])
+                info_records = self.env['product.info'].search([('product_id.id', '=', product.id)])
                 if info_records:
                     info_records.write({'active': vals['active']})  # Sync the active state
                 
