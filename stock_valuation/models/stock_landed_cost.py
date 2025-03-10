@@ -59,6 +59,7 @@ class StockLandedCost(models.Model):
                     valuation_layer_ids.append(valuation_layer.id)
                 # Update the AVCO
                 product = line.move_id.product_id
+                location = line.move_id.location_dest_id
                 if product.cost_method == 'average':
                     cost_to_add_byproduct[product] += cost_to_add
                     self.result = cost_to_add_byproduct
@@ -99,3 +100,4 @@ class StockLandedCost(models.Model):
 
         return True
     
+
