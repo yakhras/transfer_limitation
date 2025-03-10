@@ -34,11 +34,11 @@ class StockLandedCost(models.Model):
                 'line_ids': [],
                 'move_type': 'entry',
             }
-            self.result = move_vals
             valuation_layer_ids = []
             cost_to_add_byproduct = defaultdict(lambda: 0.0)
             for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
                 remaining_qty = sum(line.move_id.stock_valuation_layer_ids.mapped('remaining_qty'))
+                self.result = remaining_qty
                 linked_layer = line.move_id.stock_valuation_layer_ids[:1]
 
                 # Prorate the value at what's still in stock
@@ -102,3 +102,4 @@ class StockLandedCost(models.Model):
 
 
 
+{'journal_id': 6, 'date': datetime.date(2025, 3, 10), 'ref': 'LC/2025/1948', 'line_ids': [], 'move_type': 'entry'}
