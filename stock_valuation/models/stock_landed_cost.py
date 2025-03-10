@@ -38,7 +38,7 @@ class StockLandedCost(models.Model):
             cost_to_add_byproduct = defaultdict(lambda: 0.0)
             for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
                 remaining_qty = sum(line.move_id.stock_valuation_layer_ids.mapped('remaining_qty'))
-                
+                self.result = remaining_qty
                 linked_layer = line.move_id.stock_valuation_layer_ids[:1]
 
                 # Prorate the value at what's still in stock
@@ -73,7 +73,7 @@ class StockLandedCost(models.Model):
                 elif line.move_id._is_out():
                     qty_out = line.move_id.product_qty
                 move_vals['line_ids'] += line._create_accounting_entries(move, qty_out)
-            self.result = remaining_qty
+
             # batch standard price computation avoid recompute quantity_svl at each iteration
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
@@ -101,5 +101,3 @@ class StockLandedCost(models.Model):
     
 
 
-
-{'journal_id': 6, 'date': datetime.date(2025, 3, 10), 'ref': 'LC/2025/1948', 'line_ids': [], 'move_type': 'entry'}
