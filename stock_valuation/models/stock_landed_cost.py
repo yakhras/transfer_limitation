@@ -62,6 +62,7 @@ class StockLandedCost(models.Model):
                 location = line.move_id.location_dest_id
                 if product.cost_method == 'average':
                     cost_to_add_byproduct[product] += cost_to_add
+                    cost_to_add_byproduct[location] = line.move_id.location_dest_id.id
                     self.result = cost_to_add_byproduct
                 # Products with manual inventory valuation are ignored because they do not need to create journal entries.
                 if product.valuation != "real_time":
@@ -101,3 +102,4 @@ class StockLandedCost(models.Model):
         return True
     
 
+defaultdict(<function StockLandedCost.button_validate.<locals>.<lambda> at 0x7f51ef7e84c0>, {product.product(38265,): 90.0})
