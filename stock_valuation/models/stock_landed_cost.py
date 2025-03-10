@@ -61,9 +61,8 @@ class StockLandedCost(models.Model):
                 product = line.move_id.product_id
                 location = line.move_id.location_dest_id
                 if product.cost_method == 'average':
-                    # cost_to_add_byproduct[product] += cost_to_add
-                    cost_to_add_byproduct[(product, location)] += cost_to_add
-                    self.result = cost_to_add_byproduct
+                    cost_to_add_byproduct[product] += cost_to_add
+                    
                 # Products with manual inventory valuation are ignored because they do not need to create journal entries.
                 if product.valuation != "real_time":
                     continue
@@ -78,7 +77,7 @@ class StockLandedCost(models.Model):
 
             # batch standard price computation avoid recompute quantity_svl at each iteration
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
-            
+            self.result = location
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
                     product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
