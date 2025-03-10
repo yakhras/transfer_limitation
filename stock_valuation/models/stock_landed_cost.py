@@ -36,7 +36,6 @@ class StockLandedCost(models.Model):
             }
             valuation_layer_ids = []
             cost_to_add_byproduct = defaultdict(lambda: 0.0)
-            self.result = cost_to_add_byproduct
             for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
                 remaining_qty = sum(line.move_id.stock_valuation_layer_ids.mapped('remaining_qty'))
                 linked_layer = line.move_id.stock_valuation_layer_ids[:1]
@@ -62,6 +61,7 @@ class StockLandedCost(models.Model):
                 product = line.move_id.product_id
                 if product.cost_method == 'average':
                     cost_to_add_byproduct[product] += cost_to_add
+                    self.result = cost_to_add_byproduct
                 # Products with manual inventory valuation are ignored because they do not need to create journal entries.
                 if product.valuation != "real_time":
                     continue
