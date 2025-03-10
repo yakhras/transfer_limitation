@@ -101,5 +101,3 @@ class StockLandedCost(models.Model):
         return True
     
 
-
-stock.valuation.adjustment.lines(18562,)
