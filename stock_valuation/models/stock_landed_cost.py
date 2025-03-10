@@ -34,6 +34,7 @@ class StockLandedCost(models.Model):
                 'line_ids': [],
                 'move_type': 'entry',
             }
+            self.result = move_vals
             valuation_layer_ids = []
             cost_to_add_byproduct = defaultdict(lambda: 0.0)
             for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
