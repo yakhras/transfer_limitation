@@ -101,5 +101,3 @@ class StockLandedCost(models.Model):
 
         return True
     
-
-defaultdict(<function StockLandedCost.button_validate.<locals>.<lambda> at 0x7f51ef7e84c0>, {product.product(38265,): 90.0})
