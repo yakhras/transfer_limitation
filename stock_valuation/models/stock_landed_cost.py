@@ -15,6 +15,7 @@ class StockLandedCost(models.Model):
 
 
     result = fields.Char('Result')
+    location_id = fields.Char('location')
 
     def button_validate(self):
         self._check_can_validate()
@@ -77,7 +78,8 @@ class StockLandedCost(models.Model):
 
             # batch standard price computation avoid recompute quantity_svl at each iteration
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
-            self.result = location.id
+            self.location_id = location.id
+            self.result = self.env.context
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
                     product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
