@@ -79,6 +79,12 @@ class StockLandedCost(models.Model):
             # batch standard price computation avoid recompute quantity_svl at each iteration
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
             self.location_id = location.id
+            action = self.env.ref("stock_landed_costs.action_stock_landed_cost").read()[0]
+
+            # Dynamically set location_id in context
+            action['context'] = {
+                'default_location_dest_id': self.location_id
+            }
             self.result = self.env.context
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
@@ -100,6 +106,8 @@ class StockLandedCost(models.Model):
                     accounts = product.product_tmpl_id.get_product_accounts()
                     input_account = accounts['stock_input']
                     all_amls.filtered(lambda aml: aml.account_id == input_account and not aml.reconciled).reconcile()
+
+            
 
         return True
     
