@@ -79,7 +79,7 @@ class StockLandedCost(models.Model):
             res = self._action_generate_immediate_wizard()
             # batch standard price computation avoid recompute quantity_svl at each iteration
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
-            self.result = self.env.context
+            self.result = res
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
                 
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
