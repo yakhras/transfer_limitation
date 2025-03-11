@@ -81,7 +81,7 @@ class StockLandedCost(models.Model):
             
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
                 if not float_is_zero(product.with_context(location_dest_id = self.location_id.id).quantity_svl, precision_rounding=product.uom_id.rounding):
-                    cost = cost_to_add_byproduct[product] / product.with_context(location_dest_id = self.location_id.id).quantity_svl
+                    cost = float(cost_to_add_byproduct[product] / product.with_context(location_dest_id = self.location_id.id).quantity_svl)
                     if product and self.location_id:
                     # Check if a record already exists
                         existing_record = self.env['product.location.cost'].search([
@@ -90,7 +90,7 @@ class StockLandedCost(models.Model):
                         ], limit=1)
 
                         if existing_record:
-                            existing_record.cost += float(cost)
+                            existing_record.cost += cost
                         else:
                             self.env['product.location.cost'].create({
                                 'product_id': product.id,
