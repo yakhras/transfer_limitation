@@ -80,7 +80,7 @@ class StockLandedCost(models.Model):
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
             
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
-                self.result = product.with_context(default_location_dest_id = self.location_id).quantity_svl
+                self.result = product.with_context(location_dest_id = self.location_id).quantity_svl
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
                     product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
 
