@@ -62,7 +62,7 @@ class StockLandedCost(models.Model):
                 product = line.move_id.product_id
                 location = line.move_id.location_dest_id
                 action = self.env["ir.actions.act_window"]._for_xml_id("stock_landed_costs.action_stock_landed_cost")
-                action['context'].update({'default_location_dest_id': location})
+                action['context'].update({'default_location_dest_id': location,})
                 
                 if product.cost_method == 'average':
                     cost_to_add_byproduct[product] += cost_to_add
