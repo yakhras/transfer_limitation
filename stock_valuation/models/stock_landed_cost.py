@@ -4,7 +4,7 @@
 from collections import defaultdict
 
 from odoo import api, fields, models, tools, _
-from ast import literal_eval
+from ast import safe_eval
 from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_is_zero
 
@@ -61,8 +61,7 @@ class StockLandedCost(models.Model):
                     valuation_layer_ids.append(valuation_layer.id)
                 # Update the AVCO
                 product = line.move_id.product_id
-                location = line.move_id.location_dest_id
-                move_vals['context'] = {'default_location_dest_id': location.id}
+                location = self.action_open_landed_cost()
                 if product.cost_method == 'average':
                     cost_to_add_byproduct[product] += cost_to_add
                     
@@ -105,3 +104,25 @@ class StockLandedCost(models.Model):
 
         return True
     
+
+    def action_open_landed_cost(self):
+        for cost in self:
+            for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
+                location = line.move_id.location_dest_id  # Get destination location
+
+                # Read the action correctly
+                action = self.env["ir.actions.act_window"]._for_xml_id("stock_landed_costs.action_stock_landed_cost")
+
+                # Ensure the context is a dictionary
+                action_context = action.get("context", "{}")  # Get the existing context (as a string)
+
+                if isinstance(action_context, str):  
+                    action_context = safe_eval(action_context)  # Convert string to dictionary safely
+
+                # Update the context with the new value
+                action_context.update({"default_location_dest_id": location.id})
+
+                # Assign the updated context back to the action
+                action["context"] = action_context
+
+            return action  # Return the updated action
