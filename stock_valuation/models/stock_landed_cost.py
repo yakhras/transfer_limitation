@@ -4,7 +4,7 @@
 from collections import defaultdict
 
 from odoo import api, fields, models, tools, _
-from ast import safe_eval
+from ast import literal_eval
 from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_is_zero
 
@@ -114,15 +114,11 @@ class StockLandedCost(models.Model):
                 action = self.env["ir.actions.act_window"]._for_xml_id("stock_landed_costs.action_stock_landed_cost")
 
                 # Ensure the context is a dictionary
-                action_context = action.get("context", "{}")  # Get the existing context (as a string)
-
-                if isinstance(action_context, str):  
-                    action_context = safe_eval(action_context)  # Convert string to dictionary safely
+                action['context'] = literal_eval(action.get('context'))
 
                 # Update the context with the new value
-                action_context.update({"default_location_dest_id": location.id})
+                action['context'].update({"default_location_dest_id": location.id})
 
                 # Assign the updated context back to the action
-                action["context"] = action_context
 
             return action  # Return the updated action
