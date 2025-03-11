@@ -81,8 +81,8 @@ class StockLandedCost(models.Model):
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
             
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
+                self.result = product.quantity_svl
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
-                    self.result = product.quantity_svl
                     product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
 
             move_vals['stock_valuation_layer_ids'] = [(6, None, valuation_layer_ids)]
