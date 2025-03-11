@@ -81,7 +81,23 @@ class StockLandedCost(models.Model):
             
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
                 if not float_is_zero(product.with_context(location_dest_id = self.location_id.id).quantity_svl, precision_rounding=product.uom_id.rounding):
-                    product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.with_context(location_dest_id = self.location_id.id).quantity_svl
+                    cost = cost_to_add_byproduct[product] / product.with_context(location_dest_id = self.location_id.id).quantity_svl
+                    if product and self.location_id:
+                    # Check if a record already exists
+                        existing_record = self.env['product.location.cost'].search([
+                            ('product_id', '=', product.id),
+                            ('location_id', '=', self.location_id.id)
+                        ], limit=1)
+
+                        if existing_record:
+                            existing_record.cost += cost
+                        else:
+                            self.env['product.location.cost'].create({
+                                'product_id': product.id,
+                                'location_id': self.location_id.id,
+                                'cost': cost,
+                            })
+                    #product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.with_context(location_dest_id = self.location_id.id).quantity_svl
 
             move_vals['stock_valuation_layer_ids'] = [(6, None, valuation_layer_ids)]
             # We will only create the accounting entry when there are defined lines (the lines will be those linked to products of real_time valuation category).
