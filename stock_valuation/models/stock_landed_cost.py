@@ -113,7 +113,7 @@ class StockLandedCost(models.Model):
         action = self.env.ref('stock_landed_costs.action_stock_landed_cost')
         return {
             'type': 'ir.actions.act_window',
-            'name': action.name,
+            'name': action.id,
             'res_model': action.res_model,
             'view_mode': action.view_mode,
             'views': action.views,
