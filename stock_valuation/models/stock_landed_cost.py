@@ -61,6 +61,9 @@ class StockLandedCost(models.Model):
                 # Update the AVCO
                 product = line.move_id.product_id
                 location = line.move_id.location_dest_id
+                action = self.env["ir.actions.act_window"]._for_xml_id("stock_landed_costs.action_stock_landed_cost")
+                action['context'].update({'default_location_dest_id': location})
+                
                 if product.cost_method == 'average':
                     cost_to_add_byproduct[product] += cost_to_add
                     
@@ -78,7 +81,7 @@ class StockLandedCost(models.Model):
 
             # batch standard price computation avoid recompute quantity_svl at each iteration
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
-            self.result = location
+            self.result = self.env.context
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
                     product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
@@ -100,22 +103,6 @@ class StockLandedCost(models.Model):
                     input_account = accounts['stock_input']
                     all_amls.filtered(lambda aml: aml.account_id == input_account and not aml.reconciled).reconcile()
 
-            
 
         return True
     
-
-
-
-    def action_open_landed_cost(self):
-        for cost in self:
-            for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
-                location = line.move_id.location_dest_id
-                line.location_id = location.id  # Assign location ID to field
-
-            # Read the action and set the context dynamically
-            action = self.env.ref("stock_landed_costs.action_stock_landed_cost").read()[0]
-            action['context'] = {
-                'default_location_dest_id': line.location_id  # Use the field value
-            }
-            return action
