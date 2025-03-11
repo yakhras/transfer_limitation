@@ -44,6 +44,10 @@
             </field>
         </record>
 
+        <record id="action_stock_landed_cost" model="ir.actions.act_window">
+            <field name="inherit_id" ref="stock.action_stock_landed_cost"/>
+            <field name="context" eval="{'default_location_dest_id': False}"/>
+        </record>
 
     </data>
 </odoo>

@@ -15,7 +15,7 @@ class StockLandedCost(models.Model):
 
 
     result = fields.Char('Result')
-    location_id = fields.Char('location')
+    location_id = fields.Many2one('stock.location', string='Location')  
 
     def button_validate(self):
         self._check_can_validate()
@@ -78,13 +78,6 @@ class StockLandedCost(models.Model):
 
             # batch standard price computation avoid recompute quantity_svl at each iteration
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
-            self.location_id = location.id
-            action = self.env.ref("stock_landed_costs.action_stock_landed_cost").read()[0]
-
-            # Dynamically set location_id in context
-            action['context'] = {
-                'default_location_dest_id': self.location_id
-            }
             self.result = self.env.context
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
@@ -111,3 +104,18 @@ class StockLandedCost(models.Model):
 
         return True
     
+
+
+
+    def action_open_landed_cost(self):
+        for cost in self:
+            for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
+                location = line.move_id.location_dest_id
+                line.location_id = location.id  # Assign location ID to field
+
+            # Read the action and set the context dynamically
+            action = self.env.ref("stock_landed_costs.action_stock_landed_cost").read()[0]
+            action['context'] = {
+                'default_location_dest_id': line.location_id  # Use the field value
+            }
+            return action
