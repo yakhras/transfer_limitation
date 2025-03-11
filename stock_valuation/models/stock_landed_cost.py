@@ -61,7 +61,7 @@ class StockLandedCost(models.Model):
                     valuation_layer_ids.append(valuation_layer.id)
                 # Update the AVCO
                 product = line.move_id.product_id
-                location = self.action_open_landed_cost()
+                
                 if product.cost_method == 'average':
                     cost_to_add_byproduct[product] += cost_to_add
                     
@@ -106,20 +106,16 @@ class StockLandedCost(models.Model):
         return True
     
 
-    def action_open_landed_cost(self):
+    def _action_generate_immediate_wizard(self):
         for cost in self:
             for line in cost.valuation_adjustment_lines.filtered(lambda line: line.move_id):
-                location = line.move_id.location_dest_id  # Get destination location
-
-                # Read the action correctly
-                action = self.env["ir.actions.act_window"]._for_xml_id("stock_landed_costs.action_stock_landed_cost")
-
-                # Ensure the context is a dictionary
-                action['context'] = literal_eval(action.get('context'))
-
-                # Update the context with the new value
-                action['context'].update({"default_location_dest_id": location.id})
-
-                # Assign the updated context back to the action
-
-            return action  # Return the updated action
+                self.location_id = line.move_id.location_dest_id
+        action = self.env.ref('stock_landed_costs.action_stock_landed_cost')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': action.name,
+            'res_model': action.res_model,
+            'view_mode': action.view_mode,
+            'views': action.views,
+            'context': {'default_location_id': self.location_id.id},  # Add context if needed
+        }
