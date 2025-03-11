@@ -61,7 +61,7 @@ class StockLandedCost(models.Model):
                     valuation_layer_ids.append(valuation_layer.id)
                 # Update the AVCO
                 product = line.move_id.product_id
-                
+                self.location_id = line.move_id.location_dest_id
                 if product.cost_method == 'average':
                     cost_to_add_byproduct[product] += cost_to_add
                     
@@ -76,12 +76,11 @@ class StockLandedCost(models.Model):
                 elif line.move_id._is_out():
                     qty_out = line.move_id.product_qty
                 move_vals['line_ids'] += line._create_accounting_entries(move, qty_out)
-            res = self._action_generate_immediate_wizard()
             # batch standard price computation avoid recompute quantity_svl at each iteration
             products = self.env['product.product'].browse(p.id for p in cost_to_add_byproduct.keys())
-            self.result = res
+            
             for product in products:  # iterate on recordset to prefetch efficiently quantity_svl
-                
+                product.with_context(default_location_dest_id = self.location_id.id)
                 if not float_is_zero(product.quantity_svl, precision_rounding=product.uom_id.rounding):
                     product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.quantity_svl
 
