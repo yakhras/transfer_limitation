@@ -90,7 +90,7 @@ class StockLandedCost(models.Model):
                         ], limit=1)
 
                         if existing_record:
-                            existing_record.cost += cost
+                            existing_record.cost += float(cost)
                         else:
                             self.env['product.location.cost'].create({
                                 'product_id': product.id,
