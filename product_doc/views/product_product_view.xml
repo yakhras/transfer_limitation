@@ -24,7 +24,7 @@
                             <field name="gross_weight" readonly="1"/>
                         </group>
                     </sheet>
-                    <div>
+                    <div class="oe_chatter">
                         <t t-call="product_info.AttachmentBox"/>
                     </div>
                 </form>
