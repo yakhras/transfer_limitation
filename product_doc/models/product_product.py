@@ -23,16 +23,16 @@ class ProductProduct(models.Model):
     def write(self, vals):
         res = super().write(vals)
         for product in self:
-            product.br_qr_code = product.id
         
           # Check if the record is being archived/unarchived
         
-        # if 'active' in vals:
-            
-        #     info_records = self.env['product.info'].search([('product_id.id', '=', product.id)])
-        #     if info_records:
-        #         info_records.write({'active': vals.get('active', info_records.active)})  # Sync the active state
+            if 'active' in vals:
                 
-        return
+                info_records = self.env['product.info'].search([('product_id.id', '=', product.id)])
+                product.hs_code = info_records
+                # if info_records:
+                #     info_records.write({'active': vals.get('active', info_records.active)})  # Sync the active state
+                
+        return res
 
 
