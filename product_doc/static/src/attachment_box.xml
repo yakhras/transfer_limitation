@@ -28,7 +28,7 @@
                     </t>
                     <button class="o_AttachmentBox_buttonAdd btn btn-link" type="button" t-on-click="_onClickAdd">
                         <i class="fa fa-plus-square"/>
-                        
+                        Add attachment
                     </button>
                 </div>
                 <FileUploader
