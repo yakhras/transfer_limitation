@@ -24,12 +24,15 @@ class ProductProduct(models.Model):
         res = super().write(vals)
         for product in self:
             if 'active' in vals:
-                info_records = self.env['product.info'].search([('product_id.id', '=', product.id)])
+                info_records = self.env['product.info'].search([
+                    ('product_id', '=', product.id),
+                    '|',
+                    ('active', '=', True),
+                    ('active', '=', False)
+                    ])
                 if info_records:
-                    if vals['active'] == True:
-                        info_records.active = True
-                    else:
-                        info_records.active = False
+                    info_records.active = product.active
+                    
                 
         return res
 
