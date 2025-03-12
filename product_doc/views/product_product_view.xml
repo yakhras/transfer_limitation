@@ -25,6 +25,7 @@
                         </group>
                     </sheet>
                     <div class="oe_chatter">
+                        <t t-call="product_info.AttachmentBox"/>
                     </div>
                 </form>
             </field>

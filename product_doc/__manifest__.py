@@ -24,10 +24,10 @@
         "security/ir.model.access.csv",
         "views/product_product_view.xml",
     ],
-    # 'assets': {
-    #     'web.assets_qweb': [
-    #         'static/src/attachment_box.xml',
-    #     ],
-    # }
+    'assets': {
+        'web.assets_qweb': [
+            'static/src/attachment_box.xml',
+        ],
+    }
 
 }

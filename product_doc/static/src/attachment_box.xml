@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
 
-    <t t-name="mail.AttachmentBox" owl="1">
+    <t t-name="product_info.AttachmentBox" owl="1">
         <div class="o_AttachmentBox">
             <t t-if="chatter">
                 <div class="o_AttachmentBox_title">
@@ -28,7 +28,6 @@
                     </t>
                     <button class="o_AttachmentBox_buttonAdd btn btn-link" type="button" t-on-click="_onClickAdd">
                         <i class="fa fa-plus-square"/>
-                        Add attachment
                     </button>
                 </div>
                 <FileUploader
