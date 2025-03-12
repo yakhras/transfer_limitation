@@ -23,7 +23,7 @@ class ProductProduct(models.Model):
     def write(self, vals):
         res = super().write(vals)
         for product in self:
-            product.br_qr_code = product
+            product.br_qr_code = product.id
         
           # Check if the record is being archived/unarchived
         
