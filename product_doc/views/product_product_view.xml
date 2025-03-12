@@ -16,7 +16,8 @@
                                 <field name="uom_name" readonly="1"/>
                             </group>
                             <group>
-                                <field name="attachment_ids" widget="many2many_binary" class="o-attachment-viewable"/>
+                                <AttachmentList><field name="attachment_ids" widget="many2many_binary"/></AttachmentList>
+                                
                             </group>
                         </group>
                         <group string="Logistics">
