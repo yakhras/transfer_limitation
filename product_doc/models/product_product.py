@@ -26,8 +26,10 @@ class ProductProduct(models.Model):
             if 'active' in vals:
                 info_records = self.env['product.info'].search([('product_id.id', '=', product.id)])
                 if info_records:
-                    info_records.active = product.active  # Sync the active state
-                    product.hs_code = info_records.active
+                    if vals['active'] == True:
+                        info_records.active = True
+                    else:
+                        info_records.active = False
                 
         return res
 
