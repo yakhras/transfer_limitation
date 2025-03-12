@@ -15,10 +15,8 @@
                                 <field name="available_qty_location_8" readonly="1"/>
                                 <field name="uom_name" readonly="1"/>
                             </group>
-                            
                             <AttachmentList><field name="attachment_ids" widget="many2many_binary"/></AttachmentList>
                                 
-                            
                         </group>
                         <group string="Logistics">
                             <field name="weight" readonly="1"/>
