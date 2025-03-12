@@ -26,7 +26,7 @@
     ],
     'assets': {
         'web.assets_qweb': [
-            'static/src/attachment_box.xml',
+            'product_doc/static/src/attachment_box.xml',
         ],
     }
 
