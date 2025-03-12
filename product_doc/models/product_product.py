@@ -8,8 +8,9 @@ class ProductProduct(models.Model):
     
     def create(self, vals):
         product = super().create(vals)
-        self.env['product.info'].create({
-            'product_id': product.id})
+        for rec in product:
+            self.env['product.info'].create({
+                'product_id': rec.id})
         return product
     
 
