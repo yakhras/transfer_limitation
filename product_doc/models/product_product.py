@@ -26,17 +26,8 @@ class ProductProduct(models.Model):
         for product in self:
             if 'active' in vals:
                 info_records = self.env['product.info'].with_context(active_test=False).search([('product_id', '=', product.id)])
-
-                # info_records = self.env['product.info'].search([
-                #     ('product_id', '=', product.id),
-                #     '|',
-                #     ('active', '=', True),
-                #     ('active', '=', False)
-                #     ])
                 if info_records:
-                    info_records.active = product.active
-                    
-                
+                    info_records.active = product.active     
         return res
 
 
