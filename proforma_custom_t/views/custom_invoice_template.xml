@@ -126,7 +126,7 @@
                                 <th style="border: 1px none #ccc; padding: 6px; text-align: center;">UOM</th>
                                 <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Unit Price</th>
                                 <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Tax</th>
-                                <th style="border: 1px none #ccc; padding: 6px; text-align: center;">SubTotal</th>
+                                <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Subtotal</th>
                             </tr>
                         </thead>
                         <tbody style="background-color: #f4f4f4; color: black;">
@@ -227,50 +227,50 @@
                                 <!-- Table Header -->
                                 <thead>
                                     <tr style="background-color: #333; color: #fff;">
-                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Bank</th>
-                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Account</th>
-                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">IBAN</th>
-                                        <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">Swift Code</th>
+                                        <th style="padding: 8px; border: 1px none #ccc; text-align: left;">Bank</th>
+                                        <th style="padding: 8px; border: 1px none #ccc; text-align: left;">Account</th>
+                                        <th style="padding: 8px; border: 1px none #ccc; text-align: left;">IBAN</th>
+                                        <th style="padding: 8px; border: 1px none #ccc; text-align: left;">Swift Code</th>
                                     </tr>
                                 </thead>
                                 
                                 <!-- Table Body -->
                                 <tbody>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Kuveyt Türk Katılım Bankası</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TL IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR40 0020 5000 0988 3129 1000 01</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">KTEFTRIS</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">Kuveyt Türk Katılım Bankası</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TL IBAN</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TR40 0020 5000 0988 3129 1000 01</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">KTEFTRIS</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Kuveyt Türk Katılım Bankası</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">USD IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR56 0020 5000 0988 3129 1001 01</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">KTEFTRIS</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">Kuveyt Türk Katılım Bankası</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">USD IBAN</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TR56 0020 5000 0988 3129 1001 01</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">KTEFTRIS</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Kuveyt Türk Katılım Bankası</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">EUR IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR29 0020 5000 0988 3129 1001 02</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">KTEFTRIS</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">Kuveyt Türk Katılım Bankası</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">EUR IBAN</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TR29 0020 5000 0988 3129 1001 02</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">KTEFTRIS</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TL IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR13 0001 5001 5800 7341 8874 16</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TVBATR2AXXX</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TL IBAN</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TR13 0001 5001 5800 7341 8874 16</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TVBATR2AXXX</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">USD IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR60 0001 5001 5804 8024 5849 84</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TVBATR2AXXX</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">USD IBAN</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TR60 0001 5001 5804 8024 5849 84</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TVBATR2AXXX</td>
                                     </tr>
                                     <tr>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">EUR IBAN</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TR66 0001 5001 5804 8024 5849 73</td>
-                                        <td style="padding: 8px; border: 1px solid #ccc;">TVBATR2AXXX</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">Türkiye Vakıflar Bankası T.A.O</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">EUR IBAN</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TR66 0001 5001 5804 8024 5849 73</td>
+                                        <td style="padding: 8px; border: 1px none #ccc;">TVBATR2AXXX</td>
                                     </tr>
                                 </tbody>
                             </table>
