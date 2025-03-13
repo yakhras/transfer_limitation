@@ -9,6 +9,13 @@
                         <strong t-if="doc.company_id.name" style="font-size: 18px;">
                             <span t-field="doc.company_id.name"/>
                         </strong>
+                        <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333; margin: 0;">
+                            <span style="font-weight: 400; white-space: nowrap;">
+                                <span t-field="doc.company_id.street2"/>,
+                                <span t-field="doc.company_id.street"/>
+                            </span><br/>
+                            <span t-field="doc.company_id.city"/> <span t-field="doc.company_id.state_id.name"/>-<span t-field="doc.company_id.country_id.name"/>
+                        </p>
                     </div>
                     <!-- Company Logo (4 columns, with reduced size) -->
                     <div class="col-4 text-right" style="margin: 0; padding: 0;">
@@ -25,7 +32,7 @@
             <t t-out="0" />
         </div>
         <div t-attf-class="footer">
-            <div class="text-center" style="border-top: 1px solid black; padding-top: 10px;">
+            <div class="text-center" style="border-top: 1px solid black; padding-top: 5px;">
                 <div class="row align-items-center">
                     <!-- Page Number (Left) -->
                     <div t-if="report_type == 'pdf'" class="col-4 text-left text-muted">
@@ -34,13 +41,7 @@
                     
                     <!-- Address (Center) -->
                     <div class="col-4 text-center">
-                        <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333; margin: 0;">
-                            <span style="font-weight: 400; white-space: nowrap;">
-                                <span t-field="doc.company_id.street2"/>,<br/>
-                                <span t-field="doc.company_id.street"/>
-                            </span><br/>
-                            <span t-field="doc.company_id.city"/> <span t-field="doc.company_id.state_id.name"/>-<span t-field="doc.company_id.country_id.name"/>
-                        </p>
+                        
                     </div>
             
                     <!-- Tax Number (Right) -->
