@@ -6,15 +6,16 @@
                 <div class="row align-items-center" style="display: flex; align-items: center;">
                     <!-- Company Name (8 columns) -->
                     <div class="col-8" style="margin-top: 10px;">
-                        <strong t-if="doc.company_id.name" style="font-size: 20px;">
+                        <strong t-if="doc.company_id.name" style="font-size: 21px;">
                             <span t-field="doc.company_id.name"/>
                         </strong>
-                        <p style="font-size: 13px; line-height: 1.5; font-weight: 400; color: #333; margin: 0;">
-                            <span style="font-weight: 400; white-space: nowrap;">
+                        <p style="font-size: 13px; line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
+                            <span style="font-weight: 300; white-space: nowrap;">
                                 <span t-field="doc.company_id.street2"/>,
                                 <span t-field="doc.company_id.street"/>
+                                <span t-field="doc.company_id.city"/> <span t-field="doc.company_id.state_id.name"/>-<span t-field="doc.company_id.country_id.name"/>
                             </span>
-                            <span t-field="doc.company_id.city"/> <span t-field="doc.company_id.state_id.name"/>-<span t-field="doc.company_id.country_id.name"/>
+                            
                         </p>
                     </div>
                     <!-- Company Logo (4 columns, with reduced size) -->
