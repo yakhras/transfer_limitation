@@ -93,8 +93,6 @@
                             <span t-if="doc.partner_shipping_id.street2">
                                 <span t-field="doc.partner_shipping_id.street2"/> 
                             </span>
-                        </div>
-                        <div style="margin-bottom: 5px;">
                             <span t-if="doc.partner_shipping_id.city">
                                 <span t-field="doc.partner_shipping_id.city"/>
                             </span>
