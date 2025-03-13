@@ -5,8 +5,8 @@
             <div class="o_clean_header">
                 <div class="row align-items-center" style="display: flex; align-items: center;">
                     <!-- Company Name (8 columns) -->
-                    <div class="col-8" style="margin-top: 10px;">
-                        <strong t-if="doc.company_id.name" style="font-size: 20px;">
+                    <div class="col-9" style="margin-top: 10px;">
+                        <strong t-if="doc.company_id.name" style="font-size: 21px;">
                             <span t-field="doc.company_id.name"/>
                         </strong>
                         <p style="font-size: 13px; line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
