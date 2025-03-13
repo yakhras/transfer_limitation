@@ -15,7 +15,7 @@
                         <img t-if="doc.company_id.logo" 
                                 t-att-src="image_data_uri(doc.company_id.logo)" 
                                 alt="Company Logo" 
-                                style="width: 180px; height: 90px; margin: 0; padding: 0;"/>
+                                style="width: 180px; height: 80px; margin: 0; padding: 0;"/>
                     </div>
                 </div>
             </div>
