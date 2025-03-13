@@ -224,10 +224,10 @@
                                 <!-- Table Header -->
                                 <thead>
                                     <tr style="background-color: #333; color: #fff;">
-                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left;">Bank</th>
-                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left;">Account</th>
-                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left;">IBAN</th>
-                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left;">Swift Code</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: center;">Bank</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: center;">Account</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: center;">IBAN</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: center;">Swift Code</th>
                                     </tr>
                                 </thead>
                                 
