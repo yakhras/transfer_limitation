@@ -43,7 +43,7 @@
                     <!-- Address (Center) -->
                     <div class="col-4 text-center">
                         <p style="font-size: 13px; line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
-                            <span t-field="doc.company_id.website.replace('https://', '')"/>
+                            <span t-esc="doc.company_id.website.replace('https://', '')"/>
                         </p>
                     </div>
             
