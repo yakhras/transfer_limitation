@@ -83,8 +83,7 @@
                 <!-- <div style="border-bottom: 2px solid #333; margin-bottom: 15px; margin-top: 15px;"></div> -->
                 <!-- New Row with Two Columns -->
                 <div class="row" style="margin-top: 20px;">
-                    <!-- Left Column (col-8) -->
-                    <div class="col-8">
+                    <div class="col-12">
                         <div style="margin-bottom: 5px;"><strong>Customer: </strong><span t-esc="doc.partner_id.name"/></div>
                         <div style="margin-bottom: 5px;">
                             <strong>Address: </strong>
@@ -110,6 +109,16 @@
                             </span>
                         </div>
                         <div><strong>VAT: </strong> <span t-esc="doc.partner_id.vat[2:] if doc.partner_id.vat and doc.partner_id.vat.startswith('TR') else doc.partner_id.vat"/></div>
+                    </div>
+                </div>
+                <!-- New Row with Two Columns -->
+                <div class="row" style="margin-top: 20px;">
+                    <!-- Left Column (col-8) -->
+                    <div class="col-4">
+                        <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
+                        <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
+                        <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
+                        <div><strong>Expiration: </strong> <span t-field="doc.expiration_days"/></div>
                     </div>
 
                     <!-- Right Column (col-4) -->
