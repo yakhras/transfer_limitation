@@ -5,8 +5,8 @@
         model="sale.order"
         string="TVO Proforma Invoice"
         report_type="qweb-pdf"
-        file="proforma_custom.custom_invoice_template"
-        name="proforma_custom.custom_invoice_template"
+        file="proforma_custom_t.custom_invoice_template"
+        name="proforma_custom_t.custom_invoice_template"
         print_report_name="'Proforma Invoice - %s' % (object.name)"
     />
 </odoo>
