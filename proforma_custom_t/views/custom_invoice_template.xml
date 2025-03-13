@@ -33,7 +33,7 @@
             <t t-out="0" />
         </div>
         <div t-attf-class="footer">
-            <div class="text-center" style="border-top: 1px solid black; padding-top: 5px; margin-bottom: 3px;">
+            <div class="text-center" style="border-top: 1px solid black; padding-top: 5px;">
                 <div class="row align-items-center">
                     <!-- Page Number (Left) -->
                     <div t-if="report_type == 'pdf'" class="col-4 text-left text-muted">
@@ -227,7 +227,7 @@
                     <div class="row" style="margin-top: 20px;">
                         <div class="col-12" style="text-align: left;">
                             <!-- Bank Information Table -->
-                            <table style="width: 80%; font-size: 13px; line-height: 1.6; color: #333; border-collapse: collapse;">
+                            <table style="width: 80%; font-size: 13px; line-height: 1.6; color: #333; border-collapse: collapse; align-items: center;">
                                 <!-- Table Header -->
                                 <thead>
                                     <tr style="background-color: #333; color: #fff;">
