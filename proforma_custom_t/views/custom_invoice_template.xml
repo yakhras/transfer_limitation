@@ -11,7 +11,7 @@
                         </strong>
                         <p style="font-size: 13px; line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
                             <span style="font-weight: 300; white-space: nowrap;">
-                                <span t-field="doc.company_id.street2"/>,
+                                <span t-field="doc.company_id.street2"/>
                                 <span t-field="doc.company_id.street"/>
                                 <span t-field="doc.company_id.city"/> <span t-field="doc.company_id.state_id.name"/>-<span t-field="doc.company_id.country_id.name"/>
                             </span>
@@ -42,7 +42,9 @@
                     
                     <!-- Address (Center) -->
                     <div class="col-4 text-center">
-                        
+                        <p style="font-size: 13px; line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
+                            <span t-field="doc.company_id.website"/>
+                        </p>
                     </div>
             
                     <!-- Tax Number (Right) -->
