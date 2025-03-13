@@ -234,10 +234,10 @@
                                 <!-- Table Body -->
                                 <tbody>
                                     <tr>
-                                        <td style="padding: 3px; border: 1px none #ccc;">Kuveyt Türk Katılım Bankası</td>
-                                        <td style="padding: 3px; border: 1px none #ccc;">TL IBAN</td>
-                                        <td style="padding: 3px; border: 1px none #ccc;">TR40 0020 5000 0988 3129 1000 01</td>
-                                        <td style="padding: 3px; border: 1px none #ccc;">KTEFTRIS</td>
+                                        <td style="padding: 3px; border: 1px none #ccc; text-align: center;">Kuveyt Türk Katılım Bankası</td>
+                                        <td style="padding: 3px; border: 1px none #ccc; text-align: center;">TL IBAN</td>
+                                        <td style="padding: 3px; border: 1px none #ccc; text-align: center;">TR40 0020 5000 0988 3129 1000 01</td>
+                                        <td style="padding: 3px; border: 1px none #ccc; text-align: center;">KTEFTRIS</td>
                                     </tr>
                                     <tr>
                                         <td style="padding: 3px; border: 1px none #ccc;">Kuveyt Türk Katılım Bankası</td>
