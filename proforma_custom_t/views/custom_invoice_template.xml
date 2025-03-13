@@ -147,7 +147,7 @@
                                         <span t-field="line.product_uom.name"/>
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                        <span t-esc="('%.4f' % line.price_unit).rstrip('0').rstrip('.')"/>
+                                        <span t-esc="('%.4f' % line.price_unit).rstrip('.')"/>
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
                                         <span t-esc="int(line.tax_id.amount)"/>%
