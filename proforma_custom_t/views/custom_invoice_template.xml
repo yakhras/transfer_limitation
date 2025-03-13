@@ -70,7 +70,7 @@
                 <!-- Proforma Invoice Section -->
                 <div class="row">
                     <div class="col-12" style="text-align: center;">
-                        <strong style="font-size: 28px; font-family: Arial, sans-serif; border-bottom: 3px solid #f4f4f4;">
+                        <strong style="font-size: 28px; font-family: Arial, sans-serif; border-bottom: 3px solid #000;">
                          PROFORMA INVOICE
                         </strong>
                     </div>
