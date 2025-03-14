@@ -28,10 +28,8 @@ class StockMove(models.Model):
             rounding = move.product_id.uom_id.rounding
             #self.result = product_tot_qty_available
             
-            
             valued_move_lines = move._get_in_move_lines()
             
-
             qty_done = 0
             for valued_move_line in valued_move_lines:
                 qty_done += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)

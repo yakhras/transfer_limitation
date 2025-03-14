@@ -9,7 +9,7 @@ from odoo.tools.misc import groupby
 class StockQuant(models.Model):
     _inherit = 'stock.quant'
 
-
+    unit_value = fields.Monetary('Unit Value')
 
     @api.depends('company_id', 'location_id', 'owner_id', 'product_id', 'quantity')
     def _compute_value(self):
