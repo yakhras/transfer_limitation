@@ -38,6 +38,7 @@ class StockQuant(models.Model):
                     continue
                 average_cost = quant.product_id.with_company(quant.company_id).value_svl / quantity
                 quant.value = quant.quantity * average_cost
+                quant.unit_value = average_cost
             else:
                 if quant.location_id and quant.product_id:
                     location_cost = self.env['product.location.cost'].search([
@@ -47,3 +48,4 @@ class StockQuant(models.Model):
 
                     cost_value = location_cost.cost if location_cost else 0.0
                 quant.value = quant.quantity * cost_value
+                quant.unit_value = cost_value
