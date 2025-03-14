@@ -116,6 +116,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
         }
         account_move = self.env['account.move'].create(move_vals)
         account_move._post()
+        self.current_quantity_svl = product_id.with_context(location_dest_id = 8).quantity_svl
         self.product_id.result = self.current_quantity_svl
 
         return True
