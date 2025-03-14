@@ -37,6 +37,17 @@ class StockMove(models.Model):
                 qty_done += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
                 
             qty = forced_qty or qty_done
+            product_id = move.product_id.id  # Assuming this method runs in the product.product model
+            location_id = move.location_dest_id.id
+
+            if location_id and product_id:
+                location_cost = self.env['product.location.cost'].search([
+                    ('product_id', '=', product_id),
+                    ('location_id', '=', location_id)
+                ], order='id desc', limit=1)  # Get the most recent record
+
+                cost_value = location_cost.cost if location_cost else 0.0
+
             if float_is_zero(product_tot_qty_available, precision_rounding=rounding):
                 new_std_price = move._get_price_unit()
                 
@@ -46,7 +57,7 @@ class StockMove(models.Model):
                 
             else:
                 # Get the standard price
-                amount_unit = std_price_update.get((move.company_id.id, move.product_id.id)) or move.product_id.with_company(move.company_id).standard_price
+                amount_unit = std_price_update.get((move.company_id.id, move.product_id.id)) or cost_value #move.product_id.with_company(move.company_id).standard_price
                 
                 new_std_price = ((amount_unit * product_tot_qty_available) + (move._get_price_unit() * qty)) / (product_tot_qty_available + qty)
                 
