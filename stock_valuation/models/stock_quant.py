@@ -41,7 +41,7 @@ class StockQuant(models.Model):
             else:
                 if quant.location_id and quant.product_id:
                     location_cost = self.env['product.location.cost'].search([
-                        ('product_id', '=', quant.product_id),
+                        ('product_id', '=', quant.product_id.id),
                         ('location_id', '=', quant.location_id.id)
                     ], order='id desc', limit=1)  # Get the most recent record
 
