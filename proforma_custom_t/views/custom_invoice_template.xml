@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+
     <template id="external_layout_yaser">
         <div t-attf-class="header" t-att-style="report_header_style">
             <div class="o_clean_header">
@@ -188,7 +189,7 @@
                                 <!-- Tax Totals -->
                                 <tbody>
                                     <t t-set="tax_totals" t-value="json.loads(doc.tax_totals_json)"/>
-                                    <!-- <t t-call="account.document_tax_totals"/> -->
+                                    <t t-call="account.document_tax_totals_yaser"/>
                                 </tbody>
                             </table>
                         </div>
@@ -296,10 +297,34 @@
                         <div class="col-1"></div>
                     </div>
                 </div>
-
             </div>
-        </t>
-        
-                
+        </t>   
     </template>    
+
+    <template id="document_tax_totals_yaser">
+        <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+            <tr class="border-black o_subtotal">
+                <td><strong t-esc="subtotal['name']"/></td>
+
+                <td class="text-right">
+                    <span
+                        t-att-class="oe_subtotal_footer_separator"
+                        t-esc="subtotal['formatted_amount']"
+                    />
+                </td>
+            </tr>
+
+            <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+            <t t-call="account.tax_groups_totals"/>
+        </t>
+
+        <!--Total amount with all taxes-->
+        <tr class="border-black o_total">
+            <td><strong>Total</strong></td>
+            <td class="text-right">
+                <span t-esc="tax_totals['formatted_amount_total']"/>
+            </td>
+        </tr>
+    </template>
+
 </odoo>
