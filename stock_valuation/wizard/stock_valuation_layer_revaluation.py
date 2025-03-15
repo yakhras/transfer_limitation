@@ -27,7 +27,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
             raise UserError(_("The added value doesn't have any impact on the stock valuation"))
 
         product_id = self.product_id.with_company(self.company_id)
-        current_quantity_svl = self.product_id.with_context(location_dest_id = self.location_id.id).quantity_svl
+        current_quantity_svl = self.product_id.quantity_svl
 
         remaining_svls = self.env['stock.valuation.layer'].search([
             ('product_id', '=', product_id.id),
