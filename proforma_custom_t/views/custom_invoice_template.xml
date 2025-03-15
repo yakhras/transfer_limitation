@@ -305,7 +305,6 @@
         <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
             <tr class="border-black o_subtotal">
                 <td><strong>Untaxed Amount:</strong></td>
-
                 <td class="text-right">
                     <span
                         t-att-class="oe_subtotal_footer_separator"
@@ -323,7 +322,6 @@
                     </td>
                 </tr>
             </t>
-            <!-- <t t-call="proforma_custom_t.tax_groups_totals_yaser"/> -->
         </t>
 
         <!--Total amount with all taxes-->
@@ -333,17 +331,6 @@
                 <span t-esc="tax_totals['formatted_amount_total']"/>
             </td>
         </tr>
-    </template>
-
-    <template id="tax_groups_totals_yaser">
-        <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
-            <tr>
-                <td><strong>Value Added Tax (VAT)</strong></td>
-                <td class="text-right o_price_total">
-                    <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']" />
-                </td>
-            </tr>
-        </t>
     </template>
 
 </odoo>
