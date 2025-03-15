@@ -9,7 +9,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
     _inherit = 'stock.valuation.layer.revaluation'
 
 
-    location_id = fields.Many2one('stock.location', "Related Location", required=True)
+    location_id = fields.Many2one('stock.warehouse', "Related Location", required=True)
 
 
     def action_validate_revaluation(self):
