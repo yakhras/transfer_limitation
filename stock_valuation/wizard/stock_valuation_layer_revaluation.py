@@ -10,7 +10,6 @@ class StockValuationLayerRevaluation(models.TransientModel):
 
 
     location_id = fields.Many2one('stock.location', "Related Location", required=True)
-    current_quantity_svl = fields.Float("Current Quantity")
 
 
     def action_validate_revaluation(self):
@@ -35,6 +34,15 @@ class StockValuationLayerRevaluation(models.TransientModel):
             ('company_id', '=', self.company_id.id),
         ])
 
+        if product_id and self.location_id:
+            # Check if a record already exists
+            location_cost = self.env['product.location.cost'].search([
+                ('product_id', '=', product_id.id),
+                ('location_id', '=', self.location_id.id)
+            ], limit=1)
+
+            cost_value = location_cost.cost if location_cost else 0.0
+
         # Create a manual stock valuation layer
         if self.reason:
             description = _("Manual Stock Valuation: %s.", self.reason)
@@ -43,8 +51,8 @@ class StockValuationLayerRevaluation(models.TransientModel):
         if product_id.categ_id.property_cost_method == 'average':
             description += _(
                 " Product cost updated from %(previous)s to %(new_cost)s.",
-                previous=product_id.standard_price,
-                new_cost=product_id.standard_price + self.added_value / current_quantity_svl
+                previous=cost_value,
+                new_cost=cost_value + self.added_value / current_quantity_svl
             )
         revaluation_svl_vals = {
             'company_id': self.company_id.id,
