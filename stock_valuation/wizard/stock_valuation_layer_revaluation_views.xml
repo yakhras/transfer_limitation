@@ -5,9 +5,11 @@
         <field name="model">stock.valuation.layer.revaluation</field> 
         <field name="inherit_id" ref="stock_account.stock_valuation_layer_revaluation_form_view"/> 
         <field name="arch" type="xml">
-            <group>
-                <field name="location_id"/>
-            </group>
+            <xpath expr="//label[@for='current_value_svl']" position="before">
+                <group>
+                    <field name="location_id"/>
+                </group>
+            </xpath>
         </field>
     </record>
 </odoo>
