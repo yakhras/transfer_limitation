@@ -10,6 +10,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
 
 
     location_id = fields.Many2one('stock.location', "Related Location", required=True)
+    current_quantity_svl = fields.Float("Current Quantity")
 
 
     def action_validate_revaluation(self):
@@ -26,6 +27,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
             raise UserError(_("The added value doesn't have any impact on the stock valuation"))
 
         product_id = self.product_id.with_company(self.company_id)
+        current_quantity_svl = self.product_id.with_context(location_dest_id = self.location_id.id).quantity_svl
 
         remaining_svls = self.env['stock.valuation.layer'].search([
             ('product_id', '=', product_id.id),
@@ -42,7 +44,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
             description += _(
                 " Product cost updated from %(previous)s to %(new_cost)s.",
                 previous=product_id.standard_price,
-                new_cost=product_id.standard_price + self.added_value / self.current_quantity_svl
+                new_cost=product_id.standard_price + self.added_value / current_quantity_svl
             )
         revaluation_svl_vals = {
             'company_id': self.company_id.id,
@@ -68,7 +70,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
 
         # Update the stardard price in case of AVCO
         if product_id.categ_id.property_cost_method == 'average':
-            product_id.with_context(disable_auto_svl=True).standard_price += self.added_value / self.current_quantity_svl
+            product_id.with_context(disable_auto_svl=True).standard_price += self.added_value / current_quantity_svl
 
         # If the Inventory Valuation of the product category is automated, create related account move.
         if self.property_valuation != 'real_time':
@@ -116,9 +118,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
         }
         account_move = self.env['account.move'].create(move_vals)
         account_move._post()
-        product_id = self.product_id.with_context(location_dest_id = self.location_id.id)
-        self.current_quantity_svl = product_id.quantity_svl
-        self.product_id.result = self.current_quantity_svl
+        self.product_id.result = current_quantity_svl
         # self.product_id.result = self.current_quantity_svl
 
         return True
