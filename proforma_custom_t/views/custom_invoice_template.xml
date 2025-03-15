@@ -121,7 +121,9 @@
 
                     <!-- Right Column (col-4) -->
                     <div class="col-4">
-                        <div style="margin-bottom: 5px;"><strong>Customer ref.: </strong> <span t-field="doc.client_order_ref"/></div>
+                        <t t-if="doc.client_order_ref">
+                            <div style="margin-bottom: 5px;"><strong>Customer ref.: </strong> <span t-field="doc.client_order_ref"/></div>
+                        </t>
                         <div style="margin-bottom: 5px;"><strong>Incoterm: </strong> <span t-field="doc.incoterm.name"/></div>
                         <div style="margin-bottom: 5px;"><strong>Delivery Date: </strong> <span t-esc="doc.commitment_date.strftime('%d.%m.%Y')"/></div>
                     </div>
