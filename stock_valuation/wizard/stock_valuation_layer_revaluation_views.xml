@@ -7,13 +7,12 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet/group" position="before">
                 <group>
-                    <label for="location_id" string="Location"/>
-                        <div class="o_row">
-                            <field name="location_id" /> 
-                        </div>
-                </group>
-                <group>
-    
+                    <group>
+                        <label for="location_id" string="Location"/>
+                            <div class="o_row">
+                                <field name="location_id" /> 
+                            </div>
+                    </group>
                 </group>
             </xpath>
         </field>
