@@ -16,7 +16,7 @@ class SaleOrder(models.Model):
     )
     note = fields.Html(
         default=lambda self: """
-        Terms Content
+        Temel Koşullar
         <p style="font-size: 13px; line-height: 1.6; color: #333; margin-top: 10px;">
             1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
             2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
