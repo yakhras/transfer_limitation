@@ -39,3 +39,22 @@ class SaleOrder(models.Model):
 
     def get_partner_name_title_case(self):
         return self.partner_id.name.title() if self.partner_id.name else ''
+    
+
+    def create(self, vals):
+        # Define the terms content
+        terms_content = """ 
+        1. Fiyatlarımıza %20 KDV Dahil değildir.
+        2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.
+        3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.
+        4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.
+        5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında %3 vade farkı ilave edilecektir.
+        """
+
+        # Append terms content to the note field (if it exists)
+        if 'note' in vals:
+            vals['note'] = (vals['note'] or '') + "\n\n" + terms_content
+        else:
+            vals['note'] = terms_content
+
+        return super(SaleOrder, self).create(vals)
