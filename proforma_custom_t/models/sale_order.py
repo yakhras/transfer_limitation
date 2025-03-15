@@ -18,6 +18,7 @@ class SaleOrder(models.Model):
 
     def _compute_has_note(self):
         for record in self:
+            record.note = record.tax_totals_json
             if record.note:
                 # Remove HTML tags and check for meaningful text
                 stripped_note = re.sub('<[^<]+?>', '', record.note)  # Remove HTML tags
