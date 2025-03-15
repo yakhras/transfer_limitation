@@ -78,12 +78,12 @@ class StockValuationLayerRevaluation(models.TransientModel):
 
         # Update the stardard price in case of AVCO
         if product_id.categ_id.property_cost_method == 'average':
-            product_id.with_context(disable_auto_svl=True).standard_price += self.added_value / current_quantity_svl
             location_cost = self.env['product.location.cost'].search([
                 ('product_id', '=', product_id.id),
                 ('location_id', '=', self.location_id.id)
             ], limit=1)
             location_cost.cost += self.added_value / current_quantity_svl
+            product_id.with_context(disable_auto_svl=True).standard_price = location_cost.cost
 
         # If the Inventory Valuation of the product category is automated, create related account move.
         if self.property_valuation != 'real_time':
