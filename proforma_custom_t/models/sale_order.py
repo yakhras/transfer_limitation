@@ -14,13 +14,16 @@ class SaleOrder(models.Model):
         compute="_compute_expiration_days",
         store=False  # No need to store this, as it's dynamic and only used in the report
     )
-    note = fields.Text(
+    note = fields.Html(
         default=lambda self: """
-        1. Fiyatlarımıza %20 KDV Dahil değildir.
-        2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.
-        3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.
-        4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.
-        5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında %3 vade farkı ilave edilecektir.
+        Terms Content
+        <p style="font-size: 13px; line-height: 1.6; color: #333; margin-top: 10px;">
+            1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
+            2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
+            3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
+            4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
+            5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında % 3 vade farkı ilave edilecektir.
+        </p>
         """)
 
     def _compute_has_note(self):
