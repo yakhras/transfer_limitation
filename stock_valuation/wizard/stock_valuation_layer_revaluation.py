@@ -144,7 +144,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
         for reval in self:
             location_id = reval.stock_id.lot_stock_id
             reval.current_value_svl = reval.product_id.with_context(location_dest_id = location_id.id).value_svl
-            reval.current_quantity_svl = reval.product_id.with_context(location_dest_id = reval.location_id.id).quantity_svl
+            reval.current_quantity_svl = reval.product_id.with_context(location_dest_id = location_id.id).quantity_svl
             reval.new_value = reval.current_value_svl + reval.added_value
             if not float_is_zero(reval.current_quantity_svl, precision_rounding=self.product_id.uom_id.rounding):
                 reval.new_value_by_qty = reval.new_value / reval.current_quantity_svl
