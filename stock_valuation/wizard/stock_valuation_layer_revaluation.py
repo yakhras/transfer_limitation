@@ -142,7 +142,8 @@ class StockValuationLayerRevaluation(models.TransientModel):
     @api.depends('current_value_svl', 'current_quantity_svl', 'added_value')
     def _compute_new_value(self):
         for reval in self:
-            reval.current_value_svl = reval.product_id.with_context(location_dest_id = reval.location_id.id).value_svl
+            location_id = reval.stock_id.lot_stock_id
+            reval.current_value_svl = reval.product_id.with_context(location_dest_id = location_id.id).value_svl
             reval.current_quantity_svl = reval.product_id.with_context(location_dest_id = reval.location_id.id).quantity_svl
             reval.new_value = reval.current_value_svl + reval.added_value
             if not float_is_zero(reval.current_quantity_svl, precision_rounding=self.product_id.uom_id.rounding):
