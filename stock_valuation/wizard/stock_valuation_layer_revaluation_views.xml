@@ -8,9 +8,9 @@
             <xpath expr="//sheet/group" position="before">
                 <group>
                     <group>
-                        <label for="location_id" string="Location"/>
+                        <label for="stock_id" string="Stock"/>
                             <div class="o_row">
-                                <field name="location_id" /> 
+                                <field name="stock_id" /> 
                             </div>
                     </group>
                 </group>

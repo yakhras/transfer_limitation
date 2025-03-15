@@ -9,8 +9,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
     _inherit = 'stock.valuation.layer.revaluation'
 
 
-    stock_id = fields.Many2one('stock.warehouse')
-    location_id = fields.Many2one(related='stock_id.lot_stock_id', required=True)
+    stock_id = fields.Many2one('stock.warehouse', required=True)
 
 
 
@@ -28,7 +27,8 @@ class StockValuationLayerRevaluation(models.TransientModel):
             raise UserError(_("The added value doesn't have any impact on the stock valuation"))
 
         product_id = self.product_id.with_company(self.company_id)
-        current_quantity_svl = self.product_id.with_context(location_dest_id = self.location_id.id).quantity_svl
+        location_id = self.stock_id.lot_stock_id
+        current_quantity_svl = self.product_id.with_context(location_dest_id = location_id.id).quantity_svl
 
         remaining_svls = self.env['stock.valuation.layer'].search([
             ('product_id', '=', product_id.id),
@@ -36,11 +36,11 @@ class StockValuationLayerRevaluation(models.TransientModel):
             ('company_id', '=', self.company_id.id),
         ])
 
-        if product_id and self.location_id:
+        if product_id and location_id:
             # Check if a record already exists
             location_cost = self.env['product.location.cost'].search([
                 ('product_id', '=', product_id.id),
-                ('location_id', '=', self.location_id.id)
+                ('location_id', '=', location_id.id)
             ], limit=1)
 
             cost_value = location_cost.cost if location_cost else 0.0
@@ -82,7 +82,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
         if product_id.categ_id.property_cost_method == 'average':
             location_cost = self.env['product.location.cost'].search([
                 ('product_id', '=', product_id.id),
-                ('location_id', '=', self.location_id.id)
+                ('location_id', '=', location_id.id)
             ], limit=1)
             location_cost.cost += self.added_value / current_quantity_svl
             product_id.with_context(disable_auto_svl=True).standard_price = location_cost.cost
