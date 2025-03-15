@@ -12,6 +12,9 @@
                             <field name="location_id" /> 
                         </div>
                 </group>
+                <group>
+    
+                </group>
             </xpath>
         </field>
     </record>
