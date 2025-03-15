@@ -304,7 +304,7 @@
     <template id="document_tax_totals_yaser">
         <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
             <tr class="border-black o_subtotal">
-                <td><strong t-esc="subtotal['name']"/></td>
+                <td><strong>Untaxed Amount:</strong></td>
 
                 <td class="text-right">
                     <span
