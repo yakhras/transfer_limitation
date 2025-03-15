@@ -113,10 +113,18 @@
                 <div class="row" style="margin-top: 20px;">
                     <!-- Left Column (col-8) -->
                     <div class="col-8">
-                        <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
-                        <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
-                        <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
-                        <div><strong>Expiration: </strong> <span t-field="doc.expiration_days"/></div>
+                        <t t-if="doc.date_order">
+                            <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
+                        </t>
+                        <t t-if="doc.name">
+                            <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
+                        </t>
+                        <t t-if="doc.payment_term_id">
+                            <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
+                        </t>
+                        <t t-if="doc.expiration_days">
+                            <div><strong>Expiration: </strong> <span t-field="doc.expiration_days"/></div>
+                        </t>
                     </div>
 
                     <!-- Right Column (col-4) -->
