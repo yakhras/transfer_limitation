@@ -18,7 +18,7 @@ class UserSession(models.Model):
     context = fields.Char(compute='get_context')
 
     def get_context(self):
-        return self.env.context
+        self.context = self.env.context
  
 class ResUsers(models.Model):
     _inherit = 'res.users'
