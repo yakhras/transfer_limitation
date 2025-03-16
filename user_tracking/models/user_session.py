@@ -28,10 +28,13 @@ class ResUsers(models.Model):
 
     
     def write(self, values):
-        """ Create a new session record when the login_date is updated """
+        """ Create a new session record when the login_date is updated without removing old records """
         if 'login_date' in values:
-            # Call the session creation method when login_date is updated
-            self.env['user.session'].create(self.id, values['login_date'])
+            # Ensure that login_date is set correctly
+            login_date = values.get('login_date')
+
+            # Create a session record with the login date
+            self.env['user.session'].create_session(self.id, login_date)
         
         # Ensure the normal write process happens
         return super(ResUsers, self).write(values)
