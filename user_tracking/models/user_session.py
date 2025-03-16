@@ -29,7 +29,7 @@ class ResUsers(models.Model):
             """ Create a new session record when the login_date is updated """
             if 'login_date' in values:
                 # Call the session creation method when login_date is updated
-                rec.livechat_username = rec.login_date
+                rec.livechat_username = rec
         
         # Ensure the normal write process happens
         return super(ResUsers, self).write(values)
