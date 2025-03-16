@@ -30,19 +30,19 @@ class UserSessionline(models.Model):
     res_id = fields.Integer(string="Related Record ID")
 
 
-    def action_open_related_record(self):
-        """ Opens the related record in its form view """
-        if self.model and self.res_id:
-            return {
-                'type': 'ir.actions.act_window',
-                'name': self.rec_name,
-                'res_model': self.model,
-                'res_id': self.res_id,
-                'view_mode': 'form',
-                'target': 'current',
-            }
-        else:
-            raise UserError("No related record found.")
+    # def action_open_related_record(self):
+    #     """ Opens the related record in its form view """
+    #     if self.model and self.res_id:
+    #         return {
+    #             'type': 'ir.actions.act_window',
+    #             'name': self.rec_name,
+    #             'res_model': self.model,
+    #             'res_id': self.res_id,
+    #             'view_mode': 'form',
+    #             'target': 'current',
+    #         }
+    #     else:
+    #         raise UserError("No related record found.")
 
 
 
