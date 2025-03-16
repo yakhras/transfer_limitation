@@ -28,7 +28,6 @@
                     <sheet>
                         <group>
                             <field name="user_id"/>
-                            <field name="stored_login_date"/>
                             <field name="login_date"/>
                             <field name="context"/>
                         </group>

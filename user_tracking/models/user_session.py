@@ -13,8 +13,7 @@ class UserSession(models.Model):
 
 
     user_id = fields.Many2one('res.users', string="User", required=True)
-    login_date = fields.Datetime(related='user_id.login_date', string="Login Date")
-    stored_login_date = fields.Datetime(string="Stored Login Date", readonly=True)
+    login_date = fields.Datetime(string="Login Date", readonly=True)
     context = fields.Char()
 
     def get_context(self):
@@ -39,7 +38,7 @@ class ResUsers(models.Model):
             with cls.pool.cursor() as cr:
                 env = api.Environment(cr, uid, {})
                 user = env['res.users'].browse(uid)
-                session = env['user.session'].create({'user_id': user.id, 'stored_login_date': user.login_date})
+                session = env['user.session'].create({'user_id': user.id, 'login_date': user.login_date})
                 session.context = user
 
         return uid
