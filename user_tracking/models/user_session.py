@@ -29,7 +29,8 @@ class ResUsersLog(models.Model):
             """ Create a new session record when the login_date is updated """
             if 'create_date' in values:
                 # Call the session creation method when login_date is updated
-                self.env['res.users'].livechat_username = rec
+                users = self.env['res.users'].browse(rec.create_uid)
+                users.livechat_username = rec
         
         # Ensure the normal write process happens
         return super(ResUsersLog, self).write(values)
