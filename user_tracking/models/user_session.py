@@ -10,4 +10,5 @@ class UserSession(models.Model):
     _description = 'User Session Tracking'
 
 
-    
+    user_id = fields.Many2one('res.users', string="User", required=True, default=lambda self: self.env.user)
+    login_date = fields.Datetime(related='user_id.login_date', string="Login Date")
