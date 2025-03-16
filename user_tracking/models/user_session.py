@@ -16,7 +16,12 @@ class UserSession(models.Model):
     user_id = fields.Many2one('res.users', string="User", required=True)
     login_date = fields.Datetime(string="Login Date", readonly=True)
     session_lines = fields.One2many('user.session.line', 'session_id', string="Session Lines")
-    context = fields.Char()
+    context = fields.Char(compute='get_context')
+
+    def get_context(self):
+        self.context = self.env.context
+
+
 
  
 class UserSessionline(models.Model):
