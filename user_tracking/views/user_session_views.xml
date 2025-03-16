@@ -24,8 +24,13 @@
             <field name="name">user_session_form</field> 
             <field name="model">user.session</field>
             <field name="arch" type="xml">
-                <field name="user_id"/>
-                <field name="login_date"/>
+                <form string="Session" create="0">
+                    <sheet>
+                        <field name="user_id"/>
+                        <field name="login_date"/>
+                    </sheet>
+                </form>
+                
             </field>
         </record>
 
@@ -33,8 +38,11 @@
             <field name="name">user_session_tree</field> 
             <field name="model">user.session</field>
             <field name="arch" type="xml">
-                <field name="user_id"/>
-                <field name="login_date"/>
+                <tree string="Session">
+                    <field name="user_id"/>
+                    <field name="login_date"/>
+                </tree>
+                
             </field>
         </record>
 
