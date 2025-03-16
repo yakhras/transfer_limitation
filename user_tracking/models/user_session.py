@@ -62,7 +62,7 @@ class ResPartner(models.Model):
                 'session_id': session.id,
                 'rec_name': partner.name,  # Use partner name as record name
                 'model': 'res.partner',
-                'date': fields.Datetime.now(),
+                'date': partner.create_date,
             })
 
         return partner
