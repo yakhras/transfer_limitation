@@ -43,3 +43,26 @@ class ResUsers(models.Model):
                 session.context = user
 
         return uid
+    
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+
+    def create(self, vals):
+        partner = super(ResPartner, self).create(vals)
+
+        # Get the current user's session
+        session = self.env['user.session'].search([
+            ('user_id', '=', self.env.uid)
+        ], order='login_date desc', limit=1)
+
+        if session:
+            self.env['user.session.line'].create({
+                'session_id': session.id,
+                'rec_name': partner.name,  # Use partner name as record name
+                'model': 'res.partner',
+                'date': fields.Datetime.now(),
+            })
+
+        return partner
