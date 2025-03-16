@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from odoo import models, fields, api
 from odoo.tools import float_is_zero, float_repr
 import json
