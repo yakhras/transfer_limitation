@@ -15,9 +15,10 @@ class UserSession(models.Model):
     user_id = fields.Many2one('res.users', string="User", required=True)
     login_date = fields.Datetime(related='user_id.login_date', string="Login Date")
     stored_login_date = fields.Datetime(string="Stored Login Date", readonly=True)
-    context = fields.Char()
+    context = fields.Char(compute='get_context')
 
-    
+    def get_context(self):
+        return self.env.context
  
 class ResUsers(models.Model):
     _inherit = 'res.users'
