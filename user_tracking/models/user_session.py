@@ -99,7 +99,7 @@ class BaseModelTracking(models.AbstractModel):
                 'rec_name': model_description,  # Store model's readable name
                 'model': self._name,  # Store technical model name
                 'res_id': record.id,
-                # 'date': record.create_date,  # Store actual creation date
+                'date': record.create_date,  # Store actual creation date
             } for record in records]
 
             # Create session lines safely without recursion
