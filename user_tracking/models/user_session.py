@@ -121,7 +121,7 @@ class BaseModelTracking(models.AbstractModel):
                 'session_id': session.id,
                 'rec_name': model_description,  # Store model's readable name
                 'model': self._name,  # Store technical model name
-                'res_id': record.id,
+                # 'res_id': record.id,
                 # 'date': record.create_date,  # Store actual creation date
             } for record in records]
 
