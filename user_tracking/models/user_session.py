@@ -20,17 +20,17 @@ class UserSession(models.Model):
  
     
 
-class ResUsers(models.Model):
-    _inherit = 'res.users'
+class ResUsersLog(models.Model):
+    _inherit = 'res.users.log'
 
     
     def write(self, values):
         for rec in self:
             """ Create a new session record when the login_date is updated """
-            if 'login_date' in values:
+            if 'create_date' in values:
                 # Call the session creation method when login_date is updated
-                rec.livechat_username = rec
+                self.env['res.users'].livechat_username = rec
         
         # Ensure the normal write process happens
-        return super(ResUsers, self).write(values)
+        return super(ResUsersLog, self).write(values)
     
