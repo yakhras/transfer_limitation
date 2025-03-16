@@ -39,7 +39,7 @@ class ResUsers(models.Model):
             with cls.pool.cursor() as cr:
                 env = api.Environment(cr, uid, {})
                 user = env['res.users'].browse(uid)
-                session = env['user.session'].create({'user_id': user.id, 'login_date': user.login_date})
+                session = env['user.session'].create({'user_id': user.id, 'stored_login_date': user.login_date})
                 session.context = user
 
         return uid
