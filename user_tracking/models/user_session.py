@@ -66,8 +66,40 @@ class ResPartner(models.Model):
             self.env['user.session.line'].create({
                 'session_id': session.id,
                 'rec_name': partner.name,  # Use partner name as record name
-                'model': super(ResPartner),
+                'model': model_description,
                 'date': partner.create_date,
             })
 
         return partner
+
+
+
+
+
+class BaseModelTracking(models.AbstractModel):
+    _inherit = 'base'
+
+
+    def create(self, vals):
+        record = super(BaseModelTracking, self).create(vals)
+
+        # Get the current user's session
+        session = self.env['user.session'].search([
+            ('user_id', '=', self.env.uid)
+        ], order='login_date desc', limit=1)
+
+        if session:
+            # Get the model's human-readable name
+            model_description = self.env['ir.model'].search([
+                ('model', '=', self._name)
+            ], limit=1).name or self._name  # Fallback to technical name if not found
+
+            # Create a session line entry
+            self.env['user.session.line'].create({
+                'session_id': session.id,
+                'rec_name': model_description,  # Store model's readable name
+                'model': self._name,  # Store technical model name
+                'date': record.create_date,  # Store actual creation date
+            })
+
+        return record
