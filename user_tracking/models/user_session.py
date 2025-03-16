@@ -20,7 +20,7 @@ class UserSession(models.Model):
     def get_context(self):
         user_id = self.env.context.get('uid')
         user = self.env['res.users'].browse(user_id)
-        self.context = user
+        self.context = user.login_date
  
 class ResUsers(models.Model):
     _inherit = 'res.users'
