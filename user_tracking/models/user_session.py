@@ -24,12 +24,18 @@ class ResUsers(models.Model):
     _inherit = 'res.users'
 
     
-    def write(self, values):
-        for rec in self:
-            """ Create a new session record when the login_date is updated """
-            if 'login_date' in values:
-                # Call the session creation method when login_date is updated
-                self.env['user.session'].create({'user_id': rec.id, 'login_date': values['login_date']})
+    # def write(self, values):
+    #     for rec in self:
+    #         """ Create a new session record when the login_date is updated """
+    #         if 'login_date' in values:
+    #             # Call the session creation method when login_date is updated
+    #             self.env['user.session'].create({'user_id': rec.id, 'login_date': values['login_date']})
         
-        # Ensure the normal write process happens
-        return super(ResUsers, self).write(values)
+    #     # Ensure the normal write process happens
+    #     return super(ResUsers, self).write(values)
+    
+
+    @api.depends('login_date')
+    def _create_session(self):
+        for rec in self:
+            self.env['user.session'].create({'user_id': rec.id, 'login_date': rec.login_date})
