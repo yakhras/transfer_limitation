@@ -79,7 +79,7 @@ class ResPartner(models.Model):
 class BaseModelTracking(models.AbstractModel):
     _inherit = 'base'
 
-
+    @api.model
     def create(self, vals):
         records = super(BaseModelTracking, self).create(vals)
 
