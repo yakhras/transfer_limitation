@@ -39,6 +39,6 @@ class ResUsers(models.Model):
             with cls.pool.cursor() as cr:
                 env = api.Environment(cr, uid, {})
                 session = env['user.session'].browse(2)
-                session.context = uid.id
+                session.context = uid
 
         return uid
