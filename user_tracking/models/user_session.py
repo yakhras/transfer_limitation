@@ -16,23 +16,22 @@ class UserSession(models.Model):
     login_date = fields.Datetime(string="Login Date", readonly=True)
     context = fields.Char()
 
-    def get_context(self):
-        user_id = self.env.context.get('uid')
-        user = self.env['res.users'].browse(user_id)
-        self.context = user.login_date
  
+class UserSessionline(models.Model):
+    _name = 'user.session.line'
+    _description = 'User Session Line'
 
+    rec_name = fields.Char()
+    model = fields.Char()
+    date = fields.Datetime()
+
+    
 
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
     @classmethod
     def authenticate(cls, db, login, password, user_agent_env):
-        """ Override to link the logged in user's res.partner to website.visitor.
-        If both a request-based visitor and a user-based visitor exist we try
-        to update them (have same partner_id), and move sub records to the main
-        visitor (user one). Purpose is to try to keep a main visitor with as
-        much sub-records (tracked pages, leads, ...) as possible. """
         uid = super(ResUsers, cls).authenticate(db, login, password, user_agent_env)
         if uid:
             with cls.pool.cursor() as cr:
