@@ -66,7 +66,7 @@ class ResPartner(models.Model):
             self.env['user.session.line'].create({
                 'session_id': session.id,
                 'rec_name': partner.name,  # Use partner name as record name
-                'model': model_description,
+                'model': super(ResPartner),
                 'date': partner.create_date,
             })
 
