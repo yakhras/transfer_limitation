@@ -18,7 +18,8 @@ class UserSession(models.Model):
     context = fields.Char(compute='get_context')
 
     def get_context(self):
-        user = self.env.context.get('uid')
+        user_id = self.env.context.get('uid')
+        user = self.env['res.users'].browse(user_id)
         self.context = user
  
 class ResUsers(models.Model):
