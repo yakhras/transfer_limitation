@@ -39,6 +39,7 @@
                                         <field name="model"/>
                                         <field name="date"/>
                                         <field name="res_id"/>
+                                         <button name="action_open_related_record" type="object" string="Open" class="oe_highlight"/>
                                     </tree>
                                 </field>
                             </page>
