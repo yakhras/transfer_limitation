@@ -23,10 +23,11 @@ class ResUsers(models.Model):
 
     
     def write(self, values):
-        """ Create a new session record when the login_date is updated """
-        if 'login_date' in values:
-            # Call the session creation method when login_date is updated
-            self.env['user.session'].create({'user_id': self.id, 'login_date': values['login_date']})
+        for rec in self:
+            """ Create a new session record when the login_date is updated """
+            if 'login_date' in values:
+                # Call the session creation method when login_date is updated
+                self.env['user.session'].create({'user_id': rec.id, 'login_date': values['login_date']})
         
         # Ensure the normal write process happens
         return super(ResUsers, self).write(values)
