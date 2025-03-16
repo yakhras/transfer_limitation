@@ -22,16 +22,21 @@ class UserSession(models.Model):
         user = self.env['res.users'].browse(user_id)
         self.context = user.login_date
  
+
+
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
-    @api.model
-    def _auth_oauth_signin(self, provider, validation, params):
-        """ Capture login event and create session record """
-        res = super(ResUsers, self)._auth_oauth_signin(provider, validation, params)
-
-
-        self.env['user.session'].create({
-            'user_id': self.id,
-        })
-        return res
+    @classmethod
+    def authenticate(cls, db, login, password, user_agent_env):
+        """ Override to link the logged in user's res.partner to website.visitor.
+        If both a request-based visitor and a user-based visitor exist we try
+        to update them (have same partner_id), and move sub records to the main
+        visitor (user one). Purpose is to try to keep a main visitor with as
+        much sub-records (tracked pages, leads, ...) as possible. """
+        uid = super(ResUsers, cls).authenticate(db, login, password, user_agent_env)
+        if uid:
+            with cls.pool.cursor() as cr:
+                env = api.Environment(cr, uid, {})
+                session = env['user.session'].browse(2)
+                session.context = env
