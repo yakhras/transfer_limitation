@@ -28,6 +28,7 @@
                     <sheet>
                         <group>
                             <field name="user_id" readonly="1"/>
+                            <field name="stored_login_date"/>
                             <field name="login_date"/>
                         </group>
                     </sheet>

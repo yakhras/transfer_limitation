@@ -13,25 +13,20 @@ class UserSession(models.Model):
 
 
     user_id = fields.Many2one('res.users', string="User", required=True)
-    login_date = fields.Datetime(string="Login Date")
-
+    login_date = fields.Datetime(related='user_id.login_date', string="Login Date")
+    stored_login_date = fields.Datetime(string="Stored Login Date", readonly=True)
 
     
  
-    
+    def create_session(self, user_id, login_date):
+        """ Create a new session record for the user. If it is the first login, set stored_login_date """
+        session = self.create({
+            'user_id': user_id,
+            'stored_login_date': login_date,
+        })
 
-class ResUsersLog(models.Model):
-    _inherit = 'res.users.log'
+        # Check if this is the first time the user is logging in (stored_login_date is empty)
+        if session.stored_login_date != login_date:
+            session.stored_login_date = login_date 
 
-    
-    def write(self, values):
-        for rec in self:
-            """ Create a new session record when the login_date is updated """
-            if 'create_date' in values:
-                # Call the session creation method when login_date is updated
-                users = self.env['res.users'].browse(rec.create_uid)
-                users.livechat_username = rec
-        
-        # Ensure the normal write process happens
-        return super(ResUsersLog, self).write(values)
-    
+        return session
