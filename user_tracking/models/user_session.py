@@ -127,7 +127,7 @@ class BaseModelTracking(models.AbstractModel):
                 'model': self._name,
                 'res_id': record.id,
                 # 'date': fields.Datetime.now(),
-            } for record in result]
+            } for record in self]
 
             self.env['user.session.line'].create(session_lines)
 
