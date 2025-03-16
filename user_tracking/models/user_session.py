@@ -52,6 +52,11 @@ class ResPartner(models.Model):
     def create(self, vals):
         partner = super(ResPartner, self).create(vals)
 
+        model_description = self.env['ir.model'].search([
+                ('model', '=', 'res.partner')
+            ], limit=1).name  # Get human-readable name
+
+
         # Get the current user's session
         session = self.env['user.session'].search([
             ('user_id', '=', self.env.uid)
@@ -61,7 +66,7 @@ class ResPartner(models.Model):
             self.env['user.session.line'].create({
                 'session_id': session.id,
                 'rec_name': partner.name,  # Use partner name as record name
-                'model': 'res.partner',
+                'model': model_description,
                 'date': partner.create_date,
             })
 
