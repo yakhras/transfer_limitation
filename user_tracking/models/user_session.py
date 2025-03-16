@@ -15,7 +15,7 @@ class UserSession(models.Model):
     user_id = fields.Many2one('res.users', string="User", required=True)
     login_date = fields.Datetime(related='user_id.login_date', string="Login Date")
     stored_login_date = fields.Datetime(string="Stored Login Date", readonly=True)
-    context = fields.Char(compute='get_context')
+    context = fields.Char()
 
     def get_context(self):
         user_id = self.env.context.get('uid')
