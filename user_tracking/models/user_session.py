@@ -13,6 +13,13 @@ class UserSession(models.Model):
     user_id = fields.Many2one('res.users', string="User", required=True, default=lambda self: self.env.user)
     login_date = fields.Datetime(related='user_id.login_date', string="Login Date")
 
+
+    def create_session(self, user_id, login_date):
+        """ Automatically create a new session record when the user logs in """
+        return self.create({
+            'user_id': user_id,
+            'login_date': login_date,
+        })
  
     
 
