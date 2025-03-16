@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="action_user_session" model="ir.actions.act_window">
+            <field name="name">Session</field>
+            <field name="res_model">user.session</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p>
+                    View Sessions.
+                </p>
+            </field>
+            <field name="context">{
+            }</field>
+        </record>
+        
+        <!-- Menu Item -->
+        <menuitem id="menu_user_session" name="Session" action="action_user_session" parent="sale.product_menu_catalog" sequence="7"/>
+
+        
+
+        <!-- <record model="ir.ui.view" id="product_product_form">
+            <field name="name">product_product_form</field> 
+            <field name="model">product.product</field> 
+            <field name="inherit_id" ref="product.product_normal_form_view"/> 
+            <field name="arch" type="xml">
+                <xpath expr="//page[last()]" position="after">
+                    <page name="costs" string="Costs">
+                        <field name="location_cost_ids" widget="one2many_list">
+                            <tree string="Costs" editable="bottom">
+                                <field name="location_id" readonly="1"/>
+                                <field name="cost" readonly="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <field name="default_code" position="after">
+                    <field name="result"/>
+                </field>
+            </field>
+        </record> -->
+
+        <!-- <record model="ir.ui.view" id="stock_quant_tree">
+            <field name="name">stock_quant_tree</field> 
+            <field name="model">stock.quant</field> 
+            <field name="inherit_id" ref="stock_account.view_stock_quant_tree_editable_inherit"/> 
+            <field name="arch" type="xml">
+                <field name="value" position="before">
+                    <field name="unit_value"/>
+                </field>
+            </field>
+        </record> -->
+
+        <!-- <record model="ir.ui.view" id="stock_move_form">
+            <field name="name">stock_move_form</field> 
+            <field name="model">stock.move</field> 
+            <field name="inherit_id" ref="stock.view_move_form"/> 
+            <field name="arch" type="xml">
+                <field name="reference" position="after">
+                    <field name="result"/>
+                </field>
+            </field>
+        </record> -->
+
+        <!-- <record model="ir.ui.view" id="stock_landed_cost_form">
+            <field name="name">stock_landed_cost_form</field> 
+            <field name="model">stock.landed.cost</field> 
+            <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/> 
+            <field name="arch" type="xml">
+                <field name="picking_ids" position="after">
+                    <field name="result"/>
+                </field>
+            </field>
+        </record> -->
+
+        
+    </data>
+</odoo>
