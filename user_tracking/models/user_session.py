@@ -14,6 +14,7 @@ class UserSession(models.Model):
 
     user_id = fields.Many2one('res.users', string="User", required=True)
     login_date = fields.Datetime(string="Login Date", readonly=True)
+    session_lines = fields.One2many('user.session.line', 'session_id', string="Session Lines")
     context = fields.Char()
 
  
@@ -24,8 +25,9 @@ class UserSessionline(models.Model):
     rec_name = fields.Char()
     model = fields.Char()
     date = fields.Datetime()
+    session_id = fields.Many2one('user.session', string="Session", required=True, ondelete='cascade')
 
-    
+
 
 class ResUsers(models.Model):
     _inherit = 'res.users'

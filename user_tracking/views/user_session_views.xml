@@ -31,6 +31,17 @@
                             <field name="login_date"/>
                             <field name="context"/>
                         </group>
+                        <notebook>
+                            <page string="Session Details">
+                                <field name="session_lines">
+                                    <tree editable="bottom">
+                                        <field name="rec_name"/>
+                                        <field name="model"/>
+                                        <field name="date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>
