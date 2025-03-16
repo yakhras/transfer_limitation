@@ -81,7 +81,7 @@ class BaseModelTracking(models.AbstractModel):
 
 
     def create(self, vals):
-        record = super(BaseModelTracking, self).create(vals)
+        records = super(BaseModelTracking, self).create(vals)
 
         # Get the current user's session
         session = self.env['user.session'].search([
@@ -95,11 +95,13 @@ class BaseModelTracking(models.AbstractModel):
             ], limit=1).name or self._name  # Fallback to technical name if not found
 
             # Create a session line entry
-            self.env['user.session.line'].create({
+            session_lines = [{
                 'session_id': session.id,
                 'rec_name': model_description,  # Store model's readable name
                 'model': self._name,  # Store technical model name
                 'date': record.create_date,  # Store actual creation date
-            })
+            } for record in records]
 
-        return record
+            self.env['user.session.line'].create(session_lines)
+
+        return records
