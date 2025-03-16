@@ -26,11 +26,12 @@
             <field name="arch" type="xml">
                 <form string="Session" create="0">
                     <sheet>
-                        <field name="user_id"/>
-                        <field name="login_date"/>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="login_date"/>
+                        </group>
                     </sheet>
                 </form>
-                
             </field>
         </record>
 
