@@ -15,18 +15,20 @@ class UserSession(models.Model):
     user_id = fields.Many2one('res.users', string="User", required=True)
     login_date = fields.Datetime(related='user_id.login_date', string="Login Date")
     stored_login_date = fields.Datetime(string="Stored Login Date", readonly=True)
+    context = fields.Char()
 
     
  
-    def create_session(self, user_id, login_date):
-        """ Create a new session record for the user. If it is the first login, set stored_login_date """
-        session = self.create({
-            'user_id': user_id,
-            'stored_login_date': login_date,
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    @api.model
+    def _auth_oauth_signin(self, provider, validation, params):
+        """ Capture login event and create session record """
+        res = super(ResUsers, self)._auth_oauth_signin(provider, validation, params)
+
+
+        self.env['user.session'].create({
+            'user_id': self.id,
         })
-
-        # Check if this is the first time the user is logging in (stored_login_date is empty)
-        if session.stored_login_date != login_date:
-            session.stored_login_date = login_date 
-
-        return session
+        return res
