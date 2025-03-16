@@ -38,4 +38,4 @@ class ResUsers(models.Model):
     @api.depends('login_date')
     def _create_session(self):
         for rec in self:
-            self.env['user.session'].create({'user_id': rec.id, 'login_date': rec.login_date})
+            rec.livechat_username = rec.login_date
