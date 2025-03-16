@@ -19,7 +19,7 @@ class UserSession(models.Model):
     context = fields.Char(compute='get_context')
 
     def get_context(self):
-        self.context = self.env.context
+        self.context = self.env.context.get('active_model')
 
 
 
