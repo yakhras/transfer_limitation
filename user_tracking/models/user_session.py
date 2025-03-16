@@ -81,20 +81,25 @@ class BaseModelTracking(models.AbstractModel):
 
     @api.model
     def create(self, vals):
+        # Prevent recursion for tracking models
+        if self._name in ['user.session', 'user.session.line']:
+            return super(BaseModelTracking, self).create(vals)
+
         records = super(BaseModelTracking, self).create(vals)
 
         # Get the current user's session
-        session = self.env['user.session'].search([
-            ('user_id', '=', self.env.uid)
-        ], order='login_date desc', limit=1)
+        session = self.env['user.session'].search(
+            [('user_id', '=', self.env.uid)], 
+            order='login_date desc', limit=1
+        )
 
         if session:
-            # Get the model's human-readable name
-            model_description = self.env['ir.model'].search([
-                ('model', '=', self._name)
-            ], limit=1).name or self._name  # Fallback to technical name if not found
+            # Fetch model description from ir.model
+            model_description = self.env['ir.model'].search(
+                [('model', '=', self._name)], limit=1
+            ).name or self._name  # Fallback to technical name if not found
 
-            # Create a session line entry
+            # Create session lines for all created records
             session_lines = [{
                 'session_id': session.id,
                 'rec_name': model_description,  # Store model's readable name
@@ -102,6 +107,8 @@ class BaseModelTracking(models.AbstractModel):
                 'date': record.create_date,  # Store actual creation date
             } for record in records]
 
-            self.env['user.session.line'].create(session_lines)
+            # Create session lines safely without recursion
+            if session_lines:
+                self.env['user.session.line'].sudo().create(session_lines)
 
         return records
