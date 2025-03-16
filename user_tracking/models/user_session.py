@@ -18,7 +18,8 @@ class UserSession(models.Model):
     context = fields.Char(compute='get_context')
 
     def get_context(self):
-        self.context = self.env.context
+        user = self.env.context.get('uid')
+        self.context = user
  
 class ResUsers(models.Model):
     _inherit = 'res.users'
