@@ -67,34 +67,6 @@ class ResUsers(models.Model):
         return uid
     
 
-class ResPartner(models.Model):
-    _inherit = 'res.partner'
-
-
-    def create(self, vals):
-        partner = super(ResPartner, self).create(vals)
-
-        model_description = self.env['ir.model'].search([
-                ('model', '=', 'res.partner')
-            ], limit=1).name  # Get human-readable name
-
-
-        # Get the current user's session
-        session = self.env['user.session'].search([
-            ('user_id', '=', self.env.uid)
-        ], order='login_date desc', limit=1)
-
-        if session:
-            self.env['user.session.line'].create({
-                'session_id': session.id,
-                'rec_name': partner.name,  # Use partner name as record name
-                'model': model_description,
-                'date': partner.create_date,
-            })
-
-        return partner
-
-
 
 
 
@@ -135,3 +107,28 @@ class BaseModelTracking(models.AbstractModel):
                 self.env['user.session.line'].sudo().create(session_lines)
 
         return records
+    
+
+    @api.model
+    def write(self, vals):
+        result = super(BaseModelTracking, self).write(vals)
+
+        # Get the current user's session
+        session = self.env['user.session'].search([('user_id', '=', self.env.uid)], order='login_date desc', limit=1)
+
+        if session:
+            # Fetch model description from ir.model
+            model_description = self.env['ir.model'].search([('model', '=', self._name)], limit=1).name or self._name
+
+            # Create session lines for all updated records
+            session_lines = [{
+                'session_id': session.id,
+                'rec_name': model_description,
+                'model': self._name,
+                'res_id': record.id,
+                # 'date': fields.Datetime.now(),
+            } for record in result]
+
+            self.env['user.session.line'].create(session_lines)
+
+        return result
