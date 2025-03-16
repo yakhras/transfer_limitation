@@ -62,7 +62,7 @@ class ResUsers(models.Model):
                 env = api.Environment(cr, uid, {})
                 user = env['res.users'].browse(uid)
                 session = env['user.session'].create({'user_id': user.id, 'login_date': user.login_date})
-                session.context = user
+                # session.context = user
 
         return uid
     
