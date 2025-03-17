@@ -16,15 +16,30 @@ class SaleOrder(models.Model):
     )
     note = fields.Html(
         default=lambda self: """
-        Temel Koşullar
+        <strong style="text-decoration: underline;">Temel Koşullar</strong>
         <p style="font-size: 13px; line-height: 1.6; color: #333; margin-top: 10px;">
             1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
             2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
             3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
             4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
-            5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında % 3 vade farkı ilave edilecektir.
+            5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında %3 vade farkı ilave edilecektir.
         </p>
-        """)
+        """
+    )
+
+    @api.onchange('note')
+    def _auto_number_note(self):
+        """Automatically number each new line in the note field."""
+        for record in self:
+            if record.note:
+                # Extract existing lines from the HTML content
+                lines = re.split(r'<br\s*/?>', record.note.strip())
+
+                # Remove existing numbers and re-number
+                numbered_lines = [f"{i + 1}. {re.sub(r'^\d+\.\s*', '', line.strip())}" for i, line in enumerate(lines)]
+
+                # Convert back to HTML with <br> for line breaks
+                record.note = '<br/>'.join(numbered_lines)
 
     def _compute_has_note(self):
         for record in self:
