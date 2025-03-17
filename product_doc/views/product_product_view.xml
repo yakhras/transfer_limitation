@@ -15,7 +15,8 @@
                                 <field name="available_qty_location_8" readonly="1"/>
                                 <field name="uom_name" readonly="1"/>
                             </group>
-                                <field name="attachment_ids" widget="many2many_binary"/>
+                                <!-- <field name="attachment_ids" widget="many2many_binary"/> -->
+                                <field name="attachment_ids" widget="pdf_viewer"/>
                                 <field name="pdf_url" invisible="1"/>
                                 <div>
                                     <iframe t-if="record.pdf_url" t-att-src="record.pdf_url" width="100%" height="500px" style="border: none;"></iframe>
