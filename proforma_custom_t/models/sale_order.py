@@ -16,7 +16,7 @@ class SaleOrder(models.Model):
     )
     note = fields.Html(
         default=lambda self: """
-        <strong>Temel Koşullar</strong>
+        <strong style="border-bottom: 1px solid #000;">Temel Koşullar</strong>
         <ol style="font-size: 12px; line-height: 1.6; color: #333; margin-top: 10px;">
             <li>Fiyatlarımıza %20 KDV Dahil değildir.</li>
             <li>Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.</li>
