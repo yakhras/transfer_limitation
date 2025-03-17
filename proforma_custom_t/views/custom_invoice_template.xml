@@ -10,7 +10,7 @@
                         <strong t-if="doc.company_id.name" style="font-size: 21px;">
                             <span t-field="doc.company_id.name"/>
                         </strong>
-                        <p style="font-size: 13px; line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
+                        <p style="font-size: 10px; line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
                             <span style="font-weight: 300; white-space: nowrap;">
                                 <span t-field="doc.company_id.street2"/>
                                 <span t-field="doc.company_id.street"/>
