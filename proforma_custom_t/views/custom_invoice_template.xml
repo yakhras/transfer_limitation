@@ -167,8 +167,15 @@
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
                                         <span t-field="line.product_uom.name"/>
                                     </td>
+                                    <t t-set="is_small_value" t-value="line.price_unit &lt; 1"/>
+
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                        <span t-esc="line.price_unit_formatted"/>
+                                        <t t-if="is_small_value">
+                                            <span t-esc="('%.6f' % line.price_unit).rstrip('0')"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="'%.2f' % line.price_unit"/>
+                                        </t>
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
                                         <span t-esc="int(line.tax_id.amount)"/>%
