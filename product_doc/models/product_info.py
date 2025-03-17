@@ -62,5 +62,7 @@ class ProductInfo(models.Model):
 
     @api.depends('attachment_ids')
     def _compute_pdf_url(self):
+        """Get the first PDF attachment URL for preview."""
         for record in self:
-            record.pdf_url = f"/web/content/{record.pdf_attachment_id.id}?download=false" if record.pdf_attachment_id else ""
+            pdf_attachment = record.attachment_ids.filtered(lambda att: att.mimetype == 'application/pdf')[:1]
+            record.pdf_url = f"/web/content/{pdf_attachment.id}?download=false" if pdf_attachment else ""
