@@ -182,7 +182,7 @@
                     </table>
                 </div>
             
-                <div class="clearfix" name="so_total_summary" style="margin-top: 20px;">
+                <div class="clearfix" name="so_total_summary" style="margin-top: 20px; font-size: 12px;">
                     <div id="total" class="row" name="total">
                         <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
                             <table class="table table-sm" style="border: 1px solid #ccc; color: #333; border-collapse: collapse;">
