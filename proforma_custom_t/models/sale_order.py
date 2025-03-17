@@ -27,7 +27,7 @@ class SaleOrder(models.Model):
         """
     )
 
-    price_unit_formatted = fields.Char(compute="_compute_price_unit_formatted")
+    price_unit_formatted = fields.Float(compute="_compute_price_unit_formatted")
 
     def _compute_price_unit_formatted(self):
         for record in self:
