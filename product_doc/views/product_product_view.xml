@@ -15,7 +15,11 @@
                                 <field name="available_qty_location_8" readonly="1"/>
                                 <field name="uom_name" readonly="1"/>
                             </group>
-                            <AttachmentList><field name="attachment_ids" widget="many2many_binary"/></AttachmentList>
+                                <field name="attachment_ids" widget="many2many_binary"/>
+                                <field name="pdf_url" invisible="1"/>
+                                <div>
+                                    <iframe t-if="record.pdf_url" t-att-src="record.pdf_url" width="100%" height="500px" style="border: none;"></iframe>
+                                </div>
                                 
                         </group>
                         <group string="Logistics">

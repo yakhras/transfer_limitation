@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 
@@ -18,7 +18,7 @@ class ProductInfo(models.Model):
     gross_weight = fields.Float(string="Gross Weight", compute='_get_weight')
     uom_name = fields.Char(related='product_id.uom_id.name', string="Unit of Measure", store=True, readonly=True)
     active = fields.Boolean(default=True)
-    
+    pdf_url = fields.Char(string="PDF URL", compute="_compute_pdf_url")
 
     
     def _compute_available_qty(self):
@@ -58,3 +58,9 @@ class ProductInfo(models.Model):
     def _get_weight(self):
         for record in self:
             record.gross_weight = record.product_id.gross_weight
+
+
+    @api.depends('attachment_ids')
+    def _compute_pdf_url(self):
+        for record in self:
+            record.pdf_url = f"/web/content/{record.pdf_attachment_id.id}?download=false" if record.pdf_attachment_id else ""
