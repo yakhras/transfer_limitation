@@ -43,14 +43,14 @@
                     
                     <!-- Address (Center) -->
                     <div class="col-4 text-center">
-                        <p style="font-size: 13px; line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
+                        <p style="line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
                             <span t-esc="doc.company_id.website.replace('http://', '')"/>
                         </p>
                     </div>
             
                     <!-- Tax Number (Right) -->
                     <div class="col-4 text-right">
-                        <p style="font-size: 14px; font-weight: 400; color: #333; margin: 0;">
+                        <p style= "font-weight: 400; color: #333; margin: 0;">
                             Tax No.<span t-esc="doc.company_id.vat[2:] if doc.company_id.vat and doc.company_id.vat.startswith('TR') else doc.company_id.vat"/>
                         </p>
                     </div>
