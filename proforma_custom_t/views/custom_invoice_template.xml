@@ -240,10 +240,10 @@
                                 <thead>
                                     <tr ><td style="font-size: 12px; border-bottom: 1px solid #000;">Bank Account Details</td></tr>
                                     <tr style="color: #000;">
-                                        <th style="padding: 3px; border-bottom: 1px solid #000; #ccc; text-align: left; ">Bank</th>
-                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left;">Account</th>
-                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left;">IBAN</th>
-                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left;">Swift Code</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left; text-decoration: underline; ">Bank</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left; text-decoration: underline;">Account</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left; text-decoration: underline;">IBAN</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left; text-decoration: underline;">Swift Code</th>
                                     </tr>
                                 </thead>
                                 
