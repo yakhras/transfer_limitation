@@ -35,7 +35,7 @@
         </div>
         <div t-attf-class="footer">
             <div class="text-center" style="border-top: 1px solid black; padding-top: 5px;">
-                <div class="row align-items-center">
+                <div class="row align-items-center" style="font-size: 12px;">
                     <!-- Page Number (Left) -->
                     <div t-if="report_type == 'pdf'" class="col-4 text-left text-muted">
                         Page: <span class="page"/> / <span class="topage"/>
