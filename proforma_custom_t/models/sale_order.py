@@ -27,19 +27,6 @@ class SaleOrder(models.Model):
         """
     )
 
-    @api.onchange('note')
-    def _auto_number_note(self):
-        """Automatically number each new line in the note field."""
-        for record in self:
-            if record.note:
-                # Extract existing lines from the HTML content
-                lines = re.split(r'<br\s*/?>', record.note.strip())
-
-                # Remove existing numbers and re-number
-                numbered_lines = [f"{i + 1}. {re.sub(r'^\d+\.\s*', '', line.strip())}" for i, line in enumerate(lines)]
-
-                # Convert back to HTML with <br> for line breaks
-                record.note = '<br/>'.join(numbered_lines)
 
     def _compute_has_note(self):
         for record in self:
