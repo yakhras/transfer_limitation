@@ -168,7 +168,7 @@
                                         <span t-field="line.product_uom.name"/>
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                        <span t-esc="('%.2f' % line.price_unit).rstrip('.')"/>
+                                        <span t-esc="line.price_unit_formatted"/>
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
                                         <span t-esc="int(line.tax_id.amount)"/>%
@@ -196,7 +196,7 @@
                     </div>
                 </div>
                 
-                <div style="border-bottom: 1px solid #333; margin-bottom: 15px; margin-top: 15px;"></div>
+                <div style="border-bottom: 1px solid #333; margin-bottom: 15px; margin-top: 10px;"></div>
                 <t t-if="doc.has_note">
                     <div class="row" style="margin-top: 10px;">
                         <div class="col-12" style="text-align: left;">
@@ -231,11 +231,11 @@
                         </div>
                     </div> -->
                     <!-- Second Row in Terms (Banka Bilgileri) -->
-                    <div style="border-bottom: 1px solid #333; margin-bottom: 15px; margin-top: 15px;"></div>
+                    <div style="border-bottom: 1px solid #333; margin-bottom: 15px; margin-top: 10px;"></div>
                     <div style="padding: 3px; text-align: left; font-size: 12px; ">
                         <strong style="border-bottom: 1px solid #000;">Bank Account Details:</strong>
                     </div>
-                    <div class="row" style="margin-top: 20px; margin: 0; padding: 0;">
+                    <div class="row" style="margin-top: 15px; margin: 0; padding: 0;">
                         <div class="col-8" style="text-align: left;">
                             <!-- Bank Information Table -->
                             <table style="width: 100%; font-size: 10px; line-height: 1.6; color: #333; border-collapse: collapse;">
