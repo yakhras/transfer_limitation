@@ -1,0 +1,242 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* proforma_custom
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0-20240109\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-17 12:49+0000\n"
+"PO-Revision-Date: 2025-03-17 12:49+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: proforma_custom
+#: model:ir.actions.report,print_report_name:proforma_custom.action_report_proforma_sale_order
+msgid "'Proforma Invoice - %s' % (object.name)"
+msgstr "'Proforma Fatura - %s' % (object.name)"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.external_layout_yaser
+msgid ",<br/>"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid ""
+"<strong style=\"font-size: 28px; color: red; font-family: Arial, sans-serif;\">\n"
+"                         PROFORMA INVOICE\n"
+"                        </strong>"
+msgstr ""
+"<strong style=\"font-size: 28px; color: red; font-family: Arial, sans-serif;\">\n"
+"PROFORMA FATURA\n"
+"</strong>"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "<strong>Address: </strong>"
+msgstr "<strong>Adres:</strong>"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "<strong>Customer: </strong>"
+msgstr "<strong>Müşteri: </strong>"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "<strong>Expiration: </strong>"
+msgstr "<strong>Son kullanma tarihi: </strong>"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "<strong>Payment Terms: </strong>"
+msgstr "<strong>Ödeme Koşulları:</strong>"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "<strong>Proforma Date: </strong>"
+msgstr "<strong>Proforma Tarihi:</strong>"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "<strong>Proforma No.: </strong>"
+msgstr "<strong>Proforma No:</strong>"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "<strong>VAT: </strong>"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Account"
+msgstr "Hesap"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Amount"
+msgstr "Hesap"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Bank"
+msgstr "Banka"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.external_layout_yaser
+msgid "Company Logo"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Description"
+msgstr "Tanım"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "EUR IBAN"
+msgstr ""
+
+#. module: proforma_custom
+#: model:ir.model.fields,field_description:proforma_custom.field_sale_order__expiration_days
+msgid "Expiration Days"
+msgstr "Son Kullanma Tarihleri"
+
+#. module: proforma_custom
+#: model:ir.model.fields,field_description:proforma_custom.field_sale_order__has_note
+msgid "Has Note"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "IBAN"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "KTEFTRIS"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Kuveyt Türk Katılım Bankası"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Note:"
+msgstr "Not:"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.external_layout_yaser
+msgid "Page: <span class=\"page\"/> / <span class=\"topage\"/>"
+msgstr "Sayfa: <span class=\"page\"/> / <span class=\"topage\"/>"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Product"
+msgstr "Ürün"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Proforma Invoice Details"
+msgstr "Proforma Fatura Detayları"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Quantity"
+msgstr "Miktar"
+
+#. module: proforma_custom
+#: model:ir.model,name:proforma_custom.model_sale_order
+msgid "Sales Order"
+msgstr "Satış Siparişi"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Swift Code"
+msgstr "Swift kodu"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "TL IBAN"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "TR13 0001 5001 5800 7341 8874 16"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "TR29 0020 5000 0988 3129 1001 02"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "TR40 0020 5000 0988 3129 1000 01"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "TR56 0020 5000 0988 3129 1001 01"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "TR60 0001 5001 5804 8024 5849 84"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "TR66 0001 5001 5804 8024 5849 73"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "TVBATR2AXXX"
+msgstr ""
+
+#. module: proforma_custom
+#: model:ir.actions.report,name:proforma_custom.action_report_proforma_sale_order
+msgid "TVO Proforma Invoice"
+msgstr "TVO Proforma Faturası"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Tax"
+msgstr "Vergi"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.external_layout_yaser
+msgid "Tax No."
+msgstr "Vergi No."
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Total"
+msgstr "Toplam"
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Türkiye Vakıflar Bankası T.A.O"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "UOM"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "USD IBAN"
+msgstr ""
+
+#. module: proforma_custom
+#: model_terms:ir.ui.view,arch_db:proforma_custom.custom_invoice_template_Arabic
+msgid "Unit Price"
+msgstr "Birim Fiyat"
