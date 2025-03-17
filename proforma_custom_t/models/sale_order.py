@@ -16,14 +16,14 @@ class SaleOrder(models.Model):
     )
     note = fields.Html(
         default=lambda self: """
-        <strong style="text-decoration: underline;">Temel Koşullar</strong>
-        <p style="font-size: 12px; line-height: 1.6; color: #333; margin-top: 10px;">
-            1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
-            2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
-            3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
-            4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
-            5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında %3 vade farkı ilave edilecektir.
-        </p>
+        <strong>Temel Koşullar</strong>
+        <ol style="font-size: 12px; line-height: 1.6; color: #333; margin-top: 10px;">
+            <li>Fiyatlarımıza %20 KDV Dahil değildir.</li>
+            <li>Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.</li>
+            <li>Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.</li>
+            <li>Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.</li>
+            <li>Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında %3 vade farkı ilave edilecektir.</li>
+        </ol>
         """
     )
 
