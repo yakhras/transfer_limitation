@@ -8,6 +8,5 @@
         file="proforma_custom_t.custom_invoice_template"
         name="proforma_custom_t.custom_invoice_template"
         print_report_name="'Proforma Invoice - %s' % (object.name)"
-        context="{'allowed_company_ids': [5]}"
     />
 </odoo>
