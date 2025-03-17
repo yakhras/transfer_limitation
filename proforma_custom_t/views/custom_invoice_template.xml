@@ -111,7 +111,7 @@
                     </div>
                 </div>
                 <!-- New Row with Two Columns -->
-                <div class="row" style="margin-top: 20px;">
+                <div class="row" style="margin-top: 20px; font-size: 12px;">
                     <!-- Left Column (col-8) -->
                     <div class="col-8">
                         <t t-if="doc.date_order">
@@ -131,7 +131,7 @@
                     <!-- Right Column (col-4) -->
                     <div class="col-4">
                         <t t-if="doc.client_order_ref">
-                            <div style="margin-bottom: 5px;"><strong>Customer ref.: </strong> <span t-field="doc.client_order_ref"/></div>
+                            <div style="margin-bottom: 5px; "><strong>Customer ref.: </strong> <span t-field="doc.client_order_ref"/></div>
                         </t>
                         <t t-if="doc.incoterm">
                             <div style="margin-bottom: 5px;"><strong>Incoterm: </strong> <span t-field="doc.incoterm.name"/></div>
