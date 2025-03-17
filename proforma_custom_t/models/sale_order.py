@@ -27,15 +27,6 @@ class SaleOrder(models.Model):
         """
     )
 
-    price_unit_formatted = fields.Float(compute="_compute_price_unit_formatted")
-
-    def _compute_price_unit_formatted(self):
-        for record in self:
-            if record.price_unit < 1:
-                record.price_unit_formatted = ('%.6f' % record.price_unit).rstrip('0')
-            else:
-                record.price_unit_formatted = '%.2f' % record.price_unit
-
 
     def _compute_has_note(self):
         for record in self:

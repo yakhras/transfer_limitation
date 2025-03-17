@@ -168,7 +168,6 @@
                                         <span t-field="line.product_uom.name"/>
                                     </td>
                                     <t t-set="is_small_value" t-value="line.price_unit &lt; 1"/>
-
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
                                         <t t-if="is_small_value">
                                             <span t-esc="('%.6f' % line.price_unit).rstrip('0')"/>
