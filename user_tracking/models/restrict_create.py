@@ -25,7 +25,7 @@ class RestrictCreateView(models.Model):
         """Override to disable 'Create' in tree views for a specific user."""
         res = super().fields_view_get(view_id, view_type, toolbar, submenu)
 
-        restricted_user_id = 17  # Change this to the user ID to restrict
+        restricted_user_id = 135  # Change this to the user ID to restrict
 
         if self.env.user.id == restricted_user_id and view_type == "tree":
             # Modify the XML to set create="0"
