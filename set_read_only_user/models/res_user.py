@@ -74,9 +74,7 @@ class IrModelAccess(models.Model):
             msg_tail += u' - ({} {}, {} {})'.format(_('Operation:'), mode, _('User:'), self._uid)
             _logger.info('Access Denied by ACLs for operation: %s, uid: %s, model: %s', mode, self._uid, model)
             msg = '%s %s' % (msg_heads[mode], msg_tail)
-            # if user.readonly_user and mode != 'read':
-            #     raise AccessError(_('You Have Just Readonly Access, You Can not Do Any Transaction.'))
-            if user.readonly_user and mode != 'read' and model not in ['res.users', 'res.partner', 'res.company', 'ir.module.module']:
+            if user.readonly_user and mode != 'read':
                 raise AccessError(_('You Have Just Readonly Access, You Can not Do Any Transaction.'))
             raise AccessError(msg % msg_params)
         return bool(r)
