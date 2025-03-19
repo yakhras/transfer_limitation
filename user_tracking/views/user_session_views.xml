@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <record id="action_user_session" model="ir.actions.act_window">
+        <!-- <record id="action_user_session" model="ir.actions.act_window">
             <field name="name">Session</field>
             <field name="res_model">user.session</field>
             <field name="view_mode">tree,form</field>
@@ -15,12 +15,12 @@
             }</field>
         </record>
         
-        <!-- Menu Item -->
-        <menuitem id="menu_user_session" name="Session" action="action_user_session" parent="sale.product_menu_catalog" sequence="7"/>
+        Menu Item
+        <menuitem id="menu_user_session" name="Session" action="action_user_session" parent="sale.product_menu_catalog" sequence="7"/> -->
 
         
 
-        <record model="ir.ui.view" id="user_session_form">
+        <!-- <record model="ir.ui.view" id="user_session_form">
             <field name="name">user_session_form</field> 
             <field name="model">user.session</field>
             <field name="arch" type="xml">
@@ -47,9 +47,9 @@
                     </sheet>
                 </form>
             </field>
-        </record>
+        </record> -->
 
-        <record model="ir.ui.view" id="user_session_tree">
+        <!-- <record model="ir.ui.view" id="user_session_tree">
             <field name="name">user_session_tree</field> 
             <field name="model">user.session</field>
             <field name="arch" type="xml">
@@ -59,7 +59,7 @@
                 </tree>
                 
             </field>
-        </record>
+        </record> -->
 
         <!-- <record model="ir.ui.view" id="stock_move_form">
             <field name="name">stock_move_form</field> 
