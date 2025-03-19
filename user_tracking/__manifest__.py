@@ -22,7 +22,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'web']  ,
+    'depends': ['base', 'crm']  ,
 
     # always loaded
     'data': [
