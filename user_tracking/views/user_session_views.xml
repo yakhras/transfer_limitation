@@ -90,6 +90,7 @@
             <field name="arch" type="xml">
                 <field name="author_id" position="after">
                     <field name="lead_id" widget="many2one" options="{'no_open': False}"/>
+                    <button name="open_related_lead" string="Open Lead" type="object" />
                 </field>
             </field>
         </record>
