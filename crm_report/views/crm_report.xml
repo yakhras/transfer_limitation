@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="crm_activity_report_tree">
+            <field name="name">crm_activity_report_tree</field> 
+            <field name="model">crm.activity.report</field> 
+            <field name="inherit_id" ref="crm.crm_activity_report_view_tree"/> 
+            <field name="arch" type="xml">
+                <field name="author_id" position="after">
+                    <field name="lead_id" widget="many2one" />
+                </field>
+            </field>
+        </record>
+
+        
+    </data>
+</odoo>
