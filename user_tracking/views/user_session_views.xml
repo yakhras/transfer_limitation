@@ -89,8 +89,7 @@
             <field name="inherit_id" ref="crm.crm_activity_report_view_tree"/> 
             <field name="arch" type="xml">
                 <field name="author_id" position="after">
-                    <field name="lead_id" widget="many2one" options="{'no_open': False}"/>
-                    <!-- <button name="open_related_lead" string="Open Lead" type="object" /> -->
+                    <field name="lead_id" widget="many2one" />
                 </field>
             </field>
         </record>
