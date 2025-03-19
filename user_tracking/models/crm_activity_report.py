@@ -12,11 +12,11 @@ class ActivityReport(models.Model):
 
 
 
-    def open_related_lead(self):
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'crm.lead',
-            'view_mode': 'form',
-            'res_id': self.lead_id.id,
-            'target': 'current',
-        }
+    # def open_related_lead(self):
+    #     return {
+    #         'type': 'ir.actions.act_window',
+    #         'res_model': 'crm.lead',
+    #         'view_mode': 'form',
+    #         'res_id': self.lead_id.id,
+    #         'target': 'current',
+    #     }
