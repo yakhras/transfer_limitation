@@ -54,4 +54,5 @@ class ActivityReport(models.Model):
                     OR m.subtype_id = %s  -- 'opportunity created'
                     OR m.subtype_id = %s  -- 'stage changed'
                 )
+                AND m.date > '2025-01-01 00:00:00'
         """ % (note_subtype_id, opportunity_created_subtype_id, stage_changed_subtype_id, note_subtype_id, opportunity_created_subtype_id, stage_changed_subtype_id)
