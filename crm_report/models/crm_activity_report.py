@@ -39,8 +39,8 @@ class ActivityReport(models.Model):
         """
 
     def _where(self):
-        return self._cr.mogrify("""
+        return """
             WHERE 
                 l.date_last_stage_update >= %s
-        """, ('2025-01-01 00:00:00')).decode()
+        """ % ('2025-01-01 00:00:00')
     
