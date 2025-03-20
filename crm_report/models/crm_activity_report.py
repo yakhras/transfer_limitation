@@ -45,5 +45,5 @@ class ActivityReport(models.Model):
                 WHERE
                     m.model = 'crm.lead' 
                     AND (m.mail_activity_type_id IS NOT NULL OR m.subtype_id = %s)
-                    AND m.date_last_update BETWEEN %s AND %s
+                    AND m.date_last_stage_update BETWEEN %s AND %s
             """, (disccusion_subtype.id, '2025-01-01', current_date)
