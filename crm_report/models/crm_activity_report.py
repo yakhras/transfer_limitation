@@ -9,6 +9,7 @@ class ActivityReport(models.Model):
 
 
     lead_id = fields.Many2one('crm.lead', "Opportunity", readonly=False)
+    message_type = fields.Many2one('mail.message.message_type', 'Type', readonly=True)
     
     def _select(self):
         return """
@@ -20,6 +21,7 @@ class ActivityReport(models.Model):
                 l.date_deadline,
                 l.date_closed,
                 m.subtype_id,
+                m.message_type,
                 m.mail_activity_type_id,
                 m.author_id,
                 m.date,
@@ -47,7 +49,9 @@ class ActivityReport(models.Model):
                 m.model = 'crm.lead'
                 AND (
                     m.mail_activity_type_id IS NULL 
-                    OR m.subtype_id IN (%s, %s, %s, %s)
+                    OR m.subtype_id IN (%s, %s)
+                    OR ( m.subtype_id = %s AND m.message_type ='notification')
+                    OR ( m.subtype_id = %s AND m.message_type IN ('notification', 'comment'))
                 )
                 AND m.date > '2025-01-01 00:00:00'
-        """ % (note_subtype_id, opportunity_created_subtype_id, stage_changed_subtype_id, disccusion_subtype )
+        """ % (disccusion_subtype, opportunity_created_subtype_id,stage_changed_subtype_id, note_subtype_id,)
