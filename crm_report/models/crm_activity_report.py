@@ -39,15 +39,19 @@ class ActivityReport(models.Model):
         """
 
     def _where(self):
-        discussion_subtype = self.env.ref('mail.mt_comment')
+        # Fetch the IDs of the relevant subtypes (assuming they are defined in 'mail.message.subtype')
+        note_subtype_id = self.env.ref('mail.mt_note').id  # Example: Reference for 'note'
+        opportunity_created_subtype_id = self.env.ref('mail.mt_opportunity_created').id  # Example
+        stage_changed_subtype_id = self.env.ref('mail.mt_stage_changed').id  # Example
+
         return """
             WHERE
                 m.model = 'crm.lead'
                 AND (
                     m.mail_activity_type_id IS NULL 
-                    OR m.subtype_id = %s
-                    OR (m.subtype_id = 'note' AND m.message_type IN ('comment', 'system notification'))
-                    OR m.subtype_id = 'opportunity created'
-                    OR m.subtype_id = 'stage changed'
+                    OR m.subtype_id IN (%s, %s, %s)
+                    OR m.subtype_id = %s  -- 'note'
+                    OR m.subtype_id = %s  -- 'opportunity created'
+                    OR m.subtype_id = %s  -- 'stage changed'
                 )
-        """ % (discussion_subtype.id,)
+        """ % (note_subtype_id, opportunity_created_subtype_id, stage_changed_subtype_id, note_subtype_id, opportunity_created_subtype_id, stage_changed_subtype_id)
