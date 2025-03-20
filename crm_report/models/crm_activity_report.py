@@ -39,12 +39,10 @@ class ActivityReport(models.Model):
         """
 
     def _where(self):
-        disccusion_subtype = self.env.ref('mail.mt_comment')
-        current_date = fields.Datetime.now()  # Get today's date
-        return """
-                WHERE
-                    m.model = 'crm.lead' 
-                    AND (m.mail_activity_type_id IS NOT NULL OR m.subtype_id = %s)
-                    AND m.date_last_stage_update BETWEEN %s AND %s
-            """, (disccusion_subtype.id, '2025-01-01 00:00:00', current_date)
+        discussion_subtype = self.env.ref('mail.mt_comment')
+        return self._cr.mogrify("""
+            WHERE m.model = 'crm.lead' 
+            AND (m.mail_activity_type_id IS NOT NULL OR m.subtype_id = %s)
+            AND m.date_last_stage_update BETWEEN %s AND %s
+        """, (discussion_subtype.id, '2025-01-01 00:00:00', fields.Datetime.now())).decode()
     
