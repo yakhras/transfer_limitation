@@ -37,3 +37,13 @@ class ActivityReport(models.Model):
                 l.type as lead_type,
                 l.active
         """
+
+    def _where(self):
+        disccusion_subtype = self.env.ref('mail.mt_comment')
+        current_date = fields.Date.today()  # Get today's date
+        return """
+                WHERE
+                    m.model = 'crm.lead' 
+                    AND (m.mail_activity_type_id IS NOT NULL OR m.subtype_id = %s)
+                    AND m.date_last_update BETWEEN %s AND %s
+            """, (disccusion_subtype.id, '2025-01-01', current_date)
