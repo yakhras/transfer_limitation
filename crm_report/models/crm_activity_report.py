@@ -39,7 +39,15 @@ class ActivityReport(models.Model):
         """
 
     def _where(self):
+        discussion_subtype = self.env.ref('mail.mt_comment')
         return """
             WHERE
                 m.model = 'crm.lead'
-        """
+                AND (
+                    m.mail_activity_type_id IS NULL 
+                    OR m.subtype_id = %s
+                    OR (m.subtype = 'note' AND m.message_type IN ('comment', 'system notification'))
+                    OR m.subtype = 'opportunity created'
+                    OR m.subtype = 'stage changed'
+                )
+        """ % (discussion_subtype.id,)
