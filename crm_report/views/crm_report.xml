@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <field name="author_id" position="after">
                     <field name="lead_id" widget="many2one" />
-                    <field name="last_stage_update" widget="many2one" />
+                    <field name="last_stage_update" />
                 </field>
             </field>
         </record>
