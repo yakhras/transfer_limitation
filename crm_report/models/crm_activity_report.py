@@ -41,8 +41,8 @@ class ActivityReport(models.Model):
     def _where(self):
         # Fetch the IDs of the relevant subtypes (assuming they are defined in 'mail.message.subtype')
         note_subtype_id = self.env.ref('mail.mt_note').id  # Example: Reference for 'note'
-        opportunity_created_subtype_id = self.env.ref('mail.mt_opportunity_created').id  # Example
-        stage_changed_subtype_id = self.env.ref('mail.mt_stage_changed').id  # Example
+        opportunity_created_subtype_id = self.env.ref('crm.mt_lead_create').id  # Example
+        stage_changed_subtype_id = self.env.ref('crm.mt_lead_stage').id  # Example
 
         return """
             WHERE
