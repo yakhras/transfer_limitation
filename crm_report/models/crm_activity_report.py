@@ -42,7 +42,9 @@ class ActivityReport(models.Model):
         discussion_subtype = self.env.ref('mail.mt_comment')
         return self._cr.mogrify("""
             WHERE m.model = 'crm.lead' 
-            AND (m.mail_activity_type_id IS NOT NULL OR m.subtype_id = %s)
-            OR l.date_last_stage_update BETWEEN %s AND %s
-        """, (discussion_subtype.id, '2025-01-01 00:00:00', fields.Datetime.now())).decode()
+            AND (
+                (m.mail_activity_type_id IS NOT NULL OR m.subtype_id = %s)
+                OR l.date_last_stage_update >= %s
+            )
+        """, (discussion_subtype.id, '2025-01-01 00:00:00')).decode()
     
