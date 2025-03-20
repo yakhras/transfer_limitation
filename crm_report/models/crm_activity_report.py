@@ -41,6 +41,6 @@ class ActivityReport(models.Model):
     def _where(self):
         return """
             WHERE 
-                1.model = 'crm.lead'
-                AND 1.create_date >= '2025-01-01 00:00:00'
+                l.model = 'crm.lead'
+                AND l.create_date >= '2025-01-01 00:00:00'
         """
