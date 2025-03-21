@@ -13,11 +13,7 @@
             </field>
         </record>
 
-        <record id="crm_activity_report_action_inherit" model="ir.actions.act_window">
-            <field name="name">Activities</field>
-            <field name="res_model">crm.activity.report</field>
-            <field name="inherit_id" ref="crm.crm_activity_report_action"/>
-            <field name="view_mode">graph,pivot,tree</field>
+        <record id="crm_activity_report_action" model="ir.actions.act_window">
             <field name="domain" eval="[
                 ['body', 'not ilike', 'Görüntüle Aday/Fırsat'],
                 ['body', 'not ilike', 'View Lead/Opportunity']
