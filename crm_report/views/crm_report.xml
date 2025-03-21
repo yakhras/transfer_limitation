@@ -9,6 +9,8 @@
             <field name="arch" type="xml">
                 <field name="author_id" position="after">
                     <field name="lead_id" widget="many2one" />
+                    <field name="field" />
+                    <field name="value" />
                 </field>
             </field>
         </record>

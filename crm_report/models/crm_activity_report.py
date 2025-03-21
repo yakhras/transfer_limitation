@@ -9,6 +9,8 @@ class ActivityReport(models.Model):
 
 
     lead_id = fields.Many2one('crm.lead', "Opportunity", readonly=False)
+    field = fields.Char('Field', readonly=True)
+    value = fields.Char('Value', readonly=True)
     
     
     def _select(self):
