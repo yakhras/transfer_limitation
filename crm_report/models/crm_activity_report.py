@@ -24,8 +24,8 @@ class ActivityReport(models.Model):
                 m.author_id,
                 m.date,
                 m.body,
-                m.tracking_value_ids.field_desc,
-                m.tracking_value_ids.new_value_char,
+                t.field_desc,
+                t.new_value_char,
                 l.id as lead_id,
                 l.user_id,
                 l.team_id,
@@ -35,6 +35,12 @@ class ActivityReport(models.Model):
                 l.partner_id,
                 l.type as lead_type,
                 l.active
+        """
+    
+    def _join(self):
+        return """
+            JOIN crm_lead AS l ON m.res_id = l.id
+            JOIN mail_tracking_value AS t ON t.mail_message_id = m.id
         """
 
     def _where(self):
