@@ -15,7 +15,7 @@ class ActivityReport(models.Model):
     
     def _select(self):
         return """
-            SELECT
+            SELECT DISTINCT ON (m.id)
                 m.id,
                 l.create_date AS lead_create_date,
                 l.date_conversion,
@@ -39,23 +39,13 @@ class ActivityReport(models.Model):
                 l.active
         """
     
-    # def _join(self):
-    #     return """
-    #         JOIN crm_lead AS l ON m.res_id = l.id
-    #         LEFT JOIN mail_tracking_value AS t ON t.mail_message_id = m.id
-    #     """
-    
     def _join(self):
         return """
             JOIN crm_lead AS l ON m.res_id = l.id
-            LEFT JOIN (
-                SELECT 
-                    t.mail_message_id, 
-                    t.field_desc, 
-                    t.new_value_char
-                FROM mail_tracking_value AS t
-            ) AS t ON t.mail_message_id = m.id
+            LEFT JOIN mail_tracking_value AS t ON t.mail_message_id = m.id
         """
+    
+    
 
     def _where(self):
         # Fetch the IDs of the relevant subtypes (assuming they are defined in 'mail.message.subtype')
