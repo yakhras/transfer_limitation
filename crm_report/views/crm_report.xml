@@ -13,13 +13,6 @@
             </field>
         </record>
 
-        <record id="crm_activity_report_action" model="ir.actions.act_window">
-            <field name="domain">[
-                ['body', 'not ilike', 'Görüntüle Aday/Fırsat'],
-                ['body', 'not ilike', 'View Lead/Opportunity']
-            ]</field>
-        </record>
-
         
     </data>
 </odoo>
