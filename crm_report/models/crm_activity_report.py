@@ -42,7 +42,7 @@ class ActivityReport(models.Model):
     def _join(self):
         return """
             JOIN crm_lead AS l ON m.res_id = l.id
-            LEFT JOIN mail_tracking_value AS t ON t.mail_message_id = m.id
+            JOIN mail_tracking_value AS t ON t.mail_message_id = m.id
         """
 
     def _where(self):
