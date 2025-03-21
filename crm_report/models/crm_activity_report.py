@@ -15,7 +15,7 @@ class ActivityReport(models.Model):
     
     def _select(self):
         return """
-            SELECT DISTINCT ON (m.id)
+            SELECT
                 m.id,
                 l.create_date AS lead_create_date,
                 l.date_conversion,
