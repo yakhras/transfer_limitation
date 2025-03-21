@@ -36,7 +36,7 @@ class ActivityReport(models.Model):
                 l.stage_id,
                 l.partner_id,
                 l.type as lead_type,
-                l.active
+                l.active,
                 ROW_NUMBER() OVER (PARTITION BY m.id ORDER BY t.id) AS row_num
         """
     
