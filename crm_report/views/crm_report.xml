@@ -16,14 +16,8 @@
         <record id="crm_activity_report_action_inherit" model="ir.actions.act_window">
             <field name="name">Activities</field>
             <field name="res_model">crm.activity.report</field>
+            <field name="inherit_id" ref="crm.crm_activity_report_action"/>
             <field name="view_mode">graph,pivot,tree</field>
-            <field name="context" eval="{
-                'search_default_completion_date': 1,
-                'pivot_column_groupby': ['subtype_id', 'mail_activity_type_id'],
-                'pivot_row_groupby': ['date:month'],
-                'graph_mode': 'bar',
-                'graph_groupbys': ['date:month', 'subtype_id']
-            }"/>
             <field name="domain" eval="[
                 ['body', 'not ilike', 'Görüntüle Aday/Fırsat'],
                 ['body', 'not ilike', 'View Lead/Opportunity']
