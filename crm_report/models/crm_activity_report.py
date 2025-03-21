@@ -10,12 +10,12 @@ class ActivityReport(models.Model):
 
     lead_id = fields.Many2one('crm.lead', "Opportunity", readonly=False)
     
+    
     def _select(self):
         return """
             SELECT
                 m.id,
                 l.create_date AS lead_create_date,
-                l.date_last_stage_update AS last_stage_update,
                 l.date_conversion,
                 l.date_deadline,
                 l.date_closed,
@@ -24,6 +24,8 @@ class ActivityReport(models.Model):
                 m.author_id,
                 m.date,
                 m.body,
+                m.tracking_value_ids.field_desc,
+                m.tracking_value_ids.new_value_char,
                 l.id as lead_id,
                 l.user_id,
                 l.team_id,
