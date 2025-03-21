@@ -49,7 +49,7 @@ class ActivityReport(models.Model):
                 m.model = 'crm.lead'
                 AND (
                     m.mail_activity_type_id IS NULL 
-                    OR ( m.subtype_id = %s AND m.message_type IN ('notification', 'comment'))
+                    OR m.subtype_id = %s 
                 )
                 AND m.date > '2025-01-01 00:00:00'
         """ % ( note_subtype_id,)
