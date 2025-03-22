@@ -66,23 +66,28 @@
         <menuitem id="menu_user_email_signature" name="Email Signature" action="action_user_email_signature" parent="sale.product_menu_catalog" sequence="7"/>
 
 
-        <record id="view_users_form_inherit_email_signatures" model="ir.ui.view">
-            <field name="name">res.users.form.inherit.email.signatures</field>
+        <record id="view_users_form_inherit_email_signatures_last_page" model="ir.ui.view">
+            <field name="name">res.users.form.inherit.email.signatures.last.page</field>
             <field name="model">res.users</field>
             <field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
-                <!-- Add the email_signatures One2many field to the form view -->
-                <xpath expr="//sheet//group[@name='personal_info']" position="inside">
-                    <group string="Email Signatures">
-                        <field name="email_signatures">
-                            <tree>
-                                <field name="email"/>
-                                <field name="signature_name"/>
-                            </tree>
-                        </field>
-                    </group>
+                <!-- Find the notebook widget inside the form and add a new page at the end -->
+                <xpath expr="//notebook" position="inside">
+                    <!-- Add a new page for email signatures -->
+                    <page string="Email Signatures">
+                        <group>
+                            <field name="email_signatures">
+                                <tree>
+                                    <!-- Define the fields you want to display in the tree view -->
+                                    <field name="email"/>
+                                    <field name="signature_name"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </page>
                 </xpath>
             </field>
         </record>
+
     </data>
 </odoo>
