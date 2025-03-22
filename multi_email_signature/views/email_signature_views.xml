@@ -76,7 +76,7 @@
                     <!-- Add a new page for email signatures -->
                     <page string="Email Signatures">
                         <group>
-                            <field name="email_signatures">
+                            <field name="email_signatures" readonly="1">
                                 <tree>
                                     <!-- Define the fields you want to display in the tree view -->
                                     <field name="email"/>
