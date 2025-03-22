@@ -72,7 +72,7 @@ class MailComposeMessageInherited(models.TransientModel):
 
             batch_size = int(self.env['ir.config_parameter'].sudo().get_param('mail.batch_size')) or self._batch_size
             sliced_res_ids = [res_ids[i:i + batch_size] for i in range(0, len(res_ids), batch_size)]
-            result.result = sliced_res_ids
+            
             
 
             if wizard.composition_mode == 'mass_mail' or wizard.is_log or (wizard.composition_mode == 'mass_post' and not wizard.notify):  # log a note: subtype is False
@@ -89,6 +89,7 @@ class MailComposeMessageInherited(models.TransientModel):
                 # to create lots of emails in sudo as it is consdiered as a technical model.
                 batch_mails_sudo = self.env['mail.mail'].sudo()
                 all_mail_values = wizard.get_mail_values(res_ids)
+                result.result = all_mail_values
                 for res_id, mail_values in all_mail_values.items():
                     if wizard.composition_mode == 'mass_mail':
                         batch_mails_sudo |= self.env['mail.mail'].sudo().create(mail_values)
