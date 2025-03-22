@@ -121,9 +121,9 @@ class MailComposeMessageInherited(models.TransientModel):
     def get_mail_values(self, res_ids):
         """Generate the values that will be used by send_mail to create mail_messages
         or mail_mails. """
-        result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
 
         self.ensure_one()
+        result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
         results = dict.fromkeys(res_ids, False)
         rendered_values = {}
         mass_mail_mode = self.composition_mode == 'mass_mail'
