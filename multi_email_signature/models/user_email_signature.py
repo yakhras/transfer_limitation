@@ -19,5 +19,5 @@ class ResUsers(models.Model):
     email_signatures = fields.One2many('res.users.email.signature', 'user_id', string='Email Signatures')
     
 
-class MailComposeMessageInherited(models.TransientModel):
-    _inherit = 'mail.compose.message'
+# class MailComposeMessageInherited(models.TransientModel):
+#     _inherit = 'mail.compose.message'
