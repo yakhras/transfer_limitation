@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="view_user_email_signature_form" model="ir.ui.view">
+            <field name="name">user.email.signature.form</field>
+            <field name="model">res.users.email.signature</field>
+            <field name="arch" type="xml">
+                <form string="Email Signature" create="1">
+                    <sheet>
+                        <group col="2">  <!-- This ensures the two groups are side by side -->
+                            <group>
+                                <field name="user_id"/>
+                                <field name="email"/>
+                            </group>
+                            <group>
+                                <field name="signature_name"/>
+                                <field name="signature"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_user_email_signature_tree" model="ir.ui.view">
+            <field name="name">user.email.signature.tree</field>
+            <field name="model">res.users.email.signature</field>
+            <field name="arch" type="xml">
+                <tree string="Email Signature" create="1">
+                    <field name="user_id"/>
+                    <field name="email"/>
+                    <field name="signature_name"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- <record id="product_info_search_view" model="ir.ui.view">
+            <field name="name">product.info.search</field>
+            <field name="model">product.info</field>
+            <field name="arch" type="xml">
+                <search string="Product">
+                    <field name="product_id" string="Product" filter_domain="['|', '|', ('product_id', 'ilike', self), ('default_code', 'ilike', self),('display_name', 'ilike', self)]"/>
+                    <field name="categ_name" filter_domain="[('categ_id', 'child_of', raw_value)]"/>
+                    <searchpanel>
+                        <field name="categ_id" icon="fa-users" enable_counters="1"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record> -->
+
+        <record id="action_user_email_signature" model="ir.actions.act_window">
+            <field name="name">Email Signature</field>
+            <field name="res_model">res.users.email.signature</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p>
+                    View Signatures.
+                </p>
+            </field>
+            <field name="context">{
+            }</field>
+            <field name="domain">[]</field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_user_email_signature" name="Email Signature" action="action_user_email_signature" parent="sale.product_menu_catalog" sequence="7"/>
+    </data>
+</odoo>
