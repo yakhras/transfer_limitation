@@ -195,7 +195,7 @@ class MailComposeMessageInherited(models.TransientModel):
 
             results[res_id] = mail_values
         
-        result.result = res_ids
+            result.result = results[res_id]
         results = self._process_state(results)
         return results
 
