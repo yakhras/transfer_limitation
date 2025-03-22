@@ -89,5 +89,17 @@
             </field>
         </record>
 
+        <record id="email_compose_message_wizard_form_inherit" model="ir.ui.view">
+            <field name="name">email.compose.message.wizard.form.inherit</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+            <field name="arch" type="xml">
+                <field name="email_from" position="attributes">
+                    <attribute name="attrs">{'invisible': []}
+                    </attribute>
+                </field>
+            </field>
+        </record>
+
     </data>
 </odoo>
