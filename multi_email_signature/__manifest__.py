@@ -7,7 +7,7 @@
 
     'description': """
         Multi Email Signature for Odoo Users
-        =====================================
+        
         This module allows users to manage multiple email signatures based on different email addresses.
         Key Features:
         - Store multiple signatures per user.
