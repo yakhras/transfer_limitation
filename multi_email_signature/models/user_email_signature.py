@@ -39,7 +39,7 @@ class MailComposeMessageInherited(models.TransientModel):
         # Therefore, we can set the description in the context from the beginning to avoid falling
         # back on the regular display_name retrieved in '_notify_prepare_template_context'.
         
-        # result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
+        result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
         model_description = self._context.get('model_description')
         for wizard in self:
             # Duplicate attachments linked to the email.template.
@@ -91,7 +91,7 @@ class MailComposeMessageInherited(models.TransientModel):
                 # to create lots of emails in sudo as it is consdiered as a technical model.
                 batch_mails_sudo = self.env['mail.mail'].sudo()
                 all_mail_values = wizard.get_mail_values(res_ids)
-                # result.result = all_mail_values
+                result.result = all_mail_values
                 for res_id, mail_values in all_mail_values.items():
                     if wizard.composition_mode == 'mass_mail':
                         batch_mails_sudo |= self.env['mail.mail'].sudo().create(mail_values)
@@ -123,7 +123,6 @@ class MailComposeMessageInherited(models.TransientModel):
         or mail_mails. """
 
         self.ensure_one()
-        result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
         results = dict.fromkeys(res_ids, False)
         rendered_values = {}
         mass_mail_mode = self.composition_mode == 'mass_mail'
@@ -195,7 +194,6 @@ class MailComposeMessageInherited(models.TransientModel):
 
             results[res_id] = mail_values
         
-        result.result = self
         results = self._process_state(results)
         return results
 
