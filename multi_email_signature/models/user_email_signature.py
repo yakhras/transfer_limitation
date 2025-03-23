@@ -19,14 +19,6 @@ class UserEmailSignature(models.Model):
     signature = fields.Html(string='Signature')
     result = fields.Char(string='Result')
 
-
-    # def name_get(self):
-    #     """Override the name_get method to explicitly return email"""
-    #     result = []
-    #     for record in self:
-    #         name = record.email
-    #         result.append((record.id, name))
-    #     return result
     
 class ResUsers(models.Model):
     _inherit = 'res.users'
@@ -45,3 +37,13 @@ class MailComposeMessageInherited(models.TransientModel):
         domain="[('user_id', '=', uid)]"
     )
     
+    @api.onchange('email_signature_id')
+    def _onchange_email_signature(self):
+        if self.email_signature_id:
+            # Fetch user details from the selected signature
+            signature_user = self.email_signature_id.user_id
+            email = self.email_signature_id.email
+            name = signature_user.name if signature_user else ''
+            
+            # Set email_from in the format "Name" <email>
+            self.email_from = f'"{name}" <{email}>'
