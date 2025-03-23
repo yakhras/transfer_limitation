@@ -19,7 +19,7 @@ class UserEmailSignature(models.Model):
     signature = fields.Html(string='Signature')
     result = fields.Char(string='Result')
 
-
+    
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
