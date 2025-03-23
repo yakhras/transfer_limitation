@@ -202,7 +202,7 @@ class MailComposeMessageInherited(models.TransientModel):
                 all_mail_values = wizard.get_mail_values(res_ids)
                 for res_id, mail_values in all_mail_values.items():
                     result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
-                    result.result = mail_values
+                    
                     if wizard.composition_mode == 'mass_mail':
                         batch_mails_sudo |= self.env['mail.mail'].sudo().create(mail_values)
                     else:
@@ -213,6 +213,7 @@ class MailComposeMessageInherited(models.TransientModel):
                             add_sign=not bool(wizard.template_id),
                             mail_auto_delete=wizard.template_id.auto_delete if wizard.template_id else self._context.get('mail_auto_delete', True),
                             model_description=model_description)
+                        result.result = post_params
                         post_params.update(mail_values)
                         if ActiveModel._name == 'mail.thread':
                             if wizard.model:
