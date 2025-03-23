@@ -96,8 +96,10 @@
             <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
             <field name="arch" type="xml">
                 <field name="email_from" position="attributes">
-                    <attribute name="attrs">{'invisible': []}
-                    </attribute>
+                    <attribute name="attrs">{'invisible': []}</attribute>
+                </field>
+                <field name="email_from" position="before">
+                    <field name="email_signature_id"/>
                 </field>
             </field>
         </record>
