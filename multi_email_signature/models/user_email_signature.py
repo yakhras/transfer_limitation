@@ -32,6 +32,7 @@ class MailComposeMessageInherited(models.TransientModel):
     email_signature_id = fields.Many2one(
         'res.users.email.signature', 
         string='Email Signature', 
-        help='Select an email signature to use for this email'
+        help='Select an email signature to use for this email',
+        domain="[('user_id', '=', uid)]"
     )
     
