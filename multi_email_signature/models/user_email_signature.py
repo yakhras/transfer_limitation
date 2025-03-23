@@ -63,8 +63,10 @@ class MailThread(models.AbstractModel):
     @api.model
     def _notify_prepare_template_context(self, message, msg_vals, model_description=False, mail_auto_delete=True):
         # compute send user and its related signature
+        signature_id = self.env.context.get('signature')
         result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
-        result.result = str(self.env.context.get('signature'))
+        if result:
+            result.write({'result': str(signature_id)})  # Persist value in DB
         signature = ''
         user = self.env.user
         author = message.env['res.partner'].browse(msg_vals.get('author_id')) if msg_vals else message.author_id
