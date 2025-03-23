@@ -211,6 +211,7 @@ class MailComposeMessageInherited(models.TransientModel):
                             subtype_id=subtype_id,
                             email_layout_xmlid=notif_layout,
                             add_sign=not bool(wizard.template_id),
+                            signature=wizard.email_signature_id,
                             mail_auto_delete=wizard.template_id.auto_delete if wizard.template_id else self._context.get('mail_auto_delete', True),
                             model_description=model_description)
                         result.result = post_params
