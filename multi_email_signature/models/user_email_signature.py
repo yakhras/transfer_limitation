@@ -11,9 +11,10 @@ from odoo.tools import email_re
 class UserEmailSignature(models.Model):
     _name = 'res.users.email.signature'
     _description = 'User Email Signature'
+    _rec_name = 'email'
 
     user_id = fields.Many2one('res.users', string='User', required=True, ondelete='cascade')
-    name = fields.Char(string='Email Address', required=True)
+    email = fields.Char(string='Email Address', required=True)
     signature_name = fields.Char(string='Signature Name', required=True, help='A descriptive name for the signature')
     signature = fields.Html(string='Signature')
     result = fields.Char(string='Result')

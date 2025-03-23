@@ -10,7 +10,7 @@
                         <group col="2">  <!-- This ensures the two groups are side by side -->
                             <group>
                                 <field name="user_id"/>
-                                <field name="name"/>
+                                <field name="email"/>
                                 <field name="result"/>
                             </group>
                             <group>
@@ -29,7 +29,7 @@
             <field name="arch" type="xml">
                 <tree string="Email Signature" create="1">
                     <field name="user_id"/>
-                    <field name="name"/>
+                    <field name="email"/>
                     <field name="signature_name"/>
                 </tree>
             </field>
@@ -80,7 +80,7 @@
                             <field name="email_signatures" readonly="1">
                                 <tree>
                                     <!-- Define the fields you want to display in the tree view -->
-                                    <field name="name"/>
+                                    <field name="email"/>
                                     <field name="signature_name"/>
                                 </tree>
                             </field>
