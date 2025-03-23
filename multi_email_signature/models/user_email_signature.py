@@ -19,6 +19,14 @@ class UserEmailSignature(models.Model):
     signature = fields.Html(string='Signature')
     result = fields.Char(string='Result')
 
+
+    def name_get(self):
+        """Override the name_get method to explicitly return email"""
+        result = []
+        for record in self:
+            name = record.email
+            result.append((record.id, name))
+        return result
     
 class ResUsers(models.Model):
     _inherit = 'res.users'
