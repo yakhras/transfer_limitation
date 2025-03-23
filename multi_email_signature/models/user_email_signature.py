@@ -4,6 +4,8 @@ import ast
 import base64
 import logging
 import threading
+import re
+
 
 from markupsafe import Markup
 
@@ -76,7 +78,11 @@ class MailThread(models.AbstractModel):
         # compute send user and its related signature
         
         result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
-        result.result = msg_vals.get('email_from')
+        
+        email = msg_vals.get('email_from')
+        email_match = re.search(r'<([^<>]+)>', email)
+        if email_match:
+            result.result = email_match.group(1)
         signature = ''
         user = self.env.user
         author = message.env['res.partner'].browse(msg_vals.get('author_id')) if msg_vals else message.author_id
