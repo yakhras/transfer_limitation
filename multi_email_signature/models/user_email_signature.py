@@ -13,7 +13,7 @@ class UserEmailSignature(models.Model):
     _description = 'User Email Signature'
 
     user_id = fields.Many2one('res.users', string='User', required=True, ondelete='cascade')
-    email = fields.Char(string='Email Address', required=True)
+    name = fields.Char(string='Email Address', required=True)
     signature_name = fields.Char(string='Signature Name', required=True, help='A descriptive name for the signature')
     signature = fields.Html(string='Signature')
     result = fields.Char(string='Result')
