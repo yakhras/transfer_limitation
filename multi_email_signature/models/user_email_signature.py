@@ -46,11 +46,14 @@ class MailComposeMessageInherited(models.TransientModel):
             signature_user = self.email_signature_id.user_id
             email = self.email_signature_id.email
             name = signature_user.name if signature_user else ''
-            new_context = self.env.context.copy()
             
             # Set email_from in the format "Name" <email>
             self.email_from = f'"{name}" <{email}>'
-            self.email_signature_id.result = self.env.context.update({'signature':9})
+            new_context = dict(self.env.context)
+            new_context['signature'] = 9  # Example value, adjust as needed
+            
+            # Assign the new value to the result field
+            self.email_signature_id.result = new_context.get('signature')
 
 
 class MailThread(models.AbstractModel):
