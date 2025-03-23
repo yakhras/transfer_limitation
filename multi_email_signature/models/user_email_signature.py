@@ -50,7 +50,7 @@ class MailComposeMessageInherited(models.TransientModel):
             # Set email_from in the format "Name" <email>
             self.email_from = f'"{name}" <{email}>'
             new_context = dict(self.env.context)
-            new_context['signature'] = 9  # Example value, adjust as needed
+            new_context['signature'] = self.email_signature_id.id  # Example value, adjust as needed
             
             # Assign the new value to the result field
             self.email_signature_id.result = new_context.get('signature')
