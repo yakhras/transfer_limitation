@@ -60,158 +60,246 @@ class MailComposeMessageInherited(models.TransientModel):
             # # Assign the new value to the result field
             # self = self.with_context(signature=self.email_signature_id.id)
 
-    def get_mail_values(self, res_ids):
-        """Generate the values that will be used by send_mail to create mail_messages
-        or mail_mails. """
-        self.ensure_one()
-        results = dict.fromkeys(res_ids, False)
-        rendered_values = {}
-        mass_mail_mode = self.composition_mode == 'mass_mail'
 
-        # render all template-based value at once
-        if mass_mail_mode and self.model:
-            rendered_values = self.render_message(res_ids)
-        # compute alias-based reply-to in batch
-        reply_to_value = dict.fromkeys(res_ids, None)
-        if mass_mail_mode and not self.reply_to_force_new:
-            records = self.env[self.model].browse(res_ids)
-            reply_to_value = records._notify_get_reply_to(default=False)
-            # when having no specific reply-to, fetch rendered email_from value
-            for res_id, reply_to in reply_to_value.items():
-                if not reply_to:
-                    reply_to_value[res_id] = rendered_values.get(res_id, {}).get('email_from', False)
+    # def get_mail_values(self, res_ids):
+    #     """Generate the values that will be used by send_mail to create mail_messages
+    #     or mail_mails. """
+    #     self.ensure_one()
+    #     results = dict.fromkeys(res_ids, False)
+    #     rendered_values = {}
+    #     mass_mail_mode = self.composition_mode == 'mass_mail'
 
-        for res_id in res_ids:
-            # static wizard (mail.message) values
-            mail_values = {
-                'subject': self.subject,
-                'body': self.body or '',
-                'parent_id': self.parent_id and self.parent_id.id,
-                'partner_ids': [partner.id for partner in self.partner_ids],
-                'attachment_ids': [attach.id for attach in self.attachment_ids],
-                'author_id': self.author_id.id,
-                'signature_id': self.email_signature_id.id,
-                'email_from': self.email_from,
-                'record_name': self.record_name,
-                'reply_to_force_new': self.reply_to_force_new,
-                'mail_server_id': self.mail_server_id.id,
-                'mail_activity_type_id': self.mail_activity_type_id.id,
-            }
+    #     # render all template-based value at once
+    #     if mass_mail_mode and self.model:
+    #         rendered_values = self.render_message(res_ids)
+    #     # compute alias-based reply-to in batch
+    #     reply_to_value = dict.fromkeys(res_ids, None)
+    #     if mass_mail_mode and not self.reply_to_force_new:
+    #         records = self.env[self.model].browse(res_ids)
+    #         reply_to_value = records._notify_get_reply_to(default=False)
+    #         # when having no specific reply-to, fetch rendered email_from value
+    #         for res_id, reply_to in reply_to_value.items():
+    #             if not reply_to:
+    #                 reply_to_value[res_id] = rendered_values.get(res_id, {}).get('email_from', False)
 
-            # mass mailing: rendering override wizard static values
-            if mass_mail_mode and self.model:
-                record = self.env[self.model].browse(res_id)
-                mail_values['headers'] = record._notify_email_headers()
-                # keep a copy unless specifically requested, reset record name (avoid browsing records)
-                mail_values.update(is_notification=not self.auto_delete_message, model=self.model, res_id=res_id, record_name=False)
-                # auto deletion of mail_mail
-                if self.auto_delete or self.template_id.auto_delete:
-                    mail_values['auto_delete'] = True
-                # rendered values using template
-                email_dict = rendered_values[res_id]
-                mail_values['partner_ids'] += email_dict.pop('partner_ids', [])
-                mail_values.update(email_dict)
-                if not self.reply_to_force_new:
-                    mail_values.pop('reply_to')
-                    if reply_to_value.get(res_id):
-                        mail_values['reply_to'] = reply_to_value[res_id]
-                if self.reply_to_force_new and not mail_values.get('reply_to'):
-                    mail_values['reply_to'] = mail_values['email_from']
-                # mail_mail values: body -> body_html, partner_ids -> recipient_ids
-                mail_values['body_html'] = mail_values.get('body', '')
-                mail_values['recipient_ids'] = [Command.link(id) for id in mail_values.pop('partner_ids', [])]
+    #     for res_id in res_ids:
+    #         # static wizard (mail.message) values
+    #         mail_values = {
+    #             'subject': self.subject,
+    #             'body': self.body or '',
+    #             'parent_id': self.parent_id and self.parent_id.id,
+    #             'partner_ids': [partner.id for partner in self.partner_ids],
+    #             'attachment_ids': [attach.id for attach in self.attachment_ids],
+    #             'author_id': self.author_id.id,
+    #             'signature_id': self.email_signature_id.id,
+    #             'email_from': self.email_from,
+    #             'record_name': self.record_name,
+    #             'reply_to_force_new': self.reply_to_force_new,
+    #             'mail_server_id': self.mail_server_id.id,
+    #             'mail_activity_type_id': self.mail_activity_type_id.id,
+    #         }
 
-                # process attachments: should not be encoded before being processed by message_post / mail_mail create
-                mail_values['attachments'] = [(name, base64.b64decode(enc_cont)) for name, enc_cont in email_dict.pop('attachments', list())]
-                attachment_ids = []
-                for attach_id in mail_values.pop('attachment_ids'):
-                    new_attach_id = self.env['ir.attachment'].browse(attach_id).copy({'res_model': self._name, 'res_id': self.id})
-                    attachment_ids.append(new_attach_id.id)
-                attachment_ids.reverse()
-                mail_values['attachment_ids'] = self.env['mail.thread'].with_context(attached_to=record)._message_post_process_attachments(
-                    mail_values.pop('attachments', []),
-                    attachment_ids,
-                    {'model': 'mail.message', 'res_id': 0}
-                )['attachment_ids']
+    #         # mass mailing: rendering override wizard static values
+    #         if mass_mail_mode and self.model:
+    #             record = self.env[self.model].browse(res_id)
+    #             mail_values['headers'] = record._notify_email_headers()
+    #             # keep a copy unless specifically requested, reset record name (avoid browsing records)
+    #             mail_values.update(is_notification=not self.auto_delete_message, model=self.model, res_id=res_id, record_name=False)
+    #             # auto deletion of mail_mail
+    #             if self.auto_delete or self.template_id.auto_delete:
+    #                 mail_values['auto_delete'] = True
+    #             # rendered values using template
+    #             email_dict = rendered_values[res_id]
+    #             mail_values['partner_ids'] += email_dict.pop('partner_ids', [])
+    #             mail_values.update(email_dict)
+    #             if not self.reply_to_force_new:
+    #                 mail_values.pop('reply_to')
+    #                 if reply_to_value.get(res_id):
+    #                     mail_values['reply_to'] = reply_to_value[res_id]
+    #             if self.reply_to_force_new and not mail_values.get('reply_to'):
+    #                 mail_values['reply_to'] = mail_values['email_from']
+    #             # mail_mail values: body -> body_html, partner_ids -> recipient_ids
+    #             mail_values['body_html'] = mail_values.get('body', '')
+    #             mail_values['recipient_ids'] = [Command.link(id) for id in mail_values.pop('partner_ids', [])]
 
-            results[res_id] = mail_values
+    #             # process attachments: should not be encoded before being processed by message_post / mail_mail create
+    #             mail_values['attachments'] = [(name, base64.b64decode(enc_cont)) for name, enc_cont in email_dict.pop('attachments', list())]
+    #             attachment_ids = []
+    #             for attach_id in mail_values.pop('attachment_ids'):
+    #                 new_attach_id = self.env['ir.attachment'].browse(attach_id).copy({'res_model': self._name, 'res_id': self.id})
+    #                 attachment_ids.append(new_attach_id.id)
+    #             attachment_ids.reverse()
+    #             mail_values['attachment_ids'] = self.env['mail.thread'].with_context(attached_to=record)._message_post_process_attachments(
+    #                 mail_values.pop('attachments', []),
+    #                 attachment_ids,
+    #                 {'model': 'mail.message', 'res_id': 0}
+    #             )['attachment_ids']
 
-        results = self._process_state(results)
-        return results
+    #         results[res_id] = mail_values
+
+    #     results = self._process_state(results)
+    #     return results
+    
+
+    def _action_send_mail(self, auto_commit=False):
+        """ Process the wizard content and proceed with sending the related
+            email(s), rendering any template patterns on the fly if needed. """
+        notif_layout = self._context.get('custom_layout')
+        # Several custom layouts make use of the model description at rendering, e.g. in the
+        # 'View <document>' button. Some models are used for different business concepts, such as
+        # 'purchase.order' which is used for a RFQ and and PO. To avoid confusion, we must use a
+        # different wording depending on the state of the object.
+        # Therefore, we can set the description in the context from the beginning to avoid falling
+        # back on the regular display_name retrieved in '_notify_prepare_template_context'.
+        model_description = self._context.get('model_description')
+        for wizard in self:
+            # Duplicate attachments linked to the email.template.
+            # Indeed, basic mail.compose.message wizard duplicates attachments in mass
+            # mailing mode. But in 'single post' mode, attachments of an email template
+            # also have to be duplicated to avoid changing their ownership.
+            if wizard.attachment_ids and wizard.composition_mode != 'mass_mail' and wizard.template_id:
+                new_attachment_ids = []
+                for attachment in wizard.attachment_ids:
+                    if attachment in wizard.template_id.attachment_ids:
+                        new_attachment_ids.append(attachment.copy({'res_model': 'mail.compose.message', 'res_id': wizard.id}).id)
+                    else:
+                        new_attachment_ids.append(attachment.id)
+                new_attachment_ids.reverse()
+                wizard.write({'attachment_ids': [Command.set(new_attachment_ids)]})
+
+            # Mass Mailing
+            mass_mode = wizard.composition_mode in ('mass_mail', 'mass_post')
+
+            ActiveModel = self.env[wizard.model] if wizard.model and hasattr(self.env[wizard.model], 'message_post') else self.env['mail.thread']
+            if wizard.composition_mode == 'mass_post':
+                # do not send emails directly but use the queue instead
+                # add context key to avoid subscribing the author
+                ActiveModel = ActiveModel.with_context(mail_notify_force_send=False, mail_create_nosubscribe=True)
+            # wizard works in batch mode: [res_id] or active_ids or active_domain
+            if mass_mode and wizard.use_active_domain and wizard.model:
+                res_ids = self.env[wizard.model].search(ast.literal_eval(wizard.active_domain)).ids
+            elif mass_mode and wizard.model and self._context.get('active_ids'):
+                res_ids = self._context['active_ids']
+            else:
+                res_ids = [wizard.res_id]
+
+            batch_size = int(self.env['ir.config_parameter'].sudo().get_param('mail.batch_size')) or self._batch_size
+            sliced_res_ids = [res_ids[i:i + batch_size] for i in range(0, len(res_ids), batch_size)]
+
+            if wizard.composition_mode == 'mass_mail' or wizard.is_log or (wizard.composition_mode == 'mass_post' and not wizard.notify):  # log a note: subtype is False
+                subtype_id = False
+            elif wizard.subtype_id:
+                subtype_id = wizard.subtype_id.id
+            else:
+                subtype_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_comment')
+
+            for res_ids in sliced_res_ids:
+                # mass mail mode: mail are sudo-ed, as when going through get_mail_values
+                # standard access rights on related records will be checked when browsing them
+                # to compute mail values. If people have access to the records they have rights
+                # to create lots of emails in sudo as it is consdiered as a technical model.
+                batch_mails_sudo = self.env['mail.mail'].sudo()
+                all_mail_values = wizard.get_mail_values(res_ids)
+                for res_id, mail_values in all_mail_values.items():
+                    result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
+                    result.result = mail_values
+                    if wizard.composition_mode == 'mass_mail':
+                        batch_mails_sudo |= self.env['mail.mail'].sudo().create(mail_values)
+                    else:
+                        post_params = dict(
+                            message_type=wizard.message_type,
+                            subtype_id=subtype_id,
+                            email_layout_xmlid=notif_layout,
+                            add_sign=not bool(wizard.template_id),
+                            mail_auto_delete=wizard.template_id.auto_delete if wizard.template_id else self._context.get('mail_auto_delete', True),
+                            model_description=model_description)
+                        post_params.update(mail_values)
+                        if ActiveModel._name == 'mail.thread':
+                            if wizard.model:
+                                post_params['model'] = wizard.model
+                                post_params['res_id'] = res_id
+                            if not ActiveModel.message_notify(**post_params):
+                                # if message_notify returns an empty record set, no recipients where found.
+                                raise UserError(_("No recipient found."))
+                        else:
+                            ActiveModel.browse(res_id).message_post(**post_params)
+
+                if wizard.composition_mode == 'mass_mail':
+                    batch_mails_sudo.send(auto_commit=auto_commit)
 
 
-class MailThread(models.AbstractModel):
-    _inherit = 'mail.thread'
+# class MailThread(models.AbstractModel):
+#     _inherit = 'mail.thread'
 
 
     
-    @api.model
-    def _notify_prepare_template_context(self, message, msg_vals, model_description=False, mail_auto_delete=True):
-        # compute send user and its related signature
+#     @api.model
+#     def _notify_prepare_template_context(self, message, msg_vals, model_description=False, mail_auto_delete=True):
+#         # compute send user and its related signature
         
-        result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
-        result.result = msg_vals
-        signature = ''
-        user = self.env.user
-        author = message.env['res.partner'].browse(msg_vals.get('author_id')) if msg_vals else message.author_id
-        model = msg_vals.get('model') if msg_vals else message.model
-        add_sign = msg_vals.get('add_sign') if msg_vals else message.add_sign
-        subtype_id = msg_vals.get('subtype_id') if msg_vals else message.subtype_id.id
-        message_id = message.id
-        record_name = msg_vals.get('record_name') if msg_vals else message.record_name
-        author_user = user if user.partner_id == author else author.user_ids[0] if author and author.user_ids else False
-        # trying to use user (self.env.user) instead of browing user_ids if he is the author will give a sudo user,
+#         result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
+#         result.result = msg_vals
+#         signature = ''
+#         user = self.env.user
+#         author = message.env['res.partner'].browse(msg_vals.get('author_id')) if msg_vals else message.author_id
+#         model = msg_vals.get('model') if msg_vals else message.model
+#         add_sign = msg_vals.get('add_sign') if msg_vals else message.add_sign
+#         subtype_id = msg_vals.get('subtype_id') if msg_vals else message.subtype_id.id
+#         message_id = message.id
+#         record_name = msg_vals.get('record_name') if msg_vals else message.record_name
+#         author_user = user if user.partner_id == author else author.user_ids[0] if author and author.user_ids else False
+#         # trying to use user (self.env.user) instead of browing user_ids if he is the author will give a sudo user,
 
-        # Fallback to the default behavior when no email_signature_id is provided
-        if author_user:
-            user = author_user
-            if add_sign:
-                signature = user.signature
-        elif add_sign and author.name:
-            signature = Markup("<p>-- <br/>%s</p>") % author.name
+#         # Fallback to the default behavior when no email_signature_id is provided
+#         if author_user:
+#             user = author_user
+#             if add_sign:
+#                 signature = user.signature
+#         elif add_sign and author.name:
+#             signature = Markup("<p>-- <br/>%s</p>") % author.name
 
-        # company value should fall back on env.company if:
-        # - no company_id field on record
-        # - company_id field available but not set
-        company = self.company_id.sudo() if self and 'company_id' in self and self.company_id else self.env.company
-        if company.website:
-            website_url = 'http://%s' % company.website if not company.website.lower().startswith(('http:', 'https:')) else company.website
-        else:
-            website_url = False
+#         # company value should fall back on env.company if:
+#         # - no company_id field on record
+#         # - company_id field available but not set
+#         company = self.company_id.sudo() if self and 'company_id' in self and self.company_id else self.env.company
+#         if company.website:
+#             website_url = 'http://%s' % company.website if not company.website.lower().startswith(('http:', 'https:')) else company.website
+#         else:
+#             website_url = False
 
-        # Retrieve the language in which the template was rendered, in order to render the custom
-        # layout in the same language.
-        # TDE FIXME: this whole brol should be cleaned !
-        lang = self.env.context.get('lang')
-        if {'default_template_id', 'default_model', 'default_res_id'} <= self.env.context.keys():
-            template = self.env['mail.template'].browse(self.env.context['default_template_id'])
-            if template and template.lang:
-                lang = template._render_lang([self.env.context['default_res_id']])[self.env.context['default_res_id']]
+#         # Retrieve the language in which the template was rendered, in order to render the custom
+#         # layout in the same language.
+#         # TDE FIXME: this whole brol should be cleaned !
+#         lang = self.env.context.get('lang')
+#         if {'default_template_id', 'default_model', 'default_res_id'} <= self.env.context.keys():
+#             template = self.env['mail.template'].browse(self.env.context['default_template_id'])
+#             if template and template.lang:
+#                 lang = template._render_lang([self.env.context['default_res_id']])[self.env.context['default_res_id']]
 
-        if not model_description and model:
-            model_description = self.env['ir.model'].with_context(lang=lang)._get(model).display_name
+#         if not model_description and model:
+#             model_description = self.env['ir.model'].with_context(lang=lang)._get(model).display_name
 
-        tracking = []
-        if msg_vals.get('tracking_value_ids', True) if msg_vals else bool(self): # could be tracking
-            for tracking_value in self.env['mail.tracking.value'].sudo().search([('mail_message_id', '=', message.id)]):
-                groups = tracking_value.field_groups
-                if not groups or self.env.is_superuser() or self.user_has_groups(groups):
-                    tracking.append((tracking_value.field_desc,
-                                    tracking_value.get_old_display_value()[0],
-                                    tracking_value.get_new_display_value()[0]))
+#         tracking = []
+#         if msg_vals.get('tracking_value_ids', True) if msg_vals else bool(self): # could be tracking
+#             for tracking_value in self.env['mail.tracking.value'].sudo().search([('mail_message_id', '=', message.id)]):
+#                 groups = tracking_value.field_groups
+#                 if not groups or self.env.is_superuser() or self.user_has_groups(groups):
+#                     tracking.append((tracking_value.field_desc,
+#                                     tracking_value.get_old_display_value()[0],
+#                                     tracking_value.get_new_display_value()[0]))
 
-        is_discussion = subtype_id == self.env['ir.model.data']._xmlid_to_res_id('mail.mt_comment')
+#         is_discussion = subtype_id == self.env['ir.model.data']._xmlid_to_res_id('mail.mt_comment')
 
-        return {
-            'message': message,
-            'signature': signature,
-            'website_url': website_url,
-            'company': company,
-            'model_description': model_description,
-            'record': self,
-            'record_name': record_name,
-            'tracking_values': tracking,
-            'is_discussion': is_discussion,
-            'subtype': message.subtype_id,
-            'lang': lang,
-        }
+#         return {
+#             'message': message,
+#             'signature': signature,
+#             'website_url': website_url,
+#             'company': company,
+#             'model_description': model_description,
+#             'record': self,
+#             'record_name': record_name,
+#             'tracking_values': tracking,
+#             'is_discussion': is_discussion,
+#             'subtype': message.subtype_id,
+#             'lang': lang,
+#         }
