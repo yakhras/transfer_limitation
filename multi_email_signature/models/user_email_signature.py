@@ -49,7 +49,7 @@ class MailComposeMessageInherited(models.TransientModel):
             
             # Set email_from in the format "Name" <email>
             self.email_from = f'"{name}" <{email}>'
-            self.email_signature_id.with_context(signature_id = self.email_signature_id.id)
+            self.env.context = dict(self.env.context, signature=self.email_signature_id.id)
 
 class MailThread(models.AbstractModel):
     _inherit = 'mail.thread'
