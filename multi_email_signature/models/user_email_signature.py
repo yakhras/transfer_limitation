@@ -214,8 +214,9 @@ class MailComposeMessageInherited(models.TransientModel):
                             signature=wizard.email_signature_id,
                             mail_auto_delete=wizard.template_id.auto_delete if wizard.template_id else self._context.get('mail_auto_delete', True),
                             model_description=model_description)
-                        result.result = post_params
+                        
                         post_params.update(mail_values)
+                        result.result = mail_values
                         if ActiveModel._name == 'mail.thread':
                             if wizard.model:
                                 post_params['model'] = wizard.model
