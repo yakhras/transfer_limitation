@@ -50,7 +50,7 @@ class MailComposeMessageInherited(models.TransientModel):
             
             # Set email_from in the format "Name" <email>
             self.email_from = f'"{name}" <{email}>'
-            self.email_signature_id.result = self.email_signature_id
+            self.email_signature_id.result = self.env.context
 
 
 class MailThread(models.AbstractModel):
