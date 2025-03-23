@@ -99,7 +99,7 @@
                     <attribute name="attrs">{'invisible': []}</attribute>
                 </field>
                 <field name="email_from" position="before">
-                    <field name="email_signature_id" readonly="1"/>
+                    <field name="email_signature_id" options="{'no_create': True, 'no_edit': True}"/>
                 </field>
             </field>
         </record>
