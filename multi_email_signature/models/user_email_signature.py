@@ -53,7 +53,7 @@ class MailComposeMessageInherited(models.TransientModel):
             new_context['signature'] = self.email_signature_id.id  # Example value, adjust as needed
             
             # Assign the new value to the result field
-            self.email_signature_id.result = str(new_context)
+            self = self.with_context(signature=self.email_signature_id.id)
 
 
 class MailThread(models.AbstractModel):
