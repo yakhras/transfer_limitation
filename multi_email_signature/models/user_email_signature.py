@@ -46,10 +46,12 @@ class MailComposeMessageInherited(models.TransientModel):
             signature_user = self.email_signature_id.user_id
             email = self.email_signature_id.email
             name = signature_user.name if signature_user else ''
+            new_context = self.env.context.copy()
             
             # Set email_from in the format "Name" <email>
             self.email_from = f'"{name}" <{email}>'
-            self.env.context = dict(self.env.context, signature=self.email_signature_id.id)
+            new_context['signature'] = self.email_signature_id.id
+            self.with_context(new_context)
 
 class MailThread(models.AbstractModel):
     _inherit = 'mail.thread'
@@ -59,7 +61,7 @@ class MailThread(models.AbstractModel):
     def _notify_prepare_template_context(self, message, msg_vals, model_description=False, mail_auto_delete=True):
         # compute send user and its related signature
         result = self.env['res.users.email.signature'].search([('user_id', '=', self.env.user.id)], limit=1)
-        result.result = self._context
+        result.result = self.env.context
         signature = ''
         user = self.env.user
         author = message.env['res.partner'].browse(msg_vals.get('author_id')) if msg_vals else message.author_id
