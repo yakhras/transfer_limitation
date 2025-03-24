@@ -64,7 +64,7 @@
         </record>
 
         <!-- Menu Item -->
-        <menuitem id="menu_user_email_signature" name="Email Signature" action="action_user_email_signature" parent="sale.product_menu_catalog" sequence="7"/>
+        <menuitem id="menu_user_email_signature" name="Email Signature" action="action_user_email_signature" parent="base.menu_email" sequence="12"/>
 
 
         <record id="view_users_form_inherit_email_signatures_last_page" model="ir.ui.view">
