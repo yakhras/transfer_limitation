@@ -1,20 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import ast
-import base64
-import logging
-import threading
 import re
-
 
 from markupsafe import Markup
 
-from odoo import _, api, fields, models, tools, Command, registry, SUPERUSER_ID
-from odoo.exceptions import UserError
-from odoo.tools import email_re
+from odoo import _, api, fields, models
 
-from odoo.tools.misc import clean_context, split_every
-_logger = logging.getLogger(__name__)
+
+
 
 
 class UserEmailSignature(models.Model):
@@ -76,9 +69,6 @@ class MailThread(models.AbstractModel):
     @api.model
     def _notify_prepare_template_context(self, message, msg_vals, model_description=False, mail_auto_delete=True):
         # compute send user and its related signature
-        
-        
-        
         email = msg_vals.get('email_from')
         email_match = re.search(r'<([^<>]+)>', email)
         if email_match:
@@ -97,12 +87,15 @@ class MailThread(models.AbstractModel):
         # trying to use user (self.env.user) instead of browing user_ids if he is the author will give a sudo user,
 
         # Fallback to the default behavior when no email_signature_id is provided
-        if author_user:
-            user = author_user
-            if add_sign:
-                signature = user.signature
-        elif add_sign and author.name:
-            signature = Markup("<p>-- <br/>%s</p>") % author.name
+        if results:
+            signature = results.signature
+        else:
+            if author_user:
+                user = author_user
+                if add_sign:
+                    signature = user.signature
+            elif add_sign and author.name:
+                signature = Markup("<p>-- <br/>%s</p>") % author.name
 
         # company value should fall back on env.company if:
         # - no company_id field on record
