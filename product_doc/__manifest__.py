@@ -28,6 +28,9 @@
         'web.assets_qweb': [
             'product_doc/static/src/attachment_box.xml',
         ],
+        'web.assets_backend': [
+            'product_doc/static/src/project_task_kanban.js',
+    ],
     }
 
 }
