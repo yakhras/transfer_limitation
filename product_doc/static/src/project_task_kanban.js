@@ -4,7 +4,11 @@ import { KanbanRenderer } from "@web/views/kanban/kanban_renderer";
 import { ProjectTaskKanbanColumn } from "@project/views/project_task_kanban_column";
 import { viewUtils } from "@web/views/view_utils";
 
+
+console.log("project_task_kanban.js is executed");
 const CustomProjectTaskKanbanRenderer = KanbanRenderer.extend({
+    
+    
     config: Object.assign({}, KanbanRenderer.prototype.config, {
         KanbanColumn: ProjectTaskKanbanColumn,
     }),
@@ -58,6 +62,11 @@ const CustomProjectTaskKanbanRenderer = KanbanRenderer.extend({
         });
     }
 });
+window.projectTaskKanbanLoaded = true;
+
 
 // Register the new renderer
 export default CustomProjectTaskKanbanRenderer;
+
+console.log(window.projectTaskKanbanLoaded);
+
