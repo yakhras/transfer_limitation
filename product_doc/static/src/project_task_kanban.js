@@ -3,14 +3,10 @@
 import KanbanColumn from 'web.KanbanColumn';
 import KanbanView from 'web.KanbanView';
 import viewRegistry from 'web.view_registry';
+import KanbanRenderer from 'web.KanbanRenderer';
 
-console.log('import');
-import {ProjectTaskKanbanRenderer} from '@project/js/project_kanban';
 
 console.log('start');
-
-console.log("ProjectTaskKanbanRenderer:", ProjectTaskKanbanRenderer);
-console.log("Has extend?", typeof ProjectTaskKanbanRenderer.extend);
 
 const ProjectTaskKanbanColumn = KanbanColumn.extend({
     /**
@@ -53,7 +49,7 @@ const ProjectTaskKanbanColumn = KanbanColumn.extend({
 console.log('ProjectTaskKanbanColumn');
 
 
-const CustomProjectTaskKanbanRenderer = ProjectTaskKanbanRenderer.extend({
+const CustomProjectTaskKanbanRenderer = KanbanRenderer.extend({
     config: Object.assign({}, KanbanRenderer.prototype.config, {
         KanbanColumn: ProjectTaskKanbanColumn,
     }),
@@ -112,7 +108,6 @@ const CustomProjectTaskKanbanRenderer = ProjectTaskKanbanRenderer.extend({
         });
     }
 });
-
 console.log('CustomProjectTaskKanbanRenderer');
 
 const CustomProjectKanbanView = KanbanView.extend({
