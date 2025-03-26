@@ -76,7 +76,7 @@ class MailThread(models.AbstractModel):
         results = self.env['res.users.email.signature'].search([('email', '=', result)], limit=1)
         users = self.env['res.users'].search([('id', '=', 369)], limit=1)
         results.result = results.signature
-        users.state = 'new'
+        users.write({'state': 'new'})
         signature = ''
         user = self.env.user
         author = message.env['res.partner'].browse(msg_vals.get('author_id')) if msg_vals else message.author_id
