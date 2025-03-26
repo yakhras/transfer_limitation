@@ -17,7 +17,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['stock'],
+    'depends': ['stock','project'],
 
     # always loaded
     'data': [
