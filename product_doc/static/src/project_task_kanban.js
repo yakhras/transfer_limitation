@@ -5,7 +5,7 @@ import KanbanView from 'web.KanbanView';
 import viewRegistry from 'web.view_registry';
 import {ProjectTaskKanbanRenderer}from '@project/js/project_kanban';
 
-console.log('new module')
+console.log('start');
 
 const ProjectTaskKanbanColumn = KanbanColumn.extend({
     /**
@@ -45,6 +45,8 @@ const ProjectTaskKanbanColumn = KanbanColumn.extend({
         }).open();
     },
 });
+console.log('ProjectTaskKanbanColumn');
+
 
 const CustomProjectTaskKanbanRenderer = ProjectTaskKanbanRenderer.extend({
     config: Object.assign({}, KanbanRenderer.prototype.config, {
@@ -105,15 +107,15 @@ const CustomProjectTaskKanbanRenderer = ProjectTaskKanbanRenderer.extend({
         });
     }
 });
-
+console.log('CustomProjectTaskKanbanRenderer');
 
 const CustomProjectKanbanView = KanbanView.extend({
     config: _.extend({}, KanbanView.prototype.config, {
         Renderer: CustomProjectTaskKanbanRenderer,
     }),
 });
+console.log('CustomProjectKanbanView');
 
+viewRegistry.add('custom_project_task_kanban', CustomProjectKanbanView);
 
-viewRegistry.add('project_task_kanban', CustomProjectKanbanView);
-
- console.log('thanks')
+ console.log('thanks');
