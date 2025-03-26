@@ -9,6 +9,9 @@ import {ProjectTaskKanbanRenderer} from '@project/js/project_kanban';
 
 console.log('start');
 
+console.log("ProjectTaskKanbanRenderer:", ProjectTaskKanbanRenderer);
+console.log("Has extend?", typeof ProjectTaskKanbanRenderer.extend);
+
 const ProjectTaskKanbanColumn = KanbanColumn.extend({
     /**
      * @override
