@@ -122,7 +122,7 @@
             <table border="0" cellpadding="0" cellspacing="0" width="590" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
                 <tr><td valign="top" style="font-size: 13px;">
                     <div>
-                        Dear Marc Demo
+                        Dear <t t-out="object.name or ''">Marc Demo</t>, <br /><br />
                         You have been invited by OdooBot of YourCompany to connect on Odoo.
                         <div style="margin: 16px 0px 16px 0px;">
                             <a t-att-href="object.signup_url"
