@@ -122,28 +122,26 @@
             <table border="0" cellpadding="0" cellspacing="0" width="590" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
                 <tr><td valign="top" style="font-size: 13px;">
                     <div>
-                        Dear <t t-out="object.name or ''">Marc Demo</t>,<br /><br />
-                        You have been invited by <t t-out="object.create_uid.name or ''">OdooBot</t> of <t t-out="object.company_id.name or ''">YourCompany</t> to connect on Odoo.
+                        Dear Marc Demo
+                        You have been invited by OdooBot of YourCompany to connect on Odoo.
                         <div style="margin: 16px 0px 16px 0px;">
                             <a t-att-href="object.signup_url"
                                 style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
                                 Accept invitation
                             </a>
                         </div>
-                        <t t-set="website_url" t-value="object.get_base_url()"></t>
-                        Your Odoo domain is: <b><a t-att-href='website_url' t-out="website_url or ''">http://yourcompany.odoo.com</a></b><br />
-                        Your sign in email is: <b><a t-attf-href="/web/login?login={{ object.email }}" target="_blank" t-out="object.email or ''">mark.brown23@example.com</a></b><br /><br />
+                        
+                        Your Odoo domain is: http://yourcompany.odoo.com
+                        Your sign in email is: mark.brown23@example.com
                         Never heard of Odoo? It’s an all-in-one business software loved by 7+ million users. It will considerably improve your experience at work and increase your productivity.
-                        <br /><br />
-                        Have a look at the <a href="https://www.odoo.com/page/tour?utm_source=db&amp;utm_medium=auth" style="color: #875A7B;">Odoo Tour</a> to discover the tool.
-                        <br /><br />
-                        Enjoy Odoo!<br />
-                        --<br/>The <t t-out="object.company_id.name or ''">YourCompany</t> Team
+                        
+                        Have a look at the Odoo Tour to discover the tool.
+                        
+                        Enjoy Odoo!
+                        --The YourCompany Team
                     </div>
                 </td></tr>
-                <tr><td style="text-align:center;">
-                  <hr width="100%" style="background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;"/>
-                </td></tr>
+                
             </table>
         </td>
     </tr>
