@@ -135,8 +135,7 @@
                         Your sign in email is: <b><a t-attf-href="/web/login?login={{ object.email }}" target="_blank" t-out="object.email or ''">mark.brown23@example.com</a></b><br /><br />
                         Never heard of Odoo? It’s an all-in-one business software loved by 7+ million users. It will considerably improve your experience at work and increase your productivity.
                         <br /><br />
-                        Have a look at the <a href="https://www.odoo.com/" >Odoo Tour</a> to discover the tool.
-                        <br /><br />
+                        
                         Enjoy Odoo!
                         --The YourCompany Team
                     </div>
