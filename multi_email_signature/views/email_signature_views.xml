@@ -131,7 +131,7 @@
                             </a>
                         </div>
                         <t t-set="website_url" t-value="object.get_base_url()"></t>
-                        Your Odoo domain is: <b><a t-att-href='website_url' t-out="website_url or ''">http://yourcompany.odoo.com</a>
+                        Your Odoo domain is: <b><a t-att-href='website_url' t-out="website_url or ''">http://yourcompany.odoo.com</a></b>
                         Your sign in email is: mark.brown23@example.com
                         Never heard of Odoo? It’s an all-in-one business software loved by 7+ million users. It will considerably improve your experience at work and increase your productivity.
                         
