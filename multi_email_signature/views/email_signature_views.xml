@@ -134,8 +134,8 @@
                         Your Odoo domain is: <b><a t-att-href='website_url' t-out="website_url or ''">http://yourcompany.odoo.com</a></b><br />
                         Your sign in email is: <b><a t-attf-href="/web/login?login={{ object.email }}" target="_blank" t-out="object.email or ''">mark.brown23@example.com</a></b><br /><br />
                         
-                        Enjoy Odoo!
-                        --The YourCompany Team
+                        Enjoy Odoo!<br />
+                        --<br/>The <t t-out="object.company_id.name or ''">YourCompany</t> Team
                     </div>
                 </td></tr>
                 <tr><td style="text-align:center;">
