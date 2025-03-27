@@ -135,7 +135,6 @@
                         Your sign in email is: <b><a t-attf-href="/web/login?login={{ object.email }}" target="_blank" t-out="object.email or ''">mark.brown23@example.com</a></b><br /><br />
                         
                         Enjoy Odoo!<br />
-                        --<br/>The <t t-out="object.company_id.name or ''">YourCompany</t> Team
                     </div>
                 </td></tr>
                 <tr><td style="text-align:center;">
