@@ -57,7 +57,7 @@ const CustomProjectTaskKanbanRenderer = KanbanRenderer.extend({
 
     init: function () {
         this._super.apply(this, arguments);
-        this.isProjectManager = true;
+        this.isProjectManager = false;
     },
 
     willStart: function () {
