@@ -86,9 +86,12 @@
             <field name="model">project.task</field>
             <field name="inherit_id" ref="project.view_task_kanban"/>
             <field name="arch" type="xml">
-                <kanban xpath="@js_class" set="custom_project_task_kanban"/>
+                <xpath expr="//kanban" position="attributes">
+                    <attribute name="js_class">custom_project_task_kanban</attribute>
+                </xpath>
             </field>
         </record>
+
 
     </data>
 </odoo>
