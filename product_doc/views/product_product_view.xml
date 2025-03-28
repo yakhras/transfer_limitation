@@ -80,5 +80,15 @@
 
         <!-- Menu Item -->
         <menuitem id="menu_product_info" name="Product Info" action="action_product_info" parent="sale.product_menu_catalog" sequence="6"/>
+
+        <record id="view_task_kanban_inherit_js_class" model="ir.ui.view">
+            <field name="name">project.task.kanban.inherit.js_class</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_kanban"/>
+            <field name="arch" type="xml">
+                <kanban xpath="@js_class" set="custom_project_task_kanban"/>
+            </field>
+        </record>
+
     </data>
 </odoo>
