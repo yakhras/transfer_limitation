@@ -4,6 +4,7 @@ import KanbanColumn from 'web.KanbanColumn';
 import KanbanView from 'web.KanbanView';
 import viewRegistry from 'web.view_registry';
 import KanbanRenderer from 'web.KanbanRenderer';
+import viewUtils from 'web.viewUtils';
 
 
 console.log('start');
