@@ -7,5 +7,4 @@ class ResUsers(models.Model):
     _inherit = 'res.users'
 
 
-    property_location_id = fields.Many2one('stock.location', string='Default Location')
-    
+    property_location_ids= fields.Many2one('stock.location', string='Default Location')
