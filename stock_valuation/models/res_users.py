@@ -8,7 +8,7 @@ class Users(models.Model):
     _inherit = 'res.users'
 
 
-    warehouse_location_ids = fields.Many2many(
+    property_location_id = fields.Many2many(
         'stock.location',
         compute='_compute_warehouse_location_ids',
         string='Warehouse Locations'
@@ -18,9 +18,9 @@ class Users(models.Model):
     def _compute_warehouse_location_ids(self):
         for user in self:
             if user.property_warehouse_id and user.property_warehouse_id.view_location_id:
-                user.warehouse_location_ids = self.env['stock.location'].search([
+                user.property_location_id = self.env['stock.location'].search([
                     ('id', 'child_of', user.property_warehouse_id.view_location_id.id),
                     ('usage', '!=', 'view')
                 ])
             else:
-                user.warehouse_location_ids = False
+                user.property_location_id = False
