@@ -88,7 +88,7 @@
             <field name="active">False</field>
         </record> -->
 
-        <record id="ir_cron_generate_location_costs" model="ir.cron">
+        <!-- <record id="ir_cron_generate_location_costs" model="ir.cron">
             <field name="name">Generate Product Location Costs</field>
             <field name="model_id" ref="product.model_product_product"/>
             <field name="state">code</field>
@@ -97,7 +97,7 @@
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="active">True</field>
-        </record>
+        </record> -->
 
         
     </data>
