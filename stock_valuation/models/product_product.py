@@ -83,7 +83,7 @@ class ProductProduct(models.Model):
         product_id = self.id  # Assuming this method runs in the product.product model
         location_id = self.env.context.get('location_id')
 
-        cost_value = 0.0
+        
 
         if location_id and product_id:
             location_cost = self.env['product.location.cost'].search([
