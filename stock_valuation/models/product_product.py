@@ -13,7 +13,30 @@ class ProductProduct(models.Model):
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
     
 
+    def generate_location_costs(self):
+        internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+        all_products = self.search([])
+        CostModel = self.env['product.location.cost']
 
+        for product in all_products:
+            quants = self.env['stock.quant'].search([
+                ('product_id', '=', product.id),
+                ('location_id', 'in', internal_locations.ids),
+            ])
+            for quant in quants:
+                domain = [
+                    ('product_id', '=', product.id),
+                    ('location_id', '=', quant.location_id.id)
+                ]
+                if not CostModel.search_count(domain):
+                    CostModel.create({
+                        'product_id': product.id,
+                        'location_id': quant.location_id.id,
+                        'cost': product.standard_price
+                    })
+
+
+                    
     @api.depends('stock_valuation_layer_ids')
     @api.depends_context('to_date', 'company')
     def _compute_value_svl(self):

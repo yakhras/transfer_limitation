@@ -66,11 +66,22 @@
             </field>
         </record> -->
 
-        <record id="ir_cron_create_missing_cost_records" model="ir.cron">
+        <!-- <record id="ir_cron_create_missing_cost_records" model="ir.cron">
             <field name="name">Create Missing Product Location Cost Records</field>
             <field name="model_id" ref="model_product_location_cost"/>
             <field name="state">code</field>
             <field name="code">model.create_missing_cost_records()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record> -->
+
+        <record id="ir_cron_generate_location_costs" model="ir.cron">
+            <field name="name">Generate Product Location Costs</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="state">code</field>
+            <field name="code">model.generate_location_costs()</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
