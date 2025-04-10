@@ -85,7 +85,7 @@ class StockValuationLayerRevaluation(models.TransientModel):
                 ('location_id', '=', location_id.id)
             ], limit=1)
             location_cost.cost += self.added_value / self.current_quantity_svl
-            product_id.with_context(disable_auto_svl=True).standard_price = location_cost.cost
+            product_id.standard_price = location_cost.cost
 
         # If the Inventory Valuation of the product category is automated, create related account move.
         if self.property_valuation != 'real_time':
