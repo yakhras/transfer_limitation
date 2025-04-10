@@ -36,7 +36,7 @@ class ProductProduct(models.Model):
                     })
 
 
-                    
+
     @api.depends('stock_valuation_layer_ids')
     @api.depends_context('to_date', 'company')
     def _compute_value_svl(self):
@@ -214,3 +214,7 @@ class ProductLocationCost(models.Model):
                         'location_id': quant.location_id.id,
                         'cost': product.standard_price,
                     })
+
+
+    def reset_location_costs(self):
+        self.search([]).unlink()
