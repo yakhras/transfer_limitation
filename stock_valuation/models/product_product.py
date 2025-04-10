@@ -93,7 +93,14 @@ class ProductProduct(models.Model):
 
         #     cost_value = location_cost.cost if location_cost else 0.0
 
-        
+        location_cost = self.env['product.location.cost'].search([
+            ('product_id', '=', product_id),
+            ('location_id', '=', location_id)
+        ], order='id desc', limit=1) if location_id and product_id else False
+
+        self.result = location_cost
+
+        cost_value = location_cost.cost if location_cost else 0.0
 
         # Quantity is negative for out valuation layers.
         quantity = -1 * quantity
@@ -103,15 +110,6 @@ class ProductProduct(models.Model):
             'unit_cost': cost_value,
             'quantity': quantity,
         }
-
-        location_cost = self.env['product.location.cost'].search([
-            ('product_id', '=', product_id),
-            ('location_id', '=', location_id)
-        ], order='id desc', limit=1) if location_id and product_id else False
-
-        cost_value = location_cost.cost if location_cost else 0.0
-
-        
         if self.product_tmpl_id.cost_method in ('average', 'fifo'):
             fifo_vals = self._run_fifo(abs(quantity), company)
             vals['remaining_qty'] = fifo_vals.get('remaining_qty')
