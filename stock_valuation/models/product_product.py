@@ -98,8 +98,6 @@ class ProductProduct(models.Model):
             ('location_id', '=', location_id)
         ], order='id desc', limit=1) if location_id and product_id else False
 
-        self.result = location_cost
-
         cost_value = location_cost.cost if location_cost else 0.0
 
         # Quantity is negative for out valuation layers.
