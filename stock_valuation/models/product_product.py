@@ -195,27 +195,26 @@ class ProductLocationCost(models.Model):
     cost = fields.Float('Cost', digits='Product Price')
 
 
-    def create_missing_cost_records(self):
-        Product = self.env['product.product']
-        StockQuant = self.env['stock.quant']
-        LocationCost = self.env['product.location.cost']
+    # def create_missing_cost_records(self):
+    #     Product = self.env['product.product']
+    #     StockQuant = self.env['stock.quant']
+    #     LocationCost = self.env['product.location.cost']
 
-        all_products = Product.search([])
-        for product in all_products:
-            quants = StockQuant.search([('product_id', '=', product.id)])
-            for quant in quants:
-                domain = [
-                    ('product_id', '=', product.id),
-                    ('location_id', '=', quant.location_id.id)
-                ]
-                if not LocationCost.search_count(domain):
-                    LocationCost.create({
-                        'product_id': product.id,
-                        'location_id': quant.location_id.id,
-                        'cost': product.standard_price,
-                    })
+    #     all_products = Product.search([])
+    #     for product in all_products:
+    #         quants = StockQuant.search([('product_id', '=', product.id)])
+    #         for quant in quants:
+    #             domain = [
+    #                 ('product_id', '=', product.id),
+    #                 ('location_id', '=', quant.location_id.id)
+    #             ]
+    #             if not LocationCost.search_count(domain):
+    #                 LocationCost.create({
+    #                     'product_id': product.id,
+    #                     'location_id': quant.location_id.id,
+    #                     'cost': product.standard_price,
+    #                 })
 
 
     # def reset_location_costs(self):
     #     self.search([]).unlink()
-    
