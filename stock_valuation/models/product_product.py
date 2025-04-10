@@ -216,5 +216,6 @@ class ProductLocationCost(models.Model):
                     })
 
 
-    def reset_location_costs(self):
-        self.search([]).unlink()
+    # def reset_location_costs(self):
+    #     self.search([]).unlink()
+    
