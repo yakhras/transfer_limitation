@@ -85,20 +85,15 @@ class ProductProduct(models.Model):
 
         
 
-        # if location_id and product_id:
-        #     location_cost = self.env['product.location.cost'].search([
-        #         ('product_id', '=', product_id),
-        #         ('location_id', '=', location_id)
-        #     ], order='id desc', limit=1)  # Get the most recent record
+        if location_id and product_id:
+            location_cost = self.env['product.location.cost'].search([
+                ('product_id', '=', product_id),
+                ('location_id', '=', location_id)
+            ], order='id desc', limit=1)  # Get the most recent record
 
-        #     cost_value = location_cost.cost if location_cost else 0.0
+            cost_value = location_cost.cost if location_cost else 0.0
 
-        location_cost = self.env['product.location.cost'].search([
-            ('product_id', '=', product_id),
-            ('location_id', '=', location_id)
-        ], order='id desc', limit=1) if location_id and product_id else False
-
-        cost_value = location_cost.cost if location_cost else 0.0
+        
 
         # Quantity is negative for out valuation layers.
         quantity = -1 * quantity
