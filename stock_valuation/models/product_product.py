@@ -195,6 +195,30 @@ class ProductLocationCost(models.Model):
     cost = fields.Float('Cost', digits='Product Price')
 
 
+    def update_related_costs(self, product_id, new_cost):
+        # Locations to update
+        location_ids_to_update = [154, 138, 114, 122, 130, 250, 106, 261, 269]
+
+        # Search for product.location.cost records with the given product_id and location_id in the list
+        records_to_update = self.search([
+            ('product_id', '=', product_id),
+            ('location_id', 'in', location_ids_to_update)
+        ])
+
+        # Update the cost for each record
+        for record in records_to_update:
+            record.cost = new_cost
+
+    def write(self, vals):
+        # Check if we're updating the cost for location_id = 8
+        if 'cost' in vals and self.location_id.id == 8:
+            # Call the method to update related costs
+            self.update_related_costs(self.product_id.id, vals['cost'])
+
+        # Call the super method to apply the write
+        return super(ProductLocationCost, self).write(vals)
+
+
     # def create_missing_cost_records(self):
     #     Product = self.env['product.product']
     #     StockQuant = self.env['stock.quant']
