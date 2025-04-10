@@ -197,7 +197,7 @@ class ProductLocationCost(models.Model):
 
     def update_related_costs(self, product_id, new_cost):
         # Locations to update
-        location_ids_to_update = [154, 138, 114, 122, 130, 250, 106, 261, 269]
+        location_ids_to_update = [154, 114, 122, 130, 250, 106, 261, 269]
 
         # Search for product.location.cost records with the given product_id and location_id in the list
         records_to_update = self.search([
