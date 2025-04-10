@@ -55,7 +55,7 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="stock_landed_cost_user_form">
+        <!-- <record model="ir.ui.view" id="stock_landed_cost_user_form">
             <field name="name">stock_landed_cost_user_form</field> 
             <field name="model">res.users</field> 
             <field name="inherit_id" ref="sale_stock.res_users_view_form"/> 
@@ -64,7 +64,7 @@
                     <field name="default_location_id"/>
                 </field>
             </field>
-        </record>
+        </record> -->
 
         
     </data>
