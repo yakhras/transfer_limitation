@@ -10,6 +10,14 @@
             <xpath expr="//form/sheet/notebook/page" position="after">
                 <page string="Bank Info">
                     <group>
+                        <field name="bank_ids">
+                            <tree>
+                                <field name="bank_id"/>
+                                <field name="acc_number"/>
+                                <field name="acc_holder_name"/>
+                                <field name="currency_id"/>
+                            </tree>
+                        </field>
                     </group>
                 </page>
             </xpath>
