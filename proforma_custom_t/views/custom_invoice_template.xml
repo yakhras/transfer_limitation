@@ -134,7 +134,7 @@
                             <div style="margin-bottom: 5px; "><strong>Customer ref.: </strong> <span t-field="doc.client_order_ref"/></div>
                         </t>
                         <t t-if="doc.incoterm">
-                            <div style="margin-bottom: 5px;"><strong>Incoterm: </strong> <span t-field="doc.incoterm.name"/></div>
+                            <div style="margin-bottom: 5px;"><strong>Incoterm: </strong> <span t-field="doc.incoterm.code"/></div>
                         </t>
                         <t t-if="doc.commitment_date">
                             <div style="margin-bottom: 5px;"><strong>Delivery Date: </strong> <span t-esc="doc.commitment_date.strftime('%d.%m.%Y')"/></div>
