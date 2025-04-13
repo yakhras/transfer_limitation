@@ -11,7 +11,7 @@
                 <page string="Bank Info">
                     <group>
                         <!-- Display bank_ids as many2many_checkboxes -->
-                        <field name="bank_ids" widget="many2many_checkboxes">
+                        <field name="bank_ids">
                             <tree>
                                 <field name="bank_id"/>
                                 <field name="acc_number"/>
