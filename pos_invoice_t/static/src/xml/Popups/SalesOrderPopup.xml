@@ -22,7 +22,7 @@
                         style="display: flex; flex-direction: column; width: 100%;">
                         <t t-foreach="props.list" t-as="item" t-key="item.id">
                             <button class="selection-item"
-                                    style="height: 40px; margin: 10px 0; font-size: 15px; width: 50%;"
+                                    style="height: 40px; margin: 10px auto; font-size: 15px; width: 50%;"
                                     t-att-class="{ selected: item.isSelected }"
                                     t-on-click="selectItem(item.id)">
                                 <t t-if="item['icon']">
