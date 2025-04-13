@@ -35,6 +35,18 @@ odoo.define('pos_invoice_t.SaleOrderScreen', function (require) {
                                     item: false,
                                     icon: 'fa fa-close',
                                 },
+                                {
+                                    id:3, 
+                                    label: this.env._t("Formal Invoice"), 
+                                    item: true,
+                                    icon: 'fa fa-check-circle',
+                                }, 
+                                {
+                                    id:4, 
+                                    label: this.env._t("Informal Invoice"), 
+                                    item: false,
+                                    icon: 'fa fa-close',
+                                },
                             ],
                     });
                 if (confirmed){
