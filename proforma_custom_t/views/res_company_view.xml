@@ -11,14 +11,7 @@
                 <page string="Bank Info">
                     <group>
                         <!-- Display bank_ids as many2many_checkboxes -->
-                        <field name="bank_ids">
-                            <tree>
-                                <field name="bank_id"/>
-                                <field name="acc_number"/>
-                                <field name="acc_holder_name"/>
-                                <field name="currency_id"/>
-                            </tree>
-                        </field>
+                        <field name="bank_journal_ids"/>
                     </group>
                 </page>
             </xpath>
