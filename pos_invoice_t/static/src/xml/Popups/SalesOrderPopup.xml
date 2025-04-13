@@ -8,7 +8,7 @@
                     <header class="title drag-handle">
                         <t t-esc="props.title" />
                     </header>
-                    <div class="selection scrollable-z">
+                    <div class="selection scrollable">
                         <t t-foreach="props.list" t-as="item" t-key="item.id">
                             <button class="selection-item" style="height: 35px;margin: 15px;font-size: 15px;" t-att-class="{ selected: item.isSelected }" t-on-click="selectItem(item.id)">
                                 <t t-if="item['icon']">
