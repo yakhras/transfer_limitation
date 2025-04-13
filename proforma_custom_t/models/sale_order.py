@@ -52,3 +52,17 @@ class SaleOrder(models.Model):
     def get_partner_name_title_case(self):
         return self.partner_id.name.title() if self.partner_id.name else ''
     
+
+
+
+class ResCompany(models.Model):
+    _inherit = 'res.company'
+
+    company_bank_journal_ids = fields.Many2many(
+        'account.journal',
+        'company_bank_journal_rel',  # Relation table name
+        'company_id',  # Column for res.company
+        'journal_id',  # Column for account.journal
+        string="Company Bank Journals",
+        domain="[('type', '=', 'bank'), ('company_id', '=', id)]"
+    )
