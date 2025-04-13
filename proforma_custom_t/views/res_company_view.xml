@@ -10,7 +10,7 @@
             <xpath expr="//form/sheet/notebook/page" position="after">
                 <page string="Bank Info">
                     <group>
-                        <field name="bank_ids.acc_number"/>
+                        <field name="bank_ids"/>
                     </group>
                 </page>
             </xpath>
