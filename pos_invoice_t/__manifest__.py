@@ -14,11 +14,11 @@
     ],
     'assets': {
         'point_of_sale.assets': [
-            'pos_invoice/static/src/js/Screens/SaleOrderScreen/SaleOrderScreen.js',
-            'pos_invoice/static/src/js/Popups/SalesOrderPopup.js',
+            'pos_invoice_t/static/src/js/Screens/SaleOrderScreen/SaleOrderScreen.js',
+            'pos_invoice_t/static/src/js/Popups/SalesOrderPopup.js',
         ],
         'web.assets_qweb': [
-            'pos_invoice/static/src/xml/**/*',
+            'pos_invoice_t/static/src/xml/**/*',
         ],
     },
     'images': ['static/images/screen_image.png'],
