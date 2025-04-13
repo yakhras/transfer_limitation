@@ -1,4 +1,4 @@
-odoo.define('pos_invoice.SaleOrderScreen', function (require) {
+odoo.define('pos_invoice_t.SaleOrderScreen', function (require) {
     'use strict';
 
     const { useState } = owl.hooks;
