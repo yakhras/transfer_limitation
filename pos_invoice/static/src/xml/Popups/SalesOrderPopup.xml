@@ -8,11 +8,11 @@
                     <header class="title drag-handle">
                         <t t-esc="props.title" />
                     </header>
-                    <div class="selection scrollable-y" style="display: flex; flex-direction: column;">
+                    <div class="selection scrollable-y" style="display: block;">
                         <t t-foreach="props.list" t-as="item" t-key="item.id">
-                            <button class="selection-item" 
-                                    style="height: 35px; margin: 15px; font-size: 15px;" 
-                                    t-att-class="{ selected: item.isSelected }" 
+                            <button class="selection-item"
+                                    style="display: block; width: 100%; height: 35px; margin: 10px 0; font-size: 15px;"
+                                    t-att-class="{ selected: item.isSelected }"
                                     t-on-click="selectItem(item.id)">
                                 <t t-if="item['icon']">
                                     <i style="padding-right: 5px;" t-att-class="item.icon"/>
@@ -20,7 +20,7 @@
                                 <t t-esc="item.label" />
                             </button>
                         </t>
-                    </div>
+                    </div>                    
                     
                     <footer class="footer">
                         <div class="button cancel" t-on-click="cancel">
