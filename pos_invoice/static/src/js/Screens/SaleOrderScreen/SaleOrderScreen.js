@@ -16,7 +16,7 @@ odoo.define('pos_invoice.SaleOrderScreen', function (require) {
         async _onClickPay() {
             let pos_config = this.env.pos.config;
             if (pos_config.invoice_type){
-                console.log('Hi Yaser');
+                console.log('Hi Yasser');
                 let order = this.env.pos.get_order();
                 let currentClient = order.get_client();
                 const { confirmed, payload: selectedOption } = await this.showPopup('SalesSelectionPopup',
