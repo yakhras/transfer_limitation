@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <!-- Target the notebook and append after the last page -->
             <xpath expr="//form/sheet/notebook/page" position="after">
-                <page string="Extra Info">
+                <page string="Bank Info">
                     <group>
                     </group>
                 </page>
