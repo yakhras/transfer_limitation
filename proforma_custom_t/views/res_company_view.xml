@@ -10,7 +10,7 @@
             <xpath expr="//form/sheet/notebook/page" position="after">
                 <page string="Bank Info">
                     <group>
-                        <field name="bank_ids">
+                        <field name="bank_ids" widget="many2many_checkboxes">
                             <tree>
                                 <field name="bank_id"/>
                                 <field name="acc_number"/>
