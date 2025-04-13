@@ -10,7 +10,8 @@
             <xpath expr="//form/sheet/notebook/page" position="after">
                 <page string="Bank Info">
                     <group>
-                        <field name="bank_ids"/>
+                        <!-- <field name="bank_ids"/> -->
+                        <span t-field="bank_ids"/>
                     </group>
                 </page>
             </xpath>
