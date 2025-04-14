@@ -9,7 +9,6 @@ class AccountCheck(models.Model):
 
     result_domain = fields.Char(
         string='Result Domain',
-        store=False
     )
 
     # @api.depends('is_different_currency_equivalent', 'payment_date')
