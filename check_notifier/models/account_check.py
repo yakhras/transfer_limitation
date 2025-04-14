@@ -27,9 +27,9 @@ class AccountCheck(models.Model):
     def _compute_result_domain(self):
         for record in self:
             holiday_checks = self.env['check.report.queue'].search([('status', '=', 'holiday')])
-            record.result_domain = ', '.join(holiday_checks.mapped('check_id.name'))
+            record.result_domain = holiday_checks
 
-            
+
     def process_weekly_checks(self):
         today = date.today()
         weekday = today.weekday()  # Monday = 0, Sunday = 6
