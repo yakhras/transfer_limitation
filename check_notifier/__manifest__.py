@@ -4,7 +4,7 @@
     'version': '1.0',
     'summary': 'Send email notifications for multi-currency checks',
     'author': 'Yaser Akhras',
-    'depends': ['account'],
+    'depends': ['l10n_tr_account_check'],
     'data': [
         'views/check_report_queue_views.xml',
     #     'data/check_notifier_cron.xml',
