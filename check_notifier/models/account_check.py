@@ -6,20 +6,22 @@ from datetime import date
 class AccountCheck(models.Model):
     _inherit = 'account.check'
 
-
+    
     result_domain = fields.Char(
         string='Result Domain',
+        compute='_compute_result_domain',
+        store=False
     )
 
-    # @api.depends('is_different_currency_equivalent', 'payment_date')
-    # def _compute_result_domain(self):
-    #     for record in self:
-    #         domain = [
-    #             ('is_different_currency_equivalent', '=', True),
-    #             ('payment_date', '=', record.payment_date)
-    #         ]
-    #         result = self.search(domain)
-    #         record.result_domain = ', '.join(result.mapped('name'))
+    @api.depends('is_different_currency_equivalent', 'payment_date')
+    def _compute_result_domain(self):
+        for record in self:
+            domain = [
+                ('is_different_currency_equivalent', '=', True),
+                ('payment_date', '=', record.payment_date)
+            ]
+            result = self.search(domain)
+            record.result_domain = ', '.join(result.mapped('name'))
     
     def process_weekly_checks(self):
         today = date.today()
@@ -30,7 +32,6 @@ class AccountCheck(models.Model):
             ('is_different_currency_equivalent', '=', True),
             ('payment_date', '=', today)
         ])
-        self.result_domain = checks.mapped('name')
 
         queue_obj = self.env['check.report.queue']
 
