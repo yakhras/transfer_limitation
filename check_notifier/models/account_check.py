@@ -47,7 +47,7 @@ class AccountCheck(models.Model):
             if existing:
                 continue  # Already queued
 
-            if weekday in [5, 6]:  # Saturday or Sunday
+            if weekday in [6, 7]:  # Saturday or Sunday
                 queue_obj.create({
                     'check_id': check.id,
                     'status': 'holiday'
@@ -59,7 +59,7 @@ class AccountCheck(models.Model):
                 })
 
         # Step 2: Monday adjustment
-        if weekday == 0:
+        if weekday == 1:
             holiday_checks = queue_obj.search([('status', '=', 'holiday'), ('emailed', '=', False)])
             for rec in holiday_checks:
                 rec.status = 'week'
