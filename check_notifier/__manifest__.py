@@ -1,0 +1,14 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'Check Notifier',
+    'version': '1.0',
+    'summary': 'Send email notifications for multi-currency checks',
+    'author': 'Yaser Akhras',
+    'depends': ['account'],
+    'data': [
+        'views/check_report_queue_views.xml',
+    #     'data/check_notifier_cron.xml',
+    ],
+    'installable': True,
+    'application': False,
+}
