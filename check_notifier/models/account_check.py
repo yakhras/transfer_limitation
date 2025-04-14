@@ -26,7 +26,7 @@ class AccountCheck(models.Model):
     @api.depends('is_different_currency_equivalent', 'payment_date')
     def _compute_result_domain(self):
         for record in self:
-            holiday_checks = self.env['check.report.queue'].search([('status', '=', 'holiday')])
+            holiday_checks = self.env['check.report.queue'].search([('status', '=', 'week')])
             record.result_domain = holiday_checks
 
 
