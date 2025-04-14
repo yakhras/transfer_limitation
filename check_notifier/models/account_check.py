@@ -13,16 +13,23 @@ class AccountCheck(models.Model):
         store=False
     )
 
+    # @api.depends('is_different_currency_equivalent', 'payment_date')
+    # def _compute_result_domain(self):
+    #     for record in self:
+    #         domain = [
+    #             ('is_different_currency_equivalent', '=', True),
+    #             ('payment_date', '=', record.payment_date)
+    #         ]
+    #         result = self.search(domain)
+    #         record.result_domain = ', '.join(result.mapped('name'))
+    
     @api.depends('is_different_currency_equivalent', 'payment_date')
     def _compute_result_domain(self):
         for record in self:
-            domain = [
-                ('is_different_currency_equivalent', '=', True),
-                ('payment_date', '=', record.payment_date)
-            ]
-            result = self.search(domain)
-            record.result_domain = ', '.join(result.mapped('name'))
-    
+            holiday_checks = self.env['check.report.queue'].search([('status', '=', 'holiday')])
+            record.result_domain = ', '.join(holiday_checks.mapped('check_id.name'))
+
+            
     def process_weekly_checks(self):
         today = date.today()
         weekday = today.weekday()  # Monday = 0, Sunday = 6
