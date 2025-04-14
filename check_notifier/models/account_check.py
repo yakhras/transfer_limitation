@@ -6,7 +6,7 @@ from datetime import date
 class AccountCheck(models.Model):
     _inherit = 'account.check'
 
-    
+
     result_domain = fields.Char(
         string='Result Domain',
         compute='_compute_result_domain',
@@ -21,7 +21,7 @@ class AccountCheck(models.Model):
                 ('payment_date', '=', record.payment_date)
             ]
             result = self.search(domain)
-            record.result_domain = ', '.join(result.mapped('check_number'))
+            record.result_domain = ', '.join(result.mapped('name'))
     
     def process_weekly_checks(self):
         today = date.today()
