@@ -8,6 +8,7 @@
     'data': [
         # "security/ir.model.access.csv",
         'views/check_report_queue_views.xml',
+        'data/mail_template_data.xml',
     #     'data/check_notifier_cron.xml',
     ],
     'installable': True,
