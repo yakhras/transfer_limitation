@@ -7,10 +7,10 @@ class AccountCheck(models.Model):
     _inherit = 'account.check'
 
     
-    result_domain = fields.Char(
-        string='Result Domain',
-        compute='_compute_result_domain',
-    )
+    # result_domain = fields.Char(
+    #     string='Result Domain',
+    #     compute='_compute_result_domain',
+    # )
 
     
     def _compute_result_domain(self):
@@ -23,5 +23,4 @@ class AccountCheck(models.Model):
             if all_today_checks:
                 template = self.env.ref('check_notifier.check_notifier')
                 template.send_mail(record.id, force_send=True)
-                record.result_domain = all_today_checks.mapped('owner_name')
                 

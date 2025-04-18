@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
-        <record id="view_account_check_form_inherit" model="ir.ui.view">
+        <!-- <record id="view_account_check_form_inherit" model="ir.ui.view">
             <field name="name">account.check.form.inherit</field>
             <field name="model">account.check</field>
             <field name="inherit_id" ref="l10n_tr_account_check.view_account_check_form"/>
@@ -10,6 +10,18 @@
                     <field name="result_domain"/>
                 </xpath>
             </field>
+        </record> -->
+
+        <record id="ir_cron_send_check_notifier_email" model="ir.cron">
+            <field name="name">Send Check Notifier Email</field>
+            <field name="model_id" ref="l10n_tr_account_check.model_account_check"/>
+            <field name="state">code</field>
+            <field name="code">model._compute_result_domain()</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+            <field name="numbercall">-1</field>
         </record>
     </data>
 </odoo>
