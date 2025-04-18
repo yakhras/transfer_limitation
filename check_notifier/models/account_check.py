@@ -19,4 +19,4 @@ class AccountCheck(models.Model):
             ('payment_date', '=', today)
         ])
         for record in self:
-            record.result_domain = all_today_checks
+            record.result_domain = today
