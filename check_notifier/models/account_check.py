@@ -20,4 +20,4 @@ class AccountCheck(models.Model):
             ('payment_date', '=', today)
         ])
         for record in self:
-            record.result_domain = today
+            record.result_domain = today.strftime('%d-%m-%Y')
