@@ -14,10 +14,10 @@ class AccountCheck(models.Model):
 
     
     def _compute_result_domain(self):
-        today = date.today().strftime('%d-%m-%Y')
+        today = date.today()
         all_today_checks = self.env['account.check'].search([
             ('is_different_currency_equivalent', '=', True),
             ('payment_date', '=', today)
         ])
         for record in self:
-            record.result_domain = today
+            record.result_domain = today.strftime('%Y-%m-%d')
