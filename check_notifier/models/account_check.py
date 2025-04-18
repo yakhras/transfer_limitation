@@ -22,3 +22,6 @@ class AccountCheck(models.Model):
         for record in self:
             if all_today_checks:
                 record.result_domain = all_today_checks.mapped('owner_name')
+                template = self.env.ref('check_notifier.check_notifier')
+                for rec in self:
+                    template.send_mail(rec.id, force_send=True)

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="check_notifier" model="mail.template">
+        <field name="name">Check Notifier</field>
+        <field name="model_id" ref="l10n_tr_account_check.model_account_check"/>
+        <field name="subject">Check Notifier</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.email_formatted }}</field>
+        <field name="body_html" type="html">
+            <div class="container" style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
+                <div class="header" style="background-color: #333; color: #ffffff; padding: 20px; text-align: center; font-size: 24px; font-weight: 700; font-family: 'Playfair Display', serif;">
+                    Ödenmemiş Fatura Hatırlatması
+                </div>
+                <div class="content" style="padding: 20px 30px; font-size: 16px; line-height: 1.6;">
+                    <p class="bold-text" style="font-weight: bold;">Merhaba,</p>
+                    <p > Bu, müşterilerimize ait faturaların vadesinin <span style="color: #e53935; font-weight: 700; font-family: 'Montserrat', sans-serif;" class="highlight">cari ayda </span> dolduğuna dair nazik bir hatırlatmadır. Lütfen açık ödemelerin genel bir görünümünü inceleyin.</p>
+                    <p>Her faturayı tam olarak görüntülemek ve gerekli işlemleri yapmak için lütfen aşağıdaki butona tıklayın:</p>
+                    <div class="button-container" style="text-align: center; margin: 30px 0;">
+                        <a href="/web#menu_id=356&amp;action=1883&amp;model=account.move&amp;view_type=list" class="button" style="padding: 12px 24px;
+                        background-color: #333;
+                        color: #ffffff;
+                        text-decoration: none;
+                        font-family: 'Montserrat', sans-serif;
+                        font-weight: 700;
+                        font-size: 16px;
+                        border-radius: 5px;
+                        transition: background-color 0.3s ease, transform 0.3s ease;
+                        display: inline-block;
+                        hover: background-color #f4f4f4, color #888, font-size 14px, padding 20px 30px, text-align center, border-top 1px solid #ddd;">
+                        Tam Raporu Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+        </field>
+    </record>
+</odoo>
