@@ -9,7 +9,6 @@ class AccountCheck(models.Model):
     
     result_domain = fields.Char(
         string='Result Domain',
-        compute='_compute_result_domain',
     )
 
     
