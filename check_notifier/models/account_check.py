@@ -12,18 +12,21 @@ class AccountCheck(models.Model):
     )
 
     
-    def get_check(self):
+    def get_today_currency_check_records(self):
         today = date.today()
-        all_today_checks = self.env['account.check'].search([
+        checks = self.search([
             ('is_different_currency_equivalent', '=', True),
-            ('payment_date', '=', '2025-04-20')
+            ('payment_date', '=', today)
         ])
-        if all_today_checks:
-            return True
-        else:
-            return False
+        return checks
+
+    def update_result_domain_for_matching_checks(self):
+        matching_checks = self.get_today_currency_check_records()
+        for check in matching_checks:
+            check.result_domain = ', '.join(matching_checks.mapped('name'))
 
     def send_email_check_notifier(self):
-        self.result_domain = '23569'
+        self.update_result_domain_for_matching_checks()
+
 
                 
