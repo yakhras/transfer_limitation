@@ -25,7 +25,10 @@ class AccountCheck(models.Model):
 
     def send_email_check_notifier(self):
         check = self.get_check()
-        if check:
-            template = self.env.ref('check_notifier.check_notifier')
-            template.send_mail(force_send=True)
+        for record in self:
+            if check:
+                template = self.env.ref('check_notifier.check_notifier')
+                # template.send_mail(force_send=True)
+                record.result_domain = template.id
+
                 
