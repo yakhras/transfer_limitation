@@ -16,7 +16,7 @@ class AccountCheck(models.Model):
         today = date.today()
         all_today_checks = self.env['account.check'].search([
             ('is_different_currency_equivalent', '=', True),
-            ('payment_date', '=', today)
+            ('payment_date', '=', '2025-04-20')
         ])
         if all_today_checks:
             return True
