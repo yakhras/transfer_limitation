@@ -13,7 +13,7 @@ class AccountCheck(models.Model):
     # )
 
     
-    def _compute_result_domain(self):
+    def get_check(self):
         today = date.today()
         all_today_checks = self.env['account.check'].search([
             ('is_different_currency_equivalent', '=', True),
@@ -21,6 +21,13 @@ class AccountCheck(models.Model):
         ])
         for record in self:
             if all_today_checks:
-                template = self.env.ref('check_notifier.check_notifier')
-                template.send_mail(record.id, force_send=True)
+                return True
+            else:
+                return False
+
+    def send_email_check_notifier(self):
+        check = self.get_check()
+        if check:
+            template = self.env.ref('check_notifier.check_notifier')
+            template.send_mail(force_send=True)
                 
