@@ -15,6 +15,7 @@ class AccountCheck(models.Model):
     def get_today_currency_check_records(self):
         today = date.today()
         checks = self.search([
+            ('type', '=', 'third'),
             ('is_different_currency_equivalent', '=', True),
             ('payment_date', '=', today)
         ])

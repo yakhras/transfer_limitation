@@ -12,16 +12,19 @@
             </field>
         </record>
 
-        <record id="ir_cron_send_check_notifier_email" model="ir.cron">
-            <field name="name">Send Check Notifier Email</field>
-            <field name="model_id" ref="l10n_tr_account_check.model_account_check"/>
-            <field name="state">code</field>
-            <field name="code">model.send_email_check_notifier()</field>
-            <field name="active" eval="True"/>
-            <field name="interval_number">1</field>
-            <field name="interval_type">days</field>
-            <field name="active">True</field>
-            <field name="numbercall">-1</field>
+        <record id="action_today_currency_check_records" model="ir.actions.act_window">
+            <field name="name">Today Checks</field>
+            <field name="res_model">account.check</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[
+                ('type', '=', 'third'),
+                ('is_different_currency_equivalent', '=', True),
+                ('payment_date', '=', context_today().strftime('%Y-%m-%d')),
+                ]</field>
+            <field name="context">{
+                'search_default_state': 'holding', 'default_type': 'third'
+                }
+            </field>
         </record>
     </data>
 </odoo>
