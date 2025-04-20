@@ -19,11 +19,10 @@ class AccountCheck(models.Model):
             ('is_different_currency_equivalent', '=', True),
             ('payment_date', '=', today)
         ])
-        for record in self:
-            if all_today_checks:
-                return True
-            else:
-                return False
+        if all_today_checks:
+            return True
+        else:
+            return False
 
     def send_email_check_notifier(self):
         check = self.get_check()
