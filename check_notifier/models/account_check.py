@@ -23,9 +23,9 @@ class AccountCheck(models.Model):
     def update_result_domain_for_matching_checks(self):
         template = self.env.ref('check_notifier.check_notifier')
         matching_checks = self.get_today_currency_check_records()
-        for check in matching_checks:
-            template.send_mail(check.id, force_send=True)
-            check.result_domain = ', '.join(matching_checks.mapped('name'))
+        if matching_checks:
+        # Send the email ONCE, for the first check (or just to trigger the template logic)
+            template.send_mail(matching_checks[0].id, force_send=True)
 
     def send_email_check_notifier(self):
         self.update_result_domain_for_matching_checks()
