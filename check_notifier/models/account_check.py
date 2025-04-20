@@ -24,11 +24,6 @@ class AccountCheck(models.Model):
             return False
 
     def send_email_check_notifier(self):
-        check = self.get_check()
-        for record in self:
-            if check:
-                template = self.env.ref('check_notifier.check_notifier')
-                # template.send_mail(force_send=True)
-                record.result_domain = '23569'
+        self.result_domain = '23569'
 
                 
