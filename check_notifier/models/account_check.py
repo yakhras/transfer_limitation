@@ -6,11 +6,6 @@ from datetime import date
 class AccountCheck(models.Model):
     _inherit = 'account.check'
 
-    
-    # result_domain = fields.Char(
-    #     string='Result Domain',
-    #     compute='_compute_result_domain',
-    # )
 
     
     def get_check(self):
