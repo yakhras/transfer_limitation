@@ -16,11 +16,11 @@ class AccountCheck(models.Model):
         today = date.today()
         checks = self.search([
             ('is_different_currency_equivalent', '=', True),
-            ('payment_date', '=', "2025-04-28")
+            ('payment_date', '=', today)
         ])
         return checks
 
-    def update_result_domain_for_matching_checks(self):
+    def prepare_send_email(self):
         template = self.env.ref('check_notifier.check_notifier')
         matching_checks = self.get_today_currency_check_records()
         if matching_checks:
@@ -28,7 +28,7 @@ class AccountCheck(models.Model):
             template.send_mail(matching_checks[0].id, force_send=True)
 
     def send_email_check_notifier(self):
-        self.update_result_domain_for_matching_checks()
+        self.prepare_send_email()
 
 
                 
