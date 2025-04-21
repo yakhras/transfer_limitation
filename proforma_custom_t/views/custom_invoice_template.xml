@@ -254,12 +254,12 @@
                                     </tr>
                                 </thead>
                                 
-                                <!-- Table Body -->
+                                <!-- Table Body --><span t-esc="doc.company_id.company_bank_journal_ids.name"/>
                                 <tbody>
                                     <tr>
                                         <td style="padding: 3px; border: 1px none #ccc; text-align: left;"><span t-esc="doc.company_id.company_bank_journal_ids.name"/></td>
                                         <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TL IBAN</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TR40 0020 5000 0988 3129 1000 01</td>
+                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;"><span t-esc="doc.company_id.company_bank_journal_ids.bank_account_id.acc_number"/></td>
                                         <td style="padding: 3px; border: 1px none #ccc; text-align: left;">KTEFTRIS</td>
                                     </tr>
                                     <tr>
