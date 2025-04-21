@@ -254,47 +254,26 @@
                                     </tr>
                                 </thead>
                                 
-                                <!-- Table Body --><span t-esc="doc.company_id.company_bank_journal_ids.name"/>
+                                <!-- Table Body -->
                                 <tbody>
-                                    <tr>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;"><span t-esc="doc.company_id.company_bank_journal_ids.name"/></td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TL IBAN</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;"><span t-esc="doc.company_id.company_bank_journal_ids.bank_account_id.acc_number"/></td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">KTEFTRIS</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">Kuveyt Türk Katılım Bankası</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">USD IBAN</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TR56 0020 5000 0988 3129 1001 01</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">KTEFTRIS</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">Kuveyt Türk Katılım Bankası</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">EUR IBAN</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TR29 0020 5000 0988 3129 1001 02</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">KTEFTRIS</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">Türkiye Vakıflar Bankası T.A.O</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TL IBAN</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TR13 0001 5001 5800 7341 8874 16</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TVBATR2AXXX</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">Türkiye Vakıflar Bankası T.A.O</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">USD IBAN</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TR60 0001 5001 5804 8024 5849 84</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TVBATR2AXXX</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">Türkiye Vakıflar Bankası T.A.O</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">EUR IBAN</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TR66 0001 5001 5804 8024 5849 73</td>
-                                        <td style="padding: 3px; border: 1px none #ccc; text-align: left;">TVBATR2AXXX</td>
-                                    </tr>
+                                    <t t-foreach ="doc.company_id.company_bank_journal_ids" t-as="bank">
+                                        <tr>
+                                            <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
+                                                <span t-esc="bank.bank_id.name"/>
+                                            </td>
+                                            <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
+                                                <span t-esc="bank.bank_account_id.acc_type"/>
+                                            </td>
+                                            <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
+                                                <span t-esc="bank.bank_account_id.acc_number"/>
+                                            </td>
+                                            <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
+                                                <span t-esc="bank.bank_id.bic"/>
+                                            </td>
+                                        </tr>
+                                    </t>
                                 </tbody>
                             </table>
-
                         </div>
                     </div>
                 </div>
