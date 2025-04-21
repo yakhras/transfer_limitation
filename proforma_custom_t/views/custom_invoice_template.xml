@@ -262,7 +262,7 @@
                                                 <span t-esc="bank.bank_id.name"/>
                                             </td>
                                             <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
-                                                <span t-esc="bank.bank_account_id.acc_type"/>
+                                                <span t-esc="bank.online_bank_account_id.fec_name"/>IBAN
                                             </td>
                                             <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
                                                 <span t-esc="bank.bank_account_id.acc_number"/>
