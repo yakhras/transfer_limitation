@@ -11,7 +11,7 @@
                 <page string="Bank Info">
                     <group>
                         <!-- Display company_bank_journal_ids as a many2many_checkboxes widget -->
-                        <field name="company_bank_journal_ids" widget="many2many_checkboxes" domain="[('type', '=', 'bank'), ('company_id', '=', id)]"/>
+                        <field name="company_bank_journal_ids" widget="many2many_checkboxes" />
                     </group>
                 </page>
             </xpath>

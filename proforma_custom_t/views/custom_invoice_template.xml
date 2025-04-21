@@ -5,7 +5,7 @@
         <div t-attf-class="header" t-att-style="report_header_style">
             <div class="o_clean_header">
                 <div class="row align-items-center" style="display: flex; align-items: center;">
-                    <!-- Company Name (8 columns) -->
+                    <!-- Company Name (9 columns) -->
                     <div class="col-9" style="margin-top: 10px;">
                         <strong t-if="doc.company_id.name" style="font-size: 21px;">
                             <span t-field="doc.company_id.name"/>
@@ -19,7 +19,7 @@
                             
                         </p>
                     </div>
-                    <!-- Company Logo (4 columns, with reduced size) -->
+                    <!-- Company Logo (3 columns, with reduced size) -->
                     <div class="col-3 text-right" style="margin: 0; padding: 0;">
                         <img t-if="doc.company_id.logo" 
                                 t-att-src="image_data_uri(doc.company_id.logo)" 
@@ -41,7 +41,7 @@
                         Page: <span class="page"/> / <span class="topage"/>
                     </div>
                     
-                    <!-- Address (Center) -->
+                    <!-- Website (Center) -->
                     <div class="col-4 text-center">
                         <p style="line-height: 1.5; font-weight: 300; color: #333; margin: 0;">
                             <span t-esc="doc.company_id.website.replace('http://', '')"/>
@@ -80,7 +80,6 @@
                         </strong>
                     </div>
                 </div>
-                <!-- Border Line Before info -->
                 
                 <!-- New Row with Two Columns -->
                 <div class="row" style="margin-top: 20px; font-size: 12px;">
