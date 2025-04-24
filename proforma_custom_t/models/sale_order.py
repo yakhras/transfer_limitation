@@ -66,3 +66,14 @@ class ResCompany(models.Model):
         string="Company Bank Journals",
         domain="[('type', '=', 'bank'), ('company_id', '=', id)]"
     )
+
+
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    
+
+    default_picking_type_ids = fields.Many2many(
+        'stock.picking.type', 'stock_picking_type_users_rel',
+        'user_id', 'picking_type_id', string='Default Warehouse Operations', store=False)
