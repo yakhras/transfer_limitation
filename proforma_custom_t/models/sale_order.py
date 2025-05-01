@@ -110,6 +110,6 @@ class CrmLead(models.Model):
              'sticky': True,
             }
           )
-          return res
-        return super().write(vals)
+        return res
+    return super().write(vals)
           
