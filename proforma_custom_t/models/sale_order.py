@@ -91,7 +91,7 @@ class ResUsers(models.Model):
 
 
 class CrmLead(models.Model):
-  inherit = 'crm.lead'
+  _inherit = 'crm.lead'
 
   @api.model
   def write(self, vals):
