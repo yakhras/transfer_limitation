@@ -96,20 +96,15 @@ class CrmLead(models.Model):
   @api.model
   def write(self, vals):
     if 'stage_id' in vals:
-      
-      res = super().write(vals)
-      for lead in self:
-        
-          message = "HI"
-          self.env['bus.bus']._sendone(
-            self.env.user.partner_id.id,
-            'notification',
-            {'type': 'info',
-             'title': 'stage',
-             'message': message,
-             'sticky': True,
-            }
-          )
-        return res
+      message = "HI"
+      self.env['bus.bus']._sendone(
+        self.env.user.partner_id.id,
+        'notification',
+        {'type': 'info',
+         'title': 'stage',
+         'message': message,
+         'sticky': True,
+        }
+      )
     return super().write(vals)
           
