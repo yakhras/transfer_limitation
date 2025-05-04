@@ -33,7 +33,7 @@
             </field>
         </record>
 
-        <!-- <record model="ir.ui.view" id="stock_move_form">
+        <record model="ir.ui.view" id="stock_move_form">
             <field name="name">stock_move_form</field> 
             <field name="model">stock.move</field> 
             <field name="inherit_id" ref="stock.view_move_form"/> 
@@ -42,7 +42,7 @@
                     <field name="result"/>
                 </field>
             </field>
-        </record> -->
+        </record>
 
         <record model="ir.ui.view" id="stock_landed_cost_form">
             <field name="name">stock_landed_cost_form</field> 
