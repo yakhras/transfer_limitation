@@ -26,7 +26,7 @@ class StockMove(models.Model):
         for move in self.filtered(lambda move: move._is_in() and move.with_company(move.company_id).product_id.cost_method == 'average'):
             product_tot_qty_available = move.product_id.sudo().with_company(move.company_id).quantity_svl + tmpl_dict[move.product_id.id]
             rounding = move.product_id.uom_id.rounding
-            #self.result = product_tot_qty_available
+            self.result = product_tot_qty_available
             
             valued_move_lines = move._get_in_move_lines()
             
