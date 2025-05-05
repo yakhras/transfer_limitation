@@ -83,52 +83,56 @@ class ProductProduct(models.Model):
         self.ensure_one()
         company_id = self.env.context.get('force_company', self.env.company.id)
         company = self.env['res.company'].browse(company_id)
-        currency = company.currency_id
-        
-        product_id = self.id  # Assuming this method runs in the product.product model
-        location_id = self.env.context.get('location_id')
+        if company == 5:
+            currency = company.currency_id
+            
+            product_id = self.id  # Assuming this method runs in the product.product model
+            location_id = self.env.context.get('location_id')
 
-        
+            
 
-        if location_id and product_id:
-            location_cost = self.env['product.location.cost'].search([
-                ('product_id', '=', product_id),
-                ('location_id', '=', location_id)
-            ], order='id desc', limit=1)  # Get the most recent record
+            if location_id and product_id:
+                location_cost = self.env['product.location.cost'].search([
+                    ('product_id', '=', product_id),
+                    ('location_id', '=', location_id)
+                ], order='id desc', limit=1)  # Get the most recent record
 
-            cost_value = location_cost.cost if location_cost else 0.0
+                cost_value = location_cost.cost if location_cost else 0.0
 
-        
+            
 
-        # Quantity is negative for out valuation layers.
-        quantity = -1 * quantity
-        vals = {
-            'product_id': product_id,
-            'value': currency.round(quantity * cost_value),
-            'unit_cost': cost_value,
-            'quantity': quantity,
-        }
-        if self.product_tmpl_id.cost_method in ('average', 'fifo'):
-            fifo_vals = self._run_fifo(abs(quantity), company)
-            vals['remaining_qty'] = fifo_vals.get('remaining_qty')
-            # In case of AVCO, fix rounding issue of standard price when needed.
-            if self.product_tmpl_id.cost_method == 'average' and not float_is_zero(self.quantity_svl, precision_rounding=self.uom_id.rounding):
-                rounding_error = currency.round(
-                    (cost_value * self.quantity_svl - self.value_svl) * abs(quantity / self.quantity_svl)
-                )
-                if rounding_error:
-                    # If it is bigger than the (smallest number of the currency * quantity) / 2,
-                    # then it isn't a rounding error but a stock valuation error, we shouldn't fix it under the hood ...
-                    if abs(rounding_error) <= max((abs(quantity) * currency.rounding) / 2, currency.rounding):
-                        vals['value'] += rounding_error
-                        vals['rounding_adjustment'] = '\nRounding Adjustment: %s%s %s' % (
-                            '+' if rounding_error > 0 else '',
-                            float_repr(rounding_error, precision_digits=currency.decimal_places),
-                            currency.symbol
-                        )
-            if self.product_tmpl_id.cost_method == 'fifo':
-                vals.update(fifo_vals)
-        return vals
+            # Quantity is negative for out valuation layers.
+            quantity = -1 * quantity
+            vals = {
+                'product_id': product_id,
+                'value': currency.round(quantity * cost_value),
+                'unit_cost': cost_value,
+                'quantity': quantity,
+            }
+            if self.product_tmpl_id.cost_method in ('average', 'fifo'):
+                fifo_vals = self._run_fifo(abs(quantity), company)
+                vals['remaining_qty'] = fifo_vals.get('remaining_qty')
+                # In case of AVCO, fix rounding issue of standard price when needed.
+                if self.product_tmpl_id.cost_method == 'average' and not float_is_zero(self.quantity_svl, precision_rounding=self.uom_id.rounding):
+                    rounding_error = currency.round(
+                        (cost_value * self.quantity_svl - self.value_svl) * abs(quantity / self.quantity_svl)
+                    )
+                    if rounding_error:
+                        # If it is bigger than the (smallest number of the currency * quantity) / 2,
+                        # then it isn't a rounding error but a stock valuation error, we shouldn't fix it under the hood ...
+                        if abs(rounding_error) <= max((abs(quantity) * currency.rounding) / 2, currency.rounding):
+                            vals['value'] += rounding_error
+                            vals['rounding_adjustment'] = '\nRounding Adjustment: %s%s %s' % (
+                                '+' if rounding_error > 0 else '',
+                                float_repr(rounding_error, precision_digits=currency.decimal_places),
+                                currency.symbol
+                            )
+                if self.product_tmpl_id.cost_method == 'fifo':
+                    vals.update(fifo_vals)
+            return vals
+        else:
+            # Fallback to the default behavior for other companies
+            return super(ProductProduct, self)._prepare_out_svl_vals(quantity, company)
 
 
     def _run_fifo(self, quantity, company):
