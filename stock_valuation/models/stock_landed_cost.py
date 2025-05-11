@@ -18,7 +18,7 @@ class StockLandedCost(models.Model):
     location_id = fields.Many2one('stock.location', string='Location')  
 
     def button_validate(self):
-        self.result = self.company_id
+        self.result = self.company_id.id
         self._check_can_validate()
         cost_without_adjusment_lines = self.filtered(lambda c: not c.valuation_adjustment_lines)
         if cost_without_adjusment_lines:
