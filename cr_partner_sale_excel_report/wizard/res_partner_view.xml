@@ -28,7 +28,7 @@
         <field name="name">Sale Report</field>
         <field name="res_model">res.partner.wizard</field>
         <field name="view_mode">form</field>
-        <field name="view_id" ref="res_partner_menu"/> 
+        <field name="view_id" ref="sale_order_menu"/> 
         <field name="target">new</field>
         <field name="binding_model_id" ref="base.model_sale_order"/>
         <field name="binding_view_types">form,list</field>
