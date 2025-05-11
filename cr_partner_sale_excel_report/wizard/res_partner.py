@@ -78,7 +78,7 @@ class ResPartnerSaleReport(models.TransientModel):
         values = []
         products = []
         fp = BytesIO()
-        file_name = "sale.xlsx"
+        file_name = "'Packing List - %s' % (object.name)"
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet()
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
