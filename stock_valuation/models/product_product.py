@@ -13,7 +13,11 @@ class ProductProduct(models.Model):
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
     
 
+    
     def generate_location_costs(self):
+        """
+        initialize product costing per internal location equals to standard price, based on existing stock quantities.
+        """        
         internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
         all_products = self.search([])
         CostModel = self.env['product.location.cost']
@@ -36,7 +40,6 @@ class ProductProduct(models.Model):
                     })
 
 
-
     @api.depends('stock_valuation_layer_ids')
     @api.depends_context('to_date', 'company')
     def _compute_value_svl(self):
@@ -54,9 +57,7 @@ class ProductProduct(models.Model):
             if id:
                 domain.extend(['|', ('stock_move_id.location_dest_id.id', '=', id), ('stock_move_id.location_id.id', '=', id)])
 
-            #domain.append(('stock_move_id.location_dest_id.id', '=', id))
             groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
-            
             
             products = self.browse()
             for group in groups:
@@ -112,6 +113,7 @@ class ProductProduct(models.Model):
             if self.product_tmpl_id.cost_method in ('average', 'fifo'):
                 fifo_vals = self._run_fifo(abs(quantity), company)
                 vals['remaining_qty'] = fifo_vals.get('remaining_qty')
+                
                 # In case of AVCO, fix rounding issue of standard price when needed.
                 if self.product_tmpl_id.cost_method == 'average' and not float_is_zero(self.quantity_svl, precision_rounding=self.uom_id.rounding):
                     rounding_error = currency.round(
@@ -211,52 +213,3 @@ class ProductLocationCost(models.Model):
     product_id = fields.Many2one('product.product', string='Product', required=True, ondelete='cascade')
     location_id = fields.Many2one('stock.location', string='Location', required=True)
     cost = fields.Float('Cost', digits='Product Price')
-
-
-    def update_related_costs(self, product_id, new_cost):
-        # Locations to update
-        location_ids_to_update = [154, 114, 122, 130, 250, 106, 261, 269]
-
-        # Search for product.location.cost records with the given product_id and location_id in the list
-        records_to_update = self.search([
-            ('product_id', '=', product_id),
-            ('location_id', 'in', location_ids_to_update)
-        ])
-
-        # Update the cost for each record
-        for record in records_to_update:
-            record.cost = new_cost
-
-    def write(self, vals):
-        # Check if we're updating the cost for location_id = 8
-        if 'cost' in vals and self.location_id.id == 8:
-            # Call the method to update related costs
-            self.update_related_costs(self.product_id.id, vals['cost'])
-
-        # Call the super method to apply the write
-        return super(ProductLocationCost, self).write(vals)
-
-
-    # def create_missing_cost_records(self):
-    #     Product = self.env['product.product']
-    #     StockQuant = self.env['stock.quant']
-    #     LocationCost = self.env['product.location.cost']
-
-    #     all_products = Product.search([])
-    #     for product in all_products:
-    #         quants = StockQuant.search([('product_id', '=', product.id)])
-    #         for quant in quants:
-    #             domain = [
-    #                 ('product_id', '=', product.id),
-    #                 ('location_id', '=', quant.location_id.id)
-    #             ]
-    #             if not LocationCost.search_count(domain):
-    #                 LocationCost.create({
-    #                     'product_id': product.id,
-    #                     'location_id': quant.location_id.id,
-    #                     'cost': product.standard_price,
-    #                 })
-
-
-    # def reset_location_costs(self):
-    #     self.search([]).unlink()

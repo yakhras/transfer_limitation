@@ -4,7 +4,6 @@
 from collections import defaultdict
 
 from odoo import api, fields, models, tools, _
-from ast import literal_eval
 from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_is_zero
 
@@ -19,6 +18,7 @@ class StockLandedCost(models.Model):
     location_id = fields.Many2one('stock.location', string='Location')  
 
     def button_validate(self):
+        self.result = self.company_id
         self._check_can_validate()
         cost_without_adjusment_lines = self.filtered(lambda c: not c.valuation_adjustment_lines)
         if cost_without_adjusment_lines:
@@ -97,7 +97,6 @@ class StockLandedCost(models.Model):
                                 'location_id': self.location_id.id,
                                 'cost': cost_val,
                             })
-                    #product.with_company(cost.company_id).sudo().with_context(disable_auto_svl=True).standard_price += cost_to_add_byproduct[product] / product.with_context(location_dest_id = self.location_id.id).quantity_svl
 
             move_vals['stock_valuation_layer_ids'] = [(6, None, valuation_layer_ids)]
             # We will only create the accounting entry when there are defined lines (the lines will be those linked to products of real_time valuation category).
