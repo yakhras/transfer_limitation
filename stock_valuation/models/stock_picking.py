@@ -12,8 +12,6 @@ class Picking(models.Model):
 
 
 
-
-
     def _action_generate_immediate_wizard(self, show_transfers=False):
         view = self.env.ref('stock.view_immediate_transfer')
         return {

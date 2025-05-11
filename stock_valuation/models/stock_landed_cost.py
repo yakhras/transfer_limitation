@@ -19,7 +19,6 @@ class StockLandedCost(models.Model):
 
     def button_validate(self):
         if self.company_id.id == 5:
-            self.result = 'ok'
             self._check_can_validate()
             cost_without_adjusment_lines = self.filtered(lambda c: not c.valuation_adjustment_lines)
             if cost_without_adjusment_lines:
@@ -118,7 +117,6 @@ class StockLandedCost(models.Model):
 
             return True
         else:
-            self.result = 'not ok'
             return super(StockLandedCost, self).button_validate()
     
         

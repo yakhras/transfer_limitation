@@ -26,7 +26,6 @@ class StockMove(models.Model):
         for move in self.filtered(lambda move: move._is_in() and move.with_company(move.company_id).product_id.cost_method == 'average'):
             product_tot_qty_available = move.product_id.sudo().with_company(move.company_id).quantity_svl + tmpl_dict[move.product_id.id]
             rounding = move.product_id.uom_id.rounding
-            self.result = product_tot_qty_available
             
             valued_move_lines = move._get_in_move_lines()
             
@@ -55,7 +54,7 @@ class StockMove(models.Model):
                 
             else:
                 # Get the standard price
-                amount_unit = std_price_update.get((move.company_id.id, move.product_id.id)) or cost_value #move.product_id.with_company(move.company_id).standard_price
+                amount_unit = std_price_update.get((move.company_id.id, move.product_id.id)) or cost_value
                 
                 new_std_price = ((amount_unit * product_tot_qty_available) + (move._get_price_unit() * qty)) / (product_tot_qty_available + qty)
                 
@@ -90,9 +89,7 @@ class StockMove(models.Model):
         # adapt standard price on incomming moves if the product cost_method is 'fifo'
         for move in self.filtered(lambda move:
                                   move.with_company(move.company_id).product_id.cost_method == 'fifo'):
-                                  #and float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)):
             
-            #move.product_id.with_company(move.company_id.id).sudo().write({'standard_price': move._get_price_unit()})
             std_price_update[move.company_id.id, move.product_id.id, move.location_dest_id.id] = move._get_price_unit()
             for key, cost in std_price_update.items():
                 company_id, product_id, location_id = key
@@ -107,11 +104,6 @@ class StockMove(models.Model):
                     })
             
 
-        # end_time = time.time()
-        # execution_time = end_time - start_time
-
-        # # Store the result
-        # self.result = f"Execution Time: {execution_time:.5f} seconds"
 
     def _create_out_svl(self, forced_quantity=None):
             """Create a `stock.valuation.layer` from `self`.

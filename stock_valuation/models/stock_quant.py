@@ -21,31 +21,34 @@ class StockQuant(models.Model):
         a estimation more than a real value).
         """
         for quant in self:
-            quant.currency_id = quant.company_id.currency_id
-            # If the user didn't enter a location yet while enconding a quant.
-            if not quant.location_id:
-                quant.value = 0
-                return
+            if quant.company_id.id == 5:
+                quant.currency_id = quant.company_id.currency_id
+                # If the user didn't enter a location yet while enconding a quant.
+                if not quant.location_id:
+                    quant.value = 0
+                    return
 
-            if not quant.location_id._should_be_valued() or\
-                    (quant.owner_id and quant.owner_id != quant.company_id.partner_id):
-                quant.value = 0
-                continue
-            if quant.product_id.cost_method == 'fifo':
-                quantity = quant.product_id.with_company(quant.company_id).quantity_svl
-                if float_is_zero(quantity, precision_rounding=quant.product_id.uom_id.rounding):
-                    quant.value = 0.0
+                if not quant.location_id._should_be_valued() or\
+                        (quant.owner_id and quant.owner_id != quant.company_id.partner_id):
+                    quant.value = 0
                     continue
-                average_cost = quant.product_id.with_company(quant.company_id).value_svl / quantity
-                quant.value = quant.quantity * average_cost
-                quant.unit_value = average_cost
-            else:
-                if quant.location_id and quant.product_id:
-                    location_cost = self.env['product.location.cost'].search([
-                        ('product_id', '=', quant.product_id.id),
-                        ('location_id', '=', quant.location_id.id)
-                    ], order='id desc', limit=1)  # Get the most recent record
+                if quant.product_id.cost_method == 'fifo':
+                    quantity = quant.product_id.with_company(quant.company_id).quantity_svl
+                    if float_is_zero(quantity, precision_rounding=quant.product_id.uom_id.rounding):
+                        quant.value = 0.0
+                        continue
+                    average_cost = quant.product_id.with_company(quant.company_id).value_svl / quantity
+                    quant.value = quant.quantity * average_cost
+                    quant.unit_value = average_cost
+                else:
+                    if quant.location_id and quant.product_id:
+                        location_cost = self.env['product.location.cost'].search([
+                            ('product_id', '=', quant.product_id.id),
+                            ('location_id', '=', quant.location_id.id)
+                        ], order='id desc', limit=1)  # Get the most recent record
 
-                    cost_value = location_cost.cost if location_cost else 0.0
-                quant.value = quant.quantity * cost_value
-                quant.unit_value = cost_value
+                        cost_value = location_cost.cost if location_cost else 0.0
+                    quant.value = quant.quantity * cost_value
+                    quant.unit_value = cost_value
+            else:
+                return super(StockQuant, self)._compute_value()
