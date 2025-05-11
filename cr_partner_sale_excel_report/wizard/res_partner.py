@@ -67,7 +67,7 @@ class ResPartnerSaleReport(models.TransientModel):
         partner_id = self.env.context.get("active_ids")
         order_ids = self.env["sale.order"].search(
             [
-                ("partner_id", "in", partner_id),
+                ("name", "=", partner_id),
                 ("date_order", ">=", self.start_date),
                 ("date_order", "<", self.end_date),
             ]
@@ -78,7 +78,7 @@ class ResPartnerSaleReport(models.TransientModel):
         values = []
         products = []
         fp = BytesIO()
-        file_name = "Packing List" + str(partner_id) + ".xlsx"
+        file_name = "Packing List " + str(order_ids) + ".xlsx"
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet()
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
