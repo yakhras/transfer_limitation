@@ -8,16 +8,10 @@
         <field name="arch" type="xml">
             <form>
                 <group>
-                    <group>
-                        <field name="start_date"/>
-                    </group>
-                    <group>
-                        <field name="end_date"/> 
-                    </group>
-                </group>
-                <footer>
                     <button string="Excel Report" type="object" name="action_generate_excel_report" class="btn-primary"/>
                     <button string="PDF Report" type="object" name="action_generate_pdf_report" class="btn-primary"/> 
+                </group>
+                <footer>
                     <button string="Cancel" special="cancel" class="btn btn-secondary"/>
                 </footer>
             </form>
