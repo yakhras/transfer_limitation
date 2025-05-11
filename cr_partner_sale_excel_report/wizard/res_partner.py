@@ -7,7 +7,7 @@ import xlsxwriter
 import base64
 
 class ResPartnerSaleReport(models.TransientModel):
-    _name = "res.partner.wizard"
+    _name = "sale.order.wizard"
     _description = "Sale Report Wizard for Res Partner"
 
     start_date = fields.Date(string="Start Date:")
