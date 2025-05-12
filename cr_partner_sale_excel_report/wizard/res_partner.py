@@ -88,8 +88,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(0, 0, sale_order.name)
 
         worksheet.merge_range( "B3:E3", sale_order.company_id.name )
-        worksheet.set_row(3, 120)
-        worksheet.embed_image(3, 1, sale_order.company_id.logo)
+        worksheet.insert_image( 'F3', 'sale_order.company_id.logo' )
 
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
