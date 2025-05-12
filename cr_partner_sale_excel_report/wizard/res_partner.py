@@ -83,7 +83,7 @@ class ResPartnerSaleReport(models.TransientModel):
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet("Packing List")
         worksheet.set_paper(9)
-        worksheet.write(0, 0, int(str(partner_id)))
+        worksheet.write(0, 0, int(str(partner_id[0])))
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
         center_format1 = workbook.add_format(
