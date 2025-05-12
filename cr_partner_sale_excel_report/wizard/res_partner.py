@@ -65,6 +65,8 @@ class ResPartnerSaleReport(models.TransientModel):
 
     def action_generate_excel_report(self):
         partner_id = self.env.context.get("active_ids")
+        id = int(str(partner_id[0]))
+        sale_order = self.env["sale.order"].browse(id)
         order_ids = self.env["sale.order"].search(
             [
                 ("name", "=", partner_id),
@@ -83,7 +85,7 @@ class ResPartnerSaleReport(models.TransientModel):
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet("Packing List")
         worksheet.set_paper(9)
-        worksheet.write(0, 0, int(str(partner_id[0])))
+        worksheet.write(0, 0, sale_order)
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
         center_format1 = workbook.add_format(
