@@ -66,6 +66,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
     def action_generate_excel_report(self):
         partner_id = self.env.context.get("active_ids")
+        self.result = partner_id
         order_ids = self.env["sale.order"].search(
             [
                 ("name", "=", partner_id),
