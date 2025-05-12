@@ -108,9 +108,9 @@ class ResPartnerSaleReport(models.TransientModel):
         bold = workbook.add_format({"bold": True})
         worksheet.set_column(1, 1, 20)
         worksheet.set_column(1, 3, 10)
-        worksheet.merge_range(
-            "B3:E3", "Sale Report: %s" % order_ids.company_id.name, center_format1
-        )
+        # worksheet.merge_range(
+        #     "B3:E3", "Sale Report: %s" % order_ids.company_id.name, center_format1
+        # )
 
         for order_line in order_lines:
             if order_line.product_id.id not in products:
