@@ -12,6 +12,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
     start_date = fields.Date(string="Start Date:")
     end_date = fields.Date(string="End Date:")
+    result = fields.Char("Result")
 
     def action_generate_pdf_report(self):
         partner_id = self.env.context.get("active_ids")
