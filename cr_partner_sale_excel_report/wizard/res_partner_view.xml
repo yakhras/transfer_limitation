@@ -10,7 +10,6 @@
                 <group>
                     <button string="Excel Report" type="object" name="action_generate_excel_report" class="btn-primary"/>
                     <button string="PDF Report" type="object" name="action_generate_pdf_report" class="btn-primary"/> 
-                    <field name="result"/>
                 </group>
                 <footer>
                     <button string="Cancel" special="cancel" class="btn btn-secondary"/>
