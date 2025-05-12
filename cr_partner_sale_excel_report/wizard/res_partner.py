@@ -88,7 +88,9 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(0, 0, sale_order.name)
 
         worksheet.merge_range( "B3:E3", sale_order.company_id.name )
-        worksheet.embed_image( 3, 7, sale_order.company_id.logo )
+        worksheet.insert_image( 3, 7, sale_order.company_id.logo )
+
+
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
         center_format1 = workbook.add_format(
             {"align": "center", "valign": "vcenter", "bold": True}
