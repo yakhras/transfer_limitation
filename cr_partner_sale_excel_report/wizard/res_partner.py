@@ -79,8 +79,12 @@ class ResPartnerSaleReport(models.TransientModel):
         products = []
         fp = BytesIO()
         file_name = "Packing List.xlsx"
+
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet("Packing List")
+        worksheet.set_paper(9)
+        worksheet.write(0, 0, partner_id)
+
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
         center_format1 = workbook.add_format(
             {"align": "center", "valign": "vcenter", "bold": True}
@@ -100,6 +104,10 @@ class ResPartnerSaleReport(models.TransientModel):
         bold = workbook.add_format({"bold": True})
         worksheet.set_column(1, 1, 20)
         worksheet.set_column(1, 3, 10)
+        worksheet.merge_range(
+            "B3:E3", "Sale Report: %s" % order_ids.company_id.name, center_format1
+        )
+
         for order_line in order_lines:
             if order_line.product_id.id not in products:
                 products.append(order_line.product_id.id)
@@ -115,9 +123,7 @@ class ResPartnerSaleReport(models.TransientModel):
                 }
                 values.append(order_line_data)
 
-        worksheet.merge_range(
-            "A1:G3", "Sale Report: %s" % order_ids.company_id.name, center_format1
-        )
+        
         worksheet.merge_range(
             "A6:F7", "Time Period: %s -- %s" % (self.start_date, self.end_date), date
         )
