@@ -84,13 +84,11 @@ class ProductProduct(models.Model):
         self.ensure_one()
         company_id = self.env.context.get('force_company', self.env.company.id)
         company = self.env['res.company'].browse(company_id)
-        if company == 5:
+        if company_id == 5:
+
             currency = company.currency_id
-            
             product_id = self.id  # Assuming this method runs in the product.product model
             location_id = self.env.context.get('location_id')
-
-            
 
             if location_id and product_id:
                 location_cost = self.env['product.location.cost'].search([
@@ -99,7 +97,6 @@ class ProductProduct(models.Model):
                 ], order='id desc', limit=1)  # Get the most recent record
 
                 cost_value = location_cost.cost if location_cost else 0.0
-
             
 
             # Quantity is negative for out valuation layers.
