@@ -45,6 +45,7 @@ class ProductProduct(models.Model):
     def _compute_value_svl(self):
         """Compute `value_svl` and `quantity_svl`."""
         company_id = self.env.company.id
+        self.result = company_id
         # if company_id == 5:
         domain = [
             ('product_id', 'in', self.ids),
