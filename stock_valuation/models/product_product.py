@@ -45,33 +45,33 @@ class ProductProduct(models.Model):
     def _compute_value_svl(self):
         """Compute `value_svl` and `quantity_svl`."""
         company_id = self.env.company.id
-        self.result = company_id
-        # if company_id == 5:
-        domain = [
-            ('product_id', 'in', self.ids),
-            ('company_id', '=', company_id),
-        ]
-        if self.env.context.get('to_date'):
-            to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
-            domain.append(('create_date', '<=', to_date))
-        id = self.env.context.get('location_dest_id')
-        if id:
-            domain.extend(['|', ('stock_move_id.location_dest_id.id', '=', id), ('stock_move_id.location_id.id', '=', id)])
+        if company_id == 5:
+            domain = [
+                ('product_id', 'in', self.ids),
+                ('company_id', '=', company_id),
+            ]
+            if self.env.context.get('to_date'):
+                to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
+                domain.append(('create_date', '<=', to_date))
+            id = self.env.context.get('location_dest_id')
+            if id:
+                domain.extend(['|', ('stock_move_id.location_dest_id.id', '=', id), ('stock_move_id.location_id.id', '=', id)])
 
-        groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
-        
-        products = self.browse()
-        for group in groups:
-            product = self.browse(group['product_id'][0])
-            product.value_svl = self.env.company.currency_id.round(group['value'])
-            product.quantity_svl = group['quantity']
-            products |= product
-        remaining = (self - products)
-        remaining.value_svl = 0
-        remaining.quantity_svl = 0
-        # else:
-        #     # Fallback to the default behavior for other companies
-        #     super(ProductProduct, self)._compute_value_svl()
+            groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
+            
+            products = self.browse()
+            for group in groups:
+                product = self.browse(group['product_id'][0])
+                product.value_svl = self.env.company.currency_id.round(group['value'])
+                product.quantity_svl = group['quantity']
+                product.result = group['quantity']
+                products |= product
+            remaining = (self - products)
+            remaining.value_svl = 0
+            remaining.quantity_svl = 0
+        else:
+            # Fallback to the default behavior for other companies
+            super(ProductProduct, self)._compute_value_svl()
 
     
     def _prepare_out_svl_vals(self, quantity, company):
