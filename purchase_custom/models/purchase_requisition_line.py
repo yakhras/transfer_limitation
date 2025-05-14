@@ -6,7 +6,7 @@ class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
 
 
-    partner_id = fields.Many2one('res.partner', related='requisition_id.partner_id', string='Partner', readonly=True, store=True)
+    
     currency_id = fields.Many2one(related='requisition_id.currency_id', store=True, string='Currency', readonly=True)
     taxes_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
@@ -37,5 +37,4 @@ class PurchaseRequisitionLine(models.Model):
             'currency': self.currency_id,
             'quantity': self.product_qty,
             'product': self.product_id,
-            'partner': self.requisition_id.partner_id,
         }
