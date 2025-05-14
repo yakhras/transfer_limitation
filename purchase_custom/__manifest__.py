@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "check_risk",
+    'name': "Purchase Custom",
 
     'summary': """
-        Check Risk""",
+        Purchase Custom""",
 
     'description': """
-        Check Risk. 
+        Purchase Custom. 
     """,
 
     'author': "Yaser Akhras",
@@ -21,10 +21,10 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'l10n_tr_account_check'],
+    'depends': ['purchase_requisition'],
 
     # always loaded
     'data': [
-        "views/res_partner_view.xml",
+        "views/purchase_requisition_view.xml",
     ],
 }
