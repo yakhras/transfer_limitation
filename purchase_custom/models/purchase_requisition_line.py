@@ -32,8 +32,8 @@ class PurchaseRequisitionLine(models.Model):
         self.ensure_one()
         return {
             'price_unit': self.price_unit,
-            'currency': self.currency_id,
+            'currency': self.requisition_id.currency_id,
             'quantity': self.product_qty,
             'product': self.product_id,
-            'partner': self.partner_id,
+            'partner': self.requisition_id.partner_id,
         }
