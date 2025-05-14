@@ -5,10 +5,10 @@ from odoo import models, fields, api, _
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
 
-
+    
     taxes_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
-    price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
-    price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
+    price_subtotal = fields.Monetary(compute='_compute_amount', currency_field="requisition_id.currency_id", string='Subtotal', store=True)
+    price_total = fields.Monetary(compute='_compute_amount', currency_field="requisition_id.currency_id", string='Total', store=True)
     price_tax = fields.Float(compute='_compute_amount', string='Tax', store=True)
 
 
