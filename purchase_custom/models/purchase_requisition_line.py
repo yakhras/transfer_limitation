@@ -22,3 +22,18 @@ class PurchaseRequisitionLine(models.Model):
                 'price_total': taxes['total_included'],
                 'price_subtotal': taxes['total_excluded'],
             })
+
+    def _prepare_compute_all_values(self):
+        # Hook method to returns the different argument values for the
+        # compute_all method, due to the fact that discounts mechanism
+        # is not implemented yet on the purchase orders.
+        # This method should disappear as soon as this feature is
+        # also introduced like in the sales module.
+        self.ensure_one()
+        return {
+            'price_unit': self.price_unit,
+            'currency': self.currency_id,
+            'quantity': self.product_qty,
+            'product': self.product_id,
+            'partner': self.partner_id,
+        }
