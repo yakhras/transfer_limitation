@@ -62,6 +62,7 @@ class PurchaseRequisitionLine(models.Model):
     
     @api.depends('price_total')
     def _amount_all(self):
+        self.ensure_one()
         amount_untaxed = amount_tax = 0.0
         for line in self:
             line._compute_amount()
