@@ -62,15 +62,15 @@ class PurchaseRequisitionLine(models.Model):
     
     @api.depends('price_total')
     def _amount_all(self):
-        self.ensure_one()
-        amount_untaxed = amount_tax = 0.0
-        for line in self:
-            line._compute_amount()
-            amount_untaxed += line.price_subtotal
-            amount_tax += line.price_tax
-        currency = self.currency_id or self.env.company.currency_id
-        self.update({
-            'amount_untaxed': currency.round(amount_untaxed),
-            'amount_tax': currency.round(amount_tax),
-            'amount_total': amount_untaxed + amount_tax,
-        })
+        for order in self:
+            amount_untaxed = amount_tax = 0.0
+            for line in self:
+                line._compute_amount()
+                amount_untaxed += line.price_subtotal
+                amount_tax += line.price_tax
+            currency = order.currency_id or self.env.company.currency_id
+            order.update({
+                'amount_untaxed': currency.round(amount_untaxed),
+                'amount_tax': currency.round(amount_tax),
+                'amount_total': amount_untaxed + amount_tax,
+            })
