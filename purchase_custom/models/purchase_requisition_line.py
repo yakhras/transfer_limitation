@@ -5,10 +5,10 @@ from odoo import models, fields, api, _
 class PurchaseRequisitionLine(models.Model):
     _inherit = "purchase.requisition.line"
 
-    
+    currency_id = fields.Many2one(related='requisition_id.currency_id', store=True, string='Currency', readonly=True)
     taxes_id = fields.Many2many('account.tax', string='Taxes', domain=['|', ('active', '=', False), ('active', '=', True)])
-    price_subtotal = fields.Monetary(compute='_compute_amount', currency_field="requisition_id.currency_id", string='Subtotal', store=True)
-    price_total = fields.Monetary(compute='_compute_amount', currency_field="requisition_id.currency_id", string='Total', store=True)
+    price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
+    price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
     price_tax = fields.Float(compute='_compute_amount', string='Tax', store=True)
 
 
@@ -32,7 +32,7 @@ class PurchaseRequisitionLine(models.Model):
         self.ensure_one()
         return {
             'price_unit': self.price_unit,
-            'currency': self.requisition_id.currency_id,
+            'currency': self.currency_id,
             'quantity': self.product_qty,
             'product': self.product_id,
             'partner': self.requisition_id.partner_id,
