@@ -60,14 +60,14 @@ class PurchaseRequisition(models.Model):
     amount_untaxed = fields.Monetary(string='Untaxed Amount', store=True, readonly=True, compute='_amount_all', tracking=True)
 
 
-    @api.depends('taxes_id', 'price_subtotal', 'amount_total', 'amount_untaxed')
+    @api.depends('line_ids.taxes_id', 'line_ids.price_subtotal', 'amount_total', 'amount_untaxed')
     def  _compute_tax_totals_json(self):
         def compute_taxes(order_line):
             return order_line.taxes_id._origin.compute_all(**order_line._prepare_compute_all_values())
 
         account_move = self.env['account.move']
         for order in self:
-            tax_lines_data = account_move._prepare_tax_lines_data_for_totals_from_object(order, compute_taxes)
+            tax_lines_data = account_move._prepare_tax_lines_data_for_totals_from_object(order.line_ids, compute_taxes)
             tax_totals = account_move._get_tax_totals(order.vendor_id, tax_lines_data, order.amount_total, order.amount_untaxed, order.currency_id)
             order.tax_totals_json = json.dumps(tax_totals)
 
