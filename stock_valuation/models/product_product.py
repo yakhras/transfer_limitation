@@ -13,6 +13,46 @@ class ProductProduct(models.Model):
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
     
 
+
+    def audit_product_svl_for_location(self):
+        company = self.env.company
+        if company.id != 5:
+            return
+
+        location = self.env['stock.location'].browse(362)
+        if location.usage != 'internal':
+            return
+
+        product = self.env['product.product'].browse(37375)
+
+        # Compute SVL values using existing compute method
+        product.with_context(location_dest_id=location.id)._compute_value_svl()
+
+        # Get quantity available in this location
+        quant_domain = [
+            ('product_id', '=', product.id),
+            ('location_id', '=', location.id),
+            ('company_id', '=', company.id),
+        ]
+        quantity_available = self.env['stock.quant'].search(quant_domain).quantity
+
+        value_svl = product.value_svl
+        quantity_svl = product.quantity_svl
+
+        # Update quant if mismatch
+        if value_svl == 0 and quantity_svl == 0 and quantity_available != 0:
+            self.env['stock.quant'].search(quant_domain).write({'quantity': 0})
+            product.result = (
+                f"[FIXED] Loc {location.name}: Available={quantity_available}, "
+                f"SVL_Val={value_svl}, SVL_Qty={quantity_svl}"
+            )
+        else:
+            product.result = (
+                f"[OK] Loc {location.name}: Available={quantity_available}, "
+                f"SVL_Val={value_svl}, SVL_Qty={quantity_svl}"
+            )
+
+
     
     def generate_location_costs(self):
         """
