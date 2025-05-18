@@ -15,7 +15,7 @@ class ProductProduct(models.Model):
 
     def compute_svl_for_location_362(self):
         if self.env.company.id != 5:
-        return
+            return
 
         # Fetch all internal locations for company 5
         internal_locations = self.env['stock.location'].search([
