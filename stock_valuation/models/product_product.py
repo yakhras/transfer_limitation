@@ -14,36 +14,34 @@ class ProductProduct(models.Model):
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
 
     def compute_svl_for_location_362(self):
-        if self.env.company.id != 5:
-            return
-
-        # Fetch all internal locations for company 5
+        # Get all products
+        all_products = self.env['product.product'].search([])
+    
+        # Get all internal locations for company ID 5
         internal_locations = self.env['stock.location'].search([
             ('usage', '=', 'internal'),
             ('company_id', '=', 5)
         ])
     
-        result_lines = []
+        for product in all_products:
+            result_lines = []
     
-        for location in internal_locations:
-            ctx = dict(self.env.context, location_dest_id=location.id)
-            products = self.with_context(ctx)
-            products._compute_value_svl()
+            for location in internal_locations:
+                ctx = dict(self.env.context, location_dest_id=location.id)
+                product_with_ctx = product.with_context(ctx)
+                product_with_ctx._compute_value_svl()
     
-            for product in products:
                 line = (
                     f"Location: {location.name} (ID: {location.id})\n"
-                    f"Product ID: {product.id}\n"
-                    f"Quantity SVL: {product.quantity_svl}\n"
-                    f"Value SVL: {product.value_svl}\n"
+                    f"Product ID: {product.id} - {product.display_name}\n"
+                    f"Quantity SVL: {product_with_ctx.quantity_svl}\n"
+                    f"Value SVL: {product_with_ctx.value_svl}\n"
                     "-------------------------"
                 )
                 result_lines.append(line)
-
-        # Assign full result to each product (you can change this if you want per-location)
-        final_result = "\n".join(result_lines)
-        for product in self:
-            product.result = final_result
+    
+            # Store the result in the product's `result` Text field
+            product.result = "\n".join(result_lines)
 
     
 
