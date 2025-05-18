@@ -340,5 +340,5 @@ class StockLocation(models.Model):
                 'res_model': 'stock.valuation.layer',
                 'view_mode': 'tree',
                 'target': 'current',
-                'domain': [],
+                'domain': ["|",["stock_move_id.location_id.id","=",location.id],["stock_move_id.location_dest_id.id","=",location.id]],
             }
