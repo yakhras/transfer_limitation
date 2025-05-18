@@ -337,7 +337,7 @@ class StockLocation(models.Model):
             return {
                 'type': 'ir.actions.act_window',
                 'name': 'SVL Summary',
-                'res_model': 'product.product',
+                'res_model': 'stock.valuation.layer',
                 'view_mode': 'tree',
                 'target': 'current',
                 'domain': [],
