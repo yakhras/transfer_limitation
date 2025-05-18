@@ -14,34 +14,31 @@ class ProductProduct(models.Model):
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
 
     def compute_svl_for_location_362(self):
-        # Get all products
-        all_products = self.env['product.product'].search([])
-    
-        # Get all internal locations for company ID 5
         internal_locations = self.env['stock.location'].search([
-            ('usage', '=', 'internal'),
-            ('company_id', '=', 5)
+        ('usage', '=', 'internal'),
+        ('company_id', '=', self.env.company.id)
         ])
     
-        for product in all_products:
-            result_lines = []
+        result_lines = []
     
-            for location in internal_locations:
-                ctx = dict(self.env.context, location_dest_id=location.id)
-                product_with_ctx = product.with_context(ctx)
-                product_with_ctx._compute_value_svl()
+        for location in internal_locations:
+            ctx = dict(self.env.context, location_dest_id=location.id)
+            products = self.with_context(ctx)
+            products._compute_value_svl()
     
+            for product in products:
                 line = (
                     f"Location: {location.name} (ID: {location.id})\n"
                     f"Product ID: {product.id}\n"
-                    f"Quantity SVL: {product_with_ctx.quantity_svl}\n"
-                    f"Value SVL: {product_with_ctx.value_svl}\n"
+                    f"Quantity SVL: {product.quantity_svl}\n"
+                    f"Value SVL: {product.value_svl}\n"
                     "-------------------------"
                 )
                 result_lines.append(line)
     
-            # Store the result in the product's `result` Text field
-            product.result = "\n".join(result_lines)
+        final_result = "\n".join(result_lines)
+        for product in self:
+            product.result = final_result
 
     
 
