@@ -1,6 +1,9 @@
 from odoo import models, fields, api
 from odoo.tools import float_is_zero, float_repr
 import json
+import logging
+_logger = logging.getLogger(__name__)
+
 
 
 
@@ -12,6 +15,27 @@ class ProductProduct(models.Model):
     result = fields.Char('Result')
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
     
+
+    def get_svl_data_per_location(self):
+        results = {}
+    
+        if self.env.company.id != 5:
+            return results
+    
+        internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+        for location in internal_locations:
+            ctx = dict(self.env.context, location_dest_id=location.id)
+            products = self.with_context(ctx)
+            products._compute_value_svl()
+    
+            for product in products:
+                results.setdefault(location.id, {})[product.id] = {
+                    'value_svl': product.value_svl,
+                    'quantity_svl': product.quantity_svl,
+                }
+    
+        _logger.info("SVL Data per Location:\n%s", results)
+        return results
 
 
     def audit_product_svl_for_location(self):
