@@ -121,6 +121,24 @@
             <field name="active">True</field>
         </record>
 
+        <record id="view_location_form_inherit_custom_button" model="ir.ui.view">
+          <field name="name">stock.location.form.inherit.custom.button</field>
+          <field name="model">stock.location</field>
+          <field name="inherit_id" ref="stock.view_location_form"/>
+          <field name="arch" type="xml">
+    
+            <!-- Insert after "Current Stock" button -->
+            <xpath expr="//button[@name='598']" position="after">
+              <button name="action_custom_svl_summary"
+                      string="SVL Summary"
+                      type="object"
+                      class="oe_stat_button"
+                      icon="fa-bar-chart"/>
+            </xpath>
+    
+          </field>
+        </record>
+
         
     </data>
 </odoo>
