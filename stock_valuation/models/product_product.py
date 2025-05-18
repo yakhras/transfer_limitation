@@ -10,40 +10,54 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
 
 
-    result = fields.Char('Result')
+    result = fields.Text('Result')
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
     
 
     def get_svl_data_per_location(self):
-        results = {}
-    
         if self.env.company.id != 5:
             self.result = "Skipped: not company 5"
             return {}
     
+        StockValuationLayer = self.env['stock.valuation.layer']
         internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+        results = {}
         summary_lines = []
     
         for location in internal_locations:
-            ctx = dict(self.env.context, location_dest_id=location.id)
-            products = self.with_context(ctx)
-            products._compute_value_svl()
+            for product in self:
+                # Build domain manually as _compute_value_svl does
+                domain = [
+                    ('product_id', '=', product.id),
+                    ('company_id', '=', self.env.company.id),
+                    '|',
+                    ('stock_move_id.location_dest_id', '=', location.id),
+                    ('stock_move_id.location_id', '=', location.id)
+                ]
+                groups = StockValuationLayer.read_group(
+                    domain,
+                    ['value:sum', 'quantity:sum'],
+                    ['product_id']
+                )
+                value_svl = quantity_svl = 0.0
+                if groups:
+                    group = groups[0]
+                    value_svl = self.env.company.currency_id.round(group['value'])
+                    quantity_svl = group['quantity']
     
-            for product in products:
-                value = {
-                    'value_svl': product.value_svl,
-                    'quantity_svl': product.quantity_svl,
+                # Store results
+                results.setdefault(location.id, {})[product.id] = {
+                    'value_svl': value_svl,
+                    'quantity_svl': quantity_svl,
                 }
-                results.setdefault(location.id, {})[product.id] = value
     
-                # Add to summary string
-                line = f"Loc {location.id} Prod {product.id}: Qty SVL={product.quantity_svl}, Val SVL={product.value_svl}"
-                summary_lines.append(line)
+                # Add human-readable line
+                summary_lines.append(
+                    f"Location {location.id} ({location.display_name}) | Product {product.id} ({product.display_name}): "
+                    f"Qty SVL={quantity_svl}, Val SVL={value_svl}"
+                )
     
-        # Save summary string into the `result` field (limit if necessary)
-        result_str = "\n".join(summary_lines)
-        self.result = result_str[:1024]  # Char fields may be limited in length
-    
+        self.result = "\n".join(summary_lines)
         return results
 
 
