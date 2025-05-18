@@ -12,6 +12,24 @@ class ProductProduct(models.Model):
 
     result = fields.Text('Result')
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
+
+    def compute_svl_for_location_362(self):
+        if self.env.company.id != 5:
+            return
+    
+        location_id = 362
+        ctx = dict(self.env.context, location_dest_id=location_id)
+        products = self.with_context(ctx)
+        products._compute_value_svl()
+    
+        for product in products:
+            product.result = (
+                f"Location ID: {location_id}\n"
+                f"Product ID: {product.id}\n"
+                f"Quantity SVL: {product.quantity_svl}\n"
+                f"Value SVL: {product.value_svl}\n"
+            )
+
     
 
     def get_svl_data_per_location(self):
