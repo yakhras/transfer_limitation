@@ -326,3 +326,19 @@ class ProductLocationCost(models.Model):
     product_id = fields.Many2one('product.product', string='Product', required=True, ondelete='cascade')
     location_id = fields.Many2one('stock.location', string='Location', required=True)
     cost = fields.Float('Cost', digits='Product Price')
+
+
+class StockLocation(models.Model):
+    _inherit = 'stock.location'
+
+    def action_custom_svl_summary(self):
+        for location in self:
+            # Custom logic here, for now just log or raise a test
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'SVL Summary',
+                'res_model': 'product.product',
+                'view_mode': 'tree',
+                'target': 'current',
+                'domain': [],
+            }
