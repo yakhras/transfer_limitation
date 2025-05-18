@@ -1,8 +1,6 @@
 from odoo import models, fields, api
 from odoo.tools import float_is_zero, float_repr
 import json
-import logging
-_logger = logging.getLogger(__name__)
 
 
 
@@ -20,22 +18,34 @@ class ProductProduct(models.Model):
         results = {}
     
         if self.env.company.id != 5:
-            return results
+            self.result = "Skipped: not company 5"
+            return {}
     
         internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+        summary_lines = []
+    
         for location in internal_locations:
             ctx = dict(self.env.context, location_dest_id=location.id)
             products = self.with_context(ctx)
             products._compute_value_svl()
     
             for product in products:
-                results.setdefault(location.id, {})[product.id] = {
+                value = {
                     'value_svl': product.value_svl,
                     'quantity_svl': product.quantity_svl,
                 }
+                results.setdefault(location.id, {})[product.id] = value
     
-        _logger.info("SVL Data per Location:\n%s", results)
+                # Add to summary string
+                line = f"Loc {location.id} Prod {product.id}: Qty SVL={product.quantity_svl}, Val SVL={product.value_svl}"
+                summary_lines.append(line)
+    
+        # Save summary string into the `result` field (limit if necessary)
+        result_str = "\n".join(summary_lines)
+        self.result = result_str[:1024]  # Char fields may be limited in length
+    
         return results
+
 
 
     def audit_product_svl_for_location(self):
