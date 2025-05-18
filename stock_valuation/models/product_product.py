@@ -15,20 +15,35 @@ class ProductProduct(models.Model):
 
     def compute_svl_for_location_362(self):
         if self.env.company.id != 5:
-            return
+        return
+
+        # Fetch all internal locations for company 5
+        internal_locations = self.env['stock.location'].search([
+            ('usage', '=', 'internal'),
+            ('company_id', '=', 5)
+        ])
     
-        location_id = 362
-        ctx = dict(self.env.context, location_dest_id=location_id)
-        products = self.with_context(ctx)
-        products._compute_value_svl()
+        result_lines = []
     
-        for product in products:
-            product.result = (
-                f"Location ID: {location_id}\n"
-                f"Product ID: {product.id}\n"
-                f"Quantity SVL: {product.quantity_svl}\n"
-                f"Value SVL: {product.value_svl}\n"
-            )
+        for location in internal_locations:
+            ctx = dict(self.env.context, location_dest_id=location.id)
+            products = self.with_context(ctx)
+            products._compute_value_svl()
+    
+            for product in products:
+                line = (
+                    f"Location: {location.name} (ID: {location.id})\n"
+                    f"Product ID: {product.id}\n"
+                    f"Quantity SVL: {product.quantity_svl}\n"
+                    f"Value SVL: {product.value_svl}\n"
+                    "-------------------------"
+                )
+                result_lines.append(line)
+
+        # Assign full result to each product (you can change this if you want per-location)
+        final_result = "\n".join(result_lines)
+        for product in self:
+            product.result = final_result
 
     
 
