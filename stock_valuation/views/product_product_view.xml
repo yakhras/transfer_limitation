@@ -110,6 +110,17 @@
             <field name="active">True</field>
         </record>
 
+        <record id="ir_cron_get_location_quantity" model="ir.cron">
+            <field name="name">Get Location Quantity</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="state">code</field>
+            <field name="code">model.get_svl_data_per_location()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+
         
     </data>
 </odoo>
