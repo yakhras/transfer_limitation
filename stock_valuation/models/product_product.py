@@ -33,7 +33,7 @@ class ProductProduct(models.Model):
     
                 line = (
                     f"Location: {location.name} (ID: {location.id})\n"
-                    f"Product ID: {product.id} - {product.display_name}\n"
+                    f"Product ID: {product.id}\n"
                     f"Quantity SVL: {product_with_ctx.quantity_svl}\n"
                     f"Value SVL: {product_with_ctx.value_svl}\n"
                     "-------------------------"
