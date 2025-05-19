@@ -217,14 +217,10 @@ class StockMove(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    balance = fields.Float(string="Balance")
+    balance = fields.Float(string="Balance", compute="_compute_balance", store=True)
 
-
-    def write(self, vals):
-        res = super().write(vals)
-        
-        if 'state' in vals and vals['state'] == 'done':
-            for line in self:
+    @api.depends('quantity_done')
+    def _compute_balance(self):
+        for line in self:
+            if line.state == 'done':
                 line.balance = line.quantity_done
-
-        return res
