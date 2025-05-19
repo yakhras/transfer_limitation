@@ -382,13 +382,22 @@ class StockLocation(models.Model):
         
     def create_po(self, po_line):
         vendor = self.env['res.partner'].browse(25)
+        order_line = []
         for line in po_line:
-            qty = line['quantity_svl']
             product_id = line['product_id']
+            qty = line['quantity_svl']
+            vlaue = line['value_svl']
+            order_line.append((0, 0, {
+                'product_id': product_id,
+                'product_qty': qty,
+                'product_uom': self.env.ref('uom.product_uom_kgm').id,
+                'price_unit': vlaue,
+            }))
             
         # Create a purchase order
         po = self.env['purchase.order'].create({
             'partner_id': vendor.id,  # Replace with the actual vendor ID
+            'order_line': order_line,
         })
         return po
-                
+            
