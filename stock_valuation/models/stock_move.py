@@ -220,7 +220,6 @@ class StockMoveLine(models.Model):
     balance = fields.Float(string="Balance")
 
 
-    @api.model
     def write(self, vals):
         res = super().write(vals)
         
