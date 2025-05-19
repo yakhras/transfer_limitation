@@ -235,3 +235,23 @@ class StockMoveLine(models.Model):
 
                 # Simulate the new balance as existing + qty_done
                     line.balance = existing_quantity + line.qty_done
+
+    @api.multi
+    def write(self, values):
+        for line in self:
+            if line.location_dest_id.usage == 'internal':
+                # Get the current quant for the product and destination location
+                quant = self.env['stock.quant'].search([
+                    ('product_id', '=', line.product_id.id),
+                    ('location_id', '=', line.location_dest_id.id),
+                    ('company_id', '=', line.company_id.id),
+                ], limit=1)
+
+                existing_quantity = quant.quantity if quant else 0.0
+    
+            result = super().write(values)
+            if line.state == 'done':
+                line.balance = existing_quantity + line.qty_done
+    
+        return result
+    
