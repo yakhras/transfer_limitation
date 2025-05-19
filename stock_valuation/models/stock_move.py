@@ -237,20 +237,19 @@ class StockMoveLine(models.Model):
                     line.balance = existing_quantity + line.qty_done
 
     @api.model
-    def write(self, values):
-        res = super(StockMoveLine, self).write(values)
-        for line in self:
-            if line.location_dest_id.usage == 'internal':
+    def write(self, vals):
+        
+        for rec in self:
                 # Get the current quant for the product and destination location
-                quant = self.env['stock.quant'].search([
-                    ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_dest_id.id),
-                    ('company_id', '=', line.company_id.id),
-                ], limit=1)
+            quant = self.env['stock.quant'].search([
+                ('product_id', '=', rec.product_id.id),
+                ('location_id', '=', rec.location_dest_id.id),
+                ('company_id', '=', rec.company_id.id),
+            ], limit=1)
 
-                existing_quantity = quant.quantity if quant else 0.0
-            if line.state == 'done':
-                line.balance = existing_quantity + line.qty_done
+            existing_quantity = quant.quantity if quant else 0.0
+            res = super(StockMoveLine, rec).write(vals)
+            rec.balance = existing_quantity + rec.qty_done
 
         return res
     
