@@ -347,7 +347,7 @@ class StockLocation(models.Model):
                 value_svl = self.env.company.currency_id.round(group['value'])
                 quantity_svl = group['quantity']
 
-                if value_svl and quantity_svl > 0:
+                if (value_svl and quantity_svl) > 0:
                     line = (
                         f"Location: {location.name} (ID: {location.id})\n"
                         f"Product ID: {product.id}\n"
@@ -357,7 +357,7 @@ class StockLocation(models.Model):
                     )
                     result_positive.append(line)
 
-                elif value_svl and quantity_svl < 0:
+                elif (value_svl and quantity_svl) < 0:
                     line = (
                         f"Location: {location.name} (ID: {location.id})\n"
                         f"Product ID: {product.id}\n"
@@ -366,6 +366,7 @@ class StockLocation(models.Model):
                         "-------------------------"
                     )
                     result_negative.append(line)
+
                 else:
                     line = (
                         f"Location: {location.name} (ID: {location.id})\n"
