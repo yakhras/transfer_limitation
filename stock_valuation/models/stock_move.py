@@ -239,6 +239,7 @@ class StockMoveLine(models.Model):
     @api.model
     def write(self, values):
         for line in self:
+            res = super(StockMoveLine, self).write(values)
             # Get the current quant for the product and destination location
             quant = self.env['stock.quant'].search([
                 ('product_id', '=', line.product_id.id),
@@ -247,8 +248,6 @@ class StockMoveLine(models.Model):
             ], limit=1)
 
             existing_quantity = quant.quantity if quant else 0.0
-
-            res = super(StockMoveLine, self).write(values)
 
             if 'state' in values:
                 if line.state == 'done' and line.location_dest_id.usage == 'internal':
