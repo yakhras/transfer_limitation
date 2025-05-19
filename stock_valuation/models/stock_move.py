@@ -236,7 +236,7 @@ class StockMoveLine(models.Model):
                 # Simulate the new balance as existing + qty_done
                     line.balance = existing_quantity + line.qty_done
 
-    @api.model
+  
     def write(self, vals):
         
         for rec in self:
