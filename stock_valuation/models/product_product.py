@@ -171,7 +171,7 @@ class ProductProduct(models.Model):
                 domain.append(('create_date', '<=', to_date))
             id = self.env.context.get('location_dest_id')
             if id:
-                
+                domain.extend(['|', ('stock_move_id.location_dest_id.id', '=', id), ('stock_move_id.location_id.id', '=', id)])
 
             groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
             
