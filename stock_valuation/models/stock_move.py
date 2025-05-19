@@ -217,4 +217,33 @@ class StockMove(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    balance = fields.Float(string='Balance', digits='Product Unit of Measure')
+    balance = fields.Float(string='Balance', digits='Product Unit of Measure', copy=False)
+
+
+    @api.model
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        for line in records:
+            line._update_balance()
+        return records
+
+    def write(self, vals):
+        res = super().write(vals)
+        for line in self:
+            line._update_balance()
+        return res
+
+    def _update_balance(self):
+        """Update balance based on source/destination logic."""
+        if not self.product_id or not self.qty_done:
+            return
+
+        old_balance = self.balance or 0.0
+        delta = 0.0
+
+        if self.location_dest_id and self.location_dest_id.usage == 'internal':
+            delta = self.qty_done
+        elif self.location_id and self.location_id.usage == 'internal':
+            delta = -self.qty_done
+
+        self.balance = old_balance + delta
