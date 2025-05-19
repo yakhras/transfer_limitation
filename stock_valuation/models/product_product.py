@@ -337,7 +337,7 @@ class StockLocation(models.Model):
     def action_custom_svl_summary(self):
         for location in self:
             result_lines = []
-            domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)],
+            domain = [['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]],
             groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
             products = self.browse()
             for group in groups:
