@@ -342,14 +342,14 @@ class StockLocation(models.Model):
             products = self.browse()
             for group in groups:
                 product = self.browse(group['product_id'][0])
-                product.value_svl = self.env.company.currency_id.round(group['value'])
-                product.quantity_svl = group['quantity']
+                value_svl = self.env.company.currency_id.round(group['value'])
+                quantity_svl = group['quantity']
 
                 line = (
                     f"Location: {location.name} (ID: {location.id})\n"
                     f"Product ID: {product.id}\n"
-                    f"Quantity SVL: {product.quantity_svl}\n"
-                    f"Value SVL: {product.value_svl}\n"
+                    f"Quantity SVL: {quantity_svl}\n"
+                    f"Value SVL: {value_svl}\n"
                     "-------------------------"
                 )
                 result_lines.append(line)
