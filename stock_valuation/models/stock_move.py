@@ -236,7 +236,7 @@ class StockMoveLine(models.Model):
                 if line.state == 'done':
 
                 # Simulate the new balance as existing + qty_done
-                    line.balance = existing_quantity - line.qty_done
+                    line.balance = existing_quantity
 
 
     
