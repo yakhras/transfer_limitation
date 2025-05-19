@@ -219,7 +219,7 @@ class StockMoveLine(models.Model):
 
     balance = fields.Float(string="Balance", compute="_compute_balance", store=True)
 
-    @api.depends('qty_done')
+    @api.depends('state')
     def _compute_balance(self):
         for line in self:
             if line.state == 'done':
