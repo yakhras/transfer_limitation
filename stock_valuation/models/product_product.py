@@ -370,6 +370,7 @@ class StockLocation(models.Model):
                         'value_svl': value_svl,
                         'quantity_svl': quantity_svl,
                     }
+                    result_negative.append(location_products)
 
                 else:
                     line = (
