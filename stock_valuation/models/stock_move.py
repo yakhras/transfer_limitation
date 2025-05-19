@@ -227,6 +227,7 @@ class StockMoveLine(models.Model):
             line._update_balance()
         return records
 
+    @api.model
     def write(self, vals):
         res = super().write(vals)
         for line in self:
