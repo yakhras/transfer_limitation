@@ -240,7 +240,7 @@ class StockMoveLine(models.Model):
                     ('company_id', '=', line.company_id.id),
                 ], limit=1)
 
-            elif line.location_dest_id.usage == 'internal' and line.location_id.usage == 'internal':
+            elif line.location_dest_id.usage == 'internal' and line.location_id.usage == 'internal' and line.state == 'done':
                 original_line = self.env['stock.move.line'].browse(line.id)
                 duplicated_line = original_line.copy()
 
