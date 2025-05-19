@@ -219,6 +219,8 @@ class StockMoveLine(models.Model):
 
     balance = fields.Float(string="Balance", compute="_compute_balance", store=True)
 
+
+    @api.depends('state')
     def _compute_balance(self):
         for line in self:
             
@@ -234,22 +236,7 @@ class StockMoveLine(models.Model):
                 if line.state == 'done':
 
                 # Simulate the new balance as existing + qty_done
-                    line.balance = existing_quantity + line.qty_done
+                    line.balance = existing_quantity - line.qty_done
 
-  
-    def write(self, vals):
-        
-        for rec in self:
-                # Get the current quant for the product and destination location
-            quant = self.env['stock.quant'].search([
-                ('product_id', '=', rec.product_id.id),
-                ('location_id', '=', rec.location_dest_id.id),
-                ('company_id', '=', rec.company_id.id),
-            ], limit=1)
 
-            existing_quantity = quant.quantity if quant else 0.0
-            res = super(StockMoveLine, rec).write(vals)
-            rec.balance = existing_quantity + rec.qty_done
-
-        return res
     
