@@ -236,7 +236,7 @@ class StockMoveLine(models.Model):
                 # Simulate the new balance as existing + qty_done
                     line.balance = existing_quantity + line.qty_done
 
-    @api.multi
+    @api.model
     def write(self, values):
         for line in self:
             if line.location_dest_id.usage == 'internal':
