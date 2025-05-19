@@ -336,14 +336,11 @@ class StockLocation(models.Model):
 
     def action_custom_svl_summary(self):
         for location in self:
-            vendor = self.env['res.partner'].browse(25)
             result_positive = []
             result_negative = []
             result = []
             domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
             groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
-            products = self.browse()
-            po_lines = []
             for group in groups:
                 product = self.browse(group['product_id'][0])
                 value_svl = self.env.company.currency_id.round(group['value'])
@@ -368,13 +365,6 @@ class StockLocation(models.Model):
                         "-------------------------"
                     )
                     result_negative.append(line)
-                    po_lines.append((0, 0, {
-                        'product_id': product.id,
-                        'product_qty': abs(quantity_svl),  # must be positive
-                        'price_unit': 1.0,
-                        'name': product.display_name,
-                        'product_uom': product.uom_po_id.id or product.uom_id.id,
-                    }))
 
                 else:
                     line = (
@@ -385,11 +375,20 @@ class StockLocation(models.Model):
                         "-------------------------"
                     )
                     result.append(line)
-            if po_lines:
-                purchase_order = self.env['purchase.order'].create({
-                    'partner_id': vendor.id,
-                    'order_line': po_lines,
-                })
-            final_result = "\n".join(result) + "\n".join(result_positive) + "\n".join(result_negative)            
-            location.result = purchase_order
+            res = self.create_po(result_negative)
+            self.result = res
+
+            return result_negative, result_positive, result
+        
+        def create_po(self, po_line):
+            vendor = self.env['res.partner'].browse(25)
+            for line in po_line:
+                qty = line['quantity_svl']
+                product_id = line['product_id']
+                
+            # Create a purchase order
+            po = self.env['purchase.order'].create({
+                'partner_id': vendor.id,  # Replace with the actual vendor ID
+            })
+            return po
                 
