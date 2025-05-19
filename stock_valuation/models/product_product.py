@@ -341,4 +341,5 @@ class StockLocation(models.Model):
                 'view_mode': 'tree',
                 'target': 'current',
                 'domain': ["|",["stock_move_id.location_id.id","=",location.id],["stock_move_id.location_dest_id.id","=",location.id]],
+                'context': {'group_by': 'product_id',},
             }
