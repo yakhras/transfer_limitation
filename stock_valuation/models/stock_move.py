@@ -217,15 +217,15 @@ class StockMove(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    balance = fields.Float(string='Balance', digits='Product Unit of Measure', copy=False, compute="_compute_balance", store=True)
+    balance = fields.Float(string="Balance")
 
 
-    @api.depends('quantity_done', 'location_id.usage', 'location_dest_id.usage')
-    def _compute_balance(self):
-        for line in self:
-            if line.location_dest_id.usage == 'internal':
+    @api.model
+    def write(self, vals):
+        res = super().write(vals)
+        
+        if 'state' in vals and vals['state'] == 'done':
+            for line in self:
                 line.balance = line.quantity_done
-            elif line.location_id.usage == 'internal':
-                line.balance = -line.quantity_done
-            else:
-                line.balance = 0.0
+
+        return res
