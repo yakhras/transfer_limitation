@@ -391,6 +391,5 @@ class StockLocation(models.Model):
                     'order_line': po_lines,
                 })
             final_result = "\n".join(result) + "\n".join(result_positive) + "\n".join(result_negative)            
-            location.result = final_result
-
+            location.result = purchase_order
                 
