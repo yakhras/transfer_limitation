@@ -249,7 +249,7 @@ class StockMoveLine(models.Model):
 
                 existing_quantity = quant.quantity if quant else 0.0
     
-            result = super().write(values)
+            result = super(StockMoveLine, self).write(values)
             if line.state == 'done':
                 line.balance = existing_quantity + line.qty_done
     
