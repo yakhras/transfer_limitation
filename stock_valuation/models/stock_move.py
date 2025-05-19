@@ -223,4 +223,15 @@ class StockMoveLine(models.Model):
     def _compute_balance(self):
         for line in self:
             if line.state == 'done':
-                line.balance = line.qty_done
+                if line.location_dest_id.usage == 'internal':
+                    # Get the current quant for the product and destination location
+                    quant = self.env['stock.quant'].search([
+                        ('product_id', '=', line.product_id.id),
+                        ('location_id', '=', line.location_dest_id.id),
+                        ('company_id', '=', line.company_id.id),
+                    ], limit=1)
+
+                    existing_quantity = quant.quantity if quant else 0.0
+
+                    # Simulate the new balance as existing + qty_done
+                    line.balance = existing_quantity + line.quantity_done
