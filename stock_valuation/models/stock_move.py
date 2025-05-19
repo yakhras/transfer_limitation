@@ -224,7 +224,7 @@ class StockMoveLine(models.Model):
     def _compute_balance(self):
         for line in self:
             
-            if line.location_dest_id.usage == 'internal':
+            if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
                 # Get the current quant for the product and destination location
                 quant = self.env['stock.quant'].search([
                     ('product_id', '=', line.product_id.id),
@@ -232,17 +232,20 @@ class StockMoveLine(models.Model):
                     ('company_id', '=', line.company_id.id),
                 ], limit=1)
 
-            elif line.location_id.usage == 'internal':
+            elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
                 # Get the current quant for the product and destination location
                 quant = self.env['stock.quant'].search([
                     ('product_id', '=', line.product_id.id),
                     ('location_id', '=', line.location_id.id),
                     ('company_id', '=', line.company_id.id),
                 ], limit=1)
+                
+            elif line.location_dest_id.usage == 'internal' and line.location_id.usage == 'internal':
+                original_line = self.env['stock.move.line'].browse(line.id)
+                duplicated_line = original_line.copy()
 
             existing_quantity = quant.quantity if quant else 0.0
             if line.state == 'done':
                 line.balance = existing_quantity
-                original_line = self.env['stock.move.line'].browse(line.id)
-                duplicated_line = original_line.copy()
+                
 
