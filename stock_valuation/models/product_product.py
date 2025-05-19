@@ -331,15 +331,29 @@ class ProductLocationCost(models.Model):
 class StockLocation(models.Model):
     _inherit = 'stock.location'
 
+
+    result = fields.Text('Result')
+
     def action_custom_svl_summary(self):
         for location in self:
-            # Custom logic here, for now just log or raise a test
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'SVL Summary',
-                'res_model': 'stock.valuation.layer',
-                'view_mode': 'tree',
-                'target': 'current',
-                'domain': ["|",["stock_move_id.location_id.id","=",location.id],["stock_move_id.location_dest_id.id","=",location.id]],
-                'context': {'group_by': 'product_id',},
-            }
+            result_lines = []
+            domain = ["|",["stock_move_id.location_id.id","=",location.id],["stock_move_id.location_dest_id.id","=",location.id]],
+            groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
+            products = self.browse()
+            for group in groups:
+                product = self.browse(group['product_id'][0])
+                product.value_svl = self.env.company.currency_id.round(group['value'])
+                product.quantity_svl = group['quantity']
+
+                line = (
+                    f"Location: {location.name} (ID: {location.id})\n"
+                    f"Product ID: {product.id}\n"
+                    f"Quantity SVL: {product.quantity_svl}\n"
+                    f"Value SVL: {product.value_svl}\n"
+                    "-------------------------"
+                )
+                result_lines.append(line)
+            final_result = "\n".join(result_lines)
+            location.result = final_result
+
+                
