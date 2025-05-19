@@ -6,7 +6,7 @@
             <field name="tag">stock_request</field>
             <field name="target">main</field>
         </record>
-        <menuitem id="menu_stock_request_root" name="Stock Request" sequence="305" web_icon="stock_request,static/description/stock_request.png"/>
+        <menuitem id="menu_stock_request_root" name="Stock Request" sequence="305" web_icon="stok_request,static/description/stock_request.png"/>
         <menuitem id="menu_my_stock_request" name="My Request" parent="menu_stock_request_root" sequence="1" action="stock_request"/>
     </data>
 </odoo>
