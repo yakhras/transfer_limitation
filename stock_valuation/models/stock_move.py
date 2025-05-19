@@ -239,13 +239,13 @@ class StockMoveLine(models.Model):
                     ('location_id', '=', line.location_id.id),
                     ('company_id', '=', line.company_id.id),
                 ], limit=1)
-                
+
             elif line.location_dest_id.usage == 'internal' and line.location_id.usage == 'internal':
                 original_line = self.env['stock.move.line'].browse(line.id)
                 duplicated_line = original_line.copy()
 
-            existing_quantity = quant.quantity if quant else 0.0
-            if line.state == 'done':
-                line.balance = existing_quantity
+            # existing_quantity = quant.quantity if quant else 0.0
+            # if line.state == 'done':
+            #     line.balance = existing_quantity
                 
 
