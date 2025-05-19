@@ -336,7 +336,9 @@ class StockLocation(models.Model):
 
     def action_custom_svl_summary(self):
         for location in self:
-            result_lines = []
+            result_positive = []
+            result_negative = []
+            result = []
             domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
             groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
             products = self.browse()
@@ -345,15 +347,35 @@ class StockLocation(models.Model):
                 value_svl = self.env.company.currency_id.round(group['value'])
                 quantity_svl = group['quantity']
 
-                line = (
-                    f"Location: {location.name} (ID: {location.id})\n"
-                    f"Product ID: {product.id}\n"
-                    f"Quantity SVL: {quantity_svl}\n"
-                    f"Value SVL: {value_svl}\n"
-                    "-------------------------"
-                )
-                result_lines.append(line)
-            final_result = "\n".join(result_lines)
+                if value_svl and quantity_svl > 0:
+                    line = (
+                        f"Location: {location.name} (ID: {location.id})\n"
+                        f"Product ID: {product.id}\n"
+                        f"Quantity SVL: {quantity_svl}\n"
+                        f"Value SVL: {value_svl}\n"
+                        "-------------------------"
+                    )
+                    result_positive.append(line)
+
+                elif value_svl and quantity_svl < 0:
+                    line = (
+                        f"Location: {location.name} (ID: {location.id})\n"
+                        f"Product ID: {product.id}\n"
+                        f"Quantity SVL: {quantity_svl}\n"
+                        f"Value SVL: {value_svl}\n"
+                        "-------------------------"
+                    )
+                    result_negative.append(line)
+                else:
+                    line = (
+                        f"Location: {location.name} (ID: {location.id})\n"
+                        f"Product ID: {product.id}\n"
+                        f"Quantity SVL: {quantity_svl}\n"
+                        f"Value SVL: {value_svl}\n"
+                        "-------------------------"
+                    )
+                    result.append(line)
+            final_result = "\n".join(result) + "\n".join(result_positive) + "\n".join(result_negative)            
             location.result = final_result
 
                 
