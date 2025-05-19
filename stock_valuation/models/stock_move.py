@@ -234,4 +234,4 @@ class StockMoveLine(models.Model):
                     existing_quantity = quant.quantity if quant else 0.0
 
                     # Simulate the new balance as existing + qty_done
-                    line.balance = existing_quantity + line.quantity_done
+                    line.balance = existing_quantity + line.qty_done
