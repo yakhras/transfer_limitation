@@ -365,7 +365,8 @@ class StockLocation(models.Model):
                     #     "-------------------------"
                     # )
                     # result_negative.append(line)
-                    result_negative.setdefault(location.id, {})[product.id] = {
+                    result_negative.setdefault(location.id, {})
+                    result_negative[location.id][product.id] = {
                         'value_svl': value_svl,
                         'quantity_svl': quantity_svl,
                     }
