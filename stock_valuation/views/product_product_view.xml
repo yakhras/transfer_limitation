@@ -135,7 +135,11 @@
                       class="oe_stat_button"
                       icon="fa-bar-chart"/>
             </xpath>
-    
+            
+            <xpath expr="//field[@name='name']" position="after">
+                <field name= "result"/>
+            </xpath>
+            
           </field>
         </record>
 
