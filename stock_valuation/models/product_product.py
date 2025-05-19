@@ -395,7 +395,6 @@ class StockLocation(models.Model):
                 order_line.append((0, 0, {
                     'product_id': product_id,
                     'product_qty': product_qty,
-                    'product_uom': self.env.ref('uom.product_uom_kgm').id,
                     'price_unit': price_unit,
                 }))
             
