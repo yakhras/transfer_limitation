@@ -337,7 +337,7 @@ class StockLocation(models.Model):
     def action_custom_svl_summary(self):
         for location in self:
             result_positive = []
-            result_negative = []
+            result_negative = {}
             result = []
             domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
             groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
@@ -357,14 +357,18 @@ class StockLocation(models.Model):
                     result_positive.append(line)
 
                 elif value_svl < 0 and quantity_svl < 0:
-                    line = (
-                        f"Location: {location.name} (ID: {location.id})\n"
-                        f"Product ID: {product.id}\n"
-                        f"Quantity SVL: {quantity_svl}\n"
-                        f"Value SVL: {value_svl}\n"
-                        "-------------------------"
-                    )
-                    result_negative.append(line)
+                    # line = (
+                    #     f"Location: {location.name} (ID: {location.id})\n"
+                    #     f"Product ID: {product.id}\n"
+                    #     f"Quantity SVL: {quantity_svl}\n"
+                    #     f"Value SVL: {value_svl}\n"
+                    #     "-------------------------"
+                    # )
+                    # result_negative.append(line)
+                    result_negative.setdefault(location.id, {})[product.id] = {
+                        'value_svl': value_svl,
+                        'quantity_svl': quantity_svl,
+                    }
 
                 else:
                     line = (
