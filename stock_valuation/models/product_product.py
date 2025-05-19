@@ -375,20 +375,20 @@ class StockLocation(models.Model):
                         "-------------------------"
                     )
                     result.append(line)
-            res = create_po(result_negative)
+            res = self.create_po(result_negative)
             self.result = res
 
             return result_negative, result_positive, result
         
-        def create_po(self, po_line):
-            vendor = self.env['res.partner'].browse(25)
-            for line in po_line:
-                qty = line['quantity_svl']
-                product_id = line['product_id']
-                
-            # Create a purchase order
-            po = self.env['purchase.order'].create({
-                'partner_id': vendor.id,  # Replace with the actual vendor ID
-            })
-            return po
+    def create_po(self, po_line):
+        vendor = self.env['res.partner'].browse(25)
+        for line in po_line:
+            qty = line['quantity_svl']
+            product_id = line['product_id']
+            
+        # Create a purchase order
+        po = self.env['purchase.order'].create({
+            'partner_id': vendor.id,  # Replace with the actual vendor ID
+        })
+        return po
                 
