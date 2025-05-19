@@ -403,5 +403,5 @@ class StockLocation(models.Model):
             'partner_id': vendor.id,  # Replace with the actual vendor ID
             'order_line': order_line,
         })
-        return po_line
+        return po
             
