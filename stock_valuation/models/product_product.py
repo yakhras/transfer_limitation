@@ -384,7 +384,7 @@ class StockLocation(models.Model):
         vendor = self.env['res.partner'].browse(25)
         order_line = []
         for line in po_line:
-            product_id = line['product_id']
+            product_id = line['product_id'][0]
             qty = line['quantity_svl']
             vlaue = line['value_svl']
             order_line.append((0, 0, {
