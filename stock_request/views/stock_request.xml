@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="stock_request" model="ir.actions.client">
+            <field name="name">Stock Request</field>
+            <field name="tag">stock_request</field>
+            <field name="target">main</field>
+        </record>
+        <menuitem id="menu_stock_request_root" name="Stock Request" sequence="305" web_icon="stock_request,static/description/stock_request.png"/>
+        <menuitem id="menu_my_stock_request" name="My Request" parent="menu_stock_request_root" sequence="1" action="stock_request"/>
+    </data>
+</odoo>
