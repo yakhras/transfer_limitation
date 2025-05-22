@@ -223,11 +223,7 @@ class StockMoveLine(models.Model):
 
     @api.depends('state')
     def _compute_balance(self):
-        for line in self:
-            if line.state != 'done':
-                return
-            
-        for line in self:
+        for line in self.filtered(lambda l: l.state == 'done'):
             if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
                 # Get the current quant for the product and destination location
                 quant = self.env['stock.quant'].search([
