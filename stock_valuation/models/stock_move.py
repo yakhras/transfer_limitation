@@ -218,6 +218,7 @@ class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
     balance = fields.Float(string="Balance", compute="_compute_balance", store=True)
+    is_duplicated = fields.Boolean(string='Already Duplicated', default=False)
 
 
     @api.depends('state')
@@ -240,9 +241,14 @@ class StockMoveLine(models.Model):
                     ('company_id', '=', line.company_id.id),
                 ], limit=1)
 
-            elif line.location_dest_id.usage == 'internal' and line.location_id.usage == 'internal' and line.state == 'done':
-                original_line = self.env['stock.move.line'].browse(line.id)
-                duplicated_line = original_line.copy()
+            elif (
+                line.location_dest_id.usage == 'internal'
+                and line.location_id.usage == 'internal'
+                and line.state == 'done'
+                and not line.is_duplicated
+            ):
+                duplicated_line = line.copy()
+                line.is_duplicated = True
 
             # existing_quantity = quant.quantity if quant else 0.0
             # if line.state == 'done':
