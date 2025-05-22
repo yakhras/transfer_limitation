@@ -254,7 +254,7 @@ class StockMoveLine(models.Model):
             # if line.state == 'done':
             #     line.balance = existing_quantity
 
-
+    @api.model
     def write(self, vals):
         result = super().write(vals)
         if 'state' in vals and vals['state'] == 'done':
