@@ -270,6 +270,6 @@ class StockMoveLine(models.Model):
                 and not line.is_duplicated
             ):
                 line.copy()
-                line.is_duplicated = True
+                line.is_duplicated == True
                 
 
