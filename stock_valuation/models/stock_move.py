@@ -217,14 +217,17 @@ class StockMove(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    balance = fields.Float(string="Balance",  store=True)
+    balance = fields.Float(string="Balance", compute="_compute_balance", store=True)
     is_duplicated = fields.Boolean(string='Already Duplicated', default=False)
 
 
-    
+    @api.depends('state')
     def _compute_balance(self):
         for line in self:
+            if line.state != 'done':
+                return
             
+        for line in self:
             if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
                 # Get the current quant for the product and destination location
                 quant = self.env['stock.quant'].search([
@@ -248,28 +251,11 @@ class StockMoveLine(models.Model):
                 and not line.is_duplicated
             ):
                 duplicated_line = line.copy()
-                line.is_duplicated = True
 
             # existing_quantity = quant.quantity if quant else 0.0
             # if line.state == 'done':
             #     line.balance = existing_quantity
 
-    @api.model
-    def write(self, vals):
-        result = super().write(vals)
-        if 'state' in vals and vals['state'] == 'done':
-            self._duplicate_if_needed()
-        return result
 
-    def _duplicate_if_needed(self):
-        for line in self:
-            if (
-                line.location_id.usage == 'internal'
-                and line.location_dest_id.usage == 'internal'
-                and line.state == 'done'
-                and not line.is_duplicated
-            ):
-                line.copy()
-                line.is_duplicated == True
+    
                 
-
