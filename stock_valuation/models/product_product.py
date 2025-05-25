@@ -13,147 +13,147 @@ class ProductProduct(models.Model):
     result = fields.Text('Result')
     location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
 
-    def compute_svl_for_location_362(self):
-        internal_locations = self.env['stock.location'].search([
-        ('usage', '=', 'internal'),
-        ('company_id', '=', self.env.company.id)
-        ])
+    # def compute_svl_for_location_362(self):
+    #     internal_locations = self.env['stock.location'].search([
+    #     ('usage', '=', 'internal'),
+    #     ('company_id', '=', self.env.company.id)
+    #     ])
     
-        result_lines = []
+    #     result_lines = []
     
-        for location in internal_locations:
-            ctx = dict(self.env.context, location_dest_id=location.id)
-            products = self.with_context(ctx)
-            products._compute_value_svl()
+    #     for location in internal_locations:
+    #         ctx = dict(self.env.context, location_dest_id=location.id)
+    #         products = self.with_context(ctx)
+    #         products._compute_value_svl()
     
-            for product in products:
-                line = (
-                    f"Location: {location.name} (ID: {location.id})\n"
-                    f"Product ID: {product.id}\n"
-                    f"Quantity SVL: {product.quantity_svl}\n"
-                    f"Value SVL: {product.value_svl}\n"
-                    "-------------------------"
-                )
-                result_lines.append(line)
+    #         for product in products:
+    #             line = (
+    #                 f"Location: {location.name} (ID: {location.id})\n"
+    #                 f"Product ID: {product.id}\n"
+    #                 f"Quantity SVL: {product.quantity_svl}\n"
+    #                 f"Value SVL: {product.value_svl}\n"
+    #                 "-------------------------"
+    #             )
+    #             result_lines.append(line)
     
-        final_result = "\n".join(result_lines)
-        for product in self:
-            product.result = final_result
-
-    
-
-    def get_svl_data_per_location(self):
-        if self.env.company.id != 5:
-            self.result = "Skipped: not company 5"
-            return {}
-    
-        StockValuationLayer = self.env['stock.valuation.layer']
-        internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
-        results = {}
-        summary_lines = []
-    
-        for location in internal_locations:
-            for product in self:
-                # Build domain manually as _compute_value_svl does
-                domain = [
-                    ('product_id', '=', product.id),
-                    ('company_id', '=', self.env.company.id),
-                    '|',
-                    ('stock_move_id.location_dest_id', '=', location.id),
-                    ('stock_move_id.location_id', '=', location.id)
-                ]
-                groups = StockValuationLayer.read_group(
-                    domain,
-                    ['value:sum', 'quantity:sum'],
-                    ['product_id']
-                )
-                value_svl = quantity_svl = 0.0
-                if groups:
-                    group = groups[0]
-                    value_svl = self.env.company.currency_id.round(group['value'])
-                    quantity_svl = group['quantity']
-    
-                # Store results
-                results.setdefault(location.id, {})[product.id] = {
-                    'value_svl': value_svl,
-                    'quantity_svl': quantity_svl,
-                }
-    
-                # Add human-readable line
-                summary_lines.append(
-                    f"Location {location.id} ({location.display_name}) | Product {product.id} ({product.display_name}): "
-                    f"Qty SVL={quantity_svl}, Val SVL={value_svl}"
-                )
-    
-        self.result = "\n".join(summary_lines)
-        return results
-
-
-
-    def audit_product_svl_for_location(self):
-        company = self.env.company
-        if company.id != 5:
-            return
-
-        location = self.env['stock.location'].browse(362)
-        if location.usage != 'internal':
-            return
-
-        product = self.env['product.product'].browse(37375)
-
-        # Compute SVL values using existing compute method
-        product.with_context(location_dest_id=location.id)._compute_value_svl()
-
-        # Get quantity available in this location
-        quant_domain = [
-            ('product_id', '=', product.id),
-            ('location_id', '=', location.id),
-            ('company_id', '=', company.id),
-        ]
-        quantity_available = self.env['stock.quant'].search(quant_domain).quantity
-
-        value_svl = product.value_svl
-        quantity_svl = product.quantity_svl
-
-        # Update quant if mismatch
-        if value_svl == 0 and quantity_svl == 0 and quantity_available != 0:
-            self.env['stock.quant'].search(quant_domain).write({'quantity': 0})
-            product.result = (
-                f"[FIXED] Loc {location.name}: Available={quantity_available}, "
-                f"SVL_Val={value_svl}, SVL_Qty={quantity_svl}"
-            )
-        else:
-            product.result = (
-                f"[OK] Loc {location.name}: Available={quantity_available}, "
-                f"SVL_Val={value_svl}, SVL_Qty={quantity_svl}"
-            )
-
+    #     final_result = "\n".join(result_lines)
+    #     for product in self:
+    #         product.result = final_result
 
     
-    def generate_location_costs(self):
-        """
-        initialize product costing per internal location equals to standard price, based on existing stock quantities.
-        """        
-        internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
-        all_products = self.search([])
-        CostModel = self.env['product.location.cost']
 
-        for product in all_products:
-            quants = self.env['stock.quant'].search([
-                ('product_id', '=', product.id),
-                ('location_id', 'in', internal_locations.ids),
-            ])
-            for quant in quants:
-                domain = [
-                    ('product_id', '=', product.id),
-                    ('location_id', '=', quant.location_id.id)
-                ]
-                if not CostModel.search_count(domain):
-                    CostModel.create({
-                        'product_id': product.id,
-                        'location_id': quant.location_id.id,
-                        'cost': product.standard_price
-                    })
+    # def get_svl_data_per_location(self):
+    #     if self.env.company.id != 5:
+    #         self.result = "Skipped: not company 5"
+    #         return {}
+    
+    #     StockValuationLayer = self.env['stock.valuation.layer']
+    #     internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+    #     results = {}
+    #     summary_lines = []
+    
+    #     for location in internal_locations:
+    #         for product in self:
+    #             # Build domain manually as _compute_value_svl does
+    #             domain = [
+    #                 ('product_id', '=', product.id),
+    #                 ('company_id', '=', self.env.company.id),
+    #                 '|',
+    #                 ('stock_move_id.location_dest_id', '=', location.id),
+    #                 ('stock_move_id.location_id', '=', location.id)
+    #             ]
+    #             groups = StockValuationLayer.read_group(
+    #                 domain,
+    #                 ['value:sum', 'quantity:sum'],
+    #                 ['product_id']
+    #             )
+    #             value_svl = quantity_svl = 0.0
+    #             if groups:
+    #                 group = groups[0]
+    #                 value_svl = self.env.company.currency_id.round(group['value'])
+    #                 quantity_svl = group['quantity']
+    
+    #             # Store results
+    #             results.setdefault(location.id, {})[product.id] = {
+    #                 'value_svl': value_svl,
+    #                 'quantity_svl': quantity_svl,
+    #             }
+    
+    #             # Add human-readable line
+    #             summary_lines.append(
+    #                 f"Location {location.id} ({location.display_name}) | Product {product.id} ({product.display_name}): "
+    #                 f"Qty SVL={quantity_svl}, Val SVL={value_svl}"
+    #             )
+    
+    #     self.result = "\n".join(summary_lines)
+    #     return results
+
+
+
+    # def audit_product_svl_for_location(self):
+    #     company = self.env.company
+    #     if company.id != 5:
+    #         return
+
+    #     location = self.env['stock.location'].browse(362)
+    #     if location.usage != 'internal':
+    #         return
+
+    #     product = self.env['product.product'].browse(37375)
+
+    #     # Compute SVL values using existing compute method
+    #     product.with_context(location_dest_id=location.id)._compute_value_svl()
+
+    #     # Get quantity available in this location
+    #     quant_domain = [
+    #         ('product_id', '=', product.id),
+    #         ('location_id', '=', location.id),
+    #         ('company_id', '=', company.id),
+    #     ]
+    #     quantity_available = self.env['stock.quant'].search(quant_domain).quantity
+
+    #     value_svl = product.value_svl
+    #     quantity_svl = product.quantity_svl
+
+    #     # Update quant if mismatch
+    #     if value_svl == 0 and quantity_svl == 0 and quantity_available != 0:
+    #         self.env['stock.quant'].search(quant_domain).write({'quantity': 0})
+    #         product.result = (
+    #             f"[FIXED] Loc {location.name}: Available={quantity_available}, "
+    #             f"SVL_Val={value_svl}, SVL_Qty={quantity_svl}"
+    #         )
+    #     else:
+    #         product.result = (
+    #             f"[OK] Loc {location.name}: Available={quantity_available}, "
+    #             f"SVL_Val={value_svl}, SVL_Qty={quantity_svl}"
+    #         )
+
+
+    
+    # def generate_location_costs(self):
+    #     """
+    #     initialize product costing per internal location equals to standard price, based on existing stock quantities.
+    #     """        
+    #     internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+    #     all_products = self.search([])
+    #     CostModel = self.env['product.location.cost']
+
+    #     for product in all_products:
+    #         quants = self.env['stock.quant'].search([
+    #             ('product_id', '=', product.id),
+    #             ('location_id', 'in', internal_locations.ids),
+    #         ])
+    #         for quant in quants:
+    #             domain = [
+    #                 ('product_id', '=', product.id),
+    #                 ('location_id', '=', quant.location_id.id)
+    #             ]
+    #             if not CostModel.search_count(domain):
+    #                 CostModel.create({
+    #                     'product_id': product.id,
+    #                     'location_id': quant.location_id.id,
+    #                     'cost': product.standard_price
+    #                 })
 
 
     @api.depends('stock_valuation_layer_ids')
@@ -328,109 +328,109 @@ class ProductLocationCost(models.Model):
     cost = fields.Float('Cost', digits='Product Price')
 
 
-class StockLocation(models.Model):
-    _inherit = 'stock.location'
+# class StockLocation(models.Model):
+#     _inherit = 'stock.location'
 
 
-    result = fields.Text('Result')
+#     result = fields.Text('Result')
 
-    def action_custom_svl_summary(self):
-        for location in self:
-            result_positive = {}
-            result_negative = {}
-            result = []
-            domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
-            groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
-            for group in groups:
-                product = self.browse(group['product_id'][0])
-                value_svl = self.env.company.currency_id.round(group['value'])
-                quantity_svl = group['quantity']
+#     def action_custom_svl_summary(self):
+#         for location in self:
+#             result_positive = {}
+#             result_negative = {}
+#             result = []
+#             domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
+#             groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
+#             for group in groups:
+#                 product = self.browse(group['product_id'][0])
+#                 value_svl = self.env.company.currency_id.round(group['value'])
+#                 quantity_svl = group['quantity']
 
-                if value_svl > 0 and quantity_svl > 0:
-                    # line = (
-                    #     f"Location: {location.name} (ID: {location.id})\n"
-                    #     f"Product ID: {product.id}\n"
-                    #     f"Quantity SVL: {quantity_svl}\n"
-                    #     f"Value SVL: {value_svl}\n"
-                    #     "-------------------------"
-                    # )
-                    # result_positive.append(line)
-                    location_products = result_positive.setdefault(location.id, {})
-                    location_products[product.id] = {
-                        'value_svl': value_svl,
-                        'quantity_svl': quantity_svl,
-                    }
+#                 if value_svl > 0 and quantity_svl > 0:
+#                     # line = (
+#                     #     f"Location: {location.name} (ID: {location.id})\n"
+#                     #     f"Product ID: {product.id}\n"
+#                     #     f"Quantity SVL: {quantity_svl}\n"
+#                     #     f"Value SVL: {value_svl}\n"
+#                     #     "-------------------------"
+#                     # )
+#                     # result_positive.append(line)
+#                     location_products = result_positive.setdefault(location.id, {})
+#                     location_products[product.id] = {
+#                         'value_svl': value_svl,
+#                         'quantity_svl': quantity_svl,
+#                     }
 
-                elif value_svl < 0 and quantity_svl < 0:
-                    # line = (
-                    #     f"Location: {location.name} (ID: {location.id})\n"
-                    #     f"Product ID: {product.id}\n"
-                    #     f"Quantity SVL: {quantity_svl}\n"
-                    #     f"Value SVL: {value_svl}\n"
-                    #     "-------------------------"
-                    # )
-                    # result_negative.append(line)
-                    location_products = result_negative.setdefault(location.id, {})
-                    location_products[product.id] = {
-                        'value_svl': value_svl,
-                        'quantity_svl': quantity_svl,
-                    }
+#                 elif value_svl < 0 and quantity_svl < 0:
+#                     # line = (
+#                     #     f"Location: {location.name} (ID: {location.id})\n"
+#                     #     f"Product ID: {product.id}\n"
+#                     #     f"Quantity SVL: {quantity_svl}\n"
+#                     #     f"Value SVL: {value_svl}\n"
+#                     #     "-------------------------"
+#                     # )
+#                     # result_negative.append(line)
+#                     location_products = result_negative.setdefault(location.id, {})
+#                     location_products[product.id] = {
+#                         'value_svl': value_svl,
+#                         'quantity_svl': quantity_svl,
+#                     }
 
-                else:
-                    line = (
-                        f"Location: {location.name} (ID: {location.id})\n"
-                        f"Product ID: {product.id}\n"
-                        f"Quantity SVL: {quantity_svl}\n"
-                        f"Value SVL: {value_svl}\n"
-                        "-------------------------"
-                    )
-                    result.append(line)
-            res_po = self.create_po(result_negative)
-            res_so = self.create_so(result_positive)
-            self.result = res_so
+#                 else:
+#                     line = (
+#                         f"Location: {location.name} (ID: {location.id})\n"
+#                         f"Product ID: {product.id}\n"
+#                         f"Quantity SVL: {quantity_svl}\n"
+#                         f"Value SVL: {value_svl}\n"
+#                         "-------------------------"
+#                     )
+#                     result.append(line)
+#             res_po = self.create_po(result_negative)
+#             res_so = self.create_so(result_positive)
+#             self.result = res_so
 
-            return result_negative, result_positive, result
+#             return result_negative, result_positive, result
         
-    def create_po(self, po_line):
-        vendor = self.env['res.partner'].browse(25)
-        order_line = []
-        for location_id, products in po_line.items():
-            for product_id, values in products.items():
-                product_qty = abs(values['quantity_svl'])
-                price_unit = abs(values['value_svl']) / product_qty
+#     def create_po(self, po_line):
+#         vendor = self.env['res.partner'].browse(25)
+#         order_line = []
+#         for location_id, products in po_line.items():
+#             for product_id, values in products.items():
+#                 product_qty = abs(values['quantity_svl'])
+#                 price_unit = abs(values['value_svl']) / product_qty
 
-                order_line.append((0, 0, {
-                    'product_id': product_id,
-                    'product_qty': product_qty,
-                    'price_unit': price_unit,
-                }))
+#                 order_line.append((0, 0, {
+#                     'product_id': product_id,
+#                     'product_qty': product_qty,
+#                     'price_unit': price_unit,
+#                 }))
             
-        # Create a purchase order
-        po = self.env['purchase.order'].create({
-            'partner_id': vendor.id,  # Replace with the actual vendor ID
-            'order_line': order_line,
-        })
-        return po
+#         # Create a purchase order
+#         po = self.env['purchase.order'].create({
+#             'partner_id': vendor.id,  # Replace with the actual vendor ID
+#             'order_line': order_line,
+#         })
+#         return po
     
 
-    def create_so(self, so_line):
-        vendor = self.env['res.partner'].browse(54487)
-        order_line = []
-        for location_id, products in so_line.items():
-            for product_id, values in products.items():
-                product_qty = abs(values['quantity_svl'])
-                price_unit = 1.0
+#     def create_so(self, so_line):
+#         vendor = self.env['res.partner'].browse(54487)
+#         order_line = []
+#         for location_id, products in so_line.items():
+#             for product_id, values in products.items():
+#                 product_qty = abs(values['quantity_svl'])
+#                 price_unit = 1.0
 
-                order_line.append((0, 0, {
-                    'product_id': product_id,
-                    'product_qty': product_qty,
-                    'price_unit': price_unit,
-                }))
+#                 order_line.append((0, 0, {
+#                     'product_id': product_id,
+#                     'product_qty': product_qty,
+#                     'price_unit': price_unit,
+#                 }))
             
-        # Create a sale order
-        so = self.env['sale.order'].create({
-            'partner_id': vendor.id,  # Replace with the actual vendor ID
-            'order_line': order_line,
-        })
-        return so
+#         # Create a sale order
+#         so = self.env['sale.order'].create({
+#             'partner_id': vendor.id,  # Replace with the actual vendor ID
+#             'order_line': order_line,
+#         })
+#         return so
             

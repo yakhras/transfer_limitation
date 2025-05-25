@@ -214,43 +214,43 @@ class StockMove(models.Model):
 
 
     
-class StockMoveLine(models.Model):
-    _inherit = 'stock.move.line'
+# class StockMoveLine(models.Model):
+#     _inherit = 'stock.move.line'
 
-    balance = fields.Float(string="Balance", compute="_compute_balance", store=True)
-    is_duplicated = fields.Boolean(string='Already Duplicated', default=False)
+#     balance = fields.Float(string="Balance", compute="_compute_balance", store=True)
+#     is_duplicated = fields.Boolean(string='Already Duplicated', default=False)
 
 
-    @api.depends('state')
-    def _compute_balance(self):
-        for line in self.filtered(lambda l: l.state == 'done'):
-            if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
-                # Get the current quant for the product and destination location
-                quant = self.env['stock.quant'].search([
-                    ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_dest_id.id),
-                    ('company_id', '=', line.company_id.id),
-                ], limit=1)
+#     @api.depends('state')
+#     def _compute_balance(self):
+#         for line in self.filtered(lambda l: l.state == 'done'):
+#             if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
+#                 # Get the current quant for the product and destination location
+#                 quant = self.env['stock.quant'].search([
+#                     ('product_id', '=', line.product_id.id),
+#                     ('location_id', '=', line.location_dest_id.id),
+#                     ('company_id', '=', line.company_id.id),
+#                 ], limit=1)
 
-            elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
-                # Get the current quant for the product and destination location
-                quant = self.env['stock.quant'].search([
-                    ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_id.id),
-                    ('company_id', '=', line.company_id.id),
-                ], limit=1)
+#             elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
+#                 # Get the current quant for the product and destination location
+#                 quant = self.env['stock.quant'].search([
+#                     ('product_id', '=', line.product_id.id),
+#                     ('location_id', '=', line.location_id.id),
+#                     ('company_id', '=', line.company_id.id),
+#                 ], limit=1)
 
-            elif (
-                line.location_dest_id.usage == 'internal'
-                and line.location_id.usage == 'internal'
-                and line.state == 'done'
-                and not line.is_duplicated
-            ):
-                duplicated_line = line.copy()
+#             elif (
+#                 line.location_dest_id.usage == 'internal'
+#                 and line.location_id.usage == 'internal'
+#                 and line.state == 'done'
+#                 and not line.is_duplicated
+#             ):
+#                 duplicated_line = line.copy()
 
-            # existing_quantity = quant.quantity if quant else 0.0
-            # if line.state == 'done':
-            #     line.balance = existing_quantity
+#             existing_quantity = quant.quantity if quant else 0.0
+#             if line.state == 'done':
+#                 line.balance = existing_quantity
 
 
     

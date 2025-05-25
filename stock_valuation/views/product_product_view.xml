@@ -88,7 +88,7 @@
             <field name="active">False</field>
         </record> -->
 
-        <record id="ir_cron_generate_location_costs" model="ir.cron">
+        <!-- <record id="ir_cron_generate_location_costs" model="ir.cron">
             <field name="name">Generate Product Location Costs</field>
             <field name="model_id" ref="product.model_product_product"/>
             <field name="state">code</field>
@@ -97,9 +97,9 @@
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="active">True</field>
-        </record>
+        </record> -->
 
-        <record id="ir_cron_reset_location_quantity" model="ir.cron">
+        <!-- <record id="ir_cron_reset_location_quantity" model="ir.cron">
             <field name="name">Reset Location Quantity</field>
             <field name="model_id" ref="product.model_product_product"/>
             <field name="state">code</field>
@@ -108,9 +108,9 @@
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="active">True</field>
-        </record>
+        </record> -->
 
-        <record id="ir_cron_get_location_quantity" model="ir.cron">
+        <!-- <record id="ir_cron_get_location_quantity" model="ir.cron">
             <field name="name">Get Location Quantity</field>
             <field name="model_id" ref="product.model_product_product"/>
             <field name="state">code</field>
@@ -119,15 +119,14 @@
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="active">True</field>
-        </record>
+        </record> -->
 
-        <record id="view_location_form_inherit_custom_button" model="ir.ui.view">
+        <!-- <record id="view_location_form_inherit_custom_button" model="ir.ui.view">
           <field name="name">stock.location.form.inherit.custom.button</field>
           <field name="model">stock.location</field>
           <field name="inherit_id" ref="stock.view_location_form"/>
           <field name="arch" type="xml">
     
-            <!-- Insert after "Current Stock" button -->
             <xpath expr="//button[@name='598']" position="after">
               <button name="action_custom_svl_summary"
                       string="SVL Summary"
@@ -141,9 +140,9 @@
             </xpath>
             
           </field>
-        </record>
+        </record> -->
 
-        <record id="view_move_line_tree_inherit_balance" model="ir.ui.view">
+        <!-- <record id="view_move_line_tree_inherit_balance" model="ir.ui.view">
             <field name="name">stock.move.line.tree.inherit.balance</field>
             <field name="model">stock.move.line</field>
             <field name="inherit_id" ref="stock.view_move_line_tree"/>
@@ -152,9 +151,9 @@
                 <field name="balance"/>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
-        <record id="view_move_line_form_inherit_balance" model="ir.ui.view">
+        <!-- <record id="view_move_line_form_inherit_balance" model="ir.ui.view">
             <field name="name">stock.move.line.form.inherit.balance</field>
             <field name="model">stock.move.line</field>
             <field name="inherit_id" ref="stock.view_move_line_form"/>
@@ -163,7 +162,7 @@
                 <field name="is_duplicated"/>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
         
     </data>
