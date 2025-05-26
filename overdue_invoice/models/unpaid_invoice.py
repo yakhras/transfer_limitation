@@ -39,7 +39,7 @@ class UnpaidInvoice(models.Model):
         ('sale', 'Sales Order'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
-        ], string='Status', readonly=True, copy=False, index=True, tracking=3, default='draft')
+        ], string='Status', readonly=True, copy=False, index=True, default='draft')
 
 
     def populate_overdue_invoices(self):
