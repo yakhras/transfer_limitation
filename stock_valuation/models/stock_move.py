@@ -224,29 +224,27 @@ class StockMoveLine(models.Model):
     @api.depends('qty_done')
     def _compute_balance(self):
         for line in self.filtered(lambda l: l.state == 'done'):
-            if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
-                # Get the current quant for the product and destination location
-                quant = self.env['stock.quant'].search([
-                    ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_dest_id.id),
-                    ('company_id', '=', line.company_id.id),
-                ], limit=1)
-                line.balance = quant.quantity if quant else 0.0
+            # if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
+            #     # Get the current quant for the product and destination location
+            #     quant = self.env['stock.quant'].search([
+            #         ('product_id', '=', line.product_id.id),
+            #         ('location_id', '=', line.location_dest_id.id),
+            #         ('company_id', '=', line.company_id.id),
+            #     ], limit=1)
+            #     line.balance = quant.quantity if quant else 0.0
 
-            elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
-                # Get the current quant for the product and destination location
-                quant = self.env['stock.quant'].search([
-                    ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_id.id),
-                    ('company_id', '=', line.company_id.id),
-                ], limit=1)
-                line.balance = quant.quantity if quant else 0.0
+            # elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
+            #     # Get the current quant for the product and destination location
+            #     quant = self.env['stock.quant'].search([
+            #         ('product_id', '=', line.product_id.id),
+            #         ('location_id', '=', line.location_id.id),
+            #         ('company_id', '=', line.company_id.id),
+            #     ], limit=1)
+            #     line.balance = quant.quantity if quant else 0.0
 
-            elif (
+            if (
                 line.location_dest_id.usage == 'internal'
                 and line.location_id.usage == 'internal'
                 and line.state == 'done'):
-                    line.balance = line.qty_done
-
-                # line.copy()
+                line.copy()
 
