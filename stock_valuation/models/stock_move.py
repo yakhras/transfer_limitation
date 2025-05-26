@@ -246,7 +246,7 @@ class StockMoveLine(models.Model):
                 line.location_dest_id.usage == 'internal'
                 and line.location_id.usage == 'internal'
                 and line.state == 'done'):
-                    line.balance = quant.quantity if quant else 0.0
+                    line.balance = line.qty_done
 
                 # line.copy()
 
