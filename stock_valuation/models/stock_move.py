@@ -250,18 +250,19 @@ class StockMoveLine(models.Model):
     #         line.balance = 0.0
 
     
-    def write(self, vals):
-        state_changing = 'state' in vals and vals['state'] == 'done'
-        res = super().write(vals)
-        if state_changing:
-            for line in self:
-                line.balance = state_changing
-                if (
-                    line.state == 'done' and
-                    line.location_id.usage == 'internal' and
-                    line.location_dest_id.usage == 'internal'
-                ):
-                    line.copy()
-        return res
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
 
+    def button_validate(self):
+        res = super().button_validate()
+
+        for picking in self:
+            for move_line in picking.move_line_ids:
+                if (
+                    move_line.state == 'done' and
+                    move_line.location_id.usage == 'internal' and
+                    move_line.location_dest_id.usage == 'internal'
+                ):
+                    move_line.copy()
+        return res
 
