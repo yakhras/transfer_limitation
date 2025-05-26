@@ -217,7 +217,7 @@ class StockMove(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    balance = fields.Char(string="Balance")
+    balance = fields.Float(string="Balance", store=True)
     signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
 
     @api.depends('qty_done', 'location_id.usage', 'location_dest_id.usage')
@@ -226,9 +226,19 @@ class StockMoveLine(models.Model):
             if line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
                 # Outgoing
                 line.signed_qty_done = -line.qty_done
+                quant = self.env['stock.quant'].search([
+                    ('product_id', '=', line.product_id.id),
+                    ('location_id', '=', line.location_dest_id.id),
+                ], limit=1) 
+                line.balance = quant.quantity if quant else 0.0
             elif line.location_id.usage != 'internal' and line.location_dest_id.usage == 'internal':
                 # Incoming
                 line.signed_qty_done = line.qty_done
+                quant = self.env['stock.quant'].search([
+                    ('product_id', '=', line.product_id.id),
+                    ('location_id', '=', line.location_id.id),
+                ], limit=1) 
+                line.balance = quant.quantity if quant else 0.0
 
 
     
