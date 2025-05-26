@@ -217,47 +217,51 @@ class StockMove(models.Model):
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    balance = fields.Float(string="Balance", compute="_compute_balance", store=True)
+    balance = fields.Char(string="Balance")
     # is_duplicated = fields.Boolean(string='Already Duplicated', default=False)
 
 
-    @api.depends('location_id', 'location_dest_id', 'state')
-    def _compute_balance(self):
-        for line in self:
-            # if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
-            #     # Get the current quant for the product and destination location
-            #     quant = self.env['stock.quant'].search([
-            #         ('product_id', '=', line.product_id.id),
-            #         ('location_id', '=', line.location_dest_id.id),
-            #         ('company_id', '=', line.company_id.id),
-            #     ], limit=1)
-            #     line.balance = quant.quantity if quant else 0.0
+    # @api.depends('location_id', 'location_dest_id', 'state')
+    # def _compute_balance(self):
+    #     for line in self:
+    #         # if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
+    #         #     # Get the current quant for the product and destination location
+    #         #     quant = self.env['stock.quant'].search([
+    #         #         ('product_id', '=', line.product_id.id),
+    #         #         ('location_id', '=', line.location_dest_id.id),
+    #         #         ('company_id', '=', line.company_id.id),
+    #         #     ], limit=1)
+    #         #     line.balance = quant.quantity if quant else 0.0
 
-            # elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
-            #     # Get the current quant for the product and destination location
-            #     quant = self.env['stock.quant'].search([
-            #         ('product_id', '=', line.product_id.id),
-            #         ('location_id', '=', line.location_id.id),
-            #         ('company_id', '=', line.company_id.id),
-            #     ], limit=1)
-            #     line.balance = quant.quantity if quant else 0.0
-            # if line.state != 'done':
-            #     continue
-            # if (
-            #     line.location_dest_id.usage == 'internal'
-            #     and line.location_id.usage == 'internal'):
-            #     line.copy()
-            line.balance = 0.0
+    #         # elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
+    #         #     # Get the current quant for the product and destination location
+    #         #     quant = self.env['stock.quant'].search([
+    #         #         ('product_id', '=', line.product_id.id),
+    #         #         ('location_id', '=', line.location_id.id),
+    #         #         ('company_id', '=', line.company_id.id),
+    #         #     ], limit=1)
+    #         #     line.balance = quant.quantity if quant else 0.0
+    #         # if line.state != 'done':
+    #         #     continue
+    #         # if (
+    #         #     line.location_dest_id.usage == 'internal'
+    #         #     and line.location_id.usage == 'internal'):
+    #         #     line.copy()
+    #         line.balance = 0.0
 
     
     def write(self, vals):
+        state_changing = 'state' in vals and vals['state'] == 'done'
         res = super().write(vals)
-        for line in self:
-            if (
-                line.state == 'done' and
-                line.location_id.usage == 'internal' and
-                line.location_dest_id.usage == 'internal'
-            ):
-                line.copy()
+        if state_changing:
+            for line in self:
+                line.balance = state_changing
+                if (
+                    line.state == 'done' and
+                    line.location_id.usage == 'internal' and
+                    line.location_dest_id.usage == 'internal'
+                ):
+                    line.copy()
         return res
+
 
