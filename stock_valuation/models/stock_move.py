@@ -218,36 +218,18 @@ class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
     balance = fields.Char(string="Balance")
-    # is_duplicated = fields.Boolean(string='Already Duplicated', default=False)
+    signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
 
+    @api.depends('qty_done', 'location_id.usage', 'location_dest_id.usage')
+    def _compute_signed_qty_done(self):
+        for line in self:
+            if line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
+                # Outgoing
+                line.signed_qty_done = -line.qty_done
+            elif line.location_id.usage != 'internal' and line.location_dest_id.usage == 'internal':
+                # Incoming
+                line.signed_qty_done = line.qty_done
 
-    # @api.depends('location_id', 'location_dest_id', 'state')
-    # def _compute_balance(self):
-    #     for line in self:
-    #         # if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
-    #         #     # Get the current quant for the product and destination location
-    #         #     quant = self.env['stock.quant'].search([
-    #         #         ('product_id', '=', line.product_id.id),
-    #         #         ('location_id', '=', line.location_dest_id.id),
-    #         #         ('company_id', '=', line.company_id.id),
-    #         #     ], limit=1)
-    #         #     line.balance = quant.quantity if quant else 0.0
-
-    #         # elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
-    #         #     # Get the current quant for the product and destination location
-    #         #     quant = self.env['stock.quant'].search([
-    #         #         ('product_id', '=', line.product_id.id),
-    #         #         ('location_id', '=', line.location_id.id),
-    #         #         ('company_id', '=', line.company_id.id),
-    #         #     ], limit=1)
-    #         #     line.balance = quant.quantity if quant else 0.0
-    #         # if line.state != 'done':
-    #         #     continue
-    #         # if (
-    #         #     line.location_dest_id.usage == 'internal'
-    #         #     and line.location_id.usage == 'internal'):
-    #         #     line.copy()
-    #         line.balance = 0.0
 
     
 class StockPicking(models.Model):
