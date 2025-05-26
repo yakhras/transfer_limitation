@@ -221,7 +221,7 @@ class StockMoveLine(models.Model):
     # is_duplicated = fields.Boolean(string='Already Duplicated', default=False)
 
 
-    @api.depends('product_id', 'location_id', 'location_dest_id', 'state')
+    @api.depends('location_id', 'location_dest_id', 'state')
     def _compute_balance(self):
         for line in self:
             # if line.location_dest_id.usage == 'internal' and line.location_id.usage != 'internal':
