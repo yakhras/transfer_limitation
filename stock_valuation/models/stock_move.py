@@ -255,6 +255,16 @@ class StockPicking(models.Model):
                     move_line.location_id.usage == 'internal' and
                     move_line.location_dest_id.usage == 'internal'
                 ):
-                    move_line.copy()
+                    # Set original line's signed_qty_done to negative
+                    move_line.signed_qty_done = -move_line.qty_done
+
+                    # Copy the line
+                    copied_line = move_line.copy()
+
+                    # Set copied line's qty_done and signed_qty_done to positive
+                    copied_line.qty_done = move_line.qty_done
+                    copied_line.signed_qty_done = move_line.qty_done
+
         return res
+
 
