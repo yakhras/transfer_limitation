@@ -249,7 +249,7 @@ class StockMoveLine(models.Model):
             #     line.copy()
             line.balance = 0.0
 
-    @api.model
+    
     def write(self, vals):
         res = super().write(vals)
         for line in self:
