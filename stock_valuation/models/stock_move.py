@@ -244,7 +244,6 @@ class StockMoveLine(models.Model):
                 line.location_dest_id.usage == 'internal'
                 and line.location_id.usage == 'internal'
                 and line.state == 'done'
-                and not line.is_duplicated
             ):
                 line.copy()
 
