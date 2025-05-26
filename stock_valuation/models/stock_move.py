@@ -248,8 +248,8 @@ class StockMoveLine(models.Model):
             ):
                 duplicated_line = line.copy()
 
-            # existing_quantity = quant.quantity if quant else 0.0
-            # if line.state == 'done':
-            #     line.balance = existing_quantity
+            existing_quantity = quant.quantity if quant else 0.0
+            if line.state == 'done':
+                line.balance = existing_quantity
 
    
