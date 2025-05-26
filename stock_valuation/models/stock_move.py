@@ -231,6 +231,7 @@ class StockMoveLine(models.Model):
                     ('location_id', '=', line.location_dest_id.id),
                     ('company_id', '=', line.company_id.id),
                 ], limit=1)
+                line.balance = quant.quantity if quant else 0.0
 
             elif line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
                 # Get the current quant for the product and destination location
@@ -239,6 +240,7 @@ class StockMoveLine(models.Model):
                     ('location_id', '=', line.location_id.id),
                     ('company_id', '=', line.company_id.id),
                 ], limit=1)
+                line.balance = quant.quantity if quant else 0.0
 
             elif (
                 line.location_dest_id.usage == 'internal'
@@ -247,8 +249,3 @@ class StockMoveLine(models.Model):
             ):
                 line.copy()
 
-            existing_quantity = quant.quantity if quant else 0.0
-            if line.state == 'done':
-                line.balance = existing_quantity
-
-   
