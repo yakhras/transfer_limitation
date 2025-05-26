@@ -228,7 +228,7 @@ class StockMoveLine(models.Model):
                 line.signed_qty_done = -line.qty_done
                 quant = self.env['stock.quant'].search([
                     ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_dest_id.id),
+                    ('location_id', '=', line.location_id.id),
                 ], limit=1) 
                 line.balance = quant.quantity if quant else 0.0
             elif line.location_id.usage != 'internal' and line.location_dest_id.usage == 'internal':
@@ -236,7 +236,7 @@ class StockMoveLine(models.Model):
                 line.signed_qty_done = line.qty_done
                 quant = self.env['stock.quant'].search([
                     ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_id.id),
+                    ('location_id', '=', line.location_dest_id.id),
                 ], limit=1) 
                 line.balance = quant.quantity if quant else 0.0
 
