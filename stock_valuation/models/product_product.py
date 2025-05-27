@@ -388,8 +388,17 @@ class StockLocation(models.Model):
             # res_po = self.create_po(result_negative)
             # res_so = self.create_so(result_positive)
             # self.result = res_so
+            action = {
+                'name': f'SVL Summary for {location.name}',
+                'type': 'ir.actions.act_window',
+                'res_model': 'stock.valuation.layer',
+                'view_mode': 'tree,form',
+                'domain': domain,
+                'context': dict(self.env.context),
+            }
 
-            return result_negative, result_positive, result
+            # return result_negative, result_positive, result
+            return action
         
     def create_po(self, po_line):
         vendor = self.env['res.partner'].browse(25)
