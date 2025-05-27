@@ -150,7 +150,7 @@
             <field name="lot_id" position="before">
                 <field name="signed_qty_done" readonly="1"/>
             </field>
-            <field name="location_id" position="after">
+            <field name="location_id" position="before">
                 <field name="operation" readonly="1"/>
             </field>
             </field>
