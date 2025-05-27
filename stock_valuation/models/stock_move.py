@@ -219,6 +219,7 @@ class StockMoveLine(models.Model):
 
     balance = fields.Float(string="Balance", store=True)
     signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
+    operation = fields.Char(string="Operation")
 
     @api.depends('qty_done', 'location_id.usage', 'location_dest_id.usage')
     def _compute_signed_qty_done(self):
