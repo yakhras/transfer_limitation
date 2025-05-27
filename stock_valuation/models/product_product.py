@@ -385,9 +385,9 @@ class StockLocation(models.Model):
                         "-------------------------"
                     )
                     result.append(line)
-            res_po = self.create_po(result_negative)
-            res_so = self.create_so(result_positive)
-            self.result = res_so
+            # res_po = self.create_po(result_negative)
+            # res_so = self.create_so(result_positive)
+            # self.result = res_so
 
             return result_negative, result_positive, result
         
