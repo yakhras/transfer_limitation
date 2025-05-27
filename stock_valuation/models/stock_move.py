@@ -219,7 +219,7 @@ class StockMoveLine(models.Model):
 
     balance = fields.Float(string="Balance", store=True)
     signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
-    operation = fields.Char(string="Operation")
+    operation = fields.Char(string="Operation", compute="_compute_operation", store=True)
 
     @api.depends('qty_done', 'location_id.usage', 'location_dest_id.usage')
     def _compute_signed_qty_done(self):
@@ -240,6 +240,26 @@ class StockMoveLine(models.Model):
                     ('location_id', '=', line.location_dest_id.id),
                 ], limit=1) 
                 line.balance = quant.quantity if quant else 0.0
+
+    @api.depends('location_id.usage', 'location_dest_id.usage')
+    def _compute_operation(self):
+        for line in self:
+            if line.operation in ('Transfer Out', 'Transfer In'):
+                continue  # already explicitly set
+
+            from_usage = line.location_id.usage
+            to_usage = line.location_dest_id.usage
+
+            if from_usage == 'supplier' and to_usage == 'internal':
+                line.operation = 'Buy'
+            elif from_usage == 'internal' and to_usage == 'supplier':
+                line.operation = 'Return Buy'
+            elif from_usage == 'internal' and to_usage == 'customer':
+                line.operation = 'Sell'
+            elif from_usage == 'customer' and to_usage == 'internal':
+                line.operation = 'Return Sell'
+            else:
+                line.operation = False
 
 
     
@@ -265,6 +285,7 @@ class StockPicking(models.Model):
                     # Set signed_qty_done and balance on original move line
                     move_line.signed_qty_done = -move_line.qty_done
                     move_line.balance = source_quant.quantity if source_quant else 0.0
+                    move_line.operation = 'Transfer Out'
 
                     # Create the copied line
                     copied_line = move_line.copy()
@@ -278,6 +299,7 @@ class StockPicking(models.Model):
                     # Set signed_qty_done and balance on copied move line
                     copied_line.signed_qty_done = move_line.qty_done
                     copied_line.balance = dest_quant.quantity if dest_quant else 0.0
+                    copied_line.operation = 'Transfer In'
 
         return res
 
