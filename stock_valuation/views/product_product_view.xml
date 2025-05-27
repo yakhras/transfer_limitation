@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
+
+    <!-- Product Product Views  -->
         <record model="ir.ui.view" id="product_product_form">
             <field name="name">product_product_form</field> 
             <field name="model">product.product</field> 
@@ -22,6 +24,7 @@
             </field>
         </record>
 
+    <!-- Stock Quant Views -->
         <record model="ir.ui.view" id="stock_quant_tree">
             <field name="name">stock_quant_tree</field> 
             <field name="model">stock.quant</field> 
@@ -121,7 +124,8 @@
             <field name="active">True</field>
         </record> -->
 
-        <!-- <record id="view_location_form_inherit_custom_button" model="ir.ui.view">
+    <!-- Stock Location Views -->
+        <record id="view_location_form_inherit_custom_button" model="ir.ui.view">
           <field name="name">stock.location.form.inherit.custom.button</field>
           <field name="model">stock.location</field>
           <field name="inherit_id" ref="stock.view_location_form"/>
@@ -140,8 +144,9 @@
             </xpath>
             
           </field>
-        </record> -->
+        </record>
 
+    <!-- Stock Move Line Views -->
         <record id="view_move_line_form_inherit_signed_qty" model="ir.ui.view">
             <field name="name">stock.move.line.form.inherit.signed.qty</field>
             <field name="model">stock.move.line</field>
@@ -175,18 +180,6 @@
                 </xpath>
             </field>
         </record>
-
-
-        <!-- <record id="view_move_line_form_inherit_balance" model="ir.ui.view">
-            <field name="name">stock.move.line.form.inherit.balance</field>
-            <field name="model">stock.move.line</field>
-            <field name="inherit_id" ref="stock.view_move_line_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='qty_done']" position="after">
-                <field name="is_duplicated"/>
-                </xpath>
-            </field>
-        </record> -->
 
         
     </data>
