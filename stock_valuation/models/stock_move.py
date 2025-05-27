@@ -255,16 +255,31 @@ class StockPicking(models.Model):
                     move_line.location_id.usage == 'internal' and
                     move_line.location_dest_id.usage == 'internal'
                 ):
-                    # Update original with negative signed quantity
-                    move_line.signed_qty_done = -move_line.qty_done
+                    # Get quant for source location (for original move line)
+                    source_quant = self.env['stock.quant'].search([
+                        ('location_id', '=', move_line.location_id.id),
+                        ('product_id', '=', move_line.product_id.id),
+                    ], limit=1)
 
-                    # Create the copied line (qty_done remains 0)
+                    # Set signed_qty_done and balance on original move line
+                    move_line.signed_qty_done = -move_line.qty_done
+                    move_line.balance = source_quant.quantity if source_quant else 0.0
+
+                    # Create the copied line
                     copied_line = move_line.copy()
 
-                    # Assign positive signed_qty_done to copied line
+                    # Get quant for destination location (for copied line)
+                    dest_quant = self.env['stock.quant'].search([
+                        ('location_id', '=', copied_line.location_dest_id.id),
+                        ('product_id', '=', copied_line.product_id.id),
+                    ], limit=1)
+
+                    # Set signed_qty_done and balance on copied move line
                     copied_line.signed_qty_done = move_line.qty_done
+                    copied_line.balance = dest_quant.quantity if dest_quant else 0.0
 
         return res
+
 
 
 
