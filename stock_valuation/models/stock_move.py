@@ -214,101 +214,101 @@ class StockMove(models.Model):
 
 
     
-class StockMoveLine(models.Model):
-    _inherit = 'stock.move.line'
+# class StockMoveLine(models.Model):
+#     _inherit = 'stock.move.line'
 
-    balance = fields.Float(string="Balance", store=True)
-    signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
-    operation = fields.Char(string="Operation", compute="_compute_operation", store=True)
+#     balance = fields.Float(string="Balance", store=True)
+#     signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
+#     operation = fields.Char(string="Operation", compute="_compute_operation", store=True)
    
 
 
-    @api.depends('qty_done', 'location_id.usage', 'location_dest_id.usage')
-    def _compute_signed_qty_done(self):
-        for line in self:
-            if line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
-                # Outgoing
-                line.signed_qty_done = -line.qty_done
-                quant = self.env['stock.quant'].search([
-                    ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_id.id),
-                ], limit=1) 
-                line.balance = quant.quantity if quant else 0.0
-            elif line.location_id.usage != 'internal' and line.location_dest_id.usage == 'internal':
-                # Incoming
-                line.signed_qty_done = line.qty_done
-                quant = self.env['stock.quant'].search([
-                    ('product_id', '=', line.product_id.id),
-                    ('location_id', '=', line.location_dest_id.id),
-                ], limit=1) 
-                line.balance = quant.quantity if quant else 0.0
+#     @api.depends('qty_done', 'location_id.usage', 'location_dest_id.usage')
+#     def _compute_signed_qty_done(self):
+#         for line in self:
+#             if line.location_id.usage == 'internal' and line.location_dest_id.usage != 'internal':
+#                 # Outgoing
+#                 line.signed_qty_done = -line.qty_done
+#                 quant = self.env['stock.quant'].search([
+#                     ('product_id', '=', line.product_id.id),
+#                     ('location_id', '=', line.location_id.id),
+#                 ], limit=1) 
+#                 line.balance = quant.quantity if quant else 0.0
+#             elif line.location_id.usage != 'internal' and line.location_dest_id.usage == 'internal':
+#                 # Incoming
+#                 line.signed_qty_done = line.qty_done
+#                 quant = self.env['stock.quant'].search([
+#                     ('product_id', '=', line.product_id.id),
+#                     ('location_id', '=', line.location_dest_id.id),
+#                 ], limit=1) 
+#                 line.balance = quant.quantity if quant else 0.0
 
-    @api.depends('location_id', 'location_dest_id')
-    def _compute_operation(self):
-        for line in self:
-            # Skip if already set during duplication (e.g., "Transfer In"/"Transfer Out")
-            if line.operation in ('Transfer In', 'Transfer Out'):
-                continue
+#     @api.depends('location_id', 'location_dest_id')
+#     def _compute_operation(self):
+#         for line in self:
+#             # Skip if already set during duplication (e.g., "Transfer In"/"Transfer Out")
+#             if line.operation in ('Transfer In', 'Transfer Out'):
+#                 continue
 
-            from_usage = line.location_id.usage
-            to_usage = line.location_dest_id.usage
-            from_name = line.location_id.display_name or ''
-            to_name = line.location_dest_id.display_name or ''
+#             from_usage = line.location_id.usage
+#             to_usage = line.location_dest_id.usage
+#             from_name = line.location_id.display_name or ''
+#             to_name = line.location_dest_id.display_name or ''
 
-            if from_usage == 'supplier' and to_usage == 'internal':
-                line.operation = f"Buy → {to_name}"
-            elif from_usage == 'internal' and to_usage == 'supplier':
-                line.operation = f"Return Buy → {from_name}"
-            elif from_usage == 'internal' and to_usage == 'customer':
-                line.operation = f"Sell → {from_name}"
-            elif from_usage == 'customer' and to_usage == 'internal':
-                line.operation = f"Return Sell → {to_name}"
-            else:
-                line.operation = False
+#             if from_usage == 'supplier' and to_usage == 'internal':
+#                 line.operation = f"Buy → {to_name}"
+#             elif from_usage == 'internal' and to_usage == 'supplier':
+#                 line.operation = f"Return Buy → {from_name}"
+#             elif from_usage == 'internal' and to_usage == 'customer':
+#                 line.operation = f"Sell → {from_name}"
+#             elif from_usage == 'customer' and to_usage == 'internal':
+#                 line.operation = f"Return Sell → {to_name}"
+#             else:
+#                 line.operation = False
 
 
     
-class StockPicking(models.Model):
-    _inherit = 'stock.picking'
+# class StockPicking(models.Model):
+#     _inherit = 'stock.picking'
 
-    def button_validate(self):
-        res = super().button_validate()
+#     def button_validate(self):
+#         res = super().button_validate()
 
-        for picking in self:
-            for move_line in picking.move_line_ids:
-                if (
-                    move_line.state == 'done' and
-                    move_line.location_id.usage == 'internal' and
-                    move_line.location_dest_id.usage == 'internal'
-                ):
-                    from_name = move_line.location_id.display_name or ''
-                    to_name = move_line.location_dest_id.display_name or ''
-                    # Get quant for source location (for original move line)
-                    source_quant = self.env['stock.quant'].search([
-                        ('location_id', '=', move_line.location_id.id),
-                        ('product_id', '=', move_line.product_id.id),
-                    ], limit=1)
+#         for picking in self:
+#             for move_line in picking.move_line_ids:
+#                 if (
+#                     move_line.state == 'done' and
+#                     move_line.location_id.usage == 'internal' and
+#                     move_line.location_dest_id.usage == 'internal'
+#                 ):
+#                     from_name = move_line.location_id.display_name or ''
+#                     to_name = move_line.location_dest_id.display_name or ''
+#                     # Get quant for source location (for original move line)
+#                     source_quant = self.env['stock.quant'].search([
+#                         ('location_id', '=', move_line.location_id.id),
+#                         ('product_id', '=', move_line.product_id.id),
+#                     ], limit=1)
 
-                    # Set signed_qty_done and balance on original move line
-                    move_line.signed_qty_done = -move_line.qty_done
-                    move_line.balance = source_quant.quantity if source_quant else 0.0
-                    move_line.operation = f"Transfer Out → {from_name}"
+#                     # Set signed_qty_done and balance on original move line
+#                     move_line.signed_qty_done = -move_line.qty_done
+#                     move_line.balance = source_quant.quantity if source_quant else 0.0
+#                     move_line.operation = f"Transfer Out → {from_name}"
 
-                    # Create the copied line
-                    copied_line = move_line.copy()
+#                     # Create the copied line
+#                     copied_line = move_line.copy()
 
-                    # Get quant for destination location (for copied line)
-                    dest_quant = self.env['stock.quant'].search([
-                        ('location_id', '=', copied_line.location_dest_id.id),
-                        ('product_id', '=', copied_line.product_id.id),
-                    ], limit=1)
+#                     # Get quant for destination location (for copied line)
+#                     dest_quant = self.env['stock.quant'].search([
+#                         ('location_id', '=', copied_line.location_dest_id.id),
+#                         ('product_id', '=', copied_line.product_id.id),
+#                     ], limit=1)
 
-                    # Set signed_qty_done and balance on copied move line
-                    copied_line.signed_qty_done = move_line.qty_done
-                    copied_line.balance = dest_quant.quantity if dest_quant else 0.0
-                    copied_line.operation = f"Transfer In → {to_name}"
+#                     # Set signed_qty_done and balance on copied move line
+#                     copied_line.signed_qty_done = move_line.qty_done
+#                     copied_line.balance = dest_quant.quantity if dest_quant else 0.0
+#                     copied_line.operation = f"Transfer In → {to_name}"
 
-        return res
+#         return res
 
 
 
