@@ -91,16 +91,16 @@
             <field name="active">False</field>
         </record> -->
 
-        <record id="ir_cron_generate_location_costs" model="ir.cron">
+        <!-- <record id="ir_cron_generate_location_costs" model="ir.cron">
             <field name="name">Generate Product Location Costs</field>
-            <field name="model_id" ref="stock.model_stock_move_line"/>
+            <field name="model_id" ref="product.model_product_product"/>
             <field name="state">code</field>
-            <field name="code">model.compute_running_quantity_and_balance()</field>
+            <field name="code">model.generate_location_costs()</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="active">True</field>
-        </record>
+        </record> -->
 
         <!-- <record id="ir_cron_reset_location_quantity" model="ir.cron">
             <field name="name">Reset Location Quantity</field>
