@@ -220,6 +220,30 @@ class StockMoveLine(models.Model):
     balance = fields.Float(string="Balance", store=True)
     signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
     operation = fields.Char(string="Operation", compute="_compute_operation", store=True)
+    quantity = fields.Float(string='Quantity', store=True)
+
+
+    def compute_running_quantity_and_balance(self):
+        all_products = self.env['product.product'].search([])
+
+        for product in all_products:
+            move_lines = self.env['stock.move.line'].search(
+                [
+                    ('product_id', '=', product.id),
+                    ('state', '=', 'done'),
+                ],
+                order='date asc'
+            )
+
+            running_qty = 0.0
+            now = fields.Datetime.now()
+
+            for move in move_lines:
+                running_qty += move.signed_qty_done
+                move.quantity = running_qty
+
+                # Set balance only if move date is before "now"
+                move.balance = running_qty if move.date <= now else 0.0
 
     @api.depends('qty_done', 'location_id.usage', 'location_dest_id.usage')
     def _compute_signed_qty_done(self):
