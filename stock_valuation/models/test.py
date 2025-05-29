@@ -109,6 +109,7 @@ class ProductExportQuantSVL(models.TransientModel):
             svl_value = sum(svl_records.mapped('value'))
 
             match_status = "Matched" if round(quant_qty, 2) == round(svl_qty, 2) else "Not Matched"
+            unit_cost = svl_value / svl_qty if svl_qty else 0.0
 
             product_data[product.id] = {
                 'product': product.display_name,
@@ -116,7 +117,9 @@ class ProductExportQuantSVL(models.TransientModel):
                 'svl_qty': svl_qty,
                 'svl_value': svl_value,
                 'match_status': match_status,
+                'unit_cost': unit_cost,
             }
+            
 
             # Write data row
             worksheet.write(row, 0, product.display_name)
@@ -124,6 +127,7 @@ class ProductExportQuantSVL(models.TransientModel):
             worksheet.write(row, 2, svl_qty)
             worksheet.write(row, 3, svl_value)
             worksheet.write(row, 4, match_status)
+            worksheet.write(row, 4, unit_cost)
             row += 1
 
         workbook.close()
