@@ -89,6 +89,7 @@ class ProductExportQuantSVL(models.TransientModel):
         # Data rows
         row = 1
         products = self.env['product.product'].search([])
+        product_data = {}
         for product in products:
             # Internal Quant Quantity
             quant_qty = sum(self.env['stock.quant'].search([
@@ -108,6 +109,14 @@ class ProductExportQuantSVL(models.TransientModel):
             svl_value = sum(svl_records.mapped('value'))
 
             match_status = "Matched" if round(quant_qty, 2) == round(svl_qty, 2) else "Not Matched"
+
+            product_data[product.id] = {
+                'product': product.display_name,
+                'quant_qty': quant_qty,
+                'svl_qty': svl_qty,
+                'svl_value': svl_value,
+                'match_status': match_status,
+            }
 
             # Write data row
             worksheet.write(row, 0, product.display_name)
