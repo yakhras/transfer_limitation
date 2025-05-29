@@ -96,7 +96,7 @@ class ProductExportQuantSVL(models.TransientModel):
                 ('location_id.usage', '=', 'internal')
             ]).mapped('quantity'))
 
-            match_status = "Matched" if round(quant_qty, 2) == round(svl_qty, 2) else "Not Matched"
+            
 
             # SVL (internal) — filter by location if needed
             domain = ['|',
@@ -106,6 +106,8 @@ class ProductExportQuantSVL(models.TransientModel):
             svl_records = self.env['stock.valuation.layer'].search(domain)
             svl_qty = sum(svl_records.mapped('quantity'))
             svl_value = sum(svl_records.mapped('value'))
+
+            match_status = "Matched" if round(quant_qty, 2) == round(svl_qty, 2) else "Not Matched"
 
             # Write data row
             worksheet.write(row, 0, product.display_name)
