@@ -30,11 +30,11 @@
             <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//form/header" position="inside">
-                    <button name="action_export_quant_svl"
+                    <button name="action_export_all_products_quant_svl"
                             type="object"
                             string="Export Quant"
                             class="btn-primary"
-                            context="{'active_id': active_id}"/>
+                            />
                 </xpath>
             </field>
         </record>
