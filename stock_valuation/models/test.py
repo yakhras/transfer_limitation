@@ -24,9 +24,11 @@ class ProductProduct(models.Model):
         for product in product_ids:
             quant_qty = sum(
                 self.env['stock.quant'].search([
-                    ('product_id', '=', product.id)
+                    ('product_id', '=', product.id),
+                    ('location_id.usage', '=', 'internal')
                 ]).mapped('quantity')
             )
+
 
             svl_records = self.env['stock.valuation.layer'].search([
                 ('product_id', '=', product.id)
