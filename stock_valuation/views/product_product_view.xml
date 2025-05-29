@@ -31,7 +31,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="before">
                     <header>
-                        <button name="action_export_quant_svl" string="Export Quant & SVL" type="object" class="btn-primary"/>
+                        <button name="action_export_quant_svl" string="Export Quant" type="object" class="btn-primary"/>
                     </header>
                 </xpath>
             </field>
