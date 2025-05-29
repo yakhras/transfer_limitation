@@ -82,7 +82,7 @@ class ProductExportQuantSVL(models.TransientModel):
         worksheet = workbook.add_worksheet("Product Quant & SVL")
 
         # Headers
-        headers = ['Product', 'Internal Quant Qty', 'SVL Qty', 'SVL Value', 'Match Status', 'Unit Cost']
+        headers = ['Product', 'Internal Quant Qty', 'SVL Qty', 'SVL Value', 'Match Status', 'Unit Cost', 'Standard Price']
         for col, header in enumerate(headers):
             worksheet.write(0, col, header)
 
@@ -110,6 +110,7 @@ class ProductExportQuantSVL(models.TransientModel):
 
             match_status = "Matched" if round(quant_qty, 2) == round(svl_qty, 2) else "Not Matched"
             unit_cost = svl_value / svl_qty if svl_qty else 0.0
+            product.standard_price = unit_cost
 
             product_data[product.id] = {
                 'product': product.display_name,
@@ -118,6 +119,7 @@ class ProductExportQuantSVL(models.TransientModel):
                 'svl_value': svl_value,
                 'match_status': match_status,
                 'unit_cost': unit_cost,
+                'standard_price': product.standard_price,
             }
             
 
@@ -128,7 +130,8 @@ class ProductExportQuantSVL(models.TransientModel):
             worksheet.write(row, 3, svl_value)
             worksheet.write(row, 4, match_status)
             worksheet.write(row, 5, unit_cost)
-            worksheet.write(row, 6, str(product_data))
+            worksheet.write(row, 6, product.standard_price)
+            
             row += 1
 
         workbook.close()
