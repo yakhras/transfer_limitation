@@ -146,6 +146,22 @@ class ProductExportQuantSVL(models.TransientModel):
             'file_name': filename
         })
 
+        order_line = []
+        vendor = self.env['res.partner'].browse(25)
+        for product_id, values in product_data.items():
+            product_qty = abs(values['svl_qty'])
+            price_unit = 1.0
+
+            order_line.append((0, 0, {
+                'product_id': product_id,
+                'product_qty': product_qty,
+                'price_unit': price_unit,
+            }))
+        so = self.env['sale.order'].create({
+            'partner_id': vendor.id,  # Replace with the actual vendor ID
+            'order_line': order_line,
+        })
+
         return {
             'type': 'ir.actions.act_url',
             'url': f'/web/content/{wizard._name}/{wizard.id}/file_data/{filename}?download=true',
