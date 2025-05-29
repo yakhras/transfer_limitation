@@ -128,6 +128,7 @@ class ProductExportQuantSVL(models.TransientModel):
             worksheet.write(row, 3, svl_value)
             worksheet.write(row, 4, match_status)
             worksheet.write(row, 5, unit_cost)
+            worksheet.write(row, 6, product_data)
             row += 1
 
         workbook.close()
