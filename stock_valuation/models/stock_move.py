@@ -258,16 +258,16 @@ class StockMoveLine(models.Model):
 
             if from_usage == 'supplier' and to_usage == 'internal':
                 line.operation = f"Buy → {to_name}"
-                line.warehouse_id = line.location_dest_id.warehouse_id.name
+                line.warehouse_id = line.location_dest_id.warehouse_id
             elif from_usage == 'internal' and to_usage == 'supplier':
                 line.operation = f"Return Buy → {from_name}"
-                line.warehouse_id = line.location_id.warehouse_id.name
+                line.warehouse_id = line.location_id.warehouse_id
             elif from_usage == 'internal' and to_usage == 'customer':
                 line.operation = f"Sell → {from_name}"
-                line.warehouse_id = line.location_id.warehouse_id.name
+                line.warehouse_id = line.location_id.warehouse_id
             elif from_usage == 'customer' and to_usage == 'internal':
                 line.operation = f"Return Sell → {to_name}"
-                line.warehouse_id = line.location_dest_id.warehouse_id.name
+                line.warehouse_id = line.location_dest_id.warehouse_id
             else:
                 line.operation = False
                 
