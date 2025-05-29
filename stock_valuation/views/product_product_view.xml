@@ -29,7 +29,7 @@
             <field name="model">product.product</field>
             <field name="inherit_id" ref="product.product_product_tree_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//tree" position="before">
+                <xpath expr="//tree" position="inside">
                     <header>
                         <button name="action_export_quant_svl" string="Export Quant" type="object" class="btn-primary"/>
                     </header>
