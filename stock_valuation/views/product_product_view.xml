@@ -152,12 +152,13 @@
             <field name="model">stock.move.line</field>
             <field name="inherit_id" ref="stock.view_move_line_form"/>
             <field name="arch" type="xml">
-            <field name="lot_id" position="before">
-                <field name="signed_qty_done" readonly="1"/>
-            </field>
-            <field name="location_id" position="before">
-                <field name="operation" readonly="1"/>
-            </field>
+                <field name="lot_id" position="before">
+                    <field name="signed_qty_done" readonly="1"/>
+                </field>
+                <field name="location_id" position="before">
+                    <field name="operation" readonly="1"/>
+                    <field name="warehouse_id" readonly="1"/>
+                </field>
             </field>
         </record>
 

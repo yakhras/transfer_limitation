@@ -220,6 +220,7 @@ class StockMoveLine(models.Model):
     balance = fields.Float(string="Balance", store=True)
     signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
     operation = fields.Char(string="Operation", compute="_compute_operation", store=True)
+    warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse', store=True)
    
 
 
@@ -257,14 +258,19 @@ class StockMoveLine(models.Model):
 
             if from_usage == 'supplier' and to_usage == 'internal':
                 line.operation = f"Buy → {to_name}"
+                line.warehouse_id = line.location_dest_id.warehouse_id.name
             elif from_usage == 'internal' and to_usage == 'supplier':
                 line.operation = f"Return Buy → {from_name}"
+                line.warehouse_id = line.location_id.warehouse_id.name
             elif from_usage == 'internal' and to_usage == 'customer':
                 line.operation = f"Sell → {from_name}"
+                line.warehouse_id = line.location_id.warehouse_id.name
             elif from_usage == 'customer' and to_usage == 'internal':
                 line.operation = f"Return Sell → {to_name}"
+                line.warehouse_id = line.location_dest_id.warehouse_id.name
             else:
                 line.operation = False
+                
 
 
     
