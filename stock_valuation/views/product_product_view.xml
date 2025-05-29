@@ -24,18 +24,21 @@
             </field>
         </record>
 
-        <record id="product_template_tree_view_inherit_export_quant_svl" model="ir.ui.view">
-            <field name="name">product.template.tree.export.quant.svl</field>
+        <record id="product_product_form_view_inherit_export_quant_svl" model="ir.ui.view">
+            <field name="name">product.product.form.export.quant.svl</field>
             <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//tree" position="inside">
-                    <header>
-                        <button name="action_export_quant_svl" string="Export Quant" type="object" class="btn-primary"/>
-                    </header>
+                <xpath expr="//form/header" position="inside">
+                    <button name="action_export_quant_svl"
+                            type="object"
+                            string="Export Quant"
+                            class="btn-primary"
+                            context="{'active_id': active_id}"/>
                 </xpath>
             </field>
         </record>
+
 
 
     <!-- Stock Quant Views -->
