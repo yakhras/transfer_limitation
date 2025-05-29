@@ -82,7 +82,7 @@ class ProductExportQuantSVL(models.TransientModel):
         worksheet = workbook.add_worksheet("Product Quant & SVL")
 
         # Headers
-        headers = ['Product', 'Internal Quant Qty', 'SVL Qty', 'SVL Value']
+        headers = ['Product', 'Internal Quant Qty', 'SVL Qty', 'SVL Value', 'Match Status', 'Unit Cost']
         for col, header in enumerate(headers):
             worksheet.write(0, col, header)
 
@@ -127,7 +127,7 @@ class ProductExportQuantSVL(models.TransientModel):
             worksheet.write(row, 2, svl_qty)
             worksheet.write(row, 3, svl_value)
             worksheet.write(row, 4, match_status)
-            worksheet.write(row, 4, unit_cost)
+            worksheet.write(row, 5, unit_cost)
             row += 1
 
         workbook.close()
