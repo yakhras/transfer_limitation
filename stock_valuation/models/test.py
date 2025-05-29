@@ -154,7 +154,7 @@ class ProductExportQuantSVL(models.TransientModel):
 
             order_line.append((0, 0, {
                 'product_id': product_id,
-                'product_qty': product_qty,
+                'product_uom_qty': product_qty,
                 'price_unit': price_unit,
             }))
         so = self.env['sale.order'].create({
