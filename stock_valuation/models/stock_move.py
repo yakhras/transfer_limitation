@@ -268,8 +268,9 @@ class StockMoveLine(models.Model):
             elif from_usage == 'customer' and to_usage == 'internal':
                 line.operation = f"Return Sell → {to_name}"
                 line.warehouse_id = line.location_dest_id.warehouse_id
-            else:
-                line.operation = False
+            elif from_usage == 'internal' and to_usage == 'inventory':
+                line.operation = f"Scrap → {from_name}"
+                line.warehouse_id = line.location_id.warehouse_id
                 
 
 
@@ -317,7 +318,4 @@ class StockPicking(models.Model):
                     copied_line.warehouse_id = copied_line.location_dest_id.warehouse_id
 
         return res
-
-
-
-
+    
