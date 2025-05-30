@@ -202,6 +202,18 @@
             </field>
         </record>
 
+        <record id="stock_move_line_view_search_inherit_group_by_warehouse" model="ir.ui.view">
+            <field name="name">stock.move.line.search.inherit.group.by.warehouse</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.stock_move_line_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='by_location']" position="replace">
+                    <filter string="Warehouse" name="by_warehouse" context="{'group_by': 'warehouse_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+
         
     </data>
 </odoo>
