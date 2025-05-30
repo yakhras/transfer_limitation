@@ -271,6 +271,9 @@ class StockMoveLine(models.Model):
             elif from_usage == 'internal' and to_usage == 'inventory':
                 line.operation = f"Scrap → {from_name}"
                 line.warehouse_id = line.location_id.warehouse_id
+            elif from_usage == 'inventory' and to_usage == 'internal':
+                line.operation = f"Adjastment → {to_name}"
+                line.warehouse_id = line.location_dest_id.warehouse_id
                 
 
 
