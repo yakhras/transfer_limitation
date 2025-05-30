@@ -104,7 +104,7 @@ class ProductExportQuantSVL(models.TransientModel):
                       ('product_id', '=', product.id)]
             svl_records = self.env['stock.valuation.layer'].search(domain)
             svl_qty = sum(svl_records.mapped('quantity'))
-            svl_value = sum(svl_records.mapped('value'))
+            svl_value = round(sum(svl_records.mapped('value')))
 
             match_status = "Matched" if round(quant_qty, 2) == round(svl_qty, 2) else "Not Matched"
             unit_cost = svl_value / svl_qty if svl_qty else 0.0
