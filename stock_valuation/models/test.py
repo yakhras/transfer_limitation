@@ -92,16 +92,26 @@ class ProductExportQuantSVL(models.TransientModel):
         product_data = {}
         for product in products:
             # Internal Quant Quantity
-            quant_qty = sum(self.env['stock.quant'].search([
+            quant_records = self.env['stock.quant'].search([
                 ('product_id', '=', product.id),
-                ('location_id.usage', '=', 'internal')
-            ]).mapped('quantity'))
+                ('location_id.usage', '=', 'internal'),
+            ])
+
+            quant_qty = sum(quant_records.mapped('quantity'))
+
+            for quant in quant_records:
+                warehouse = quant.location_id.warehouse_id
+                qty = quant.quantity
+                product_data[product.id] = {
+                    'product': product,
+                    'quant_qty': qty,
+                    'warehouse': warehouse,
+                }
 
             
 
             # SVL (internal) — filter by location if needed
-            domain = [
-                      ('product_id', '=', product.id)]
+            domain = [('product_id', '=', product.id)]
             svl_records = self.env['stock.valuation.layer'].search(domain)
             svl_qty = sum(svl_records.mapped('quantity'))
             svl_value = round(sum(svl_records.mapped('value')))
@@ -129,6 +139,7 @@ class ProductExportQuantSVL(models.TransientModel):
             worksheet.write(row, 4, match_status)
             worksheet.write(row, 5, unit_cost)
             worksheet.write(row, 6, product.standard_price)
+            worksheet.write(row, 7, product_data)
             
             row += 1
 
