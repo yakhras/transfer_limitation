@@ -155,16 +155,18 @@ class ProductExportQuantSVL(models.TransientModel):
         order_line = []
         vendor = self.env['res.partner'].browse(25)
         for product_id, values in product_data.items():
-            if values['svl_qty'] == 0:
-                continue
-            product_qty = abs(values['svl_qty'])
-            price_unit = 1.0
+            for warehouse, qty in values['warehouse_quantities'].items():
+                if values['svl_qty'] == 0:
+                    continue
+                product_qty = abs(qty)
+                price_unit = 1.0
 
-            order_line.append((0, 0, {
-                'product_id': product_id,
-                'product_uom_qty': product_qty,
-                'price_unit': price_unit,
-            }))
+                order_line.append((0, 0, {
+                    'product_id': product_id,
+                    'warehouses_id': warehouse,
+                    'product_uom_qty': product_qty,
+                    'price_unit': price_unit,
+                }))
         so = self.env['sale.order'].create({
             'partner_id': vendor.id,  # Replace with the actual vendor ID
             'order_line': order_line,
