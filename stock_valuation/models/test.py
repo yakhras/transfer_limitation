@@ -98,15 +98,11 @@ class ProductExportQuantSVL(models.TransientModel):
             ])
 
             quant_qty = sum(quant_records.mapped('quantity'))
-
+            warehouse_quantities = {}
             for quant in quant_records:
                 warehouse = quant.location_id.warehouse_id
-                qty = quant.quantity
-                product_data[product.id] = {
-                    'product': product,
-                    'quant_qty': qty,
-                    'warehouse': warehouse,
-                }
+                warehouse_quantities.setdefault(warehouse, 0.0)
+                warehouse_quantities[warehouse] += quant.quantity
 
             
 
@@ -128,6 +124,7 @@ class ProductExportQuantSVL(models.TransientModel):
                 'match_status': match_status,
                 'unit_cost': unit_cost,
                 'standard_price': product.standard_price,
+                'warehouse_quantities': warehouse_quantities,
             }
             
 
