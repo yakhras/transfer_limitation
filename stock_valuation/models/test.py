@@ -155,6 +155,8 @@ class ProductExportQuantSVL(models.TransientModel):
         order_line = []
         vendor = self.env['res.partner'].browse(25)
         for product_id, values in product_data.items():
+            if values['svl_qty'] == 0:
+                continue
             product_qty = abs(values['svl_qty'])
             price_unit = 1.0
 
