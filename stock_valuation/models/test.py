@@ -88,7 +88,7 @@ class ProductExportQuantSVL(models.TransientModel):
 
         # Data rows
         row = 1
-        products = self.env['product.product'].search([])
+        products = self.env['product.product'].search([('type', '=', 'product')])
         product_data = {}
         for product in products:
             # Internal Quant Quantity
