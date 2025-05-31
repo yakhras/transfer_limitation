@@ -163,7 +163,7 @@ class ProductExportQuantSVL(models.TransientModel):
 
                 order_line.append((0, 0, {
                     'product_id': product_id,
-                    'warehouses_id': warehouse,
+                    'warehouses_id': warehouse.id,
                     'product_uom_qty': product_qty,
                     'price_unit': price_unit,
                 }))
