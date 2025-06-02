@@ -429,7 +429,7 @@ class StockLocation(models.Model):
             })
             created_pos.append(po)
 
-        return created_pos
+        return
 
     
 
