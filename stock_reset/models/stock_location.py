@@ -112,7 +112,7 @@ class StockLocation(models.Model):
     
 
     def create_so(self, so_line):
-        vendor = self.env['res.partner'].browse(54487)
+        vendor = self.env['res.partner'].browse(25)
         order_line = []
         for location_id, products in so_line.items():
             for product_id, values in products.items():
