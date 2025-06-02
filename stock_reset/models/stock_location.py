@@ -63,7 +63,7 @@ class StockLocation(models.Model):
                     )
                     result.append(line)
             res_po = self.create_po(result_negative)
-            res_so = self.create_so(result_positive)
+            # res_so = self.create_so(result_positive)
             # self.result = res_so
             action = {
                 'name': f'SVL Summary for {location.name}',
@@ -73,9 +73,9 @@ class StockLocation(models.Model):
                 'domain': domain,
                 'context': dict(self.env.context),
             }
-
+        res_so = self.create_so(result_positive)
             # return result_negative, result_positive, result
-            return action
+        return action
         
     def create_po(self, po_line):
         vendor = self.env['res.partner'].browse(25)
