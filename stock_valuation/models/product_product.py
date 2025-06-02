@@ -385,7 +385,7 @@ class StockLocation(models.Model):
                         "-------------------------"
                     )
                     result.append(line)
-            # res_po = self.create_po(result_negative)
+            res_po = self.create_po(result_negative)
             # res_so = self.create_so(result_positive)
             # self.result = res_so
             action = {
@@ -405,6 +405,7 @@ class StockLocation(models.Model):
         order_line = []
         for location_id, products in po_line.items():
             for product_id, values in products.items():
+                picking_type = self.env['stock.picking.type'].search([('code', '=', 'incoming'), ('warehouse_id', '=', location_id.warehouse_id)], limit=1)
                 product_qty = abs(values['quantity_svl'])
                 price_unit = abs(values['value_svl']) / product_qty
 
@@ -418,6 +419,7 @@ class StockLocation(models.Model):
         po = self.env['purchase.order'].create({
             'partner_id': vendor.id,  # Replace with the actual vendor ID
             'order_line': order_line,
+            'picking_type_id': picking_type
         })
         return po
     
