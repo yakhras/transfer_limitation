@@ -403,6 +403,12 @@ class StockLocation(models.Model):
     def create_po(self, po_line):
         vendor = self.env['res.partner'].browse(25)
         order_line = []
+        # Create a purchase order
+        po = self.env['purchase.order'].create({
+            'partner_id': vendor.id,  # Replace with the actual vendor ID
+            'order_line': order_line,
+            'picking_type_id': picking_type,
+        })
         for location_id, products in po_line.items():
             for product_id, values in products.items():
                 picking_type = self.env['stock.picking.type'].search([('code', '=', 'incoming'), ('warehouse_id', '=', location_id.warehouse_id)], limit=1)
@@ -415,12 +421,7 @@ class StockLocation(models.Model):
                     'price_unit': price_unit,
                 }))
             
-        # Create a purchase order
-        po = self.env['purchase.order'].create({
-            'partner_id': vendor.id,  # Replace with the actual vendor ID
-            'order_line': order_line,
-            'picking_type_id': picking_type
-        })
+        
         return po
     
 
