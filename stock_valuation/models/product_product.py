@@ -402,27 +402,35 @@ class StockLocation(models.Model):
         
     def create_po(self, po_line):
         vendor = self.env['res.partner'].browse(25)
-        order_line = []
-        # Create a purchase order
-        po = self.env['purchase.order'].create({
-            'partner_id': vendor.id,  # Replace with the actual vendor ID
-            'order_line': order_line,
-            'picking_type_id': picking_type,
-        })
+        created_pos = []
+
         for location_id, products in po_line.items():
+            order_line = []
+            picking_type = self.env['stock.picking.type'].search([
+                ('code', '=', 'incoming'),
+                ('warehouse_id', '=', location_id.warehouse_id)
+            ], limit=1)
+
             for product_id, values in products.items():
-                picking_type = self.env['stock.picking.type'].search([('code', '=', 'incoming'), ('warehouse_id', '=', location_id.warehouse_id)], limit=1)
                 product_qty = abs(values['quantity_svl'])
-                price_unit = abs(values['value_svl']) / product_qty
+                price_unit = abs(values['value_svl']) / product_qty if product_qty else 0.0
 
                 order_line.append((0, 0, {
                     'product_id': product_id,
                     'product_qty': product_qty,
                     'price_unit': price_unit,
                 }))
-            
-        
-        return po
+
+            # Now create PO with order lines for this location
+            po = self.env['purchase.order'].create({
+                'partner_id': vendor.id,
+                'order_line': order_line,
+                'picking_type_id': picking_type.id,
+            })
+            created_pos.append(po)
+
+        return created_pos
+
     
 
     def create_so(self, so_line):
