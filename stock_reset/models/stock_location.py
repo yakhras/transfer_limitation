@@ -63,7 +63,7 @@ class StockLocation(models.Model):
                     )
                     result.append(line)
             res_po = self.create_po(result_negative)
-            # res_so = self.create_so(result_positive)
+            res_so = self.create_so(result_positive)
             # self.result = res_so
             action = {
                 'name': f'SVL Summary for {location.name}',

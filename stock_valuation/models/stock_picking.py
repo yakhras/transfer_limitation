@@ -28,3 +28,4 @@ class Picking(models.Model):
                             location_dest_id=self.location_dest_id.id, 
                             location_id=self.location_id.id),
         }
+    

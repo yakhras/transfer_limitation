@@ -52,3 +52,4 @@ class StockQuant(models.Model):
                     quant.unit_value = cost_value
             else:
                 return super(StockQuant, self)._compute_value()
+            
