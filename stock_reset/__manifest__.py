@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "User Tracking",
+    'name': "Stock Reset",
 
-    'summary': """
-        Track user logins, sessions""",
+    'summary': """Stock Reset""",
 
-    'description': """
-        stock_valuation. 
-    """,
+    'description': """Stock Reset. """,
 
     'author': "Yaser Akhras",
     #'website': "https://www.yaserakhras.com",
@@ -22,11 +19,10 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'crm']  ,
+    'depends': ['stock_landed_costs','base']  ,
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
-        "views/user_session_views.xml",
+        "views/stock_reset_view.xml",
     ],
 }

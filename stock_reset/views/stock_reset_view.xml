@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+    <!-- Stock Location Views -->
+        <record id="view_location_form_inherit_custom_button" model="ir.ui.view">
+          <field name="name">stock.location.form.inherit.custom.button</field>
+          <field name="model">stock.location</field>
+          <field name="inherit_id" ref="stock.view_location_form"/>
+          <field name="arch" type="xml">
+    
+            <xpath expr="//button[@name='598']" position="after">
+              <button name="action_custom_svl_summary"
+                      string="SVL Summary"
+                      type="object"
+                      class="oe_stat_button"
+                      icon="fa-bar-chart"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='name']" position="after">
+                <field name= "result"/>
+            </xpath>
+            
+          </field>
+        </record>
+
+    <!-- Product Product Views  -->
+        <record id="product_product_form_view_inherit_export_quant_svl" model="ir.ui.view">
+            <field name="name">product.product.form.export.quant.svl</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/header" position="inside">
+                    <button name="action_export_quant_svl"
+                            type="object"
+                            string="Export Quant"
+                            class="btn-primary"
+                            />
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</odoo>
