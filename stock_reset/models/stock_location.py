@@ -116,6 +116,8 @@ class StockLocation(models.Model):
         order_line = []
         for location_id, products in so_line.items():
             for product_id, values in products.items():
+                unit_cost = values['value_svl'] / values['quantity_svl']
+                product_id.standard_price = unit_cost
                 product_qty = abs(values['quantity_svl'])
                 price_unit = 1.0
 
