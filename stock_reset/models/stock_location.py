@@ -12,8 +12,9 @@ class StockLocation(models.Model):
     result = fields.Text('Result')
 
     def action_custom_svl_summary(self):
+        result_positive = {}
         for location in self:
-            result_positive = {}
+            # result_positive = {}
             result_negative = {}
             result = []
             domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
