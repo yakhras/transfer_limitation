@@ -12,9 +12,8 @@ class StockLocation(models.Model):
     result = fields.Text('Result')
 
     def action_custom_svl_summary(self):
-        result_positive = {}
         for location in self:
-            # result_positive = {}
+            result_positive = {}
             result_negative = {}
             result = []
             domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
@@ -64,7 +63,8 @@ class StockLocation(models.Model):
                     )
                     result.append(line)
         res_po = self.create_po(result_negative)
-        res_so = self.create_so(result_positive)
+        if result_positive:
+            res_so = self.create_so(result_positive)
         # self.result = res_so
         action = {
             'name': f'SVL Summary for {location.name}',
