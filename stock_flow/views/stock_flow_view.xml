@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+    <!-- Stock Move Line Views -->
+        <record id="view_move_line_form_inherit_signed_qty" model="ir.ui.view">
+            <field name="name">stock.move.line.form.inherit.signed.qty</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_move_line_form"/>
+            <field name="arch" type="xml">
+                <field name="lot_id" position="before">
+                    <field name="signed_qty_done" readonly="1"/>
+                </field>
+                <field name="location_id" position="before">
+                    <field name="operation" readonly="1"/>
+                    <field name="warehouse_id" readonly="1"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_move_line_tree_inherit_balance" model="ir.ui.view">
+            <field name="name">stock.move.line.tree.inherit.balance</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.view_move_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='qty_done']" position="after">
+                    <field name="balance"/>
+                </xpath>
+                <xpath expr="//field[@name='qty_done']" position="replace">
+                    <field name="signed_qty_done"/>
+                </xpath>
+                <xpath expr="//field[@name='location_id']" position="replace">
+                    <field name="operation"/>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="editable"></attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="stock_move_line_view_search_inherit_group_by_warehouse" model="ir.ui.view">
+            <field name="name">stock.move.line.search.inherit.group.by.warehouse</field>
+            <field name="model">stock.move.line</field>
+            <field name="inherit_id" ref="stock.stock_move_line_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='by_location']" position="replace">
+                    <filter string="Warehouse" name="by_warehouse" context="{'group_by': 'warehouse_id'}"/>
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</odoo>
