@@ -115,16 +115,18 @@ class StockLocation(models.Model):
         vendor = self.env['res.partner'].browse(25)
         order_line = []
         for location_id, products in so_line.items():
+            warehouse = self.env['stock.location'].browse(location_id).warehouse_id
             for product_id, values in products.items():
                 unit_cost = values['value_svl'] / values['quantity_svl']
                 product = self.env['product.product'].browse(product_id)
                 product.standard_price = unit_cost
-                product_qty = abs(values['quantity_svl'])
+                product_qty = values['quantity_svl']
                 price_unit = 1.0
 
                 order_line.append((0, 0, {
                     'product_id': product_id,
-                    'product_qty': product_qty,
+                    'warehouses_id': warehouse.id,
+                    'product_uom_qty': product_qty,
                     'price_unit': price_unit,
                 }))
             
