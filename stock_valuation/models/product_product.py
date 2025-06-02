@@ -408,7 +408,7 @@ class StockLocation(models.Model):
             order_line = []
             picking_type = self.env['stock.picking.type'].search([
                 ('code', '=', 'incoming'),
-                ('warehouse_id', '=', location_id.warehouse_id)
+                ('warehouse_id', '=', location_id.warehouse_id.id)
             ], limit=1)
 
             for product_id, values in products.items():
