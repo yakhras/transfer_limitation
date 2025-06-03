@@ -189,7 +189,7 @@ class ProductExportQuantSVL(models.TransientModel):
             for location_id, products in location_data.items():
                 location = self.env['stock.location'].browse(location_id)
                 for product_id, data in products.items():
-                    product_locations.setdefault(product_id, []).append({
+                    product_locations.setdefault(product_id, {}).append({
                         'location_id': location.id,
                         'svl_qty': data['svl_qty'],
                     })
