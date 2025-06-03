@@ -138,3 +138,5 @@ class StockLocation(models.Model):
         return so
             
 
+    def action_export_quant_svl(self):
+        return self.env['export.quant.svl.wizard'].create({}).action_export_all_locations_quant_svl()

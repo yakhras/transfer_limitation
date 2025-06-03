@@ -114,3 +114,118 @@ class ProductExportQuantSVL(models.TransientModel):
             'target': 'new'
         }
 
+
+    def action_export_all_locations_quant_svl(self):
+        # Prepare output stream and workbook
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        worksheet = workbook.add_worksheet("Location Quant & SVL")
+
+        # Headers
+        headers = ['Location', 'Product', 'SVL Qty', 'SVL Value']
+        for col, header in enumerate(headers):
+            worksheet.write(0, col, header)
+
+        # Data rows
+        row = 1
+        locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+        location_data = {}
+        for location in locations:
+            domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
+            groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
+            for group in groups:
+                product = self.browse(group['product_id'][0])
+                value_svl = self.env.company.currency_id.round(group['value'])
+                quantity_svl = group['quantity']
+                location_data.setdefault(location.id, {}).setdefault(product.id, {
+                    'product': product.id,
+                    'svl_qty': quantity_svl,
+                    'svl_value': value_svl,
+                })
+        # products = self.env['product.product'].search([('type', '=', 'product')])
+        # product_data = {}
+        # for product in products:
+        #     # Internal Quant Quantity
+        #     quant_records = self.env['stock.quant'].search([
+        #         ('product_id', '=', product.id),
+        #         ('location_id.usage', '=', 'internal'),
+        #     ])
+
+        #     quant_qty = sum(quant_records.mapped('quantity'))
+        #     warehouse_quantities = {}
+        #     for quant in quant_records:
+        #         warehouse = quant.location_id.warehouse_id
+        #         warehouse_quantities.setdefault(warehouse, 0.0)
+        #         warehouse_quantities[warehouse] += quant.quantity
+
+            
+
+        #     # SVL (internal) — filter by location if needed
+        #     domain = [('product_id', '=', product.id)]
+        #     svl_records = self.env['stock.valuation.layer'].search(domain)
+        #     svl_qty = sum(svl_records.mapped('quantity'))
+        #     svl_value = round(sum(svl_records.mapped('value')))
+
+        #     match_status = "Matched" if round(quant_qty, 2) == round(svl_qty, 2) else "Not Matched"
+        #     unit_cost = svl_value / svl_qty if svl_qty else 0.0
+        #     product.standard_price = unit_cost
+
+        #     product_data[product.id] = {
+        #         'product': product.display_name,
+        #         'quant_qty': quant_qty,
+        #         'svl_qty': svl_qty,
+        #         'svl_value': svl_value,
+        #         'match_status': match_status,
+        #         'unit_cost': unit_cost,
+        #         'standard_price': product.standard_price,
+        #         'warehouse_quantities': warehouse_quantities,
+        #     }
+            
+
+            # Write data row
+            worksheet.write(row, 0, location.name)
+            worksheet.write(row, 1, product.display_name)
+            worksheet.write(row, 2, location_data[location.id][product.id]['svl_qty'])
+            worksheet.write(row, 3, location_data[location.id][product.id]['svl_value'])
+            worksheet.write(row, 4, str(location_data))
+            
+            row += 1
+
+        workbook.close()
+        output.seek(0)
+
+        # Prepare wizard file to download
+        file_data = base64.b64encode(output.read())
+        filename = 'locations_quant_svl_report.xlsx'
+
+        wizard = self.create({
+            'file_data': file_data,
+            'file_name': filename
+        })
+
+        # order_line = []
+        # vendor = self.env['res.partner'].browse(25)
+        # for product_id, values in product_data.items():
+        #     for warehouse, qty in values['warehouse_quantities'].items():
+        #         if values['svl_qty'] == 0:
+        #             continue
+        #         product_qty = abs(qty)
+        #         price_unit = 1.0
+
+        #         order_line.append((0, 0, {
+        #             'product_id': product_id,
+        #             'warehouses_id': warehouse.id,
+        #             'product_uom_qty': product_qty,
+        #             'price_unit': price_unit,
+        #         }))
+        # so = self.env['sale.order'].create({
+        #     'partner_id': vendor.id,  # Replace with the actual vendor ID
+        #     'order_line': order_line,
+        # })
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{wizard._name}/{wizard.id}/file_data/{filename}?download=true',
+            'target': 'new'
+        }
+

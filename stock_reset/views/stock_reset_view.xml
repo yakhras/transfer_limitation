@@ -24,6 +24,21 @@
           </field>
         </record>
 
+        <record id="stock_location_form_view_inherit_export_quant_svl" model="ir.ui.view">
+            <field name="name">stock.location.form.export.quant.svl</field>
+            <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/header" position="inside">
+                    <button name="action_export_quant_svl"
+                            type="object"
+                            string="Export Quant"
+                            class="btn-primary"
+                            />
+                </xpath>
+            </field>
+        </record>
+
     <!-- Product Product Views  -->
         <record id="product_product_form_view_inherit_export_quant_svl" model="ir.ui.view">
             <field name="name">product.product.form.export.quant.svl</field>
