@@ -136,8 +136,8 @@ class ProductExportQuantSVL(models.TransientModel):
             for group in groups:
                 product_id = group['product_id'][0]
                 product = self.env['product.product'].browse(product_id)
-                value_svl = sum(self.env.company.currency_id.round(group['value']))
-                quantity_svl = sum(group['quantity'])
+                value_svl = self.env.company.currency_id.round(group['value'])
+                quantity_svl = group['quantity']
                 location_data.setdefault(location.id, {})[product_id] = {
                 'product': product,
                 'svl_qty': quantity_svl,
