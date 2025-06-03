@@ -184,7 +184,7 @@ class ProductExportQuantSVL(models.TransientModel):
                             continue
 
                         transfer_qty = min(buy_qty, sell_qty)
-                        route_key = (buy_loc_id, sell_loc_id)
+                        route_key = (sell_loc_id, buy_loc_id)
 
                         transfer_map.setdefault(route_key, []).append({
                             'product_id': product_id,
