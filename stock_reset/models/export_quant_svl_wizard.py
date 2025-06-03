@@ -147,6 +147,7 @@ class ProductExportQuantSVL(models.TransientModel):
 
             # Write data row
             product_locations = {}
+            transfer_map = {}
             for location_id, products in location_data.items():
                 location = self.env['stock.location'].browse(location_id)
                 for product_id, data in products.items():
@@ -168,8 +169,6 @@ class ProductExportQuantSVL(models.TransientModel):
                     row += 1
             
             
-            transfer_map = {}
-
             for product_id, directions in product_locations.items():
                 buy_locations = directions.get('buy', {})
                 sell_locations = directions.get('sell', {})
@@ -191,6 +190,7 @@ class ProductExportQuantSVL(models.TransientModel):
                             'product_id': product_id,
                             'qty_to_transfer': transfer_qty,
                         })
+
             location.result = transfer_map
 
         workbook.close()
