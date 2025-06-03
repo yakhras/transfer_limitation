@@ -185,14 +185,15 @@ class ProductExportQuantSVL(models.TransientModel):
             
 
             # Write data row
-            product_locations = defaultdict(set)
+            product_locations = {}
             for location_id, products in location_data.items():
                 location = self.env['stock.location'].browse(location_id)
                 for product_id, data in products.items():
-                    product_locations.setdefault(product_id, []).append({
-                        'location_id': location.id,
+                    product_locations.setdefault(product_id, 0.0)
+                    product_locations[product_id] = {
+                        'location': location_id,
                         'svl_qty': data['svl_qty'],
-                    })
+                    }
                     worksheet.write(row, 0, location.id)
                     worksheet.write(row, 1, data['product'].display_name)
                     worksheet.write(row, 2, data['svl_qty'])
