@@ -191,6 +191,7 @@ class ProductExportQuantSVL(models.TransientModel):
                     worksheet.write(row, 1, data['product'].display_name)
                     worksheet.write(row, 2, data['svl_qty'])
                     worksheet.write(row, 3, data['svl_value'])
+                    worksheet.write(row, 4, str(location_data))
                     row += 1
 
         workbook.close()
