@@ -72,7 +72,9 @@ class StockLocation(models.Model):
             'res_model': 'stock.valuation.layer',
             'view_mode': 'tree,form',
             'domain': domain,
-            'context': dict(self.env.context),
+            'context': {
+                'group_by': 'product_id',
+            },
         }
         # return result_negative, result_positive, result
         return action
