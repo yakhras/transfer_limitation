@@ -206,7 +206,31 @@ class ProductExportQuantSVL(models.TransientModel):
                     worksheet.write(row, 4, str(location_data))
                     row += 1
             
-            location.result = product_locations
+            
+            transfer_map = {}
+
+            for product_id, directions in product_locations.items():
+                buy_locations = directions.get('buy', {})
+                sell_locations = directions.get('sell', {})
+
+                for buy_loc_id, buy_data in buy_locations.items():
+                    buy_qty = buy_data['svl_qty']
+                    if buy_qty <= 0:
+                        continue
+
+                    for sell_loc_id, sell_data in sell_locations.items():
+                        sell_qty = abs(sell_data['svl_qty'])
+                        if sell_qty <= 0:
+                            continue
+
+                        transfer_qty = min(buy_qty, sell_qty)
+                        route_key = (buy_loc_id, sell_loc_id)
+
+                        transfer_map.setdefault(route_key, []).append({
+                            'product_id': product_id,
+                            'qty_to_transfer': transfer_qty,
+                        })
+            location.result = transfer_map
 
         workbook.close()
         output.seek(0)
