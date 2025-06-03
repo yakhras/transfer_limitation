@@ -187,7 +187,7 @@ class ProductExportQuantSVL(models.TransientModel):
             for location_id, products in location_data.items():
                 location = self.env['stock.location'].browse(location_id)
                 for product_id, data in products.items():
-                    worksheet.write(row, 0, location.name)
+                    worksheet.write(row, 0, location.id)
                     worksheet.write(row, 1, data['product'].display_name)
                     worksheet.write(row, 2, data['svl_qty'])
                     worksheet.write(row, 3, data['svl_value'])
