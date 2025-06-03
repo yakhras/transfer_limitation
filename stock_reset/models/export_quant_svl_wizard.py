@@ -144,45 +144,6 @@ class ProductExportQuantSVL(models.TransientModel):
                 'svl_qty': quantity_svl,
                 'svl_value': value_svl,
             }
-        # products = self.env['product.product'].search([('type', '=', 'product')])
-        # product_data = {}
-        # for product in products:
-        #     # Internal Quant Quantity
-        #     quant_records = self.env['stock.quant'].search([
-        #         ('product_id', '=', product.id),
-        #         ('location_id.usage', '=', 'internal'),
-        #     ])
-
-        #     quant_qty = sum(quant_records.mapped('quantity'))
-        #     warehouse_quantities = {}
-        #     for quant in quant_records:
-        #         warehouse = quant.location_id.warehouse_id
-        #         warehouse_quantities.setdefault(warehouse, 0.0)
-        #         warehouse_quantities[warehouse] += quant.quantity
-
-            
-
-        #     # SVL (internal) — filter by location if needed
-        #     domain = [('product_id', '=', product.id)]
-        #     svl_records = self.env['stock.valuation.layer'].search(domain)
-        #     svl_qty = sum(svl_records.mapped('quantity'))
-        #     svl_value = round(sum(svl_records.mapped('value')))
-
-        #     match_status = "Matched" if round(quant_qty, 2) == round(svl_qty, 2) else "Not Matched"
-        #     unit_cost = svl_value / svl_qty if svl_qty else 0.0
-        #     product.standard_price = unit_cost
-
-        #     product_data[product.id] = {
-        #         'product': product.display_name,
-        #         'quant_qty': quant_qty,
-        #         'svl_qty': svl_qty,
-        #         'svl_value': svl_value,
-        #         'match_status': match_status,
-        #         'unit_cost': unit_cost,
-        #         'standard_price': product.standard_price,
-        #         'warehouse_quantities': warehouse_quantities,
-        #     }
-            
 
             # Write data row
             product_locations = {}
@@ -230,7 +191,7 @@ class ProductExportQuantSVL(models.TransientModel):
                             'product_id': product_id,
                             'qty_to_transfer': transfer_qty,
                         })
-            location.result = transfer_map
+            location.result = product_locations
 
         workbook.close()
         output.seek(0)
@@ -244,6 +205,7 @@ class ProductExportQuantSVL(models.TransientModel):
             'file_data': file_data,
             'file_name': filename
         })
+
         Picking = self.env['stock.picking']
         picking_type = self.env['stock.picking.type'].search([('sequence_code', '=', 'INT')], limit=1)
 
