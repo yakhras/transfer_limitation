@@ -134,14 +134,15 @@ class ProductExportQuantSVL(models.TransientModel):
             domain = ['|',("stock_move_id.location_id.id","=",location.id),("stock_move_id.location_dest_id.id","=",location.id)]
             groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
             for group in groups:
-                product = self.browse(group['product_id'][0])
+                product_id = group['product_id'][0]
+                product = self.env['product.product'].browse(product_id)
                 value_svl = self.env.company.currency_id.round(group['value'])
                 quantity_svl = group['quantity']
-                location_data.setdefault(location.id, {}).setdefault(product.id, {
-                    'product': product.id,
-                    'svl_qty': quantity_svl,
-                    'svl_value': value_svl,
-                })
+                location_data.setdefault(location.id, {})[product_id] = {
+                'product': product,
+                'svl_qty': quantity_svl,
+                'svl_value': value_svl,
+            }
         # products = self.env['product.product'].search([('type', '=', 'product')])
         # product_data = {}
         # for product in products:
@@ -183,13 +184,14 @@ class ProductExportQuantSVL(models.TransientModel):
             
 
             # Write data row
-            worksheet.write(row, 0, location.name)
-            worksheet.write(row, 1, product.display_name)
-            worksheet.write(row, 2, location_data[location.id][product.id]['svl_qty'])
-            worksheet.write(row, 3, location_data[location.id][product.id]['svl_value'])
-            worksheet.write(row, 4, str(location_data))
-            
-            row += 1
+            for location_id, products in location_data.items():
+                location = self.env['stock.location'].browse(location_id)
+                for product_id, data in products.items():
+                    worksheet.write(row, 0, location.name)
+                    worksheet.write(row, 1, data['product'].display_name)
+                    worksheet.write(row, 2, data['svl_qty'])
+                    worksheet.write(row, 3, data['svl_value'])
+                    row += 1
 
         workbook.close()
         output.seek(0)
