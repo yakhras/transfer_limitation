@@ -230,7 +230,7 @@ class ProductExportQuantSVL(models.TransientModel):
                             'product_id': product_id,
                             'qty_to_transfer': transfer_qty,
                         })
-            location.result = transfer_map
+            location.result = product_locations
 
         workbook.close()
         output.seek(0)
