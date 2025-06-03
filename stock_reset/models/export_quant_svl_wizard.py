@@ -244,6 +244,35 @@ class ProductExportQuantSVL(models.TransientModel):
             'file_data': file_data,
             'file_name': filename
         })
+        Picking = self.env['stock.picking']
+        picking_type = self.env['stock.picking.type'].search([('sequence_code', '=', 'INT')], limit=1)
+
+
+        for (buy_loc_id, sell_loc_id), products in transfer_map.items():
+            picking = Picking.create({
+                'picking_type_id': picking_type.id,
+                'location_id': buy_loc_id,
+                'location_dest_id': sell_loc_id,
+            })
+
+            move_vals = []
+            for product in products:
+                product_id = product['product_id']
+                qty = product['qty_to_transfer']
+
+                move_vals.append((0, 0, {
+                    'product_id': product_id,
+                    'product_uom_qty': qty,
+                    'name': self.env['product.product'].browse(product_id).display_name,
+                    'product_uom': self.env['product.product'].browse(product_id).uom_id.id,
+                    'location_id': buy_loc_id,
+                    'location_dest_id': sell_loc_id,
+                }))
+
+            picking.write({
+                'move_ids_without_package': move_vals
+            })
+
 
         # order_line = []
         # vendor = self.env['res.partner'].browse(25)
