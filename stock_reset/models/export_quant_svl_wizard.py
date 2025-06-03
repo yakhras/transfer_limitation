@@ -196,11 +196,12 @@ class ProductExportQuantSVL(models.TransientModel):
                     worksheet.write(row, 3, data['svl_value'])
                     worksheet.write(row, 4, str(location_data))
                     row += 1
-            matched_products = {product_id for product_id, locs in product_locations.items() if len(locs) > 1}
+                matched_products = {product_id for product_id, locs in product_locations.items() if len(locs) > 1}
+                location.result = matched_products
 
         workbook.close()
         output.seek(0)
-        self.result = matched_products
+        
 
         # Prepare wizard file to download
         file_data = base64.b64encode(output.read())
