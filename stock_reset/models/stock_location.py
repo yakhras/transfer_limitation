@@ -93,7 +93,7 @@ class StockLocation(models.Model):
 
             for product_id, values in products.items():
                 product_qty = abs(values['quantity_svl']) if values['quantity_svl'] < 0 else 1.0
-                price_unit = abs(values['value_svl']) / product_qty if product_qty > 0 else abs(values['value_svl']+1)
+                price_unit = abs(values['value_svl']) / product_qty if product_qty > 0 else abs(values['value_svl'])+1.0
 
                 order_line.append((0, 0, {
                     'product_id': product_id,
