@@ -62,9 +62,9 @@ class StockLocation(models.Model):
                         "-------------------------"
                     )
                     result.append(line)
-        res_po = self.create_po(result_negative)
-        if result_positive:
-            res_so = self.create_so(result_positive)
+        # res_po = self.create_po(result_negative)
+        # if result_positive:
+        #     res_so = self.create_so(result_positive)
         # self.result = result_positive
         action = {
             'name': f'SVL Summary for {location.name}',
@@ -142,3 +142,69 @@ class StockLocation(models.Model):
 
     def action_export_quant_svl(self):
         return self.env['export.quant.svl.wizard'].create({}).action_export_all_locations_quant_svl()
+    
+
+
+    def action_view_svl_summary(self):
+        for location in self:
+            domain = ['|', 
+                    ("stock_move_id.location_id.id", "=", location.id),
+                    ("stock_move_id.location_dest_id.id", "=", location.id)]
+            action = {
+                'name': f'SVL Summary for {location.name}',
+                'type': 'ir.actions.act_window',
+                'res_model': 'stock.valuation.layer',
+                'view_mode': 'tree,form',
+                'domain': domain,
+                'context': {
+                    'group_by': 'product_id',
+                },
+            }
+            return action
+
+
+    def action_create_po(self):
+        for location in self:
+            result_negative = {}
+
+            domain = ['|', 
+                    ("stock_move_id.location_id.id", "=", location.id),
+                    ("stock_move_id.location_dest_id.id", "=", location.id)]
+            groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'])
+
+            for group in groups:
+                product = self.env['product.product'].browse(group['product_id'][0])
+                value_svl = self.env.company.currency_id.round(group['value'])
+                quantity_svl = group['quantity']
+                if value_svl < 0 and quantity_svl < 0:
+                    location_products = result_negative.setdefault(location.id, {})
+                    location_products[product.id] = {
+                        'value_svl': value_svl,
+                        'quantity_svl': quantity_svl,
+                    }
+
+            self.create_po(result_negative)
+
+
+    def action_create_so(self):
+        for location in self:
+            result_positive = {}
+
+            domain = ['|', 
+                    ("stock_move_id.location_id.id", "=", location.id),
+                    ("stock_move_id.location_dest_id.id", "=", location.id)]
+            groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'])
+
+            for group in groups:
+                product = self.env['product.product'].browse(group['product_id'][0])
+                value_svl = self.env.company.currency_id.round(group['value'])
+                quantity_svl = group['quantity']
+                if value_svl > 0 and quantity_svl > 0:
+                    location_products = result_positive.setdefault(location.id, {})
+                    location_products[product.id] = {
+                        'value_svl': value_svl,
+                        'quantity_svl': quantity_svl,
+                    }
+
+            self.create_so(result_positive)
+
