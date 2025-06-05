@@ -34,7 +34,7 @@
                         <button name="action_view_svl_summary" type="object" string="View SVL Summary" class="oe_highlight"/>
                         <button name="action_create_po" type="object" string="Create PO" class="btn-primary"/>
                         <button name="action_create_so" type="object" string="Create SO" class="btn-primary"/>
-                        <button name="action_export_quant_svl" type="object" string="Export Quant" class="btn-primary" />
+                        <button name="action_export_quant_svl" type="object" string="Create Tr" class="btn-primary" />
                     </header>
                 </xpath>
             </field>
