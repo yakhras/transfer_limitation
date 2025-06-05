@@ -176,7 +176,7 @@ class StockLocation(models.Model):
                 product = self.env['product.product'].browse(group['product_id'][0])
                 value_svl = self.env.company.currency_id.round(group['value'])
                 quantity_svl = group['quantity']
-                if value_svl < 0 and quantity_svl < 0:
+                if value_svl < 0 :
                     location_products = result_negative.setdefault(location.id, {})
                     location_products[product.id] = {
                         'value_svl': value_svl,
