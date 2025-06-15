@@ -93,6 +93,15 @@ class ResPartnerSaleReport(models.TransientModel):
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
 
+        for row_num, line in enumerate(order_lines, start=6):
+            worksheet.write(row_num, 0, row_num - 5, border_format)  # SR NO.
+            worksheet.write(row_num, 1, line.product_id.display_name, border_format)
+            worksheet.write(row_num, 2, line.product_uom_qty, border_format)
+            worksheet.write(row_num, 3, line.product_id.type, border_format)
+            worksheet.write(row_num, 4, line.product_id.weight, border_format)
+            worksheet.write(row_num, 5, line.product_id.weight + 0.2, border_format)  # Example gross weight calculation
+
+
         
         workbook.close()
         attachment_id = self.env["ir.attachment"].create(
