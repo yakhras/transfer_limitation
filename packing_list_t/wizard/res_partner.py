@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-# Part of Creyox Technologies
 
-from odoo import api, fields, models
+from odoo import fields, models
 from io import BytesIO
 import xlsxwriter
 import base64
@@ -80,11 +79,12 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_margins(left=0.7, right=0.7, top=0.75, bottom=0.75)
         worksheet.fit_to_pages(1, 0)
 
-        # Style formats
+        # Style formats #
         border_format = workbook.add_format({'border': 1})
         worksheet.set_column('A:A', 2)
 
-        # Header and Footer
+        # Header and Footer #
+        # Set the header with company logo and name
         logo_path = sale_order.company_id.logo
         logo_data = base64.b64decode(logo_path)
         tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
@@ -96,7 +96,7 @@ class ResPartnerSaleReport(models.TransientModel):
                 'image_right': tmp_logo_file.name,
             }
         )
-
+        # Set the footer with company address and VAT number
         footer_address = sale_order.company_id.street2 or ''
         if sale_order.company_id.street:
             footer_address += ', ' + sale_order.company_id.street
@@ -112,7 +112,7 @@ class ResPartnerSaleReport(models.TransientModel):
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
         
-        #Seller and Buyer Information
+        # Seller and Buyer Information #
         row = 9  
         col_seller = 1  
         col_buyer = 4   
@@ -144,26 +144,26 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, col_seller, f"Phone: {sale_order.company_id.phone or ''}")
         worksheet.write(row, col_buyer, f"Phone: {sale_order.partner_id.phone or ''}")
 
-        # Order Information
+        # Order Information #
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
         worksheet.write('B7', f"Date: {date}")
         worksheet.write('F7', f"Order No: {sale_order.name}")
 
-        # Order Lines Table
+        # Order Lines Table #
         order_lines = sale_order.order_line
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
         worksheet.write_row(14, 1, order_line_header, border_format)
         for row_num, line in enumerate(order_lines, start=15):
-            worksheet.write(row_num, 1, row_num - 5, border_format)  # SR NO.
+            worksheet.write(row_num, 1, row_num - 5, border_format)
             worksheet.write(row_num, 2, line.product_id.display_name, border_format)
             worksheet.write(row_num, 3, line.product_uom_qty, border_format)
             worksheet.write(row_num, 4, line.product_packaging_id.name, border_format)
             worksheet.write(row_num, 5, line.net_weight, border_format)
-            worksheet.write(row_num, 6, line.gross_weight, border_format)  # Example gross weight calculation
+            worksheet.write(row_num, 6, line.gross_weight, border_format)
 
 
         workbook.close()
-        
+
         attachment_id = self.env["ir.attachment"].create(
             {
                 "name": file_name,
