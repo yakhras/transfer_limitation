@@ -87,9 +87,11 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_paper(9)
         worksheet.write(0, 0, sale_order.name)
 
+        address = sale_order.company_id.street + sale_order.company_id.city + sale_order.company_id.state_id + sale_order.company_id.country_id
+
         worksheet.merge_range( "B2:E2", sale_order.company_id.name )
         worksheet.merge_range( "B3:D3", sale_order.company_id.street2 )
-        worksheet.merge_range( "B4:D4", sale_order.company_id.street )
+        worksheet.merge_range( "B4:D4", address )
         worksheet.merge_range( "B5:C5", sale_order.company_id.vat )
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
