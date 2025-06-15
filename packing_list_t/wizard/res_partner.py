@@ -91,9 +91,42 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.merge_range( "B5:E5", sale_order.company_id.vat, border_format )
 
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-
-
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
+
+        row = 15  # Starting row
+        col_seller = 0  # Left column
+        col_buyer = 3   # Right column (e.g. 3 columns over)
+        worksheet.write(row, col_seller, "Seller:")
+        worksheet.write(row, col_buyer, "Buyer:")
+        row += 1
+        worksheet.write(row, col_seller, sale_order.company_id.name or "")
+        worksheet.write(row, col_buyer, sale_order.partner_id.name or "")
+        row += 1
+        seller_address_parts = filter(None, [
+            sale_order.company_id.street,
+            sale_order.company_id.street2,
+            sale_order.company_id.city,
+            sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
+            sale_order.company_id.zip,
+            sale_order.company_id.country_id.name if sale_order.company_id.country_id else None,
+        ])
+        buyer_address_parts = filter(None, [
+            sale_order.partner_shipping_id.street,
+            sale_order.partner_shipping_id.street2,
+            sale_order.partner_shipping_id.city,
+            sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else None,
+            sale_order.partner_shipping_id.zip,
+            sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
+        ])
+        worksheet.write(row, col_seller, ", ".join(seller_address_parts))
+        worksheet.write(row, col_buyer, ", ".join(buyer_address_parts))
+
+        # Row 3: Phone
+        row += 1
+        worksheet.write(row, col_seller, f"Phone: {sale_order.company_id.phone or ''}")
+        worksheet.write(row, col_buyer, f"Phone: {sale_order.partner_id.phone or ''}")
+
+
         worksheet.write_row(8, 1, order_line_header, border_format)
         worksheet.write('B7', f"Date: {date}")
         worksheet.write('F7', f"Order No: {sale_order.name}")
