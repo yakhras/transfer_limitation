@@ -115,7 +115,7 @@ class ResPartnerSaleReport(models.TransientModel):
         # Seller and Buyer Information #
         row = 9  
         col_seller = 1  
-        col_buyer = 4   
+        col_buyer = 5   
         worksheet.write(row, col_seller, "Seller:")
         worksheet.write(row, col_buyer, "Buyer:")
         row += 1
