@@ -67,19 +67,7 @@ class ResPartnerSaleReport(models.TransientModel):
         ctx = self.env.context.get("active_ids")
         id = int(str(ctx[0]))
         sale_order = self.env["sale.order"].browse(id)
-        order_ids = self.env["sale.order"].search(
-            [
-                ("name", "=", ctx),
-                ("date_order", ">=", self.start_date),
-                ("date_order", "<", self.end_date),
-            ]
-        )
         order_lines = sale_order.order_line
-        # order_lines = self.env["sale.order.line"].search(
-        #     [("order_id", "in", order_ids.ids)]
-        # )
-        values = []
-        products = []
         fp = BytesIO()
         file_name = "Packing List.xlsx"
 
@@ -101,64 +89,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
 
-        for order_line in order_lines:
-            if order_line.product_id.id not in products:
-                products.append(order_line.product_id.id)
-                product_order_lines = order_lines.filtered(
-                    lambda line: line.product_id.id == order_line.product_id.id
-                )
-                total_qty = sum(product_order_lines.mapped("product_uom_qty"))
-                subtotal = sum(product_order_lines.mapped("price_subtotal"))
-                order_line_data = {
-                    "product": order_line.product_template_id.name,
-                    "quantity": total_qty,
-                    "subtotal": subtotal,
-                }
-                values.append(order_line_data)
-
-        center_format1 = workbook.add_format(
-            {"align": "center", "valign": "vcenter", "bold": True}
-        )
-        center_format1.set_bg_color("#D3D3D3")
-        center_format2 = workbook.add_format(
-            {"align": "center", "valign": "vcenter", "bold": True}
-        )
-        center_format2.set_bg_color("#48AAAD")
-        center_format3 = workbook.add_format(
-            {"align": "center", "valign": "vcenter", "bold": True}
-        )
-        date = workbook.add_format(
-            {"align": "center", "valign": "vcenter", "bold": True}
-        )
-        date.set_bg_color("#ADD8E6")
-        bold = workbook.add_format({"bold": True})
-        worksheet.set_column(1, 1, 20)
-        worksheet.set_column(1, 3, 10)
-        # worksheet.merge_range(
-        #     "B3:E3", "Sale Report: %s" % order_ids.company_id.name, center_format1
-        # )
-
         
-
-        
-        worksheet.merge_range(
-            "A6:F7", "Time Period: %s -- %s" % (self.start_date, self.end_date), date
-        )
-        worksheet.merge_range("A9:C10", order_ids.partner_id.name, center_format2)
-        worksheet.write_row(11, 0, order_line_header, center_format3)
-        row = 12
-        index = 1
-        for val in values:
-            worksheet.write(row, 0, index)
-            worksheet.write(row, 1, val.get("product"))
-            worksheet.write(row, 2, val.get("quantity"))
-            worksheet.write(row, 3, val.get("subtotal"))
-            row += 1
-            index += 1
-
-        worksheet.write_formula("C17", "{=SUM(C13:C15)}", bold)
-        worksheet.write_formula("D17", "{=SUM(D13:D14)}", bold)
-
         workbook.close()
         attachment_id = self.env["ir.attachment"].create(
             {
