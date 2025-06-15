@@ -94,7 +94,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
-        worksheet.write_row(8, 0, order_line_header, border_format)
+        worksheet.write_row(8, 1, order_line_header, border_format)
         worksheet.write('B7', f"Date: {date}")
         worksheet.write('F7', f"Order No: {sale_order.name}")
 
