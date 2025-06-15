@@ -64,12 +64,12 @@ class ResPartnerSaleReport(models.TransientModel):
         )
 
     def action_generate_excel_report(self):
-        partner_id = self.env.context.get("active_ids")
-        id = int(str(partner_id[0]))
+        ctx = self.env.context.get("active_ids")
+        id = int(str(ctx[0]))
         sale_order = self.env["sale.order"].browse(id)
         order_ids = self.env["sale.order"].search(
             [
-                ("name", "=", partner_id),
+                ("name", "=", ctx),
                 ("date_order", ">=", self.start_date),
                 ("date_order", "<", self.end_date),
             ]
