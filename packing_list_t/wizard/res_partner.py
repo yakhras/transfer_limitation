@@ -74,6 +74,12 @@ class ResPartnerSaleReport(models.TransientModel):
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet(sale_order.name)
         worksheet.set_paper(9)
+        worksheet.set_margins(left=0.7, right=0.7, top=0.75, bottom=0.75)  # Inches
+        worksheet.set_landscape()  # Optional: For landscape mode
+        worksheet.fit_to_pages(1, 0)  # Fit all columns to one page wide, unlimited tall
+        worksheet.center_horizontally()
+        worksheet.center_vertically()
+
         worksheet.write(0, 0, sale_order.name)
 
         address = str(sale_order.company_id.street +', '
