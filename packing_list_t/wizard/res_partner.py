@@ -99,6 +99,16 @@ class ResPartnerSaleReport(models.TransientModel):
 
         worksheet.add_table('B19:F26')
 
+        worksheet.add_table('B3:F7', {'columns': 
+                                      [{'header': 'Product'},
+                                       {'header': 'Quantity'},
+                                       {'header': 'Type'},
+                                       {'header': 'Net Weight KG'},
+                                       {'header': 'Gross Weight KG'},
+                                     ]
+                                     }
+                            )
+
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
         center_format1 = workbook.add_format(
             {"align": "center", "valign": "vcenter", "bold": True}
