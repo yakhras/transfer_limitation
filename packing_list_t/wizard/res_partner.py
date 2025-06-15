@@ -74,11 +74,9 @@ class ResPartnerSaleReport(models.TransientModel):
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet(sale_order.name)
         worksheet.set_paper(9)
-        worksheet.set_margins(left=0.7, right=0.7, top=0.75, bottom=0.75)  # Inches
-        worksheet.set_landscape()  # Optional: For landscape mode
-        worksheet.fit_to_pages(1, 0)  # Fit all columns to one page wide, unlimited tall
-        worksheet.center_horizontally()
-        worksheet.center_vertically()
+        worksheet.set_margins(left=0.7, right=0.7, top=0.75, bottom=0.75)
+        worksheet.fit_to_pages(1, 0)
+        border_format = workbook.add_format({'border': 1})
 
         worksheet.write(0, 0, sale_order.name)
 
@@ -87,10 +85,10 @@ class ResPartnerSaleReport(models.TransientModel):
                       + sale_order.company_id.state_id.name +', '
                       + sale_order.company_id.country_id.name)
 
-        worksheet.merge_range( "B2:E2", sale_order.company_id.name )
-        worksheet.merge_range( "B3:E3", sale_order.company_id.street2 )
-        worksheet.merge_range( "B4:E4", address )
-        worksheet.merge_range( "B5:E5", sale_order.company_id.vat )
+        worksheet.merge_range( "B2:E2", sale_order.company_id.name, border_format )
+        worksheet.merge_range( "B3:E3", sale_order.company_id.street2, border_format )
+        worksheet.merge_range( "B4:E4", address, border_format )
+        worksheet.merge_range( "B5:E5", sale_order.company_id.vat, border_format )
 
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
