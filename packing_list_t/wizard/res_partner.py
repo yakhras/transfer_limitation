@@ -97,7 +97,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.merge_range( "B4:E4", address )
         worksheet.merge_range( "B5:E5", sale_order.company_id.vat )
 
-        worksheet.add_table('B7:F15')
+        worksheet.add_table('B19:F26')
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
         center_format1 = workbook.add_format(
