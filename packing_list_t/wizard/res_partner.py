@@ -95,16 +95,16 @@ class ResPartnerSaleReport(models.TransientModel):
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
         worksheet.write_row(8, 0, order_line_header, border_format)
-        worksheet.write('A6', f"Date: {date}")
-        worksheet.write('F6', f"Order No: {sale_order.name}")
+        worksheet.write('B7', f"Date: {date}")
+        worksheet.write('F7', f"Order No: {sale_order.name}")
 
         for row_num, line in enumerate(order_lines, start=9):
-            worksheet.write(row_num, 0, row_num - 5, border_format)  # SR NO.
-            worksheet.write(row_num, 1, line.product_id.display_name, border_format)
-            worksheet.write(row_num, 2, line.product_uom_qty, border_format)
-            worksheet.write(row_num, 3, line.product_id.type, border_format)
-            worksheet.write(row_num, 4, line.product_id.weight, border_format)
-            worksheet.write(row_num, 5, line.product_id.weight + 0.2, border_format)  # Example gross weight calculation
+            worksheet.write(row_num, 1, row_num - 5, border_format)  # SR NO.
+            worksheet.write(row_num, 2, line.product_id.display_name, border_format)
+            worksheet.write(row_num, 3, line.product_uom_qty, border_format)
+            worksheet.write(row_num, 4, line.product_id.type, border_format)
+            worksheet.write(row_num, 5, line.product_id.weight, border_format)
+            worksheet.write(row_num, 6, line.product_id.weight + 0.2, border_format)  # Example gross weight calculation
 
 
         
