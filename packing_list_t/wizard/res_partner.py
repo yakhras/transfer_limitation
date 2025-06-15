@@ -103,8 +103,8 @@ class ResPartnerSaleReport(models.TransientModel):
             worksheet.write(row_num, 2, line.product_id.display_name, border_format)
             worksheet.write(row_num, 3, line.product_uom_qty, border_format)
             worksheet.write(row_num, 4, line.product_packaging_id.name, border_format)
-            worksheet.write(row_num, 5, line.product_id.net_weight, border_format)
-            worksheet.write(row_num, 6, line.product_id.gross_weight, border_format)  # Example gross weight calculation
+            worksheet.write(row_num, 5, line.net_weight, border_format)
+            worksheet.write(row_num, 6, line.gross_weight, border_format)  # Example gross weight calculation
 
 
         
