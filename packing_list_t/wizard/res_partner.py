@@ -87,7 +87,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_paper(9)
         worksheet.write(0, 0, sale_order.name)
 
-        address = str(sale_order.company_id.street +', '+ sale_order.company_id.city +', '+ sale_order.company_id.state_id +', '+ sale_order.company_id.country_id)
+        address = str(sale_order.company_id.street +', '+ sale_order.company_id.city +', '+ sale_order.company_id.state_id.name +', '+ sale_order.company_id.country_id.name)
 
         worksheet.merge_range( "B2:E2", sale_order.company_id.name )
         worksheet.merge_range( "B3:D3", sale_order.company_id.street2 )
