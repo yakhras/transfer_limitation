@@ -1,0 +1,330 @@
+from odoo import models, fields, api
+from odoo.tools import float_is_zero, float_repr
+import json
+
+
+
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+
+    result = fields.Text('Result')
+    location_cost_ids = fields.One2many('product.location.cost', 'product_id', string='Location Costs')
+
+    # def compute_svl_for_location_362(self):
+    #     internal_locations = self.env['stock.location'].search([
+    #     ('usage', '=', 'internal'),
+    #     ('company_id', '=', self.env.company.id)
+    #     ])
+    
+    #     result_lines = []
+    
+    #     for location in internal_locations:
+    #         ctx = dict(self.env.context, location_dest_id=location.id)
+    #         products = self.with_context(ctx)
+    #         products._compute_value_svl()
+    
+    #         for product in products:
+    #             line = (
+    #                 f"Location: {location.name} (ID: {location.id})\n"
+    #                 f"Product ID: {product.id}\n"
+    #                 f"Quantity SVL: {product.quantity_svl}\n"
+    #                 f"Value SVL: {product.value_svl}\n"
+    #                 "-------------------------"
+    #             )
+    #             result_lines.append(line)
+    
+    #     final_result = "\n".join(result_lines)
+    #     for product in self:
+    #         product.result = final_result
+
+    
+
+    # def get_svl_data_per_location(self):
+    #     if self.env.company.id != 5:
+    #         self.result = "Skipped: not company 5"
+    #         return {}
+    
+    #     StockValuationLayer = self.env['stock.valuation.layer']
+    #     internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+    #     results = {}
+    #     summary_lines = []
+    
+    #     for location in internal_locations:
+    #         for product in self:
+    #             # Build domain manually as _compute_value_svl does
+    #             domain = [
+    #                 ('product_id', '=', product.id),
+    #                 ('company_id', '=', self.env.company.id),
+    #                 '|',
+    #                 ('stock_move_id.location_dest_id', '=', location.id),
+    #                 ('stock_move_id.location_id', '=', location.id)
+    #             ]
+    #             groups = StockValuationLayer.read_group(
+    #                 domain,
+    #                 ['value:sum', 'quantity:sum'],
+    #                 ['product_id']
+    #             )
+    #             value_svl = quantity_svl = 0.0
+    #             if groups:
+    #                 group = groups[0]
+    #                 value_svl = self.env.company.currency_id.round(group['value'])
+    #                 quantity_svl = group['quantity']
+    
+    #             # Store results
+    #             results.setdefault(location.id, {})[product.id] = {
+    #                 'value_svl': value_svl,
+    #                 'quantity_svl': quantity_svl,
+    #             }
+    
+    #             # Add human-readable line
+    #             summary_lines.append(
+    #                 f"Location {location.id} ({location.display_name}) | Product {product.id} ({product.display_name}): "
+    #                 f"Qty SVL={quantity_svl}, Val SVL={value_svl}"
+    #             )
+    
+    #     self.result = "\n".join(summary_lines)
+    #     return results
+
+
+
+    # def audit_product_svl_for_location(self):
+    #     company = self.env.company
+    #     if company.id != 5:
+    #         return
+
+    #     location = self.env['stock.location'].browse(362)
+    #     if location.usage != 'internal':
+    #         return
+
+    #     product = self.env['product.product'].browse(37375)
+
+    #     # Compute SVL values using existing compute method
+    #     product.with_context(location_dest_id=location.id)._compute_value_svl()
+
+    #     # Get quantity available in this location
+    #     quant_domain = [
+    #         ('product_id', '=', product.id),
+    #         ('location_id', '=', location.id),
+    #         ('company_id', '=', company.id),
+    #     ]
+    #     quantity_available = self.env['stock.quant'].search(quant_domain).quantity
+
+    #     value_svl = product.value_svl
+    #     quantity_svl = product.quantity_svl
+
+    #     # Update quant if mismatch
+    #     if value_svl == 0 and quantity_svl == 0 and quantity_available != 0:
+    #         self.env['stock.quant'].search(quant_domain).write({'quantity': 0})
+    #         product.result = (
+    #             f"[FIXED] Loc {location.name}: Available={quantity_available}, "
+    #             f"SVL_Val={value_svl}, SVL_Qty={quantity_svl}"
+    #         )
+    #     else:
+    #         product.result = (
+    #             f"[OK] Loc {location.name}: Available={quantity_available}, "
+    #             f"SVL_Val={value_svl}, SVL_Qty={quantity_svl}"
+    #         )
+
+
+    
+    # def generate_location_costs(self):
+    #     """
+    #     initialize product costing per internal location equals to standard price, based on existing stock quantities.
+    #     """        
+    #     internal_locations = self.env['stock.location'].search([('usage', '=', 'internal')])
+    #     all_products = self.search([])
+    #     CostModel = self.env['product.location.cost']
+
+    #     for product in all_products:
+    #         quants = self.env['stock.quant'].search([
+    #             ('product_id', '=', product.id),
+    #             ('location_id', 'in', internal_locations.ids),
+    #         ])
+    #         for quant in quants:
+    #             domain = [
+    #                 ('product_id', '=', product.id),
+    #                 ('location_id', '=', quant.location_id.id)
+    #             ]
+    #             if not CostModel.search_count(domain):
+    #                 CostModel.create({
+    #                     'product_id': product.id,
+    #                     'location_id': quant.location_id.id,
+    #                     'cost': product.standard_price
+    #                 })
+
+
+    @api.depends('stock_valuation_layer_ids')
+    @api.depends_context('to_date', 'company')
+    def _compute_value_svl(self):
+        """Compute `value_svl` and `quantity_svl`."""
+        company_id = self.env.company.id
+        if company_id == 5:
+            domain = [
+                ('product_id', 'in', self.ids),
+                ('company_id', '=', company_id),
+            ]
+            if self.env.context.get('to_date'):
+                to_date = fields.Datetime.to_datetime(self.env.context['to_date'])
+                domain.append(('create_date', '<=', to_date))
+            id = self.env.context.get('location_dest_id')
+            if id:
+                domain.extend(['|', ('stock_move_id.location_dest_id.id', '=', id), ('stock_move_id.location_id.id', '=', id)])
+
+            groups = self.env['stock.valuation.layer'].read_group(domain, ['value:sum', 'quantity:sum'], ['product_id'], orderby='id')
+            
+            products = self.browse()
+            for group in groups:
+                product = self.browse(group['product_id'][0])
+                product.value_svl = self.env.company.currency_id.round(group['value'])
+                product.quantity_svl = group['quantity']
+                product.result = group['quantity']
+                products |= product
+            remaining = (self - products)
+            remaining.value_svl = 0
+            remaining.quantity_svl = 0
+        else:
+            # Fallback to the default behavior for other companies
+            super(ProductProduct, self)._compute_value_svl()
+
+    
+    def _prepare_out_svl_vals(self, quantity, company):
+        """Prepare the values for a stock valuation layer created by a delivery.
+
+        :param quantity: the quantity to value, expressed in `self.uom_id`
+        :return: values to use in a call to create
+        :rtype: dict
+        """
+        self.ensure_one()
+        company_id = self.env.context.get('force_company', self.env.company.id)
+        company = self.env['res.company'].browse(company_id)
+        if company_id == 5:
+
+            currency = company.currency_id
+            product_id = self.id  # Assuming this method runs in the product.product model
+            location_id = self.env.context.get('location_id')
+
+            if location_id and product_id:
+                location_cost = self.env['product.location.cost'].search([
+                    ('product_id', '=', product_id),
+                    ('location_id', '=', location_id)
+                ], order='id desc', limit=1)  # Get the most recent record
+
+                cost_value = location_cost.cost if location_cost else 0.0
+            
+
+            # Quantity is negative for out valuation layers.
+            quantity = -1 * quantity
+            vals = {
+                'product_id': product_id,
+                'value': currency.round(quantity * cost_value),
+                'unit_cost': cost_value,
+                'quantity': quantity,
+            }
+            if self.product_tmpl_id.cost_method in ('average', 'fifo'):
+                fifo_vals = self._run_fifo(abs(quantity), company)
+                vals['remaining_qty'] = fifo_vals.get('remaining_qty')
+                
+                # In case of AVCO, fix rounding issue of standard price when needed.
+                if self.product_tmpl_id.cost_method == 'average' and not float_is_zero(self.quantity_svl, precision_rounding=self.uom_id.rounding):
+                    rounding_error = currency.round(
+                        (cost_value * self.quantity_svl - self.value_svl) * abs(quantity / self.quantity_svl)
+                    )
+                    if rounding_error:
+                        # If it is bigger than the (smallest number of the currency * quantity) / 2,
+                        # then it isn't a rounding error but a stock valuation error, we shouldn't fix it under the hood ...
+                        if abs(rounding_error) <= max((abs(quantity) * currency.rounding) / 2, currency.rounding):
+                            vals['value'] += rounding_error
+                            vals['rounding_adjustment'] = '\nRounding Adjustment: %s%s %s' % (
+                                '+' if rounding_error > 0 else '',
+                                float_repr(rounding_error, precision_digits=currency.decimal_places),
+                                currency.symbol
+                            )
+                if self.product_tmpl_id.cost_method == 'fifo':
+                    vals.update(fifo_vals)
+            return vals
+        else:
+            # Fallback to the default behavior for other companies
+            return super(ProductProduct, self)._prepare_out_svl_vals(quantity, company)
+
+
+    def _run_fifo(self, quantity, company):
+            self.ensure_one()
+            if company.id == 5:
+
+                # Find back incoming stock valuation layers (called candidates here) to value `quantity`.
+                qty_to_take_on_candidates = quantity
+                id = self.env.context.get('location_id')
+                candidates = self.env['stock.valuation.layer'].sudo().search([
+                    ('product_id', '=', self.id),
+                    ('remaining_qty', '>', 0),
+                    ('company_id', '=', company.id),
+                    ('stock_move_id.location_dest_id.id', '=', id)
+                ])
+                new_standard_price = 0
+                tmp_value = 0  # to accumulate the value taken on the candidates
+                for candidate in candidates:
+                    qty_taken_on_candidate = min(qty_to_take_on_candidates, candidate.remaining_qty)
+
+                    candidate_unit_cost = candidate.remaining_value / candidate.remaining_qty
+                    new_standard_price = candidate_unit_cost
+                    value_taken_on_candidate = qty_taken_on_candidate * candidate_unit_cost
+                    value_taken_on_candidate = candidate.currency_id.round(value_taken_on_candidate)
+                    new_remaining_value = candidate.remaining_value - value_taken_on_candidate
+
+                    candidate_vals = {
+                        'remaining_qty': candidate.remaining_qty - qty_taken_on_candidate,
+                        'remaining_value': new_remaining_value,
+                    }
+
+                    candidate.write(candidate_vals)
+
+                    qty_to_take_on_candidates -= qty_taken_on_candidate
+                    tmp_value += value_taken_on_candidate
+
+                    if float_is_zero(qty_to_take_on_candidates, precision_rounding=self.uom_id.rounding):
+                        if float_is_zero(candidate.remaining_qty, precision_rounding=self.uom_id.rounding):
+                            next_candidates = candidates.filtered(lambda svl: svl.remaining_qty > 0)
+                            new_standard_price = next_candidates and next_candidates[0].unit_cost or new_standard_price
+                        break
+
+                # Update the standard price with the price of the last used candidate, if any.
+                if new_standard_price and self.cost_method == 'fifo':
+                    self.sudo().with_company(company.id).with_context(disable_auto_svl=True).standard_price = new_standard_price
+
+                # If there's still quantity to value but we're out of candidates, we fall in the
+                # negative stock use case. We chose to value the out move at the price of the
+                # last out and a correction entry will be made once `_fifo_vacuum` is called.
+                vals = {}
+                if float_is_zero(qty_to_take_on_candidates, precision_rounding=self.uom_id.rounding):
+                    vals = {
+                        'value': -tmp_value,
+                        'unit_cost': tmp_value / quantity,
+                    }
+                else:
+                    assert qty_to_take_on_candidates > 0
+                    last_fifo_price = new_standard_price or self.standard_price
+                    negative_stock_value = last_fifo_price * -qty_to_take_on_candidates
+                    tmp_value += abs(negative_stock_value)
+                    vals = {
+                        'remaining_qty': -qty_to_take_on_candidates,
+                        'value': -tmp_value,
+                        'unit_cost': last_fifo_price,
+                    }
+                return vals
+            else:
+                # Fallback to the default behavior for other companies
+                return super(ProductProduct, self)._run_fifo(quantity, company) 
+
+
+class ProductLocationCost(models.Model):
+    _name = 'product.location.cost'
+    _description = 'Product Location Cost'
+
+    product_id = fields.Many2one('product.product', string='Product', required=True, ondelete='cascade')
+    location_id = fields.Many2one('stock.location', string='Location', required=True)
+    cost = fields.Float('Cost', digits='Product Price')
+
+

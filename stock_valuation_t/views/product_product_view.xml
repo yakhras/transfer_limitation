@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+    <!-- Product Product Views  -->
+        <record model="ir.ui.view" id="product_product_form">
+            <field name="name">product_product_form</field> 
+            <field name="model">product.product</field> 
+            <field name="inherit_id" ref="product.product_normal_form_view"/> 
+            <field name="groups_id" eval="[(4, ref('base.group_system'))]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[last()]" position="after">
+                    <page name="costs" string="Costs">
+                        <field name="location_cost_ids" widget="one2many_list">
+                            <tree string="Costs" editable="bottom">
+                                <field name="location_id" readonly="1"/>
+                                <field name="cost" readonly="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <field name="default_code" position="after">
+                    <field name="result"/>
+                </field>
+            </field>
+        </record>
+
+
+    <!-- Stock Quant Views -->
+        <record model="ir.ui.view" id="stock_quant_tree">
+            <field name="name">stock_quant_tree</field> 
+            <field name="model">stock.quant</field> 
+            <field name="inherit_id" ref="stock_account.view_stock_quant_tree_editable_inherit"/> 
+            <field name="arch" type="xml">
+                <field name="value" position="before">
+                    <field name="unit_value"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- <record model="ir.ui.view" id="stock_move_form">
+            <field name="name">stock_move_form</field> 
+            <field name="model">stock.move</field> 
+            <field name="inherit_id" ref="stock.view_move_form"/> 
+            <field name="arch" type="xml">
+                <field name="reference" position="after">
+                    <field name="result"/>
+                </field>
+            </field>
+        </record> -->
+
+        <!-- <record model="ir.ui.view" id="stock_landed_cost_form">
+            <field name="name">stock_landed_cost_form</field> 
+            <field name="model">stock.landed.cost</field> 
+            <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_form"/> 
+            <field name="arch" type="xml">
+                <field name="picking_ids" position="after">
+                    <field name="result"/>
+                </field>
+            </field>
+        </record> -->
+
+        <!-- <record model="ir.ui.view" id="stock_landed_cost_user_form">
+            <field name="name">stock_landed_cost_user_form</field> 
+            <field name="model">res.users</field> 
+            <field name="inherit_id" ref="sale_stock.res_users_view_form"/> 
+            <field name="arch" type="xml">
+                <field name="property_warehouse_id" position="after">
+                    <field name="default_location_id"/>
+                </field>
+            </field>
+        </record> -->
+
+        <!-- <record id="ir_cron_create_missing_cost_records" model="ir.cron">
+            <field name="name">Create Missing Product Location Cost Records</field>
+            <field name="model_id" ref="model_product_location_cost"/>
+            <field name="state">code</field>
+            <field name="code">model.create_missing_cost_records()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record> -->
+
+        <!-- <record id="ir_cron_reset_location_costs" model="ir.cron">
+            <field name="name">Reset Product Location Costs</field>
+            <field name="model_id" ref="model_product_location_cost"/>
+            <field name="state">code</field>
+            <field name="code">model.reset_location_costs()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">False</field>
+        </record> -->
+
+        <!-- <record id="ir_cron_generate_location_costs" model="ir.cron">
+            <field name="name">Generate Product Location Costs</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="state">code</field>
+            <field name="code">model.generate_location_costs()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record> -->
+
+        <!-- <record id="ir_cron_reset_location_quantity" model="ir.cron">
+            <field name="name">Reset Location Quantity</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="state">code</field>
+            <field name="code">model.audit_product_svl_for_location()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record> -->
+
+        <!-- <record id="ir_cron_get_location_quantity" model="ir.cron">
+            <field name="name">Get Location Quantity</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="state">code</field>
+            <field name="code">model.compute_svl_for_location_362()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record> -->
+
+    
+
+    
+
+
+        
+    </data>
+</odoo>
