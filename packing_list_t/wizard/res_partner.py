@@ -81,7 +81,6 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # Style formats #
         border_format = workbook.add_format({'border': 1})
-        worksheet.set_column('A:A', 2)
 
         # Header and Footer #
         # Set the header with company logo and name
