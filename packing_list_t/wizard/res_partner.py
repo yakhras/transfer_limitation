@@ -5,6 +5,8 @@ from odoo import api, fields, models
 from io import BytesIO
 import xlsxwriter
 import base64
+import tempfile
+from PIL import Image
 
 class ResPartnerSaleReport(models.TransientModel):
     _name = "sale.order.wizard"
@@ -70,13 +72,25 @@ class ResPartnerSaleReport(models.TransientModel):
         order_lines = sale_order.order_line
         fp = BytesIO()
         file_name = "Packing List.xlsx"
+        logo_path = sale_order.company_id.logo
+        logo_data = base64.b64decode(logo_path)
+        tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        tmp_logo_file.write(logo_data)
+        tmp_logo_file.close()
+
 
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet(sale_order.name)
         worksheet.set_paper(9)
         worksheet.set_margins(left=0.7, right=0.7, top=0.75, bottom=0.75)
         worksheet.fit_to_pages(1, 0)
-        worksheet.set_header('&L%s' % sale_order.company_id.name)
+        worksheet.set_header(
+            '&L&G&C%s' % (sale_order.company_id.name or ''),
+            {
+                'image_left': tmp_logo_file.name,
+            }
+        )
+        # worksheet.set_header('&L%s' % sale_order.company_id.name)
         footer_address = sale_order.company_id.street or ''
         if sale_order.company_id.city:
             footer_address += ', ' + sale_order.company_id.city
