@@ -69,21 +69,27 @@ class ResPartnerSaleReport(models.TransientModel):
         ctx = self.env.context.get("active_ids")
         id = int(str(ctx[0]))
         sale_order = self.env["sale.order"].browse(id)
-        order_lines = sale_order.order_line
         fp = BytesIO()
         file_name = "Packing List.xlsx"
-        logo_path = sale_order.company_id.logo
-        logo_data = base64.b64decode(logo_path)
-        tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-        tmp_logo_file.write(logo_data)
-        tmp_logo_file.close()
+        
 
-
+        # Create an Excel workbook and worksheet
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
         worksheet = workbook.add_worksheet(sale_order.name)
         worksheet.set_paper(9)
         worksheet.set_margins(left=0.7, right=0.7, top=0.75, bottom=0.75)
         worksheet.fit_to_pages(1, 0)
+
+        # Style formats
+        border_format = workbook.add_format({'border': 1})
+        worksheet.set_column('A:A', 2)
+
+        # Header and Footer
+        logo_path = sale_order.company_id.logo
+        logo_data = base64.b64decode(logo_path)
+        tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        tmp_logo_file.write(logo_data)
+        tmp_logo_file.close()
         worksheet.set_header(
             '&L&B&18%s&R&G' % (sale_order.company_id.name or ''),
             {
@@ -100,23 +106,16 @@ class ResPartnerSaleReport(models.TransientModel):
             footer_address += ', ' + sale_order.company_id.state_id.name
         if sale_order.company_id.country_id:
             footer_address += ', ' + sale_order.company_id.country_id.name
-
         worksheet.set_footer(
             '&LPage &P'
             '&C%s'
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
-
-
-        border_format = workbook.add_format({'border': 1})
-        worksheet.set_column('A:A', 2)
-
-        date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
-
-        row = 9  # Starting row
-        col_seller = 1  # Left column
-        col_buyer = 4   # Right column (e.g. 3 columns over)
+        
+        #Seller and Buyer Information
+        row = 9  
+        col_seller = 1  
+        col_buyer = 4   
         worksheet.write(row, col_seller, "Seller:")
         worksheet.write(row, col_buyer, "Buyer:")
         row += 1
@@ -141,17 +140,19 @@ class ResPartnerSaleReport(models.TransientModel):
         ])
         worksheet.write(row, col_seller, ", ".join(seller_address_parts))
         worksheet.write(row, col_buyer, ", ".join(buyer_address_parts))
-
-        # Row 3: Phone
         row += 1
         worksheet.write(row, col_seller, f"Phone: {sale_order.company_id.phone or ''}")
         worksheet.write(row, col_buyer, f"Phone: {sale_order.partner_id.phone or ''}")
 
-
-        worksheet.write_row(14, 1, order_line_header, border_format)
+        # Order Information
+        date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
         worksheet.write('B7', f"Date: {date}")
         worksheet.write('F7', f"Order No: {sale_order.name}")
 
+        # Order Lines Table
+        order_lines = sale_order.order_line
+        order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
+        worksheet.write_row(14, 1, order_line_header, border_format)
         for row_num, line in enumerate(order_lines, start=15):
             worksheet.write(row_num, 1, row_num - 5, border_format)  # SR NO.
             worksheet.write(row_num, 2, line.product_id.display_name, border_format)
@@ -161,8 +162,8 @@ class ResPartnerSaleReport(models.TransientModel):
             worksheet.write(row_num, 6, line.gross_weight, border_format)  # Example gross weight calculation
 
 
-        
         workbook.close()
+        
         attachment_id = self.env["ir.attachment"].create(
             {
                 "name": file_name,
