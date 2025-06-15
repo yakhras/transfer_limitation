@@ -94,13 +94,16 @@ class ResPartnerSaleReport(models.TransientModel):
 
 
         # worksheet.set_header('&L%s' % sale_order.company_id.name)
-        footer_address = sale_order.company_id.street or ''
+        footer_address = sale_order.company_id.street2 or ''
+        if sale_order.company_id.street:
+            footer_address += ', ' + sale_order.company_id.street
         if sale_order.company_id.city:
             footer_address += ', ' + sale_order.company_id.city
         if sale_order.company_id.state_id:
             footer_address += ', ' + sale_order.company_id.state_id.name
         if sale_order.company_id.country_id:
             footer_address += ', ' + sale_order.company_id.country_id.name
+
 
         worksheet.set_footer(
             '&LPage &P'
