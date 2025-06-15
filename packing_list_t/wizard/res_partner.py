@@ -98,17 +98,8 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.merge_range( "B5:E5", sale_order.company_id.vat )
 
 
-        worksheet.add_table('B19:F26', {'columns': 
-                                        [{'header': 'Product'},
-                                         {'header': 'Quantity'},
-                                         {'header': 'Type'},
-                                         {'header': 'Net Weight KG'},
-                                         {'header': 'Gross Weight KG'},
-                                        ]
-                                       }
-                            )
+        order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
 
-        order_line_header = ["SR NO.", "Product", "Quantity", "Sub Total"]
         center_format1 = workbook.add_format(
             {"align": "center", "valign": "vcenter", "bold": True}
         )
