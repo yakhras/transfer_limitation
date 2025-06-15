@@ -74,9 +74,10 @@ class ResPartnerSaleReport(models.TransientModel):
                 ("date_order", "<", self.end_date),
             ]
         )
-        order_lines = self.env["sale.order.line"].search(
-            [("order_id", "in", order_ids.ids)]
-        )
+        order_lines = sale_order.order_line
+        # order_lines = self.env["sale.order.line"].search(
+        #     [("order_id", "in", order_ids.ids)]
+        # )
         values = []
         products = []
         fp = BytesIO()
@@ -100,6 +101,21 @@ class ResPartnerSaleReport(models.TransientModel):
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
 
+        for order_line in order_lines:
+            if order_line.product_id.id not in products:
+                products.append(order_line.product_id.id)
+                product_order_lines = order_lines.filtered(
+                    lambda line: line.product_id.id == order_line.product_id.id
+                )
+                total_qty = sum(product_order_lines.mapped("product_uom_qty"))
+                subtotal = sum(product_order_lines.mapped("price_subtotal"))
+                order_line_data = {
+                    "product": order_line.product_template_id.name,
+                    "quantity": total_qty,
+                    "subtotal": subtotal,
+                }
+                values.append(order_line_data)
+
         center_format1 = workbook.add_format(
             {"align": "center", "valign": "vcenter", "bold": True}
         )
@@ -122,20 +138,7 @@ class ResPartnerSaleReport(models.TransientModel):
         #     "B3:E3", "Sale Report: %s" % order_ids.company_id.name, center_format1
         # )
 
-        for order_line in order_lines:
-            if order_line.product_id.id not in products:
-                products.append(order_line.product_id.id)
-                product_order_lines = order_lines.filtered(
-                    lambda line: line.product_id.id == order_line.product_id.id
-                )
-                total_qty = sum(product_order_lines.mapped("product_uom_qty"))
-                subtotal = sum(product_order_lines.mapped("price_subtotal"))
-                order_line_data = {
-                    "product": order_line.product_template_id.name,
-                    "quantity": total_qty,
-                    "subtotal": subtotal,
-                }
-                values.append(order_line_data)
+        
 
         
         worksheet.merge_range(
