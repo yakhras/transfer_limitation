@@ -94,8 +94,8 @@ class ResPartnerSaleReport(models.TransientModel):
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
 
         row = 15  # Starting row
-        col_seller = 0  # Left column
-        col_buyer = 3   # Right column (e.g. 3 columns over)
+        col_seller = 1  # Left column
+        col_buyer = 4   # Right column (e.g. 3 columns over)
         worksheet.write(row, col_seller, "Seller:")
         worksheet.write(row, col_buyer, "Buyer:")
         row += 1
