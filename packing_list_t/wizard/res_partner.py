@@ -90,7 +90,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.merge_range( "B4:E4", address, border_format )
         worksheet.merge_range( "B5:E5", sale_order.company_id.vat, border_format )
 
-        date = sale_order.date_order.strftime("%d/%m/%Y") if sale_order.date_order else ""
+        date = sale_order.date_order if sale_order.date_order else ""
 
 
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
