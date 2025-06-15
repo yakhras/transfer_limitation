@@ -85,11 +85,12 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_margins(left=0.7, right=0.7, top=0.75, bottom=0.75)
         worksheet.fit_to_pages(1, 0)
         worksheet.set_header(
-            '&L&G&C%s' % (sale_order.company_id.name or ''),
+            '&L%s&R&G' % (sale_order.company_id.name or ''),
             {
-                'image_left': tmp_logo_file.name,
+                'image_right': tmp_logo_file.name,  # Move logo to the right
             }
         )
+
         # worksheet.set_header('&L%s' % sale_order.company_id.name)
         footer_address = sale_order.company_id.street or ''
         if sale_order.company_id.city:
