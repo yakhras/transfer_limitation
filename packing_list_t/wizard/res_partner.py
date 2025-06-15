@@ -78,7 +78,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.fit_to_pages(1, 0)
         border_format = workbook.add_format({'border': 1})
 
-        worksheet.write(0, 0, sale_order.name)
+        
 
         address = str(sale_order.company_id.street +', '
                       + sale_order.company_id.city +', '
@@ -96,6 +96,7 @@ class ResPartnerSaleReport(models.TransientModel):
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
         worksheet.write_row(8, 0, order_line_header, border_format)
         worksheet.write('A6', f"Order Date: {date}")
+        worksheet.write('F6', sale_order.name)
 
         for row_num, line in enumerate(order_lines, start=9):
             worksheet.write(row_num, 0, row_num - 5, border_format)  # SR NO.
