@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="external_layout_yaser">
+        <div t-attf-class="header" t-att-style="report_header_style">
+            <div class="o_clean_header">
+                <div class="row align-items-center" style="display: flex; align-items: center;">
+                    <!-- Company Name (8 columns) -->
+                    <div class="col-8" style="margin-top: 10px;">
+                        <strong t-if="doc.company_id.name" style="font-size: 18px;">
+                            <span t-field="doc.company_id.name"/>
+                        </strong>
+                    </div>
+                    <!-- Company Logo (4 columns, with reduced size) -->
+                    <div class="col-4 text-right" style="margin: 0; padding: 0;">
+                        <img t-if="doc.company_id.logo" 
+                                t-att-src="image_data_uri(doc.company_id.logo)" 
+                                alt="Company Logo" 
+                                style="width: 180px; height: 90px; margin: 0; padding: 0;"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div t-attf-class="article">
+            <t t-out="0" />
+        </div>
+        <div t-attf-class="footer">
+            <div class="text-center" style="border-top: 1px solid black; padding-top: 10px;">
+                <div class="row align-items-center">
+                    <!-- Page Number (Left) -->
+                    <div t-if="report_type == 'pdf'" class="col-4 text-left text-muted">
+                        Page: <span class="page"/> / <span class="topage"/>
+                    </div>
+                    
+                    <!-- Address (Center) -->
+                    <div class="col-4 text-center">
+                        <p style="font-size: 14px; line-height: 1.5; font-weight: 400; color: #333; margin: 0;">
+                            <span style="font-weight: 400; white-space: nowrap;">
+                                <span t-field="doc.company_id.street2"/>,<br/>
+                                <span t-field="doc.company_id.street"/>
+                            </span><br/>
+                            <span t-field="doc.company_id.city"/> <span t-field="doc.company_id.state_id.name"/>-<span t-field="doc.company_id.country_id.name"/>
+                        </p>
+                    </div>
+            
+                    <!-- Tax Number (Right) -->
+                    <div class="col-4 text-right">
+                        <p style="font-size: 14px; font-weight: 400; color: #333; margin: 0;">
+                            Tax No.<span t-esc="doc.company_id.vat[2:] if doc.company_id.vat and doc.company_id.vat.startswith('TR') else doc.company_id.vat"/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </template>
+    <template id="custom_packing_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="packing_list_t.external_layout_yaser">
+                    <div class="page">
+                        <!-- Proforma Invoice Section -->
+                        <div class="row">
+                            <div class="col-12" style="text-align: center;">
+                                <strong style="font-size: 28px; color: red; font-family: Arial, sans-serif;">
+                                    Packing List
+                                </strong>
+                            </div>
+                        </div>
+                        <!-- Border Line Before info -->
+                        <div style="border-bottom: 2px solid #333; margin-bottom: 15px; margin-top: 15px;"></div>
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="col-6">
+                                <div style="margin-bottom: 5px;"><strong>Date: </strong> <span style="color: red;" t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
+                            </div>
+                            <div class="col-6">
+                                <div style="margin-bottom: 5px;"><strong>Order No.: </strong> <span t-field="doc.name"/></div>
+                            </div>
+                        </div>
+                        <!-- Border Line Before partners -->
+                        <div style="border-bottom: 2px solid #333; margin-bottom: 15px; margin-top: 15px;"></div>
+                        
+                        <!-- New Row with Two Columns -->
+                        <div class="row" style="margin-top: 20px;">
+                            <!-- Left Column (col-8) -->
+                            <div class="col-6">
+                                <div style="margin-bottom: 5px;"><strong>Seller: </strong><span t-esc="doc.company_id.name"/></div>
+                                <div style="margin-bottom: 5px;">
+                                    <strong>Address: </strong>
+                                    <span t-if="doc.company_id.street">
+                                        <span t-field="doc.company_id.street"/> 
+                                    </span>
+                                    <span t-if="doc.company_id.street2">
+                                        <span t-field="doc.company_id.street2"/> 
+                                    </span>
+                                </div>
+                                <div style="margin-bottom: 5px;">
+                                    <span t-if="doc.company_id.city">
+                                        <span t-field="doc.company_id.city"/>
+                                    </span>
+                                    <span t-if="doc.company_id.state_id">
+                                        <span t-field="doc.company_id.state_id.name"/>
+                                    </span>
+                                    <span t-if="doc.company_id.zip">
+                                        <span t-field="doc.company_id.zip"/>
+                                    </span>
+                                    <span t-if="doc.company_id.country_id">
+                                        <span t-field="doc.company_id.country_id.name"/>
+                                    </span>
+                                </div>
+                                <div><strong>Phone:</strong> <span t-esc="doc.company_id.phone"/></div>
+                            </div>
+
+                            <!-- Right Column (col-4) -->
+                            <div class="col-6">
+                                <div style="margin-bottom: 5px;"><strong>Buyer: </strong><span t-esc="doc.partner_id.name"/></div>
+                                <div style="margin-bottom: 5px;">
+                                    <strong>Address: </strong>
+                                    <span t-if="doc.partner_shipping_id.street">
+                                        <span t-field="doc.partner_shipping_id.street"/> 
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.street2">
+                                        <span t-field="doc.partner_shipping_id.street2"/> 
+                                    </span>
+                                </div>
+                                <div style="margin-bottom: 5px;">
+                                    <span t-if="doc.partner_shipping_id.city">
+                                        <span t-field="doc.partner_shipping_id.city"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.state_id">
+                                        <span t-field="doc.partner_shipping_id.state_id.name"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.zip">
+                                        <span t-field="doc.partner_shipping_id.zip"/>
+                                    </span>
+                                    <span t-if="doc.partner_shipping_id.country_id">
+                                        <span t-field="doc.partner_shipping_id.country_id.name"/>
+                                    </span>
+                                </div>
+                                <div><strong>Phone:</strong> <span t-esc="doc.partner_id.phone"/></div>
+                                
+                            </div>
+                        </div>
+                        <!-- Border Line Before Title -->
+                        <div style="border-bottom: 2px solid #333; margin-bottom: 15px; margin-top: 15px;"></div>
+                        <!-- Table Title -->
+                        <h4 style="text-align: left; margin-top: 10px; margin-bottom: 5px; color: #333;">Packing List Details</h4>
+                        <!-- Table Section -->
+                        <div style="margin-top: 20px;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead style="background-color: black; color: white;">
+                                    <tr>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: left;">Product</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Quantity</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Type</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Net Weight KG</th>
+                                        <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Gross Weight KG</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="background-color: #f4f4f4; color: black;">
+                                    <!-- Loop through order line items -->
+                                    <t t-foreach="doc.order_line" t-as="line">
+                                        <tr>
+                                            <td style="border: 1px none black; padding: 6px;">
+                                                <span t-esc="line.name.split(']', 1)[1].strip() if '[' in line.name and ']' in line.name else line.name"/>
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-field="line.product_uom_qty"/>
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-field="line.product_packaging_id"/>
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-field="line.net_weight"/>
+                                            </td>
+                                            <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                                <span t-field="line.gross_weight"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <!-- Table Footer (Total Row) -->
+                                <tfoot>
+                                    <tr style="background-color: #ddd; font-weight: bold;">
+                                        <td style="border: 1px solid #ccc; padding: 6px; text-align: left;">Total</td>
+                                        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">
+                                            <span t-esc="sum(doc.order_line.mapped('product_uom_qty'))"/>
+                                        </td>
+                                        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">Packaging</td>
+                                        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">
+                                            <span t-esc="sum(doc.order_line.mapped('net_weight'))"/>
+                                        </td>
+                                        <td style="border: 1px solid #ccc; padding: 6px; text-align: center;">
+                                            <span t-esc="sum(doc.order_line.mapped('gross_weight'))"/>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    
+
+                        <t t-if="doc.has_note">
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-12" style="text-align: left;">
+                                    <!-- Styled Header for "Note" Section -->
+                                    <div style="background-color: #333; color: #fff; padding: 8px; border: 1px solid #ccc; font-weight: bold;">
+                                        Note:
+                                    </div>
+                        
+                                    <!-- Display HTML Note Content -->
+                                    <div style="margin-top: 10px; font-size: 13px; line-height: 1.6; color: #333;">
+                                        <t t-raw="doc.note"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>    
+</odoo>

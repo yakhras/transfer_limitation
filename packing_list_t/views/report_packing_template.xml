@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <report 
+        id="action_report_packing_sale_order"
+        model="sale.order"
+        string="TVO Packing List"
+        report_type="qweb-pdf"
+        file="packing_list_t.custom_packing_template"
+        name="packing_list_t.custom_packing_template"
+        print_report_name="'Packing List - %s' % (object.name)"
+    />
+</odoo>
