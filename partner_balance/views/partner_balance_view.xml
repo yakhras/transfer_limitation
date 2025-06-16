@@ -8,13 +8,13 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-            <header position="inside">
-                <button name="action_view_partner_report"
-                        type="object"
-                        string="View Report"
-                        class="btn-primary"
-                        attrs="{'invisible': [('is_company', '=', False)]}" />
-            </header>
+                <header position="inside">
+                    <button name="action_view_partner_report"
+                            type="object"
+                            string="View Report"
+                            class="btn-primary"
+                            attrs="{'invisible': [('is_company', '=', False)]}" />
+                </header>
             </field>
         </record>
 
