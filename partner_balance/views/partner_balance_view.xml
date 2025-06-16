@@ -23,7 +23,6 @@
         <record id="view_account_move_line_custom_tree" model="ir.ui.view">
             <field name="name">account.move.line.custom.tree</field>
             <field name="model">account.move.line</field>
-            <field name="inherit_id" ref="account.view_move_line_tree"/>
             <field name="arch" type="xml">
                 <tree string="Journal Items (Custom)" create="false">
                     <field name="date"/>
