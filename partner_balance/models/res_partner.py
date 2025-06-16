@@ -36,4 +36,15 @@ class ResPartner(models.Model):
     
 
     def action_view_partner_report(self):
-        return
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Journal Items',
+            'res_model': 'account.move.line',
+            'view_mode': 'tree,form',
+            'domain': [('partner_id', '=', self.id)],
+            'context': {
+                'search_default_partner_id': self.id,
+                'default_partner_id': self.id,
+            },
+        }
