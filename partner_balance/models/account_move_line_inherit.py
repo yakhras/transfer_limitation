@@ -73,13 +73,22 @@ class AccountMoveLine(models.Model):
     @api.depends_context('order_cumulated_balance', 'domain_cumulated_balance')
     def _compute_cumulated_amount_currency(self):
         if not self.env.context.get('order_cumulated_balance'):
-            # We do not come from search_read, so we are not in a list view, so it doesn't make any sense to compute the cumulated balance
             self.cumulated_balance_amount_currency = 0
             return
 
-        # get the where clause
-        query = self._where_calc(list(self.env.context.get('domain_cumulated_balance') or []))
-        order_string = ", ".join(self._generate_order_by_inner(self._table, self.env.context.get('order_cumulated_balance'), query, reverse_direction=True))
+        # get the where clause from the domain
+        domain = list(self.env.context.get('domain_cumulated_balance') or [])
+        # add the USD filter
+        domain.append(('currency_id.name', '=', 'USD'))
+
+        query = self._where_calc(domain)
+        order_string = ", ".join(self._generate_order_by_inner(
+            self._table,
+            self.env.context.get('order_cumulated_balance'),
+            query,
+            reverse_direction=True
+        ))
+
         from_clause, where_clause, where_clause_params = query.get_sql()
         sql = """
             SELECT account_move_line.id, SUM(account_move_line.amount_currency) OVER (
@@ -88,8 +97,14 @@ class AccountMoveLine(models.Model):
             )
             FROM %(from)s
             WHERE %(where)s
-        """ % {'from': from_clause, 'where': where_clause or 'TRUE', 'order_by': order_string}
+        """ % {
+            'from': from_clause,
+            'where': where_clause or 'TRUE',
+            'order_by': order_string
+        }
+
         self.env.cr.execute(sql, where_clause_params)
         result = {r[0]: r[1] for r in self.env.cr.fetchall()}
         for record in self:
-            record.cumulated_balance_amount_currency = result[record.id]
+            record.cumulated_balance_amount_currency = result.get(record.id, 0.0)
+
