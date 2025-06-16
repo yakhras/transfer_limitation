@@ -8,12 +8,14 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="l10n_tr_base_ubl.view_partner_form_esolutions"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='action_registered_user']" position="after">
-                    <button name="action_view_partner_report"
-                            type="object"
-                            string="View Report"
-                            class="btn-primary"
-                            attrs="{'invisible': [('is_company', '=', False)]}" />
+                <xpath expr="//form/sheet" position="before">
+                    <header>
+                        <button name="action_view_partner_report"
+                        type="object"
+                        string="View Report"
+                        class="btn-primary"
+                        attrs="{'invisible': [('is_company', '=', False)]}" />
+                    </header>
                 </xpath>
             </field>
         </record>
