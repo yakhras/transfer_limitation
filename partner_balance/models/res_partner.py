@@ -45,6 +45,7 @@ class ResPartner(models.Model):
             'domain': [
                 ('partner_id', '=', self.id),
                 ('move_id.state', '=', 'posted'),
+                ('account_id.user_type_id.type', 'in', ['payable', 'receivable']),
             ],
             'context': {
                 'default_partner_id': self.id,
