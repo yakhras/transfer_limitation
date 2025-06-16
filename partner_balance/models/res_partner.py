@@ -41,7 +41,7 @@ class ResPartner(models.Model):
             'type': 'ir.actions.act_window',
             'name': 'Journal Items',
             'res_model': 'account.move.line',
-            'view_mode': 'tree,form',
+            'view_mode': 'tree',
             'views': [
                 (self.env.ref('partner_balance.view_account_move_line_custom_tree').id, 'tree'),
             ],
