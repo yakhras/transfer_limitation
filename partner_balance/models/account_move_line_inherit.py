@@ -79,7 +79,7 @@ class AccountMoveLine(models.Model):
         # get the where clause from the domain
         domain = list(self.env.context.get('domain_cumulated_balance') or [])
         # add the USD filter
-        domain.append(('currency_id.name', '=', 'USD'))
+        domain.append(('currency_id.name', '!=', 'TRY'))
 
         query = self._where_calc(domain)
         order_string = ", ".join(self._generate_order_by_inner(
