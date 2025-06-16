@@ -20,6 +20,23 @@
             </field>
         </record>
 
+        <record id="view_account_move_line_custom_tree" model="ir.ui.view">
+            <field name="name">account.move.line.custom.tree</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+            <tree string="Journal Items (Custom)" create="false" delete="false">
+                <field name="date"/>
+                <field name="move_id" string="Journal Entry"/>
+                <field name="name" string="Label"/>
+                <field name="amount_currency"/>
+                <field name="debit"/>
+                <field name="credit"/>
+                <field name="balance"/>
+                <field name="cumulated_balance"/>
+            </tree>
+            </field>
+        </record>
+
         <!-- Tree View -->
         <record id="view_partner_balance_tree" model="ir.ui.view">
             <field name="name">partner.balance.tree</field>
