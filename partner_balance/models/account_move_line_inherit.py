@@ -74,7 +74,7 @@ class AccountMoveLine(models.Model):
     def _compute_cumulated_amount_currency(self):
         if not self.env.context.get('order_cumulated_balance'):
             # We do not come from search_read, so we are not in a list view, so it doesn't make any sense to compute the cumulated balance
-            self.cumulated_balance = 0
+            self.cumulated_balance_amount_currency = 0
             return
 
         # get the where clause
@@ -92,4 +92,4 @@ class AccountMoveLine(models.Model):
         self.env.cr.execute(sql, where_clause_params)
         result = {r[0]: r[1] for r in self.env.cr.fetchall()}
         for record in self:
-            record.cumulated_balance = result[record.id]
+            record.cumulated_balance_amount_currency = result[record.id]
