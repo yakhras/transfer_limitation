@@ -29,10 +29,10 @@
                     <field name="move_id" string="Journal Entry"/>
                     <field name="name" string="Label"/>
                     <field name="amount_currency"/>
-                    <field name="debit"/>
-                    <field name="credit"/>
-                    <field name="balance"/>
-                    <field name="cumulated_balance"/>
+                    <field name="debit" sum="Total Debit"/>
+                    <field name="credit" sum="Total Credit"/>
+                    <field name="balance" sum="Total Balance">
+                    <field name="cumulated_balance" sum="Total"/>
                 </tree>
             </field>
         </record>
