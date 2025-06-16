@@ -44,7 +44,6 @@ class ResPartner(models.Model):
             'view_mode': 'tree,form',
             'domain': [('partner_id', '=', self.id)],
             'context': {
-                'search_default_partner_id': self.id,
                 'default_partner_id': self.id,
             },
         }
