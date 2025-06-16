@@ -29,6 +29,7 @@
                     <field name="move_id" string="Journal Entry"/>
                     <field name="name" string="Label"/>
                     <field name="amount_currency"/>
+                    <field name="cumulated_balance_amount_currency"/>
                     <field name="debit" />
                     <field name="credit" />
                     <field name="balance" />
