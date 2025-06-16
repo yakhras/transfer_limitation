@@ -42,7 +42,10 @@ class ResPartner(models.Model):
             'name': 'Journal Items',
             'res_model': 'account.move.line',
             'view_mode': 'tree,form',
-            'domain': [('partner_id', '=', self.id)],
+            'domain': [
+                ('partner_id', '=', self.id),
+                ('move_id.state', '=', 'posted'),
+            ],
             'context': {
                 'default_partner_id': self.id,
             },
