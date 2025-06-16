@@ -6,7 +6,7 @@
         <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.custom.button</field>
             <field name="model">res.partner</field>
-            <field name="inherit_id" ref="l10n_tr_base_ubl.view_partner_form_esolutions"/>
+            <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet" position="before">
                     <header>
