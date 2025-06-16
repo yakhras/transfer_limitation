@@ -33,3 +33,7 @@ class ResPartner(models.Model):
         # Remove corresponding partner.balance records
         self.env['partner.balance'].search([('partner_id', 'in', self.ids)]).unlink()
         return super().unlink()
+    
+
+    def action_view_partner_report(self):
+        return
