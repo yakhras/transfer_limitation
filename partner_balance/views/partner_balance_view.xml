@@ -24,7 +24,7 @@
             <field name="name">account.move.line.custom.tree</field>
             <field name="model">account.move.line</field>
             <field name="arch" type="xml">
-                <tree string="Journal Items (Custom)" create="false">
+                <tree string="Journal Items (Custom)" create="false" js_class="partner_balance">
                     <field name="date"/>
                     <field name="move_id" string="Journal Entry"/>
                     <field name="name" string="Label"/>
