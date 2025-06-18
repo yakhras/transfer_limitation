@@ -14,11 +14,6 @@ var ExportPdfButtonListController = ListController.extend({
     }),
     _onExport: function(){
         console.log('Hi Yaser')
-        var self = this;
-        var domain = self.model.get('domain');  // Get the domain of the current tree view
-        console.log(domain)
-        var context = self.model.get('context');  // Get context
-        console.log(context)
         this._rpc({
             model: 'report.partner_balance.xlsx_report',
             method: 'button_export_xlsx',
