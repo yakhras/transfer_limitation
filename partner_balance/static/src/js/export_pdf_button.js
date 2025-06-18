@@ -22,7 +22,6 @@ var ExportPdfButtonListController = ListController.extend({
         this._rpc({
             model: 'report.partner_balance.xlsx_report',
             method: 'button_export_xlsx',
-            args: [],
         })
     }
 });
