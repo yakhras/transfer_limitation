@@ -18,7 +18,11 @@ var ExportPdfButtonListController = ListController.extend({
             model: 'report.partner_balance.xlsx_report',
             method: 'button_export_xlsx',
             args: [[]],
-        })
+        }).then(function (action) {
+            if (action && action.type === 'ir.actions.act_url') {
+                window.location.href = action.url;
+            }
+        });
     }
 });
 
