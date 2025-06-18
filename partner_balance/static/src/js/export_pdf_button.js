@@ -22,6 +22,7 @@ var ExportPdfButtonListController = ListController.extend({
         this._rpc({
             model: 'partner.ledger.report.wizard',
             method: 'button_export_xlsx',
+            args: [],
         })
     }
 });
