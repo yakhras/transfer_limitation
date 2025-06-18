@@ -3,12 +3,12 @@
 <templates id="template" xml:space="preserve">
 
 <t t-extend="ListView.buttons" t-name="PartnerBalance.Buttons">
-    <t t-jquery="button.o_list_export_xlsx" t-operation="after">
+    <t t-jquery="button.o_list_export_xlsx" t-operation="replace">
         <button class="btn btn-primary o_button_pdf mr-2" type="button">
             PDF
         </button>
         <button class="btn btn-primary o_button_xls mr-2" type="button">
-            PDF
+            Excel
         </button>
     </t>
 </t>
