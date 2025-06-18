@@ -8,14 +8,16 @@ class GeneralLedgerXslx(models.AbstractModel):
     _description = "Partner Balance XLSX Report"
 
     
-    def button_export_xlsx(self):
+    def button_export_xlsx(self, domain=None, context=None, order=None, view_id=None):
         # Create an in-memory output file
         output = BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
         worksheet = workbook.add_worksheet("Sheet1")
 
         # (Optional) Write a title or header, or leave completely blank
-        worksheet.write(0, 0, "This is an empty XLSX file")
+        worksheet.write(0, 0, "Domain passed from JS:")
+        domain_str = str(domain) if domain else "No domain passed"
+        worksheet.write(1, 0, domain_str)
 
         workbook.close()
         output.seek(0)
