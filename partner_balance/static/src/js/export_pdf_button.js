@@ -21,7 +21,7 @@ var ExportPdfButtonListController = ListController.extend({
         this._rpc({
             model: 'report.partner_balance.xlsx_report',
             method: 'button_export_xlsx',
-            args: [[domain, context, order, viewId]],
+            args: [domain, context, order, viewId],
         }).then(function (action) {
             if (action && action.type === 'ir.actions.act_url') {
                 window.location.href = action.url;

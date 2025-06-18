@@ -7,7 +7,7 @@ class GeneralLedgerXslx(models.AbstractModel):
     _name = "report.partner_balance.xlsx_report"
     _description = "Partner Balance XLSX Report"
 
-    
+    @api.model
     def button_export_xlsx(self, domain=None, context=None, order=None, view_id=None):
         # Create an in-memory output file
         output = BytesIO()
