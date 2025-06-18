@@ -20,7 +20,7 @@ var ExportPdfButtonListController = ListController.extend({
         var context = self.model.get('context');  // Get context
         console.log(context)
         this._rpc({
-            model: 'report.partner_balance.xlsx',
+            model: 'report.partner_balance.xlsx_report',
             method: 'button_export_xlsx',
             args: [],
         })

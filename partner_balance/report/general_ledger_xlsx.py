@@ -2,7 +2,7 @@ from odoo import _, models
 
 
 class GeneralLedgerXslx(models.AbstractModel):
-    _name = "report.partner_balance.xlsx"
+    _name = "report.partner_balance.xlsx_report"
     _description = "Partner Balance XLSL Report"
 
 
