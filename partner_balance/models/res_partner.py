@@ -52,6 +52,6 @@ class ResPartner(models.Model):
             ],
             'context': {
                 'default_partner_id': self.id,
-                'group_by': 'partner_id',
+                'group_by': ['partner_id', 'currency_id'],
             },
         }
