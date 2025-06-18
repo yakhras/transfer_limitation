@@ -14,7 +14,7 @@ var ExportPdfButtonListController = ListController.extend({
     }),
     _onExport: function(){
         console.log('Hi Yaser')
-        const domain = this.model.get('domain');
+        const domain = this.get('domain');
         const context = this.model.get('context');
         const order = this.model.get('order');
         const viewId = this.viewId;
