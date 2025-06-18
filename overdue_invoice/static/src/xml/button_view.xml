@@ -5,7 +5,7 @@
           <button type="button" class="btn btn-secondary o_button_unpaid_tree">
               Excel
           </button>
-          <button type="button" class="btn btn-secondary o_button_unpaid_tree">
+          <button type="button" class="btn btn-secondary o_button_balance_tree">
               PDF
           </button>
       </t>
