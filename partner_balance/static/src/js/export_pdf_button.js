@@ -19,7 +19,7 @@ var ExportPdfButtonListController = ListController.extend({
         const order = this.model.get('order');
         const viewId = this.viewId;
         console.log('domain', domain);
-        console.log('context', context);
+        console.log('context', viewId);
         this._rpc({
             model: 'report.partner_balance.xlsx_report',
             method: 'button_export_xlsx',
