@@ -64,7 +64,6 @@
                 <tree string="Account Move Line Report" create="false" delete="false" edit="false">
                     <field name="date"/>
                     <field name="move_id"/>
-                    <field name="journal_id"/>
                     <field name="name"/>
                     <field name="debit"/>
                     <field name="credit"/>
