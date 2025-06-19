@@ -39,8 +39,8 @@ class AccountMoveLineReport(models.Model):
     def init(self):
         """Initialize the report view"""
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""
-            CREATE OR REPLACE VIEW %s AS (
+        self.env.cr.execute(f"""
+            CREATE OR REPLACE VIEW {self._table} AS (
                 SELECT 
                     aml.id,
                     aml.date,
@@ -51,27 +51,34 @@ class AccountMoveLineReport(models.Model):
                     aml.debit,
                     aml.credit,
                     aml.balance,
+
+                    -- Improved cumulated balance: cumulative per partner, ordered by date, move_id, id
                     SUM(aml.balance) OVER (
-                        PARTITION BY aml.account_id, aml.partner_id 
-                        ORDER BY aml.date, aml.move_id 
+                        PARTITION BY aml.partner_id
+                        ORDER BY aml.date, aml.move_id, aml.id
                         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-                    ) as cumulated_balance,
+                    ) AS cumulated_balance,
+
                     aml.partner_id,
                     aml.account_id,
                     aml.company_id,
                     rc.id as company_currency_id
+
                 FROM account_move_line aml
                 INNER JOIN account_move am ON aml.move_id = am.id
                 INNER JOIN account_account aa ON aml.account_id = aa.id
                 INNER JOIN account_account_type aat ON aa.user_type_id = aat.id
                 INNER JOIN res_company comp ON aml.company_id = comp.id
                 INNER JOIN res_currency rc ON comp.currency_id = rc.id
+
                 WHERE am.state = 'posted'
                     AND aat.type IN ('payable', 'receivable')
                     AND aml.partner_id IS NOT NULL
+
                 ORDER BY aml.date DESC, aml.move_id DESC
             )
-        """ % self._table)
+        """)
+
 
     @api.depends_context('order_cumulated_balance', 'domain_cumulated_balance')
     def _compute_cumulated_amount_currency(self):
