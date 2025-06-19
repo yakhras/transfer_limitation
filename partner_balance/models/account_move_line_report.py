@@ -73,34 +73,20 @@ class AccountMoveLineReport(models.Model):
             )
         """)
 
-    @api.depends_context('order_cumulated_balance', 'domain_cumulated_balance')
+    @api.depends('partner_id', 'date', 'move_id', 'balance')
     def _compute_cumulated_balance(self):
-        if not self.env.context.get('order_cumulated_balance'):
-            for record in self:
-                record.cumulated_balance = 0
-            return
-
-        query = self._where_calc(list(self.env.context.get('domain_cumulated_balance') or []))
-        order_string = ", ".join(self._generate_order_by_inner(
-            self._table,
-            self.env.context.get('order_cumulated_balance'),
-            query,
-            reverse_direction=True
-        ))
-        from_clause, where_clause, where_clause_params = query.get_sql()
-
-        sql = f"""
-            SELECT {self._table}.id, SUM({self._table}.balance) OVER (
-                ORDER BY {order_string}
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            )
-            FROM {from_clause}
-            WHERE {where_clause or 'TRUE'}
         """
-        self.env.cr.execute(sql, where_clause_params)
-        result = dict(self.env.cr.fetchall())
-        for record in self:
-            record.cumulated_balance = result.get(record.id, 0.0)
+        Compute the cumulated balance dynamically for each partner based on date + move + id ordering.
+        This version does NOT depend on context.
+        """
+        grouped = {}
+        for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
+            key = rec.partner_id.id
+            if key not in grouped:
+                grouped[key] = 0.0
+            grouped[key] += rec.balance
+            rec.cumulated_balance = grouped[key]
+
 
     @api.depends_context('order_cumulated_balance', 'domain_cumulated_balance')
     def _compute_cumulated_amount_currency(self):
