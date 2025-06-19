@@ -55,6 +55,22 @@ class AccountMoveLineReport(models.Model):
         store=False,
     )
 
+    balance_amount = fields.Monetary(
+        string='Balance Amount',
+        compute='_compute_balance_amount',
+        currency_field='currency_id',
+        store=False,
+    )
+
+    @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
+    def _compute_balance_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.balance_amount = rec.cumulated_balance
+            else:
+                rec.balance_amount = rec.cumulated_balance_amount_currency
+
+
     @api.depends('credit', 'amount_currency', 'currency_id')
     def _compute_credit_amount(self):
         for rec in self:
