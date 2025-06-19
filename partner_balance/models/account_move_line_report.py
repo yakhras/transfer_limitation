@@ -141,3 +141,32 @@ class AccountMoveLineReport(models.Model):
             if 'balance' in fields and 'debit' in fields and 'credit' in fields:
                 group['balance'] = group.get('debit', 0) - group.get('credit', 0)
         return res
+
+
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    def action_view_move_line_report(self):
+        """Open Account Move Line Report for this partner"""
+        self.ensure_one()  # Ensure only one record is processed
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Account Move Line Report - {self.name}',
+            'res_model': 'account.move.line.report',
+            'view_mode': 'tree,form',
+            'domain': [('partner_id', '=', self.id)],
+            'context': {
+                'default_partner_id': self.id,
+                'search_default_group_by_account': 1,
+                'partner_name': self.name,  # Pass partner name for reference
+            },
+            'target': 'current',  # Open in current window
+        }
+
+    def get_move_line_count(self):
+        """Get count of move lines for this partner (for display purposes)"""
+        return self.env['account.move.line.report'].search_count([
+            ('partner_id', '=', self.id)
+        ])
