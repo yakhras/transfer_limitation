@@ -42,6 +42,22 @@ class AccountMoveLineReport(models.Model):
     company_id = fields.Many2one('res.company', string='Company', readonly=True)
     company_currency_id = fields.Many2one('res.currency', string='Company Currency', readonly=True)
 
+    debit_amount = fields.Monetary(
+    string='Debit Amount',
+    compute='_compute_debit_amount',
+    currency_field='currency_id',
+    store=False,
+)
+
+    @api.depends('debit', 'amount_currency', 'currency_id')
+    def _compute_debit_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.debit_amount = rec.debit
+            else:
+                rec.debit_amount = rec.amount_currency or 0.0
+
+
     def init(self):
         """Initialize the report view"""
         tools.drop_view_if_exists(self.env.cr, self._table)

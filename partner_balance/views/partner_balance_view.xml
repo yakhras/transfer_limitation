@@ -66,6 +66,7 @@
                     <field name="move_id"/>
                     <field name="name"/>
                     <field name="debit"/>
+                    <field name="debit_amount"/>
                     <field name="credit"/>
                     <field name="balance"/>
                     <field name="cumulated_balance"/>
