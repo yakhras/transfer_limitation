@@ -24,8 +24,17 @@ class AccountMoveLineReport(models.Model):
     # Additional useful fields for reporting
     partner_id = fields.Many2one('res.partner', string='Partner', readonly=True)
     account_id = fields.Many2one('account.account', string='Account', readonly=True)
-    journal_id = fields.Many2one('account.journal', string='Journal', readonly=True)
     company_id = fields.Many2one('res.company', string='Company', readonly=True)
+    company_currency_id = fields.Many2one('res.currency', string='Company Currency', readonly=True)
+    
+    # New cumulated amount currency field
+    cumulated_balance_amount_currency = fields.Monetary(
+        string='Cumulated Amount Balance', 
+        store=False,
+        currency_field='company_currency_id',
+        compute='_compute_cumulated_amount_currency',
+        help="Cumulated amount currency balance depending on the domain and the order chosen in the view."
+    )
 
     def init(self):
         """Initialize the report view"""
@@ -49,18 +58,61 @@ class AccountMoveLineReport(models.Model):
                     ) as cumulated_balance,
                     aml.partner_id,
                     aml.account_id,
-                    aml.journal_id,
-                    aml.company_id
+                    aml.company_id,
+                    rc.id as company_currency_id
                 FROM account_move_line aml
                 INNER JOIN account_move am ON aml.move_id = am.id
                 INNER JOIN account_account aa ON aml.account_id = aa.id
                 INNER JOIN account_account_type aat ON aa.user_type_id = aat.id
+                INNER JOIN res_company comp ON aml.company_id = comp.id
+                INNER JOIN res_currency rc ON comp.currency_id = rc.id
                 WHERE am.state = 'posted'
                     AND aat.type IN ('payable', 'receivable')
                     AND aml.partner_id IS NOT NULL
                 ORDER BY aml.date DESC, aml.move_id DESC
             )
         """ % self._table)
+
+    @api.depends_context('order_cumulated_balance', 'domain_cumulated_balance')
+    def _compute_cumulated_amount_currency(self):
+        if not self.env.context.get('order_cumulated_balance'):
+            for record in self:
+                record.cumulated_balance_amount_currency = 0
+            return
+
+        # get the where clause from the domain
+        domain = list(self.env.context.get('domain_cumulated_balance') or [])
+        # add the non-TRY filter (exclude Turkish Lira)
+        domain.append(('currency_id.name', '!=', 'TRY'))
+
+        query = self._where_calc(domain)
+        order_string = ", ".join(self._generate_order_by_inner(
+            self._table,
+            self.env.context.get('order_cumulated_balance'),
+            query,
+            reverse_direction=True
+        ))
+
+        from_clause, where_clause, where_clause_params = query.get_sql()
+        
+        # Use the view table name instead of account_move_line
+        sql = """
+            SELECT report.id, SUM(report.amount_currency) OVER (
+                ORDER BY %(order_by)s
+                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            )
+            FROM %(table)s report
+            WHERE %(where)s
+        """ % {
+            'table': self._table,
+            'where': where_clause or 'TRUE',
+            'order_by': order_string
+        }
+
+        self.env.cr.execute(sql, where_clause_params)
+        result = {r[0]: r[1] for r in self.env.cr.fetchall()}
+        for record in self:
+            record.cumulated_balance_amount_currency = result.get(record.id, 0.0)
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
