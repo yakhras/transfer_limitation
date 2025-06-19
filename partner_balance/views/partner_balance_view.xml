@@ -3,7 +3,7 @@
 <odoo>
     <data>
 
-        <!-- <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
+        <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.custom.button</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
@@ -37,7 +37,7 @@
                     <field name="cumulated_balance" />
                 </tree>
             </field>
-        </record> -->
+        </record>
 
     <!-- Partner Form View Inheritance -->
         <record id="view_partner_form_move_line_report" model="ir.ui.view">
