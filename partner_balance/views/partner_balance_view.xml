@@ -10,7 +10,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//form/sheet" position="before">
                     <header>
-                        <button name="action_view_partner_report"
+                        <button name="action_view_move_line_report"
                         type="object"
                         string="View Report"
                         class="btn-primary"
@@ -39,22 +39,6 @@
             </field>
         </record>
 
-    <!-- Partner Form View Inheritance -->
-        <record id="view_partner_form_move_line_report" model="ir.ui.view">
-            <field name="name">res.partner.form.move.line.report</field>
-            <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_partner_form"/>
-            <field name="arch" type="xml">
-                <form position="inside">
-                    <header>
-                        <button name="action_view_move_line_report" 
-                                string="Move Line Report" 
-                                type="object" 
-                                class="btn-primary"/>
-                    </header>
-                </form>
-            </field>
-        </record>
 
     <!-- Tree View for Account Move Line Report -->
         <record id="view_account_move_line_report_tree" model="ir.ui.view">

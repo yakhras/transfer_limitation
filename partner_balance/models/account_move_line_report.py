@@ -21,46 +21,19 @@ class AccountMoveLineReport(models.Model):
     balance = fields.Monetary(string='Balance', readonly=True)
 
     # Computed instead of SQL
-    cumulated_balance = fields.Monetary(
-        string='Cumulated Balance',
-        compute='_compute_cumulated_balance',
-        store=False,
-        currency_field='company_currency_id',
-        help="Cumulated balance depending on the domain and the order chosen in the view."
-    )
+    cumulated_balance = fields.Monetary(string='Cumulated Balance', compute='_compute_cumulated_balance', store=False, currency_field='company_currency_id')
 
-    cumulated_balance_amount_currency = fields.Monetary(
-        string='Cumulated Amount Currency',
-        compute='_compute_cumulated_amount_currency',
-        store=False,
-        currency_field='company_currency_id',
-        help="Cumulated amount currency for non-TRY currencies only."
-    )
+    cumulated_balance_amount_currency = fields.Monetary(string='Cumulated Amount Currency', compute='_compute_cumulated_amount_currency', store=False, currency_field='company_currency_id')
 
     partner_id = fields.Many2one('res.partner', string='Partner', readonly=True)
     account_id = fields.Many2one('account.account', string='Account', readonly=True)
     company_id = fields.Many2one('res.company', string='Company', readonly=True)
     company_currency_id = fields.Many2one('res.currency', string='Company Currency', readonly=True)
 
-    debit_amount = fields.Monetary(
-        string='Debit Amount',
-        compute='_compute_debit_amount',
-        currency_field='currency_id',
-        store=False,
-    )
-    credit_amount = fields.Monetary(
-        string='Credit Amount',
-        compute='_compute_credit_amount',
-        currency_field='currency_id',
-        store=False,
-    )
+    debit_amount = fields.Monetary(string='Debit Amount', compute='_compute_debit_amount', currency_field='currency_id', store=False)
+    credit_amount = fields.Monetary(string='Credit Amount', compute='_compute_credit_amount', currency_field='currency_id', store=False)
+    balance_amount = fields.Monetary(string='Balance Amount', compute='_compute_balance_amount', currency_field='currency_id', store=False)
 
-    balance_amount = fields.Monetary(
-        string='Balance Amount',
-        compute='_compute_balance_amount',
-        currency_field='currency_id',
-        store=False,
-    )
 
     @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
     def _compute_balance_amount(self):
