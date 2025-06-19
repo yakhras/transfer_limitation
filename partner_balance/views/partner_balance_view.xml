@@ -3,7 +3,7 @@
 <odoo>
     <data>
 
-        <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
+        <!-- <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.custom.button</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
@@ -37,7 +37,52 @@
                     <field name="cumulated_balance" />
                 </tree>
             </field>
+        </record> -->
+
+    <!-- Partner Form View Inheritance -->
+        <record id="view_partner_form_move_line_report" model="ir.ui.view">
+            <field name="name">res.partner.form.move.line.report</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <form position="inside">
+                    <header>
+                        <button name="action_view_move_line_report" 
+                                string="Move Line Report" 
+                                type="object" 
+                                class="btn-primary"/>
+                    </header>
+                </form>
+            </field>
         </record>
+
+    <!-- Tree View for Account Move Line Report -->
+        <record id="view_account_move_line_report_tree" model="ir.ui.view">
+            <field name="name">account.move.line.report.tree</field>
+            <field name="model">account.move.line.report</field>
+            <field name="arch" type="xml">
+                <tree string="Account Move Line Report" create="false" delete="false" edit="false">
+                    <field name="date"/>
+                    <field name="move_id"/>
+                    <field name="journal_id"/>
+                    <field name="name"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="balance"/>
+                    <field name="cumulated_balance"/>
+                    <field name="amount_currency"/>
+                    <field name="currency_id"/>
+                </tree>
+            </field>
+        </record>
+
+    <!-- Action for Account Move Line Report -->
+        <record id="action_account_move_line_report" model="ir.actions.act_window">
+            <field name="name">Account Move Line Report</field>
+            <field name="res_model">account.move.line.report</field>
+            <field name="view_mode">tree</field>
+        </record>
+
 
         <!-- Tree View -->
         <record id="view_partner_balance_tree" model="ir.ui.view">
