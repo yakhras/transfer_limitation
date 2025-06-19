@@ -88,37 +88,40 @@ class AccountMoveLineReport(models.Model):
             rec.cumulated_balance = grouped[key]
 
 
-    @api.depends_context('order_cumulated_balance', 'domain_cumulated_balance')
+    @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_currency')
     def _compute_cumulated_amount_currency(self):
-        if not self.env.context.get('order_cumulated_balance'):
-            for record in self:
-                record.cumulated_balance_amount_currency = 0
-            return
-
-        domain = list(self.env.context.get('domain_cumulated_balance') or [])
-        domain.append(('currency_id.name', '!=', 'TRY'))
-
-        query = self._where_calc(domain)
-        order_string = ", ".join(self._generate_order_by_inner(
-            self._table,
-            self.env.context.get('order_cumulated_balance'),
-            query,
-            reverse_direction=True
-        ))
-        from_clause, where_clause, where_clause_params = query.get_sql()
-
-        sql = f"""
-            SELECT {self._table}.id, SUM({self._table}.amount_currency) OVER (
-                ORDER BY {order_string}
-                ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-            )
-            FROM {from_clause}
-            WHERE {where_clause or 'TRUE'}
         """
-        self.env.cr.execute(sql, where_clause_params)
-        result = dict(self.env.cr.fetchall())
-        for record in self:
-            record.cumulated_balance_amount_currency = result.get(record.id, 0.0)
+        Compute the cumulative amount in currency for non-TRY entries, grouped by partner and currency,
+        sorted by date, move_id, and id — no context required.
+        """
+        # Prepare a dictionary to track running totals for each (partner_id, currency_id)
+        grouped = {}
+
+        # Sort records to simulate SQL "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
+        sorted_records = sorted(
+            self,
+            key=lambda r: (
+                r.partner_id.id or 0,
+                r.currency_id.id or 0,
+                r.date or '',
+                r.move_id.id or 0,
+                r.id
+            )
+        )
+
+        for rec in sorted_records:
+            # Skip TRY currency records
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.cumulated_balance_amount_currency = 0
+                continue
+
+            key = (rec.partner_id.id, rec.currency_id.id)
+            if key not in grouped:
+                grouped[key] = 0.0
+
+            grouped[key] += rec.amount_currency or 0.0
+            rec.cumulated_balance_amount_currency = grouped[key]
+
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
