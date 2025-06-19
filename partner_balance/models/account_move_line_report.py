@@ -43,11 +43,28 @@ class AccountMoveLineReport(models.Model):
     company_currency_id = fields.Many2one('res.currency', string='Company Currency', readonly=True)
 
     debit_amount = fields.Monetary(
-    string='Debit Amount',
-    compute='_compute_debit_amount',
-    currency_field='currency_id',
-    store=False,
-)
+        string='Debit Amount',
+        compute='_compute_debit_amount',
+        currency_field='currency_id',
+        store=False,
+    )
+    credit_amount = fields.Monetary(
+        string='Credit Amount',
+        compute='_compute_credit_amount',
+        currency_field='currency_id',
+        store=False,
+    )
+
+    @api.depends('credit', 'amount_currency', 'currency_id')
+    def _compute_credit_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.credit_amount = rec.credit
+            elif rec.amount_currency and rec.amount_currency < 0:
+                rec.credit_amount = -rec.amount_currency  # Convert to positive
+            else:
+                rec.credit_amount = 0.0
+
 
     @api.depends('debit', 'amount_currency', 'currency_id')
     def _compute_debit_amount(self):

@@ -68,6 +68,7 @@
                     <field name="debit"/>
                     <field name="debit_amount"/>
                     <field name="credit"/>
+                    <field name="credit_amount"/>
                     <field name="balance"/>
                     <field name="cumulated_balance"/>
                     <field name="amount_currency"/>
