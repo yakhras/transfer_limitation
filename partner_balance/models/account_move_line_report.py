@@ -54,8 +54,10 @@ class AccountMoveLineReport(models.Model):
         for rec in self:
             if rec.currency_id and rec.currency_id.name == 'TRY':
                 rec.debit_amount = rec.debit
+            elif rec.amount_currency and rec.amount_currency > 0:
+                rec.debit_amount = rec.amount_currency
             else:
-                rec.debit_amount = rec.amount_currency or 0.0
+                rec.debit_amount = 0.0
 
 
     def init(self):
