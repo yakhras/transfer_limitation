@@ -65,15 +65,9 @@
                     <field name="date"/>
                     <field name="move_id"/>
                     <field name="name"/>
-                    <field name="debit"/>
                     <field name="debit_amount"/>
-                    <field name="credit"/>
                     <field name="credit_amount"/>
-                    <field name="balance"/>
                     <field name="balance_amount"/>
-                    <field name="cumulated_balance"/>
-                    <field name="amount_currency"/>
-                    <field name="cumulated_balance_amount_currency"/>
                     <field name="currency_id"/>
                 </tree>
             </field>
