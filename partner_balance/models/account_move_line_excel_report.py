@@ -8,142 +8,68 @@ import base64
 from datetime import datetime
 
 
-class AccountMoveLineExcelReport(models.TransientModel):
-    _name = 'account.move.line.excel.report'
-    _description = 'Account Move Line Excel Report Generator'
+class AccountMoveLineReport(models.Model):
+    _name = 'account.move.line.report'
+    _description = 'Account Move Line Report'
+    _auto = False
+    _order = 'date desc, move_id desc'
 
-    # Filter fields
-    partner_ids = fields.Many2many('res.partner', string='Partners')
-    account_ids = fields.Many2many('account.account', string='Accounts')
-    currency_ids = fields.Many2many('res.currency', string='Currencies')
-    date_from = fields.Date(string='Date From')
-    date_to = fields.Date(string='Date To')
-    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
-    
-    # Output
-    excel_file = fields.Binary(string='Excel File', readonly=True)
-    file_name = fields.Char(string='File Name', readonly=True)
-    state = fields.Selection([('draft', 'Draft'), ('done', 'Done')], default='draft')
+    date = fields.Date(string='Date', readonly=True)
+    move_id = fields.Many2one('account.move', string='Journal Entry', readonly=True)
+    name = fields.Char(string='Label', readonly=True)
+    amount_currency = fields.Monetary(string='Amount Currency', readonly=True)
+    currency_id = fields.Many2one('res.currency', string='Currency', readonly=True)
+    debit = fields.Monetary(string='Debit', readonly=True)
+    credit = fields.Monetary(string='Credit', readonly=True)
+    balance = fields.Monetary(string='Balance', readonly=True)
 
-    def generate_excel_report(self):
-        """Generate Excel report with multiple sheets"""
-        
-        # Build domain for filtering
-        domain = []
-        if self.partner_ids:
-            domain.append(('partner_id', 'in', self.partner_ids.ids))
-        if self.account_ids:
-            domain.append(('account_id', 'in', self.account_ids.ids))
-        if self.currency_ids:
-            domain.append(('currency_id', 'in', self.currency_ids.ids))
-        if self.date_from:
-            domain.append(('date', '>=', self.date_from))
-        if self.date_to:
-            domain.append(('date', '<=', self.date_to))
-        if self.company_id:
-            domain.append(('company_id', '=', self.company_id.id))
+    # Computed instead of SQL
+    cumulated_balance = fields.Monetary(string='Cumulated Balance', compute='_compute_cumulated_balance', store=False, currency_field='company_currency_id')
 
-        # Fetch data
-        move_lines = self.env['account.move.line.report'].search(domain, order='partner_id, date, move_id')
+    cumulated_balance_amount_currency = fields.Monetary(string='Cumulated Amount Currency', compute='_compute_cumulated_amount_currency', store=False, currency_field='company_currency_id')
+
+    partner_id = fields.Many2one('res.partner', string='Partner', readonly=True)
+    account_id = fields.Many2one('account.account', string='Account', readonly=True)
+    company_id = fields.Many2one('res.company', string='Company', readonly=True)
+    company_currency_id = fields.Many2one('res.currency', string='Company Currency', readonly=True)
+
+    debit_amount = fields.Monetary(string='Debit Amount', compute='_compute_debit_amount', currency_field='currency_id', store=False)
+    credit_amount = fields.Monetary(string='Credit Amount', compute='_compute_credit_amount', currency_field='currency_id', store=False)
+    balance_amount = fields.Monetary(string='Balance Amount', compute='_compute_balance_amount', currency_field='currency_id', store=False)
+
+    def export_to_excel(self):
+        """Export current records to Excel"""
+        # Get current domain from context or use all records
+        domain = self.env.context.get('active_domain', [])
+        records = self.search(domain)
         
         # Create Excel file
         output = BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet('Account Move Lines')
         
         # Define formats
         header_format = workbook.add_format({
             'bold': True,
-            'font_size': 12,
             'bg_color': '#4F81BD',
             'font_color': 'white',
-            'border': 1,
-            'align': 'center',
-            'valign': 'vcenter'
-        })
-        
-        subheader_format = workbook.add_format({
-            'bold': True,
-            'font_size': 11,
-            'bg_color': '#B8CCE4',
             'border': 1,
             'align': 'center'
         })
         
         date_format = workbook.add_format({
             'num_format': 'dd/mm/yyyy',
-            'border': 1,
-            'align': 'center'
+            'border': 1
         })
         
         currency_format = workbook.add_format({
             'num_format': '#,##0.00',
-            'border': 1,
-            'align': 'right'
+            'border': 1
         })
         
         text_format = workbook.add_format({
-            'border': 1,
-            'align': 'left',
-            'valign': 'top'
+            'border': 1
         })
-        
-        center_format = workbook.add_format({
-            'border': 1,
-            'align': 'center'
-        })
-        
-        total_format = workbook.add_format({
-            'bold': True,
-            'num_format': '#,##0.00',
-            'bg_color': '#FFFF99',
-            'border': 1,
-            'align': 'right'
-        })
-
-        # Sheet 1: Detailed Report
-        self._create_detailed_sheet(workbook, move_lines, header_format, subheader_format, 
-                                  date_format, currency_format, text_format, center_format, total_format)
-        
-        # Sheet 2: Partner Summary
-        self._create_partner_summary_sheet(workbook, move_lines, header_format, subheader_format,
-                                         currency_format, text_format, total_format)
-        
-        # Sheet 3: Currency Summary
-        self._create_currency_summary_sheet(workbook, move_lines, header_format, subheader_format,
-                                          currency_format, text_format, total_format)
-        
-        # Sheet 4: Account Summary
-        self._create_account_summary_sheet(workbook, move_lines, header_format, subheader_format,
-                                         currency_format, text_format, total_format)
-
-        workbook.close()
-        output.seek(0)
-        
-        # Generate filename
-        date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
-        partner_str = f"_{len(self.partner_ids)}_partners" if self.partner_ids else "_all_partners"
-        filename = f"Account_Move_Line_Report{partner_str}_{date_str}.xlsx"
-        
-        # Save file
-        self.write({
-            'excel_file': base64.b64encode(output.read()),
-            'file_name': filename,
-            'state': 'done'
-        })
-        
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'account.move.line.excel.report',
-            'view_mode': 'form',
-            'res_id': self.id,
-            'target': 'new',
-            'context': {'form_view_initial_mode': 'readonly'}
-        }
-
-    def _create_detailed_sheet(self, workbook, move_lines, header_format, subheader_format, 
-                             date_format, currency_format, text_format, center_format, total_format):
-        """Create detailed move lines sheet"""
-        worksheet = workbook.add_worksheet('Detailed Report')
         
         # Set column widths
         worksheet.set_column('A:A', 12)  # Date
@@ -151,226 +77,185 @@ class AccountMoveLineExcelReport(models.TransientModel):
         worksheet.set_column('C:C', 30)  # Partner
         worksheet.set_column('D:D', 25)  # Account
         worksheet.set_column('E:E', 35)  # Label
-        worksheet.set_column('F:F', 12)  # Currency
-        worksheet.set_column('G:G', 15)  # Debit Amount
-        worksheet.set_column('H:H', 15)  # Credit Amount
-        worksheet.set_column('I:I', 15)  # Balance Amount
-        worksheet.set_column('J:J', 15)  # Cumulated Balance
+        worksheet.set_column('F:F', 10)  # Currency
+        worksheet.set_column('G:G', 15)  # Debit
+        worksheet.set_column('H:H', 15)  # Credit
+        worksheet.set_column('I:I', 15)  # Balance
         
-        # Write header
+        # Write headers
         headers = [
-            'Date', 'Journal Entry', 'Partner', 'Account', 'Label', 
-            'Currency', 'Debit Amount', 'Credit Amount', 'Balance Amount', 'Cumulated Balance'
+            'Date', 'Journal Entry', 'Partner', 'Account', 'Label',
+            'Currency', 'Debit Amount', 'Credit Amount', 'Balance Amount'
         ]
         
         for col, header in enumerate(headers):
             worksheet.write(0, col, header, header_format)
         
         # Write data
-        row = 1
-        current_partner = None
-        partner_totals = {}
+        for row, record in enumerate(records, 1):
+            worksheet.write(row, 0, record.date, date_format)
+            worksheet.write(row, 1, record.move_id.name or '', text_format)
+            worksheet.write(row, 2, record.partner_id.name or '', text_format)
+            worksheet.write(row, 3, record.account_id.name or '', text_format)
+            worksheet.write(row, 4, record.name or '', text_format)
+            worksheet.write(row, 5, record.currency_id.name or '', text_format)
+            worksheet.write(row, 6, record.debit_amount or 0, currency_format)
+            worksheet.write(row, 7, record.credit_amount or 0, currency_format)
+            worksheet.write(row, 8, record.balance_amount or 0, currency_format)
         
-        for line in move_lines:
-            # Partner grouping
-            if current_partner != line.partner_id.id:
-                if current_partner is not None:
-                    # Write partner total
-                    worksheet.write(row, 2, 'TOTAL', total_format)
-                    worksheet.write(row, 6, partner_totals.get('debit', 0), total_format)
-                    worksheet.write(row, 7, partner_totals.get('credit', 0), total_format)
-                    worksheet.write(row, 8, partner_totals.get('balance', 0), total_format)
-                    row += 2
-                
-                current_partner = line.partner_id.id
-                partner_totals = {'debit': 0, 'credit': 0, 'balance': 0}
-                
-                # Write partner header
-                worksheet.write(row, 0, f"Partner: {line.partner_id.name}", subheader_format)
-                worksheet.merge_range(row, 0, row, 9, f"Partner: {line.partner_id.name}", subheader_format)
-                row += 1
-            
-            # Write line data
-            worksheet.write(row, 0, line.date, date_format)
-            worksheet.write(row, 1, line.move_id.name or '', center_format)
-            worksheet.write(row, 2, line.partner_id.name or '', text_format)
-            worksheet.write(row, 3, line.account_id.name or '', text_format)
-            worksheet.write(row, 4, line.name or '', text_format)
-            worksheet.write(row, 5, line.currency_id.name or '', center_format)
-            worksheet.write(row, 6, line.debit_amount or 0, currency_format)
-            worksheet.write(row, 7, line.credit_amount or 0, currency_format)
-            worksheet.write(row, 8, line.balance_amount or 0, currency_format)
-            worksheet.write(row, 9, line.balance_amount or 0, currency_format)  # Cumulated will be calculated
-            
-            # Update totals
-            partner_totals['debit'] += line.debit_amount or 0
-            partner_totals['credit'] += line.credit_amount or 0
-            partner_totals['balance'] += line.balance_amount or 0
-            
-            row += 1
+        workbook.close()
+        output.seek(0)
         
-        # Write final partner total
-        if current_partner is not None:
-            worksheet.write(row, 2, 'TOTAL', total_format)
-            worksheet.write(row, 6, partner_totals.get('debit', 0), total_format)
-            worksheet.write(row, 7, partner_totals.get('credit', 0), total_format)
-            worksheet.write(row, 8, partner_totals.get('balance', 0), total_format)
-
-    def _create_partner_summary_sheet(self, workbook, move_lines, header_format, subheader_format,
-                                    currency_format, text_format, total_format):
-        """Create partner summary sheet"""
-        worksheet = workbook.add_worksheet('Partner Summary')
+        # Generate filename
+        date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'account_move_lines_{date_str}.xlsx'
         
-        # Set column widths
-        worksheet.set_column('A:A', 30)  # Partner
-        worksheet.set_column('B:B', 15)  # Currency
-        worksheet.set_column('C:C', 15)  # Total Debit
-        worksheet.set_column('D:D', 15)  # Total Credit
-        worksheet.set_column('E:E', 15)  # Balance
-        worksheet.set_column('F:F', 10)  # Line Count
-        
-        # Write headers
-        headers = ['Partner', 'Currency', 'Total Debit', 'Total Credit', 'Balance', 'Transactions']
-        for col, header in enumerate(headers):
-            worksheet.write(0, col, header, header_format)
-        
-        # Group by partner and currency
-        partner_summary = {}
-        for line in move_lines:
-            key = (line.partner_id.id, line.currency_id.id if line.currency_id else 0)
-            if key not in partner_summary:
-                partner_summary[key] = {
-                    'partner_name': line.partner_id.name,
-                    'currency_name': line.currency_id.name if line.currency_id else 'No Currency',
-                    'total_debit': 0,
-                    'total_credit': 0,
-                    'count': 0
-                }
-            
-            partner_summary[key]['total_debit'] += line.debit_amount or 0
-            partner_summary[key]['total_credit'] += line.credit_amount or 0
-            partner_summary[key]['count'] += 1
-        
-        # Write data
-        row = 1
-        for key, data in sorted(partner_summary.items()):
-            balance = data['total_debit'] - data['total_credit']
-            
-            worksheet.write(row, 0, data['partner_name'], text_format)
-            worksheet.write(row, 1, data['currency_name'], text_format)
-            worksheet.write(row, 2, data['total_debit'], currency_format)
-            worksheet.write(row, 3, data['total_credit'], currency_format)
-            worksheet.write(row, 4, balance, currency_format)
-            worksheet.write(row, 5, data['count'], text_format)
-            row += 1
-
-    def _create_currency_summary_sheet(self, workbook, move_lines, header_format, subheader_format,
-                                     currency_format, text_format, total_format):
-        """Create currency summary sheet"""
-        worksheet = workbook.add_worksheet('Currency Summary')
-        
-        # Set column widths
-        worksheet.set_column('A:A', 15)  # Currency
-        worksheet.set_column('B:B', 15)  # Total Debit
-        worksheet.set_column('C:C', 15)  # Total Credit
-        worksheet.set_column('D:D', 15)  # Balance
-        worksheet.set_column('E:E', 12)  # Partners
-        worksheet.set_column('F:F', 12)  # Transactions
-        
-        # Write headers
-        headers = ['Currency', 'Total Debit', 'Total Credit', 'Balance', 'Partners', 'Transactions']
-        for col, header in enumerate(headers):
-            worksheet.write(0, col, header, header_format)
-        
-        # Group by currency
-        currency_summary = {}
-        for line in move_lines:
-            currency_id = line.currency_id.id if line.currency_id else 0
-            currency_name = line.currency_id.name if line.currency_id else 'No Currency'
-            
-            if currency_id not in currency_summary:
-                currency_summary[currency_id] = {
-                    'currency_name': currency_name,
-                    'total_debit': 0,
-                    'total_credit': 0,
-                    'partners': set(),
-                    'count': 0
-                }
-            
-            currency_summary[currency_id]['total_debit'] += line.debit_amount or 0
-            currency_summary[currency_id]['total_credit'] += line.credit_amount or 0
-            currency_summary[currency_id]['partners'].add(line.partner_id.id)
-            currency_summary[currency_id]['count'] += 1
-        
-        # Write data
-        row = 1
-        for currency_id, data in sorted(currency_summary.items()):
-            balance = data['total_debit'] - data['total_credit']
-            
-            worksheet.write(row, 0, data['currency_name'], text_format)
-            worksheet.write(row, 1, data['total_debit'], currency_format)
-            worksheet.write(row, 2, data['total_credit'], currency_format)
-            worksheet.write(row, 3, balance, currency_format)
-            worksheet.write(row, 4, len(data['partners']), text_format)
-            worksheet.write(row, 5, data['count'], text_format)
-            row += 1
-
-    def _create_account_summary_sheet(self, workbook, move_lines, header_format, subheader_format,
-                                    currency_format, text_format, total_format):
-        """Create account summary sheet"""
-        worksheet = workbook.add_worksheet('Account Summary')
-        
-        # Set column widths
-        worksheet.set_column('A:A', 25)  # Account
-        worksheet.set_column('B:B', 15)  # Currency
-        worksheet.set_column('C:C', 15)  # Total Debit
-        worksheet.set_column('D:D', 15)  # Total Credit
-        worksheet.set_column('E:E', 15)  # Balance
-        worksheet.set_column('F:F', 12)  # Partners
-        worksheet.set_column('G:G', 12)  # Transactions
-        
-        # Write headers
-        headers = ['Account', 'Currency', 'Total Debit', 'Total Credit', 'Balance', 'Partners', 'Transactions']
-        for col, header in enumerate(headers):
-            worksheet.write(0, col, header, header_format)
-        
-        # Group by account and currency
-        account_summary = {}
-        for line in move_lines:
-            key = (line.account_id.id, line.currency_id.id if line.currency_id else 0)
-            if key not in account_summary:
-                account_summary[key] = {
-                    'account_name': f"{line.account_id.code} - {line.account_id.name}",
-                    'currency_name': line.currency_id.name if line.currency_id else 'No Currency',
-                    'total_debit': 0,
-                    'total_credit': 0,
-                    'partners': set(),
-                    'count': 0
-                }
-            
-            account_summary[key]['total_debit'] += line.debit_amount or 0
-            account_summary[key]['total_credit'] += line.credit_amount or 0
-            account_summary[key]['partners'].add(line.partner_id.id)
-            account_summary[key]['count'] += 1
-        
-        # Write data
-        row = 1
-        for key, data in sorted(account_summary.items()):
-            balance = data['total_debit'] - data['total_credit']
-            
-            worksheet.write(row, 0, data['account_name'], text_format)
-            worksheet.write(row, 1, data['currency_name'], text_format)
-            worksheet.write(row, 2, data['total_debit'], currency_format)
-            worksheet.write(row, 3, data['total_credit'], currency_format)
-            worksheet.write(row, 4, balance, currency_format)
-            worksheet.write(row, 5, len(data['partners']), text_format)
-            worksheet.write(row, 6, data['count'], text_format)
-            row += 1
-
-    def download_excel_file(self):
-        """Download the generated Excel file"""
+        # Return download action
         return {
             'type': 'ir.actions.act_url',
-            'url': f'/web/content?model={self._name}&id={self.id}&field=excel_file&download=true&filename={self.file_name}',
+            'url': f'/web/content?model={self._name}&id=0&field=export_excel&download=true&filename={filename}&data={base64.b64encode(output.read()).decode()}',
             'target': 'self',
         }
+
+    @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
+    def _compute_balance_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.balance_amount = rec.cumulated_balance
+            else:
+                rec.balance_amount = rec.cumulated_balance_amount_currency
+
+    @api.depends('credit', 'amount_currency', 'currency_id')
+    def _compute_credit_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.credit_amount = rec.credit
+            elif rec.amount_currency and rec.amount_currency < 0:
+                rec.credit_amount = rec.amount_currency  # Convert to positive
+            else:
+                rec.credit_amount = 0.0
+
+    @api.depends('debit', 'amount_currency', 'currency_id')
+    def _compute_debit_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.debit_amount = rec.debit
+            elif rec.amount_currency and rec.amount_currency > 0:
+                rec.debit_amount = rec.amount_currency
+            else:
+                rec.debit_amount = 0.0
+
+    def init(self):
+        """Initialize the report view"""
+        tools.drop_view_if_exists(self.env.cr, self._table)
+        self.env.cr.execute(f"""
+            CREATE OR REPLACE VIEW {self._table} AS (
+                SELECT 
+                    aml.id,
+                    aml.date,
+                    aml.move_id,
+                    aml.name,
+                    aml.amount_currency,
+                    aml.currency_id,
+                    aml.debit,
+                    aml.credit,
+                    aml.balance,
+                    aml.partner_id,
+                    aml.account_id,
+                    aml.company_id,
+                    rc.id as company_currency_id
+                FROM account_move_line aml
+                INNER JOIN account_move am ON aml.move_id = am.id
+                INNER JOIN account_account aa ON aml.account_id = aa.id
+                INNER JOIN account_account_type aat ON aa.user_type_id = aat.id
+                INNER JOIN res_company comp ON aml.company_id = comp.id
+                INNER JOIN res_currency rc ON comp.currency_id = rc.id
+                WHERE am.state = 'posted'
+                    AND aat.type IN ('payable', 'receivable')
+                    AND aml.partner_id IS NOT NULL
+            )
+        """)
+
+    @api.depends('partner_id', 'date', 'move_id', 'balance')
+    def _compute_cumulated_balance(self):
+        """
+        Compute the cumulated balance dynamically for each partner based on date + move + id ordering.
+        This version does NOT depend on context.
+        """
+        grouped = {}
+        for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
+            key = rec.partner_id.id
+            if key not in grouped:
+                grouped[key] = 0.0
+            grouped[key] += rec.balance
+            rec.cumulated_balance = grouped[key]
+
+    @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_currency')
+    def _compute_cumulated_amount_currency(self):
+        """
+        Compute the cumulative amount in currency for non-TRY entries, grouped by partner and currency,
+        sorted by date, move_id, and id — no context required.
+        """
+        # Prepare a dictionary to track running totals for each (partner_id, currency_id)
+        grouped = {}
+
+        # Sort records to simulate SQL "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
+        sorted_records = sorted(
+            self,
+            key=lambda r: (
+                r.partner_id.id or 0,
+                r.currency_id.id or 0,
+                r.date or '',
+                r.move_id.id or 0,
+                r.id
+            )
+        )
+
+        for rec in sorted_records:
+            # Skip TRY currency records
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.cumulated_balance_amount_currency = 0
+                continue
+
+            key = (rec.partner_id.id, rec.currency_id.id)
+            if key not in grouped:
+                grouped[key] = 0.0
+
+            grouped[key] += rec.amount_currency or 0.0
+            rec.cumulated_balance_amount_currency = grouped[key]
+
+    @api.model
+    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+        res = super().read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
+        for group in res:
+            if 'balance' in fields and 'debit' in fields and 'credit' in fields:
+                group['balance'] = group.get('debit', 0) - group.get('credit', 0)
+        return res
+
+
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    def action_view_move_line_report(self):
+        """Open Account Move Line Report for this partner"""
+        self.ensure_one()  # Ensure only one record is processed
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Account Move Line Report - {self.name}',
+            'res_model': 'account.move.line.report',
+            'view_mode': 'tree,form',
+            'domain': [('partner_id', '=', self.id)],
+            'context': {
+                'default_partner_id': self.id,
+                'search_default_group_by_account': 1,
+                'partner_name': self.name,  # Pass partner name for reference
+            },
+            'target': 'current',  # Open in current window
+        }
+
+    def get_move_line_count(self):
+        """Get count of move lines for this partner (for display purposes)"""
+        return self.env['account.move.line.report'].search_count([
+            ('partner_id', '=', self.id)
+        ])

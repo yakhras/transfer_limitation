@@ -3,6 +3,28 @@
 <odoo>
     <data>
 
+        <record id="view_account_move_line_report_tree" model="ir.ui.view">
+            <field name="name">account.move.line.report.tree</field>
+            <field name="model">account.move.line.report</field>
+            <field name="arch" type="xml">
+                <tree string="Account Move Line Report" create="false" delete="false" edit="false">
+                    <header>
+                        <button name="export_to_excel" 
+                                string="Export to Excel" 
+                                type="object" 
+                                class="btn-primary"/>
+                    </header>
+                    <field name="date"/>
+                    <field name="move_id"/>
+                    <field name="name"/>
+                    <field name="debit_amount"/>
+                    <field name="credit_amount"/>
+                    <field name="balance_amount"/>
+                    <field name="currency_id"/>
+                </tree>
+            </field>
+        </record>
+
         <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.custom.button</field>
             <field name="model">res.partner</field>
@@ -142,184 +164,5 @@
         <!-- Menu Item -->
         <menuitem id="menu_partner_balance" name="Partner Balances" action="action_partner_balance" parent="point_of_sale.menu_point_rep" sequence="10"/>
 
-        <record id="view_account_move_line_excel_report_form" model="ir.ui.view">
-            <field name="name">account.move.line.excel.report.form</field>
-            <field name="model">account.move.line.excel.report</field>
-            <field name="arch" type="xml">
-                <form string="Account Move Line Excel Report">
-                    <header>
-                        <button name="generate_excel_report" 
-                                string="Generate Excel Report" 
-                                type="object" 
-                                class="btn-primary"
-                                attrs="{'invisible': [('state', '=', 'done')]}"/>
-                        <button name="download_excel_file" 
-                                string="Download Excel File" 
-                                type="object" 
-                                class="btn-success"
-                                attrs="{'invisible': [('state', '=', 'draft')]}"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
-                    </header>
-                    <sheet>
-                        <div class="oe_title">
-                            <h1>
-                                <field name="file_name" attrs="{'invisible': [('state', '=', 'draft')]}"/>
-                            </h1>
-                        </div>
-                        <group>
-                            <group string="Filters">
-                                <field name="company_id" options="{'no_create': True}"/>
-                                <field name="date_from"/>
-                                <field name="date_to"/>
-                                <field name="partner_ids" widget="many2many_tags" options="{'no_create': True}"/>
-                                <field name="account_ids" widget="many2many_tags" options="{'no_create': True}"/>
-                                <field name="currency_ids" widget="many2many_tags" options="{'no_create': True}"/>
-                            </group>
-                            <group string="Generated File" attrs="{'invisible': [('state', '=', 'draft')]}">
-                                <field name="excel_file" filename="file_name" attrs="{'invisible': [('state', '=', 'draft')]}"/>
-                            </group>
-                        </group>
-                        <div class="oe_clear"/>
-                        <div class="alert alert-info" role="alert" attrs="{'invisible': [('state', '=', 'done')]}">
-                            <strong>Instructions:</strong>
-                            <ul>
-                                <li>Select your desired filters (optional)</li>
-                                <li>Click "Generate Excel Report" to create the report</li>
-                                <li>The Excel file will contain 4 sheets:
-                                    <ul>
-                                        <li><strong>Detailed Report:</strong> All move lines grouped by partner</li>
-                                        <li><strong>Partner Summary:</strong> Totals by partner and currency</li>
-                                        <li><strong>Currency Summary:</strong> Totals by currency</li>
-                                        <li><strong>Account Summary:</strong> Totals by account and currency</li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="alert alert-success" role="alert" attrs="{'invisible': [('state', '=', 'draft')]}">
-                            <strong>Report Generated Successfully!</strong><br/>
-                            Click "Download Excel File" to save the report to your computer.
-                        </div>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <!-- Excel Report Wizard Action -->
-        <record id="action_account_move_line_excel_report" model="ir.actions.act_window">
-            <field name="name">Account Move Line Excel Report</field>
-            <field name="res_model">account.move.line.excel.report</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-            <field name="view_id" ref="view_account_move_line_excel_report_form"/>
-        </record>
-
-        <!-- Menu Item -->
-        <menuitem id="menu_account_move_line_excel_report"
-                  name="Account Move Line Excel Report"
-                  parent="account.menu_finance_reports"
-                  action="action_account_move_line_excel_report"
-                  sequence="50"/>
-
-        <!-- Add Excel Export button to existing tree view -->
-        <record id="view_account_move_line_report_tree_excel" model="ir.ui.view">
-            <field name="name">account.move.line.report.tree.excel</field>
-            <field name="model">account.move.line.report</field>
-            <field name="inherit_id" ref="view_account_move_line_report_tree"/>
-            <field name="arch" type="xml">
-                <tree position="attributes">
-                    <attribute name="toolbar">1</attribute>
-                </tree>
-                <tree position="inside">
-                    <header>
-                        <button name="%(action_account_move_line_excel_report)d" 
-                                string="Export to Excel" 
-                                type="action" 
-                                class="btn-primary"/>
-                    </header>
-                </tree>
-            </field>
-        </record>
-
-        <!-- Add Excel Export button to Partner form -->
-        <record id="view_partner_form_excel_report" model="ir.ui.view">
-            <field name="name">res.partner.form.excel.report</field>
-            <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_partner_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//div[@name='button_box']" position="inside">
-                    <button name="action_partner_excel_report" 
-                            type="object" 
-                            class="oe_stat_button" 
-                            icon="fa-file-excel-o"
-                            attrs="{'invisible': [('is_company', '=', False), ('parent_id', '!=', False)]}">
-                        <div class="o_field_widget o_stat_info">
-                            <span class="o_stat_text">Excel Report</span>
-                        </div>
-                    </button>
-                </xpath>
-            </field>
-        </record>
-
-        <!-- Search View for Excel Report Wizard -->
-        <record id="view_account_move_line_excel_report_search" model="ir.ui.view">
-            <field name="name">account.move.line.excel.report.search</field>
-            <field name="model">account.move.line.excel.report</field>
-            <field name="arch" type="xml">
-                <search string="Excel Reports">
-                    <field name="file_name"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
-                    <field name="partner_ids"/>
-                    <field name="company_id"/>
-                    <filter string="Generated" name="generated" domain="[('state', '=', 'done')]"/>
-                    <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
-                    <group expand="0" string="Group By">
-                        <filter string="State" name="group_by_state" context="{'group_by': 'state'}"/>
-                        <filter string="Company" name="group_by_company" context="{'group_by': 'company_id'}"/>
-                        <filter string="Date From" name="group_by_date_from" context="{'group_by': 'date_from'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-        <!-- Tree View for Excel Report History -->
-        <record id="view_account_move_line_excel_report_tree" model="ir.ui.view">
-            <field name="name">account.move.line.excel.report.tree</field>
-            <field name="model">account.move.line.excel.report</field>
-            <field name="arch" type="xml">
-                <tree string="Excel Reports" create="false">
-                    <field name="file_name"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
-                    <field name="partner_ids" widget="many2many_tags"/>
-                    <field name="company_id"/>
-                    <field name="state"/>
-                    <field name="create_date"/>
-                    <button name="download_excel_file" 
-                            string="Download" 
-                            type="object" 
-                            class="btn-link"
-                            attrs="{'invisible': [('state', '=', 'draft')]}"/>
-                </tree>
-            </field>
-        </record>
-
-        <!-- Action for Excel Report History -->
-        <record id="action_account_move_line_excel_report_history" model="ir.actions.act_window">
-            <field name="name">Excel Report History</field>
-            <field name="res_model">account.move.line.excel.report</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[('state', '=', 'done')]</field>
-            <field name="context">{'search_default_generated': 1}</field>
-        </record>
-
-        <!-- Menu Item for History -->
-        <menuitem id="menu_account_move_line_excel_report_history"
-                  name="Excel Report History"
-                  parent="account.menu_finance_reports"
-                  action="action_account_move_line_excel_report_history"
-                  sequence="51"/>
-
-        
     </data>
 </odoo>
