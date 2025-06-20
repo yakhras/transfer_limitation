@@ -224,7 +224,7 @@
         <record id="view_account_move_line_report_tree_excel" model="ir.ui.view">
             <field name="name">account.move.line.report.tree.excel</field>
             <field name="model">account.move.line.report</field>
-            <field name="inherit_id" ref="view_account_move_line_report_tree"/>
+            <field name="inherit_id" ref="partner_balance.view_account_move_line_report_tree"/>
             <field name="arch" type="xml">
                 <tree position="attributes">
                     <attribute name="toolbar">1</attribute>
