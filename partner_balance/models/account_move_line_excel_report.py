@@ -45,7 +45,7 @@ class AccountMoveLineReport(models.Model):
         
         # Create Excel file
         output = BytesIO()
-        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        workbook = xlsxwriter.Workbook(output, {'in_memory': False})
         worksheet = workbook.add_worksheet('Account Move Lines')
         
         # Define formats
