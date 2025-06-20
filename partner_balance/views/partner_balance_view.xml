@@ -3,27 +3,6 @@
 <odoo>
     <data>
 
-        <record id="view_account_move_line_report_tree" model="ir.ui.view">
-            <field name="name">account.move.line.report.tree</field>
-            <field name="model">account.move.line.report</field>
-            <field name="arch" type="xml">
-                <tree string="Account Move Line Report" create="false" delete="false" edit="false">
-                    <header>
-                        <button name="export_to_excel" 
-                                string="Export to Excel" 
-                                type="object" 
-                                class="btn-primary"/>
-                    </header>
-                    <field name="date"/>
-                    <field name="move_id"/>
-                    <field name="name"/>
-                    <field name="debit_amount"/>
-                    <field name="credit_amount"/>
-                    <field name="balance_amount"/>
-                    <field name="currency_id"/>
-                </tree>
-            </field>
-        </record>
 
         <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.custom.button</field>
@@ -67,7 +46,7 @@
             <field name="name">account.move.line.report.tree</field>
             <field name="model">account.move.line.report</field>
             <field name="arch" type="xml">
-                <tree string="Account Move Line Report" create="false" delete="false" edit="false">
+                <tree string="Account Move Line Report" create="false" delete="false" edit="false" js_class="partner_balance">
                     <field name="date"/>
                     <field name="move_id"/>
                     <field name="name"/>
