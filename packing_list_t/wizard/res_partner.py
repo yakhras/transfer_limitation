@@ -94,7 +94,7 @@ class ResPartnerSaleReport(models.TransientModel):
         tmp_logo_file.write(logo_data)
         tmp_logo_file.close()
         worksheet.set_header(
-            '&L&B&14%s\n\n\n&R&G' % (sale_order.company_id.name or ''),
+            '&L%s&R&G' % left_header_content,
             {
                 'image_right': tmp_logo_file.name,
                 'image_right_height': 40,
@@ -134,6 +134,8 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.zip,
             sale_order.company_id.country_id.name if sale_order.company_id.country_id else None,
         ])
+        seller_address = ", ".join(seller_address_parts)
+        left_header_content = f"&B&14{sale_order.company_id.name}\n{seller_address}"
         buyer_address_parts = filter(None, [
             sale_order.partner_shipping_id.street,
             sale_order.partner_shipping_id.street2,
