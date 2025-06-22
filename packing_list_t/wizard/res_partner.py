@@ -79,11 +79,11 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.fit_to_pages(1, 0)
 
         # Styles
-        font10 = {'font_size': 14}
+        font10 = {'font_size': 11}
         font10_format = workbook.add_format(font10)
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
-        wrap_format = workbook.add_format({'font_size': 14, 'text_wrap': True})
+        wrap_format = workbook.add_format({'font_size': 11, 'text_wrap': True})
 
 
         # Header and Footer
@@ -153,7 +153,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # Order Lines Table
         order_lines = sale_order.order_line
-        headers = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
+        headers = ["Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
         worksheet.write_row(19, 1, headers, header_format)
 
         # Track max widths (based on header lengths)
@@ -161,7 +161,6 @@ class ResPartnerSaleReport(models.TransientModel):
 
         for idx, line in enumerate(order_lines, start=20):
             data = [
-                str(idx - 5),
                 line.product_id.display_name or "",
                 str(line.product_uom_qty),
                 line.product_packaging_id.name or "",
