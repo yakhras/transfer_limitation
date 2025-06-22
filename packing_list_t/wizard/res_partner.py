@@ -126,8 +126,8 @@ class ResPartnerSaleReport(models.TransientModel):
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
         worksheet.write('A8', "Date:", bold_format)
         worksheet.write('B8', date, font10_format)
-        worksheet.write('D8', "Order No:", bold_format)
-        worksheet.write('E8', sale_order.name, wrap_format)
+        worksheet.write('C8', "Order No:", bold_format)
+        worksheet.write('D8', sale_order.name, wrap_format)
 
         # Seller and Buyer Information
         row = 10 
@@ -158,9 +158,14 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.merge_range(11, 3, 11, 4, buyer_address, wrap_format)
 
         row += 1
+        if sale_order.company_id.phone:
+            worksheet.write(row, col_seller, "Phone:", bold_format)
+            worksheet.write(row, col_seller + 1, sale_order.company_id.phone or '', font10_format)
+            
         if sale_order.partner_id.phone:
             worksheet.write(row, col_buyer, "Phone:", bold_format)
             worksheet.write(row, col_buyer+1, sale_order.partner_id.phone or '', font10_format)
+        
 
         
 
