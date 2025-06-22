@@ -79,7 +79,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.fit_to_pages(1, 0)
 
         # Styles
-        font10 = {'font_size': 13}
+        font10 = {'font_size': 14}
         font10_format = workbook.add_format(font10)
         bold_format = workbook.add_format({'align': 'left', 'valign': 'top', 'bold': True, **font10})
         border_format = workbook.add_format({'border': 1, **font10})
@@ -103,7 +103,7 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
         ]))
         address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
-        left_header_content = f"&B&14{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
+        left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
