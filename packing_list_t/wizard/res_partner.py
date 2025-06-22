@@ -104,7 +104,7 @@ class ResPartnerSaleReport(models.TransientModel):
         address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
 
         # Combine name and address lines with proper formatting
-        left_header_content = f"&B&14{company_name}&B0\n{address_line_1}\n{address_line_2}\n{address_line_3}"
+        left_header_content = f"&B&14{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
         # Set header with text on the left, logo on the right
         worksheet.set_header(
