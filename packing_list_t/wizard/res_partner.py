@@ -81,6 +81,7 @@ class ResPartnerSaleReport(models.TransientModel):
         # Styles
         font10 = {'font_size': 13}
         font10_format = workbook.add_format(font10)
+        bold_format = workbook.add_format({'bold': True, **font10})
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
@@ -121,7 +122,7 @@ class ResPartnerSaleReport(models.TransientModel):
         # Seller and Buyer Information
         row = 10 
         col_buyer = 0  
-        worksheet.write(row, col_buyer, "Buyer:", font10_format)
+        worksheet.write(row, col_buyer, "Buyer:", bold_format)
         worksheet.write(row, col_buyer +1, sale_order.partner_id.name or "", font10_format)
         row += 1
         
@@ -134,19 +135,21 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
         ])
         # 
-        worksheet.write(row, col_buyer, "Address:", font10_format)
+        worksheet.write(row, col_buyer, "Address:", bold_format)
         worksheet.write(row, col_buyer+1, ", ".join(buyer_address_parts), wrap_format)
 
         row += 1
-        worksheet.write(row, col_buyer, "Phone:", font10_format)
+        worksheet.write(row, col_buyer, "Phone:", bold_format)
         worksheet.write(row, col_buyer+1, sale_order.partner_id.phone or '', font10_format)
 
         
 
         # Order Information
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        worksheet.write('E11', f"Date: {date}", font10_format)
-        worksheet.write('E12', f"Order No: {sale_order.name}", font10_format)
+        worksheet.write('E11', "Date:", bold_format)
+        worksheet.write('F11', date, font10_format)
+        worksheet.write('E12', "Order No:", bold_format)
+        worksheet.write('F12', sale_order.name, font10_format)
 
         # Order Lines Table
         order_lines = sale_order.order_line
