@@ -84,6 +84,7 @@ class ResPartnerSaleReport(models.TransientModel):
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({'font_size': 11, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
+        merge_format = workbook.add_format({'font_size': 11,'align': 'left','valign': 'top'})
 
 
         # Header and Footer
@@ -141,7 +142,9 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
         ])
         worksheet.write(row, col_seller, ", ".join(seller_address_parts), wrap_format)
-        worksheet.write(row, col_buyer, ", ".join(buyer_address_parts), wrap_format)
+        worksheet.merge_range(row, col_buyer, row, col_buyer + 1, ", ".join(buyer_address_parts), wrap_format)
+
+        # worksheet.write(row, col_buyer, ", ".join(buyer_address_parts), wrap_format)
         row += 1
         worksheet.write(row, col_seller, f"Phone: {sale_order.company_id.phone or ''}", font10_format)
         worksheet.write(row, col_buyer, f"Phone: {sale_order.partner_id.phone or ''}", font10_format)
