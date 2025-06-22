@@ -124,14 +124,14 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # Order Information
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        worksheet.write('B8', "Date:", bold_format)
-        worksheet.write('C8', date, font10_format)
-        worksheet.write('E8', "Order No:", bold_format)
-        worksheet.write('F8', sale_order.name, wrap_format)
+        worksheet.write('A8', "Date:", bold_format)
+        worksheet.write('B8', date, font10_format)
+        worksheet.write('D8', "Order No:", bold_format)
+        worksheet.write('E8', sale_order.name, wrap_format)
 
         # Seller and Buyer Information
         row = 10 
-        col_buyer = 3 
+        col_buyer = 2 
         col_seller = 0 
         worksheet.write(row, col_seller, "Seller:", bold_format)
         worksheet.write(row, col_seller + 1, company_name or "", font10_format)
