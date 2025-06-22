@@ -120,17 +120,17 @@ class ResPartnerSaleReport(models.TransientModel):
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
 
-        worksheet.merge_range('B6:E6', "PACKING LIST", title_format)
+        worksheet.merge_range('B9:E9', "PACKING LIST", title_format)
 
         # Order Information
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        worksheet.write('A8', "Date:", bold_format)
-        worksheet.write('B8', date, font10_format)
-        worksheet.write('C8', "Order No:", bold_format)
-        worksheet.write('D8', sale_order.name, wrap_format)
+        worksheet.write('A11', "Date:", bold_format)
+        worksheet.write('B11', date, font10_format)
+        worksheet.write('C11', "Order No:", bold_format)
+        worksheet.write('D11', sale_order.name, wrap_format)
 
         # Seller and Buyer Information
-        row = 10 
+        row = 13 
         col_buyer = 2 
         col_seller = 0 
         worksheet.write(row, col_seller, "Seller:", bold_format)
@@ -155,7 +155,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, col_buyer, "Address:", bold_format)
         # worksheet.write(row, col_buyer+1, ", ".join(buyer_address_parts), wrap_format)
         buyer_address = ", ".join(buyer_address_parts)
-        worksheet.merge_range('D12:F12', buyer_address, wrap_format)
+        worksheet.merge_range('D15:F15', buyer_address, wrap_format)
 
         row += 1
         if sale_order.company_id.phone:
