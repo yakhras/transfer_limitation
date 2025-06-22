@@ -79,13 +79,13 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.fit_to_pages(1, 0)
 
         # Styles
-        font10 = {'font_size': 14}
+        font10 = {'font_size': 18}
         font10_format = workbook.add_format(font10)
         bold_format = workbook.add_format({'align': 'left', 'valign': 'top', 'bold': True, **font10})
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
-        title_format = workbook.add_format({'font_size': 18, 'text_wrap': True, 'align': 'center', 'valign': 'center', 'bold': True})
+        title_format = workbook.add_format({'font_size': 26, 'text_wrap': True, 'align': 'center', 'valign': 'center', 'bold': True})
 
 
         # Header and Footer
