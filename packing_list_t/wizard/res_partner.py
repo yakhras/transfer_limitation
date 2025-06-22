@@ -70,7 +70,6 @@ class ResPartnerSaleReport(models.TransientModel):
         sale_order = self.env["sale.order"].browse(id)
         fp = BytesIO()
         file_name = "Packing List.xlsx"
-        
 
         # Create an Excel workbook and worksheet
         workbook = xlsxwriter.Workbook(fp, {"in_memory": True})
@@ -79,11 +78,11 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_margins(left=0.7, right=0.7, top=0.75, bottom=0.75)
         worksheet.fit_to_pages(1, 0)
 
-        # Style formats #
-        border_format = workbook.add_format({'border': 1})
+        # Style formats
+        font10_format = workbook.add_format({'font_size': 10})
+        border_format = workbook.add_format({'border': 1, 'font_size': 10})
 
-        # Header and Footer #
-        # Set the header with company logo and name
+        # Header and Footer
         logo_path = sale_order.company_id.logo
         logo_data = base64.b64decode(logo_path)
         tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
@@ -95,7 +94,7 @@ class ResPartnerSaleReport(models.TransientModel):
                 'image_right': tmp_logo_file.name,
             }
         )
-        # Set the footer with company address and VAT number
+
         footer_address = sale_order.company_id.street2 or ''
         if sale_order.company_id.street:
             footer_address += ', ' + sale_order.company_id.street
@@ -110,16 +109,16 @@ class ResPartnerSaleReport(models.TransientModel):
             '&C%s'
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
-        
-        # Seller and Buyer Information #
+
+        # Seller and Buyer Information
         row = 13  
         col_seller = 1  
         col_buyer = 5   
-        worksheet.write(row, col_seller, "Seller:")
-        worksheet.write(row, col_buyer, "Buyer:")
+        worksheet.write(row, col_seller, "Seller:", font10_format)
+        worksheet.write(row, col_buyer, "Buyer:", font10_format)
         row += 1
-        worksheet.write(row, col_seller, sale_order.company_id.name or "")
-        worksheet.write(row, col_buyer, sale_order.partner_id.name or "")
+        worksheet.write(row, col_seller, sale_order.company_id.name or "", font10_format)
+        worksheet.write(row, col_buyer, sale_order.partner_id.name or "", font10_format)
         row += 1
         seller_address_parts = filter(None, [
             sale_order.company_id.street,
@@ -137,29 +136,28 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.partner_shipping_id.zip,
             sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
         ])
-        worksheet.write(row, col_seller, ", ".join(seller_address_parts))
-        worksheet.write(row, col_buyer, ", ".join(buyer_address_parts))
+        worksheet.write(row, col_seller, ", ".join(seller_address_parts), font10_format)
+        worksheet.write(row, col_buyer, ", ".join(buyer_address_parts), font10_format)
         row += 1
-        worksheet.write(row, col_seller, f"Phone: {sale_order.company_id.phone or ''}")
-        worksheet.write(row, col_buyer, f"Phone: {sale_order.partner_id.phone or ''}")
+        worksheet.write(row, col_seller, f"Phone: {sale_order.company_id.phone or ''}", font10_format)
+        worksheet.write(row, col_buyer, f"Phone: {sale_order.partner_id.phone or ''}", font10_format)
 
-        # Order Information #
+        # Order Information
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        worksheet.write('B11', f"Date: {date}")
-        worksheet.write('F11', f"Order No: {sale_order.name}")
+        worksheet.write('B11', f"Date: {date}", font10_format)
+        worksheet.write('F11', f"Order No: {sale_order.name}", font10_format)
 
-        # Order Lines Table #
+        # Order Lines Table
         order_lines = sale_order.order_line
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
-        worksheet.write_row(18, 1, order_line_header, border_format)
-        for row_num, line in enumerate(order_lines, start=19):
+        worksheet.write_row(19, 1, order_line_header, border_format)
+        for row_num, line in enumerate(order_lines, start=20):
             worksheet.write(row_num, 1, row_num - 5, border_format)
             worksheet.write(row_num, 2, line.product_id.display_name, border_format)
             worksheet.write(row_num, 3, line.product_uom_qty, border_format)
             worksheet.write(row_num, 4, line.product_packaging_id.name, border_format)
             worksheet.write(row_num, 5, line.net_weight, border_format)
             worksheet.write(row_num, 6, line.gross_weight, border_format)
-
 
         workbook.close()
 
@@ -175,6 +173,6 @@ class ResPartnerSaleReport(models.TransientModel):
         return {
             "type": "ir.actions.act_url",
             "url": "/web/content/%s/%s/datas/%s"
-                   % ("ir.attachment", attachment_id.id, file_name),
+                % ("ir.attachment", attachment_id.id, file_name),
             "target": "self",
         }
