@@ -93,6 +93,16 @@ class ResPartnerSaleReport(models.TransientModel):
         tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
         tmp_logo_file.write(logo_data)
         tmp_logo_file.close()
+        seller_address_parts = filter(None, [
+            sale_order.company_id.street,
+            sale_order.company_id.street2,
+            sale_order.company_id.city,
+            sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
+            sale_order.company_id.zip,
+            sale_order.company_id.country_id.name if sale_order.company_id.country_id else None,
+        ])
+        seller_address = ", ".join(seller_address_parts)
+        left_header_content = f"&B&14{sale_order.company_id.name}\n{seller_address}"
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
             {
@@ -126,16 +136,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, col_seller, sale_order.company_id.name or "", font10_format)
         worksheet.write(row, col_buyer, sale_order.partner_id.name or "", font10_format)
         row += 1
-        seller_address_parts = filter(None, [
-            sale_order.company_id.street,
-            sale_order.company_id.street2,
-            sale_order.company_id.city,
-            sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
-            sale_order.company_id.zip,
-            sale_order.company_id.country_id.name if sale_order.company_id.country_id else None,
-        ])
-        seller_address = ", ".join(seller_address_parts)
-        left_header_content = f"&B&14{sale_order.company_id.name}\n{seller_address}"
+        
         buyer_address_parts = filter(None, [
             sale_order.partner_shipping_id.street,
             sale_order.partner_shipping_id.street2,
