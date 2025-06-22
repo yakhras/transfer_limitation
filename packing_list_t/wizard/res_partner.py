@@ -155,7 +155,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, col_buyer, "Address:", bold_format)
         # worksheet.write(row, col_buyer+1, ", ".join(buyer_address_parts), wrap_format)
         buyer_address = ", ".join(buyer_address_parts)
-        worksheet.merge_range(11, 3, 11, 4, ', '.join(buyer_address_parts), wrap_format)
+        worksheet.merge_range(11, 3, 11, 4, buyer_address, wrap_format)
 
         row += 1
         if sale_order.partner_id.phone:
