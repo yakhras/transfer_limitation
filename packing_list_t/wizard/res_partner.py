@@ -139,8 +139,9 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, col_buyer+1, ", ".join(buyer_address_parts), wrap_format)
 
         row += 1
-        worksheet.write(row, col_buyer, "Phone:", bold_format)
-        worksheet.write(row, col_buyer+1, sale_order.partner_id.phone or '', font10_format)
+        if sale_order.partner_id.phone:
+            worksheet.write(row, col_buyer, "Phone:", bold_format)
+            worksheet.write(row, col_buyer+1, sale_order.partner_id.phone or '', font10_format)
 
         
 
