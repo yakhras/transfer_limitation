@@ -79,8 +79,8 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.fit_to_pages(1, 0)
 
         # Style formats
-        font10_format = workbook.add_format({'font_size': 10})
-        border_format = workbook.add_format({'border': 1, 'font_size': 10})
+        font10_format = workbook.add_format({'font_size': 14})
+        border_format = workbook.add_format({'border': 1, 'font_size': 14})
 
         # Header and Footer
         logo_path = sale_order.company_id.logo
