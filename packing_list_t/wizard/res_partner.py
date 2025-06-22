@@ -169,9 +169,9 @@ class ResPartnerSaleReport(models.TransientModel):
                 str(line.net_weight),
                 str(line.gross_weight)
             ]
-            for col, val in enumerate(data, start=20):
+            for col, val in enumerate(data, start=0):
                 worksheet.write(idx, col, val, border_format)
-                col_widths[col - 1] = max(col_widths[col - 1], len(val))
+                # col_widths[col - 1] = max(col_widths[col - 1], len(val))
 
         # Set column widths with padding
         for i, width in enumerate(col_widths, start=1):
