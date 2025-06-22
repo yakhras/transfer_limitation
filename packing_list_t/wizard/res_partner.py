@@ -85,6 +85,7 @@ class ResPartnerSaleReport(models.TransientModel):
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
+        title_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'center', 'valign': 'center', 'bold': True})
 
 
         # Header and Footer
@@ -119,7 +120,7 @@ class ResPartnerSaleReport(models.TransientModel):
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
 
-        worksheet.merge_range(6, 1, 6, 4, "PACKING LIST", header_format)
+        worksheet.merge_range(6, 1, 6, 4, "PACKING LIST", title_format)
         # Seller and Buyer Information
         row = 10 
         col_buyer = 0  
