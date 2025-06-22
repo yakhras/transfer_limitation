@@ -162,6 +162,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
         for idx, line in enumerate(order_lines, start=1):
             data = [
+                str(idx),
                 line.product_id.display_name or "",
                 str(line.product_uom_qty),
                 line.product_packaging_id.name or "",
