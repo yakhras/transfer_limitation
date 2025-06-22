@@ -138,6 +138,8 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, col_buyer , "Buyer:", bold_format)
         worksheet.write(row, col_buyer + 1, sale_order.partner_id.name or "", font10_format)
         row += 1
+        worksheet.write(row, col_seller, "Address:", bold_format)
+        worksheet.write(row, col_seller + 1, ", ".join(address_line_3, address_line_2, address_line_1), wrap_format)
         
         buyer_address_parts = filter(None, [
             sale_order.partner_shipping_id.street,
