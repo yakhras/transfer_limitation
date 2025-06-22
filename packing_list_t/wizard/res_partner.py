@@ -154,7 +154,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # Order Lines Table
         order_lines = sale_order.order_line
-        headers = ["Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
+        headers = ["#", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
         worksheet.write_row(19, 1, headers, header_format)
 
         # Track max widths (based on header lengths)
@@ -162,13 +162,14 @@ class ResPartnerSaleReport(models.TransientModel):
 
         for idx, line in enumerate(order_lines, start=20):
             data = [
+                str(idx),
                 line.product_id.display_name or "",
                 str(line.product_uom_qty),
                 line.product_packaging_id.name or "",
                 str(line.net_weight),
                 str(line.gross_weight)
             ]
-            for col, val in enumerate(data, start=1):
+            for col, val in enumerate(data, start=0):
                 worksheet.write(idx, col, val, border_format)
                 col_widths[col - 1] = max(col_widths[col - 1], len(val))
 
