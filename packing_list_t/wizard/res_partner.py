@@ -149,7 +149,7 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.partner_shipping_id.zip,
             sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
         ])
-        worksheet.write(row, col_seller, ", ".join(seller_address_parts), wrap_format)
+        # worksheet.write(row, col_seller, ", ".join(seller_address_parts), wrap_format)
         worksheet.merge_range(row, col_buyer, row, col_buyer + 1, ", ".join(buyer_address_parts), wrap_format)
 
         # worksheet.write(row, col_buyer, ", ".join(buyer_address_parts), wrap_format)
