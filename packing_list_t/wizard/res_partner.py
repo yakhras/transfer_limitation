@@ -145,14 +145,14 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # Order Information #
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        worksheet.write('B7', f"Date: {date}")
-        worksheet.write('F7', f"Order No: {sale_order.name}")
+        worksheet.write('B11', f"Date: {date}")
+        worksheet.write('F11', f"Order No: {sale_order.name}")
 
         # Order Lines Table #
         order_lines = sale_order.order_line
         order_line_header = ["SR NO.", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
-        worksheet.write_row(14, 1, order_line_header, border_format)
-        for row_num, line in enumerate(order_lines, start=15):
+        worksheet.write_row(18, 1, order_line_header, border_format)
+        for row_num, line in enumerate(order_lines, start=19):
             worksheet.write(row_num, 1, row_num - 5, border_format)
             worksheet.write(row_num, 2, line.product_id.display_name, border_format)
             worksheet.write(row_num, 3, line.product_uom_qty, border_format)
