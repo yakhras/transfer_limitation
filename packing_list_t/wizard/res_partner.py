@@ -79,12 +79,11 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.fit_to_pages(1, 0)
 
         # Styles
-        font10 = {'font_size': 11}
+        font10 = {'font_size': 13}
         font10_format = workbook.add_format(font10)
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
-        wrap_format = workbook.add_format({'font_size': 11, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
-        merge_format = workbook.add_format({'font_size': 11,'align': 'left','valign': 'top'})
+        wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
 
 
         # Header and Footer
@@ -93,6 +92,7 @@ class ResPartnerSaleReport(models.TransientModel):
         tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
         tmp_logo_file.write(logo_data)
         tmp_logo_file.close()
+
         company_name = sale_order.company_id.name or ''
         address_line_1 = sale_order.company_id.street2 or ''
         address_line_2 = ", ".join(filter(None, [
@@ -102,16 +102,12 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
         ]))
         address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
-
-        # Combine name and address lines with proper formatting
         left_header_content = f"&B&14{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
-        # Set header with text on the left, logo on the right
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
             {
                 'image_right': tmp_logo_file.name,
-                'image_right_height': 30,  # optional: resize logo if needed
             }
         )
 
@@ -123,13 +119,10 @@ class ResPartnerSaleReport(models.TransientModel):
         )
 
         # Seller and Buyer Information
-        row = 13  
-        col_seller = 1  
-        col_buyer = 4   
-        worksheet.write(row, col_seller, "Seller:", font10_format)
+        row = 11 
+        col_buyer = 1  
         worksheet.write(row, col_buyer, "Buyer:", font10_format)
         row += 1
-        worksheet.write(row, col_seller, sale_order.company_id.name or "", font10_format)
         worksheet.write(row, col_buyer, sale_order.partner_id.name or "", font10_format)
         row += 1
         
@@ -141,18 +134,14 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.partner_shipping_id.zip,
             sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
         ])
-        # worksheet.write(row, col_seller, ", ".join(seller_address_parts), wrap_format)
-        worksheet.merge_range(row, col_buyer, row, col_buyer + 1, ", ".join(buyer_address_parts), wrap_format)
-
-        # worksheet.write(row, col_buyer, ", ".join(buyer_address_parts), wrap_format)
+        worksheet.write(row, col_buyer, ", ".join(buyer_address_parts), wrap_format)
         row += 1
-        worksheet.write(row, col_seller, f"Phone: {sale_order.company_id.phone or ''}", font10_format)
         worksheet.write(row, col_buyer, f"Phone: {sale_order.partner_id.phone or ''}", font10_format)
 
         # Order Information
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        worksheet.write('B11', f"Date: {date}", font10_format)
-        worksheet.write('E11', f"Order No: {sale_order.name}", font10_format)
+        worksheet.write('E11', f"Date: {date}", font10_format)
+        worksheet.write('E12', f"Order No: {sale_order.name}", font10_format)
 
         # Order Lines Table
         order_lines = sale_order.order_line
