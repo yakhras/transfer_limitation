@@ -83,6 +83,8 @@ class ResPartnerSaleReport(models.TransientModel):
         font10_format = workbook.add_format(font10)
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
+        wrap_format = workbook.add_format({'font_size': 14, 'text_wrap': True})
+
 
         # Header and Footer
         logo_path = sale_order.company_id.logo
@@ -138,8 +140,8 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.partner_shipping_id.zip,
             sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
         ])
-        worksheet.write(row, col_seller, ", ".join(seller_address_parts), font10_format)
-        worksheet.write(row, col_buyer, ", ".join(buyer_address_parts), font10_format)
+        worksheet.write(row, col_seller, ", ".join(seller_address_parts), wrap_format)
+        worksheet.write(row, col_buyer, ", ".join(buyer_address_parts), wrap_format)
         row += 1
         worksheet.write(row, col_seller, f"Phone: {sale_order.company_id.phone or ''}", font10_format)
         worksheet.write(row, col_buyer, f"Phone: {sale_order.partner_id.phone or ''}", font10_format)
@@ -173,7 +175,7 @@ class ResPartnerSaleReport(models.TransientModel):
         # Set column widths with padding
         for i, width in enumerate(col_widths, start=1):
             worksheet.set_column(i, i, width + 2)
-            
+
         workbook.close()
 
         attachment_id = self.env["ir.attachment"].create(
