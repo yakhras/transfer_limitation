@@ -85,7 +85,7 @@ class ResPartnerSaleReport(models.TransientModel):
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
-        title_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'center', 'valign': 'center', 'bold': True})
+        title_format = workbook.add_format({'font_size': 18, 'text_wrap': True, 'align': 'center', 'valign': 'center', 'bold': True})
 
 
         # Header and Footer
@@ -95,7 +95,7 @@ class ResPartnerSaleReport(models.TransientModel):
         tmp_logo_file.write(logo_data)
         tmp_logo_file.close()
 
-        company_name = sale_order.company_id.name or ''
+        company_name = sale_order.company_id.name
         address_line_1 = sale_order.company_id.street2 or ''
         address_line_2 = ", ".join(filter(None, [
             sale_order.company_id.street,
@@ -121,6 +121,13 @@ class ResPartnerSaleReport(models.TransientModel):
         )
 
         worksheet.merge_range(6, 1, 6, 4, "PACKING LIST", title_format)
+
+        # Order Information
+        date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
+        worksheet.write('B8', "Date:", bold_format)
+        worksheet.write('C8', date, font10_format)
+        worksheet.write('E8', "Order No:", bold_format)
+        worksheet.write('F8', sale_order.name, wrap_format)
         # Seller and Buyer Information
         row = 10 
         col_buyer = 0  
@@ -147,12 +154,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
         
 
-        # Order Information
-        date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        worksheet.write('E11', "Date:", bold_format)
-        worksheet.write('F11', date, font10_format)
-        worksheet.write('E12', "Order No:", bold_format)
-        worksheet.write('F12', sale_order.name, wrap_format)
+        
 
         # Order Lines Table
         order_lines = sale_order.order_line
