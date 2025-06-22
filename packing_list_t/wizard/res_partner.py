@@ -119,6 +119,7 @@ class ResPartnerSaleReport(models.TransientModel):
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
 
+        worksheet.merge_range(6, 1, 6, 4, "PACKING LIST", header_format)
         # Seller and Buyer Information
         row = 10 
         col_buyer = 0  
