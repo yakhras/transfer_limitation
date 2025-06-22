@@ -172,10 +172,7 @@ class ResPartnerSaleReport(models.TransientModel):
             row_num = start_row + i - 1
             for col, val in enumerate(data):
                 worksheet.write(row_num, col, val, border_format)
-                # Ensure col_widths is long enough
-                while len(col_widths) <= col:
-                    col_widths.append(0)
-                col_widths[col] = max(col_widths[col], len(val))
+                col_widths[col - 1] = max(col_widths[col - 1], len(val))
 
         # Set column widths with padding
         for i, width in enumerate(col_widths, start=1):
