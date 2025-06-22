@@ -93,21 +93,25 @@ class ResPartnerSaleReport(models.TransientModel):
         tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
         tmp_logo_file.write(logo_data)
         tmp_logo_file.close()
-        seller_address_parts = filter(None, [
+        company_name = sale_order.company_id.name or ''
+        address_line_1 = sale_order.company_id.street2 or ''
+        address_line_2 = ", ".join(filter(None, [
             sale_order.company_id.street,
-            sale_order.company_id.street2,
             sale_order.company_id.city,
-            sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
             sale_order.company_id.zip,
-            sale_order.company_id.country_id.name if sale_order.company_id.country_id else None,
-        ])
-        seller_address = ", ".join(seller_address_parts)
-        left_header_content = f"&B&14{sale_order.company_id.name}\n{seller_address}"
+            sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
+        ]))
+        address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
+
+        # Combine name and address lines with proper formatting
+        left_header_content = f"&B&14{company_name}&B0\n{address_line_1}\n{address_line_2}\n{address_line_3}"
+
+        # Set header with text on the left, logo on the right
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
             {
                 'image_right': tmp_logo_file.name,
-                'image_right_height': 40,
+                'image_right_height': 40,  # optional: resize logo if needed
             }
         )
 
