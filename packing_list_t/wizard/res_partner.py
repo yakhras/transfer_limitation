@@ -111,19 +111,11 @@ class ResPartnerSaleReport(models.TransientModel):
             '&L%s&R&G' % left_header_content,
             {
                 'image_right': tmp_logo_file.name,
-                'image_right_height': 40,  # optional: resize logo if needed
+                'image_right_height': 30,  # optional: resize logo if needed
             }
         )
 
-        footer_address = sale_order.company_id.street2 or ''
-        if sale_order.company_id.street:
-            footer_address += ', ' + sale_order.company_id.street
-        if sale_order.company_id.city:
-            footer_address += ', ' + sale_order.company_id.city
-        if sale_order.company_id.state_id:
-            footer_address += ', ' + sale_order.company_id.state_id.name
-        if sale_order.company_id.country_id:
-            footer_address += ', ' + sale_order.company_id.country_id.name
+        footer_address = sale_order.company_id.website
         worksheet.set_footer(
             '&LPage &P'
             '&C%s'
