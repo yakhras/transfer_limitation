@@ -160,7 +160,7 @@ class ResPartnerSaleReport(models.TransientModel):
         # Track max widths (based on header lengths)
         col_widths = [len(h) for h in headers]
 
-        for idx, line in enumerate(order_lines, start=1):
+        for idx, line in enumerate(order_lines, start=20):
             data = [
                 str(idx),
                 line.product_id.display_name or "",
