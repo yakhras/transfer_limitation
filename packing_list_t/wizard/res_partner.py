@@ -159,19 +159,23 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # Track max widths (based on header lengths)
         col_widths = [len(h) for h in headers]
-
-        for idx, line in enumerate(order_lines, start=20):
+        start_row = 20
+        for i, line in enumerate(order_lines, start=1):
             data = [
-                str(idx),
+                str(i),  # start numbering from 1
                 line.product_id.display_name or "",
                 str(line.product_uom_qty),
                 line.product_packaging_id.name or "",
                 str(line.net_weight),
                 str(line.gross_weight)
             ]
-            for col, val in enumerate(data, start=0):
-                worksheet.write(idx, col, val, border_format)
-                col_widths[col - 1] = max(col_widths[col - 1], len(val))
+            row_num = start_row + i - 1
+            for col, val in enumerate(data):
+                worksheet.write(row_num, col, val, border_format)
+                # Ensure col_widths is long enough
+                while len(col_widths) <= col:
+                    col_widths.append(0)
+                col_widths[col] = max(col_widths[col], len(val))
 
         # Set column widths with padding
         for i, width in enumerate(col_widths, start=1):
