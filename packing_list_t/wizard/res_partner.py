@@ -83,7 +83,7 @@ class ResPartnerSaleReport(models.TransientModel):
         font10_format = workbook.add_format(font10)
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
-        wrap_format = workbook.add_format({'font_size': 11, 'text_wrap': True})
+        wrap_format = workbook.add_format({'font_size': 11, 'text_wrap': True, 'align': 'center'})
 
 
         # Header and Footer
@@ -117,7 +117,7 @@ class ResPartnerSaleReport(models.TransientModel):
         # Seller and Buyer Information
         row = 13  
         col_seller = 1  
-        col_buyer = 5   
+        col_buyer = 4   
         worksheet.write(row, col_seller, "Seller:", font10_format)
         worksheet.write(row, col_buyer, "Buyer:", font10_format)
         row += 1
@@ -149,7 +149,7 @@ class ResPartnerSaleReport(models.TransientModel):
         # Order Information
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
         worksheet.write('B11', f"Date: {date}", font10_format)
-        worksheet.write('F11', f"Order No: {sale_order.name}", font10_format)
+        worksheet.write('E11', f"Order No: {sale_order.name}", font10_format)
 
         # Order Lines Table
         order_lines = sale_order.order_line
