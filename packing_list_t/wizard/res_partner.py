@@ -128,11 +128,15 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write('C8', date, font10_format)
         worksheet.write('E8', "Order No:", bold_format)
         worksheet.write('F8', sale_order.name, wrap_format)
+
         # Seller and Buyer Information
         row = 10 
-        col_buyer = 0  
-        worksheet.write(row, col_buyer, "Buyer:", bold_format)
-        worksheet.write(row, col_buyer +1, sale_order.partner_id.name or "", font10_format)
+        col_buyer = 3 
+        col_seller = 0 
+        worksheet.write(row, col_seller, "Seller:", bold_format)
+        worksheet.write(row, col_seller + 1, company_name or "", font10_format)
+        worksheet.write(row, col_buyer , "Buyer:", bold_format)
+        worksheet.write(row, col_buyer + 1, sale_order.partner_id.name or "", font10_format)
         row += 1
         
         buyer_address_parts = filter(None, [
