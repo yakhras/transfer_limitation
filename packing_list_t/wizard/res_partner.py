@@ -150,7 +150,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write('E11', "Date:", bold_format)
         worksheet.write('F11', date, font10_format)
         worksheet.write('E12', "Order No:", bold_format)
-        worksheet.write('F12', sale_order.name, font10_format)
+        worksheet.write('F12', sale_order.name, font10_format, wrap_format)
 
         # Order Lines Table
         order_lines = sale_order.order_line
