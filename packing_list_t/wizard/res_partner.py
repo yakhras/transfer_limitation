@@ -94,9 +94,10 @@ class ResPartnerSaleReport(models.TransientModel):
         tmp_logo_file.write(logo_data)
         tmp_logo_file.close()
         worksheet.set_header(
-            '&L&B&18%s&R&G' % (sale_order.company_id.name or ''),
+            '&L&B&14%s\n\n\n&R&G' % (sale_order.company_id.name or ''),
             {
                 'image_right': tmp_logo_file.name,
+                'image_right_height': 40,
             }
         )
 
