@@ -120,7 +120,7 @@ class ResPartnerSaleReport(models.TransientModel):
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
 
-        worksheet.merge_range(6, 1, 6, 4, "PACKING LIST", title_format)
+        worksheet.merge_range('B6:E6', "PACKING LIST", title_format)
 
         # Order Information
         date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
