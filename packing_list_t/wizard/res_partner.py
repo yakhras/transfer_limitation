@@ -83,7 +83,7 @@ class ResPartnerSaleReport(models.TransientModel):
         font10_format = workbook.add_format(font10)
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
-        wrap_format = workbook.add_format({'font_size': 11, 'text_wrap': True, 'align': 'center'})
+        wrap_format = workbook.add_format({'font_size': 11, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
 
 
         # Header and Footer
