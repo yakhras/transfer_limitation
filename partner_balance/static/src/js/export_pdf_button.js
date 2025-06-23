@@ -42,6 +42,8 @@ var DataExportExtended = DataExport.extend({
             },
             complete: framework.unblockUI,
             error: (error) => this.call('crash_manager', 'rpc_error', error),
+        }
+        ).then(() => {console.log(this.record.model)
         });
     },
 });
