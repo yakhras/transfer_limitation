@@ -8,7 +8,7 @@ from odoo import http
 from odoo.http import content_disposition, request, serialize_exception
 from odoo.tools import osutil, pycompat
 from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter
-
+from odoo.addons.web.controllers.main import ExportXlsxWriter as BaseExportXlsxWriter
     
 class ExcelExport(BaseExcelExport):
 
@@ -70,3 +70,10 @@ class ExcelExport(BaseExcelExport):
                     xlsx_writer.write_cell(row_index + 2, cell_index, cell_value)
 
         return xlsx_writer.value
+    
+
+class ExportXlsxWriter(BaseExportXlsxWriter):
+    def write_header(self):
+        for i, fieldname in enumerate(self.field_names):
+            self.write(1, i, fieldname, self.header_style)
+        self.worksheet.set_column(0, i, 30) # around 220 pixels
