@@ -1,13 +1,13 @@
 odoo.define('partner_balance.listpdf', function (require) {
     "use strict";
 
-var NewDataExport = require('web.DataExport') ;
+var DataExport = require('web.DataExport') ;
 
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
 var viewRegistry = require('web.view_registry');
 
-var DataExportExtended = NewDataExport.extend({
+var DataExportExtended = DataExport.extend({
     /**
      * Submit the user data and export the file
      * Extended to add console logging of data
@@ -82,59 +82,3 @@ viewRegistry.add('partner_balance', BalanceListView);
 return DataExportExtended;
 });
 
-
-
-
-
-odoo.define('web.DataExport', function (require) {
-"use strict";
-
-var config = require('web.config');
-var core = require('web.core');
-var Dialog = require('web.Dialog');
-var data = require('web.data');
-var framework = require('web.framework');
-var pyUtils = require('web.py_utils');
-
-var QWeb = core.qweb;
-var _t = core._t;
-
-var DataExport = Dialog.extend({
-    /**
-     * Submit the user data and export the file
-     *
-     * @private
-     */
-    _exportData(exportedFields, exportFormat, idsToExport) {
-
-        if (_.isEmpty(exportedFields)) {
-            Dialog.alert(this, _t("Please select fields to export..."));
-            return;
-        }
-        if (this.isCompatibleMode) {
-            exportedFields.unshift({ name: 'id', label: _t('External ID') });
-        }
-
-        framework.blockUI();
-        this.getSession().get_file({
-            url: '/web/export/' + exportFormat,
-            data: {
-                data: JSON.stringify({
-                    model: this.record.model,
-                    fields: exportedFields,
-                    ids: idsToExport,
-                    domain: this.domain,
-                    groupby: this.groupby,
-                    context: pyUtils.eval('contexts', [this.record.getContext()]),
-                    import_compat: this.isCompatibleMode,
-                })
-            },
-            complete: framework.unblockUI,
-            error: (error) => this.call('crash_manager', 'rpc_error', error),
-        });
-    },
-});
-
-return DataExport;
-
-});
