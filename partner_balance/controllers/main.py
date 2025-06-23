@@ -2,9 +2,11 @@
 
 import json
 import operator
-from odoo.tools import osutil, pycompat
+
+
 from odoo import http
 from odoo.http import content_disposition, request, serialize_exception
+from odoo.tools import osutil, pycompat
 from odoo.addons.web.controllers.main import GroupsTreeNode, ExportXlsxWriter
 
 
