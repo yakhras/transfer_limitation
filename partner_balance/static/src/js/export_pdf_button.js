@@ -24,7 +24,7 @@ var DataExportExtended = DataExport.extend({
         if (this.isCompatibleMode) {
             exportedFields.unshift({ name: 'id', label: _t('External ID') });
         }
-        console.log('exportedFields');
+        console.log('exportedFields', exportedFields);
         framework.blockUI();
         this.getSession().get_file({
             url: '/web/export/' + exportFormat,
