@@ -58,14 +58,14 @@ class ExcelExport(BaseExcelExport):
         )
     
     def from_data(self, fields, rows, model_name):
-        with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:  # +1 for model row
+        with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             # Write model name in the first row if provided
             if model_name:
                 xlsx_writer.write_cell(0, 0, f"Model: {model_name}")
             
-            # Write headers starting from row 1 (second row)
-            for col_index, field in enumerate(fields):
-                xlsx_writer.write_cell(1, col_index, field)
+            # # Write headers starting from row 1 (second row)
+            # for col_index, field in enumerate(fields):
+            #     xlsx_writer.write_cell(1, col_index, field)
             
             # Write data starting from row 2 (third row)
             for row_index, row in enumerate(rows):
