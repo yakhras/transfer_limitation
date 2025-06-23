@@ -8,23 +8,15 @@ from odoo import http
 from odoo.http import content_disposition, request, serialize_exception
 from odoo.tools import osutil, pycompat
 from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter
-from odoo.addons.web.controllers.main import ExportFormat as BaseExportFormat
 
+    
+class ExcelExport(BaseExcelExport):
 
-
-
-class ExportFormat(BaseExportFormat):
-
-    def from_data(self, fields, rows, model_name):
-        """ Conversion method from Odoo's export data to whatever the
-        current export class outputs
-
-        :params list fields: a list of fields to export
-        :params list rows: a list of records to export
-        :returns:
-        :rtype: bytes
-        """
-        raise NotImplementedError()
+    @http.route('/web/export/xlsx', type='http', auth="user")
+    @serialize_exception
+    def index(self, data):
+        return self.base(data)
+    
 
     def base(self, data):
         params = json.loads(data)
@@ -68,13 +60,6 @@ class ExportFormat(BaseExportFormat):
                                 osutil.clean_filename(self.filename(model) + self.extension))),
                      ('Content-Type', self.content_type)],
         )
-    
-class ExcelExport(BaseExcelExport):
-
-    @http.route('/web/export/xlsx', type='http', auth="user")
-    @serialize_exception
-    def index(self, data):
-        return self.base(data)
     
     def from_data(self, fields, rows, model_name):
         with ExportXlsxWriter(fields, len(rows) + 1) as xlsx_writer:  # +1 for model row
