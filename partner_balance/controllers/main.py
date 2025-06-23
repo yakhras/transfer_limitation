@@ -71,6 +71,10 @@ class ExportFormat(BaseExportFormat):
     
 class ExcelExport(BaseExcelExport):
 
+    @http.route('/web/export/xlsx', type='http', auth="user")
+    @serialize_exception
+    def index(self, data):
+        return self.base(data)
     
     def from_data(self, fields, rows, model_name):
         with ExportXlsxWriter(fields, len(rows) + 1) as xlsx_writer:  # +1 for model row
