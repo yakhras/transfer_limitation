@@ -4,12 +4,13 @@ import json
 import operator
 from odoo.tools import osutil, pycompat
 from odoo import http
-from odoo.http import content_disposition, request
+from odoo.http import content_disposition, request, serialize_exception
 from odoo.addons.web.controllers.main import GroupsTreeNode, ExportXlsxWriter
 
 
 
 class ExportFormat(object):
+
     def base(self, data):
         params = json.loads(data)
         model, fields, ids, domain, import_compat = \
@@ -54,6 +55,12 @@ class ExportFormat(object):
         )
     
 class ExcelExport(ExportFormat, http.Controller):
+
+    @http.route('/web/export/xlsx', type='http', auth="user")
+    @serialize_exception
+    def index(self, data):
+        return self.base(data)
+    
     def from_data(self, fields, rows, model_name):
         with ExportXlsxWriter(fields, len(rows) + 1) as xlsx_writer:  # +1 for model row
             # Write model name in the first row if provided
