@@ -43,7 +43,7 @@ var DataExportExtended = DataExport.extend({
             complete: framework.unblockUI,
             error: (error) => this.call('crash_manager', 'rpc_error', error),
         }),
-        console.log(this.record.getContext());
+        console.log(idsToExport);
     },
 });
 
