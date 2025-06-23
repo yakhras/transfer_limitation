@@ -23,6 +23,8 @@ class ExcelExport(BaseExcelExport):
         if not Model._is_an_ordinary_table():
             fields = [field for field in fields if field['name'] != 'id']
 
+        partner_name = params.get('context', {}).get('partner_name', '')
+
         field_names = [f['name'] for f in fields]
         if import_compat:
             columns_headers = field_names
@@ -47,7 +49,7 @@ class ExcelExport(BaseExcelExport):
 
             export_data = records.export_data(field_names).get('datas',[])
             # response_data = self.from_data(columns_headers, export_data)
-            response_data = self.from_data(columns_headers, export_data, params.get('context', {}).get('partner_name', ''))
+            response_data = self.from_data(columns_headers, export_data, partner_name)
 
         # TODO: call `clean_filename` directly in `content_disposition`?
         return request.make_response(response_data,
@@ -57,11 +59,11 @@ class ExcelExport(BaseExcelExport):
                      ('Content-Type', self.content_type)],
         )
     
-    def from_data(self, fields, rows, model_name):
+    def from_data(self, fields, rows, partner_name=None):
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             # Write model name in the first row if provided
-            if model_name:
-                xlsx_writer.write(0, 0, f"Model: {model_name}", xlsx_writer.header_style)
+            if partner_name:
+                xlsx_writer.write(0, 0, f"Model: {partner_name}", xlsx_writer.header_style)
             
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
