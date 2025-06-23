@@ -1,13 +1,13 @@
 odoo.define('partner_balance.listpdf', function (require) {
     "use strict";
 
-var DataExport = require('web.DataExport') ;
+var NewDataExport = require('web.DataExport') ;
 
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
 var viewRegistry = require('web.view_registry');
 
-var NewDataExport = DataExport.extend({
+var DataExportExtended = NewDataExport.extend({
     /**
      * Submit the user data and export the file
      * Extended to add console logging of data
@@ -79,7 +79,7 @@ var BalanceListView = ListView.extend({
 
 
 viewRegistry.add('partner_balance', BalanceListView);
-return NewDataExport;
+return DataExportExtended;
 });
 
 
