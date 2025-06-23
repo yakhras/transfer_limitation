@@ -54,7 +54,7 @@ class ExportFormat(object):
         )
     
 class ExcelExport(ExportFormat, http.Controller):
-    def from_data(self, fields, rows, model_name=None):
+    def from_data(self, fields, rows, model_name):
         with ExportXlsxWriter(fields, len(rows) + 1) as xlsx_writer:  # +1 for model row
             # Write model name in the first row if provided
             if model_name:
