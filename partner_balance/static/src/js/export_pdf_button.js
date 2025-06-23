@@ -6,6 +6,7 @@ var DataExport = require('web.DataExport') ;
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
 var viewRegistry = require('web.view_registry');
+var framework = require('web.framework');
 
 var DataExportExtended = DataExport.extend({
     /**
