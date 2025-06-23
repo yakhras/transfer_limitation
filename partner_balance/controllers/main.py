@@ -24,6 +24,7 @@ class ExcelExport(BaseExcelExport):
             fields = [field for field in fields if field['name'] != 'id']
 
         partner_name = params.get('context', {}).get('partner_name', '')
+        company_name = self.env['res.partner'].browse(params.get('context', {}).get('active_id', '')).company_id.name
 
         field_names = [f['name'] for f in fields]
         if import_compat:
@@ -49,7 +50,7 @@ class ExcelExport(BaseExcelExport):
 
             export_data = records.export_data(field_names).get('datas',[])
             # response_data = self.from_data(columns_headers, export_data)
-            response_data = self.from_data(columns_headers, export_data, partner_name)
+            response_data = self.from_data(columns_headers, export_data, company_name)
 
         # TODO: call `clean_filename` directly in `content_disposition`?
         return request.make_response(response_data,
@@ -63,7 +64,7 @@ class ExcelExport(BaseExcelExport):
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             # Write model name in the first row if provided
             if partner_name:
-                xlsx_writer.write(0, 0, f"Model: {partner_name}", xlsx_writer.header_style)
+                xlsx_writer.write(0, 0, f"Customer: {partner_name}", xlsx_writer.header_style)
             
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
