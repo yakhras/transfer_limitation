@@ -63,16 +63,10 @@ class ExcelExport(BaseExcelExport):
             if model_name:
                 xlsx_writer.write_cell(0, 0, f"Model: {model_name}")
             
-            # # Write headers starting from row 1 (second row)
-            # for col_index, field in enumerate(fields):
-            #     xlsx_writer.write_cell(1, col_index, field)
-            
-            # Write data starting from row 2 (third row)
             for row_index, row in enumerate(rows):
-                xlsx_writer.write_cell(1, 1, rows)
-                # for cell_index, cell_value in enumerate(row):
-                #     if isinstance(cell_value, (list, tuple)):
-                #         cell_value = pycompat.to_text(cell_value)
-                #     xlsx_writer.write_cell(row_index + 1, cell_index, cell_value)
+                for cell_index, cell_value in enumerate(row):
+                    if isinstance(cell_value, (list, tuple)):
+                        cell_value = pycompat.to_text(cell_value)
+                    xlsx_writer.write_cell(row_index + 2, cell_index, cell_value)
 
         return xlsx_writer.value
