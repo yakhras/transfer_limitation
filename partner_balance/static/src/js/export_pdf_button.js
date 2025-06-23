@@ -1,11 +1,42 @@
 odoo.define('partner_balance.listpdf', function (require) {
     "use strict";
 
+import DataExport from 'web.DataExport';
 
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
 var viewRegistry = require('web.view_registry');
 
+var NewDataExport = DataExport.extend({
+    _exportData(exportedFields, exportFormat, idsToExport) {
+
+        if (_.isEmpty(exportedFields)) {
+            Dialog.alert(this, _t("Please select fields to export..."));
+            return;
+        }
+        if (this.isCompatibleMode) {
+            exportedFields.unshift({ name: 'id', label: _t('External ID') });
+        }
+        console.log('exportedFields', exportedFields);
+        framework.blockUI();
+        this.getSession().get_file({
+            url: '/web/export/' + exportFormat,
+            data: {
+                data: JSON.stringify({
+                    model: this.record.model,
+                    fields: exportedFields,
+                    ids: idsToExport,
+                    domain: this.domain,
+                    groupby: this.groupby,
+                    context: pyUtils.eval('contexts', [this.record.getContext()]),
+                    import_compat: this.isCompatibleMode,
+                })
+            },
+            complete: framework.unblockUI,
+            error: (error) => this.call('crash_manager', 'rpc_error', error),
+        });
+    },
+});
 
 var ExportPdfButtonListController = ListController.extend({
     buttons_template: 'PartnerBalance.Buttons',
@@ -42,4 +73,5 @@ var BalanceListView = ListView.extend({
 
 
 viewRegistry.add('partner_balance', BalanceListView);
+return NewDataExport;
 });
