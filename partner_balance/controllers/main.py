@@ -72,6 +72,6 @@ class ExcelExport(BaseExcelExport):
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
                         cell_value = pycompat.to_text(cell_value)
-                    xlsx_writer.write_cell(row_index + 2, cell_index, cell_value)  # +2 to account for model and header rows
+                    xlsx_writer.write_cell(row_index + 2, cell_index + 2, cell_value)  # +2 to account for model and header rows
 
         return xlsx_writer.value
