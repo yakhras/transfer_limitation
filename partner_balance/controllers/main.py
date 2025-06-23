@@ -12,10 +12,6 @@ from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, Gro
     
 class ExcelExport(BaseExcelExport):
 
-    @http.route('/web/export/xlsx', type='http', auth="user")
-    @serialize_exception
-    def index(self, data):
-        return self.base(data)
     
 
     def base(self, data):
