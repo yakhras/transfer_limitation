@@ -7,12 +7,24 @@ import operator
 from odoo import http
 from odoo.http import content_disposition, request, serialize_exception
 from odoo.tools import osutil, pycompat
-from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter, ExportFormat as BaseExportFormat
+from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter
+from odoo.addons.web.controllers.main import ExportFormat as BaseExportFormat
 
 
 
 
 class ExportFormat(BaseExportFormat):
+
+    def from_data(self, fields, rows, model_name):
+        """ Conversion method from Odoo's export data to whatever the
+        current export class outputs
+
+        :params list fields: a list of fields to export
+        :params list rows: a list of records to export
+        :returns:
+        :rtype: bytes
+        """
+        raise NotImplementedError()
 
     def base(self, data):
         params = json.loads(data)
