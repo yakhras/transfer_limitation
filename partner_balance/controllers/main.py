@@ -5,7 +5,7 @@ import operator
 from odoo.tools import osutil, pycompat
 from odoo import http
 from odoo.http import content_disposition, request
-from odoo.addons.web.controllers.main import GroupsTreeNode, ExcelExportWriter
+from odoo.addons.web.controllers.main import GroupsTreeNode, ExportXlsxWriter
 
 
 
@@ -55,7 +55,7 @@ class ExportFormat(object):
     
 class ExcelExport(ExportFormat, http.Controller):
     def from_data(self, fields, rows, model_name=None):
-        with ExcelExportWriter(fields, len(rows) + 1) as xlsx_writer:  # +1 for model row
+        with ExportXlsxWriter(fields, len(rows) + 1) as xlsx_writer:  # +1 for model row
             # Write model name in the first row if provided
             if model_name:
                 xlsx_writer.write_cell(0, 0, f"Model: {model_name}")
