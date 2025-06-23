@@ -67,7 +67,19 @@ var ExportPdfButtonListController = ListController.extend({
                 window.location.href = action.url;
             }
         });
-    }
+    },
+    /**
+     * @returns {DataExportExtended} the export dialog widget
+     * @private
+     */
+    _getExportDialogWidget() {
+        let state = this.model.get(this.handle);
+        let defaultExportFields = this.renderer.columns.filter(field => field.tag === 'field' && state.fields[field.attrs.name].exportable !== false).map(field => field.attrs.name);
+        let groupedBy = this.renderer.state.groupedBy;
+        const domain = this.isDomainSelected && state.getDomain();
+        return new DataExportExtended(this, state, defaultExportFields, groupedBy,
+            domain, this.getSelectedIds());
+    },
 });
 
 
