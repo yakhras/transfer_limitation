@@ -47,7 +47,7 @@ class ExcelExport(BaseExcelExport):
 
             export_data = records.export_data(field_names).get('datas',[])
             # response_data = self.from_data(columns_headers, export_data)
-            response_data = self.from_data(columns_headers, export_data, params.get('context', {}))
+            response_data = self.from_data(columns_headers, export_data, params.get('context', {}).get('partner_name', ''))
 
         # TODO: call `clean_filename` directly in `content_disposition`?
         return request.make_response(response_data,
