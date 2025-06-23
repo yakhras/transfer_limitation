@@ -7,11 +7,12 @@ import operator
 from odoo import http
 from odoo.http import content_disposition, request, serialize_exception
 from odoo.tools import osutil, pycompat
-from odoo.addons.web.controllers.main import GroupsTreeNode, ExportXlsxWriter
+from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter, ExportFormat as BaseExportFormat
 
 
 
-class ExportFormat(object):
+
+class ExportFormat(BaseExportFormat):
 
     def base(self, data):
         params = json.loads(data)
@@ -56,12 +57,8 @@ class ExportFormat(object):
                      ('Content-Type', self.content_type)],
         )
     
-class ExcelExport(ExportFormat, http.Controller):
+class ExcelExport(BaseExcelExport):
 
-    @http.route('/web/export/xlsx', type='http', auth="user")
-    @serialize_exception
-    def index(self, data):
-        return self.base(data)
     
     def from_data(self, fields, rows, model_name):
         with ExportXlsxWriter(fields, len(rows) + 1) as xlsx_writer:  # +1 for model row
