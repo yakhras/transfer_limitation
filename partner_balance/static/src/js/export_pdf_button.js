@@ -1,7 +1,7 @@
 odoo.define('partner_balance.listpdf', function (require) {
     "use strict";
 
-import DataExport from 'web.DataExport';
+var DataExport = require('web.DataExport') ;
 
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
