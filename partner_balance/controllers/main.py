@@ -61,7 +61,7 @@ class ExcelExport(BaseExcelExport):
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             # Write model name in the first row if provided
             if model_name:
-                xlsx_writer.write_cell(0, 0, f"Model: {model_name}", self.header_style)
+                xlsx_writer.write(0, 0, f"Model: {model_name}", xlsx_writer.header_style)
             
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
