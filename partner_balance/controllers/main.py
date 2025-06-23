@@ -24,7 +24,7 @@ class ExcelExport(BaseExcelExport):
             fields = [field for field in fields if field['name'] != 'id']
 
         partner_name = params.get('context', {}).get('partner_name', '')
-        company_name = self.env['res.partner'].browse(params.get('context', {}).get('active_id', '')).company_id.name
+        company_name = request.env['res.partner'].browse(params.get('context', {}).get('active_id', '')).company_id.name
 
         field_names = [f['name'] for f in fields]
         if import_compat:
