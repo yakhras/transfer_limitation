@@ -7,7 +7,7 @@ from datetime import datetime
 
 from odoo.http import content_disposition, request
 from odoo.tools import osutil, pycompat
-from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter
+from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter, GroupExportXlsxWriter
 from odoo.addons.web.controllers.main import ExportXlsxWriter as BaseExportXlsxWriter
     
 class ExcelExport(BaseExcelExport):
@@ -89,9 +89,46 @@ class ExcelExport(BaseExcelExport):
 
         return xlsx_writer.value
     
+    def from_group_data(self, fields, groups):
+        with GroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
+            x, y = 1, 0
+            for group_name, group in groups.children.items():
+                x, y = xlsx_writer.write_group(x, y, group_name, group)
+
+        return xlsx_writer.value
+    
 
 class ExportXlsxWriter(BaseExportXlsxWriter):
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
             self.write(4, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
+
+
+    def write_group(self, row, column, group_name, group, group_depth=0):
+        group_name = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
+        if group._groupby_type[group_depth] != 'boolean':
+            group_name = group_name or _("Undefined")
+
+        # Step 1: Write the group label/title
+        row, column = self._write_group_header(row, column, group_name, group, group_depth)
+
+        # Step 2: Write the column headers just under the group title
+        row = self._write_column_headers(row)
+
+        # Step 3: Recurse into subgroups
+        for child_group_name, child_group in group.children.items():
+            row, column = self.write_group(row, column, child_group_name, child_group, group_depth + 1)
+
+        # Step 4: Write data rows
+        for record in group.data:
+            row, column = self._write_row(row, column, record)
+
+        return row, column
+    
+
+    def _write_group_header(self, row, column, label, group, group_depth=0):
+        label = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
+        self.write(row, column, label, self.header_bold_style)
+        return row + 1, 0
+
