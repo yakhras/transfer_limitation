@@ -117,14 +117,22 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             group_name = group_name or _("Undefined")
 
         row, column = self._write_group_header(row, column, group_name, group, group_depth)
+
+        for child_group_name, child_group in group.children.items():
+            row, column = self.write_group(row, column, child_group_name, child_group, group_depth + 1)
+
+        row = self.write_group_header(row)
+
         for record in group.data:
             row, column = self._write_row(row, column, record)
         return row, column
     
-    def write_header(self):
+    def write_group_header(self, row):
         for i, fieldname in enumerate(self.field_names):
-            self.write(6, i, fieldname, self.header_style)
-        self.worksheet.set_column(0, i, 30) # around 220 pixels
+            self.write(row, i, fieldname, self.header_style)
+        self.worksheet.set_column(0, i, 30)  # Column width
+        return row + 1  # Return next row to continue from
+
     
     
 
