@@ -137,14 +137,21 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         return row + 1  # Return next row to continue from
     
     def write_header(self):
-        
         return
     
     def _write_group_header(self, row, column, label, group, group_depth=0):
-        label = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
-        self.write(row, column, label, self.header_bold_style)
-        
+        label_text = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
+
+        # Write the label in the first column
+        self.write(row, column, label_text, self.header_bold_style)
+
+        # Apply the same style to all other columns in that row
+        total_columns = len(self.fields)
+        for col in range(1, total_columns):
+            self.write(row, col, '', self.header_bold_style)
+
         return row + 1, 0
+
     
 
     def _write_group_totals(self, row, group):
@@ -162,7 +169,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             self.write(row, column, aggregated_value, self.header_bold_style)
             column += 1
 
-        return row + 1, 0  # advance to next row
+        return row + 1, 0
 
 
     
