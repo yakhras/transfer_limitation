@@ -136,6 +136,10 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         self.worksheet.set_column(0, i, 30)  # Column width
         return row + 1  # Return next row to continue from
     
+    def write_header(self, row):
+        
+        return
+    
     def _write_group_header(self, row, column, label, group, group_depth=0):
         label = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
         self.write(row, column, label, self.header_bold_style)
