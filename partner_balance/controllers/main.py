@@ -42,7 +42,7 @@ class ExcelExport(BaseExcelExport):
             for leaf in groups_data:
                 tree.insert_leaf(leaf)
 
-            response_data = self.from_group_data(fields, tree)
+            response_data = self.from_group_data(fields, tree, header_data)
         else:
             records = Model.browse(ids) if ids else Model.search(domain, offset=0, limit=False, order=False)
 
@@ -90,8 +90,11 @@ class ExcelExport(BaseExcelExport):
 
         return xlsx_writer.value
     
-    def from_group_data(self, fields, groups):
+    def from_group_data(self, fields, groups, params=None):
         with GroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
+            data = self.header_metadata(params)
+            for row_index, header_info in enumerate(data):
+                xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
             x, y = 3, 0
             for group_name, group in groups.children.items():
                 x, y = xlsx_writer.write_group(x, y, group_name, group)
