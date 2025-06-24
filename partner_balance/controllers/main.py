@@ -127,7 +127,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             row, column = self._write_row(row, column, record)
         
         row, column = self._write_group_totals(row, group)
-        
+
         return row, column
     
     def write_group_header(self, row):
@@ -145,9 +145,9 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
     def _write_group_totals(self, row, group):
         aggregates = group.aggregated_values
-
+        column = 1
         for field in self.fields[1:]: # No aggregates allowed in the first column because of the group title
-            column += 1
+            
             aggregated_value = aggregates.get(field['name'])
             if field.get('type') == 'monetary':
                 self.header_bold_style.set_num_format(self.monetary_format)
