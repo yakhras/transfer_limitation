@@ -112,28 +112,16 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         group_name = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
         if group._groupby_type[group_depth] != 'boolean':
             group_name = group_name or _("Undefined")
-
-        # Step 1: Write the group label/title
+        label = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
+        self.write(row, column, label, self.header_bold_style)
+        
         row, column = self._write_group_header(row, column, group_name, group, group_depth)
 
-        # Step 2: Write the column headers just under the group title
-        for field in self.fields:
-            self.write(row, column, field.get('string', ''), self.header_bold_style)
-            column += 1
-        row += 1
-        # Step 3: Recurse into subgroups
+        # Recursively write sub-groups
         for child_group_name, child_group in group.children.items():
             row, column = self.write_group(row, column, child_group_name, child_group, group_depth + 1)
 
-        # Step 4: Write data rows
         for record in group.data:
             row, column = self._write_row(row, column, record)
-
         return row, column
-    
-
-    def _write_group_header(self, row, column, label, group, group_depth=0):
-        label = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
-        self.write(row, column, label, self.header_bold_style)
-        return row + 1, 0
 
