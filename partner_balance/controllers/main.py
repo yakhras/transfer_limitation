@@ -9,6 +9,7 @@ from odoo.http import content_disposition, request
 from odoo.tools import osutil, pycompat
 from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter, GroupExportXlsxWriter
 from odoo.addons.web.controllers.main import ExportXlsxWriter as BaseExportXlsxWriter
+from odoo.addons.web.controllers.main import GroupExportXlsxWriter as BaseGroupExportXlsxWriter
     
 class ExcelExport(BaseExcelExport):
 
@@ -104,6 +105,8 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             self.write(4, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
 
+
+class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
     def write_group(self, row, column, group_name, group, group_depth=0):
         group_name = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
