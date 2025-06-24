@@ -125,6 +125,9 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
         for record in group.data:
             row, column = self._write_row(row, column, record)
+        
+        row, column = self._write_group_totals(row, group)
+        
         return row, column
     
     def write_group_header(self, row):
@@ -132,6 +135,28 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             self.write(row, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30)  # Column width
         return row + 1  # Return next row to continue from
+    
+    def _write_group_header(self, row, column, label, group, group_depth=0):
+        label = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
+        self.write(row, column, label, self.header_bold_style)
+        
+        return row + 1, 0
+    
+
+    def _write_group_totals(self, row, group):
+        aggregates = group.aggregated_values
+
+        for field in self.fields[1:]: # No aggregates allowed in the first column because of the group title
+            column += 1
+            aggregated_value = aggregates.get(field['name'])
+            if field.get('type') == 'monetary':
+                self.header_bold_style.set_num_format(self.monetary_format)
+            elif field.get('type') == 'float':
+                self.header_bold_style.set_num_format(self.float_format)
+            else:
+                aggregated_value = str(aggregated_value if aggregated_value is not None else '')
+            self.write(row, column, aggregated_value, self.header_bold_style)
+        return row + 1, 0
 
     
     
