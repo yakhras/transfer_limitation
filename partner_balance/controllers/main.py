@@ -117,8 +117,8 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             group_name = group_name or _("Undefined")
 
         row, column = self._write_group_header(row, column, group_name, group, group_depth)
-        self.write(row, column, row, column)
-
+        for record in group.data:
+            row, column = self._write_row(row, column, record)
         return row, column
     
     def write_header(self):
