@@ -92,7 +92,7 @@ class ExcelExport(BaseExcelExport):
     
     def from_group_data(self, fields, groups):
         with GroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
-            x, y = 1, 0
+            x, y = 3, 0
             for group_name, group in groups.children.items():
                 x, y = xlsx_writer.write_group(x, y, group_name, group)
 
@@ -120,7 +120,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
     
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
-            self.write(4, i, fieldname, self.header_style)
+            self.write(6, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
     
     
