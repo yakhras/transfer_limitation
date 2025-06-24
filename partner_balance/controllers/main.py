@@ -113,14 +113,14 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         if group._groupby_type[group_depth] != 'boolean':
             group_name = group_name or _("Undefined")
 
-        # label = '%s%s (%s)' % ('    ' * group_depth, group_name, group.count)
-        # self.write(row, column, label, self.header_bold_style)
 
         # row, column = self._write_group_header(row, column, group_name, group, group_depth)
 
         # Recursively write sub-groups
         for child_group_name, child_group in group.children.items():
             row, column = self.write_group(row, column, child_group_name, child_group, group_depth + 1)
+        
+        row, column = self._write_group_header(row, column, group_name, group, group_depth)
 
         for record in group.data:
             row, column = self._write_row(row, column, record)
