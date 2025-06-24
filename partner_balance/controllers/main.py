@@ -2,17 +2,15 @@
 
 import json
 import operator
+from datetime import datetime
 
 
-from odoo import http
-from odoo.http import content_disposition, request, serialize_exception
+from odoo.http import content_disposition, request
 from odoo.tools import osutil, pycompat
 from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter
 from odoo.addons.web.controllers.main import ExportXlsxWriter as BaseExportXlsxWriter
     
 class ExcelExport(BaseExcelExport):
-
-    
 
     def base(self, data):
         params = json.loads(data)
@@ -23,8 +21,7 @@ class ExcelExport(BaseExcelExport):
         if not Model._is_an_ordinary_table():
             fields = [field for field in fields if field['name'] != 'id']
 
-        partner_name = params.get('context', {}).get('partner_name', '')
-        company_name = request.env['res.partner'].browse(params.get('context', {}).get('active_id', '')).company_id.name
+        header_data = params.get('context', {})
 
         field_names = [f['name'] for f in fields]
         if import_compat:
@@ -50,7 +47,7 @@ class ExcelExport(BaseExcelExport):
 
             export_data = records.export_data(field_names).get('datas',[])
             # response_data = self.from_data(columns_headers, export_data)
-            response_data = self.from_data(columns_headers, export_data, company_name)
+            response_data = self.from_data(columns_headers, export_data, header_data)
 
         # TODO: call `clean_filename` directly in `content_disposition`?
         return request.make_response(response_data,
@@ -60,17 +57,35 @@ class ExcelExport(BaseExcelExport):
                      ('Content-Type', self.content_type)],
         )
     
-    def from_data(self, fields, rows, partner_name=None):
+    def header_metadata(self, params):
+        partner_name = params.get('partner_name', '')
+        company_name = ''
+        active_id = params.get('active_id')
+        if active_id:
+            partner_record = request.env['res.partner'].sudo().browse(active_id)
+            if partner_record.exists() and partner_record.company_id:
+                company_name = partner_record.company_id.name
+        header_data = [
+            f"Partner: {partner_name}" if partner_name else "",
+            f"Company: {company_name}" if company_name else "",
+            f"Export Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        ]
+        return [item for item in header_data if item]
+    
+    def from_data(self, fields, rows, params=None):
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             # Write model name in the first row if provided
-            if partner_name:
-                xlsx_writer.write(0, 0, f"Customer: {partner_name}", xlsx_writer.header_style)
+            # if partner_name:
+            #     xlsx_writer.write(0, 0, f"Customer: {partner_name}", xlsx_writer.header_style)
+            data = self.header_metadata(params)
+            for row_index, header_info in enumerate(data):
+                xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
             
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
                         cell_value = pycompat.to_text(cell_value)
-                    xlsx_writer.write_cell(row_index + 2, cell_index, cell_value)
+                    xlsx_writer.write_cell(row_index + 4, cell_index, cell_value)
 
         return xlsx_writer.value
     
@@ -78,5 +93,5 @@ class ExcelExport(BaseExcelExport):
 class ExportXlsxWriter(BaseExportXlsxWriter):
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
-            self.write(1, i, fieldname, self.header_style)
+            self.write(3, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
