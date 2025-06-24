@@ -68,7 +68,7 @@ class ExcelExport(BaseExcelExport):
         header_data = [
             f"Partner: {partner_name}" if partner_name else "",
             f"Company: {company_name}" if company_name else "",
-            f"Export Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+            f"Export Date: {datetime.now().strftime('%Y-%m-%d')}"
         ]
         return [item for item in header_data if item]
     
