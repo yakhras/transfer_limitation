@@ -114,7 +114,10 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             group_name = group_name or _("Undefined")
 
         # Step 1: Write the group label/title
-        row, column = self._write_group_header(row, column, group_name, group, group_depth)
+        for field in self.fields:
+            self.write(row, column, field.get('string', ''), self.header_bold_style)
+            column += 1
+        row += 1
 
         # Step 2: Write the column headers just under the group title
         row = self._write_column_headers(row)
