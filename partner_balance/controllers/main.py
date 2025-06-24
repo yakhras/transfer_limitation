@@ -85,7 +85,7 @@ class ExcelExport(BaseExcelExport):
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
                         cell_value = pycompat.to_text(cell_value)
-                    xlsx_writer.write_cell(row_index + 4, cell_index, cell_value)
+                    xlsx_writer.write_cell(row_index + 5, cell_index, cell_value)
 
         return xlsx_writer.value
     
@@ -93,5 +93,5 @@ class ExcelExport(BaseExcelExport):
 class ExportXlsxWriter(BaseExportXlsxWriter):
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
-            self.write(3, i, fieldname, self.header_style)
+            self.write(4, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
