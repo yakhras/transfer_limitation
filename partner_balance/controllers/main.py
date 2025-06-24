@@ -136,7 +136,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         self.worksheet.set_column(0, i, 30)  # Column width
         return row + 1  # Return next row to continue from
     
-    def write_header(self, row):
+    def write_header(self):
         
         return
     
