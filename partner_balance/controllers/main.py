@@ -113,8 +113,8 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         if group._groupby_type[group_depth] != 'boolean':
             group_name = group_name or _("Undefined")
 
-        label = '%s%s (%s)' % ('    ' * group_depth, group_name, group.count)
-        self.write(row, column, label, self.header_bold_style)
+        # label = '%s%s (%s)' % ('    ' * group_depth, group_name, group.count)
+        # self.write(row, column, label, self.header_bold_style)
 
         # row, column = self._write_group_header(row, column, group_name, group, group_depth)
 
