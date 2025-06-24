@@ -148,10 +148,10 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
     
 
     def _write_group_totals(self, row, group):
+        column = 1  # skip the first column (reserved for group label or index)
         aggregates = group.aggregated_values
-        column = 1
-        for field in self.fields[1:]: # No aggregates allowed in the first column because of the group title
-            
+
+        for field in self.fields[1:]:
             aggregated_value = aggregates.get(field['name'])
             if field.get('type') == 'monetary':
                 self.header_bold_style.set_num_format(self.monetary_format)
@@ -160,7 +160,10 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             else:
                 aggregated_value = str(aggregated_value if aggregated_value is not None else '')
             self.write(row, column, aggregated_value, self.header_bold_style)
-        return row + 1, 0
+            column += 1
+
+        return row + 1, 0  # advance to next row
+
 
     
     
