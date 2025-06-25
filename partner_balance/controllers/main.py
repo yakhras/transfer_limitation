@@ -97,7 +97,7 @@ class ExcelExport(BaseExcelExport):
             data = self.header_metadata(params)
             for row_index, header_info in enumerate(data):
                 xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
-            x, y = 3, 0
+            x, y = 4, 0
             for group_name, group in groups.children.items():
                 x, y = xlsx_writer.write_group(x, y, group_name, group)
 
@@ -107,7 +107,7 @@ class ExcelExport(BaseExcelExport):
 class ExportXlsxWriter(BaseExportXlsxWriter):
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
-            self.write(4, i, fieldname, self.header_style)
+            self.write(5, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
 
 
@@ -145,7 +145,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         label_text = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
 
         # Write the label in the first column
-        self.write(row + 1, column, label_text, self.header_bold_style)
+        self.write(row, column, label_text, self.header_bold_style)
 
         # Apply the same style to all other columns in that row
         total_columns = len(self.fields)
