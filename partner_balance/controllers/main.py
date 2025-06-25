@@ -199,7 +199,3 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
         return row + 2, 0
 
-
-
-    
-    
