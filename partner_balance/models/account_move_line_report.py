@@ -184,7 +184,7 @@ class ResPartner(models.Model):
         
         return {
             'type': 'ir.actions.act_window',
-            'name': f'Partner Ledger - {self.name}',
+            'name': f'Currency-based Partner Ledger - {self.name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree,form',
             'domain': [('partner_id', '=', self.id)],

@@ -242,7 +242,25 @@ class ResPartner(models.Model):
         
         return {
             'type': 'ir.actions.act_window',
-            'name': f'Account Move Line Report - {self.name}',
+            'name': f'Partner Ledger - {self.name}',
+            'res_model': 'account.move.line.report',
+            'view_mode': 'tree,form',
+            'domain': [('partner_id', '=', self.id)],
+            'context': {
+                'default_partner_id': self.id,
+                'search_default_group_by_account': 1,
+                'partner_name': self.name,  # Pass partner name for reference
+            },
+            'target': 'current',  # Open in current window
+        }
+    
+    def action_view_move_line_report_currency(self):
+        """Open Account Move Line Report for this partner"""
+        self.ensure_one()  # Ensure only one record is processed
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Currency-based Partner Ledger - {self.name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree,form',
             'domain': [('partner_id', '=', self.id)],
