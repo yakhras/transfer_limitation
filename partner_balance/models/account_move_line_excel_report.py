@@ -244,7 +244,7 @@ class ResPartner(models.Model):
             'type': 'ir.actions.act_window',
             'name': f'Partner Ledger - {self.name}',
             'res_model': 'account.move.line.report',
-            'view_mode': 'tree,form',
+            'view_mode': 'tree',
             'view_id' : 'view_account_move_line_report_tree',
             'domain': [('partner_id', '=', self.id)],
             'context': {
@@ -263,7 +263,7 @@ class ResPartner(models.Model):
             'type': 'ir.actions.act_window',
             'name': f'Currency-based Partner Ledger - {self.name}',
             'res_model': 'account.move.line.report',
-            'view_mode': 'tree,form',
+            'view_mode': 'tree',
             'view_id' : 'view_account_move_line_report_currency_tree',
             'domain': [('partner_id', '=', self.id)],
             'context': {
