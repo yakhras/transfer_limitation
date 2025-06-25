@@ -155,8 +155,10 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
     
 
     def _write_group_totals(self, row, group):
-        column = 1  # skip the first column (reserved for group label or index)
+        column = 0  # skip the first column (reserved for group label or index)
         aggregates = group.aggregated_values
+        self.write(row, column, _("Total"), self.header_bold_style)
+        column += 1
 
         for field in self.fields[1:]:
             aggregated_value = aggregates.get(field['name'])
@@ -169,7 +171,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             self.write(row, column, aggregated_value, self.header_bold_style)
             column += 1
 
-        return row + 1, 0
+        return row + 2, 0
 
 
     
