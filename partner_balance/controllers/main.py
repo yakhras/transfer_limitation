@@ -5,6 +5,7 @@ import operator
 from datetime import datetime
 import io
 from odoo.tools.misc import xlsxwriter
+from odoo.exceptions import UserError
 
 
 
@@ -107,9 +108,26 @@ class ExcelExport(BaseExcelExport):
     
 
 class ExportXlsxWriter(BaseExportXlsxWriter):
+    def __init__(self, field_names, row_count=0):
+        self.field_names = field_names
+        self.output = io.BytesIO()
+        self.workbook = xlsxwriter.Workbook(self.output, {'in_memory': True})
+        self.base_style = self.workbook.add_format({'text_wrap': True})
+        self.header_style = self.workbook.add_format({'bold': True})
+        self.header_bold_style = self.workbook.add_format({'text_wrap': True, 'bold': True, 'bg_color': "#efefe9"})
+        self.date_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd'})
+        self.datetime_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd hh:mm:ss'})
+        self.worksheet = self.workbook.add_worksheet()
+        self.value = False
+        self.float_format = '#,##0.00'
+        decimal_places = [res['decimal_places'] for res in request.env['res.currency'].search_read([], ['decimal_places'])]
+        self.monetary_format = f'#,##0.{max(decimal_places or [2]) * "0"}'
+
+        if row_count > self.worksheet.xls_rowmax:
+            raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
+
     
     def write_header(self):
-        self.header_style = xlsxwriter.workbook(io.BytesIO(),{}).add_format({'bold': True, 'bg_color': "#eeefe9"})
         for i, fieldname in enumerate(self.field_names):
             self.write(4, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
@@ -178,10 +196,4 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
             column += 1
 
         return row + 2, 0
-
-
-    
-    
-
-
 
