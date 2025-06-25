@@ -108,7 +108,7 @@ class ExcelExport(BaseExcelExport):
 class ExportXlsxWriter(BaseExportXlsxWriter):
     
     def write_header(self):
-        self.header_style = self.xlsxwriter.Workbook.workbook.add_format({'bold': True, 'bg_color': "#eeefe9"})
+        self.header_style = xlsxwriter.workbook.add_format({'bold': True, 'bg_color': "#eeefe9"})
         for i, fieldname in enumerate(self.field_names):
             self.write(4, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
