@@ -245,6 +245,7 @@ class ResPartner(models.Model):
             'name': f'Partner Ledger - {self.name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree,form',
+            'view_id' : 'view_account_move_line_report_tree',
             'domain': [('partner_id', '=', self.id)],
             'context': {
                 'default_partner_id': self.id,
@@ -263,6 +264,7 @@ class ResPartner(models.Model):
             'name': f'Currency-based Partner Ledger - {self.name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree,form',
+            'view_id' : 'view_account_move_line_report_currency_tree',
             'domain': [('partner_id', '=', self.id)],
             'context': {
                 'default_partner_id': self.id,
