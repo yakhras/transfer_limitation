@@ -113,8 +113,8 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         self.output = io.BytesIO()
         self.workbook = xlsxwriter.Workbook(self.output, {'in_memory': True})
         self.base_style = self.workbook.add_format({'text_wrap': True})
-        self.header_style = self.workbook.add_format({'bold': True})
-        self.header_bold_style = self.workbook.add_format({'text_wrap': True, 'bold': True, 'bg_color': "#efefe9"})
+        self.header_style = self.workbook.add_format({'bold': True, 'bg_color': "#f5f50e"})
+        self.header_bold_style = self.workbook.add_format({'text_wrap': True, 'bold': True, 'bg_color': "#f5f50e"})
         self.date_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd'})
         self.datetime_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd hh:mm:ss'})
         self.worksheet = self.workbook.add_worksheet()
@@ -128,6 +128,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
 
     
     def write_header(self):
+        self.header_style = xlsxwriter.workbook(io.BytesIO(),{}).add_format({'bold': True, 'bg_color': "#eeefe9"})
         for i, fieldname in enumerate(self.field_names):
             self.write(4, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
@@ -197,3 +198,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
         return row + 2, 0
 
+
+
+    
+    
