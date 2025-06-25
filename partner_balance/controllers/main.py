@@ -145,7 +145,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         label_text = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
 
         # Write the label in the first column
-        self.write(row, column, label_text, self.header_bold_style)
+        self.write(row + 1, column, label_text, self.header_bold_style)
 
         # Apply the same style to all other columns in that row
         total_columns = len(self.fields)
