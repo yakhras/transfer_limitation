@@ -113,7 +113,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         self.output = io.BytesIO()
         self.workbook = xlsxwriter.Workbook(self.output, {'in_memory': True})
         self.base_style = self.workbook.add_format({'text_wrap': True})
-        self.header_style = self.workbook.add_format({'bold': True, 'bg_color': "#f5f50e"})
+        self.header_style = self.workbook.add_format({'bold': True, 'bg_color': "#f5f50e", 'border': 1})
         self.header_bold_style = self.workbook.add_format({'text_wrap': True, 'bold': True, 'bg_color': "#f5f50e"})
         self.date_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd'})
         self.datetime_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd hh:mm:ss'})
