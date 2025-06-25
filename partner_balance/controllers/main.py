@@ -65,6 +65,7 @@ class ExcelExport(BaseExcelExport):
     
     def header_metadata(self, params):
         partner_name = params.get('partner_name', '')
+        action_name = params.get('action_name', '')
         company_name = ''
         active_id = params.get('active_id')
         if active_id:
@@ -72,7 +73,7 @@ class ExcelExport(BaseExcelExport):
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
         header_data = [
-            f"Partner: {partner_name}" if partner_name else "",
+            f"Partner: {action_name}" if partner_name else "",
             f"Company: {company_name}" if company_name else "",
             f"Export Date: {datetime.now().strftime('%Y-%m-%d')}"
         ]
