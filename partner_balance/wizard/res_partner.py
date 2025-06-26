@@ -2,7 +2,7 @@
 
 from odoo import models
 
-class ResPartnerSaleReport(models.TransientModel):
+class ResPartnerReport(models.TransientModel):
     _name = "res.partner.wizard"
     _description = "Ledger Report Wizard for Res Partner"
 
@@ -13,4 +13,5 @@ class ResPartnerSaleReport(models.TransientModel):
         
 
     def currency_partner_ledger_report(self):
-        self.env['res.partner'].action_view_move_line_report_currency()
+        active_id = self.env.context.get('active_id')
+        return self.env['res.partner'].sudo().browse(active_id).action_view_move_line_report_currency()
