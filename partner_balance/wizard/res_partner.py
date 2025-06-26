@@ -9,7 +9,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
     def partner_ledger_report(self):
         active_id = self.env.context.get('active_id')
-        self.env['res.partner'].sudo().browse(active_id).action_view_move_line_report()
+        return self.env['res.partner'].sudo().browse(active_id).action_view_move_line_report()
         
 
     def currency_partner_ledger_report(self):
