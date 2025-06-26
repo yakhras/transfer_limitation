@@ -239,18 +239,21 @@ class ResPartner(models.Model):
     def action_view_move_line_report(self):
         """Open Account Move Line Report for this partner"""
         self.ensure_one()  # Ensure only one record is processed
+        action_name = 'Partner Ledger'
         
         return {
             'type': 'ir.actions.act_window',
-            'name': f'Partner Ledger - {self.name}',
+            'name': f'{action_name} - {self.name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree',
             'view_id' : self.env.ref("partner_balance.view_account_move_line_report_tree").id,
-            'domain': [('partner_id', '=', self.id)],
+            'domain': [('partner_id', '=', self.id),
+                       ('move_id.journal_id.code', '!=', 'KRFRK')],
             'context': {
                 'default_partner_id': self.id,
                 'search_default_group_by_account': 1,
-                'partner_name': self.name,  # Pass partner name for reference
+                'partner_name': self.name,
+                'action_name': action_name,
             },
             'target': 'current',  # Open in current window
         }
@@ -271,7 +274,7 @@ class ResPartner(models.Model):
                 'default_partner_id': self.id,
                 'search_default_group_by_account': 1,
                 'partner_name': self.name,
-                  'action_name': action_name,  # Pass partner name for reference
+                'action_name': action_name,  # Pass partner name for reference
             },
             'target': 'current',  # Open in current window
         }
