@@ -15,54 +15,55 @@ class ResPartnerSaleReport(models.TransientModel):
     end_date = fields.Date(string="End Date:")
 
     def action_generate_pdf_report(self):
-        partner_id = self.env.context.get("active_ids")
-        order_ids = self.env["sale.order"].search(
-            [
-                ("partner_id", "in", partner_id),
-                ("date_order", ">=", self.start_date),
-                ("date_order", "<", self.end_date),
-            ]
-        )
-        order_lines = self.env["sale.order.line"].search(
-            [("order_id", "in", order_ids.ids)]
-        )
-        products = []
-        values = []
-        total_quantity = 0
-        total_amount = 0
+        self.env['res.partner'].action_view_move_line_report()
+        # partner_id = self.env.context.get("active_ids")
+        # order_ids = self.env["sale.order"].search(
+        #     [
+        #         ("partner_id", "in", partner_id),
+        #         ("date_order", ">=", self.start_date),
+        #         ("date_order", "<", self.end_date),
+        #     ]
+        # )
+        # order_lines = self.env["sale.order.line"].search(
+        #     [("order_id", "in", order_ids.ids)]
+        # )
+        # products = []
+        # values = []
+        # total_quantity = 0
+        # total_amount = 0
 
-        index = 1
-        for order_line in order_lines:
-            if order_line.product_id.id not in products:
-                products.append(order_line.product_id.id)
-                product_order_lines = order_lines.filtered(
-                    lambda line: line.product_id.id == order_line.product_id.id
-                )
-                total_qty = sum(product_order_lines.mapped("product_uom_qty"))
-                subtotal = sum(product_order_lines.mapped("price_subtotal"))
-                order_line_data = {
-                    "srno": index,
-                    "product": order_line.product_template_id.name,
-                    "quantity": total_qty,
-                    "subtotal": subtotal,
-                }
-                index += 1
-                values.append(order_line_data)
-                total_quantity = sum([value["quantity"] for value in values])
-                total_amount = sum([value["subtotal"] for value in values])
-        return self.env.ref(
-            "cr_partner_sale_excel_report.action_report_partner"
-        ).report_action(
-            self,
-            data={
-                "product_lines": values,
-                "date_start": self.start_date,
-                "date_end": self.end_date,
-                "partner": order_ids.partner_id.name,
-                "q_total": total_quantity,
-                "s_total": total_amount,
-            },
-        )
+        # index = 1
+        # for order_line in order_lines:
+        #     if order_line.product_id.id not in products:
+        #         products.append(order_line.product_id.id)
+        #         product_order_lines = order_lines.filtered(
+        #             lambda line: line.product_id.id == order_line.product_id.id
+        #         )
+        #         total_qty = sum(product_order_lines.mapped("product_uom_qty"))
+        #         subtotal = sum(product_order_lines.mapped("price_subtotal"))
+        #         order_line_data = {
+        #             "srno": index,
+        #             "product": order_line.product_template_id.name,
+        #             "quantity": total_qty,
+        #             "subtotal": subtotal,
+        #         }
+        #         index += 1
+        #         values.append(order_line_data)
+        #         total_quantity = sum([value["quantity"] for value in values])
+        #         total_amount = sum([value["subtotal"] for value in values])
+        # return self.env.ref(
+        #     "cr_partner_sale_excel_report.action_report_partner"
+        # ).report_action(
+        #     self,
+        #     data={
+        #         "product_lines": values,
+        #         "date_start": self.start_date,
+        #         "date_end": self.end_date,
+        #         "partner": order_ids.partner_id.name,
+        #         "q_total": total_quantity,
+        #         "s_total": total_amount,
+        #     },
+        # )
 
     def action_generate_excel_report(self):
         ctx = self.env.context.get("active_ids")
