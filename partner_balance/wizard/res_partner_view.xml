@@ -11,9 +11,6 @@
                     <button string="Currency Ledger" type="object" name="currency_partner_ledger_report" class="btn-primary"/>
                     <button string="Partner Ledger" type="object" name="partner_ledger_report" class="btn-primary"/> 
                 </group>
-                <footer>
-                    <button string="Cancel" special="cancel" class="btn btn-secondary"/>
-                </footer>
             </form>
         </field>
     </record>
