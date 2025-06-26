@@ -4,7 +4,7 @@
     <data>
 
 
-        <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
+        <!-- <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.custom.button</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
@@ -24,7 +24,7 @@
                     </header>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
         <record id="view_account_move_line_custom_tree" model="ir.ui.view">
             <field name="name">account.move.line.custom.tree</field>
