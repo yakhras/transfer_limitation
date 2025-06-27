@@ -86,7 +86,7 @@ class ResPartnerSaleReport(models.TransientModel):
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
-        title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'center', 'bold': True})
+        title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'center', 'bold': True, 'border': 1})
         date_format = workbook.add_format({'align': 'left', 'valign': 'center', **font10})
         worksheet.set_column('A:A', 8.43)
         worksheet.set_column('B:B', 8.43)
@@ -150,8 +150,8 @@ class ResPartnerSaleReport(models.TransientModel):
         # )
 
         # # Title
-        # worksheet.set_row(8, 22)  # Set row height for the title
-        # worksheet.merge_range('A9:I9', "PACKING LIST", title_format)
+        
+        worksheet.merge_range('A9:I9', "PACKING LIST", title_format)
 
         # # Order Information
         # date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
