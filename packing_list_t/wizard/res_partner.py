@@ -96,7 +96,25 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_column('F:F', 8.43)
         worksheet.set_column('G:G', 10.29)
         worksheet.set_column('H:H', 14.29)
-        worksheet.set_column('I:I', 14.29)   
+        worksheet.set_column('I:I', 14.29)  
+        worksheet.set_row(6, 21.5)
+        worksheet.set_row(7, 17)
+        worksheet.set_row(8, 9.5)
+        worksheet.set_row(9, 27.5)
+        worksheet.set_row(10, 9.5)
+        worksheet.set_row(11, 15.25)
+        worksheet.set_row(12, 15.25)
+        worksheet.set_row(13, 15.25)
+        worksheet.set_row(14, 15.25)
+        worksheet.set_row(16, 15.25)
+        worksheet.set_row(17, 9.5)
+        worksheet.set_row(18, 15.25)
+        worksheet.set_row(19, 45)
+        worksheet.set_row(20, 45)
+        worksheet.set_row(21, 45)
+        worksheet.set_row(22, 45)
+        worksheet.set_row(23, 45)
+
 
 
         # # Header and Footer
