@@ -87,7 +87,7 @@ class ResPartnerSaleReport(models.TransientModel):
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
         title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'center', 'bold': True, 'border': 1})
-        label_format = workbook.add_format({'align': 'left', 'valign': 'center', 'font_size': 10, 'bold': True, 'border': 1})
+        label_format = workbook.add_format({'align': 'left', 'valign': 'center', 'font_size': 10, 'bold': True})
         date_format = workbook.add_format({'align': 'left', 'valign': 'center','font_size': 10 })
         name_format = workbook.add_format({'align': 'left', 'valign': 'center','font_size': 11 })
         worksheet.set_column('A:A', 8.43)
@@ -127,14 +127,14 @@ class ResPartnerSaleReport(models.TransientModel):
         # tmp_logo_file.close()
 
         company_name = sale_order.company_id.name
-        # address_line_1 = sale_order.company_id.street2 or ''
-        # address_line_2 = ", ".join(filter(None, [
-        #     sale_order.company_id.street,
-        #     sale_order.company_id.city,
-        #     sale_order.company_id.zip,
-        #     sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
-        # ]))
-        # address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
+        address_line_1 = sale_order.company_id.street2 or ''
+        address_line_2 = ", ".join(filter(None, [
+            sale_order.company_id.street,
+            sale_order.company_id.city,
+            sale_order.company_id.zip,
+            sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
+        ]))
+        address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
         # left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
         # worksheet.set_header(
@@ -163,18 +163,16 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write('H8', sale_order.name, date_format)
 
         # # Seller and Buyer Information
-        # row = 14 
-        # col_buyer = 6 
-        # col_seller = 0 
         worksheet.write('A10', "Seller:", label_format)
         worksheet.merge_range('B10:F10', company_name or "", name_format)
         worksheet.write('G10' , "Buyer:", label_format)
-        worksheet.merge_range('G10:H10', sale_order.partner_id.name or "", name_format)
-        # row += 1
+        worksheet.merge_range('H10:I10', sale_order.partner_id.name or "", name_format)
         
-        # full_address = ", ".join(filter(None, [address_line_3, address_line_2, address_line_1]))
-        # worksheet.write(row, col_seller, "Address:", bold_format)
-        # worksheet.write(row, col_seller + 1, full_address, wrap_format)
+        full_address = ", ".join(filter(None, [address_line_1, address_line_2, address_line_3]))
+        worksheet.write('A12', "Address:", label_format)
+        worksheet.write('B12', address_line_1, date_format)
+        worksheet.write('B13', address_line_2, date_format)
+        worksheet.write('B14', address_line_3, date_format)
 
         # buyer_address_parts = filter(None, [
         #     sale_order.partner_shipping_id.street,
@@ -185,19 +183,18 @@ class ResPartnerSaleReport(models.TransientModel):
         #     sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
         # ])
         # # 
-        # worksheet.write(row, col_buyer, "Address:", bold_format)
-        # # worksheet.write(row, col_buyer+1, ", ".join(buyer_address_parts), wrap_format)
-        # buyer_address = ", ".join(buyer_address_parts)
-        # worksheet.merge_range('D16:F16', buyer_address, wrap_format)
+        worksheet.write('G12', "Address:", label_format)
+        worksheet.write('H12', sale_order.partner_shipping_id.street or '', date_format)
+        worksheet.write('H13', sale_order.partner_shipping_id.street2 or '', date_format)
+        worksheet.write('H14', sale_order.partner_shipping_id.country_id.name or '', date_format)
 
-        # row += 1
-        # if sale_order.company_id.phone:
-        #     worksheet.write(row, col_seller, "Phone:", bold_format)
-        #     worksheet.write(row, col_seller + 1, sale_order.company_id.phone or '', font10_format)
+        if sale_order.company_id.phone:
+            worksheet.write('A15', "Phone:", label_format)
+            worksheet.write('B15', sale_order.company_id.phone or '', date_format)
 
-        # if sale_order.partner_id.phone:
-        #     worksheet.write(row, col_buyer, "Phone:", bold_format)
-        #     worksheet.write(row, col_buyer+1, sale_order.partner_id.phone or '', font10_format)
+        if sale_order.partner_id.phone:
+            worksheet.write('G15', "Phone:", label_format)
+            worksheet.write('H15', sale_order.partner_id.phone or '', date_format)
         
 
 
