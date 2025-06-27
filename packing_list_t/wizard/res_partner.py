@@ -87,7 +87,7 @@ class ResPartnerSaleReport(models.TransientModel):
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
         title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'center', 'bold': True})
-        date_format = workbook.add_format({'align': 'left', 'valign': 'center' **font10})
+        date_format = workbook.add_format({'align': 'left', 'valign': 'center', **font10})
         worksheet.set_column('A:A', 8.43)
         worksheet.set_column('B:B', 8.43)
         worksheet.set_column('C:C', 8.43)
