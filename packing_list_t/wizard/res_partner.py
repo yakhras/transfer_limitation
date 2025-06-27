@@ -87,7 +87,9 @@ class ResPartnerSaleReport(models.TransientModel):
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
         title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'center', 'bold': True, 'border': 1})
-        date_format = workbook.add_format({'align': 'left', 'valign': 'center', **font10})
+        label_format = workbook.add_format({'align': 'left', 'valign': 'center', 'font_size': 10, 'bold': True, 'border': 1})
+        date_format = workbook.add_format({'align': 'left', 'valign': 'center','font_size': 10 })
+        name_format = workbook.add_format({'align': 'left', 'valign': 'center','font_size': 11 })
         worksheet.set_column('A:A', 8.43)
         worksheet.set_column('B:B', 8.43)
         worksheet.set_column('C:C', 8.43)
@@ -124,7 +126,7 @@ class ResPartnerSaleReport(models.TransientModel):
         # tmp_logo_file.write(logo_data)
         # tmp_logo_file.close()
 
-        # company_name = sale_order.company_id.name
+        company_name = sale_order.company_id.name
         # address_line_1 = sale_order.company_id.street2 or ''
         # address_line_2 = ", ".join(filter(None, [
         #     sale_order.company_id.street,
@@ -151,23 +153,23 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # # Title
         
-        worksheet.merge_range('A6:I6', "PACKING LIST", title_format)
+        worksheet.merge_range('A7:I7', "PACKING LIST", title_format)
 
         # # Order Information
-        # date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        # worksheet.write('A12', "Date:", bold_format)
-        # worksheet.write('B12', date, date_format)
-        # worksheet.write('G12', "Order No:", bold_format)
-        # worksheet.write('H12', sale_order.name, date_format)
+        date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
+        worksheet.write('A8', "Date:", label_format)
+        worksheet.write('B8', date, date_format)
+        worksheet.write('G8', "Order No:", label_format)
+        worksheet.write('H8', sale_order.name, date_format)
 
         # # Seller and Buyer Information
         # row = 14 
         # col_buyer = 6 
         # col_seller = 0 
-        # worksheet.write(row, col_seller, "Seller:", bold_format)
-        # worksheet.write(row, col_seller + 1, company_name or "", font10_format)
-        # worksheet.write(row, col_buyer , "Buyer:", bold_format)
-        # worksheet.write(row, col_buyer + 1, sale_order.partner_id.name or "", font10_format)
+        worksheet.write('A10', "Seller:", label_format)
+        worksheet.merge_range('B10:F10', company_name or "", name_format)
+        worksheet.write('G10' , "Buyer:", label_format)
+        worksheet.merge_range('G10:H10', sale_order.partner_id.name or "", name_format)
         # row += 1
         
         # full_address = ", ".join(filter(None, [address_line_3, address_line_2, address_line_1]))
