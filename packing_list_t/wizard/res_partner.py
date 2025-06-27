@@ -86,117 +86,126 @@ class ResPartnerSaleReport(models.TransientModel):
         border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
-        title_format = workbook.add_format({'font_size': 26, 'text_wrap': True, 'align': 'center', 'valign': 'center', 'bold': True})
+        title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'center', 'bold': True})
+        date_format = workbook.add_format({'align': 'left', 'valign': 'center' **font10})
+        worksheet.set_column('A:A', 8.43)
+        worksheet.set_column('B:B', 8.43)
+        worksheet.set_column('C:C', 8.43)
+        worksheet.set_column('D:D', 8.43)
+        worksheet.set_column('E:E', 10.71)
+        worksheet.set_column('F:F', 8.43)
+        worksheet.set_column('G:G', 10.29)
+        worksheet.set_column('H:H', 14.29)
+        worksheet.set_column('I:I', 14.29)   
 
 
-        # Header and Footer
-        logo_path = sale_order.company_id.logo
-        logo_data = base64.b64decode(logo_path)
-        tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-        tmp_logo_file.write(logo_data)
-        tmp_logo_file.close()
+        # # Header and Footer
+        # logo_path = sale_order.company_id.logo
+        # logo_data = base64.b64decode(logo_path)
+        # tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        # tmp_logo_file.write(logo_data)
+        # tmp_logo_file.close()
 
-        company_name = sale_order.company_id.name
-        address_line_1 = sale_order.company_id.street2 or ''
-        address_line_2 = ", ".join(filter(None, [
-            sale_order.company_id.street,
-            sale_order.company_id.city,
-            sale_order.company_id.zip,
-            sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
-        ]))
-        address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
-        left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
+        # company_name = sale_order.company_id.name
+        # address_line_1 = sale_order.company_id.street2 or ''
+        # address_line_2 = ", ".join(filter(None, [
+        #     sale_order.company_id.street,
+        #     sale_order.company_id.city,
+        #     sale_order.company_id.zip,
+        #     sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
+        # ]))
+        # address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
+        # left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
-        worksheet.set_header(
-            '&L%s&R&G' % left_header_content,
-            {
-                'image_right': tmp_logo_file.name,
-            }
-        )
+        # worksheet.set_header(
+        #     '&L%s&R&G' % left_header_content,
+        #     {
+        #         'image_right': tmp_logo_file.name,
+        #     }
+        # )
 
-        footer_address = sale_order.company_id.website
-        worksheet.set_footer(
-            '&LPage &P'
-            '&C%s'
-            '&R%s' % (footer_address, sale_order.company_id.vat or '')
-        )
+        # footer_address = sale_order.company_id.website
+        # worksheet.set_footer(
+        #     '&LPage &P'
+        #     '&C%s'
+        #     '&R%s' % (footer_address, sale_order.company_id.vat or '')
+        # )
 
-        worksheet.merge_range('A9:F9', "PACKING LIST", title_format)
+        # # Title
+        # worksheet.set_row(8, 22)  # Set row height for the title
+        # worksheet.merge_range('A9:I9', "PACKING LIST", title_format)
 
-        # Order Information
-        date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
-        worksheet.write('A12', "Date:", bold_format)
-        worksheet.write('B12', date, font10_format)
-        worksheet.write('C12', "Order No:", bold_format)
-        worksheet.write('D12', sale_order.name, wrap_format)
+        # # Order Information
+        # date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
+        # worksheet.write('A12', "Date:", bold_format)
+        # worksheet.write('B12', date, date_format)
+        # worksheet.write('G12', "Order No:", bold_format)
+        # worksheet.write('H12', sale_order.name, date_format)
 
-        # Seller and Buyer Information
-        row = 14 
-        col_buyer = 2 
-        col_seller = 0 
-        worksheet.write(row, col_seller, "Seller:", bold_format)
-        worksheet.write(row, col_seller + 1, company_name or "", font10_format)
-        worksheet.write(row, col_buyer , "Buyer:", bold_format)
-        worksheet.write(row, col_buyer + 1, sale_order.partner_id.name or "", font10_format)
-        row += 1
+        # # Seller and Buyer Information
+        # row = 14 
+        # col_buyer = 6 
+        # col_seller = 0 
+        # worksheet.write(row, col_seller, "Seller:", bold_format)
+        # worksheet.write(row, col_seller + 1, company_name or "", font10_format)
+        # worksheet.write(row, col_buyer , "Buyer:", bold_format)
+        # worksheet.write(row, col_buyer + 1, sale_order.partner_id.name or "", font10_format)
+        # row += 1
         
-        full_address = ", ".join(filter(None, [address_line_3, address_line_2, address_line_1]))
-        worksheet.write(row, col_seller, "Address:", bold_format)
-        worksheet.write(row, col_seller + 1, full_address, wrap_format)
+        # full_address = ", ".join(filter(None, [address_line_3, address_line_2, address_line_1]))
+        # worksheet.write(row, col_seller, "Address:", bold_format)
+        # worksheet.write(row, col_seller + 1, full_address, wrap_format)
 
-        buyer_address_parts = filter(None, [
-            sale_order.partner_shipping_id.street,
-            sale_order.partner_shipping_id.street2,
-            sale_order.partner_shipping_id.city,
-            sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else None,
-            sale_order.partner_shipping_id.zip,
-            sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
-        ])
-        # 
-        worksheet.write(row, col_buyer, "Address:", bold_format)
-        # worksheet.write(row, col_buyer+1, ", ".join(buyer_address_parts), wrap_format)
-        buyer_address = ", ".join(buyer_address_parts)
-        worksheet.merge_range('D16:F16', buyer_address, wrap_format)
+        # buyer_address_parts = filter(None, [
+        #     sale_order.partner_shipping_id.street,
+        #     sale_order.partner_shipping_id.street2,
+        #     sale_order.partner_shipping_id.city,
+        #     sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else None,
+        #     sale_order.partner_shipping_id.zip,
+        #     sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
+        # ])
+        # # 
+        # worksheet.write(row, col_buyer, "Address:", bold_format)
+        # # worksheet.write(row, col_buyer+1, ", ".join(buyer_address_parts), wrap_format)
+        # buyer_address = ", ".join(buyer_address_parts)
+        # worksheet.merge_range('D16:F16', buyer_address, wrap_format)
 
-        row += 1
-        if sale_order.company_id.phone:
-            worksheet.write(row, col_seller, "Phone:", bold_format)
-            worksheet.write(row, col_seller + 1, sale_order.company_id.phone or '', font10_format)
+        # row += 1
+        # if sale_order.company_id.phone:
+        #     worksheet.write(row, col_seller, "Phone:", bold_format)
+        #     worksheet.write(row, col_seller + 1, sale_order.company_id.phone or '', font10_format)
 
-        if sale_order.partner_id.phone:
-            worksheet.write(row, col_buyer, "Phone:", bold_format)
-            worksheet.write(row, col_buyer+1, sale_order.partner_id.phone or '', font10_format)
+        # if sale_order.partner_id.phone:
+        #     worksheet.write(row, col_buyer, "Phone:", bold_format)
+        #     worksheet.write(row, col_buyer+1, sale_order.partner_id.phone or '', font10_format)
         
 
-        
 
-        
+        # # Order Lines Table
+        # order_lines = sale_order.order_line
+        # headers = ["#", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
+        # worksheet.write_row(19, 0, headers, header_format)
 
-        # Order Lines Table
-        order_lines = sale_order.order_line
-        headers = ["#", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
-        worksheet.write_row(19, 0, headers, header_format)
+        # # Track max widths (based on header lengths)
+        # col_widths = [len(h) for h in headers]
+        # start_row = 20
+        # for i, line in enumerate(order_lines, start=1):
+        #     data = [
+        #         str(i),  # start numbering from 1
+        #         line.product_id.display_name or "",
+        #         str(line.product_uom_qty),
+        #         line.product_packaging_id.name or "",
+        #         str(line.net_weight),
+        #         str(line.gross_weight)
+        #     ]
+        #     row_num = start_row + i - 1
+        #     for col, val in enumerate(data):
+        #         worksheet.write(row_num, col, val, border_format)
+        #         col_widths[col - 1] = max(col_widths[col - 1], len(val))
 
-        # Track max widths (based on header lengths)
-        col_widths = [len(h) for h in headers]
-        start_row = 20
-        for i, line in enumerate(order_lines, start=1):
-            data = [
-                str(i),  # start numbering from 1
-                line.product_id.display_name or "",
-                str(line.product_uom_qty),
-                line.product_packaging_id.name or "",
-                str(line.net_weight),
-                str(line.gross_weight)
-            ]
-            row_num = start_row + i - 1
-            for col, val in enumerate(data):
-                worksheet.write(row_num, col, val, border_format)
-                col_widths[col - 1] = max(col_widths[col - 1], len(val))
-
-        # Set column widths with padding
-        for i, width in enumerate(col_widths, start=1):
-            worksheet.set_column(i, i, width + 2)
+        # # Set column widths with padding
+        # for i, width in enumerate(col_widths, start=1):
+        #     worksheet.set_column(i, i, width + 2)
 
         workbook.close()
 
