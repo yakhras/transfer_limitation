@@ -151,7 +151,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # # Title
         
-        worksheet.merge_range('A9:I9', "PACKING LIST", title_format)
+        worksheet.merge_range('A6:I6', "PACKING LIST", title_format)
 
         # # Order Information
         # date = sale_order.date_order.strftime('%Y-%m-%d') if sale_order.date_order else ""
