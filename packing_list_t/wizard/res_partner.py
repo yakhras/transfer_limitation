@@ -132,7 +132,7 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
         ]))
 
-        left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
+        left_header_content = f"&B&16{company_name}&B&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
