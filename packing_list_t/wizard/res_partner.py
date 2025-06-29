@@ -80,12 +80,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.fit_to_pages(1, 0)
 
         # Styles
-        font10 = {'font_size': 18}
-        font10_format = workbook.add_format(font10)
-        bold_format = workbook.add_format({'align': 'left', 'valign': 'top', 'bold': True, **font10})
-        border_format = workbook.add_format({'border': 1, **font10})
         header_format = workbook.add_format({'bold': True, 'font_size': 10, 'bg_color': '#D9E1F2', 'border': 1})
-        wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
         title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'vcenter', 'bold': True, 'border': 1})
         label_format = workbook.add_format({'align': 'left', 'valign': 'vcenter', 'font_size': 10, 'bold': True})
         date_format = workbook.add_format({'valign': 'vcenter', 'align': 'left','font_size': 10 })
@@ -115,12 +110,12 @@ class ResPartnerSaleReport(models.TransientModel):
 
 
 
-        # # Header and Footer
-        # logo_path = sale_order.company_id.logo
-        # logo_data = base64.b64decode(logo_path)
-        # tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-        # tmp_logo_file.write(logo_data)
-        # tmp_logo_file.close()
+        # Header and Footer
+        logo_path = sale_order.company_id.logo
+        logo_data = base64.b64decode(logo_path)
+        tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        tmp_logo_file.write(logo_data)
+        tmp_logo_file.close()
 
         company_name = sale_order.company_id.name
         address_line_1 = sale_order.company_id.street2 or ''
@@ -134,21 +129,21 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
         ]))
 
-        # left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
+        left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
-        # worksheet.set_header(
-        #     '&L%s&R&G' % left_header_content,
-        #     {
-        #         'image_right': tmp_logo_file.name,
-        #     }
-        # )
+        worksheet.set_header(
+            '&L%s&R&G' % left_header_content,
+            {
+                'image_right': tmp_logo_file.name,
+            }
+        )
 
-        # footer_address = sale_order.company_id.website
-        # worksheet.set_footer(
-        #     '&LPage &P'
-        #     '&C%s'
-        #     '&R%s' % (footer_address, sale_order.company_id.vat or '')
-        # )
+        footer_address = sale_order.company_id.website
+        worksheet.set_footer(
+            '&LPage &P'
+            '&C%s'
+            '&R%s' % (footer_address, sale_order.company_id.vat or '')
+        )
 
         # # Title
         
