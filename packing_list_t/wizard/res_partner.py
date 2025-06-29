@@ -136,7 +136,11 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.zip,
             sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
         ]))
-        address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
+        address_line_3 = ", ".join(filter(None, [
+            sale_order.company_id.state_id.name if sale_order.company_id.state_id else '',
+            sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
+        ]))
+        # address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
         # left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
         # worksheet.set_header(
@@ -190,10 +194,14 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.partner_shipping_id.city,
             sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else None,
         ]))
+        buyer_address_3 = ", ".join(filter(None, [
+            sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else '',
+            sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else ''
+        ]))
         worksheet.write('G12', "Address:", label_format)
         worksheet.write('H12', sale_order.partner_shipping_id.street2 or '', date_format)
         worksheet.write('H13', buyer_address_2, date_format)
-        worksheet.write('H14', sale_order.partner_shipping_id.country_id.name or '', date_format)
+        worksheet.write('H14', buyer_address_3, date_format)
 
         if sale_order.company_id.phone:
             worksheet.write('A15', "Phone:", label_format)
@@ -227,7 +235,7 @@ class ResPartnerSaleReport(models.TransientModel):
                 gross_weight
             ]
             worksheet.merge_range(row, 0, row, 4, row_data[0], product_format)
-            worksheet.write_row(row, 5, row_data[1:], product_format)
+            worksheet.write_row(row, 5, row_data[1:], row_format)
             row += 1
         # Track max widths (based on header lengths)
         # col_widths = [len(h) for h in headers]
