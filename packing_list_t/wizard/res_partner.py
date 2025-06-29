@@ -90,6 +90,7 @@ class ResPartnerSaleReport(models.TransientModel):
         label_format = workbook.add_format({'align': 'left', 'valign': 'center', 'font_size': 10, 'bold': True})
         date_format = workbook.add_format({'valign': 'left', 'align': 'center','font_size': 10 })
         name_format = workbook.add_format({'align': 'left', 'valign': 'center','font_size': 11 })
+        product_format = workbook.add_format({'text_wrap': True, 'font_size': 9})
         worksheet.set_column('A:A', 8.43)
         worksheet.set_column('B:B', 8.43)
         worksheet.set_column('C:C', 8.43)
@@ -224,8 +225,8 @@ class ResPartnerSaleReport(models.TransientModel):
                 net_weight,
                 gross_weight
             ]
-            worksheet.merge_range(row, 0, row, 4, row_data[0])
-            worksheet.write_row(row, 5, row_data[1:])
+            worksheet.merge_range(row, 0, row, 4, row_data[0], product_format)
+            worksheet.write_row(row, 5, row_data[1:], product_format)
             row += 1
         # Track max widths (based on header lengths)
         # col_widths = [len(h) for h in headers]
