@@ -112,12 +112,12 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_row(14, 15.25)
         worksheet.set_row(16, 15.25)
         worksheet.set_row(17, 15.25)
-        worksheet.set_row(18, 45)
-        worksheet.set_row(19, 45)
-        worksheet.set_row(20, 45)
-        worksheet.set_row(21, 45)
-        worksheet.set_row(22, 45)
-        worksheet.set_row(23, 45)
+        # worksheet.set_row(18, 45)
+        # worksheet.set_row(19, 45)
+        # worksheet.set_row(20, 45)
+        # worksheet.set_row(21, 45)
+        # worksheet.set_row(22, 45)
+        # worksheet.set_row(23, 45)
 
 
 
@@ -139,7 +139,7 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.state_id.name if sale_order.company_id.state_id else '',
             sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
         ]))
-        # address_line_3 = sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
+
         # left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
         # worksheet.set_header(
@@ -173,21 +173,13 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write('G10' , "Buyer:", label_format)
         worksheet.merge_range('H10:I10', sale_order.partner_id.name or "", name_format)
         
-        full_address = ", ".join(filter(None, [address_line_1, address_line_2, address_line_3]))
+        
         worksheet.write('A12', "Address:", label_format)
         worksheet.write('B12', address_line_1, date_format)
         worksheet.write('B13', address_line_2, date_format)
         worksheet.write('B14', address_line_3, date_format)
 
-        # buyer_address_parts = filter(None, [
-        #     sale_order.partner_shipping_id.street,
-        #     sale_order.partner_shipping_id.street2,
-        #     sale_order.partner_shipping_id.city,
-        #     sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else None,
-        #     sale_order.partner_shipping_id.zip,
-        #     sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
-        # ])
-        # # 
+        
         buyer_address_2 = ", ".join(filter(None, [
             sale_order.partner_shipping_id.street,
             sale_order.partner_shipping_id.city,
@@ -209,8 +201,6 @@ class ResPartnerSaleReport(models.TransientModel):
             worksheet.write('G15', "Phone:", label_format)
             worksheet.write('H15', sale_order.partner_id.phone or '', date_format)
         
-
-
         # # Order Lines Table
         order_lines = sale_order.order_line
         headers = ["Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
@@ -232,29 +222,11 @@ class ResPartnerSaleReport(models.TransientModel):
                 net_weight,
                 gross_weight
             ]
+            worksheet.set_row(row, 45)
             worksheet.merge_range(row, 0, row, 4, row_data[0], product_format)
             worksheet.write_row(row, 5, row_data[1:], row_format)
             row += 1
-        # Track max widths (based on header lengths)
-        # col_widths = [len(h) for h in headers]
-        # start_row = 20
-        # for i, line in enumerate(order_lines, start=1):
-        #     data = [
-        #         str(i),  # start numbering from 1
-        #         line.product_id.display_name or "",
-        #         str(line.product_uom_qty),
-        #         line.product_packaging_id.name or "",
-        #         str(line.net_weight),
-        #         str(line.gross_weight)
-        #     ]
-        #     row_num = start_row + i - 1
-        #     for col, val in enumerate(data):
-        #         worksheet.write(row_num, col, val, border_format)
-        #         col_widths[col - 1] = max(col_widths[col - 1], len(val))
-
-        # # Set column widths with padding
-        # for i, width in enumerate(col_widths, start=1):
-        #     worksheet.set_column(i, i, width + 2)
+            
 
         workbook.close()
 
