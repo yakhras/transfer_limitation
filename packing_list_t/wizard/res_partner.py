@@ -84,7 +84,7 @@ class ResPartnerSaleReport(models.TransientModel):
         font10_format = workbook.add_format(font10)
         bold_format = workbook.add_format({'align': 'left', 'valign': 'top', 'bold': True, **font10})
         border_format = workbook.add_format({'border': 1, **font10})
-        header_format = workbook.add_format({'border': 1, 'bold': True, **font10})
+        header_format = workbook.add_format({'bold': True, 'font_size': 10, 'bg_color': '#D9E1F2'})
         wrap_format = workbook.add_format({**font10, 'text_wrap': True, 'align': 'left', 'valign': 'top'})
         title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'center', 'bold': True, 'border': 1})
         label_format = workbook.add_format({'align': 'left', 'valign': 'center', 'font_size': 10, 'bold': True})
@@ -206,7 +206,8 @@ class ResPartnerSaleReport(models.TransientModel):
         # # Order Lines Table
         order_lines = sale_order.order_line
         headers = ["Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
-        worksheet.write_row(17, 0, headers, header_format)
+        worksheet.merge_range('A18:E18', headers[0], header_format)
+        worksheet.write_row(17, 5, headers[1:], header_format)
 
         # # Track max widths (based on header lengths)
         # col_widths = [len(h) for h in headers]
