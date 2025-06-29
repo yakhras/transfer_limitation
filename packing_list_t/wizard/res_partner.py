@@ -234,7 +234,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, 0, "Note:", label_format)
         row += 1
         worksheet.set_row(row, 90)
-        worksheet.write(row, 0, sale_order.note or "", product_format)
+        worksheet.merge_range(row, 0, row, 8, sale_order.note or "", product_format)
             
 
         workbook.close()
