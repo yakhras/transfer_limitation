@@ -17,7 +17,7 @@ class ResPartnerSaleReport(models.TransientModel):
     end_date = fields.Date(string="End Date:")
 
     def action_generate_pdf_report(self):
-        action = self.env["ir.actions.reports"]._for_xml_id("packing_list_t.action_report_packing_sale_order")
+        action = self.env["ir.actions.reports"]._render_template("packing_list_t.action_report_packing_sale_order")
         # report_action = {
         #     'context': context,
         #     'data': data,
