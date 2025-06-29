@@ -148,6 +148,13 @@ class ResPartnerSaleReport(models.TransientModel):
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
 
+        worksheet.insert_image('G1:I6', tmp_logo_file.name, {
+            'x_scale': 0.5,
+            'y_scale': 0.5,
+            'x_offset': 10,
+            'y_offset': 10,
+        })
+
         # # Title
         worksheet.merge_range('A7:I7', "PACKING LIST", title_format)
 
