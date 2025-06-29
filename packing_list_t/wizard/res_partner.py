@@ -134,7 +134,6 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.street,
             sale_order.company_id.city,
             sale_order.company_id.zip,
-            sale_order.company_id.state_id.name if sale_order.company_id.state_id else None,
         ]))
         address_line_3 = ", ".join(filter(None, [
             sale_order.company_id.state_id.name if sale_order.company_id.state_id else '',
@@ -192,7 +191,6 @@ class ResPartnerSaleReport(models.TransientModel):
         buyer_address_2 = ", ".join(filter(None, [
             sale_order.partner_shipping_id.street,
             sale_order.partner_shipping_id.city,
-            sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else None,
         ]))
         buyer_address_3 = ", ".join(filter(None, [
             sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else '',
