@@ -149,7 +149,6 @@ class ResPartnerSaleReport(models.TransientModel):
         )
 
         # # Title
-        
         worksheet.merge_range('A7:I7', "PACKING LIST", title_format)
 
         # # Order Information
@@ -218,6 +217,16 @@ class ResPartnerSaleReport(models.TransientModel):
             worksheet.merge_range(row, 0, row, 4, row_data[0], product_format)
             worksheet.write_row(row, 5, row_data[1:], row_format)
             row += 1
+
+        # # Totals
+        total_qty = sum(line.product_uom_qty for line in order_lines)
+        total_net_weight = sum(line.net_weight for line in order_lines)
+        total_gross_weight = sum(line.gross_weight for line in order_lines)
+        worksheet.write(row, 0, row, 4, "Total:", header_format)
+        worksheet.write(row, 5, total_qty, row_format)
+        worksheet.write(row, 6, "Packaging", row_format)
+        worksheet.write(row, 7, total_net_weight, row_format)
+        worksheet.write(row, 8, total_gross_weight, row_format)
             
 
         workbook.close()
