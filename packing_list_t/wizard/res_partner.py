@@ -222,7 +222,7 @@ class ResPartnerSaleReport(models.TransientModel):
         total_qty = sum(line.product_uom_qty for line in order_lines)
         total_net_weight = sum(line.net_weight for line in order_lines)
         total_gross_weight = sum(line.gross_weight for line in order_lines)
-        worksheet.write(row, 0, row, 4, "Total:", header_format)
+        worksheet.merge_range(row, 0, row, 4, "Total:", header_format)
         worksheet.write(row, 5, total_qty, row_format)
         worksheet.write(row, 6, "Packaging", row_format)
         worksheet.write(row, 7, total_net_weight, row_format)
