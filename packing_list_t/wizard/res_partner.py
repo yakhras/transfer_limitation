@@ -148,7 +148,6 @@ class ResPartnerSaleReport(models.TransientModel):
             '&R%s' % (footer_address, sale_order.company_id.vat or '')
         )
 
-        # worksheet.insert_image('G1:I6', tmp_logo_file.name, {})
 
         # # Title
         worksheet.merge_range('A7:I7', "PACKING LIST", title_format)
@@ -229,6 +228,9 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, 6, "Packaging", row_format)
         worksheet.write(row, 7, total_net_weight, row_format)
         worksheet.write(row, 8, total_gross_weight, row_format)
+        row += 2
+        worksheet.wite(row, 0, "Note:", label_format)
+        worksheet.set_row(row, 90)
             
 
         workbook.close()
