@@ -90,8 +90,8 @@ class ResPartnerSaleReport(models.TransientModel):
         label_format = workbook.add_format({'align': 'left', 'valign': 'vcenter', 'font_size': 10, 'bold': True})
         date_format = workbook.add_format({'valign': 'vcenter', 'align': 'left','font_size': 10 })
         name_format = workbook.add_format({'align': 'left', 'valign': 'vcenter','font_size': 11 })
-        product_format = workbook.add_format({'text_wrap': True, 'font_size': 9, 'valign': 'vcenter'})
-        row_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'font_size': 10, 'text_wrap': True})
+        product_format = workbook.add_format({'text_wrap': True, 'font_size': 9, 'valign': 'vcenter', 'border': 1})
+        row_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'font_size': 10, 'text_wrap': True, 'border': 1})
         worksheet.set_column('A:A', 8.43)
         worksheet.set_column('B:B', 8.43)
         worksheet.set_column('C:C', 8.43)
@@ -112,12 +112,6 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_row(14, 15.25)
         worksheet.set_row(16, 15.25)
         worksheet.set_row(17, 15.25)
-        # worksheet.set_row(18, 45)
-        # worksheet.set_row(19, 45)
-        # worksheet.set_row(20, 45)
-        # worksheet.set_row(21, 45)
-        # worksheet.set_row(22, 45)
-        # worksheet.set_row(23, 45)
 
 
 
