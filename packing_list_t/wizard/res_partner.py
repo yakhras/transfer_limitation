@@ -115,7 +115,7 @@ class ResPartnerSaleReport(models.TransientModel):
         logo_path = sale_order.company_id.logo
         logo_data = base64.b64decode(logo_path)
         image = Image.open(io.BytesIO(logo_data))
-        resized_image = image.resize((300, 150))
+        resized_image = image.resize((222, 104))
         tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
         resized_image.save(tmp_logo_file, format='PNG')
         tmp_logo_file.close()
