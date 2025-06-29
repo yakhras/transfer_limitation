@@ -11,10 +11,8 @@ from bs4 import BeautifulSoup
 
 class ResPartnerSaleReport(models.TransientModel):
     _name = "sale.order.wizard"
-    _description = "Sale Report Wizard for Res Partner"
+    _description = "Packing List Wizard for Sale Order"
 
-    start_date = fields.Date(string="Start Date:")
-    end_date = fields.Date(string="End Date:")
 
     def action_generate_pdf_report(self):
         context = self.env.context
@@ -25,55 +23,7 @@ class ResPartnerSaleReport(models.TransientModel):
             return (self.env['ir.actions.report'].search([('report_name', '=', 'packing_list_t.custom_packing_template')], limit=1)
                         .report_action(docids))
 
-        # partner_id = self.env.context.get("active_ids")
-        # order_ids = self.env["sale.order"].search(
-        #     [
-        #         ("partner_id", "in", partner_id),
-        #         ("date_order", ">=", self.start_date),
-        #         ("date_order", "<", self.end_date),
-        #     ]
-        # )
-        # order_lines = self.env["sale.order.line"].search(
-        #     [("order_id", "in", order_ids.ids)]
-        # )
-        # products = []
-        # values = []
-        # total_quantity = 0
-        # total_amount = 0
-
-        # index = 1
-        # for order_line in order_lines:
-        #     if order_line.product_id.id not in products:
-        #         products.append(order_line.product_id.id)
-        #         product_order_lines = order_lines.filtered(
-        #             lambda line: line.product_id.id == order_line.product_id.id
-        #         )
-        #         total_qty = sum(product_order_lines.mapped("product_uom_qty"))
-        #         subtotal = sum(product_order_lines.mapped("price_subtotal"))
-        #         order_line_data = {
-        #             "srno": index,
-        #             "product": order_line.product_template_id.name,
-        #             "quantity": total_qty,
-        #             "subtotal": subtotal,
-        #         }
-        #         index += 1
-        #         values.append(order_line_data)
-        #         total_quantity = sum([value["quantity"] for value in values])
-        #         total_amount = sum([value["subtotal"] for value in values])
-        # return self.env.ref(
-        #     "cr_partner_sale_excel_report.action_report_partner"
-        # ).report_action(
-        #     self,
-        #     data={
-        #         "product_lines": values,
-        #         "date_start": self.start_date,
-        #         "date_end": self.end_date,
-        #         "partner": order_ids.partner_id.name,
-        #         "q_total": total_quantity,
-        #         "s_total": total_amount,
-        #     },
-        # )
-
+        
     def action_generate_excel_report(self):
         ctx = self.env.context.get("active_ids")
         id = int(str(ctx[0]))
@@ -119,7 +69,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
 
 
-        # Header and Footer
+        # # Header and Footer
         logo_path = sale_order.company_id.logo
         logo_data = base64.b64decode(logo_path)
         image = Image.open(io.BytesIO(logo_data))
@@ -127,7 +77,6 @@ class ResPartnerSaleReport(models.TransientModel):
         tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
         resized_image.save(tmp_logo_file, format='PNG')
         tmp_logo_file.close()
-
         company_name = sale_order.company_id.name
         address_line_1 = sale_order.company_id.street2 or ''
         address_line_2 = ", ".join(filter(None, [
@@ -145,17 +94,12 @@ class ResPartnerSaleReport(models.TransientModel):
 
         else:
             left_header_content = f"&B&16{company_name}&B&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
-        
-
-        
-
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
             {
                 'image_right': tmp_logo_file.name,
             }
         )
-
         footer_address = sale_order.company_id.website
         worksheet.set_footer(
             '&LPage &P'
@@ -180,7 +124,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write('G10' , "Buyer:", label_format)
         worksheet.merge_range('H10:I10', sale_order.partner_id.name or "", name_format)
         
-        
+        # Address
         worksheet.write('A12', "Address:", label_format)
         worksheet.write('B12', address_line_1, date_format)
         worksheet.write('B13', address_line_2, date_format)
@@ -200,6 +144,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write('H13', buyer_address_2, date_format)
         worksheet.write('H14', buyer_address_3, date_format)
 
+        # Phone
         if sale_order.company_id.phone:
             worksheet.write('A15', "Phone:", label_format)
             worksheet.write('B15', sale_order.company_id.phone or '', date_format)
