@@ -208,8 +208,8 @@ class ResPartnerSaleReport(models.TransientModel):
         headers = ["Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
         worksheet.merge_range('A18:E18', headers[0], header_format)
         worksheet.write_row(17, 5, headers[1:], header_format)
-        worksheet.write('A19', str(order_lines))
 
+        row = 19
         for line in order_lines:
             product_name = line.product_id.display_name or ""
             product_qty = str(line.product_uom_qty)
@@ -224,7 +224,8 @@ class ResPartnerSaleReport(models.TransientModel):
                 net_weight,
                 gross_weight
             ]
-            worksheet.write_row(19, 0, row_data)
+            worksheet.merge_range(row, 0, row, 4, row_data[0])
+            worksheet.write_row(row, 5, row_data[1:])
         # Track max widths (based on header lengths)
         # col_widths = [len(h) for h in headers]
         # start_row = 20
