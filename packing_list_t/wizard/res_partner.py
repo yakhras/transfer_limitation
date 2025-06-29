@@ -7,6 +7,7 @@ import xlsxwriter
 import base64
 import tempfile
 from PIL import Image
+from bs4 import BeautifulSoup
 
 class ResPartnerSaleReport(models.TransientModel):
     _name = "sale.order.wizard"
@@ -230,13 +231,15 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, 8, total_gross_weight, row_format)
 
         # # Note
+        soup = BeautifulSoup(sale_order.note, "html.parser")
+        plain_text = soup.get_text(separator="\n", strip=True)
         row += 2
         worksheet.write(row, 0, "Note:", label_format)
         row += 1
         worksheet.set_row(row, 90)
-        worksheet.merge_range(row, 0, row, 8, sale_order.note or "", product_format)
+        worksheet.merge_range(row, 0, row, 8, plain_text or "", product_format)
             
-
+        
         workbook.close()
 
         attachment_id = self.env["ir.attachment"].create(
