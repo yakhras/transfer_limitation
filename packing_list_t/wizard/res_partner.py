@@ -212,7 +212,7 @@ class ResPartnerSaleReport(models.TransientModel):
 
         row = 18
         for line in order_lines:
-            product_name = line.product_id.display_name or ""
+            product_name = line.product_id.name or ""
             product_qty = str(line.product_uom_qty)
             packaging_name = line.product_packaging_id.name or ""
             net_weight = str(line.net_weight)
