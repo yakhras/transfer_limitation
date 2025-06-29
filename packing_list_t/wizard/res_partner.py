@@ -208,7 +208,7 @@ class ResPartnerSaleReport(models.TransientModel):
         headers = ["Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
         worksheet.merge_range('A18:E18', headers[0], header_format)
         worksheet.write_row(17, 5, headers[1:], header_format)
-        worksheet.write('A19', order_lines)
+        worksheet.write('A19', str(order_lines))
 
         # Track max widths (based on header lengths)
         # col_widths = [len(h) for h in headers]
