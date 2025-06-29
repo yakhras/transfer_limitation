@@ -224,7 +224,7 @@ class ResPartnerSaleReport(models.TransientModel):
                 net_weight,
                 gross_weight
             ]
-            worksheet.write_row(18 + order_lines.index(line), 0, row_data)
+            worksheet.write_row(19, 0, row_data)
         # Track max widths (based on header lengths)
         # col_widths = [len(h) for h in headers]
         # start_row = 20
