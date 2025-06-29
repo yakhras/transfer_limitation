@@ -17,8 +17,18 @@ class ResPartnerSaleReport(models.TransientModel):
     end_date = fields.Date(string="End Date:")
 
     def action_generate_pdf_report(self):
+        action = self.env["ir.actions.reports"]._for_xml_id("packing_list_t.action_report_packing_sale_order")
+        # report_action = {
+        #     'context': context,
+        #     'data': data,
+        #     'type': 'ir.actions.report',
+        #     'report_name': self.report_name,
+        #     'report_type': self.report_type,
+        #     'report_file': self.report_file,
+        #     'name': self.name,
+        # }
         # self.env['res.partner'].action_view_move_line_report()
-        return self.env['ir.actions.report']._action_configure_external_report_layout('packing_list_t.action_report_packing_sale_order')
+        return action #self.env['ir.actions.report']._action_configure_external_report_layout('packing_list_t.action_report_packing_sale_order')
         # partner_id = self.env.context.get("active_ids")
         # order_ids = self.env["sale.order"].search(
         #     [
