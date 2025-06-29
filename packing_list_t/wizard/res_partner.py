@@ -210,6 +210,21 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write_row(17, 5, headers[1:], header_format)
         worksheet.write('A19', str(order_lines))
 
+        for line in order_lines:
+            product_name = line.product_id.display_name or ""
+            product_qty = str(line.product_uom_qty)
+            packaging_name = line.product_packaging_id.name or ""
+            net_weight = str(line.net_weight)
+            gross_weight = str(line.gross_weight)
+
+            row_data = [
+                product_name,
+                product_qty,
+                packaging_name,
+                net_weight,
+                gross_weight
+            ]
+            worksheet.write_row(18 + order_lines.index(line), 0, row_data)
         # Track max widths (based on header lengths)
         # col_widths = [len(h) for h in headers]
         # start_row = 20
