@@ -19,7 +19,7 @@
     </record>
 
     <record id="res_partner_action" model="ir.actions.act_window">
-        <field name="name">Sale Report</field>
+        <field name="name">Packing List</field>
         <field name="res_model">sale.order.wizard</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="res_partner_menu"/> 
