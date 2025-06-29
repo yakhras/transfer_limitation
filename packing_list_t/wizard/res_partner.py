@@ -183,9 +183,14 @@ class ResPartnerSaleReport(models.TransientModel):
         #     sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else None,
         # ])
         # # 
+        buyer_address_2 = ", ".join(filter(None, [
+            sale_order.partner_shipping_id.street,
+            sale_order.partner_shipping_id.city,
+            sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else None,
+        ]))
         worksheet.write('G12', "Address:", label_format)
-        worksheet.write('H12', sale_order.partner_shipping_id.street or '', date_format)
-        worksheet.write('H13', sale_order.partner_shipping_id.street2 or '', date_format)
+        worksheet.write('H12', sale_order.partner_shipping_id.street2 or '', date_format)
+        worksheet.write('H13', buyer_address_2, date_format)
         worksheet.write('H14', sale_order.partner_shipping_id.country_id.name or '', date_format)
 
         if sale_order.company_id.phone:
@@ -199,9 +204,9 @@ class ResPartnerSaleReport(models.TransientModel):
 
 
         # # Order Lines Table
-        # order_lines = sale_order.order_line
-        # headers = ["#", "Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
-        # worksheet.write_row(19, 0, headers, header_format)
+        order_lines = sale_order.order_line
+        headers = ["Product", "Quantity", "Type", "Net Weight KG", "Gross Weight KG"]
+        worksheet.write_row(17, 0, headers, header_format)
 
         # # Track max widths (based on header lengths)
         # col_widths = [len(h) for h in headers]
