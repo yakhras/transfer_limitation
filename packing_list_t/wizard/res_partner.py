@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import fields, models
+import io
 from io import BytesIO
 import xlsxwriter
 import base64
@@ -112,10 +113,12 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # Header and Footer
         logo_path = sale_order.company_id.logo
-        # logo_data = base64.b64decode(logo_path)
-        # tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-        # tmp_logo_file.write(logo_data)
-        # tmp_logo_file.close()
+        logo_data = base64.b64decode(logo_path)
+        image = Image.open(io.BytesIO(logo_data))
+        resized_image = image.resize((120, 40))
+        tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        resized_image.save(tmp_logo_file, format='PNG')
+        tmp_logo_file.close()
 
         company_name = sale_order.company_id.name
         address_line_1 = sale_order.company_id.street2 or ''
@@ -134,7 +137,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
             {
-                'image_right': logo_path,
+                'image_right': tmp_logo_file.name,
             }
         )
 
