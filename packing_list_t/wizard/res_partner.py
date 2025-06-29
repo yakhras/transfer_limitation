@@ -112,10 +112,10 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # Header and Footer
         logo_path = sale_order.company_id.logo
-        logo_data = base64.b64decode(logo_path)
-        tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-        tmp_logo_file.write(logo_data)
-        tmp_logo_file.close()
+        # logo_data = base64.b64decode(logo_path)
+        # tmp_logo_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        # tmp_logo_file.write(logo_data)
+        # tmp_logo_file.close()
 
         company_name = sale_order.company_id.name
         address_line_1 = sale_order.company_id.street2 or ''
@@ -134,7 +134,7 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
             {
-                'image_right': tmp_logo_file.name,
+                'image_right': logo_path,
             }
         )
 
