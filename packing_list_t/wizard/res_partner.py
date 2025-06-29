@@ -86,7 +86,7 @@ class ResPartnerSaleReport(models.TransientModel):
         title_format = workbook.add_format({'font_size': 16, 'align': 'center', 'valign': 'vcenter', 'bold': True, 'border': 1})
         label_format = workbook.add_format({'align': 'left', 'valign': 'vcenter', 'font_size': 10, 'bold': True})
         date_format = workbook.add_format({'valign': 'vcenter', 'align': 'left','font_size': 10 })
-        name_format = workbook.add_format({'align': 'left', 'valign': 'vcenter','font_size': 11 })
+        name_format = workbook.add_format({'align': 'left', 'valign': 'vcenter','font_size': 11, 'text_wrap': True })
         product_format = workbook.add_format({'text_wrap': True, 'font_size': 9, 'valign': 'vcenter', 'border': 1})
         row_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'font_size': 10, 'text_wrap': True, 'border': 1})
         worksheet.set_column('A:A', 8.43)
@@ -132,8 +132,15 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.company_id.state_id.name if sale_order.company_id.state_id else '',
             sale_order.company_id.country_id.name if sale_order.company_id.country_id else ''
         ]))
+        company_sh_name = 'MENA GATE YÖNETİM HİZMETLERİ GIDA SAN. TİC. A. Ş.'
+        if sale_order.company_id.id == 1:
+            left_header_content = f"&B&16{company_sh_name}&B&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
-        left_header_content = f"&B&16{company_name}&B&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
+        else:
+            left_header_content = f"&B&16{company_name}&B&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
+        
+
+        
 
         worksheet.set_header(
             '&L%s&R&G' % left_header_content,
