@@ -228,6 +228,8 @@ class ResPartnerSaleReport(models.TransientModel):
         worksheet.write(row, 6, "Packaging", row_format)
         worksheet.write(row, 7, total_net_weight, row_format)
         worksheet.write(row, 8, total_gross_weight, row_format)
+
+        # # Note
         row += 2
         worksheet.wite(row, 0, "Note:", label_format)
         row += 1
