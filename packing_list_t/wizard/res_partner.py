@@ -134,21 +134,21 @@ class ResPartnerSaleReport(models.TransientModel):
 
         left_header_content = f"&B&16{company_name}&B0&11\n{address_line_1}\n{address_line_2}\n{address_line_3}"
 
-        # worksheet.set_header(
-        #     '&L%s&R&G' % left_header_content,
-        #     {
-        #         'image_right': tmp_logo_file.name,
-        #     }
-        # )
+        worksheet.set_header(
+            '&L%s&R&G' % left_header_content,
+            {
+                'image_right': tmp_logo_file.name,
+            }
+        )
 
-        # footer_address = sale_order.company_id.website
-        # worksheet.set_footer(
-        #     '&LPage &P'
-        #     '&C%s'
-        #     '&R%s' % (footer_address, sale_order.company_id.vat or '')
-        # )
+        footer_address = sale_order.company_id.website
+        worksheet.set_footer(
+            '&LPage &P'
+            '&C%s'
+            '&R%s' % (footer_address, sale_order.company_id.vat or '')
+        )
 
-        worksheet.insert_image('G1:I6', tmp_logo_file.name, {})
+        # worksheet.insert_image('G1:I6', tmp_logo_file.name, {})
 
         # # Title
         worksheet.merge_range('A7:I7', "PACKING LIST", title_format)
