@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <report 
+    <!-- <report 
         id="action_report_packing_sale_order"
         model="sale.order"
         string="TVO Packing List"
@@ -8,5 +8,16 @@
         file="packing_list_t.custom_packing_template"
         name="packing_list_t.custom_packing_template"
         print_report_name="'Packing List - %s' % (object.name)"
-    />
+    /> -->
+
+    <record
+        id="action_report_packing_sale_order"
+        model="ir.actions.report"
+    >
+        <field name="name">TVO Packing List</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">packing_list_t.custom_packing_template</field>
+        <field name="report_file">packing_list_t.custom_packing_template</field>
+    </record>
 </odoo>
