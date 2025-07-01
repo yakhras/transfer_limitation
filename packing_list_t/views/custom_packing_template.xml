@@ -171,7 +171,8 @@
                                                 <span t-field="line.product_packaging_id"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                                <span t-field="line.net_weight"/>
+                                                <t t-set="line_net_weight_total" t-value="line.net_weight * line.product_uom_qty"/>
+                                                <span t-esc="line_net_weight_total"/>
                                             </td>
                                             <td style="border: 1px none black; padding: 6px; text-align: center;">
                                                 <span t-field="line.gross_weight"/>
