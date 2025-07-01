@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.tools import float_round
 from odoo import tools
 from io import BytesIO
@@ -239,7 +239,7 @@ class ResPartner(models.Model):
     def action_view_move_line_report(self):
         """Open Account Move Line Report for this partner"""
         self.ensure_one()  # Ensure only one record is processed
-        action_name = 'Partner Ledger'
+        action_name = _("Partner Ledger")
         
         return {
             'type': 'ir.actions.act_window',
@@ -261,7 +261,7 @@ class ResPartner(models.Model):
     def action_view_move_line_report_currency(self):
         """Open Account Move Line Report for this partner"""
         self.ensure_one()  # Ensure only one record is processed
-        action_name = 'Currency-based Partner Ledger'
+        action_name = _("Partner Ledger")
         
         return {
             'type': 'ir.actions.act_window',
