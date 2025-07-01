@@ -164,8 +164,8 @@ class ResPartnerSaleReport(models.TransientModel):
             product_name = line.product_id.name or ""
             product_qty = str(line.product_uom_qty)
             packaging_name = line.product_packaging_id.name or ""
-            net_weight = str(line.net_weight)
-            gross_weight = str(line.gross_weight)
+            net_weight = str(line.net_weight * line.product_uom_qty) if line.net_weight else "0.00"
+            gross_weight = str(line.gross_weight * line.product_uom_qty) if line.gross_weight else "0.00"
 
             row_data = [
                 product_name,
@@ -181,8 +181,8 @@ class ResPartnerSaleReport(models.TransientModel):
 
         # # Totals
         total_qty = sum(line.product_uom_qty for line in order_lines)
-        total_net_weight = sum(line.net_weight for line in order_lines)
-        total_gross_weight = sum(line.gross_weight for line in order_lines)
+        total_net_weight = sum(line.net_weight * line.product_uom_qty for line in order_lines)
+        total_gross_weight = sum(line.gross_weight * line.product_uom_qty for line in order_lines)
         worksheet.merge_range(row, 0, row, 4, "Total:", header_format)
         worksheet.write(row, 5, total_qty, row_format)
         worksheet.write(row, 6, "Packaging", row_format)
