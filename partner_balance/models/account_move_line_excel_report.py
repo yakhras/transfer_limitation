@@ -183,7 +183,7 @@ class AccountMoveLineReport(models.Model):
         This version does NOT depend on context.
         """
         grouped = {}
-        for rec in sorted(self, key=lambda r: (r.date , r.id)):
+        for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
             key = rec.partner_id.id
             if key not in grouped:
                 grouped[key] = 0.0
