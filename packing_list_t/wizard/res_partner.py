@@ -132,17 +132,21 @@ class ResPartnerSaleReport(models.TransientModel):
 
         
         buyer_address_2 = ", ".join(filter(None, [
+            sale_order.partner_shipping_id.street2,
             sale_order.partner_shipping_id.street,
             sale_order.partner_shipping_id.city,
+            sale_order.partner_shipping_id.state_id.name,
+            sale_order.partner_shipping_id.country_id.name
         ]))
         buyer_address_3 = ", ".join(filter(None, [
             sale_order.partner_shipping_id.state_id.name if sale_order.partner_shipping_id.state_id else '',
             sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else ''
         ]))
         worksheet.write('G12', "Address:", label_format)
-        worksheet.write('H12', sale_order.partner_shipping_id.street2 or '', date_format)
-        worksheet.write('H13', buyer_address_2, date_format)
-        worksheet.write('H14', buyer_address_3, date_format)
+        worksheet.merge_range('H12:I14', buyer_address_2, name_format)
+        # worksheet.write('H12', sale_order.partner_shipping_id.street2 or '', date_format)
+        # worksheet.write('H13', buyer_address_2, date_format)
+        # worksheet.write('H14', buyer_address_3, date_format)
 
         # Phone
         if sale_order.company_id.phone:
