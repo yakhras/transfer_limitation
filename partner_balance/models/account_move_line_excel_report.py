@@ -239,7 +239,7 @@ class ResPartner(models.Model):
     def action_view_move_line_report(self):
         """Open Account Move Line Report for this partner"""
         self.ensure_one()  # Ensure only one record is processed
-        action_name = _("Partner Ledger")
+        action_name = _("Statement of Account")  # Default action name
         
         return {
             'type': 'ir.actions.act_window',
@@ -261,7 +261,7 @@ class ResPartner(models.Model):
     def action_view_move_line_report_currency(self):
         """Open Account Move Line Report for this partner"""
         self.ensure_one()  # Ensure only one record is processed
-        action_name = _("Partner Ledger")
+        action_name = _('Statement Currency-based of Account')
         
         return {
             'type': 'ir.actions.act_window',
