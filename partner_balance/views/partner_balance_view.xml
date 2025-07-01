@@ -76,6 +76,7 @@
                     <field name="credit"/>
                     <field name="cumulated_balance"/>
                     <field name="currency_id"/>
+                    <field name="amount_currency"/>
                 </tree>
             </field>
         </record>
