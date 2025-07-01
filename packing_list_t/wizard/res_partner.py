@@ -44,6 +44,7 @@ class ResPartnerSaleReport(models.TransientModel):
         label_format = workbook.add_format({'align': 'left', 'valign': 'vcenter', 'font_size': 10, 'bold': True})
         date_format = workbook.add_format({'valign': 'vcenter', 'align': 'left','font_size': 10 })
         name_format = workbook.add_format({'align': 'left', 'valign': 'vcenter','font_size': 11, 'text_wrap': True })
+        address_format = workbook.add_format({'align': 'left', 'valign': 'vcenter','font_size': 9, 'text_wrap': True })
         product_format = workbook.add_format({'text_wrap': True, 'font_size': 9, 'valign': 'vcenter', 'border': 1})
         row_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'font_size': 10, 'text_wrap': True, 'border': 1})
         worksheet.set_column('A:A', 8.43)
@@ -143,7 +144,7 @@ class ResPartnerSaleReport(models.TransientModel):
             sale_order.partner_shipping_id.country_id.name if sale_order.partner_shipping_id.country_id else ''
         ]))
         worksheet.write('G12', "Address:", label_format)
-        worksheet.merge_range('H12:I14', buyer_address_2, name_format)
+        worksheet.merge_range('H12:I14', buyer_address_2, address_format)
         # worksheet.write('H12', sale_order.partner_shipping_id.street2 or '', date_format)
         # worksheet.write('H13', buyer_address_2, date_format)
         # worksheet.write('H14', buyer_address_3, date_format)
