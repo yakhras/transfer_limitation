@@ -18,10 +18,10 @@ class StockMoveLine(models.Model):
 
 
 
-    @api.depends('product_id', 'date', 'location_id')
+    @api.depends('product_id', 'date')
     def _compute_balance(self):
         for line in self:
-            if not line.product_id or not line.date or not line.warehouse_id:
+            if not line.product_id or not line.date:
                 line.balance = 0.0
                 continue
 
