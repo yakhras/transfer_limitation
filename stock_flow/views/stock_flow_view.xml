@@ -2,16 +2,6 @@
 <odoo>
     <data>
 
-        <record id="view_stock_flow_tree" model="ir.ui.view">
-            <field name="name">flow.stock.tree.inherit</field>
-            <field name="model">product.product</field>
-            <field name="inherit_id" ref="stock.view_stock_product_tree"/>
-            <field name="arch" type="xml">
-                <field name="qty_available" position="after">
-                    <field name="quantity" attrs="{'invisible':[('type', '!=', 'product')]}" optional="show" decoration-danger="virtual_available &lt; 0" decoration-warning="virtual_available == 0" decoration-bf="1"/>
-                </field>
-            </field>
-        </record>
 
     <!-- Stock Move Line Views -->
         <record id="view_move_line_form_inherit_signed_qty" model="ir.ui.view">
