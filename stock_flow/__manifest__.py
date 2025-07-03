@@ -25,4 +25,6 @@
     'data': [
         "views/stock_flow_view.xml",
     ],
+
+    'post_init_hook': 'process_existing_internal_transfers',
 }
