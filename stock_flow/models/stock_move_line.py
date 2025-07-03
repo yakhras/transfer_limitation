@@ -10,7 +10,7 @@ from odoo.osv import expression
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
-    balance = fields.Float(string="Balance", store=True, compute="_compute_balance", readonly=True)
+    balance = fields.Float(string="Balance", store=True, readonly=True)
     
     signed_qty_done = fields.Float(string="Signed Quantity Done", compute="_compute_signed_qty_done", store=True)
     operation = fields.Char(string="Operation", compute="_compute_operation", store=True)
@@ -18,18 +18,18 @@ class StockMoveLine(models.Model):
 
 
 
-    @api.depends('product_id', 'date')
-    def _compute_balance(self):
-        for line in self:
-            if not line.product_id or not line.date:
-                line.balance = 0.0
-                continue
+    # @api.depends('product_id', 'date')
+    # def _compute_balance(self):
+    #     for line in self:
+    #         if not line.product_id or not line.date:
+    #             line.balance = 0.0
+    #             continue
 
-            qty = self.env['product.product'].browse(line.product_id.id).with_context(
-                to_date=line.date,
-            ).qty_available
+    #         qty = self.env['product.product'].browse(line.product_id.id).with_context(
+    #             to_date=line.date,
+    #         ).qty_available
 
-            line.balance = qty
+    #         line.balance = qty
    
 
 
