@@ -26,8 +26,7 @@ class StockMoveLine(models.Model):
                 continue
 
             qty = self.env['product.product'].browse(line.product_id.id).with_context(
-                to_date=line.date,
-                warehouse=line.warehouse_id.id if line.warehouse_id else False
+                to_date=line.date
             ).qty_available
 
             line.balance = qty
