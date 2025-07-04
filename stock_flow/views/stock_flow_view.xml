@@ -22,7 +22,6 @@
             <field name="name">Stock Move Report</field>
             <field name="res_model">stock.move.line.report</field>
             <field name="view_mode">tree</field>
-            <field name="view_id" ref="stock_flow.view_stock_move_line_report_tree"/>
         </record>
 
 
