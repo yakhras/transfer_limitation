@@ -65,4 +65,5 @@ def process_existing_internal_transfers(cr, registry):
             'warehouse_id': warehouse_to.id if warehouse_to else False,
             'signed_qty_done': signed_qty_in,
             'balance': balance_in,
+            'company_id': line.company_id.id,
         })
