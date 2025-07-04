@@ -86,3 +86,20 @@ class StockMoveLine(models.Model):
    
 
 
+class StockMoveLineReport(models.Model):
+    _name = 'stock.move.line.report'
+    _description = 'Stock Move Line Report'
+    _auto = False  # because we use a database view
+
+    move_line_id = fields.Many2one('stock.move.line', string="Original Move Line")
+    product_id = fields.Many2one('product.product', string="Product")
+    date = fields.Datetime(string="Date")
+    location_id = fields.Many2one('stock.location', string="Source Location")
+    location_dest_id = fields.Many2one('stock.location', string="Destination Location")
+    warehouse_id = fields.Many2one('stock.warehouse', string="Warehouse")
+    qty_done = fields.Float(string="Qty Done")
+    signed_qty_done = fields.Float(string="Signed Qty")
+    operation = fields.Char(string="Operation")
+    direction = fields.Selection([('in', 'In'), ('out', 'Out')], string="Direction")
+
+    
