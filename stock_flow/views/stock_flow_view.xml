@@ -30,7 +30,7 @@
                     name="Stock Flow"
                     parent="stock.menu_stock_warehouse_mgmt"
                     action="action_stock_move_line_report"
-                    sequence="10"/>
+                    sequence="50"/>
 
 
     <!-- Stock Move Line Views -->
