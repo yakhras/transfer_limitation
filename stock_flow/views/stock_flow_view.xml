@@ -25,14 +25,10 @@
             <field name="view_id" ref="stock_flow.view_stock_move_line_report_tree"/>
         </record>
 
-        <menuitem id="menu_stock_move_line_report_root"
-                    name="Stock Flow"
-                    parent="stock.menu_stock_warehouse_mgmt"
-                    sequence="200"/>
 
         <menuitem id="menu_stock_move_line_report"
-                    name="Move Line Report"
-                    parent="menu_stock_move_line_report_root"
+                    name="Stock Flow"
+                    parent="stock.menu_stock_warehouse_mgmt"
                     action="action_stock_move_line_report"
                     sequence="10"/>
 
