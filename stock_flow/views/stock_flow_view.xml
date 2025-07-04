@@ -28,7 +28,7 @@
         <menuitem id="menu_stock_move_line_report_root"
                     name="Stock Flow"
                     parent="stock.menu_stock_warehouse_mgmt"
-                    sequence="100"/>
+                    sequence="200"/>
 
         <menuitem id="menu_stock_move_line_report"
                     name="Move Line Report"
