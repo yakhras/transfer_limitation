@@ -112,7 +112,8 @@ class StockMoveLineReport(models.Model):
         self.env.cr.execute("""DROP VIEW IF EXISTS stock_move_line_report""")
         self.env.cr.execute("""
             CREATE VIEW stock_move_line_report AS (
-                -- Row 1: outgoing from source warehouse
+
+                -- Case 1: Outgoing from source warehouse (internal → internal)
                 SELECT
                     sml.id * 2 AS id,
                     sml.id AS move_line_id,
@@ -136,7 +137,7 @@ class StockMoveLineReport(models.Model):
 
                 UNION ALL
 
-                -- Row 2: incoming to destination warehouse
+                -- Case 2: Incoming to destination warehouse (internal → internal)
                 SELECT
                     sml.id * 2 + 1 AS id,
                     sml.id AS move_line_id,
@@ -157,8 +158,39 @@ class StockMoveLineReport(models.Model):
                 WHERE
                     sml.product_id = 33196 AND
                     sl.usage = 'internal' AND sld.usage = 'internal'
+
+                UNION ALL
+
+                -- Case 3: One side is not internal (no duplication)
+                SELECT
+                    sml.id * 10 AS id,
+                    sml.id AS move_line_id,
+                    sml.product_id,
+                    sml.date,
+                    sml.location_id,
+                    sml.location_dest_id,
+                    COALESCE(sw_in.id, sw_out.id) AS warehouse_id,
+                    sml.qty_done,
+                    CASE
+                        WHEN sl.usage = 'internal' THEN -sml.qty_done
+                        WHEN sld.usage = 'internal' THEN sml.qty_done
+                        ELSE 0
+                    END AS signed_qty_done,
+                    sm.name AS operation,
+                    CASE
+                        WHEN sl.usage = 'internal' THEN 'out'
+                        WHEN sld.usage = 'internal' THEN 'in'
+                        ELSE NULL
+                    END AS direction
+                FROM stock_move_line sml
+                JOIN stock_move sm ON sm.id = sml.move_id
+                LEFT JOIN stock_location sl ON sml.location_id = sl.id
+                LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+                LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
+                LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
+                WHERE
+                    sml.product_id = 33196 AND
+                    NOT (sl.usage = 'internal' AND sld.usage = 'internal')
+
             )
         """)
-
-
-    
