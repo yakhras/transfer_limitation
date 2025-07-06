@@ -6,17 +6,20 @@
             <field name="name">stock.move.line.report.tree</field>
             <field name="model">stock.move.line.report</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree default_order="date desc">
                     <field name="product_id"/>
                     <field name="date"/>
                     <field name="operation"/>
-                    <field name="qty_done"/>
-                    <field name="signed_qty_done"/>
+                    <field name="location_id"/>
+                    <field name="location_dest_id"/>
+                    <field name="qty_done" string="Quantity"/>
+                    <field name="signed_qty_done" string="Signed Quantity"/>
                     <field name="warehouse_id"/>
                     <field name="direction"/>
                 </tree>
             </field>
         </record>
+
 
         <record id="action_stock_move_line_report" model="ir.actions.act_window">
             <field name="name">Stock Move Report</field>
