@@ -17,6 +17,7 @@
                     <field name="subtotal"/>
                     <field name="vendor_name"/>
                     <field name="purchase_order_ref"/>
+                    <field name="warehouse_name"/>
                 </tree>
             </field>
         </record>
