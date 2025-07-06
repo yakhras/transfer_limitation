@@ -44,6 +44,7 @@ class ReportVendorInvoice(models.Model):
                     am.currency_rate AS currency_rate,
                     sw.name AS warehouse_name,
                     am.company_id AS company_id
+
                 FROM account_move_line aml
                 JOIN account_move am ON aml.move_id = am.id
                 JOIN res_partner rp ON am.partner_id = rp.id
@@ -59,5 +60,6 @@ class ReportVendorInvoice(models.Model):
                 AND aml.display_type IS NULL
             );
         """)
+
 
 
