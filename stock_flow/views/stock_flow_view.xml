@@ -16,6 +16,7 @@
                     <field name="signed_qty_done" string="Signed Quantity"/>
                     <field name="warehouse_id"/>
                     <field name="direction"/>
+                    <field name="stock_balance"/>
                 </tree>
             </field>
         </record>

@@ -106,6 +106,8 @@ class StockMoveLineReport(models.Model):
     signed_qty_done = fields.Float(string="Signed Qty")
     operation = fields.Char(string="Operation")
     direction = fields.Selection([('in', 'In'), ('out', 'Out')], string="Direction")
+    stock_balance = fields.Float(string="Stock Balance", readonly=True)
+
 
     @api.model
     def init(self):
@@ -113,7 +115,7 @@ class StockMoveLineReport(models.Model):
         self.env.cr.execute("""
             CREATE VIEW stock_move_line_report AS (
 
-                -- Case 1: Outgoing from source warehouse (internal → internal)
+                -- Case 1: Outgoing from internal to internal (source side)
                 SELECT
                     sml.id * 2 AS id,
                     sml.id AS move_line_id,
@@ -125,7 +127,11 @@ class StockMoveLineReport(models.Model):
                     sml.qty_done,
                     -sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
-                    'out' AS direction
+                    'out' AS direction,
+                    SUM(-sml.qty_done) OVER (
+                        PARTITION BY sml.product_id, sw_out.id
+                        ORDER BY sml.date, sml.id
+                    ) AS stock_balance
                 FROM stock_move_line sml
                 JOIN stock_move sm ON sm.id = sml.move_id
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
@@ -138,7 +144,7 @@ class StockMoveLineReport(models.Model):
 
                 UNION ALL
 
-                -- Case 2: Incoming to destination warehouse (internal → internal)
+                -- Case 2: Incoming to internal from internal (destination side)
                 SELECT
                     sml.id * 2 + 1 AS id,
                     sml.id AS move_line_id,
@@ -150,7 +156,11 @@ class StockMoveLineReport(models.Model):
                     sml.qty_done,
                     sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
-                    'in' AS direction
+                    'in' AS direction,
+                    SUM(sml.qty_done) OVER (
+                        PARTITION BY sml.product_id, sw_in.id
+                        ORDER BY sml.date, sml.id
+                    ) AS stock_balance
                 FROM stock_move_line sml
                 JOIN stock_move sm ON sm.id = sml.move_id
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
@@ -163,7 +173,7 @@ class StockMoveLineReport(models.Model):
 
                 UNION ALL
 
-                -- Case 3: One side is not internal (no duplication)
+                -- Case 3: Only one side internal (no duplication)
                 SELECT
                     sml.id * 10 AS id,
                     sml.id AS move_line_id,
@@ -183,7 +193,17 @@ class StockMoveLineReport(models.Model):
                         WHEN sl.usage = 'internal' THEN 'out'
                         WHEN sld.usage = 'internal' THEN 'in'
                         ELSE NULL
-                    END AS direction
+                    END AS direction,
+                    SUM(
+                        CASE
+                            WHEN sl.usage = 'internal' THEN -sml.qty_done
+                            WHEN sld.usage = 'internal' THEN sml.qty_done
+                            ELSE 0
+                        END
+                    ) OVER (
+                        PARTITION BY sml.product_id, COALESCE(sw_in.id, sw_out.id)
+                        ORDER BY sml.date, sml.id
+                    ) AS stock_balance
                 FROM stock_move_line sml
                 JOIN stock_move sm ON sm.id = sml.move_id
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
