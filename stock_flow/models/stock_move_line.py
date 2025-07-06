@@ -86,7 +86,150 @@ class StockMoveLine(models.Model):
    
 
 
-from odoo import fields, models, api
+# from odoo import fields, models, api
+
+# class StockMoveLineReport(models.Model):
+#     _name = 'stock.move.line.report'
+#     _description = 'Stock Move Line Report'
+#     _auto = False
+#     _rec_name = 'move_line_id'
+#     _order = 'date asc'
+
+
+#     move_line_id = fields.Many2one('stock.move.line', string="Original Move Line")
+#     product_id = fields.Many2one('product.product', string="Product")
+#     date = fields.Datetime(string="Date")
+#     location_id = fields.Many2one('stock.location', string="Source Location")
+#     location_dest_id = fields.Many2one('stock.location', string="Destination Location")
+#     warehouse_id = fields.Many2one('stock.warehouse', string="Warehouse")
+#     qty_done = fields.Float(string="Qty Done")
+#     signed_qty_done = fields.Float(string="Signed Qty")
+#     operation = fields.Char(string="Operation")
+#     direction = fields.Selection([('in', 'In'), ('out', 'Out')], string="Direction")
+#     stock_balance = fields.Float(string="Stock Balance", readonly=True)
+
+
+#     @api.model
+#     def init(self):
+#         self.env.cr.execute("""DROP VIEW IF EXISTS stock_move_line_report""")
+#         self.env.cr.execute("""
+#             CREATE VIEW stock_move_line_report AS (
+
+#                 -- Case 1: Outgoing (internal → internal)
+#                 SELECT
+#                     sml.id * 2 AS id,
+#                     sml.id AS move_line_id,
+#                     sml.product_id,
+#                     sml.date,
+#                     sml.location_id,
+#                     sml.location_dest_id,
+#                     sw_out.id AS warehouse_id,
+#                     sml.qty_done,
+#                     -sml.qty_done AS signed_qty_done,
+#                     sm.name AS operation,
+#                     'out' AS direction,
+#                     SUM(-sml.qty_done) OVER (
+#                         PARTITION BY sml.product_id, sw_out.id
+#                         ORDER BY sml.date, sml.id
+#                     ) AS stock_balance
+#                 FROM stock_move_line sml
+#                 JOIN stock_move sm ON sm.id = sml.move_id
+#                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
+#                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+#                 LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
+#                 WHERE
+#                     sml.product_id = 33196 AND
+#                     sm.state = 'done' AND
+#                     sl.usage = 'internal' AND sld.usage = 'internal'
+
+#                 UNION ALL
+
+#                 -- Case 2: Incoming (internal ← internal)
+#                 SELECT
+#                     sml.id * 2 + 1 AS id,
+#                     sml.id AS move_line_id,
+#                     sml.product_id,
+#                     sml.date,
+#                     sml.location_id,
+#                     sml.location_dest_id,
+#                     sw_in.id AS warehouse_id,
+#                     sml.qty_done,
+#                     sml.qty_done AS signed_qty_done,
+#                     sm.name AS operation,
+#                     'in' AS direction,
+#                     SUM(sml.qty_done) OVER (
+#                         PARTITION BY sml.product_id, sw_in.id
+#                         ORDER BY sml.date, sml.id
+#                     ) AS stock_balance
+#                 FROM stock_move_line sml
+#                 JOIN stock_move sm ON sm.id = sml.move_id
+#                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
+#                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+#                 LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
+#                 WHERE
+#                     sml.product_id = 33196 AND
+#                     sm.state = 'done' AND
+#                     sl.usage = 'internal' AND sld.usage = 'internal'
+
+#                 UNION ALL
+
+#                 -- Case 3: Mixed (internal ↔ external) - single row
+#                 SELECT
+#                     sml.id * 10 AS id,
+#                     sml.id AS move_line_id,
+#                     sml.product_id,
+#                     sml.date,
+#                     sml.location_id,
+#                     sml.location_dest_id,
+#                     CASE
+#                         WHEN sl.usage = 'internal' THEN sw_out.id
+#                         WHEN sld.usage = 'internal' THEN sw_in.id
+#                         ELSE NULL
+#                     END AS warehouse_id,
+#                     sml.qty_done,
+#                     CASE
+#                         WHEN sl.usage = 'internal' THEN -sml.qty_done
+#                         WHEN sld.usage = 'internal' THEN sml.qty_done
+#                         ELSE 0
+#                     END AS signed_qty_done,
+#                     sm.name AS operation,
+#                     CASE
+#                         WHEN sl.usage = 'internal' THEN 'out'
+#                         WHEN sld.usage = 'internal' THEN 'in'
+#                         ELSE NULL
+#                     END AS direction,
+#                     SUM(
+#                         CASE
+#                             WHEN sl.usage = 'internal' THEN -sml.qty_done
+#                             WHEN sld.usage = 'internal' THEN sml.qty_done
+#                             ELSE 0
+#                         END
+#                     ) OVER (
+#                         PARTITION BY sml.product_id,
+#                                     CASE
+#                                         WHEN sl.usage = 'internal' THEN sw_out.id
+#                                         WHEN sld.usage = 'internal' THEN sw_in.id
+#                                         ELSE NULL
+#                                     END
+#                         ORDER BY sml.date, sml.id
+#                     ) AS stock_balance
+#                 FROM stock_move_line sml
+#                 JOIN stock_move sm ON sm.id = sml.move_id
+#                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
+#                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+#                 LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
+#                 LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
+#                 WHERE
+#                     sml.product_id = 33196 AND
+#                     sm.state = 'done' AND
+#                     NOT (sl.usage = 'internal' AND sld.usage = 'internal')
+
+#             )
+#         """)
+
+
+from odoo import api, fields, models
+
 
 class StockMoveLineReport(models.Model):
     _name = 'stock.move.line.report'
@@ -94,7 +237,6 @@ class StockMoveLineReport(models.Model):
     _auto = False
     _rec_name = 'move_line_id'
     _order = 'date asc'
-
 
     move_line_id = fields.Many2one('stock.move.line', string="Original Move Line")
     product_id = fields.Many2one('product.product', string="Product")
@@ -108,12 +250,11 @@ class StockMoveLineReport(models.Model):
     direction = fields.Selection([('in', 'In'), ('out', 'Out')], string="Direction")
     stock_balance = fields.Float(string="Stock Balance", readonly=True)
 
-
     @api.model
     def init(self):
-        self.env.cr.execute("""DROP VIEW IF EXISTS stock_move_line_report""")
+        self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_move_line_report""")
         self.env.cr.execute("""
-            CREATE VIEW stock_move_line_report AS (
+            CREATE MATERIALIZED VIEW stock_move_line_report AS (
 
                 -- Case 1: Outgoing (internal → internal)
                 SELECT
@@ -226,3 +367,7 @@ class StockMoveLineReport(models.Model):
 
             )
         """)
+
+    @api.model
+    def refresh_view(self):
+        self.env.cr.execute("REFRESH MATERIALIZED VIEW stock_move_line_report")
