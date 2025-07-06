@@ -115,7 +115,7 @@ class StockMoveLineReport(models.Model):
         self.env.cr.execute("""
             CREATE VIEW stock_move_line_report AS (
 
-                -- Case 1: Outgoing from internal to internal (source side)
+                -- Case 1: Outgoing (internal → internal) - source side
                 SELECT
                     sml.id * 2 AS id,
                     sml.id AS move_line_id,
@@ -123,13 +123,22 @@ class StockMoveLineReport(models.Model):
                     sml.date,
                     sml.location_id,
                     sml.location_dest_id,
-                    COALESCE(sw_out.id, sw_in.id) AS warehouse_id,
+                    CASE
+                        WHEN sl.usage = 'internal' THEN sw_out.id
+                        WHEN sld.usage = 'internal' THEN sw_in.id
+                        ELSE NULL
+                    END AS warehouse_id,
                     sml.qty_done,
                     -sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
                     'out' AS direction,
                     SUM(-sml.qty_done) OVER (
-                        PARTITION BY sml.product_id, COALESCE(sw_out.id, sw_in.id)
+                        PARTITION BY sml.product_id,
+                            CASE
+                                WHEN sl.usage = 'internal' THEN sw_out.id
+                                WHEN sld.usage = 'internal' THEN sw_in.id
+                                ELSE NULL
+                            END
                         ORDER BY sml.date, sml.id
                     ) AS stock_balance
                 FROM stock_move_line sml
@@ -145,7 +154,7 @@ class StockMoveLineReport(models.Model):
 
                 UNION ALL
 
-                -- Case 2: Incoming to internal from internal (destination side)
+                -- Case 2: Incoming (internal ← internal) - destination side
                 SELECT
                     sml.id * 2 + 1 AS id,
                     sml.id AS move_line_id,
@@ -153,13 +162,22 @@ class StockMoveLineReport(models.Model):
                     sml.date,
                     sml.location_id,
                     sml.location_dest_id,
-                    COALESCE(sw_in.id, sw_out.id) AS warehouse_id,
+                    CASE
+                        WHEN sl.usage = 'internal' THEN sw_out.id
+                        WHEN sld.usage = 'internal' THEN sw_in.id
+                        ELSE NULL
+                    END AS warehouse_id,
                     sml.qty_done,
                     sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
                     'in' AS direction,
                     SUM(sml.qty_done) OVER (
-                        PARTITION BY sml.product_id, COALESCE(sw_in.id, sw_out.id)
+                        PARTITION BY sml.product_id,
+                            CASE
+                                WHEN sl.usage = 'internal' THEN sw_out.id
+                                WHEN sld.usage = 'internal' THEN sw_in.id
+                                ELSE NULL
+                            END
                         ORDER BY sml.date, sml.id
                     ) AS stock_balance
                 FROM stock_move_line sml
@@ -175,7 +193,7 @@ class StockMoveLineReport(models.Model):
 
                 UNION ALL
 
-                -- Case 3: One side is not internal (no duplication)
+                -- Case 3: Mixed (e.g., internal <-> customer/supplier/etc.) - no duplication
                 SELECT
                     sml.id * 10 AS id,
                     sml.id AS move_line_id,
@@ -183,7 +201,11 @@ class StockMoveLineReport(models.Model):
                     sml.date,
                     sml.location_id,
                     sml.location_dest_id,
-                    COALESCE(sw_in.id, sw_out.id) AS warehouse_id,
+                    CASE
+                        WHEN sl.usage = 'internal' THEN sw_out.id
+                        WHEN sld.usage = 'internal' THEN sw_in.id
+                        ELSE NULL
+                    END AS warehouse_id,
                     sml.qty_done,
                     CASE
                         WHEN sl.usage = 'internal' THEN -sml.qty_done
@@ -203,7 +225,12 @@ class StockMoveLineReport(models.Model):
                             ELSE 0
                         END
                     ) OVER (
-                        PARTITION BY sml.product_id, COALESCE(sw_in.id, sw_out.id)
+                        PARTITION BY sml.product_id,
+                            CASE
+                                WHEN sl.usage = 'internal' THEN sw_out.id
+                                WHEN sld.usage = 'internal' THEN sw_in.id
+                                ELSE NULL
+                            END
                         ORDER BY sml.date, sml.id
                     ) AS stock_balance
                 FROM stock_move_line sml
