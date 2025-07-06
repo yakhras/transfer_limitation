@@ -29,7 +29,7 @@ class ReportVendorInvoice(models.Model):
                     aml.id AS id,
                     am.name AS invoice_number,
                     am.invoice_date AS invoice_date,
-                    aml.product_id AS product_name,
+                    pp.name AS product_name,
                     aml.quantity AS quantity,
                     aml.price_unit::numeric(16, 6) AS price_unit,
                     aml.price_subtotal::numeric(16, 6) AS subtotal,
