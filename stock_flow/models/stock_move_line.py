@@ -129,7 +129,7 @@ class StockMoveLineReport(models.Model):
                 JOIN stock_move sm ON sm.id = sml.move_id
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                LEFT JOIN stock_warehouse sw_out ON sl.id = sw_out.view_location_id
+                LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
                 WHERE
                     sml.product_id = 33196 AND
                     sl.usage = 'internal' AND sld.usage = 'internal'
@@ -153,7 +153,7 @@ class StockMoveLineReport(models.Model):
                 JOIN stock_move sm ON sm.id = sml.move_id
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                LEFT JOIN stock_warehouse sw_in ON sld.id = sw_in.view_location_id
+                LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
                 WHERE
                     sml.product_id = 33196 AND
                     sl.usage = 'internal' AND sld.usage = 'internal'
