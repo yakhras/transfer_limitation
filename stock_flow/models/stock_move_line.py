@@ -112,36 +112,49 @@ class StockMoveLineReport(models.Model):
         self.env.cr.execute("""DROP VIEW IF EXISTS stock_move_line_report""")
         self.env.cr.execute("""
             CREATE VIEW stock_move_line_report AS (
+                -- Row 1: outgoing from source warehouse
                 SELECT
-                    sml.id AS id,
+                    sml.id * 2 AS id,
                     sml.id AS move_line_id,
                     sml.product_id,
                     sml.date,
                     sml.location_id,
                     sml.location_dest_id,
-                    sw.id AS warehouse_id,
+                    sw_out.id AS warehouse_id,
                     sml.qty_done,
-                    CASE
-                        WHEN sl.usage = 'internal' AND sld.usage != 'internal' THEN -sml.qty_done
-                        WHEN sl.usage != 'internal' AND sld.usage = 'internal' THEN sml.qty_done
-                        ELSE 0
-                    END AS signed_qty_done,
+                    -sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
-                    CASE
-                        WHEN sl.usage = 'internal' AND sld.usage != 'internal' THEN 'out'
-                        WHEN sl.usage != 'internal' AND sld.usage = 'internal' THEN 'in'
-                        ELSE NULL
-                    END AS direction
+                    'out' AS direction
                 FROM stock_move_line sml
                 JOIN stock_move sm ON sm.id = sml.move_id
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                LEFT JOIN stock_picking sp ON sm.picking_id = sp.id
-                LEFT JOIN stock_warehouse sw ON sp.picking_type_id = sw.int_type_id
-                WHERE
-                    sml.product_id = 33196 AND
-                    sl.usage = 'internal' AND sld.usage = 'internal'
+                LEFT JOIN stock_warehouse sw_out ON sl.id = sw_out.view_location_id
+                WHERE sl.usage = 'internal' AND sld.usage = 'internal'
+
+                UNION ALL
+
+                -- Row 2: incoming to destination warehouse
+                SELECT
+                    sml.id * 2 + 1 AS id,
+                    sml.id AS move_line_id,
+                    sml.product_id,
+                    sml.date,
+                    sml.location_id,
+                    sml.location_dest_id,
+                    sw_in.id AS warehouse_id,
+                    sml.qty_done,
+                    sml.qty_done AS signed_qty_done,
+                    sm.name AS operation,
+                    'in' AS direction
+                FROM stock_move_line sml
+                JOIN stock_move sm ON sm.id = sml.move_id
+                LEFT JOIN stock_location sl ON sml.location_id = sl.id
+                LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+                LEFT JOIN stock_warehouse sw_in ON sld.id = sw_in.view_location_id
+                WHERE sl.usage = 'internal' AND sld.usage = 'internal'
             )
+
         """)
 
 
