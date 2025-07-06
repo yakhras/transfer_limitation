@@ -252,6 +252,7 @@ class StockMoveLineReport(models.Model):
 
     @api.model
     def init(self):
+        self.env.cr.execute("""DROP VIEW IF EXISTS stock_move_line_report CASCADE""")
         self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_move_line_report""")
         self.env.cr.execute("""
             CREATE MATERIALIZED VIEW stock_move_line_report AS (
