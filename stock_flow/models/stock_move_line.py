@@ -105,7 +105,7 @@ class StockMoveLineReport(models.Model):
     operation = fields.Char(string="Operation")
     direction = fields.Selection([('in', 'In'), ('out', 'Out')], string="Direction")
 
-    @api.model_cr
+    @api.model
     def init(self):
         self.env.cr.execute("""DROP VIEW IF EXISTS stock_move_line_report""")
         self.env.cr.execute("""
