@@ -7,10 +7,12 @@
             <field name="model">report.vendor.invoice</field>
             <field name="arch" type="xml">
                 <tree create="false">
+                    <field name="invoice_date"/>
                     <field name="product_name"/>
                     <field name="invoice_number"/>
                     <field name="quantity"/>
                     <field name="price_unit"/>
+                    <field name="currency_id"/>
                     <field name="subtotal"/>
                     <field name="vendor_name"/>
                     <field name="purchase_order_ref"/>
