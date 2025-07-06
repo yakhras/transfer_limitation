@@ -93,6 +93,8 @@ class StockMoveLineReport(models.Model):
     _description = 'Stock Move Line Report'
     _auto = False
     _rec_name = 'move_line_id'
+    _order = 'date asc'
+
 
     move_line_id = fields.Many2one('stock.move.line', string="Original Move Line")
     product_id = fields.Many2one('product.product', string="Product")
