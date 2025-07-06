@@ -46,7 +46,7 @@ class ReportVendorInvoice(models.Model):
                 JOIN res_partner rp ON am.partner_id = rp.id
 
                 LEFT JOIN purchase_order po ON po.name = am.invoice_origin
-                LEFT JOIN stock_picking sp ON sp.purchase_id = po.id
+                LEFT JOIN stock_picking sp ON sp.origin = po.name
                 LEFT JOIN stock_picking_type spt ON sp.picking_type_id = spt.id
                 LEFT JOIN stock_warehouse sw ON spt.warehouse_id = sw.id
 
@@ -54,5 +54,3 @@ class ReportVendorInvoice(models.Model):
                 AND aml.display_type IS NULL
             );
         """)
-
-
