@@ -152,7 +152,9 @@ class StockMoveLineReport(models.Model):
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
                 LEFT JOIN stock_warehouse sw_in ON sld.id = sw_in.view_location_id
-                WHERE sl.usage = 'internal' AND sld.usage = 'internal'
+                WHERE 
+                    sml.product_id = 33196 AND
+                    sl.usage = 'internal' AND sld.usage = 'internal'
             )
 
         """)
