@@ -10,8 +10,8 @@ class ReportVendorInvoice(models.Model):
     invoice_date = fields.Date(string='Invoice Date')
     product_name = fields.Char(string='Product')
     quantity = fields.Float(string='Quantity')
-    price_unit = fields.Float(string='Price Unit', currency_field='currency_id', digits=(16, 6))
-    subtotal = fields.Float(string='Subtotal', currency_field='currency_id', digits=(16, 6))
+    price_unit = fields.Float(string='Price Unit', currency_field='currency_id', digits=(16, 4))
+    subtotal = fields.Float(string='Subtotal', currency_field='currency_id', digits=(16, 4))
     vendor_name = fields.Char(string='Vendor')
     purchase_order_ref = fields.Char(string='PO Reference')
     currency_id = fields.Many2one('res.currency', string='Currency')
@@ -29,8 +29,8 @@ class ReportVendorInvoice(models.Model):
                     am.invoice_date AS invoice_date,
                     pt.name AS product_name,
                     aml.quantity AS quantity,
-                    aml.price_unit::numeric(16, 6) AS price_unit,
-                    aml.price_subtotal::numeric(16, 6) AS subtotal,
+                    aml.price_unit::numeric(16, 4) AS price_unit,
+                    aml.price_subtotal::numeric(16, 4) AS subtotal,
                     rp.name AS vendor_name,
                     am.invoice_origin AS purchase_order_ref,
                     am.currency_id AS currency_id
