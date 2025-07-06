@@ -23,7 +23,6 @@
 
     # always loaded
     'data': [
-        'data/report_view.sql',
         "views/stock_flow_view.xml",
     ],
 
