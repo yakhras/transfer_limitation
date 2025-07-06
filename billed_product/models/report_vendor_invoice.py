@@ -8,7 +8,7 @@ class ReportVendorInvoice(models.Model):
 
     invoice_number = fields.Char(string='Invoice Number')
     invoice_date = fields.Date(string='Invoice Date')
-    product_name = fields.Char(string='Product')
+    product_id = fields.Many2one('product.product', string='Product')
     quantity = fields.Float(string='Quantity')
     price_unit = fields.Float(string='Price Unit', currency_field='currency_id', digits=(16, 4))
     subtotal = fields.Float(string='Subtotal', currency_field='currency_id', digits=(16, 4))
@@ -29,7 +29,7 @@ class ReportVendorInvoice(models.Model):
                     aml.id AS id,
                     am.name AS invoice_number,
                     am.invoice_date AS invoice_date,
-                    pt.name AS product_name,
+                    aml.product_id AS product_id,
                     aml.quantity AS quantity,
                     aml.price_unit::numeric(16, 6) AS price_unit,
                     aml.price_subtotal::numeric(16, 6) AS subtotal,
@@ -40,8 +40,6 @@ class ReportVendorInvoice(models.Model):
                 FROM account_move_line aml
                 JOIN account_move am ON aml.move_id = am.id
                 JOIN res_partner rp ON am.partner_id = rp.id
-                JOIN product_product pp ON aml.product_id = pp.id
-                JOIN product_template pt ON pp.product_tmpl_id = pt.id
                 WHERE am.move_type = 'in_invoice'
                 AND aml.display_type IS NULL
             );
