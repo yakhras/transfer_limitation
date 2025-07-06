@@ -17,8 +17,14 @@ class ReportVendorInvoice(models.Model):
     currency_id = fields.Many2one('res.currency', string='Currency')
 
     def init(self):
+        # Drop the view if it already exists
         self.env.cr.execute("""
-            CREATE OR REPLACE VIEW report_vendor_invoice AS (
+            DROP VIEW IF EXISTS report_vendor_invoice CASCADE;
+        """)
+
+        # Create the new view
+        self.env.cr.execute("""
+            CREATE VIEW report_vendor_invoice AS (
                 SELECT
                     aml.id AS id,
                     am.name AS invoice_number,
