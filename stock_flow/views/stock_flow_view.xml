@@ -6,7 +6,7 @@
             <field name="name">stock.move.line.report.tree</field>
             <field name="model">stock.move.line.report</field>
             <field name="arch" type="xml">
-                <tree default_order="date desc">
+                <tree default_order="date asc">
                     <field name="product_id"/>
                     <field name="date"/>
                     <field name="operation"/>
