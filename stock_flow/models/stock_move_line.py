@@ -123,13 +123,13 @@ class StockMoveLineReport(models.Model):
                     sml.date,
                     sml.location_id,
                     sml.location_dest_id,
-                    sw_out.id AS warehouse_id,
+                    COALESCE(sw_out.id, sw_in.id) AS warehouse_id,
                     sml.qty_done,
                     -sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
                     'out' AS direction,
                     SUM(-sml.qty_done) OVER (
-                        PARTITION BY sml.product_id, sw_out.id
+                        PARTITION BY sml.product_id, COALESCE(sw_out.id, sw_in.id)
                         ORDER BY sml.date, sml.id
                     ) AS stock_balance
                 FROM stock_move_line sml
@@ -137,6 +137,7 @@ class StockMoveLineReport(models.Model):
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
                 LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
+                LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
                 WHERE
                     sml.product_id = 33196 AND
                     sm.state = 'done' AND
@@ -152,19 +153,20 @@ class StockMoveLineReport(models.Model):
                     sml.date,
                     sml.location_id,
                     sml.location_dest_id,
-                    sw_in.id AS warehouse_id,
+                    COALESCE(sw_in.id, sw_out.id) AS warehouse_id,
                     sml.qty_done,
                     sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
                     'in' AS direction,
                     SUM(sml.qty_done) OVER (
-                        PARTITION BY sml.product_id, sw_in.id
+                        PARTITION BY sml.product_id, COALESCE(sw_in.id, sw_out.id)
                         ORDER BY sml.date, sml.id
                     ) AS stock_balance
                 FROM stock_move_line sml
                 JOIN stock_move sm ON sm.id = sml.move_id
                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+                LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
                 LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
                 WHERE
                     sml.product_id = 33196 AND
@@ -173,7 +175,7 @@ class StockMoveLineReport(models.Model):
 
                 UNION ALL
 
-                -- Case 3: Only one side internal (no duplication)
+                -- Case 3: One side is not internal (no duplication)
                 SELECT
                     sml.id * 10 AS id,
                     sml.id AS move_line_id,
