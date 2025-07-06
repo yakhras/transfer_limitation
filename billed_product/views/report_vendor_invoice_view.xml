@@ -13,6 +13,7 @@
                     <field name="quantity"/>
                     <field name="price_unit"/>
                     <field name="currency_id"/>
+                    <field name="currency_rate"/>
                     <field name="subtotal"/>
                     <field name="vendor_name"/>
                     <field name="purchase_order_ref"/>

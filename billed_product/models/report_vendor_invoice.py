@@ -15,6 +15,8 @@ class ReportVendorInvoice(models.Model):
     vendor_name = fields.Char(string='Vendor')
     purchase_order_ref = fields.Char(string='PO Reference')
     currency_id = fields.Many2one('res.currency', string='Currency')
+    currency_rate = fields.Float(string='Currency Rate', digits=(12, 6))
+
 
     def init(self):
         self.env.cr.execute("""
@@ -29,11 +31,12 @@ class ReportVendorInvoice(models.Model):
                     am.invoice_date AS invoice_date,
                     pt.name AS product_name,
                     aml.quantity AS quantity,
-                    aml.price_unit::numeric(16, 4) AS price_unit,
-                    aml.price_subtotal::numeric(16, 4) AS subtotal,
+                    aml.price_unit::numeric(16, 6) AS price_unit,
+                    aml.price_subtotal::numeric(16, 6) AS subtotal,
                     rp.name AS vendor_name,
                     am.invoice_origin AS purchase_order_ref,
-                    am.currency_id AS currency_id
+                    am.currency_id AS currency_id,
+                    am.currency_rate AS currency_rate
                 FROM account_move_line aml
                 JOIN account_move am ON aml.move_id = am.id
                 JOIN res_partner rp ON am.partner_id = rp.id
