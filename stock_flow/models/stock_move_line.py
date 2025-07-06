@@ -123,22 +123,13 @@ class StockMoveLineReport(models.Model):
                     sml.date,
                     sml.location_id,
                     sml.location_dest_id,
-                    CASE
-                        WHEN sl.usage = 'internal' THEN sw_out.id
-                        WHEN sld.usage = 'internal' THEN sw_in.id
-                        ELSE NULL
-                    END AS warehouse_id,
+                    sw_out.id AS warehouse_id,
                     sml.qty_done,
                     -sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
                     'out' AS direction,
                     SUM(-sml.qty_done) OVER (
-                        PARTITION BY sml.product_id,
-                            CASE
-                                WHEN sl.usage = 'internal' THEN sw_out.id
-                                WHEN sld.usage = 'internal' THEN sw_in.id
-                                ELSE NULL
-                            END
+                        PARTITION BY sml.product_id, sw_out.id
                         ORDER BY sml.date, sml.id
                     ) AS stock_balance
                 FROM stock_move_line sml
@@ -162,22 +153,13 @@ class StockMoveLineReport(models.Model):
                     sml.date,
                     sml.location_id,
                     sml.location_dest_id,
-                    CASE
-                        WHEN sl.usage = 'internal' THEN sw_out.id
-                        WHEN sld.usage = 'internal' THEN sw_in.id
-                        ELSE NULL
-                    END AS warehouse_id,
+                    sw_in.id AS warehouse_id,
                     sml.qty_done,
                     sml.qty_done AS signed_qty_done,
                     sm.name AS operation,
                     'in' AS direction,
                     SUM(sml.qty_done) OVER (
-                        PARTITION BY sml.product_id,
-                            CASE
-                                WHEN sl.usage = 'internal' THEN sw_out.id
-                                WHEN sld.usage = 'internal' THEN sw_in.id
-                                ELSE NULL
-                            END
+                        PARTITION BY sml.product_id, sw_in.id
                         ORDER BY sml.date, sml.id
                     ) AS stock_balance
                 FROM stock_move_line sml
