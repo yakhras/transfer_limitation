@@ -357,3 +357,7 @@ class StockMoveLineReport(models.Model):
 
             )
         """)
+        self.env.cr.execute("""
+            CREATE INDEX IF NOT EXISTS idx_stock_balance_by_product_warehouse
+            ON stock_move_line_report (product_id, warehouse_id, date)
+        """)
