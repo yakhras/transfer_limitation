@@ -10,7 +10,7 @@ class ReportVendorInvoice(models.Model):
     invoice_date = fields.Date(string='Invoice Date')
     product_name = fields.Char(string='Product')
     quantity = fields.Float(string='Quantity')
-    price_unit = fields.Monetary(string='Price Unit', currency_field='currency_id', digits='Product Price')
+    price_unit = fields.Monetary(string='Price Unit', currency_field='currency_id', digits=(16, 4))
     subtotal = fields.Monetary(string='Subtotal', currency_field='currency_id')
     vendor_name = fields.Char(string='Vendor')
     purchase_order_ref = fields.Char(string='PO Reference')
