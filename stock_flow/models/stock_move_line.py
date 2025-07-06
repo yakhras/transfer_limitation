@@ -256,125 +256,104 @@ class StockMoveLineReport(models.Model):
         self.env.cr.execute("""
             CREATE MATERIALIZED VIEW stock_move_line_report AS (
 
-                -- Case 1: Outgoing (internal → internal)
-                SELECT
-                    sml.id * 2 AS id,
-                    sml.id AS move_line_id,
-                    sml.product_id,
-                    sml.date,
-                    sml.location_id,
-                    sml.location_dest_id,
-                    sw_out.id AS warehouse_id,
-                    sml.qty_done,
-                    -sml.qty_done AS signed_qty_done,
-                    sm.name AS operation,
-                    'out' AS direction,
-                    SUM(-sml.qty_done) OVER (
-                        PARTITION BY sml.product_id, sw_out.id
-                        ORDER BY sml.date,
-                                1, -- 'out' direction weight
-                                sml.id
-                    ) AS stock_balance
-                FROM stock_move_line sml
-                JOIN stock_move sm ON sm.id = sml.move_id
-                LEFT JOIN stock_location sl ON sml.location_id = sl.id
-                LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
-                WHERE
-                    sml.product_id = 33196 AND
-                    sm.state = 'done' AND
-                    sl.usage = 'internal' AND sld.usage = 'internal'
+                WITH move_lines_union AS (
 
-                UNION ALL
+                    -- Internal → Internal: create both 'out' and 'in' rows
+                    SELECT
+                        sml.id * 2 AS id,
+                        sml.id AS move_line_id,
+                        sml.product_id,
+                        sml.date,
+                        sml.location_id,
+                        sml.location_dest_id,
+                        sw_out.id AS warehouse_id,
+                        sml.qty_done,
+                        -sml.qty_done AS signed_qty_done,
+                        sm.name AS operation,
+                        'out' AS direction
+                    FROM stock_move_line sml
+                    JOIN stock_move sm ON sm.id = sml.move_id
+                    LEFT JOIN stock_location sl ON sml.location_id = sl.id
+                    LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+                    LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
+                    WHERE
+                        sml.product_id = 33196
+                        AND sm.state = 'done'
+                        AND sl.usage = 'internal' AND sld.usage = 'internal'
 
-                -- Case 2: Incoming (internal ← internal)
-                SELECT
-                    sml.id * 2 + 1 AS id,
-                    sml.id AS move_line_id,
-                    sml.product_id,
-                    sml.date,
-                    sml.location_id,
-                    sml.location_dest_id,
-                    sw_in.id AS warehouse_id,
-                    sml.qty_done,
-                    sml.qty_done AS signed_qty_done,
-                    sm.name AS operation,
-                    'in' AS direction,
-                    SUM(sml.qty_done) OVER (
-                        PARTITION BY sml.product_id, sw_in.id
-                        ORDER BY sml.date,
-                                0, -- 'in' direction weight
-                                sml.id
-                    ) AS stock_balance
-                FROM stock_move_line sml
-                JOIN stock_move sm ON sm.id = sml.move_id
-                LEFT JOIN stock_location sl ON sml.location_id = sl.id
-                LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
-                WHERE
-                    sml.product_id = 33196 AND
-                    sm.state = 'done' AND
-                    sl.usage = 'internal' AND sld.usage = 'internal'
+                    UNION ALL
 
-                UNION ALL
+                    SELECT
+                        sml.id * 2 + 1 AS id,
+                        sml.id AS move_line_id,
+                        sml.product_id,
+                        sml.date,
+                        sml.location_id,
+                        sml.location_dest_id,
+                        sw_in.id AS warehouse_id,
+                        sml.qty_done,
+                        sml.qty_done AS signed_qty_done,
+                        sm.name AS operation,
+                        'in' AS direction
+                    FROM stock_move_line sml
+                    JOIN stock_move sm ON sm.id = sml.move_id
+                    LEFT JOIN stock_location sl ON sml.location_id = sl.id
+                    LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+                    LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
+                    WHERE
+                        sml.product_id = 33196
+                        AND sm.state = 'done'
+                        AND sl.usage = 'internal' AND sld.usage = 'internal'
 
-                -- Case 3: Mixed (internal ↔ external)
-                SELECT
-                    sml.id * 10 AS id,
-                    sml.id AS move_line_id,
-                    sml.product_id,
-                    sml.date,
-                    sml.location_id,
-                    sml.location_dest_id,
-                    CASE
-                        WHEN sl.usage = 'internal' THEN sw_out.id
-                        WHEN sld.usage = 'internal' THEN sw_in.id
-                        ELSE NULL
-                    END AS warehouse_id,
-                    sml.qty_done,
-                    CASE
-                        WHEN sl.usage = 'internal' THEN -sml.qty_done
-                        WHEN sld.usage = 'internal' THEN sml.qty_done
-                        ELSE 0
-                    END AS signed_qty_done,
-                    sm.name AS operation,
-                    CASE
-                        WHEN sl.usage = 'internal' THEN 'out'
-                        WHEN sld.usage = 'internal' THEN 'in'
-                        ELSE NULL
-                    END AS direction,
-                    SUM(
+                    UNION ALL
+
+                    -- External ↔ Internal: single row only
+                    SELECT
+                        sml.id * 10 AS id,
+                        sml.id AS move_line_id,
+                        sml.product_id,
+                        sml.date,
+                        sml.location_id,
+                        sml.location_dest_id,
+                        CASE
+                            WHEN sl.usage = 'internal' THEN sw_out.id
+                            WHEN sld.usage = 'internal' THEN sw_in.id
+                            ELSE NULL
+                        END AS warehouse_id,
+                        sml.qty_done,
                         CASE
                             WHEN sl.usage = 'internal' THEN -sml.qty_done
                             WHEN sld.usage = 'internal' THEN sml.qty_done
                             ELSE 0
-                        END
-                    ) OVER (
-                        PARTITION BY sml.product_id,
-                                    CASE
-                                        WHEN sl.usage = 'internal' THEN sw_out.id
-                                        WHEN sld.usage = 'internal' THEN sw_in.id
-                                        ELSE NULL
-                                    END
-                        ORDER BY sml.date,
-                                CASE
-                                    WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 0
-                                    WHEN sl.usage = 'internal' THEN 1
-                                    WHEN sld.usage = 'internal' THEN 0
-                                    ELSE 2
-                                END,
-                                sml.id
+                        END AS signed_qty_done,
+                        sm.name AS operation,
+                        CASE
+                            WHEN sl.usage = 'internal' THEN 'out'
+                            WHEN sld.usage = 'internal' THEN 'in'
+                            ELSE NULL
+                        END AS direction
+                    FROM stock_move_line sml
+                    JOIN stock_move sm ON sm.id = sml.move_id
+                    LEFT JOIN stock_location sl ON sml.location_id = sl.id
+                    LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+                    LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sl.id
+                    LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sld.id
+                    WHERE
+                        sml.product_id = 33196
+                        AND sm.state = 'done'
+                        AND NOT (sl.usage = 'internal' AND sld.usage = 'internal')
+                )
+
+                -- Final SELECT: apply balance in single pass
+                SELECT
+                    *,
+                    SUM(signed_qty_done) OVER (
+                        PARTITION BY product_id, warehouse_id
+                        ORDER BY date,
+                                CASE WHEN direction = 'in' THEN 0 ELSE 1 END,
+                                id
                     ) AS stock_balance
-                FROM stock_move_line sml
-                JOIN stock_move sm ON sm.id = sml.move_id
-                LEFT JOIN stock_location sl ON sml.location_id = sl.id
-                LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
-                LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
-                WHERE
-                    sml.product_id = 33196 AND
-                    sm.state = 'done' AND
-                    NOT (sl.usage = 'internal' AND sld.usage = 'internal')
+                FROM move_lines_union
 
             )
         """)
