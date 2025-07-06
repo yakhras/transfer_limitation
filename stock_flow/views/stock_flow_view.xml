@@ -31,9 +31,9 @@
 
         <menuitem id="menu_stock_move_line_report"
                     name="Stock Flow"
-                    parent="stock.menu_stock_warehouse_mgmt"
+                    parent="stock.menu_warehouse_report"
                     action="action_stock_move_line_report"
-                    sequence="50"/>
+                    sequence="160"/>
 
 
     <!-- Stock Move Line Views -->
