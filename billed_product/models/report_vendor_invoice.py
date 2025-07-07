@@ -81,7 +81,7 @@ class CustomerInvoiceReport(models.Model):
                 JOIN account_move am ON aml.move_id = am.id
                 LEFT JOIN sale_order_line sol ON aml.sale_line_id = sol.id
                 LEFT JOIN sale_order so ON sol.order_id = so.id
-                LEFT JOIN stock_warehouse sw ON so.warehouse_id = sw.id
+                LEFT JOIN stock_warehouse sw ON sol.warehouses_id = sw.id
 
                 WHERE am.move_type = 'out_invoice'
                     AND aml.product_id IS NOT NULL
