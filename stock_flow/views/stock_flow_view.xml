@@ -35,6 +35,12 @@
                     action="action_stock_move_line_report"
                     sequence="160"/>
 
+        <menuitem id="menu_stock_flow_report"
+                    name="Stock Flow Report"
+                    parent="base.menu_reporting_dashboard"
+                    action="action_stock_move_line_report"
+                    sequence="6"/>
+
 
         
     </data>

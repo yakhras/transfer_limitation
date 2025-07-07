@@ -6,7 +6,7 @@
             <field name="name">vendor.bill.report.tree</field>
             <field name="model">vendor.bill.report</field>
             <field name="arch" type="xml">
-                <tree string="Vendor Bill Report" create="false" >
+                <tree string="Billed Products Report" create="false" >
                     <field name="invoice_id"/>
                     <field name="partner_id"/>
                     <field name="product_id"/>
@@ -28,7 +28,7 @@
 
 
         <menuitem id="menu_report_vendor_invoice_report"
-                    name="Billed Products Report"
+                    name="Billed Products"
                     parent="base.menu_reporting_dashboard"
                     action="action_report_vendor_invoice_report"
                     sequence="4"/>
@@ -38,7 +38,7 @@
             <field name="name">customer.invoice.report.tree</field>
             <field name="model">customer.invoice.report</field>
             <field name="arch" type="xml">
-                <tree string="Customer Invoice Report" create="false">
+                <tree string="Invoiced Products Report" create="false">
                     <field name="invoice_id"/>
                     <field name="partner_id"/>
                     <field name="product_id"/>
@@ -60,17 +60,12 @@
 
 
         <menuitem id="menu_customer_invoice_report"
-                    name="Customer Invoice Report"
+                    name="Invoiced Products"
                     parent="base.menu_reporting_dashboard"
                     action="action_customer_invoice_report"
                     sequence="5"/>
 
 
-        <menuitem id="menu_stock_flow_report"
-                    name="Stock Flow Report"
-                    parent="base.menu_reporting_dashboard"
-                    action="stock_flow.action_stock_move_line_report"
-                    sequence="6"/>
 
 
         
