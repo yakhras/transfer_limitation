@@ -21,7 +21,7 @@
 
 
         <record id="action_report_vendor_invoice_report" model="ir.actions.act_window">
-            <field name="name">Billed Product Report</field>
+            <field name="name">Billed Products Report</field>
             <field name="res_model">vendor.bill.report</field>
             <field name="view_mode">tree</field>
         </record>
@@ -53,7 +53,7 @@
 
 
         <record id="action_customer_invoice_report" model="ir.actions.act_window">
-            <field name="name">Customer Invoice Report</field>
+            <field name="name">Invoiced Products Report</field>
             <field name="res_model">customer.invoice.report</field>
             <field name="view_mode">tree</field>
         </record>
