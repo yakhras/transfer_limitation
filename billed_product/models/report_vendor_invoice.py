@@ -79,7 +79,7 @@ class CustomerInvoiceReport(models.Model):
 
                 FROM account_move_line aml
                 JOIN account_move am ON aml.move_id = am.id
-                LEFT JOIN sale_order_line sol ON aml.sale_line_ids @> ARRAY[sol.id]
+                LEFT JOIN sale_order_line sol ON aml.sale_line_id = sol.id
                 LEFT JOIN sale_order so ON sol.order_id = so.id
                 LEFT JOIN stock_picking_type pt ON so.picking_type_id = pt.id
                 LEFT JOIN stock_warehouse sw ON pt.warehouse_id = sw.id
