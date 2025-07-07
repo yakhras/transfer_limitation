@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, tools
 
 
 class VendorBillReport(models.Model):
@@ -15,14 +15,13 @@ class VendorBillReport(models.Model):
     warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
     currency_id = fields.Many2one('res.currency', string='Currency')
 
-
     @api.model
     def init(self):
-        self.env.cr.execute("DROP VIEW IF EXISTS vendor_bill_report CASCADE")
+        tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute("""
-            CREATE VIEW vendor_bill_report AS (
+            CREATE OR REPLACE VIEW %s AS (
                 SELECT
-                    aml.id AS id,
+                    ROW_NUMBER() OVER (ORDER BY aml.id) AS id,
                     am.id AS invoice_id,
                     am.partner_id,
                     aml.product_id,
@@ -41,6 +40,6 @@ class VendorBillReport(models.Model):
 
                 WHERE am.move_type = 'in_invoice'
                     AND aml.product_id IS NOT NULL
-                    AND am.company_id = 5
+                    AND am.company_id = %%s
             )
-        """)
+        """ % self._table, (self.env.company.id,))
