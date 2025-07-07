@@ -33,6 +33,7 @@
                     name="Billed Products"
                     parent="base.menu_reporting_dashboard"
                     action="action_report_vendor_invoice_report"
+                    groups="account.group_account_manager"
                     sequence="4"/>
 
 
@@ -67,6 +68,7 @@
                     name="Invoiced Products"
                     parent="base.menu_reporting_dashboard"
                     action="action_customer_invoice_report"
+                    groups="account.group_account_manager"
                     sequence="5"/>
 
 
