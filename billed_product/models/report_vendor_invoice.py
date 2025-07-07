@@ -18,9 +18,9 @@ class VendorBillReport(models.Model):
 
     @api.model
     def init(self):
-        self.env.cr.execute("DROP VIEW IF EXISTS vendor_bill_report")
+        self.env.cr.execute("DROP VIEW IF EXISTS vendor_bill_report CASCADE")
         self.env.cr.execute("""
-            CREATE OR REPLACE VIEW vendor_bill_report AS (
+            CREATE VIEW vendor_bill_report AS (
                 SELECT
                     aml.id AS id,
                     am.id AS invoice_id,
@@ -41,8 +41,6 @@ class VendorBillReport(models.Model):
 
                 WHERE am.move_type = 'in_invoice'
                     AND aml.product_id IS NOT NULL
-                    AND am.partner_id IS NOT NULL
                     AND am.company_id = 5
             )
         """)
-
