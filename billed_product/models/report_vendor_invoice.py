@@ -43,3 +43,52 @@ class VendorBillReport(models.Model):
                     AND am.company_id = 5
             )
         """ % self._table)
+
+
+
+
+class CustomerInvoiceReport(models.Model):
+    _name = 'customer.invoice.report'
+    _description = 'Customer Invoice Report'
+    _auto = False
+
+    invoice_id = fields.Many2one('account.move', string='Customer Invoice')
+    partner_id = fields.Many2one('res.partner', string='Customer')
+    product_id = fields.Many2one('product.product', string='Product')
+    quantity = fields.Float(string='Quantity')
+    price_unit = fields.Float(string='Unit Price')
+    sale_id = fields.Many2one('sale.order', string='Sale Order')
+    warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
+    currency_id = fields.Many2one('res.currency', string='Currency')
+
+    @api.model
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, self._table)
+        self.env.cr.execute("""
+            CREATE OR REPLACE VIEW %s AS (
+                SELECT
+                    ROW_NUMBER() OVER (ORDER BY aml.id) AS id,
+                    am.id AS invoice_id,
+                    am.partner_id,
+                    aml.product_id,
+                    aml.quantity,
+                    aml.price_unit,
+                    am.currency_id,
+                    so.id AS sale_id,
+                    sw.id AS warehouse_id
+
+                FROM account_move_line aml
+                JOIN account_move am ON aml.move_id = am.id
+                LEFT JOIN sale_order_line sol ON aml.sale_line_ids @> ARRAY[sol.id]
+                LEFT JOIN sale_order so ON sol.order_id = so.id
+                LEFT JOIN stock_picking_type pt ON so.picking_type_id = pt.id
+                LEFT JOIN stock_warehouse sw ON pt.warehouse_id = sw.id
+
+                WHERE am.move_type = 'out_invoice'
+                    AND aml.product_id IS NOT NULL
+                    AND am.partner_id IS NOT NULL
+                    AND am.state = 'posted'
+                    AND am.company_id = %s
+            )
+        """ % (self._table, self.env.company.id))
+        

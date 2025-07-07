@@ -34,6 +34,38 @@
                     sequence="4"/>
 
 
+        <record id="view_customer_invoice_report_tree" model="ir.ui.view">
+            <field name="name">customer.invoice.report.tree</field>
+            <field name="model">customer.invoice.report</field>
+            <field name="arch" type="xml">
+                <tree string="Customer Invoice Report">
+                    <field name="invoice_id"/>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="quantity"/>
+                    <field name="price_unit"/>
+                    <field name="currency_id"/>
+                    <field name="sale_id"/>
+                    <field name="warehouse_id"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_customer_invoice_report" model="ir.actions.act_window">
+            <field name="name">Customer Invoice Report</field>
+            <field name="res_model">customer.invoice.report</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+        <menuitem id="menu_customer_invoice_report"
+                    name="Customer Invoice Report"
+                    parent="base.menu_reporting_dashboard"
+                    action="action_customer_invoice_report"
+                    sequence="5"/>
+
+
         
     </data>
 </odoo>
