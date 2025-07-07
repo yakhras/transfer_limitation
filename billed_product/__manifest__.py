@@ -20,7 +20,7 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['account','base']  ,
+    'depends': ['account','base', 'stock', 'purchase', 'sale', 'product'],
 
     # always loaded
     'data': [
