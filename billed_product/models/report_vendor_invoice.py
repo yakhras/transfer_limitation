@@ -13,6 +13,8 @@ class VendorBillReport(models.Model):
     price_unit = fields.Float(string='Unit Price')
     purchase_id = fields.Many2one('purchase.order', string='Purchase Order')
     warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
+    currency_id = fields.Many2one('res.currency', string='Currency')
+
 
     @api.model
     def init(self):
@@ -25,6 +27,7 @@ class VendorBillReport(models.Model):
                     aml.product_id,
                     aml.quantity,
                     aml.price_unit,
+                    am.currency_id,
                     po.id AS purchase_id,
                     sw.id AS warehouse_id
 
