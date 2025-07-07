@@ -39,7 +39,7 @@ class VendorBillReport(models.Model):
                 FROM account_move_line aml
                 JOIN account_move am ON aml.move_id = am.id
                 LEFT JOIN purchase_order_line pol ON aml.purchase_line_id = pol.id
-                LEFT JOIN purchase_order po ON pol.order_id = po.id
+                LEFT JOIN purchase_order po ON pol.order_id.name = po.id
                 LEFT JOIN stock_picking_type pt ON po.picking_type_id = pt.id
                 LEFT JOIN stock_warehouse sw ON pt.warehouse_id = sw.id
 
