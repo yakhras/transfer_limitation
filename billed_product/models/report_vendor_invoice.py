@@ -14,11 +14,12 @@ class VendorBillReport(models.Model):
     purchase_id = fields.Many2one('purchase.order', string='Purchase Order')
     warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
     currency_id = fields.Many2one('res.currency', string='Currency')
-    currency_rate = fields.Float(string='Currency Rate')
+
 
     @api.model
     def init(self):
-        self.env.cr.execute("DROP VIEW IF EXISTS vendor_bill_report CASCADE")
+        # Drop the view if it exists
+        self.env.cr.execute("DROP VIEW IF EXISTS vendor_bill_report")
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW vendor_bill_report AS (
                 SELECT
@@ -29,7 +30,6 @@ class VendorBillReport(models.Model):
                     aml.quantity,
                     aml.price_unit,
                     am.currency_id,
-                    am.currency_rate,
                     po.id AS purchase_id,
                     sw.id AS warehouse_id
 
@@ -42,10 +42,6 @@ class VendorBillReport(models.Model):
 
                 WHERE am.move_type = 'in_invoice'
                     AND aml.product_id IS NOT NULL
-                    AND am.partner_id IS NOT NULL
-                    AND am.currency_id IS NOT NULL
-                    AND po.id IS NOT NULL
-                    AND pt.warehouse_id IS NOT NULL
                     AND am.company_id = 5
             )
         """)
