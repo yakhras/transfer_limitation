@@ -18,6 +18,7 @@ class VendorBillReport(models.Model):
 
     @api.model
     def init(self):
+        self.env.cr.execute("DROP VIEW IF EXISTS vendor_bill_report CASCADE")
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW vendor_bill_report AS (
                 SELECT
