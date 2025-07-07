@@ -14,6 +14,8 @@ class VendorBillReport(models.Model):
     purchase_id = fields.Many2one('purchase.order', string='Purchase Order')
     warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
     currency_id = fields.Many2one('res.currency', string='Currency')
+    currency_rate = fields.Float(string='Currency Rate')
+
 
     @api.model
     def init(self):
@@ -28,6 +30,7 @@ class VendorBillReport(models.Model):
                     aml.quantity,
                     aml.price_unit,
                     am.currency_id,
+                    am.currency_rate,
                     po.id AS purchase_id,
                     sw.id AS warehouse_id
 
@@ -60,6 +63,7 @@ class CustomerInvoiceReport(models.Model):
     sale_id = fields.Many2one('sale.order', string='Sale Order')
     warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
     currency_id = fields.Many2one('res.currency', string='Currency')
+    currency_rate = fields.Float(string='Currency Rate')
 
     @api.model
     def init(self):
@@ -74,6 +78,7 @@ class CustomerInvoiceReport(models.Model):
                     aml.quantity,
                     aml.price_unit,
                     am.currency_id,
+                    am.currency_rate,
                     so.id AS sale_id,
                     sw.id AS warehouse_id
 
