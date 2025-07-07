@@ -1,2 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-user_report_vendor_invoice,user_report_vendor_invoice,model_report_vendor_invoice,account.group_account_manager,1,1,1,1
+user_vendor.bill.report,user_vendor.bill.report,model_vendor_bill_report,account.group_account_manager,1,1,1,1
