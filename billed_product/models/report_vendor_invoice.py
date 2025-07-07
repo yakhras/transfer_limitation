@@ -7,6 +7,7 @@ class VendorBillReport(models.Model):
     _auto = False
 
     invoice_id = fields.Many2one('account.move', string='Vendor Bill')
+    invoice_name = fields.Char(string='Invoice Number')
     partner_id = fields.Many2one('res.partner', string='Vendor')
     product_id = fields.Many2one('product.product', string='Product')
     quantity = fields.Float(string='Quantity')
@@ -25,7 +26,8 @@ class VendorBillReport(models.Model):
             CREATE OR REPLACE VIEW vendor_bill_report AS (
                 SELECT
                     aml.id AS id,
-                    am.name AS invoice_id,
+                    am.id AS invoice_id,
+                    am.name AS invoice_name,
                     am.partner_id,
                     aml.product_id,
                     aml.quantity,
