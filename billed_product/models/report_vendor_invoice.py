@@ -88,7 +88,6 @@ class CustomerInvoiceReport(models.Model):
                     AND aml.product_id IS NOT NULL
                     AND am.partner_id IS NOT NULL
                     AND am.state = 'posted'
-                    AND am.company_id = %s
+                    AND am.company_id = 5
             )
-        """ % (self._table, self.env.company.id))
-        
+        """ % (self._table))
