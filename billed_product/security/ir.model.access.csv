@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 user_vendor.bill.report,user_vendor.bill.report,model_vendor_bill_report,account.group_account_manager,1,1,1,1
+user_customer.invoice.report,user_customer.invoice.report,model_customer_invoice_report,account.group_account_manager,1,1,1,1
