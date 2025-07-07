@@ -13,6 +13,7 @@
                     <field name="quantity"/>
                     <field name="price_unit"/>
                     <field name="currency_id"/>
+                    <field name="currency_rate"/>
                     <field name="purchase_id"/>
                     <field name="warehouse_id"/>
                 </tree>
