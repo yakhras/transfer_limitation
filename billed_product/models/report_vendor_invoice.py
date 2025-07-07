@@ -33,13 +33,13 @@ class VendorBillReport(models.Model):
                     aml.price_unit,
                     am.currency_id,
                     am.currency_rate,
-                    po.name AS purchase_id,
+                    po.id AS purchase_id,
                     sw.id AS warehouse_id
 
                 FROM account_move_line aml
                 JOIN account_move am ON aml.move_id = am.id
                 LEFT JOIN purchase_order_line pol ON aml.purchase_line_id = pol.id
-                LEFT JOIN purchase_order po ON pol.order_id = po.name
+                LEFT JOIN purchase_order po ON pol.order_id = po.id
                 LEFT JOIN stock_picking_type pt ON po.picking_type_id = pt.id
                 LEFT JOIN stock_warehouse sw ON pt.warehouse_id = sw.id
 
