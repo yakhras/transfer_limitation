@@ -29,7 +29,7 @@
 
         <menuitem id="menu_report_vendor_invoice_report"
                     name="Billed Products Report"
-                    parent="account.menu_finance_payables"
+                    parent="base.menu_reporting_dashboard"
                     action="action_report_vendor_invoice_report"
                     sequence="4"/>
 
