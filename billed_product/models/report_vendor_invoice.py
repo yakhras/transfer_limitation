@@ -37,12 +37,11 @@ class VendorBillReport(models.Model):
                 LEFT JOIN purchase_order po ON pol.order_id = po.id
                 LEFT JOIN stock_picking_type pt ON po.picking_type_id = pt.id
                 LEFT JOIN stock_warehouse sw ON pt.warehouse_id = sw.id
-                            
+
                 WHERE am.move_type = 'in_invoice'
                     AND aml.product_id IS NOT NULL
                     AND am.partner_id IS NOT NULL
                     AND am.state = 'posted'
                     AND am.company_id = %s
-
             )
         """ % self._table, (self.env.company.id,))
