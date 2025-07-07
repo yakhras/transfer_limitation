@@ -37,6 +37,6 @@ class VendorBillReport(models.Model):
 
                 WHERE am.move_type = 'in_invoice'
                     AND aml.product_id IS NOT NULL
-                    AND aml.company_id.id = 5
+                    AND am.company_id.id = 5
             )
         """)
