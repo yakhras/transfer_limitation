@@ -25,7 +25,7 @@ class VendorBillReport(models.Model):
             CREATE OR REPLACE VIEW vendor_bill_report AS (
                 SELECT
                     aml.id AS id,
-                    am.id AS invoice_id,
+                    am.name AS invoice_id,
                     am.partner_id,
                     aml.product_id,
                     aml.quantity,
