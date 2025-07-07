@@ -16,8 +16,6 @@ class VendorBillReport(models.Model):
     currency_id = fields.Many2one('res.currency', string='Currency')
     currency_rate = fields.Float(string='Currency Rate')
 
-
-
     @api.model
     def init(self):
         self.env.cr.execute("DROP VIEW IF EXISTS vendor_bill_report CASCADE")
@@ -44,6 +42,10 @@ class VendorBillReport(models.Model):
 
                 WHERE am.move_type = 'in_invoice'
                     AND aml.product_id IS NOT NULL
+                    AND am.partner_id IS NOT NULL
+                    AND am.currency_id IS NOT NULL
+                    AND po.id IS NOT NULL
+                    AND pt.warehouse_id IS NOT NULL
                     AND am.company_id = 5
             )
         """)
