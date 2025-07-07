@@ -42,4 +42,4 @@ class VendorBillReport(models.Model):
                     AND aml.product_id IS NOT NULL
                     AND am.company_id = 5
             )
-        """)
+        """ % self._table,)
