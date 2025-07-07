@@ -33,7 +33,7 @@ class VendorBillReport(models.Model):
                     aml.price_unit,
                     am.currency_id,
                     am.currency_rate,
-                    po.id AS purchase_id,
+                    po.name AS purchase_id,
                     sw.id AS warehouse_id
 
                 FROM account_move_line aml
