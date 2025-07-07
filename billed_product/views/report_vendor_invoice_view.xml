@@ -38,7 +38,7 @@
             <field name="name">customer.invoice.report.tree</field>
             <field name="model">customer.invoice.report</field>
             <field name="arch" type="xml">
-                <tree string="Customer Invoice Report">
+                <tree string="Customer Invoice Report" create="false">
                     <field name="invoice_id"/>
                     <field name="partner_id"/>
                     <field name="product_id"/>
