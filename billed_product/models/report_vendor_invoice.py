@@ -14,7 +14,7 @@ class VendorBillReport(models.Model):
     purchase_id = fields.Many2one('purchase.order', string='Purchase Order')
     warehouse_id = fields.Many2one('stock.warehouse', string='Warehouse')
 
-    @api.model_cr
+    @api.model
     def init(self):
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW vendor_bill_report AS (
