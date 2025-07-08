@@ -7,12 +7,12 @@
             <field name="model">stock.move.line.report</field>
             <field name="arch" type="xml">
                 <tree default_order="date asc" create="false" js_class="inventory_report_list">
-                    <field name="product_id"/>
                     <field name="date"/>
-                    <field name="location_id" string="From" optional="hide"/>
-                    <field name="location_dest_id" string="To" optional="hide"/>
+                    <field name="product_id"/>
                     <field name="warehouse_id"/>
                     <field name="operation"/>
+                    <field name="location_id" string="From" optional="hide"/>
+                    <field name="location_dest_id" string="To" optional="hide"/>
                     <field name="signed_qty_done" string="Quantity"/>
                     <field name="stock_balance"/>
                 </tree>
