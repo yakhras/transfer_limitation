@@ -226,7 +226,7 @@ class StockMoveLineReport(models.Model):
                         sml.location_id,
                         sml.location_dest_id,
                         sl.name AS source_location_name,
-                        sld.name AS dest_location_name
+                        sld.name AS dest_location_name,
                         CASE
                             WHEN sl.usage = 'internal' THEN sw_out.id
                             WHEN sld.usage = 'internal' THEN sw_in.id
