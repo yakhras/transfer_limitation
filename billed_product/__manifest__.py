@@ -28,5 +28,4 @@
         "views/report_vendor_invoice_view.xml",
     ],
 
-    #'post_init_hook': 'process_existing_internal_transfers',
 }
