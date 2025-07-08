@@ -154,8 +154,6 @@ class StockMoveLineReport(models.Model):
                         sml.date,
                         sml.location_id,
                         sml.location_dest_id,
-                        sl.name AS source_location_name,
-                        sld.name AS dest_location_name,
                         sw_out.id AS warehouse_id,
                         sml.qty_done,
                         -sml.qty_done AS signed_qty_done,
@@ -189,8 +187,6 @@ class StockMoveLineReport(models.Model):
                         sml.date,
                         sml.location_id,
                         sml.location_dest_id,
-                        sl.name AS source_location_name,
-                        sld.name AS dest_location_name,
                         sw_in.id AS warehouse_id,
                         sml.qty_done,
                         sml.qty_done AS signed_qty_done,
@@ -225,8 +221,6 @@ class StockMoveLineReport(models.Model):
                         sml.date,
                         sml.location_id,
                         sml.location_dest_id,
-                        sl.name AS source_location_name,
-                        sld.name AS dest_location_name,
                         CASE
                             WHEN sl.usage = 'internal' THEN sw_out.id
                             WHEN sld.usage = 'internal' THEN sw_in.id
