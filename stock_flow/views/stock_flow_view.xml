@@ -34,6 +34,7 @@
                     <group expand="0" string="Group By">
                         <filter name="group_by_warehouse" string="Warehouse" domain="[]" context="{'group_by': 'warehouse_id'}"/>
                         <filter name="group_by_product" string="Product" domain="[]" context="{'group_by': 'product_id'}"/>
+                        <filter name="group_by_date" string="Date" domain="[]" context="{'group_by': 'date'}"/>
                     </group>
                 </search>
             </field>
