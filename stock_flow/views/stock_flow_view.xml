@@ -11,8 +11,9 @@
                     <field name="date"/>
                     <field name="location_id"/>
                     <field name="location_dest_id"/>
-                    <field name="signed_qty_done" string="Quantity"/>
                     <field name="warehouse_id"/>
+                    <field name="operation"/>
+                    <field name="signed_qty_done" string="Quantity"/>
                     <field name="stock_balance"/>
                 </tree>
             </field>
