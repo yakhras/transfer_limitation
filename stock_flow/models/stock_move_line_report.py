@@ -162,7 +162,7 @@ class StockMoveLineReport(models.Model):
                             WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
-                            WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Internal Transfer'
+                            WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
                             ELSE sm.name
                         END AS operation,
                         'out' AS direction
@@ -195,7 +195,7 @@ class StockMoveLineReport(models.Model):
                             WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
-                            WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Internal Transfer'
+                            WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
                             ELSE sm.name
                         END AS operation,
                         'in' AS direction
@@ -237,7 +237,7 @@ class StockMoveLineReport(models.Model):
                             WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
-                            WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Internal Transfer'
+                            WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
                             ELSE sm.name
                         END AS operation,
                         CASE
