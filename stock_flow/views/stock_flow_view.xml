@@ -9,13 +9,10 @@
                 <tree default_order="date asc" create="false" js_class="inventory_report_list">
                     <field name="product_id"/>
                     <field name="date"/>
-                    <field name="operation"/>
                     <field name="location_id"/>
                     <field name="location_dest_id"/>
-                    <field name="qty_done" string="Quantity"/>
-                    <field name="signed_qty_done" string="Signed Quantity"/>
+                    <field name="signed_qty_done" string="Quantity"/>
                     <field name="warehouse_id"/>
-                    <field name="direction"/>
                     <field name="stock_balance"/>
                 </tree>
             </field>
