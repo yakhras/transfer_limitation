@@ -3,8 +3,8 @@
     <data>
 
         <record id="view_stock_move_line_report_tree" model="ir.ui.view">
-            <field name="name">stock.move.line.report.tree</field>
-            <field name="model">stock.move.line.report</field>
+            <field name="name">stock.product.flow.report.tree</field>
+            <field name="model">stock.product.flow.report</field>
             <field name="arch" type="xml">
                 <tree default_order="date asc" create="false">
                     <field name="date"/>
@@ -20,8 +20,8 @@
         </record>
 
         <record id="view_stock_move_line_report_search" model="ir.ui.view">
-            <field name="name">stock.move.line.report.search</field>
-            <field name="model">stock.move.line.report</field>
+            <field name="name">stock.product.flow.report.search</field>
+            <field name="model">stock.product.flow.report</field>
             <field name="arch" type="xml">
                 <search>
                     <!-- Default search filters -->
@@ -43,8 +43,8 @@
 
 
         <record id="action_stock_move_line_report" model="ir.actions.act_window">
-            <field name="name">Stock Move Report</field>
-            <field name="res_model">stock.move.line.report</field>
+            <field name="name">Stock Product Flow</field>
+            <field name="res_model">stock.product.flow.report</field>
             <field name="view_mode">tree</field>
             <field name="search_view_id" ref="stock_flow.view_stock_move_line_report_search"/>
         </record>

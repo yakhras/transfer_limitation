@@ -3,8 +3,8 @@
 from odoo import api, fields, models
 
 
-class StockMoveLineReport(models.Model):
-    _name = 'stock.move.line.report'
+class StockProductFlowReport(models.Model):
+    _name = 'stock.product.flow.report'
     _description = 'Stock Move Line Report'
     _auto = False
     _rec_name = 'move_line_id'
