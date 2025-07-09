@@ -16,6 +16,11 @@
                     <field name="signed_qty_done" string="Quantity"/>
                     <field name="stock_balance"/>
                 </tree>
+                <button name="action_view_stock_moves"
+                        type="object"
+                        string="View Stock Moves"
+                        class="oe_highlight"
+                        icon="fa-eye"/>
             </field>
         </record>
 
@@ -29,8 +34,6 @@
                     <field name="operation"/>
                     <field name="direction"/>
                     <field name="date"/>
-
-                    <field name="date" string="Date"/>
 
                     <!-- Group By section -->
                     <group expand="0" string="Group By">

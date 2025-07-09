@@ -163,3 +163,6 @@ class StockMoveLineReport(models.Model):
             CREATE INDEX IF NOT EXISTS idx_stock_balance_by_product_warehouse
             ON stock_move_line_report (product_id, warehouse_id, date)
         """)
+    
+    def action_view_stock_moves(self):
+        return
