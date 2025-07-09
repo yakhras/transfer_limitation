@@ -22,7 +22,7 @@ class StockProductFlowReport(models.Model):
     direction = fields.Selection([('in', 'In'), ('out', 'Out')], string="Direction")
     stock_balance = fields.Float(string="Stock Balance", readonly=True)
 
-    @api.model
+
     def init(self):
         company_id = self.env.company.id
         if company_id == 1:
