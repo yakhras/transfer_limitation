@@ -27,8 +27,6 @@ class StockProductFlowReport(models.Model):
 
     @api.model
     def init(self):
-        self = self.with_company(self.env.company)
-        company_id = self.env.company.id
         self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_product_flow_report CASCADE""")
         self.env.cr.execute("""
             CREATE MATERIALIZED VIEW stock_product_flow_report AS (
@@ -63,7 +61,6 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
                     LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
                     WHERE
-                        sml.company_id = %(company_id)s
                         AND sm.state = 'done'
                         AND sl.usage = 'internal' AND sld.usage = 'internal'
 
@@ -96,7 +93,6 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
                     LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
                     WHERE
-                        sml.company_id = %(company_id)s
                         AND sm.state = 'done'
                         AND sl.usage = 'internal' AND sld.usage = 'internal'
 
@@ -143,7 +139,6 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sl.id
                     LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sld.id
                     WHERE
-                        sml.company_id = %(company_id)s
                         AND sm.state = 'done'
                         AND NOT (sl.usage = 'internal' AND sld.usage = 'internal')
                 )
@@ -160,7 +155,7 @@ class StockProductFlowReport(models.Model):
                 FROM move_lines_union
 
             )
-        """, {'company_id': company_id})
+        """)
         self.env.cr.execute("""
             CREATE INDEX IF NOT EXISTS idx_stock_balance_by_product_warehouse
             ON stock_product_flow_report (product_id, warehouse_id, date)
