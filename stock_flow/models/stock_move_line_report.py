@@ -164,5 +164,3 @@ class StockMoveLineReport(models.Model):
             ON stock_move_line_report (product_id, warehouse_id, date)
         """)
     
-    def action_view_stock_moves(self):
-        return
