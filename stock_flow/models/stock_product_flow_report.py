@@ -27,7 +27,7 @@ class StockProductFlowReport(models.Model):
 
     @api.model
     def init(self):
-        company_id = self.env.company
+        company_id = self.env.company.id
         self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_product_flow_report CASCADE""")
         self.env.cr.execute("""
             CREATE MATERIALIZED VIEW stock_product_flow_report AS (
@@ -162,6 +162,6 @@ class StockProductFlowReport(models.Model):
         """, {'company_id': company_id})
         self.env.cr.execute("""
             CREATE INDEX IF NOT EXISTS idx_stock_balance_by_product_warehouse
-            ON stock_move_line_report (product_id, warehouse_id, date)
+            ON stock_product_flow_report (product_id, warehouse_id, date)
         """)
     
