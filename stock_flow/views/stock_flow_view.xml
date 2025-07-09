@@ -2,6 +2,14 @@
 <odoo>
     <data>
 
+        <record id="stock_product_flow_report_company_rule" model="ir.rule">
+            <field name="name">Stock Product Flow per Company</field>
+            <field name="model_id" ref="model_stock_product_flow_report"/>
+            <field name="domain_force">[('company_id', '=', user.company_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+
         <record id="view_stock_move_line_report_tree" model="ir.ui.view">
             <field name="name">stock.product.flow.report.tree</field>
             <field name="model">stock.product.flow.report</field>
