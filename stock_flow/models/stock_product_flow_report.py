@@ -61,7 +61,8 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
                     LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
                     WHERE
-                        sm.state = 'done'
+                        sml.company_id = 1
+                        AND sm.state = 'done'
                         AND sl.usage = 'internal' AND sld.usage = 'internal'
 
                     UNION ALL
@@ -93,7 +94,8 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
                     LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
                     WHERE
-                        sm.state = 'done'
+                        sml.company_id = 1
+                        AND sm.state = 'done'
                         AND sl.usage = 'internal' AND sld.usage = 'internal'
 
                     UNION ALL
@@ -139,7 +141,8 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sl.id
                     LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sld.id
                     WHERE
-                        sm.state = 'done'
+                        sml.company_id = 1
+                        AND sm.state = 'done'
                         AND NOT (sl.usage = 'internal' AND sld.usage = 'internal')
                 )
 
