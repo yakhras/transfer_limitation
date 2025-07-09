@@ -34,7 +34,6 @@ class StockProductFlowReport(models.Model):
 
 
 
-    @api.model
     def company_5(self):
         self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_product_flow_report CASCADE""")
         self.env.cr.execute("""
@@ -176,7 +175,6 @@ class StockProductFlowReport(models.Model):
     
 
 
-    @api.model
     def company_1(self):
         self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_product_flow_report CASCADE""")
         self.env.cr.execute("""
