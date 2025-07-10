@@ -37,85 +37,87 @@ class AccountMoveLineReport(models.Model):
     credit_amount = fields.Monetary(string='Credit Amount', compute='_compute_credit_amount', currency_field='currency_id', store=False)
     balance_amount = fields.Monetary(string='Balance Amount', compute='_compute_balance_amount', currency_field='currency_id', store=False)
 
-    def export_to_excel(self):
-        """Export current records to Excel"""
-        # Get current domain from context or use all records
-        domain = self.env.context.get('active_domain', [])
-        records = self.search(domain)
+    # def export_to_excel(self):
+    #     """Export current records to Excel"""
+    #     # Get current domain from context or use all records
+    #     domain = self.env.context.get('active_domain', [])
+    #     records = self.search(domain)
         
-        # Create Excel file
-        output = BytesIO()
-        workbook = xlsxwriter.Workbook(output, {'in_memory': False})
-        worksheet = workbook.add_worksheet('Account Move Lines')
+    #     # Create Excel file
+    #     output = BytesIO()
+    #     workbook = xlsxwriter.Workbook(output, {'in_memory': False})
+    #     worksheet = workbook.add_worksheet('Account Move Lines')
         
-        # Define formats
-        header_format = workbook.add_format({
-            'bold': True,
-            'bg_color': '#4F81BD',
-            'font_color': 'white',
-            'border': 1,
-            'align': 'center'
-        })
+    #     # Define formats
+    #     header_format = workbook.add_format({
+    #         'bold': True,
+    #         'bg_color': '#4F81BD',
+    #         'font_color': 'white',
+    #         'border': 1,
+    #         'align': 'center'
+    #     })
         
-        date_format = workbook.add_format({
-            'num_format': 'dd/mm/yyyy',
-            'border': 1
-        })
+    #     date_format = workbook.add_format({
+    #         'num_format': 'dd/mm/yyyy',
+    #         'border': 1
+    #     })
         
-        currency_format = workbook.add_format({
-            'num_format': '#,##0.00',
-            'border': 1
-        })
+    #     currency_format = workbook.add_format({
+    #         'num_format': '#,##0.00',
+    #         'border': 1
+    #     })
         
-        text_format = workbook.add_format({
-            'border': 1
-        })
+    #     text_format = workbook.add_format({
+    #         'border': 1
+    #     })
         
-        # Set column widths
-        worksheet.set_column('A:A', 12)  # Date
-        worksheet.set_column('B:B', 15)  # Journal Entry
-        worksheet.set_column('C:C', 30)  # Partner
-        worksheet.set_column('D:D', 25)  # Account
-        worksheet.set_column('E:E', 35)  # Label
-        worksheet.set_column('F:F', 10)  # Currency
-        worksheet.set_column('G:G', 15)  # Debit
-        worksheet.set_column('H:H', 15)  # Credit
-        worksheet.set_column('I:I', 15)  # Balance
+    #     # Set column widths
+    #     worksheet.set_column('A:A', 12)  # Date
+    #     worksheet.set_column('B:B', 15)  # Journal Entry
+    #     worksheet.set_column('C:C', 30)  # Partner
+    #     worksheet.set_column('D:D', 25)  # Account
+    #     worksheet.set_column('E:E', 35)  # Label
+    #     worksheet.set_column('F:F', 10)  # Currency
+    #     worksheet.set_column('G:G', 15)  # Debit
+    #     worksheet.set_column('H:H', 15)  # Credit
+    #     worksheet.set_column('I:I', 15)  # Balance
         
-        # Write headers
-        headers = [
-            'Date', 'Journal Entry', 'Partner', 'Account', 'Label',
-            'Currency', 'Debit Amount', 'Credit Amount', 'Balance Amount'
-        ]
+    #     # Write headers
+    #     headers = [
+    #         'Date', 'Journal Entry', 'Partner', 'Account', 'Label',
+    #         'Currency', 'Debit Amount', 'Credit Amount', 'Balance Amount'
+    #     ]
         
-        for col, header in enumerate(headers):
-            worksheet.write(0, col, header, header_format)
+    #     for col, header in enumerate(headers):
+    #         worksheet.write(0, col, header, header_format)
         
-        # Write data
-        for row, record in enumerate(records, 1):
-            worksheet.write(row, 0, record.date, date_format)
-            worksheet.write(row, 1, record.move_id.name or '', text_format)
-            worksheet.write(row, 2, record.partner_id.name or '', text_format)
-            worksheet.write(row, 3, record.account_id.name or '', text_format)
-            worksheet.write(row, 4, record.name or '', text_format)
-            worksheet.write(row, 5, record.currency_id.name or '', text_format)
-            worksheet.write(row, 6, record.debit_amount or 0, currency_format)
-            worksheet.write(row, 7, record.credit_amount or 0, currency_format)
-            worksheet.write(row, 8, record.balance_amount or 0, currency_format)
+    #     # Write data
+    #     for row, record in enumerate(records, 1):
+    #         worksheet.write(row, 0, record.date, date_format)
+    #         worksheet.write(row, 1, record.move_id.name or '', text_format)
+    #         worksheet.write(row, 2, record.partner_id.name or '', text_format)
+    #         worksheet.write(row, 3, record.account_id.name or '', text_format)
+    #         worksheet.write(row, 4, record.name or '', text_format)
+    #         worksheet.write(row, 5, record.currency_id.name or '', text_format)
+    #         worksheet.write(row, 6, record.debit_amount or 0, currency_format)
+    #         worksheet.write(row, 7, record.credit_amount or 0, currency_format)
+    #         worksheet.write(row, 8, record.balance_amount or 0, currency_format)
         
-        workbook.close()
-        output.seek(0)
+    #     workbook.close()
+    #     output.seek(0)
         
-        # Generate filename
-        date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f'account_move_lines_{date_str}.xlsx'
+    #     # Generate filename
+    #     date_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+    #     filename = f'account_move_lines_{date_str}.xlsx'
         
-        # Return download action
-        return {
-            'type': 'ir.actions.act_url',
-            'url': f'/web/content?model={self._name}&id=0&field=export_excel&download=true&filename={filename}&data={base64.b64encode(output.read()).decode()}',
-            'target': 'self',
-        }
+    #     # Return download action
+    #     return {
+    #         'type': 'ir.actions.act_url',
+    #         'url': f'/web/content?model={self._name}&id=0&field=export_excel&download=true&filename={filename}&data={base64.b64encode(output.read()).decode()}',
+    #         'target': 'self',
+    #     }
+
+
 
     @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
     def _compute_balance_amount(self):
@@ -183,7 +185,7 @@ class AccountMoveLineReport(models.Model):
         This version does NOT depend on context.
         """
         grouped = {}
-        for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
+        for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.name or ''), reverse=True):
             key = rec.partner_id.id
             if key not in grouped:
                 grouped[key] = 0.0
