@@ -263,6 +263,8 @@ class StockProductFlowReport(models.Model):
                         CASE
                             WHEN sl.usage = 'internal' THEN -sml.qty_done
                             WHEN sld.usage = 'internal' THEN sml.qty_done
+                            When sl.usage = 'supplier' AND sld.usage = 'customer' THEN -sml.qty_done
+                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN sml.qty_done
                             ELSE 0
                         END AS signed_qty_done,
                         CASE
@@ -280,6 +282,8 @@ class StockProductFlowReport(models.Model):
                         CASE
                             WHEN sl.usage = 'internal' THEN 'out'
                             WHEN sld.usage = 'internal' THEN 'in'
+                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'out'
+                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'in'
                             ELSE NULL
                         END AS direction
                     FROM stock_move_line sml
