@@ -199,8 +199,8 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
                     LEFT JOIN stock_location l_out ON sml.location_id = l_out.id
                     LEFT JOIN stock_warehouse sw_out ON
-                        sw_out.lot_stock_id = l_out.id OR
-                        l_out.parent_path LIKE CONCAT('%/', sw_out.lot_stock_id::text, '/%')
+                        sw_out.view_location_id = l_out.id OR
+                        l_out.parent_path LIKE CONCAT('%/', sw_out.view_location_id::text, '/%')
                     WHERE
                         sm.state = 'done'
                         AND sl.usage = 'internal' AND sld.usage = 'internal'
@@ -234,8 +234,8 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
                     LEFT JOIN stock_location l_in ON sml.location_dest_id = l_in.id
                     LEFT JOIN stock_warehouse sw_in ON
-                        sw_in.lot_stock_id = l_in.id OR
-                        l_in.parent_path LIKE CONCAT('%/', sw_in.lot_stock_id::text, '/%')
+                        sw_in.view_location_id = l_in.id OR
+                        l_in.parent_path LIKE CONCAT('%/', sw_in.view_location_id::text, '/%')
                     WHERE
                         sm.state = 'done'
                         AND sl.usage = 'internal' AND sld.usage = 'internal'
@@ -283,11 +283,11 @@ class StockProductFlowReport(models.Model):
                     LEFT JOIN stock_location l_out ON sml.location_id = l_out.id
                     LEFT JOIN stock_location l_in ON sml.location_dest_id = l_in.id
                     LEFT JOIN stock_warehouse sw_out ON
-                        sw_out.lot_stock_id = l_out.id OR
-                        l_out.parent_path LIKE CONCAT('%/', sw_out.lot_stock_id::text, '/%')
+                        sw_out.view_location_id = l_out.id OR
+                        l_out.parent_path LIKE CONCAT('%/', sw_out.view_location_id::text, '/%')
                     LEFT JOIN stock_warehouse sw_in ON
-                        sw_in.lot_stock_id = l_in.id OR
-                        l_in.parent_path LIKE CONCAT('%/', sw_in.lot_stock_id::text, '/%')
+                        sw_in.view_location_id = l_in.id OR
+                        l_in.parent_path LIKE CONCAT('%/', sw_in.view_location_id::text, '/%')
                     WHERE
                         sm.state = 'done'
                         AND NOT (sl.usage = 'internal' AND sld.usage = 'internal')
