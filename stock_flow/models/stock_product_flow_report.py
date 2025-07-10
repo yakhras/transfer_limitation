@@ -25,28 +25,28 @@ class StockProductFlowReport(models.Model):
 
 
 
-    @api.model
-    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        """Override read_group to get latest balance per group."""
-        # Get the standard read_group result
-        result = super().read_group(domain, fields, groupby, offset, limit, orderby, lazy)
+    # @api.model
+    # def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+    #     """Override read_group to get latest balance per group."""
+    #     # Get the standard read_group result
+    #     result = super().read_group(domain, fields, groupby, offset, limit, orderby, lazy)
         
-        # Fix stock_balance to show latest value instead of sum
-        if any('stock_balance' in field for field in fields):
-            for group in result:
-                if '__domain' in group:
-                    # Get the most recent record in this group (by date, then by id)
-                    latest_record = self.search(
-                        group['__domain'], 
-                        order='date desc, id desc', 
-                        limit=1
-                    )
-                    if latest_record:
-                        group['stock_balance'] = latest_record.stock_balance
-                    else:
-                        group['stock_balance'] = 0.0
+    #     # Fix stock_balance to show latest value instead of sum
+    #     if any('stock_balance' in field for field in fields):
+    #         for group in result:
+    #             if '__domain' in group:
+    #                 # Get the most recent record in this group (by date, then by id)
+    #                 latest_record = self.search(
+    #                     group['__domain'], 
+    #                     order='date desc, id desc', 
+    #                     limit=1
+    #                 )
+    #                 if latest_record:
+    #                     group['stock_balance'] = latest_record.stock_balance
+    #                 else:
+    #                     group['stock_balance'] = 0.0
         
-        return result
+    #     return result
 
     @api.model
     def init(self):
