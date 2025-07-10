@@ -26,143 +26,6 @@ class StockProductFlowReport(models.Model):
 
 
 
-    # @api.model
-    # def init(self):
-    #     self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_product_flow_report CASCADE""")
-    #     self.env.cr.execute("""
-    #         CREATE MATERIALIZED VIEW stock_product_flow_report AS (
-
-    #             WITH move_lines_union AS (
-
-    #                 -- Internal → Internal: create both 'out' and 'in' rows
-    #                 SELECT
-    #                     sml.id * 2 AS id,
-    #                     sml.id AS move_line_id,
-    #                     sml.product_id,
-    #                     sml.date,
-    #                     sml.location_id,
-    #                     sml.location_dest_id,
-    #                     sw_out.id AS warehouse_id,
-    #                     sml.qty_done,
-    #                     -sml.qty_done AS signed_qty_done,
-    #                     CASE
-    #                         WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
-    #                         WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
-    #                         WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
-    #                         ELSE sm.name
-    #                     END AS operation,
-    #                     'out' AS direction
-    #                 FROM stock_move_line sml
-    #                 JOIN stock_move sm ON sm.id = sml.move_id
-    #                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
-    #                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-    #                 LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
-    #                 WHERE
-    #                     sm.state = 'done'
-    #                     AND sl.usage = 'internal' AND sld.usage = 'internal'
-
-    #                 UNION ALL
-
-    #                 SELECT
-    #                     sml.id * 2 + 1 AS id,
-    #                     sml.id AS move_line_id,
-    #                     sml.product_id,
-    #                     sml.date,
-    #                     sml.location_id,
-    #                     sml.location_dest_id,
-    #                     sw_in.id AS warehouse_id,
-    #                     sml.qty_done,
-    #                     sml.qty_done AS signed_qty_done,
-    #                     CASE
-    #                         WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
-    #                         WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
-    #                         WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
-    #                         ELSE sm.name
-    #                     END AS operation,
-    #                     'in' AS direction
-    #                 FROM stock_move_line sml
-    #                 JOIN stock_move sm ON sm.id = sml.move_id
-    #                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
-    #                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-    #                 LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
-    #                 WHERE
-    #                     sm.state = 'done'
-    #                     AND sl.usage = 'internal' AND sld.usage = 'internal'
-
-    #                 UNION ALL
-
-    #                 -- External ↔ Internal: single row only
-    #                 SELECT
-    #                     sml.id * 10 AS id,
-    #                     sml.id AS move_line_id,
-    #                     sml.product_id,
-    #                     sml.date,
-    #                     sml.location_id,
-    #                     sml.location_dest_id,
-    #                     CASE
-    #                         WHEN sl.usage = 'internal' THEN sw_out.id
-    #                         WHEN sld.usage = 'internal' THEN sw_in.id
-    #                         ELSE NULL
-    #                     END AS warehouse_id,
-    #                     sml.qty_done,
-    #                     CASE
-    #                         WHEN sl.usage = 'internal' THEN -sml.qty_done
-    #                         WHEN sld.usage = 'internal' THEN sml.qty_done
-    #                         ELSE 0
-    #                     END AS signed_qty_done,
-    #                     CASE
-    #                         WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
-    #                         WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
-    #                         WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
-    #                         WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
-    #                         ELSE sm.name
-    #                     END AS operation,
-    #                     CASE
-    #                         WHEN sl.usage = 'internal' THEN 'out'
-    #                         WHEN sld.usage = 'internal' THEN 'in'
-    #                         ELSE NULL
-    #                     END AS direction
-    #                 FROM stock_move_line sml
-    #                 JOIN stock_move sm ON sm.id = sml.move_id
-    #                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
-    #                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-    #                 LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sl.id
-    #                 LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sld.id
-    #                 WHERE
-    #                     sm.state = 'done'
-    #                     AND NOT (sl.usage = 'internal' AND sld.usage = 'internal')
-    #             )
-
-    #             -- Final SELECT: apply stock balance
-    #             SELECT
-    #                 *,
-    #                 SUM(signed_qty_done) OVER (
-    #                     PARTITION BY product_id, warehouse_id
-    #                     ORDER BY date,
-    #                             CASE WHEN direction = 'in' THEN 0 ELSE 1 END,
-    #                             id
-    #                 ) AS stock_balance
-    #             FROM move_lines_union
-
-    #         )
-    #     """)
-    #     self.env.cr.execute("""
-    #         CREATE INDEX IF NOT EXISTS idx_stock_balance_by_product_warehouse
-    #         ON stock_product_flow_report (product_id, warehouse_id, date)
-    #     """)
-    
-    
     @api.model
     def init(self):
         self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_product_flow_report CASCADE""")
@@ -197,10 +60,7 @@ class StockProductFlowReport(models.Model):
                     JOIN stock_move sm ON sm.id = sml.move_id
                     LEFT JOIN stock_location sl ON sml.location_id = sl.id
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                    LEFT JOIN stock_location l_out ON sml.location_id = l_out.id
-                    LEFT JOIN stock_warehouse sw_out ON
-                        sw_out.view_location_id = l_out.id OR
-                        l_out.parent_path LIKE CONCAT('%/', sw_out.view_location_id::text, '/%')
+                    LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sml.location_id
                     WHERE
                         sm.state = 'done'
                         AND sl.usage = 'internal' AND sld.usage = 'internal'
@@ -232,10 +92,7 @@ class StockProductFlowReport(models.Model):
                     JOIN stock_move sm ON sm.id = sml.move_id
                     LEFT JOIN stock_location sl ON sml.location_id = sl.id
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                    LEFT JOIN stock_location l_in ON sml.location_dest_id = l_in.id
-                    LEFT JOIN stock_warehouse sw_in ON
-                        sw_in.view_location_id = l_in.id OR
-                        l_in.parent_path LIKE CONCAT('%/', sw_in.view_location_id::text, '/%')
+                    LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sml.location_dest_id
                     WHERE
                         sm.state = 'done'
                         AND sl.usage = 'internal' AND sld.usage = 'internal'
@@ -280,14 +137,8 @@ class StockProductFlowReport(models.Model):
                     JOIN stock_move sm ON sm.id = sml.move_id
                     LEFT JOIN stock_location sl ON sml.location_id = sl.id
                     LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
-                    LEFT JOIN stock_location l_out ON sml.location_id = l_out.id
-                    LEFT JOIN stock_location l_in ON sml.location_dest_id = l_in.id
-                    LEFT JOIN stock_warehouse sw_out ON
-                        sw_out.view_location_id = l_out.id OR
-                        l_out.parent_path LIKE CONCAT('%/', sw_out.view_location_id::text, '/%')
-                    LEFT JOIN stock_warehouse sw_in ON
-                        sw_in.view_location_id = l_in.id OR
-                        l_in.parent_path LIKE CONCAT('%/', sw_in.view_location_id::text, '/%')
+                    LEFT JOIN stock_warehouse sw_out ON sw_out.lot_stock_id = sl.id
+                    LEFT JOIN stock_warehouse sw_in ON sw_in.lot_stock_id = sld.id
                     WHERE
                         sm.state = 'done'
                         AND NOT (sl.usage = 'internal' AND sld.usage = 'internal')
@@ -310,3 +161,152 @@ class StockProductFlowReport(models.Model):
             CREATE INDEX IF NOT EXISTS idx_stock_balance_by_product_warehouse
             ON stock_product_flow_report (product_id, warehouse_id, date)
         """)
+    
+    
+    # @api.model
+    # def init(self):
+    #     self.env.cr.execute("""DROP MATERIALIZED VIEW IF EXISTS stock_product_flow_report CASCADE""")
+    #     self.env.cr.execute("""
+    #         CREATE MATERIALIZED VIEW stock_product_flow_report AS (
+
+    #             WITH move_lines_union AS (
+
+    #                 -- Internal → Internal: create both 'out' and 'in' rows
+    #                 SELECT
+    #                     sml.id * 2 AS id,
+    #                     sml.id AS move_line_id,
+    #                     sml.product_id,
+    #                     sml.date,
+    #                     sml.location_id,
+    #                     sml.location_dest_id,
+    #                     sw_out.id AS warehouse_id,
+    #                     sml.qty_done,
+    #                     -sml.qty_done AS signed_qty_done,
+    #                     CASE
+    #                         WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
+    #                         WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
+    #                         WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
+    #                         ELSE sm.name
+    #                     END AS operation,
+    #                     'out' AS direction
+    #                 FROM stock_move_line sml
+    #                 JOIN stock_move sm ON sm.id = sml.move_id
+    #                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
+    #                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+    #                 LEFT JOIN stock_location l_out ON sml.location_id = l_out.id
+    #                 LEFT JOIN stock_warehouse sw_out ON
+    #                     sw_out.view_location_id = l_out.id OR
+    #                     l_out.parent_path LIKE CONCAT('%/', sw_out.view_location_id::text, '/%')
+    #                 WHERE
+    #                     sm.state = 'done'
+    #                     AND sl.usage = 'internal' AND sld.usage = 'internal'
+
+    #                 UNION ALL
+
+    #                 SELECT
+    #                     sml.id * 2 + 1 AS id,
+    #                     sml.id AS move_line_id,
+    #                     sml.product_id,
+    #                     sml.date,
+    #                     sml.location_id,
+    #                     sml.location_dest_id,
+    #                     sw_in.id AS warehouse_id,
+    #                     sml.qty_done,
+    #                     sml.qty_done AS signed_qty_done,
+    #                     CASE
+    #                         WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
+    #                         WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
+    #                         WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
+    #                         ELSE sm.name
+    #                     END AS operation,
+    #                     'in' AS direction
+    #                 FROM stock_move_line sml
+    #                 JOIN stock_move sm ON sm.id = sml.move_id
+    #                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
+    #                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+    #                 LEFT JOIN stock_location l_in ON sml.location_dest_id = l_in.id
+    #                 LEFT JOIN stock_warehouse sw_in ON
+    #                     sw_in.view_location_id = l_in.id OR
+    #                     l_in.parent_path LIKE CONCAT('%/', sw_in.view_location_id::text, '/%')
+    #                 WHERE
+    #                     sm.state = 'done'
+    #                     AND sl.usage = 'internal' AND sld.usage = 'internal'
+
+    #                 UNION ALL
+
+    #                 -- External ↔ Internal: single row only
+    #                 SELECT
+    #                     sml.id * 10 AS id,
+    #                     sml.id AS move_line_id,
+    #                     sml.product_id,
+    #                     sml.date,
+    #                     sml.location_id,
+    #                     sml.location_dest_id,
+    #                     CASE
+    #                         WHEN sl.usage = 'internal' THEN sw_out.id
+    #                         WHEN sld.usage = 'internal' THEN sw_in.id
+    #                         ELSE NULL
+    #                     END AS warehouse_id,
+    #                     sml.qty_done,
+    #                     CASE
+    #                         WHEN sl.usage = 'internal' THEN -sml.qty_done
+    #                         WHEN sld.usage = 'internal' THEN sml.qty_done
+    #                         ELSE 0
+    #                     END AS signed_qty_done,
+    #                     CASE
+    #                         WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
+    #                         WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
+    #                         WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
+    #                         WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
+    #                         ELSE sm.name
+    #                     END AS operation,
+    #                     CASE
+    #                         WHEN sl.usage = 'internal' THEN 'out'
+    #                         WHEN sld.usage = 'internal' THEN 'in'
+    #                         ELSE NULL
+    #                     END AS direction
+    #                 FROM stock_move_line sml
+    #                 JOIN stock_move sm ON sm.id = sml.move_id
+    #                 LEFT JOIN stock_location sl ON sml.location_id = sl.id
+    #                 LEFT JOIN stock_location sld ON sml.location_dest_id = sld.id
+    #                 LEFT JOIN stock_location l_out ON sml.location_id = l_out.id
+    #                 LEFT JOIN stock_location l_in ON sml.location_dest_id = l_in.id
+    #                 LEFT JOIN stock_warehouse sw_out ON
+    #                     sw_out.view_location_id = l_out.id OR
+    #                     l_out.parent_path LIKE CONCAT('%/', sw_out.view_location_id::text, '/%')
+    #                 LEFT JOIN stock_warehouse sw_in ON
+    #                     sw_in.view_location_id = l_in.id OR
+    #                     l_in.parent_path LIKE CONCAT('%/', sw_in.view_location_id::text, '/%')
+    #                 WHERE
+    #                     sm.state = 'done'
+    #                     AND NOT (sl.usage = 'internal' AND sld.usage = 'internal')
+    #             )
+
+    #             -- Final SELECT: apply stock balance
+    #             SELECT
+    #                 *,
+    #                 SUM(signed_qty_done) OVER (
+    #                     PARTITION BY product_id, warehouse_id
+    #                     ORDER BY date,
+    #                             CASE WHEN direction = 'in' THEN 0 ELSE 1 END,
+    #                             id
+    #                 ) AS stock_balance
+    #             FROM move_lines_union
+
+    #         )
+    #     """)
+    #     self.env.cr.execute("""
+    #         CREATE INDEX IF NOT EXISTS idx_stock_balance_by_product_warehouse
+    #         ON stock_product_flow_report (product_id, warehouse_id, date)
+    #     """)
