@@ -21,6 +21,7 @@ class StockProductFlowReport(models.Model):
     operation = fields.Char(string="Operation")
     direction = fields.Selection([('in', 'In'), ('out', 'Out')], string="Direction")
     stock_balance = fields.Float(string="Stock Balance", readonly=True)
+    company_id = fields.Many2one('res.company', string="Company", readonly=True)
 
 
 
