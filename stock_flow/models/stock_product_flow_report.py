@@ -173,7 +173,7 @@ class StockProductFlowReport(models.Model):
 
                     -- Internal → Internal: create both 'out' and 'in' rows
                     SELECT
-                        sml.id * 2 AS id,
+                        sml.id * 1000 AS id,
                         sml.id AS move_line_id,
                         sml.product_id,
                         sml.date,
@@ -210,7 +210,7 @@ class StockProductFlowReport(models.Model):
                     UNION ALL
 
                     SELECT
-                        sml.id * 2 + 1 AS id,
+                        sml.id * 1000 + 1 AS id,
                         sml.id AS move_line_id,
                         sml.product_id,
                         sml.date,
@@ -248,7 +248,7 @@ class StockProductFlowReport(models.Model):
 
                     -- External ↔ Internal: single row only
                     SELECT
-                        sml.id * 10 AS id,
+                        sml.id * 1000 + 2 AS id,
                         sml.id AS move_line_id,
                         sml.product_id,
                         sml.date,
@@ -263,7 +263,7 @@ class StockProductFlowReport(models.Model):
                         CASE
                             WHEN sl.usage = 'internal' THEN -sml.qty_done
                             WHEN sld.usage = 'internal' THEN sml.qty_done
-                            When sl.usage = 'supplier' AND sld.usage = 'customer' THEN -sml.qty_done
+                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN -sml.qty_done
                             WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN sml.qty_done
                             ELSE 0
                         END AS signed_qty_done,
