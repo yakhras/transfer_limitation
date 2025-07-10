@@ -189,6 +189,8 @@ class StockProductFlowReport(models.Model):
                             WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
+                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
+                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
                             ELSE sm.name
                         END AS operation,
@@ -224,6 +226,8 @@ class StockProductFlowReport(models.Model):
                             WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
+                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
+                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
                             ELSE sm.name
                         END AS operation,
@@ -242,7 +246,7 @@ class StockProductFlowReport(models.Model):
 
                     UNION ALL
 
-                    -- External ↔ Internal: single row only
+                    -- External ↔ Internal and External ↔ External: single row only
                     SELECT
                         sml.id * 10 AS id,
                         sml.id AS move_line_id,
@@ -268,6 +272,8 @@ class StockProductFlowReport(models.Model):
                             WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
+                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
+                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
                             ELSE sm.name
                         END AS operation,
