@@ -25,31 +25,6 @@ class StockProductFlowReport(models.Model):
 
 
 
-    @api.model
-    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-        """Get latest balance by finding max date first."""
-        result = super().read_group(domain, fields, groupby, offset, limit, orderby, lazy)
-        
-        if any('stock_balance' in field for field in fields):
-            # Get max date for each group first, then balance for that date
-            for group in result:
-                if '__domain' in group:
-                    # Find the max date in this group
-                    max_date_record = self.search(
-                        group['__domain'], 
-                        order='date desc', 
-                        limit=1
-                    )
-                    if max_date_record:
-                        # Get all records with that max date, then take the one with highest ID
-                        same_date_records = self.search(
-                            group['__domain'] + [('date', '=', max_date_record.date)],
-                            order='id desc',
-                            limit=1
-                        )
-                        group['stock_balance'] = same_date_records.stock_balance if same_date_records else 0.0
-        
-        return result
 
     @api.model
     def init(self):
