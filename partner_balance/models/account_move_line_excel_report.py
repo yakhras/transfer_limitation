@@ -12,7 +12,7 @@ class AccountMoveLineReport(models.Model):
     _name = 'account.move.line.report'
     _description = 'Account Move Line Report'
     _auto = False
-    _order = 'date desc'
+    _order = 'date desc, id desc'
 
     date = fields.Date(string='Date', readonly=True)
     move_id = fields.Many2one('account.move', string='Journal Entry', readonly=True)
@@ -185,7 +185,6 @@ class AccountMoveLineReport(models.Model):
         This version does NOT depend on context.
         """
         grouped = {}
-        # for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
         for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
             key = rec.partner_id.id
             if key not in grouped:
