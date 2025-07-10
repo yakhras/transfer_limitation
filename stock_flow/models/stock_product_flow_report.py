@@ -183,8 +183,6 @@ class StockProductFlowReport(models.Model):
                         sml.qty_done,
                         -sml.qty_done AS signed_qty_done,
                         CASE
-                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
-                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
                             WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
                             WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
@@ -192,6 +190,8 @@ class StockProductFlowReport(models.Model):
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
+                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
+                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             ELSE sm.name
                         END AS operation,
                         'out' AS direction
@@ -220,8 +220,6 @@ class StockProductFlowReport(models.Model):
                         sml.qty_done,
                         sml.qty_done AS signed_qty_done,
                         CASE
-                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
-                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
                             WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
                             WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
@@ -229,6 +227,8 @@ class StockProductFlowReport(models.Model):
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
+                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
+                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             ELSE sm.name
                         END AS operation,
                         'in' AS direction
@@ -246,7 +246,7 @@ class StockProductFlowReport(models.Model):
 
                     UNION ALL
 
-                    -- External ↔ Internal and External ↔ External: single row only
+                    -- External ↔ Internal: single row only
                     SELECT
                         sml.id * 10 AS id,
                         sml.id AS move_line_id,
@@ -259,16 +259,13 @@ class StockProductFlowReport(models.Model):
                             WHEN sld.usage = 'internal' THEN sw_in.id
                             ELSE NULL
                         END AS warehouse_id,
+                        sml.qty_done,
                         CASE
                             WHEN sl.usage = 'internal' THEN -sml.qty_done
                             WHEN sld.usage = 'internal' THEN sml.qty_done
-                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN -sml.qty_done
-                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN sml.qty_done
                             ELSE 0
                         END AS signed_qty_done,
                         CASE
-                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
-                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
                             WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
                             WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
@@ -276,13 +273,13 @@ class StockProductFlowReport(models.Model):
                             WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
                             WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
+                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'Transit'
+                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'Transit Return'
                             ELSE sm.name
                         END AS operation,
                         CASE
                             WHEN sl.usage = 'internal' THEN 'out'
                             WHEN sld.usage = 'internal' THEN 'in'
-                            WHEN sl.usage = 'supplier' AND sld.usage = 'customer' THEN 'out'
-                            WHEN sl.usage = 'customer' AND sld.usage = 'supplier' THEN 'in'
                             ELSE NULL
                         END AS direction
                     FROM stock_move_line sml
