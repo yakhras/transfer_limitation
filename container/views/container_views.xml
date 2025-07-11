@@ -482,7 +482,7 @@
     </record>
 
     <!-- Extended Container Form to show Bill of Lading -->
-    <record id="view_logistics_container_form_extended" model="ir.ui.view">
+    <!-- <record id="view_logistics_container_form_extended" model="ir.ui.view">
         <field name="name">logistics.container.form.extended</field>
         <field name="model">logistics.container</field>
         <field name="inherit_id" ref="view_logistics_container_form"/>
@@ -493,7 +493,7 @@
                     <field name="bill_lading_count" widget="statinfo" string="B/L"/>
                 </button>
             </xpath>
-            <!-- <xpath expr="//page[@string='Container Contents']" position="after">
+            <xpath expr="//page[@string='Container Contents']" position="after">
                 <page string="Bills of Lading">
                     <field name="bill_lading_ids" readonly="1">
                         <tree>
@@ -507,9 +507,9 @@
                         </tree>
                     </field>
                 </page>
-            </xpath> -->
+            </xpath>
         </field>
-    </record>
+    </record> -->
     
     <record id="view_stock_picking_container_form" model="ir.ui.view">
         <field name="name">stock.picking.container.form</field>
