@@ -5,22 +5,22 @@ from odoo.exceptions import ValidationError
 
 
 # Extend Purchase Requisition
-class PurchaseRequisition(models.Model):
-    _inherit = 'purchase.requisition'
+# class PurchaseRequisition(models.Model):
+#     _inherit = 'purchase.requisition'
     
-    # Direct relations
-    container_ids = fields.One2many('logistics.container', 'requisition_id', string='Containers')
-    bill_lading_ids = fields.One2many('logistics.bill.lading', 'requisition_id', string='Bills of Lading')
+#     # Direct relations
+#     container_ids = fields.One2many('logistics.container', 'requisition_id', string='Containers')
+#     bill_lading_ids = fields.One2many('logistics.bill.lading', 'requisition_id', string='Bills of Lading')
     
-    # Computed fields
-    container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
-    bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
+#     # Computed fields
+#     container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
+#     bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
     
-    @api.depends('container_ids', 'bill_lading_ids')
-    def _compute_counts(self):
-        for requisition in self:
-            requisition.container_count = len(requisition.container_ids)
-            requisition.bill_lading_count = len(requisition.bill_lading_ids)
+#     @api.depends('container_ids', 'bill_lading_ids')
+#     def _compute_counts(self):
+#         for requisition in self:
+#             requisition.container_count = len(requisition.container_ids)
+#             requisition.bill_lading_count = len(requisition.bill_lading_ids)
 
 
 # Extend Purchase Order
