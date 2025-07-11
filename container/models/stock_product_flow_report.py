@@ -4,6 +4,51 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
+# Extend Purchase Requisition
+class PurchaseRequisition(models.Model):
+    _inherit = 'purchase.requisition'
+    
+    # Direct relations
+    container_ids = fields.One2many('logistics.container', 'requisition_id', string='Containers')
+    bill_lading_ids = fields.One2many('logistics.bill.lading', 'requisition_id', string='Bills of Lading')
+    
+    # Computed fields
+    container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
+    bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
+    
+    @api.depends('container_ids', 'bill_lading_ids')
+    def _compute_counts(self):
+        for requisition in self:
+            requisition.container_count = len(requisition.container_ids)
+            requisition.bill_lading_count = len(requisition.bill_lading_ids)
+
+
+# Extend Purchase Order
+class PurchaseOrder(models.Model):
+    _inherit = 'purchase.order'
+    
+    # Direct relations
+    container_ids = fields.One2many('logistics.container', 'purchase_order_id', string='Containers')
+    bill_lading_id = fields.Many2one('logistics.bill.lading', string='Bill of Lading')
+    
+    # Computed fields
+    container_count = fields.Integer('Container Count', compute='_compute_container_count', store=True)
+    
+    @api.depends('container_ids')
+    def _compute_container_count(self):
+        for order in self:
+            order.container_count = len(order.container_ids)
+    
+    @api.constrains('requisition_id', 'bill_lading_id')
+    def _check_bill_lading_requisition_consistency(self):
+        for order in self:
+            if order.requisition_id and order.bill_lading_id:
+                if order.bill_lading_id.requisition_id != order.requisition_id:
+                    raise ValidationError(_(
+                        'Purchase Order %s: Bill of Lading must belong to the same requisition (%s) as the purchase order.'
+                    ) % (order.name, order.requisition_id.name))
+
+
 class LogisticsBillLading(models.Model):
     _name = 'logistics.bill.lading'
     _description = 'Bill of Lading'
@@ -20,6 +65,16 @@ class LogisticsBillLading(models.Model):
         ('seaway', 'Seaway B/L'),
     ], string='B/L Type', default='master', required=True, tracking=True)
     bl_date = fields.Date('B/L Date', required=True, default=fields.Date.context_today, tracking=True)
+    
+    # Master Relation - One B/L belongs to one Requisition
+    requisition_id = fields.Many2one('purchase.requisition', string='Purchase Requisition', 
+                                    required=True, tracking=True, ondelete='cascade')
+    
+    # Related Purchase Orders (from the requisition)
+    purchase_order_ids = fields.One2many('purchase.order', 'bill_lading_id', string='Purchase Orders')
+    
+    # Direct container relation
+    container_ids = fields.One2many('logistics.container', 'bill_lading_id', string='Containers')
     
     # Parties Information
     shipper_id = fields.Many2one('res.partner', string='Shipper', required=True,
@@ -62,10 +117,9 @@ class LogisticsBillLading(models.Model):
         ('cancelled', 'Cancelled'),
     ], string='Status', default='draft', tracking=True, required=True)
     
-    # Container Relations
-    container_ids = fields.Many2many('logistics.container', 'bill_lading_container_rel',
-                                   'bill_lading_id', 'container_id', string='Containers')
-    container_count = fields.Integer('Container Count', compute='_compute_container_count', store=True)
+    # Computed counts
+    container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
+    purchase_order_count = fields.Integer('Purchase Order Count', compute='_compute_counts', store=True)
     
     # Additional Information
     marks_and_numbers = fields.Text('Marks and Numbers')
@@ -89,10 +143,11 @@ class LogisticsBillLading(models.Model):
     company_id = fields.Many2one('res.company', string='Company', required=True,
                                 default=lambda self: self.env.company)
     
-    @api.depends('container_ids')
-    def _compute_container_count(self):
+    @api.depends('container_ids', 'purchase_order_ids')
+    def _compute_counts(self):
         for bl in self:
             bl.container_count = len(bl.container_ids)
+            bl.purchase_order_count = len(bl.purchase_order_ids)
     
     @api.onchange('container_ids')
     def _onchange_container_ids(self):
@@ -107,6 +162,26 @@ class LogisticsBillLading(models.Model):
             # Calculate totals from containers
             self.gross_weight = sum(self.container_ids.mapped('weight_kg'))
             self.measurement = sum(self.container_ids.mapped('volume_m3'))
+    
+    @api.constrains('container_ids')
+    def _check_container_requisition_consistency(self):
+        for bl in self:
+            if bl.container_ids:
+                for container in bl.container_ids:
+                    if container.requisition_id != bl.requisition_id:
+                        raise ValidationError(_(
+                            'Container %s must belong to the same requisition (%s) as the Bill of Lading.'
+                        ) % (container.name, bl.requisition_id.name))
+    
+    @api.constrains('purchase_order_ids')
+    def _check_purchase_order_requisition_consistency(self):
+        for bl in self:
+            if bl.purchase_order_ids:
+                for po in bl.purchase_order_ids:
+                    if po.requisition_id != bl.requisition_id:
+                        raise ValidationError(_(
+                            'Purchase Order %s must belong to the same requisition (%s) as the Bill of Lading.'
+                        ) % (po.name, bl.requisition_id.name))
     
     # State Management Methods
     def action_confirm(self):
@@ -161,30 +236,12 @@ class LogisticsPort(models.Model):
     city = fields.Char('City')
     timezone = fields.Selection([
         ('UTC', 'UTC'),
-        ('UTC+1', 'UTC+1'),
-        ('UTC+2', 'UTC+2'),
-        ('UTC+3', 'UTC+3'),
-        ('UTC+4', 'UTC+4'),
-        ('UTC+5', 'UTC+5'),
-        ('UTC+6', 'UTC+6'),
-        ('UTC+7', 'UTC+7'),
-        ('UTC+8', 'UTC+8'),
-        ('UTC+9', 'UTC+9'),
-        ('UTC+10', 'UTC+10'),
-        ('UTC+11', 'UTC+11'),
-        ('UTC+12', 'UTC+12'),
-        ('UTC-1', 'UTC-1'),
-        ('UTC-2', 'UTC-2'),
-        ('UTC-3', 'UTC-3'),
-        ('UTC-4', 'UTC-4'),
-        ('UTC-5', 'UTC-5'),
-        ('UTC-6', 'UTC-6'),
-        ('UTC-7', 'UTC-7'),
-        ('UTC-8', 'UTC-8'),
-        ('UTC-9', 'UTC-9'),
-        ('UTC-10', 'UTC-10'),
-        ('UTC-11', 'UTC-11'),
-        ('UTC-12', 'UTC-12'),
+        ('UTC+1', 'UTC+1'), ('UTC+2', 'UTC+2'), ('UTC+3', 'UTC+3'), ('UTC+4', 'UTC+4'),
+        ('UTC+5', 'UTC+5'), ('UTC+6', 'UTC+6'), ('UTC+7', 'UTC+7'), ('UTC+8', 'UTC+8'),
+        ('UTC+9', 'UTC+9'), ('UTC+10', 'UTC+10'), ('UTC+11', 'UTC+11'), ('UTC+12', 'UTC+12'),
+        ('UTC-1', 'UTC-1'), ('UTC-2', 'UTC-2'), ('UTC-3', 'UTC-3'), ('UTC-4', 'UTC-4'),
+        ('UTC-5', 'UTC-5'), ('UTC-6', 'UTC-6'), ('UTC-7', 'UTC-7'), ('UTC-8', 'UTC-8'),
+        ('UTC-9', 'UTC-9'), ('UTC-10', 'UTC-10'), ('UTC-11', 'UTC-11'), ('UTC-12', 'UTC-12'),
     ], string='Timezone', default='UTC')
     is_active = fields.Boolean('Active', default=True)
     notes = fields.Text('Notes')
@@ -220,6 +277,14 @@ class LogisticsContainer(models.Model):
         ('40ot', '40ft Open Top'),
     ], string='Container Type', required=True, tracking=True)
     
+    # Master Relations - Following hierarchy: Requisition > Purchase Order > Container > Bill of Lading
+    requisition_id = fields.Many2one('purchase.requisition', string='Purchase Requisition', 
+                                    required=True, tracking=True, ondelete='cascade')
+    purchase_order_id = fields.Many2one('purchase.order', string='Purchase Order', 
+                                       required=True, tracking=True, ondelete='cascade')
+    bill_lading_id = fields.Many2one('logistics.bill.lading', string='Bill of Lading', 
+                                    tracking=True, ondelete='set null')
+    
     # Physical Properties
     seal_number = fields.Char('Seal Number', tracking=True)
     weight_kg = fields.Float('Weight (KG)', digits=(12, 2))
@@ -251,13 +316,7 @@ class LogisticsContainer(models.Model):
     
     # Business Relations
     supplier_id = fields.Many2one('res.partner', string='Supplier', 
-                                 domain=[('supplier_rank', '>', 0)], tracking=True)
-    purchase_order_id = fields.Many2one('purchase.order', string='Purchase Order')
-    
-    # Bill of Lading Relations
-    bill_lading_ids = fields.Many2many('logistics.bill.lading', 'bill_lading_container_rel',
-                                      'container_id', 'bill_lading_id', string='Bills of Lading')
-    bill_lading_count = fields.Integer('B/L Count', compute='_compute_bill_lading_count')
+                                 related='purchase_order_id.partner_id', store=True)
     
     # Container Content
     container_line_ids = fields.One2many('logistics.container.line', 'container_id', 
@@ -265,7 +324,7 @@ class LogisticsContainer(models.Model):
     
     # Financial Information
     currency_id = fields.Many2one('res.currency', string='Currency', 
-                                 default=lambda self: self.env.company.currency_id)
+                                 related='purchase_order_id.currency_id', store=True)
     total_value = fields.Monetary('Total Value', compute='_compute_totals', 
                                  store=True, currency_field='currency_id')
     freight_cost = fields.Monetary('Freight Cost', currency_field='currency_id')
@@ -279,18 +338,9 @@ class LogisticsContainer(models.Model):
     total_qty = fields.Float('Total Quantity', compute='_compute_totals', store=True)
     product_count = fields.Integer('Product Count', compute='_compute_totals', store=True)
     
-    # Future integration points (commented for now)
-    # picking_ids = fields.One2many('stock.picking', 'logistics_container_id', string='Stock Operations')
-    # invoice_ids = fields.Many2many('account.move', 'container_invoice_rel', 'container_id', 'invoice_id', string='Related Invoices')
-    
     # Company
-    company_id = fields.Many2one('res.company', string='Company', required=True,
-                                default=lambda self: self.env.company)
-    
-    @api.depends('bill_lading_ids')
-    def _compute_bill_lading_count(self):
-        for container in self:
-            container.bill_lading_count = len(container.bill_lading_ids)
+    company_id = fields.Many2one('res.company', string='Company', 
+                                related='purchase_order_id.company_id', store=True)
     
     @api.depends('container_line_ids.product_qty', 'container_line_ids.price_subtotal')
     def _compute_totals(self):
@@ -305,6 +355,45 @@ class LogisticsContainer(models.Model):
             container.total_cost = (container.total_value + container.freight_cost + 
                                   container.insurance_cost + container.customs_duty + 
                                   container.other_charges)
+    
+    @api.constrains('requisition_id', 'purchase_order_id')
+    def _check_purchase_order_requisition_consistency(self):
+        for container in self:
+            if container.purchase_order_id.requisition_id != container.requisition_id:
+                raise ValidationError(_(
+                    'Container %s: Purchase Order must belong to the same requisition (%s).'
+                ) % (container.name, container.requisition_id.name))
+    
+    @api.constrains('bill_lading_id', 'requisition_id')
+    def _check_bill_lading_requisition_consistency(self):
+        for container in self:
+            if container.bill_lading_id and container.bill_lading_id.requisition_id != container.requisition_id:
+                raise ValidationError(_(
+                    'Container %s: Bill of Lading must belong to the same requisition (%s).'
+                ) % (container.name, container.requisition_id.name))
+    
+    @api.onchange('requisition_id')
+    def _onchange_requisition_id(self):
+        if self.requisition_id:
+            # Filter purchase orders by requisition
+            return {
+                'domain': {
+                    'purchase_order_id': [('requisition_id', '=', self.requisition_id.id)],
+                    'bill_lading_id': [('requisition_id', '=', self.requisition_id.id)]
+                }
+            }
+    
+    @api.onchange('purchase_order_id')
+    def _onchange_purchase_order_id(self):
+        if self.purchase_order_id:
+            # Auto-set requisition from purchase order
+            self.requisition_id = self.purchase_order_id.requisition_id
+            # Filter bill of lading by requisition
+            return {
+                'domain': {
+                    'bill_lading_id': [('requisition_id', '=', self.requisition_id.id)]
+                }
+            }
     
     # State Management Methods
     def action_ship(self):
@@ -397,11 +486,41 @@ class LogisticsContainerLine(models.Model):
             self.price_unit = self.product_id.standard_price
             if self.product_id.country_of_origin:
                 self.country_of_origin = self.product_id.country_of_origin
-    
-    @api.onchange('product_qty', 'volume_per_unit')
-    def _onchange_compute_volume(self):
-        if self.product_qty and self.volume_per_unit:
-            # This could be used to update container volume calculations
-            pass
 
 
+# Future integrations with other Odoo modules (commented for now)
+
+# class StockPicking(models.Model):
+#     _inherit = 'stock.picking'
+#     
+#     logistics_container_id = fields.Many2one('logistics.container', string='Container')
+#     container_operation_type = fields.Selection([
+#         ('receiving', 'Container Receiving'),
+#         ('unloading', 'Container Unloading'),
+#         ('delivery', 'Container Delivery'),
+#     ], string='Container Operation')
+#     
+#     @api.onchange('logistics_container_id')
+#     def _onchange_container_id(self):
+#         if self.logistics_container_id:
+#             self.origin = self.logistics_container_id.name
+#             if self.logistics_container_id.purchase_order_id:
+#                 self.purchase_id = self.logistics_container_id.purchase_order_id
+
+
+# class AccountMove(models.Model):
+#     _inherit = 'account.move'
+#     
+#     container_ids = fields.Many2many('logistics.container', 'container_invoice_rel',
+#                                     'invoice_id', 'container_id', 
+#                                     string='Related Containers')
+#     container_reference = fields.Char('Container Reference', 
+#                                      compute='_compute_container_reference', store=True)
+#     
+#     @api.depends('container_ids')
+#     def _compute_container_reference(self):
+#         for move in self:
+#             if move.container_ids:
+#                 move.container_reference = ', '.join(move.container_ids.mapped('name'))
+#             else:
+#                 move.container_reference = ''
