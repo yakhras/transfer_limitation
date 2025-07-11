@@ -7,11 +7,11 @@
                 web_icon="container,static/description/icon.svg"/>
         
         <menuitem id="menu_container_containers" name="Containers" 
-                parent="container.menu_container_root" sequence="10"
+                parent="base.menu_reporting_dashboard" sequence="10"
                 action="action_container_container"/>
                 
         <menuitem id="menu_container_lines" name="Container Contents" 
-                parent="container.menu_container_root" sequence="20"
+                parent="base.menu_reporting_dashboard" sequence="20"
                 action="action_container_line"/>
 
 
