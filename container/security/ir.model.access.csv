@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_logistics_container_user,logistics.container.user,model_logistics_container,base.group_user,1,1,1,0
+access_logistics_container_manager,logistics.container.manager,model_logistics_container,base.group_system,1,1,1,1
+
+access_logistics_container_line_user,logistics.container.line.user,model_logistics_container_line,base.group_user,1,1,1,0
+access_logistics_container_line_manager,logistics.container.line.manager,model_logistics_container_line,base.group_system,1,1,1,1

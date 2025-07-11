@@ -1,0 +1,47 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="containerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f4e79;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e74c3c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c0392b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="64" cy="64" r="60" fill="url(#containerGradient)" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Main Container Body -->
+  <rect x="20" y="35" width="88" height="45" rx="3" ry="3" fill="#34495e" stroke="#2c3e50" stroke-width="1.5"/>
+  
+  <!-- Container Ridges (corrugated effect) -->
+  <line x1="20" y1="42" x2="108" y2="42" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="20" y1="48" x2="108" y2="48" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="20" y1="54" x2="108" y2="54" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="20" y1="60" x2="108" y2="60" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="20" y1="66" x2="108" y2="66" stroke="#2c3e50" stroke-width="1"/>
+  <line x1="20" y1="72" x2="108" y2="72" stroke="#2c3e50" stroke-width="1"/>
+  
+  <!-- Container Doors -->
+  <rect x="20" y="35" width="44" height="45" rx="3" ry="3" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <rect x="64" y="35" width="44" height="45" rx="3" ry="3" fill="none" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Door Handles -->
+  <rect x="60" y="54" width="8" height="8" rx="1" ry="1" fill="url(#accentGradient)"/>
+  
+  <!-- Container Number/Label -->
+  <rect x="30" y="85" width="68" height="12" rx="2" ry="2" fill="#ffffff" opacity="0.9"/>
+  <text x="64" y="93" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#2c3e50">CONTAINER</text>
+  
+  <!-- Shipping/Movement Lines -->
+  <path d="M 15 20 Q 30 15 45 20" stroke="#ecf0f1" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M 83 20 Q 98 15 113 20" stroke="#ecf0f1" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M 15 108 Q 30 113 45 108" stroke="#ecf0f1" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M 83 108 Q 98 113 113 108" stroke="#ecf0f1" stroke-width="2" fill="none" opacity="0.7"/>
+  
+  <!-- Location Pin (indicating tracking) -->
+  <circle cx="95" cy="25" r="8" fill="url(#accentGradient)"/>
+  <circle cx="95" cy="25" r="3" fill="#ffffff"/>
+</svg>
