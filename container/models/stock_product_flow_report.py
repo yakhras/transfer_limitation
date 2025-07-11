@@ -1,8 +1,203 @@
-
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+
+
+class LogisticsBillLading(models.Model):
+    _name = 'logistics.bill.lading'
+    _description = 'Bill of Lading'
+    _order = 'bl_date desc, name'
+    _rec_name = 'name'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    # Basic Information
+    name = fields.Char('B/L Number', required=True, copy=False, tracking=True)
+    bl_type = fields.Selection([
+        ('master', 'Master B/L'),
+        ('house', 'House B/L'),
+        ('express', 'Express B/L'),
+        ('seaway', 'Seaway B/L'),
+    ], string='B/L Type', default='master', required=True, tracking=True)
+    bl_date = fields.Date('B/L Date', required=True, default=fields.Date.context_today, tracking=True)
+    
+    # Parties Information
+    shipper_id = fields.Many2one('res.partner', string='Shipper', required=True,
+                                domain=[('is_company', '=', True)], tracking=True)
+    consignee_id = fields.Many2one('res.partner', string='Consignee', required=True,
+                                  domain=[('is_company', '=', True)], tracking=True)
+    notify_party_id = fields.Many2one('res.partner', string='Notify Party',
+                                     domain=[('is_company', '=', True)], tracking=True)
+    
+    # Shipping Information
+    vessel_name = fields.Char('Vessel Name', tracking=True)
+    voyage_number = fields.Char('Voyage Number', tracking=True)
+    port_of_loading_id = fields.Many2one('logistics.port', string='Port of Loading', tracking=True)
+    port_of_discharge_id = fields.Many2one('logistics.port', string='Port of Discharge', tracking=True)
+    place_of_receipt = fields.Char('Place of Receipt')
+    place_of_delivery = fields.Char('Place of Delivery')
+    
+    # Dates
+    etd = fields.Date('ETD (Estimated Time of Departure)', tracking=True)
+    eta = fields.Date('ETA (Estimated Time of Arrival)', tracking=True)
+    actual_departure_date = fields.Date('Actual Departure Date', tracking=True)
+    actual_arrival_date = fields.Date('Actual Arrival Date', tracking=True)
+    
+    # Terms and Conditions
+    freight_terms = fields.Selection([
+        ('prepaid', 'Freight Prepaid'),
+        ('collect', 'Freight Collect'),
+    ], string='Freight Terms', default='prepaid', tracking=True)
+    payment_terms = fields.Text('Payment Terms')
+    
+    # Status
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('confirmed', 'Confirmed'),
+        ('shipped', 'Shipped'),
+        ('in_transit', 'In Transit'),
+        ('arrived', 'Arrived'),
+        ('delivered', 'Delivered'),
+        ('closed', 'Closed'),
+        ('cancelled', 'Cancelled'),
+    ], string='Status', default='draft', tracking=True, required=True)
+    
+    # Container Relations
+    container_ids = fields.Many2many('logistics.container', 'bill_lading_container_rel',
+                                   'bill_lading_id', 'container_id', string='Containers')
+    container_count = fields.Integer('Container Count', compute='_compute_container_count', store=True)
+    
+    # Additional Information
+    marks_and_numbers = fields.Text('Marks and Numbers')
+    description_of_goods = fields.Text('Description of Goods')
+    gross_weight = fields.Float('Gross Weight (KG)', digits=(12, 2))
+    net_weight = fields.Float('Net Weight (KG)', digits=(12, 2))
+    measurement = fields.Float('Measurement (CBM)', digits=(10, 3))
+    
+    # Financial
+    currency_id = fields.Many2one('res.currency', string='Currency', 
+                                 default=lambda self: self.env.company.currency_id)
+    freight_amount = fields.Monetary('Freight Amount', currency_field='currency_id')
+    total_charges = fields.Monetary('Total Charges', currency_field='currency_id')
+    
+    # Document References
+    booking_reference = fields.Char('Booking Reference')
+    export_reference = fields.Char('Export Reference')
+    forwarding_agent_reference = fields.Char('Forwarding Agent Reference')
+    
+    # Company
+    company_id = fields.Many2one('res.company', string='Company', required=True,
+                                default=lambda self: self.env.company)
+    
+    @api.depends('container_ids')
+    def _compute_container_count(self):
+        for bl in self:
+            bl.container_count = len(bl.container_ids)
+    
+    @api.onchange('container_ids')
+    def _onchange_container_ids(self):
+        if self.container_ids:
+            # Auto-populate vessel and voyage from first container
+            first_container = self.container_ids[0]
+            if first_container.vessel_name and not self.vessel_name:
+                self.vessel_name = first_container.vessel_name
+            if first_container.voyage_number and not self.voyage_number:
+                self.voyage_number = first_container.voyage_number
+            
+            # Calculate totals from containers
+            self.gross_weight = sum(self.container_ids.mapped('weight_kg'))
+            self.measurement = sum(self.container_ids.mapped('volume_m3'))
+    
+    # State Management Methods
+    def action_confirm(self):
+        self.state = 'confirmed'
+    
+    def action_ship(self):
+        self.state = 'shipped'
+        if not self.actual_departure_date:
+            self.actual_departure_date = fields.Date.context_today(self)
+        # Update related containers
+        self.container_ids.filtered(lambda c: c.state in ['draft', 'shipped']).action_in_transit()
+    
+    def action_in_transit(self):
+        self.state = 'in_transit'
+    
+    def action_arrived(self):
+        self.state = 'arrived'
+        if not self.actual_arrival_date:
+            self.actual_arrival_date = fields.Date.context_today(self)
+        # Update related containers
+        self.container_ids.filtered(lambda c: c.state == 'in_transit').action_arrived()
+    
+    def action_delivered(self):
+        self.state = 'delivered'
+    
+    def action_close(self):
+        self.state = 'closed'
+    
+    def action_cancel(self):
+        self.state = 'cancelled'
+    
+    def action_reset_to_draft(self):
+        self.state = 'draft'
+    
+    @api.constrains('eta', 'etd')
+    def _check_dates(self):
+        for bl in self:
+            if bl.eta and bl.etd:
+                if bl.eta < bl.etd:
+                    raise ValidationError(_('ETA cannot be before ETD.'))
+
+
+class LogisticsPort(models.Model):
+    _name = 'logistics.port'
+    _description = 'Port'
+    _order = 'name'
+    _rec_name = 'name'
+
+    name = fields.Char('Port Name', required=True)
+    code = fields.Char('Port Code', size=5)
+    country_id = fields.Many2one('res.country', string='Country', required=True)
+    city = fields.Char('City')
+    timezone = fields.Selection([
+        ('UTC', 'UTC'),
+        ('UTC+1', 'UTC+1'),
+        ('UTC+2', 'UTC+2'),
+        ('UTC+3', 'UTC+3'),
+        ('UTC+4', 'UTC+4'),
+        ('UTC+5', 'UTC+5'),
+        ('UTC+6', 'UTC+6'),
+        ('UTC+7', 'UTC+7'),
+        ('UTC+8', 'UTC+8'),
+        ('UTC+9', 'UTC+9'),
+        ('UTC+10', 'UTC+10'),
+        ('UTC+11', 'UTC+11'),
+        ('UTC+12', 'UTC+12'),
+        ('UTC-1', 'UTC-1'),
+        ('UTC-2', 'UTC-2'),
+        ('UTC-3', 'UTC-3'),
+        ('UTC-4', 'UTC-4'),
+        ('UTC-5', 'UTC-5'),
+        ('UTC-6', 'UTC-6'),
+        ('UTC-7', 'UTC-7'),
+        ('UTC-8', 'UTC-8'),
+        ('UTC-9', 'UTC-9'),
+        ('UTC-10', 'UTC-10'),
+        ('UTC-11', 'UTC-11'),
+        ('UTC-12', 'UTC-12'),
+    ], string='Timezone', default='UTC')
+    is_active = fields.Boolean('Active', default=True)
+    notes = fields.Text('Notes')
+
+    @api.depends('name', 'code')
+    def name_get(self):
+        result = []
+        for port in self:
+            name = port.name
+            if port.code:
+                name = f"[{port.code}] {name}"
+            result.append((port.id, name))
+        return result
 
 
 class LogisticsContainer(models.Model):
@@ -59,6 +254,11 @@ class LogisticsContainer(models.Model):
                                  domain=[('supplier_rank', '>', 0)], tracking=True)
     purchase_order_id = fields.Many2one('purchase.order', string='Purchase Order')
     
+    # Bill of Lading Relations
+    bill_lading_ids = fields.Many2many('logistics.bill.lading', 'bill_lading_container_rel',
+                                      'container_id', 'bill_lading_id', string='Bills of Lading')
+    bill_lading_count = fields.Integer('B/L Count', compute='_compute_bill_lading_count')
+    
     # Container Content
     container_line_ids = fields.One2many('logistics.container.line', 'container_id', 
                                         string='Container Lines')
@@ -86,6 +286,11 @@ class LogisticsContainer(models.Model):
     # Company
     company_id = fields.Many2one('res.company', string='Company', required=True,
                                 default=lambda self: self.env.company)
+    
+    @api.depends('bill_lading_ids')
+    def _compute_bill_lading_count(self):
+        for container in self:
+            container.bill_lading_count = len(container.bill_lading_ids)
     
     @api.depends('container_line_ids.product_qty', 'container_line_ids.price_subtotal')
     def _compute_totals(self):
