@@ -246,7 +246,7 @@
                 </sheet>
             </form>
         </field>
-    </record><?xml version="1.0" encoding="utf-8"?>
+    </record>
 
     <!-- Container Tree View -->
     <record id="view_logistics_container_tree" model="ir.ui.view">
