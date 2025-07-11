@@ -2,19 +2,7 @@
 <odoo>
     <data>
         
-        <!-- Menu Structure - Standalone App -->
-        <menuitem id="menu_container_root" name="Container" sequence="45" 
-                web_icon="container,static/description/icon.svg"/>
         
-        <menuitem id="menu_container_containers" 
-                    name="Containers" 
-                    parent="base.menu_reporting_dashboard" 
-                    sequence="10"
-                    action="action_container_container"/>
-                
-        <menuitem id="menu_container_lines" name="Container Contents" 
-                parent="base.menu_reporting_dashboard" sequence="20"
-                action="action_container_line"/>
 
 
         <!-- Container Tree View -->
@@ -302,6 +290,7 @@
         </record>
 
 
+
         <!-- Actions -->
         <record id="action_container_container" model="ir.actions.act_window">
             <field name="name">Containers</field>
@@ -329,6 +318,21 @@
                 </p>
             </field>
         </record>
+
+
+
+
+        <!-- Menu Structure - Standalone App -->
+        <menuitem id="menu_container_root" name="Container" sequence="45" 
+                web_icon="container,static/description/icon.svg"/>
+        
+        <menuitem id="menu_container_containers" name="Containers" 
+                parent="menu_container_root" sequence="10"
+                action="action_container_container"/>
+                
+        <menuitem id="menu_container_lines" name="Container Contents" 
+                parent="menu_container_root" sequence="20"
+                action="action_container_line"/>
 
     </data>
 </odoo>
