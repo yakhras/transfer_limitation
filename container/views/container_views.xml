@@ -493,7 +493,7 @@
                     <field name="bill_lading_count" widget="statinfo" string="B/L"/>
                 </button>
             </xpath>
-            <xpath expr="//page[@string='Container Contents']" position="after">
+            <!-- <xpath expr="//page[@string='Container Contents']" position="after">
                 <page string="Bills of Lading">
                     <field name="bill_lading_ids" readonly="1">
                         <tree>
@@ -507,7 +507,7 @@
                         </tree>
                     </field>
                 </page>
-            </xpath>
+            </xpath> -->
         </field>
     </record>
     
