@@ -59,46 +59,7 @@
         </field>
     </record>
 
-    <!-- If there's no existing notebook in Purchase Requisition, use this alternative -->
-    <!-- 
-    <record id="view_purchase_requisition_form_container_pages_alt" model="ir.ui.view">
-        <field name="name">purchase.requisition.form.container.pages.alt</field>
-        <field name="model">purchase.requisition</field>
-        <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//sheet" position="inside">
-                <notebook>
-                    <page string="Containers" attrs="{'invisible': [('container_count', '=', 0)]}">
-                        <field name="container_ids" readonly="1">
-                            <tree>
-                                <field name="name"/>
-                                <field name="container_type"/>
-                                <field name="supplier_id"/>
-                                <field name="departure_date"/>
-                                <field name="arrival_date"/>
-                                <field name="state"/>
-                                <field name="total_value"/>
-                            </tree>
-                        </field>
-                    </page>
-                    <page string="Bills of Lading" attrs="{'invisible': [('bill_lading_count', '=', 0)]}">
-                        <field name="bill_lading_ids" readonly="1">
-                            <tree>
-                                <field name="name"/>
-                                <field name="bl_type"/>
-                                <field name="bl_date"/>
-                                <field name="shipper_id"/>
-                                <field name="consignee_id"/>
-                                <field name="vessel_name"/>
-                                <field name="state"/>
-                            </tree>
-                        </field>
-                    </page>
-                </notebook>
-            </xpath>
-        </field>
-    </record>
-    -->
+    
 
     <!-- Bill of Lading Views -->
     <record id="view_logistics_bill_lading_tree" model="ir.ui.view">
@@ -585,47 +546,6 @@
         </field>
     </record>
 
-    <!-- Extended Container Form to show Bill of Lading -->
-    <!-- <record id="view_logistics_container_form_extended" model="ir.ui.view">
-        <field name="name">logistics.container.form.extended</field>
-        <field name="model">logistics.container</field>
-        <field name="inherit_id" ref="view_logistics_container_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//div[@name='button_box']" position="inside">
-                <button type="object" name="action_view_bill_ladings" 
-                        class="oe_stat_button" icon="fa-file-text-o">
-                    <field name="bill_lading_count" widget="statinfo" string="B/L"/>
-                </button>
-            </xpath>
-            <xpath expr="//page[@string='Container Contents']" position="after">
-                <page string="Bills of Lading">
-                    <field name="bill_lading_ids" readonly="1">
-                        <tree>
-                            <field name="name"/>
-                            <field name="bl_type"/>
-                            <field name="bl_date"/>
-                            <field name="shipper_id"/>
-                            <field name="consignee_id"/>
-                            <field name="vessel_name"/>
-                            <field name="state"/>
-                        </tree>
-                    </field>
-                </page>
-            </xpath>
-        </field>
-    </record> -->
-    
-    <!-- <record id="view_stock_picking_container_form" model="ir.ui.view">
-        <field name="name">stock.picking.container.form</field>
-        <field name="model">stock.picking</field>
-        <field name="inherit_id" ref="stock.stock_picking_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='origin']" position="after">
-                <field name="logistics_container_id"/>
-                <field name="container_operation_type"/>
-            </xpath>
-        </field>
-    </record> -->
     
 
     <!-- Container Dashboard/Search View -->
@@ -699,15 +619,40 @@
                     
                     <field name="container_distribution_ids" 
                            attrs="{'invisible': [('has_container_distribution', '=', False)]}">
-                        <tree editable="bottom" create="false" delete="false">
+                        <tree editable="bottom">
                             <field name="product_id" readonly="1"/>
                             <field name="total_qty" readonly="1"/>
                             <field name="product_uom_id" readonly="1"/>
-                            <field name="container_count" string="# Containers"/>
-                            <field name="distribution_method" string="Method"/>
-                            <field name="qty_per_container" readonly="1" string="Qty/Container"/>
+                            <field name="container_count"/>
+                            <field name="distribution_method"/>
+                            <field name="qty_per_container" readonly="1"/>
                         </tree>
-                        
+                        <form>
+                            <group>
+                                <group>
+                                    <field name="product_id" readonly="1"/>
+                                    <field name="total_qty" readonly="1"/>
+                                    <field name="product_uom_id" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="container_count"/>
+                                    <field name="distribution_method"/>
+                                    <field name="qty_per_container" readonly="1"/>
+                                </group>
+                            </group>
+                            <!-- Future: Manual distribution lines -->
+                            <notebook attrs="{'invisible': [('distribution_method', '!=', 'manual')]}">
+                                <page string="Manual Distribution">
+                                    <field name="manual_distribution_ids">
+                                        <tree editable="bottom">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="container_name"/>
+                                            <field name="qty"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </form>
                     </field>
                     
                     <div class="mt16" attrs="{'invisible': [('has_container_distribution', '=', False)]}">
@@ -740,7 +685,7 @@
     </record>
 
     <!-- Container Distribution Form View -->
-    <!-- <record id="view_purchase_requisition_container_distribution_form" model="ir.ui.view">
+    <record id="view_purchase_requisition_container_distribution_form" model="ir.ui.view">
         <field name="name">purchase.requisition.container.distribution.form</field>
         <field name="model">purchase.requisition.container.distribution</field>
         <field name="arch" type="xml">
@@ -774,14 +719,13 @@
                 </sheet>
             </form>
         </field>
-    </record> -->
+    </record>
 
     <!-- Actions -->
     <record id="action_purchase_requisition_container_distribution" model="ir.actions.act_window">
         <field name="name">Container Distribution</field>
         <field name="res_model">purchase.requisition.container.distribution</field>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="view_purchase_requisition_container_distribution_tree"/>
+        <field name="view_mode">tree,form</field>
     </record>
 
     
@@ -867,6 +811,7 @@
     <menuitem id="menu_container_ports" name="Ports" 
               parent="menu_container_root" sequence="40"
               action="action_container_port"/>
+
 
     <!-- Menu (optional - for debugging/admin) -->
     <menuitem id="menu_container_distribution" 
