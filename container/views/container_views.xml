@@ -677,13 +677,10 @@
             
             <!-- Add Container Distribution page to notebook -->
             <xpath expr="//notebook" position="inside">
-                <page string="Container Distribution" attrs="{'invisible': [('line_ids', '=', [])]}" autofocus="context.get('default_active_tab') == 'container_distribution'">
+                <page string="Container Distribution" 
+                      attrs="{'invisible': [('line_ids', '=', [])]}"
+                      autofocus="context.get('default_active_tab') == 'container_distribution'">
                     <div class="oe_button_box" name="container_distribution_buttons">
-                        <button name="action_generate_container_distribution" 
-                                string="Generate Distribution" 
-                                type="object"
-                                class="btn-primary"
-                                attrs="{'invisible': [('has_container_distribution', '=', True)]}"/>
                         <button name="action_create_containers_from_distribution" 
                                 string="Create Containers" 
                                 type="object"
@@ -695,7 +692,7 @@
                     <div attrs="{'invisible': [('has_container_distribution', '=', True)]}">
                         <div class="alert alert-info" role="alert">
                             <strong>Container Distribution</strong><br/>
-                            Click "Generate Distribution" to create container distribution planning from your requisition lines.
+                            Add products to your requisition lines above. Distribution records will be created automatically.
                             You can then specify how many containers needed for each product and create the actual containers.
                         </div>
                     </div>
@@ -818,6 +815,7 @@
               sequence="25"
               action="action_purchase_requisition_container_distribution"
               groups="base.group_system"/>
+
 
     
 

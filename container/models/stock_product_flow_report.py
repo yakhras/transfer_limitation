@@ -18,15 +18,6 @@ class PurchaseRequisition(models.Model):
     # Computed fields
     container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
     bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
-
-    
-    
-
-    
-    
-    # Existing methods...
-    # @api.depends('container_ids', 'bill_lading_ids')
-    # def _compute_counts(self):...
     
     
     
@@ -101,62 +92,12 @@ class PurchaseRequisition(models.Model):
         for requisition in self:
             requisition.has_container_distribution = bool(requisition.container_distribution_ids)
     
-    # Existing methods...
-    # @api.depends('container_ids', 'bill_lading_ids')
-    # def _compute_counts(self):...
-    
-    def action_generate_container_distribution(self):
-        """Generate container distribution lines from requisition lines"""
-        self.ensure_one()
-        
-        # Clear existing distribution lines
-        self.container_distribution_ids.unlink()
-        
-        # Create distribution lines for each product in requisition
-        distribution_lines = []
-        for line in self.line_ids:
-            distribution_lines.append({
-                'requisition_id': self.id,
-                'product_id': line.product_id.id,
-                'product_uom_id': line.product_uom_id.id,
-                'total_qty': line.product_qty,
-                'container_count': 1,  # Default to 1 container
-                'distribution_method': 'equal',
-                'qty_per_container': line.product_qty,  # Will be recalculated
-            })
-        
-        if distribution_lines:
-            self.env['purchase.requisition.container.distribution'].create(distribution_lines)
-        
-        # Show notification and return to the same form
-        self.env['bus.bus']._sendone(
-            self.env.user.partner_id,
-            'simple_notification',
-            {
-                'message': f'Container distribution generated for {len(distribution_lines)} products.',
-                'type': 'success',
-            }
-        )
-        
-        # Return action to show the same record with updated data
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'purchase.requisition',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'view_type': 'form',
-            'target': 'current',
-            'context': {
-                'default_active_tab': 'container_distribution',
-            }
-        }
-    
     def action_create_containers_from_distribution(self):
         """Create actual containers and container lines based on distribution"""
         self.ensure_one()
         
         if not self.container_distribution_ids:
-            raise ValidationError(_('No container distribution found. Please generate distribution first.'))
+            raise ValidationError(_('No container distribution found. Please add products to requisition first.'))
         
         # Group distribution by container number
         containers_data = {}
@@ -211,29 +152,17 @@ class PurchaseRequisition(models.Model):
             created_containers.append(container)
             container_sequence += 1
         
-        # Show notification and return to the same form
-        self.env['bus.bus']._sendone(
-            self.env.user.partner_id,
-            'simple_notification',
-            {
+        # Show notification
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
                 'message': f'{len(created_containers)} containers created successfully.',
                 'type': 'success',
-            }
-        )
-        
-        # Return action to show the same record with updated data
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'purchase.requisition',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'view_type': 'form',
-            'target': 'current',
-            'context': {
-                'default_active_tab': 'container_distribution',
+                'sticky': False,
             }
         }
-
+    
 # Extend Purchase Order
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
@@ -859,6 +788,79 @@ class PurchaseRequisitionContainerDistributionLine(models.Model):
             if line.qty <= 0:
                 raise ValidationError(_('Quantity must be greater than 0.'))
 
+
+
+class PurchaseRequisitionLine(models.Model):
+    _inherit = 'purchase.requisition.line'
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Auto-create distribution record when requisition line is created"""
+        lines = super().create(vals_list)
+        
+        for line in lines:
+            # Auto-create container distribution record
+            self.env['purchase.requisition.container.distribution'].create({
+                'requisition_id': line.requisition_id.id,
+                'product_id': line.product_id.id,
+                'product_uom_id': line.product_uom_id.id,
+                'total_qty': line.product_qty,
+                'container_count': 1,  # Default to 1 container
+                'distribution_method': 'equal',
+            })
+        
+        return lines
+    
+    def write(self, vals):
+        """Update distribution record when requisition line is updated"""
+        result = super().write(vals)
+        
+        # If product or quantity changed, update distribution
+        if 'product_id' in vals or 'product_qty' in vals or 'product_uom_id' in vals:
+            for line in self:
+                # Find existing distribution record
+                distribution = self.env['purchase.requisition.container.distribution'].search([
+                    ('requisition_id', '=', line.requisition_id.id),
+                    ('product_id', '=', line.product_id.id)
+                ], limit=1)
+                
+                if distribution:
+                    # Update existing distribution
+                    distribution.write({
+                        'total_qty': line.product_qty,
+                        'product_uom_id': line.product_uom_id.id,
+                    })
+                else:
+                    # Create new distribution if it doesn't exist
+                    self.env['purchase.requisition.container.distribution'].create({
+                        'requisition_id': line.requisition_id.id,
+                        'product_id': line.product_id.id,
+                        'product_uom_id': line.product_uom_id.id,
+                        'total_qty': line.product_qty,
+                        'container_count': 1,
+                        'distribution_method': 'equal',
+                    })
+        
+        return result
+    
+    def unlink(self):
+        """Remove distribution record when requisition line is deleted"""
+        # Store distribution records to delete
+        distributions_to_delete = self.env['purchase.requisition.container.distribution']
+        
+        for line in self:
+            distribution = self.env['purchase.requisition.container.distribution'].search([
+                ('requisition_id', '=', line.requisition_id.id),
+                ('product_id', '=', line.product_id.id)
+            ])
+            distributions_to_delete |= distribution
+        
+        result = super().unlink()
+        
+        # Delete related distribution records
+        distributions_to_delete.unlink()
+        
+        return result
 # Future integrations with other Odoo modules (commented for now)
 
 # class StockPicking(models.Model):
