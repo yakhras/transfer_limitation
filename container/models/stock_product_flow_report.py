@@ -492,7 +492,7 @@ class LogisticsContainer(models.Model):
     requisition_id = fields.Many2one('purchase.requisition', string='Purchase Requisition', 
                                     required=True, tracking=True, ondelete='cascade')
     purchase_order_id = fields.Many2one('purchase.order', string='Purchase Order', 
-                                       required=True, tracking=True, ondelete='cascade')
+                                       tracking=True, ondelete='cascade')
     bill_lading_id = fields.Many2one('logistics.bill.lading', string='Bill of Lading', 
                                     tracking=True, ondelete='set null')
     
