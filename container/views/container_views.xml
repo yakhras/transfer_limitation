@@ -267,6 +267,32 @@
         </field>
     </record>
 
+    <record id="view_logistics_bill_lading_form_smart_buttons" model="ir.ui.view">
+        <field name="name">logistics.bill.lading.form.smart.buttons</field>
+        <field name="model">logistics.bill.lading</field>
+        <field name="inherit_id" ref="view_logistics_bill_lading_form"/>
+        <field name="arch" type="xml">
+            <!-- Add button box to bill of lading form -->
+            <xpath expr="//div[@class='oe_title']" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button type="object" name="action_view_purchase_requisition" 
+                            class="oe_stat_button" icon="fa-file-text"
+                            attrs="{'invisible': [('requisition_id', '=', False)]}">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">Purchase</span>
+                            <span class="o_stat_text">Requisition</span>
+                        </div>
+                    </button>
+                    <button type="object" name="action_view_purchase_orders" 
+                            class="oe_stat_button" icon="fa-shopping-cart"
+                            attrs="{'invisible': [('purchase_order_count', '=', 0)]}">
+                        <field name="purchase_order_count" widget="statinfo" string="Purchase Orders"/>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
     <!-- Port Views -->
     <record id="view_logistics_port_tree" model="ir.ui.view">
         <field name="name">logistics.port.tree</field>
@@ -543,6 +569,32 @@
                 <field name="container_state"/>
                 <field name="currency_id" invisible="1"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="view_logistics_container_form_smart_buttons" model="ir.ui.view">
+        <field name="name">logistics.container.form.smart.buttons</field>
+        <field name="model">logistics.container</field>
+        <field name="inherit_id" ref="view_logistics_container_form"/>
+        <field name="arch" type="xml">
+            <!-- Add button box to container form -->
+            <xpath expr="//div[@class='oe_title']" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button type="object" name="action_view_purchase_requisition" 
+                            class="oe_stat_button" icon="fa-file-text"
+                            attrs="{'invisible': [('requisition_id', '=', False)]}">
+                        <div class="o_field_widget o_stat_info">
+                            <span class="o_stat_text">Purchase</span>
+                            <span class="o_stat_text">Requisition</span>
+                        </div>
+                    </button>
+                    <button type="object" name="action_view_purchase_orders" 
+                            class="oe_stat_button" icon="fa-shopping-cart"
+                            attrs="{'invisible': [('purchase_order_count', '=', 0)]}">
+                        <field name="purchase_order_count" widget="statinfo" string="Purchase Orders"/>
+                    </button>
+                </div>
+            </xpath>
         </field>
     </record>
 

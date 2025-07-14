@@ -396,6 +396,44 @@ class LogisticsBillLading(models.Model):
             if total_amount and not self.total_charges:
                 self.total_charges = total_amount
 
+    def action_view_purchase_requisition(self):
+        """Smart button to view related purchase requisition"""
+        self.ensure_one()
+        if not self.requisition_id:
+            return
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.requisition',
+            'res_id': self.requisition_id.id,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'current',
+        }
+    
+    def action_view_purchase_orders(self):
+        """Smart button to view related purchase orders"""
+        self.ensure_one()
+        
+        # Get purchase orders from requisition or direct relationship
+        purchase_orders = self.purchase_order_ids
+        
+        if self.requisition_id and not purchase_orders:
+            purchase_orders = self.requisition_id.purchase_ids
+        
+        if not purchase_orders:
+            return
+        
+        action = self.env.ref('purchase.purchase_order_action_generic').read()[0]
+        
+        if len(purchase_orders) > 1:
+            action['domain'] = [('id', 'in', purchase_orders.ids)]
+        else:
+            action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
+            action['res_id'] = purchase_orders.id
+        
+        return action
+
 
 class LogisticsPort(models.Model):
     _name = 'logistics.port'
@@ -624,6 +662,64 @@ class LogisticsContainer(models.Model):
                     'bill_lading_id': [('requisition_id', '=', self.requisition_id.id)]
                 }
             }
+
+    purchase_order_count = fields.Integer(
+        'Purchase Order Count', 
+        compute='_compute_related_counts', 
+        store=True
+    )
+    
+    @api.depends('purchase_order_id', 'requisition_id')
+    def _compute_related_counts(self):
+        for container in self:
+            # Count purchase orders - either direct PO or all POs from requisition
+            if container.purchase_order_id:
+                container.purchase_order_count = 1
+            elif container.requisition_id:
+                container.purchase_order_count = len(container.requisition_id.purchase_ids)
+            else:
+                container.purchase_order_count = 0
+    
+    def action_view_purchase_requisition(self):
+        """Smart button to view related purchase requisition"""
+        self.ensure_one()
+        if not self.requisition_id:
+            return
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.requisition',
+            'res_id': self.requisition_id.id,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'current',
+        }
+    
+    def action_view_purchase_orders(self):
+        """Smart button to view related purchase orders"""
+        self.ensure_one()
+        
+        # Collect purchase orders
+        purchase_orders = self.env['purchase.order']
+        
+        if self.purchase_order_id:
+            purchase_orders |= self.purchase_order_id
+        
+        if self.requisition_id:
+            purchase_orders |= self.requisition_id.purchase_ids
+        
+        if not purchase_orders:
+            return
+        
+        action = self.env.ref('purchase.purchase_order_action_generic').read()[0]
+        
+        if len(purchase_orders) > 1:
+            action['domain'] = [('id', 'in', purchase_orders.ids)]
+        else:
+            action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
+            action['res_id'] = purchase_orders.id
+        
+        return action
 
 
 class LogisticsContainerLine(models.Model):
