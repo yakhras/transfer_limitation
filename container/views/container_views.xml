@@ -699,13 +699,13 @@
                     
                     <field name="container_distribution_ids" 
                            attrs="{'invisible': [('has_container_distribution', '=', False)]}">
-                        <tree editable="bottom">
+                        <tree editable="bottom" create="false" delete="false">
                             <field name="product_id" readonly="1"/>
                             <field name="total_qty" readonly="1"/>
                             <field name="product_uom_id" readonly="1"/>
-                            <field name="container_count"/>
-                            <field name="distribution_method"/>
-                            <field name="qty_per_container" readonly="1"/>
+                            <field name="container_count" string="# Containers"/>
+                            <field name="distribution_method" string="Method"/>
+                            <field name="qty_per_container" readonly="1" string="Qty/Container"/>
                         </tree>
                         <form>
                             <group>
