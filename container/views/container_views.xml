@@ -670,6 +670,11 @@
         <field name="model">purchase.requisition</field>
         <field name="inherit_id" ref="purchase_requisition.view_purchase_requisition_form"/>
         <field name="arch" type="xml">
+            <!-- Add invisible fields for attrs -->
+            <xpath expr="//form" position="inside">
+                <field name="has_container_distribution" invisible="1"/>
+            </xpath>
+            
             <!-- Add Container Distribution page to notebook -->
             <xpath expr="//notebook" position="inside">
                 <page string="Container Distribution" attrs="{'invisible': [('line_ids', '=', [])]}">
