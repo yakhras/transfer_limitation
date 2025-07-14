@@ -765,7 +765,7 @@
     </record>
 
     <!-- Container Distribution Form View -->
-    <record id="view_purchase_requisition_container_distribution_form" model="ir.ui.view">
+    <!-- <record id="view_purchase_requisition_container_distribution_form" model="ir.ui.view">
         <field name="name">purchase.requisition.container.distribution.form</field>
         <field name="model">purchase.requisition.container.distribution</field>
         <field name="arch" type="xml">
@@ -799,7 +799,7 @@
                 </sheet>
             </form>
         </field>
-    </record>
+    </record> -->
 
     <!-- Actions -->
     <record id="action_purchase_requisition_container_distribution" model="ir.actions.act_window">
