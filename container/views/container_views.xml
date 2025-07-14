@@ -707,32 +707,7 @@
                             <field name="distribution_method" string="Method"/>
                             <field name="qty_per_container" readonly="1" string="Qty/Container"/>
                         </tree>
-                        <form>
-                            <group>
-                                <group>
-                                    <field name="product_id" readonly="1"/>
-                                    <field name="total_qty" readonly="1"/>
-                                    <field name="product_uom_id" readonly="1"/>
-                                </group>
-                                <group>
-                                    <field name="container_count"/>
-                                    <field name="distribution_method"/>
-                                    <field name="qty_per_container" readonly="1"/>
-                                </group>
-                            </group>
-                            <!-- Future: Manual distribution lines -->
-                            <notebook attrs="{'invisible': [('distribution_method', '!=', 'manual')]}">
-                                <page string="Manual Distribution">
-                                    <field name="manual_distribution_ids">
-                                        <tree editable="bottom">
-                                            <field name="sequence" widget="handle"/>
-                                            <field name="container_name"/>
-                                            <field name="qty"/>
-                                        </tree>
-                                    </field>
-                                </page>
-                            </notebook>
-                        </form>
+                        
                     </field>
                     
                     <div class="mt16" attrs="{'invisible': [('has_container_distribution', '=', False)]}">
@@ -805,7 +780,8 @@
     <record id="action_purchase_requisition_container_distribution" model="ir.actions.act_window">
         <field name="name">Container Distribution</field>
         <field name="res_model">purchase.requisition.container.distribution</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_purchase_requisition_container_distribution_tree"/>
     </record>
 
     
