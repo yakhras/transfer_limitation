@@ -19,6 +19,73 @@ class PurchaseRequisition(models.Model):
     container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
     bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
 
+    
+    
+
+    
+    
+    # Existing methods...
+    # @api.depends('container_ids', 'bill_lading_ids')
+    # def _compute_counts(self):...
+    
+    
+    
+    
+    
+    @api.depends('container_ids', 'bill_lading_ids')
+    def _compute_counts(self):
+        for requisition in self:
+            requisition.container_count = len(requisition.container_ids)
+            requisition.bill_lading_count = len(requisition.bill_lading_ids)
+    
+    # Smart button action methods - ADD THESE NEW METHODS
+    def action_view_containers(self):
+        """Smart button action to view related containers"""
+        self.ensure_one()
+        action = self.env.ref('container.action_container_container').read()[0]
+        
+        # Always set the context for auto-population
+        action['context'] = {
+            'default_requisition_id': self.id,
+            'default_supplier_id': self.vendor_id.id if self.vendor_id else False,
+        }
+        
+        if len(self.container_ids) > 1:
+            action['domain'] = [('requisition_id', '=', self.id)]
+        elif len(self.container_ids) == 1:
+            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
+            action['res_id'] = self.container_ids.id
+        else:
+            # No containers yet, create new one
+            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
+            action['res_id'] = False
+            
+        return action
+    
+    def action_view_bill_ladings(self):
+        """Smart button action to view related bills of lading"""
+        self.ensure_one()
+        action = self.env.ref('container.action_container_bill_lading').read()[0]
+        
+        # Always set the context for auto-population
+        action['context'] = {
+            'default_requisition_id': self.id,
+            'default_shipper_id': self.vendor_id.id if self.vendor_id else False,
+            'default_consignee_id': self.company_id.partner_id.id,
+        }
+        
+        if len(self.bill_lading_ids) > 1:
+            action['domain'] = [('requisition_id', '=', self.id)]
+        elif len(self.bill_lading_ids) == 1:
+            action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
+            action['res_id'] = self.bill_lading_ids.id
+        else:
+            # No B/L yet, create new one
+            action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
+            action['res_id'] = False
+            
+        return action
+    
     container_distribution_ids = fields.One2many(
         'purchase.requisition.container.distribution', 
         'requisition_id', 
@@ -28,7 +95,7 @@ class PurchaseRequisition(models.Model):
         'Has Container Distribution', 
         compute='_compute_has_container_distribution'
     )
-
+    
     @api.depends('container_distribution_ids')
     def _compute_has_container_distribution(self):
         for requisition in self:
@@ -61,14 +128,24 @@ class PurchaseRequisition(models.Model):
         if distribution_lines:
             self.env['purchase.requisition.container.distribution'].create(distribution_lines)
         
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
+        # Show notification and return to the same form
+        self.env['bus.bus']._sendone(
+            self.env.user.partner_id,
+            'simple_notification',
+            {
                 'message': f'Container distribution generated for {len(distribution_lines)} products.',
                 'type': 'success',
-                'sticky': False,
             }
+        )
+        
+        # Return action to show the same record with updated data
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.requisition',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'current',
         }
     
     def action_create_containers_from_distribution(self):
@@ -131,69 +208,25 @@ class PurchaseRequisition(models.Model):
             created_containers.append(container)
             container_sequence += 1
         
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
+        # Show notification and return to the same form
+        self.env['bus.bus']._sendone(
+            self.env.user.partner_id,
+            'simple_notification',
+            {
                 'message': f'{len(created_containers)} containers created successfully.',
                 'type': 'success',
-                'sticky': False,
             }
+        )
+        
+        # Return action to show the same record with updated data
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.requisition',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'current',
         }
-    
-    @api.depends('container_ids', 'bill_lading_ids')
-    def _compute_counts(self):
-        for requisition in self:
-            requisition.container_count = len(requisition.container_ids)
-            requisition.bill_lading_count = len(requisition.bill_lading_ids)
-    
-    # Smart button action methods - ADD THESE NEW METHODS
-    def action_view_containers(self):
-        """Smart button action to view related containers"""
-        self.ensure_one()
-        action = self.env.ref('container.action_container_container').read()[0]
-        
-        # Always set the context for auto-population
-        action['context'] = {
-            'default_requisition_id': self.id,
-            'default_supplier_id': self.vendor_id.id if self.vendor_id else False,
-        }
-        
-        if len(self.container_ids) > 1:
-            action['domain'] = [('requisition_id', '=', self.id)]
-        elif len(self.container_ids) == 1:
-            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
-            action['res_id'] = self.container_ids.id
-        else:
-            # No containers yet, create new one
-            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
-            action['res_id'] = False
-            
-        return action
-    
-    def action_view_bill_ladings(self):
-        """Smart button action to view related bills of lading"""
-        self.ensure_one()
-        action = self.env.ref('container.action_container_bill_lading').read()[0]
-        
-        # Always set the context for auto-population
-        action['context'] = {
-            'default_requisition_id': self.id,
-            'default_shipper_id': self.vendor_id.id if self.vendor_id else False,
-            'default_consignee_id': self.company_id.partner_id.id,
-        }
-        
-        if len(self.bill_lading_ids) > 1:
-            action['domain'] = [('requisition_id', '=', self.id)]
-        elif len(self.bill_lading_ids) == 1:
-            action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
-            action['res_id'] = self.bill_lading_ids.id
-        else:
-            # No B/L yet, create new one
-            action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
-            action['res_id'] = False
-            
-        return action
 
 # Extend Purchase Order
 class PurchaseOrder(models.Model):
