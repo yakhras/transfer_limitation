@@ -808,13 +808,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <!-- Menu (optional - for debugging/admin) -->
-    <menuitem id="menu_container_distribution" 
-              name="Container Distribution" 
-              parent="menu_container_root" 
-              sequence="25"
-              action="action_purchase_requisition_container_distribution"
-              groups="base.group_system"/>
+    
 
 
     
@@ -897,5 +891,13 @@
     <menuitem id="menu_container_ports" name="Ports" 
               parent="menu_container_root" sequence="40"
               action="action_container_port"/>
+
+    <!-- Menu (optional - for debugging/admin) -->
+    <menuitem id="menu_container_distribution" 
+              name="Container Distribution" 
+              parent="menu_container_root" 
+              sequence="25"
+              action="action_purchase_requisition_container_distribution"
+              groups="base.group_system"/>
 
 </odoo>
