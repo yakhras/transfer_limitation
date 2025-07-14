@@ -6,6 +6,8 @@ from odoo.exceptions import ValidationError
 
 # Extend Purchase Requisition
 
+# Add these methods to the PurchaseRequisition class in your Python file
+
 class PurchaseRequisition(models.Model):
     _inherit = 'purchase.requisition'
     
@@ -39,12 +41,12 @@ class PurchaseRequisition(models.Model):
             action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
             action['context'] = {
                 'default_requisition_id': self.id,
+                'default_supplier_id': self.vendor_id.id if self.vendor_id else False,
             }
             action['res_id'] = False
             
         return action
     
-
     def action_view_bill_ladings(self):
         """Smart button action to view related bills of lading"""
         self.ensure_one()
@@ -60,11 +62,12 @@ class PurchaseRequisition(models.Model):
             action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
             action['context'] = {
                 'default_requisition_id': self.id,
+                'default_shipper_id': self.vendor_id.id if self.vendor_id else False,
+                'default_consignee_id': self.company_id.partner_id.id,
             }
             action['res_id'] = False
             
         return action
-
 
 # Extend Purchase Order
 class PurchaseOrder(models.Model):
@@ -265,6 +268,39 @@ class LogisticsBillLading(models.Model):
             if bl.eta and bl.etd:
                 if bl.eta < bl.etd:
                     raise ValidationError(_('ETA cannot be before ETD.'))
+                
+    @api.onchange('requisition_id')
+    def _onchange_requisition_id_details(self):
+        """Auto-populate fields when requisition is selected"""
+        if self.requisition_id:
+            # Set default shipper from requisition vendor
+            if self.requisition_id.vendor_id and not self.shipper_id:
+                self.shipper_id = self.requisition_id.vendor_id
+            
+            # Set default consignee as company
+            if not self.consignee_id:
+                self.consignee_id = self.env.company.partner_id
+            
+            # Auto-populate description from requisition lines
+            if self.requisition_id.line_ids and not self.description_of_goods:
+                products = self.requisition_id.line_ids.mapped('product_id.name')
+                self.description_of_goods = ', '.join(products[:5])  # First 5 products
+                if len(products) > 5:
+                    self.description_of_goods += f' and {len(products) - 5} more items'
+
+    @api.onchange('purchase_order_ids')
+    def _onchange_purchase_order_ids(self):
+        """Auto-populate vessel info and cargo details from purchase orders"""
+        if self.purchase_order_ids:
+            # Get unique suppliers from purchase orders
+            suppliers = self.purchase_order_ids.mapped('partner_id')
+            if len(suppliers) == 1 and not self.shipper_id:
+                self.shipper_id = suppliers[0]
+            
+            # Calculate total values
+            total_amount = sum(self.purchase_order_ids.mapped('amount_total'))
+            if total_amount and not self.total_charges:
+                self.total_charges = total_amount
 
 
 class LogisticsPort(models.Model):
@@ -478,6 +514,22 @@ class LogisticsContainer(models.Model):
             if container.arrival_date and container.departure_date:
                 if container.arrival_date < container.departure_date:
                     raise ValidationError(_('Arrival date cannot be before departure date.'))
+                
+    @api.onchange('requisition_id')
+    def _onchange_requisition_id_details(self):
+        """Auto-populate fields when requisition is selected"""
+        if self.requisition_id:
+            # Set supplier from requisition vendor
+            if self.requisition_id.vendor_id:
+                self.supplier_id = self.requisition_id.vendor_id
+            
+            # Filter purchase orders by requisition
+            return {
+                'domain': {
+                    'purchase_order_id': [('requisition_id', '=', self.requisition_id.id)],
+                    'bill_lading_id': [('requisition_id', '=', self.requisition_id.id)]
+                }
+            }
 
 
 class LogisticsContainerLine(models.Model):
