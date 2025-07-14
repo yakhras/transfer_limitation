@@ -18,6 +18,128 @@ class PurchaseRequisition(models.Model):
     # Computed fields
     container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
     bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
+
+    container_distribution_ids = fields.One2many(
+        'purchase.requisition.container.distribution', 
+        'requisition_id', 
+        string='Container Distribution'
+    )
+    has_container_distribution = fields.Boolean(
+        'Has Container Distribution', 
+        compute='_compute_has_container_distribution'
+    )
+
+    @api.depends('container_distribution_ids')
+    def _compute_has_container_distribution(self):
+        for requisition in self:
+            requisition.has_container_distribution = bool(requisition.container_distribution_ids)
+    
+    # Existing methods...
+    # @api.depends('container_ids', 'bill_lading_ids')
+    # def _compute_counts(self):...
+    
+    def action_generate_container_distribution(self):
+        """Generate container distribution lines from requisition lines"""
+        self.ensure_one()
+        
+        # Clear existing distribution lines
+        self.container_distribution_ids.unlink()
+        
+        # Create distribution lines for each product in requisition
+        distribution_lines = []
+        for line in self.line_ids:
+            distribution_lines.append({
+                'requisition_id': self.id,
+                'product_id': line.product_id.id,
+                'product_uom_id': line.product_uom_id.id,
+                'total_qty': line.product_qty,
+                'container_count': 1,  # Default to 1 container
+                'distribution_method': 'equal',
+                'qty_per_container': line.product_qty,  # Will be recalculated
+            })
+        
+        if distribution_lines:
+            self.env['purchase.requisition.container.distribution'].create(distribution_lines)
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'message': f'Container distribution generated for {len(distribution_lines)} products.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+    
+    def action_create_containers_from_distribution(self):
+        """Create actual containers and container lines based on distribution"""
+        self.ensure_one()
+        
+        if not self.container_distribution_ids:
+            raise ValidationError(_('No container distribution found. Please generate distribution first.'))
+        
+        # Group distribution by container number
+        containers_data = {}
+        
+        for dist_line in self.container_distribution_ids:
+            for container_num in range(1, dist_line.container_count + 1):
+                container_key = f"container_{container_num}_{dist_line.product_id.id}"
+                
+                if container_key not in containers_data:
+                    containers_data[container_key] = {
+                        'container_num': container_num,
+                        'products': []
+                    }
+                
+                # Calculate quantity for this container
+                if dist_line.distribution_method == 'equal':
+                    qty_for_container = dist_line.qty_per_container
+                else:
+                    # For manual method, use the calculated qty_per_container
+                    qty_for_container = dist_line.qty_per_container
+                
+                containers_data[container_key]['products'].append({
+                    'product_id': dist_line.product_id.id,
+                    'product_uom_id': dist_line.product_uom_id.id,
+                    'product_qty': qty_for_container,
+                    'price_unit': dist_line.product_id.standard_price,
+                })
+        
+        # Create containers
+        created_containers = []
+        container_sequence = len(self.container_ids) + 1
+        
+        for container_data in containers_data.values():
+            # Create container
+            container = self.env['logistics.container'].create({
+                'name': f"{self.name}-CONT-{container_sequence:03d}",
+                'requisition_id': self.id,
+                'container_type': '40ft',  # Default, user can change
+                'state': 'draft',
+            })
+            
+            # Create container lines
+            for product_data in container_data['products']:
+                self.env['logistics.container.line'].create({
+                    'container_id': container.id,
+                    'product_id': product_data['product_id'],
+                    'product_uom_id': product_data['product_uom_id'],
+                    'product_qty': product_data['product_qty'],
+                    'price_unit': product_data['price_unit'],
+                })
+            
+            created_containers.append(container)
+            container_sequence += 1
+        
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'message': f'{len(created_containers)} containers created successfully.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
     
     @api.depends('container_ids', 'bill_lading_ids')
     def _compute_counts(self):
@@ -586,6 +708,117 @@ class LogisticsContainerLine(models.Model):
             if self.product_id.country_of_origin:
                 self.country_of_origin = self.product_id.country_of_origin
 
+
+class PurchaseRequisitionContainerDistribution(models.Model):
+    _name = 'purchase.requisition.container.distribution'
+    _description = 'Purchase Requisition Container Distribution'
+    _order = 'product_id, id'
+
+    # Relations
+    requisition_id = fields.Many2one(
+        'purchase.requisition', 
+        string='Purchase Requisition', 
+        required=True, 
+        ondelete='cascade'
+    )
+    product_id = fields.Many2one(
+        'product.product', 
+        string='Product', 
+        required=True
+    )
+    product_uom_id = fields.Many2one(
+        'uom.uom', 
+        string='Unit of Measure', 
+        required=True
+    )
+    
+    # Quantities
+    total_qty = fields.Float(
+        'Total Quantity', 
+        required=True, 
+        digits='Product Unit of Measure'
+    )
+    container_count = fields.Integer(
+        'Number of Containers', 
+        required=True, 
+        default=1
+    )
+    distribution_method = fields.Selection([
+        ('equal', 'Equal Distribution'),
+        ('manual', 'Manual Distribution'),
+    ], string='Distribution Method', default='equal', required=True)
+    
+    qty_per_container = fields.Float(
+        'Quantity per Container', 
+        compute='_compute_qty_per_container', 
+        store=True, 
+        digits='Product Unit of Measure'
+    )
+    
+    # Manual distribution fields (for future enhancement)
+    manual_distribution_ids = fields.One2many(
+        'purchase.requisition.container.distribution.line',
+        'distribution_id',
+        string='Manual Distribution'
+    )
+    
+    @api.depends('total_qty', 'container_count', 'distribution_method')
+    def _compute_qty_per_container(self):
+        for line in self:
+            if line.distribution_method == 'equal' and line.container_count > 0:
+                line.qty_per_container = line.total_qty / line.container_count
+            else:
+                # For manual method, will be sum of manual lines
+                line.qty_per_container = sum(line.manual_distribution_ids.mapped('qty'))
+    
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        if self.product_id:
+            self.product_uom_id = self.product_id.uom_id
+    
+    @api.constrains('container_count')
+    def _check_container_count(self):
+        for line in self:
+            if line.container_count < 1:
+                raise ValidationError(_('Container count must be at least 1.'))
+    
+    @api.constrains('total_qty', 'qty_per_container', 'container_count')
+    def _check_quantities(self):
+        for line in self:
+            if line.distribution_method == 'equal':
+                expected_total = line.qty_per_container * line.container_count
+                if abs(expected_total - line.total_qty) > 0.01:  # Small tolerance for floating point
+                    raise ValidationError(_(
+                        'Total quantity (%(total)s) does not match calculated quantity per container (%(per_container)s × %(count)s = %(calculated)s)'
+                    ) % {
+                        'total': line.total_qty,
+                        'per_container': line.qty_per_container,
+                        'count': line.container_count,
+                        'calculated': expected_total
+                    })
+
+
+# NEW MODEL: Manual Distribution Lines (for future enhancement)
+class PurchaseRequisitionContainerDistributionLine(models.Model):
+    _name = 'purchase.requisition.container.distribution.line'
+    _description = 'Manual Container Distribution Line'
+    _order = 'sequence, id'
+
+    distribution_id = fields.Many2one(
+        'purchase.requisition.container.distribution',
+        string='Distribution',
+        required=True,
+        ondelete='cascade'
+    )
+    sequence = fields.Integer('Sequence', default=10)
+    container_name = fields.Char('Container Name')
+    qty = fields.Float('Quantity', required=True, digits='Product Unit of Measure')
+    
+    @api.constrains('qty')
+    def _check_qty(self):
+        for line in self:
+            if line.qty <= 0:
+                raise ValidationError(_('Quantity must be greater than 0.'))
 
 # Future integrations with other Odoo modules (commented for now)
 
