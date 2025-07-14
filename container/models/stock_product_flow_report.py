@@ -31,18 +31,20 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         action = self.env.ref('container.action_container_container').read()[0]
         
+        # Always set the context for auto-population
+        action['context'] = {
+            'default_requisition_id': self.id,
+            'default_supplier_id': self.vendor_id.id if self.vendor_id else False,
+        }
+        
         if len(self.container_ids) > 1:
             action['domain'] = [('requisition_id', '=', self.id)]
         elif len(self.container_ids) == 1:
             action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
             action['res_id'] = self.container_ids.id
         else:
-            # No containers yet, create new one with context
+            # No containers yet, create new one
             action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
-            action['context'] = {
-                'default_requisition_id': self.id,
-                'default_supplier_id': self.vendor_id.id if self.vendor_id else False,
-            }
             action['res_id'] = False
             
         return action
@@ -52,19 +54,21 @@ class PurchaseRequisition(models.Model):
         self.ensure_one()
         action = self.env.ref('container.action_container_bill_lading').read()[0]
         
+        # Always set the context for auto-population
+        action['context'] = {
+            'default_requisition_id': self.id,
+            'default_shipper_id': self.vendor_id.id if self.vendor_id else False,
+            'default_consignee_id': self.company_id.partner_id.id,
+        }
+        
         if len(self.bill_lading_ids) > 1:
             action['domain'] = [('requisition_id', '=', self.id)]
         elif len(self.bill_lading_ids) == 1:
             action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
             action['res_id'] = self.bill_lading_ids.id
         else:
-            # No B/L yet, create new one with context
+            # No B/L yet, create new one
             action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
-            action['context'] = {
-                'default_requisition_id': self.id,
-                'default_shipper_id': self.vendor_id.id if self.vendor_id else False,
-                'default_consignee_id': self.company_id.partner_id.id,
-            }
             action['res_id'] = False
             
         return action
