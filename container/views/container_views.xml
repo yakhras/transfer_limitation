@@ -677,7 +677,7 @@
             
             <!-- Add Container Distribution page to notebook -->
             <xpath expr="//notebook" position="inside">
-                <page string="Container Distribution" attrs="{'invisible': [('line_ids', '=', [])]}">
+                <page string="Container Distribution" attrs="{'invisible': [('line_ids', '=', [])]}" autofocus="context.get('default_active_tab') == 'container_distribution'">
                     <div class="oe_button_box" name="container_distribution_buttons">
                         <button name="action_generate_container_distribution" 
                                 string="Generate Distribution" 

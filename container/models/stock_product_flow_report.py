@@ -146,6 +146,9 @@ class PurchaseRequisition(models.Model):
             'view_mode': 'form',
             'view_type': 'form',
             'target': 'current',
+            'context': {
+                'default_active_tab': 'container_distribution',
+            }
         }
     
     def action_create_containers_from_distribution(self):
@@ -226,6 +229,9 @@ class PurchaseRequisition(models.Model):
             'view_mode': 'form',
             'view_type': 'form',
             'target': 'current',
+            'context': {
+                'default_active_tab': 'container_distribution',
+            }
         }
 
 # Extend Purchase Order
