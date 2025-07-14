@@ -26,6 +26,7 @@ into their logistics operations.
     'depends': [
         'base',
         'purchase',
+        'purchase_requisition',
         'product',
         'mail',
     ],

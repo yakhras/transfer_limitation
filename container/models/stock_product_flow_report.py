@@ -5,22 +5,65 @@ from odoo.exceptions import ValidationError
 
 
 # Extend Purchase Requisition
-# class PurchaseRequisition(models.Model):
-#     _inherit = 'purchase.requisition'
+
+class PurchaseRequisition(models.Model):
+    _inherit = 'purchase.requisition'
     
-#     # Direct relations
-#     container_ids = fields.One2many('logistics.container', 'requisition_id', string='Containers')
-#     bill_lading_ids = fields.One2many('logistics.bill.lading', 'requisition_id', string='Bills of Lading')
+    # Direct relations
+    container_ids = fields.One2many('logistics.container', 'requisition_id', string='Containers')
+    bill_lading_ids = fields.One2many('logistics.bill.lading', 'requisition_id', string='Bills of Lading')
     
-#     # Computed fields
-#     container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
-#     bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
+    # Computed fields
+    container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
+    bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
     
-#     @api.depends('container_ids', 'bill_lading_ids')
-#     def _compute_counts(self):
-#         for requisition in self:
-#             requisition.container_count = len(requisition.container_ids)
-#             requisition.bill_lading_count = len(requisition.bill_lading_ids)
+    @api.depends('container_ids', 'bill_lading_ids')
+    def _compute_counts(self):
+        for requisition in self:
+            requisition.container_count = len(requisition.container_ids)
+            requisition.bill_lading_count = len(requisition.bill_lading_ids)
+    
+    # Smart button action methods - ADD THESE NEW METHODS
+    def action_view_containers(self):
+        """Smart button action to view related containers"""
+        self.ensure_one()
+        action = self.env.ref('container.action_container_container').read()[0]
+        
+        if len(self.container_ids) > 1:
+            action['domain'] = [('requisition_id', '=', self.id)]
+        elif len(self.container_ids) == 1:
+            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
+            action['res_id'] = self.container_ids.id
+        else:
+            # No containers yet, create new one with context
+            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
+            action['context'] = {
+                'default_requisition_id': self.id,
+            }
+            action['res_id'] = False
+            
+        return action
+    
+
+    def action_view_bill_ladings(self):
+        """Smart button action to view related bills of lading"""
+        self.ensure_one()
+        action = self.env.ref('container.action_container_bill_lading').read()[0]
+        
+        if len(self.bill_lading_ids) > 1:
+            action['domain'] = [('requisition_id', '=', self.id)]
+        elif len(self.bill_lading_ids) == 1:
+            action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
+            action['res_id'] = self.bill_lading_ids.id
+        else:
+            # No B/L yet, create new one with context
+            action['views'] = [(self.env.ref('container.view_logistics_bill_lading_form').id, 'form')]
+            action['context'] = {
+                'default_requisition_id': self.id,
+            }
+            action['res_id'] = False
+            
+        return action
 
 
 # Extend Purchase Order
