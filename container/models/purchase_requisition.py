@@ -88,7 +88,7 @@ class PurchaseRequisition(models.Model):
             requisition.has_container_distribution = bool(requisition.container_distribution_ids)
     
     def action_create_containers_from_distribution(self):
-        """Create actual containers and container lines based on distribution"""
+    # """Create actual containers and container lines based on distribution"""
         self.ensure_one()
         
         if not self.container_distribution_ids:
@@ -147,6 +147,10 @@ class PurchaseRequisition(models.Model):
             created_containers.append(container)
             container_sequence += 1
         
+        # Force recompute the container_count field and refresh UI fields
+        self._compute_counts()
+        self.invalidate_cache(['container_ids', 'container_count'])
+        
         # Show notification
         return {
             'type': 'ir.actions.client',
@@ -157,4 +161,3 @@ class PurchaseRequisition(models.Model):
                 'sticky': False,
             }
         }
-    
