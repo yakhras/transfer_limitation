@@ -88,7 +88,7 @@ class PurchaseRequisition(models.Model):
             requisition.has_container_distribution = bool(requisition.container_distribution_ids)
     
     def action_create_containers_from_distribution(self):
-    # """Create actual containers and container lines based on distribution"""
+        """Create actual containers and container lines based on distribution"""
         self.ensure_one()
         
         if not self.container_distribution_ids:
@@ -160,77 +160,3 @@ class PurchaseRequisition(models.Model):
                 'sticky': False,
             }
         }
-        # """Create actual containers and container lines based on distribution"""
-            self.ensure_one()
-            
-            if not self.container_distribution_ids:
-                raise ValidationError(_('No container distribution found. Please add products to requisition first.'))
-            
-            # Group distribution by container number
-            containers_data = {}
-            
-            for dist_line in self.container_distribution_ids:
-                for container_num in range(1, dist_line.container_count + 1):
-                    container_key = f"container_{container_num}_{dist_line.product_id.id}"
-                    
-                    if container_key not in containers_data:
-                        containers_data[container_key] = {
-                            'container_num': container_num,
-                            'products': []
-                        }
-                    
-                    # Calculate quantity for this container
-                    if dist_line.distribution_method == 'equal':
-                        qty_for_container = dist_line.qty_per_container
-                    else:
-                        # For manual method, use the calculated qty_per_container
-                        qty_for_container = dist_line.qty_per_container
-                    
-                    containers_data[container_key]['products'].append({
-                        'product_id': dist_line.product_id.id,
-                        'product_uom_id': dist_line.product_uom_id.id,
-                        'product_qty': qty_for_container,
-                        'price_unit': dist_line.product_id.standard_price,
-                    })
-            
-            # Create containers
-            created_containers = []
-            container_sequence = len(self.container_ids) + 1
-            
-            for container_data in containers_data.values():
-                # Create container
-                container = self.env['logistics.container'].create({
-                    'name': f"{self.name}-CONT-{container_sequence:03d}",
-                    'requisition_id': self.id,
-                    'container_type': '40ft',  # Default, user can change
-                    'state': 'draft',
-                })
-                
-                # Create container lines
-                for product_data in container_data['products']:
-                    self.env['logistics.container.line'].create({
-                        'container_id': container.id,
-                        'product_id': product_data['product_id'],
-                        'product_uom_id': product_data['product_uom_id'],
-                        'product_qty': product_data['product_qty'],
-                        'price_unit': product_data['price_unit'],
-                    })
-                
-                created_containers.append(container)
-                container_sequence += 1
-            
-            # Force recompute the container_count field and refresh UI fields
-            self._compute_counts()
-            self.invalidate_cache(['container_ids', 'container_count'])
-            
-            # Show notification
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'message': f'{len(created_containers)} containers created successfully.',
-                    'type': 'success',
-                    'sticky': False,
-                }
-            }
-    
