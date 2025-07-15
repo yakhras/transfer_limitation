@@ -39,6 +39,7 @@ into their logistics operations.
         'views/purchase_requisition_container_distribution_views.xml',
         'views/purchase_requisition_views.xml',
         'views/actions_menus.xml',
+        'views/sequence.xml',
     ],
     'demo': [
         'demo/container_demo.xml',

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Container Sequence -->
+        <record id="seq_logistics_container" model="ir.sequence">
+            <field name="name">Logistics Container Reference</field>
+            <field name="code">logistics.container</field>
+            <field name="prefix">CON</field>
+            <field name="padding">5</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

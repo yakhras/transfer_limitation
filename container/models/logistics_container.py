@@ -11,8 +11,11 @@ class LogisticsContainer(models.Model):
     _rec_name = 'name'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    # Basic Information
-    name = fields.Char('Container Number', required=True, copy=False, tracking=True)
+    # Basic Information - Modified to auto-generate reference
+    name = fields.Char('Container Reference', required=True, copy=False, readonly=True, 
+                      default=lambda self: _('New'), tracking=True)
+    container_number = fields.Char('Container Number', tracking=True, 
+                                  help="Physical container number from shipping line")
     container_type = fields.Selection([
         ('20ft', '20ft Standard'),
         ('40ft', '40ft Standard'),
@@ -88,6 +91,13 @@ class LogisticsContainer(models.Model):
     # Company
     company_id = fields.Many2one('res.company', string='Company', 
                                 related='purchase_order_id.company_id', store=True)
+    
+    @api.model
+    def create(self, vals):
+        """Override create to generate sequence number"""
+        if vals.get('name', _('New')) == _('New'):
+            vals['name'] = self.env['ir.sequence'].next_by_code('logistics.container') or _('New')
+        return super(LogisticsContainer, self).create(vals)
     
     @api.depends('container_line_ids.product_qty', 'container_line_ids.price_subtotal')
     def _compute_totals(self):
