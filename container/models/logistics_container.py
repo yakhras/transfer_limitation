@@ -103,13 +103,13 @@ class LogisticsContainer(models.Model):
                                   container.insurance_cost + container.customs_duty + 
                                   container.other_charges)
     
-    @api.constrains('requisition_id', 'purchase_order_id')
-    def _check_purchase_order_requisition_consistency(self):
-        for container in self:
-            if container.purchase_order_id.requisition_id != container.requisition_id:
-                raise ValidationError(_(
-                    'Container %s: Purchase Order must belong to the same requisition (%s).'
-                ) % (container.name, container.requisition_id.name))
+    # @api.constrains('requisition_id', 'purchase_order_id')
+    # def _check_purchase_order_requisition_consistency(self):
+    #     for container in self:
+    #         if container.purchase_order_id.requisition_id != container.requisition_id:
+    #             raise ValidationError(_(
+    #                 'Container %s: Purchase Order must belong to the same requisition (%s).'
+    #             ) % (container.name, container.requisition_id.name))
     
     @api.constrains('bill_lading_id', 'requisition_id')
     def _check_bill_lading_requisition_consistency(self):
