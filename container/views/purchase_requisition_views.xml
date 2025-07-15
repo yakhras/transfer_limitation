@@ -129,13 +129,6 @@
                         </form>
                     </field>
                     
-                    <div class="mt16" attrs="{'invisible': [('has_container_distribution', '=', False)]}">
-                        <p><strong>Summary:</strong></p>
-                        <p>Total containers will be created: <span class="badge badge-info"><field name="container_distribution_ids" widget="count"/></span></p>
-                        <p class="text-muted">
-                            After creating containers, you can modify container details (type, vessel info, etc.) in the Containers tab.
-                        </p>
-                    </div>
                 </page>
             </xpath>
         </field>
