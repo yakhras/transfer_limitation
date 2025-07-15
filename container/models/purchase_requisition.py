@@ -147,16 +147,21 @@ class PurchaseRequisition(models.Model):
             created_containers.append(container)
             container_sequence += 1
         
-        # Update manually and refresh
-        self.container_count = len(self.container_ids)
+        # Force recompute and trigger form refresh
+        self._compute_counts()
         
-        # Show notification
+        # Return action that refreshes the current view without reload
         return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'message': f'{len(created_containers)} containers created successfully.',
-                'type': 'success',
-                'sticky': False,
-            }
+            'type': 'ir.actions.act_window',
+            'name': 'Purchase Requisition',
+            'res_model': 'purchase.requisition',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'current',
+            'context': dict(self.env.context, 
+                default_active_tab='containers',
+                show_notification=True,
+                notification_message=f'{len(created_containers)} containers created successfully.',
+                notification_type='success'
+            ),
         }
