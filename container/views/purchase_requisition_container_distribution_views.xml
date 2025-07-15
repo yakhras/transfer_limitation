@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Container Distribution Tree View -->
+    <record id="view_purchase_requisition_container_distribution_tree" model="ir.ui.view">
+        <field name="name">purchase.requisition.container.distribution.tree</field>
+        <field name="model">purchase.requisition.container.distribution</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="requisition_id"/>
+                <field name="product_id"/>
+                <field name="total_qty"/>
+                <field name="product_uom_id"/>
+                <field name="container_count"/>
+                <field name="distribution_method"/>
+                <field name="qty_per_container"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Container Distribution Form View -->
+    <record id="view_purchase_requisition_container_distribution_form" model="ir.ui.view">
+        <field name="name">purchase.requisition.container.distribution.form</field>
+        <field name="model">purchase.requisition.container.distribution</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="requisition_id"/>
+                            <field name="product_id"/>
+                            <field name="total_qty"/>
+                            <field name="product_uom_id"/>
+                        </group>
+                        <group>
+                            <field name="container_count"/>
+                            <field name="distribution_method"/>
+                            <field name="qty_per_container"/>
+                        </group>
+                    </group>
+                    
+                    <notebook attrs="{'invisible': [('distribution_method', '!=', 'manual')]}">
+                        <page string="Manual Distribution">
+                            <field name="manual_distribution_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="container_name"/>
+                                    <field name="qty"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

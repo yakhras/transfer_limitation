@@ -32,7 +32,13 @@ into their logistics operations.
     ],
     'data': [
         'security/ir.model.access.csv',
-        'views/container_views.xml',
+        'views/logistics_bill_lading_views.xml',
+        'views/logistics_container_line_views.xml',
+        'views/logistics_container_views.xml',
+        'views/logistics_port_views.xml',
+        'views/purchase_requisition_container_distribution_views.xml',
+        'views/purchase_requisition_views.xml',
+        'views/actions_menus.xml',
     ],
     'demo': [
         'demo/container_demo.xml',

@@ -1,0 +1,252 @@
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+
+
+
+
+class LogisticsBillLading(models.Model):
+    _name = 'logistics.bill.lading'
+    _description = 'Bill of Lading'
+    _order = 'bl_date desc, name'
+    _rec_name = 'name'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    # Basic Information
+    name = fields.Char('B/L Number', required=True, copy=False, tracking=True)
+    bl_type = fields.Selection([
+        ('master', 'Master B/L'),
+        ('house', 'House B/L'),
+        ('express', 'Express B/L'),
+        ('seaway', 'Seaway B/L'),
+    ], string='B/L Type', default='master', required=True, tracking=True)
+    bl_date = fields.Date('B/L Date', required=True, default=fields.Date.context_today, tracking=True)
+    
+    # Master Relation - One B/L belongs to one Requisition
+    requisition_id = fields.Many2one('purchase.requisition', string='Purchase Requisition', 
+                                    required=True, tracking=True, ondelete='cascade')
+    
+    # Related Purchase Orders (from the requisition)
+    purchase_order_ids = fields.One2many('purchase.order', 'bill_lading_id', string='Purchase Orders')
+    
+    # Direct container relation
+    container_ids = fields.One2many('logistics.container', 'bill_lading_id', string='Containers')
+    
+    # Parties Information
+    shipper_id = fields.Many2one('res.partner', string='Shipper', required=True,
+                                domain=[('is_company', '=', True)], tracking=True)
+    consignee_id = fields.Many2one('res.partner', string='Consignee', required=True,
+                                  domain=[('is_company', '=', True)], tracking=True)
+    notify_party_id = fields.Many2one('res.partner', string='Notify Party',
+                                     domain=[('is_company', '=', True)], tracking=True)
+    
+    # Shipping Information
+    vessel_name = fields.Char('Vessel Name', tracking=True)
+    voyage_number = fields.Char('Voyage Number', tracking=True)
+    port_of_loading_id = fields.Many2one('logistics.port', string='Port of Loading', tracking=True)
+    port_of_discharge_id = fields.Many2one('logistics.port', string='Port of Discharge', tracking=True)
+    place_of_receipt = fields.Char('Place of Receipt')
+    place_of_delivery = fields.Char('Place of Delivery')
+    
+    # Dates
+    etd = fields.Date('ETD (Estimated Time of Departure)', tracking=True)
+    eta = fields.Date('ETA (Estimated Time of Arrival)', tracking=True)
+    actual_departure_date = fields.Date('Actual Departure Date', tracking=True)
+    actual_arrival_date = fields.Date('Actual Arrival Date', tracking=True)
+    
+    # Terms and Conditions
+    freight_terms = fields.Selection([
+        ('prepaid', 'Freight Prepaid'),
+        ('collect', 'Freight Collect'),
+    ], string='Freight Terms', default='prepaid', tracking=True)
+    payment_terms = fields.Text('Payment Terms')
+    
+    # Status
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('confirmed', 'Confirmed'),
+        ('shipped', 'Shipped'),
+        ('in_transit', 'In Transit'),
+        ('arrived', 'Arrived'),
+        ('delivered', 'Delivered'),
+        ('closed', 'Closed'),
+        ('cancelled', 'Cancelled'),
+    ], string='Status', default='draft', tracking=True, required=True)
+    
+    # Computed counts
+    container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
+    purchase_order_count = fields.Integer('Purchase Order Count', compute='_compute_counts', store=True)
+    
+    # Additional Information
+    marks_and_numbers = fields.Text('Marks and Numbers')
+    description_of_goods = fields.Text('Description of Goods')
+    gross_weight = fields.Float('Gross Weight (KG)', digits=(12, 2))
+    net_weight = fields.Float('Net Weight (KG)', digits=(12, 2))
+    measurement = fields.Float('Measurement (CBM)', digits=(10, 3))
+    
+    # Financial
+    currency_id = fields.Many2one('res.currency', string='Currency', 
+                                 default=lambda self: self.env.company.currency_id)
+    freight_amount = fields.Monetary('Freight Amount', currency_field='currency_id')
+    total_charges = fields.Monetary('Total Charges', currency_field='currency_id')
+    
+    # Document References
+    booking_reference = fields.Char('Booking Reference')
+    export_reference = fields.Char('Export Reference')
+    forwarding_agent_reference = fields.Char('Forwarding Agent Reference')
+    
+    # Company
+    company_id = fields.Many2one('res.company', string='Company', required=True,
+                                default=lambda self: self.env.company)
+    
+    @api.depends('container_ids', 'purchase_order_ids')
+    def _compute_counts(self):
+        for bl in self:
+            bl.container_count = len(bl.container_ids)
+            bl.purchase_order_count = len(bl.purchase_order_ids)
+    
+    @api.onchange('container_ids')
+    def _onchange_container_ids(self):
+        if self.container_ids:
+            # Auto-populate vessel and voyage from first container
+            first_container = self.container_ids[0]
+            if first_container.vessel_name and not self.vessel_name:
+                self.vessel_name = first_container.vessel_name
+            if first_container.voyage_number and not self.voyage_number:
+                self.voyage_number = first_container.voyage_number
+            
+            # Calculate totals from containers
+            self.gross_weight = sum(self.container_ids.mapped('weight_kg'))
+            self.measurement = sum(self.container_ids.mapped('volume_m3'))
+    
+    @api.constrains('container_ids')
+    def _check_container_requisition_consistency(self):
+        for bl in self:
+            if bl.container_ids:
+                for container in bl.container_ids:
+                    if container.requisition_id != bl.requisition_id:
+                        raise ValidationError(_(
+                            'Container %s must belong to the same requisition (%s) as the Bill of Lading.'
+                        ) % (container.name, bl.requisition_id.name))
+    
+    @api.constrains('purchase_order_ids')
+    def _check_purchase_order_requisition_consistency(self):
+        for bl in self:
+            if bl.purchase_order_ids:
+                for po in bl.purchase_order_ids:
+                    if po.requisition_id != bl.requisition_id:
+                        raise ValidationError(_(
+                            'Purchase Order %s must belong to the same requisition (%s) as the Bill of Lading.'
+                        ) % (po.name, bl.requisition_id.name))
+    
+    # State Management Methods
+    def action_confirm(self):
+        self.state = 'confirmed'
+    
+    def action_ship(self):
+        self.state = 'shipped'
+        if not self.actual_departure_date:
+            self.actual_departure_date = fields.Date.context_today(self)
+        # Update related containers
+        self.container_ids.filtered(lambda c: c.state in ['draft', 'shipped']).action_in_transit()
+    
+    def action_in_transit(self):
+        self.state = 'in_transit'
+    
+    def action_arrived(self):
+        self.state = 'arrived'
+        if not self.actual_arrival_date:
+            self.actual_arrival_date = fields.Date.context_today(self)
+        # Update related containers
+        self.container_ids.filtered(lambda c: c.state == 'in_transit').action_arrived()
+    
+    def action_delivered(self):
+        self.state = 'delivered'
+    
+    def action_close(self):
+        self.state = 'closed'
+    
+    def action_cancel(self):
+        self.state = 'cancelled'
+    
+    def action_reset_to_draft(self):
+        self.state = 'draft'
+    
+    @api.constrains('eta', 'etd')
+    def _check_dates(self):
+        for bl in self:
+            if bl.eta and bl.etd:
+                if bl.eta < bl.etd:
+                    raise ValidationError(_('ETA cannot be before ETD.'))
+                
+    @api.onchange('requisition_id')
+    def _onchange_requisition_id_details(self):
+        """Auto-populate fields when requisition is selected"""
+        if self.requisition_id:
+            # Set default shipper from requisition vendor
+            if self.requisition_id.vendor_id and not self.shipper_id:
+                self.shipper_id = self.requisition_id.vendor_id
+            
+            # Set default consignee as company
+            if not self.consignee_id:
+                self.consignee_id = self.env.company.partner_id
+            
+            # Auto-populate description from requisition lines
+            if self.requisition_id.line_ids and not self.description_of_goods:
+                products = self.requisition_id.line_ids.mapped('product_id.name')
+                self.description_of_goods = ', '.join(products[:5])  # First 5 products
+                if len(products) > 5:
+                    self.description_of_goods += f' and {len(products) - 5} more items'
+
+    @api.onchange('purchase_order_ids')
+    def _onchange_purchase_order_ids(self):
+        """Auto-populate vessel info and cargo details from purchase orders"""
+        if self.purchase_order_ids:
+            # Get unique suppliers from purchase orders
+            suppliers = self.purchase_order_ids.mapped('partner_id')
+            if len(suppliers) == 1 and not self.shipper_id:
+                self.shipper_id = suppliers[0]
+            
+            # Calculate total values
+            total_amount = sum(self.purchase_order_ids.mapped('amount_total'))
+            if total_amount and not self.total_charges:
+                self.total_charges = total_amount
+
+    def action_view_purchase_requisition(self):
+        """Smart button to view related purchase requisition"""
+        self.ensure_one()
+        if not self.requisition_id:
+            return
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.requisition',
+            'res_id': self.requisition_id.id,
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'current',
+        }
+    
+    def action_view_purchase_orders(self):
+        """Smart button to view related purchase orders"""
+        self.ensure_one()
+        
+        # Get purchase orders from requisition or direct relationship
+        purchase_orders = self.purchase_order_ids
+        
+        if self.requisition_id and not purchase_orders:
+            purchase_orders = self.requisition_id.purchase_ids
+        
+        if not purchase_orders:
+            return
+        
+        action = self.env.ref('purchase.purchase_order_action_generic').read()[0]
+        
+        if len(purchase_orders) > 1:
+            action['domain'] = [('id', 'in', purchase_orders.ids)]
+        else:
+            action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
+            action['res_id'] = purchase_orders.id
+        
+        return action
