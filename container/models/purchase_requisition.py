@@ -128,7 +128,6 @@ class PurchaseRequisition(models.Model):
         for container_data in containers_data.values():
             # Create container
             container = self.env['logistics.container'].create({
-                'name': f"{self.name}-CONT-{container_sequence:03d}",
                 'requisition_id': self.id,
                 'container_type': '40ft',  # Default, user can change
                 'state': 'draft',
