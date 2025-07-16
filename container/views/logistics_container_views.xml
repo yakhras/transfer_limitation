@@ -9,9 +9,8 @@
                   decoration-warning="state in ('in_transit','customs')"
                   decoration-success="state in ('arrived','released')"
                   decoration-muted="state in ('empty','returned')"
-                  editable="bottom"
-                  create="false">
-                <field name="name" widget="handle"/>
+                  multi_edit="1">
+                <field name="name" />
                 <field name="container_type" />
                 <field name="requisition_id" />
                 <field name="supplier_id"/>
