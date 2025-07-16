@@ -11,7 +11,7 @@
                   decoration-muted="state in ('empty','returned')"
                   editable="bottom"
                   create="false">
-                <field name="name"/>
+                <field name="name" readonly="1"/>
                 <field name="container_type" />
                 <field name="requisition_id" />
                 <field name="supplier_id"/>
