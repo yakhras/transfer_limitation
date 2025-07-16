@@ -50,6 +50,6 @@ class LogisticsContainerLine(models.Model):
     def _onchange_product_id(self):
         if self.product_id:
             self.product_uom_id = self.product_id.uom_id
-            self.price_unit = self.product_id.standard_price
-            if self.product_id.country_of_origin:
-                self.country_of_origin = self.product_id.country_of_origin
+            # self.price_unit = self.product_id.standard_price
+            # if self.product_id.country_of_origin:
+            #     self.country_of_origin = self.product_id.country_of_origin
