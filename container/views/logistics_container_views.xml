@@ -6,20 +6,21 @@
         <field name="model">logistics.container</field>
         <field name="arch" type="xml">
             <tree decoration-info="state in ('draft','shipped')" 
-                  decoration-warning="state in ('in_transit','customs')"
-                  decoration-success="state in ('arrived','released')"
-                  decoration-muted="state in ('empty','returned')">
-                <field name="name"/>
-                <field name="container_type"/>
-                <field name="requisition_id"/>
+                decoration-warning="state in ('in_transit','customs')"
+                decoration-success="state in ('arrived','released')"
+                decoration-muted="state in ('empty','returned')"
+                editable="bottom">
+                <field name="name" readonly="1"/>
+                <field name="container_type" readonly="state not in ('draft',)"/>
+                <field name="requisition_id" readonly="state not in ('draft',)"/>
                 <field name="supplier_id"/>
-                <field name="departure_date"/>
-                <field name="arrival_date"/>
+                <field name="departure_date" readonly="state in ('draft',)"/>
+                <field name="arrival_date" readonly="state not in ('arrived', 'released', 'customs', 'unloading', 'unloaded')"/>
                 <field name="location"/>
                 <field name="state"/>
-                <field name="product_count"/>
-                <field name="total_qty"/>
-                <field name="total_value"/>
+                <field name="product_count" readonly="1"/>
+                <field name="total_qty" readonly="1"/>
+                <field name="total_value" readonly="1"/>
                 <field name="currency_id" invisible="1"/>
             </tree>
         </field>
