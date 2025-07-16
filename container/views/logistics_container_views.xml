@@ -10,9 +10,8 @@
                   decoration-success="state in ('arrived','released')"
                   decoration-muted="state in ('empty','returned')"
                   editable="bottom"
-                  create="false"
-                  open_form_view="true">
-                <field name="name" readonly="1"/>
+                  create="false">
+                <field name="name" readonly="1" widget="handle"/>
                 <field name="container_type" />
                 <field name="requisition_id" />
                 <field name="supplier_id"/>
