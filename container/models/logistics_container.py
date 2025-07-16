@@ -257,12 +257,13 @@ class LogisticsContainer(models.Model):
         if not purchase_orders:
             return
         
-        action = self.env.ref('purchase.purchase_order_action_generic').read()[0]
-        
-        if len(purchase_orders) > 1:
-            action['domain'] = [('id', 'in', purchase_orders.ids)]
-        else:
-            action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
-            action['res_id'] = purchase_orders.id
-        
-        return action
+        return {
+            'name': _('Purchase Orders'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.order',
+            'view_mode': 'tree,form' if len(purchase_orders) > 1 else 'form',
+            'res_id': purchase_orders.id if len(purchase_orders) == 1 else False,
+            'domain': [('id', 'in', purchase_orders.ids)],
+            'target': 'current',
+            'context': self.env.context,
+        }
