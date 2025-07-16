@@ -8,8 +8,7 @@
             <tree decoration-info="state in ('draft','shipped')" 
                   decoration-warning="state in ('in_transit','customs')"
                   decoration-success="state in ('arrived','released')"
-                  decoration-muted="state in ('empty','returned')"
-                  editable="bottom">
+                  decoration-muted="state in ('empty','returned')" >
                 <field name="name" readonly="1"/>
                 <field name="container_type" readonly="state not in ('draft',)"/>
                 <field name="requisition_id" readonly="state not in ('draft',)"/>
@@ -25,6 +24,7 @@
             </tree>
         </field>
     </record>
+
 
     <!-- Container Form View -->
     <record id="view_logistics_container_form" model="ir.ui.view">
