@@ -92,6 +92,24 @@ class LogisticsContainer(models.Model):
     company_id = fields.Many2one('res.company', string='Company', 
                                 related='purchase_order_id.company_id', store=True)
     
+    @api.onchange('requisition_id')
+    def _onchange_requisition_id_details(self):
+        """Auto-populate fields when requisition is selected"""
+        if self.requisition_id:
+            # Set supplier from requisition vendor
+            if self.requisition_id.vendor_id:
+                self.supplier_id = self.requisition_id.vendor_id
+            
+            # Filter purchase orders by requisition
+            return {
+                'domain': {
+                    'purchase_order_id': [('requisition_id', '=', self.requisition_id.id)],
+                    'bill_lading_id': [('requisition_id', '=', self.requisition_id.id)]
+                }
+            }
+
+
+    
     @api.model
     def create(self, vals):
         """Override create to generate sequence number"""
