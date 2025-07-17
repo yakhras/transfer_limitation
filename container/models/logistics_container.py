@@ -206,7 +206,7 @@ class LogisticsContainer(models.Model):
             # Filter purchase orders by requisition
             return {
                 'domain': {
-                    'purchase_order_id': [('requisition_id', '=', self.requisition_id.id)],
+                    'purchase_order_ids': [('requisition_id', '=', self.requisition_id.id)],
                     'bill_lading_id': [('requisition_id', '=', self.requisition_id.id)]
                 }
             }
@@ -301,5 +301,4 @@ class LogisticsContainer(models.Model):
             action['views'] = [(False, 'form')]
         
         return action
-    
     
