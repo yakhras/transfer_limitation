@@ -15,6 +15,7 @@
                 <field name="requisition_id" />
                 <field name="purchase_order_ids" widget="many2many_tags"/>
                 <field name="supplier_id" readonly="1"/>
+                <field name="supplier_ref" readonly="1"/>
                 <field name="departure_date" />
                 <field name="arrival_date" />
                 <field name="location"/>
@@ -69,6 +70,7 @@
                             <field name="container_number"/>
                             <field name="requisition_id"/>
                             <field name="supplier_id" readonly="1"/>
+                            <field name="supplier_ref" readonly="1"/>
                             <field name="purchase_order_ids" widget="many2many_tags"/>
                             <field name="seal_number"/>
                             <field name="tracking_number"/>
@@ -177,6 +179,7 @@
                 <field name="name"/>
                 <field name="container_type"/>
                 <field name="supplier_id"/>
+                <field name="supplier_ref"/>
                 <field name="arrival_date"/>
                 <field name="total_value"/>
                 <field name="state"/>
@@ -200,6 +203,10 @@
                                 </div>
                                 <div class="o_kanban_record_body">
                                     <field name="supplier_id"/>
+                                    <t t-if="record.supplier_ref.raw_value">
+                                        <br/>
+                                        <span class="text-muted">Ref: <field name="supplier_ref"/></span>
+                                    </t>
                                     <br/>
                                     <t t-if="record.location.raw_value">
                                         📍 <field name="location"/>
@@ -258,6 +265,7 @@
                 <field name="name"/>
                 <field name="container_number"/>
                 <field name="supplier_id"/>
+                <field name="supplier_ref"/>
                 <field name="requisition_id"/>
                 <field name="purchase_order_ids"/>
                 <field name="container_type"/>
