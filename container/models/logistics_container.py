@@ -128,13 +128,14 @@ class LogisticsContainer(models.Model):
                                   container.insurance_cost + container.customs_duty + 
                                   container.other_charges)
     
-    # @api.constrains('requisition_id', 'purchase_order_id')
+    # @api.constrains('requisition_id', 'purchase_order_ids')
     # def _check_purchase_order_requisition_consistency(self):
     #     for container in self:
-    #         if container.purchase_order_id.requisition_id != container.requisition_id:
-    #             raise ValidationError(_(
-    #                 'Container %s: Purchase Order must belong to the same requisition (%s).'
-    #             ) % (container.name, container.requisition_id.name))
+    #         for purchase_order in container.purchase_order_ids:
+    #             if purchase_order.requisition_id != container.requisition_id:
+    #                 raise ValidationError(_(
+    #                     'Container %s: Purchase Order %s must belong to the same requisition (%s).'
+    #                 ) % (container.name, purchase_order.name, container.requisition_id.name))
     
     @api.constrains('bill_lading_id', 'requisition_id')
     def _check_bill_lading_requisition_consistency(self):
@@ -207,7 +208,7 @@ class LogisticsContainer(models.Model):
     def _onchange_requisition_id_details(self):
         """Filter domains when requisition is selected"""
         if self.requisition_id:
-            # Filter purchase orders by requisition
+            # Filter purchase orders and bill of lading by requisition
             return {
                 'domain': {
                     'purchase_order_ids': [('requisition_id', '=', self.requisition_id.id)],
@@ -305,4 +306,5 @@ class LogisticsContainer(models.Model):
             action['views'] = [(False, 'form')]
         
         return action
+    
     
