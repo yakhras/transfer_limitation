@@ -20,7 +20,7 @@
                 <field name="departure_date" />
                 <field name="arrival_date" />
                 <field name="location"/>
-                <field name="state" widget="statusbar"/>
+                <field name="state" />
                 <field name="product_count" />
                 <field name="total_qty" />
                 <field name="total_value" />
