@@ -47,7 +47,8 @@ class LogisticsContainer(models.Model):
     # Logistics Information
     arrival_date = fields.Date('Arrival Date', tracking=True)
     departure_date = fields.Date('Departure Date', tracking=True)
-    location = fields.Char('Current Location', tracking=True)
+    country_id = fields.Many2one('res.country', string='Country', 
+                                related='supplier_id.country_id', store=True, tracking=True)
     tracking_number = fields.Char('Tracking Number')
     vessel_name = fields.Char('Vessel Name')
     voyage_number = fields.Char('Voyage Number')
@@ -340,3 +341,4 @@ class LogisticsContainer(models.Model):
             action['views'] = [(False, 'form')]
         
         return action
+    

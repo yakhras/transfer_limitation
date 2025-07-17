@@ -19,8 +19,8 @@
                 <field name="supplier_ref" readonly="1"/>
                 <field name="departure_date" />
                 <field name="arrival_date" />
-                <field name="location"/>
-                <field name="state" />
+                <field name="country_id" readonly="1"/>
+                <field name="state"/>
                 <field name="product_count" />
                 <field name="total_qty" />
                 <field name="total_value" />
@@ -79,7 +79,7 @@
                         <group string="Physical Properties">
                             <field name="weight_kg"/>
                             <field name="volume_m3"/>
-                            <field name="location"/>
+                            <field name="country_id" readonly="1"/>
                             <field name="company_id" groups="base.group_multi_company" readonly="1"/>
                         </group>
                     </group>
@@ -184,7 +184,7 @@
                 <field name="arrival_date"/>
                 <field name="total_value"/>
                 <field name="state"/>
-                <field name="location"/>
+                <field name="country_id"/>
                 <field name="currency_id"/>
                 <field name="purchase_order_ids"/>
                 <templates>
@@ -209,8 +209,8 @@
                                         <span class="text-muted">Ref: <field name="supplier_ref"/></span>
                                     </t>
                                     <br/>
-                                    <t t-if="record.location.raw_value">
-                                        📍 <field name="location"/>
+                                    <t t-if="record.country_id.raw_value">
+                                        🌍 <field name="country_id"/>
                                         <br/>
                                     </t>
                                     <t t-if="record.arrival_date.raw_value">
@@ -270,7 +270,7 @@
                 <field name="requisition_id"/>
                 <field name="purchase_order_ids"/>
                 <field name="container_type"/>
-                <field name="location"/>
+                <field name="country_id"/>
                 <field name="tracking_number"/>
                 <field name="vessel_name"/>
                 <separator/>
@@ -292,9 +292,9 @@
                 <group expand="1" string="Group By">
                     <filter string="Status" name="group_state" context="{'group_by':'state'}"/>
                     <filter string="Supplier" name="group_supplier" context="{'group_by':'supplier_id'}"/>
+                    <filter string="Country" name="group_country" context="{'group_by':'country_id'}"/>
                     <filter string="Purchase Requisition" name="group_requisition" context="{'group_by':'requisition_id'}"/>
                     <filter string="Container Type" name="group_type" context="{'group_by':'container_type'}"/>
-                    <filter string="Location" name="group_location" context="{'group_by':'location'}"/>
                     <filter string="Arrival Date" name="group_arrival" context="{'group_by':'arrival_date'}"/>
                 </group>
             </search>
