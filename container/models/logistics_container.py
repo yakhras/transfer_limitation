@@ -53,7 +53,7 @@ class LogisticsContainer(models.Model):
     vessel_name = fields.Char('Vessel Name')
     voyage_number = fields.Char('Voyage Number')
     port_of_loading = fields.Char('Port of Loading')
-    port_of_discharge = fields.Char('Port of Discharge')
+    port_of_discharge = fields.Many2one('res.country.state', string='Port of Discharge', tracking=True)
     
     # Status Management
     state = fields.Selection([
