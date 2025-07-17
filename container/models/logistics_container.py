@@ -112,7 +112,7 @@ class LogisticsContainer(models.Model):
         
         # Remove any old field references that might cause issues
         if 'purchase_order_id' in vals:
-            # _logger.warning("Deprecated field 'purchase_order_id' found in vals. Use 'purchase_order_ids' instead.")
+            _logger.warning("Deprecated field 'purchase_order_id' found in vals. Use 'purchase_order_ids' instead.")
             vals.pop('purchase_order_id', None)
         
         # Create the record
@@ -176,37 +176,60 @@ class LogisticsContainer(models.Model):
     
     # State Management Methods
     def action_ship(self):
-        self.state = 'shipped'
-        self.departure_date = fields.Date.context_today(self)
+        for record in self:
+            record.write({
+                'state': 'shipped',
+                'departure_date': fields.Date.context_today(record)
+            })
+        return True
     
     def action_in_transit(self):
-        self.state = 'in_transit'
+        for record in self:
+            record.write({'state': 'in_transit'})
+        return True
     
     def action_arrived(self):
-        self.state = 'arrived'
-        if not self.arrival_date:
-            self.arrival_date = fields.Date.context_today(self)
+        for record in self:
+            vals = {'state': 'arrived'}
+            if not record.arrival_date:
+                vals['arrival_date'] = fields.Date.context_today(record)
+            record.write(vals)
+        return True
     
     def action_antrepo(self):
-        self.state = 'antrepo'
+        for record in self:
+            record.write({'state': 'antrepo'})
+        return True
     
     def action_released(self):
-        self.state = 'released'
+        for record in self:
+            record.write({'state': 'released'})
+        return True
     
     def action_start_unloading(self):
-        self.state = 'unloading'
+        for record in self:
+            record.write({'state': 'unloading'})
+        return True
     
     def action_unloaded(self):
-        self.state = 'unloaded'
+        for record in self:
+            record.write({'state': 'unloaded'})
+        return True
     
     def action_at_port(self):
-        self.state = 'at_port'
+        for record in self:
+            record.write({'state': 'at_port'})
+        return True
     
     def action_purchasing(self):
-        self.state = 'purchasing'
+        for record in self:
+            record.write({'state': 'purchasing'})
+        return True
     
     def action_reset_to_draft(self):
-        self.state = 'draft'
+        for record in self:
+            record.write({'state': 'draft'})
+        return True
     
     @api.constrains('arrival_date', 'departure_date')
     def _check_dates(self):
@@ -317,4 +340,3 @@ class LogisticsContainer(models.Model):
             action['views'] = [(False, 'form')]
         
         return action
-    

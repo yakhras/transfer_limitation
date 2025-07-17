@@ -37,7 +37,7 @@
             <form>
                 <header>
                     <button name="action_ship" string="Ship" type="object"
-                            class="btn-primary" states="draft"/>
+                            class="btn-primary" states="draft" confirm="Are you sure you want to ship this container?"/>
                     <button name="action_in_transit" string="In Transit" type="object"
                             class="btn-primary" states="shipped"/>
                     <button name="action_arrived" string="Arrived" type="object"
@@ -55,7 +55,7 @@
                     <button name="action_purchasing" string="Purchasing" type="object"
                             class="btn-info" states="at_port"/>
                     <button name="action_reset_to_draft" string="Reset to Draft" type="object"
-                            groups="base.group_system"/>
+                            groups="base.group_system" confirm="Are you sure you want to reset to draft?"/>
                     <field name="state" widget="statusbar" 
                            statusbar_visible="draft,shipped,in_transit,arrived,antrepo,released,unloading,unloaded,at_port,purchasing"/>
                 </header>
