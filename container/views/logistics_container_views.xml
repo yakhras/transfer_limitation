@@ -6,9 +6,10 @@
         <field name="model">logistics.container</field>
         <field name="arch" type="xml">
             <tree decoration-info="state in ('draft','shipped')" 
-                  decoration-warning="state in ('in_transit','customs')"
+                  decoration-warning="state in ('in_transit','antrepo')"
                   decoration-success="state in ('arrived','released')"
-                  decoration-muted="state in ('empty','returned')"
+                  decoration-muted="state in ('at_port','purchasing')"
+                  decoration-danger="state in ('unloading','unloaded')"
                   multi_edit="1">
                 <field name="name" />
                 <field name="container_type" />
@@ -41,22 +42,22 @@
                             class="btn-primary" states="shipped"/>
                     <button name="action_arrived" string="Arrived" type="object"
                             class="btn-primary" states="in_transit"/>
-                    <button name="action_customs" string="Customs" type="object"
+                    <button name="action_antrepo" string="Antrepo" type="object"
                             class="btn-warning" states="arrived"/>
                     <button name="action_released" string="Released" type="object"
-                            class="btn-primary" states="customs"/>
+                            class="btn-primary" states="antrepo"/>
                     <button name="action_start_unloading" string="Start Unloading" type="object"
-                            class="btn-primary" states="arrived,released"/>
+                            class="btn-primary" states="released"/>
                     <button name="action_unloaded" string="Unloaded" type="object"
                             class="btn-primary" states="unloading"/>
-                    <button name="action_empty" string="Empty" type="object"
+                    <button name="action_at_port" string="At Port" type="object"
                             class="btn-secondary" states="unloaded"/>
-                    <button name="action_returned" string="Returned" type="object"
-                            class="btn-secondary" states="empty"/>
+                    <button name="action_purchasing" string="Purchasing" type="object"
+                            class="btn-info" states="at_port"/>
                     <button name="action_reset_to_draft" string="Reset to Draft" type="object"
                             groups="base.group_system"/>
                     <field name="state" widget="statusbar" 
-                           statusbar_visible="draft,shipped,in_transit,arrived,customs,released,unloading,unloaded"/>
+                           statusbar_visible="draft,shipped,in_transit,arrived,antrepo,released,unloading,unloaded,at_port,purchasing"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -277,13 +278,17 @@
                 <filter string="Shipped" name="shipped" domain="[('state','=','shipped')]"/>
                 <filter string="In Transit" name="in_transit" domain="[('state','=','in_transit')]"/>
                 <filter string="Arrived" name="arrived" domain="[('state','=','arrived')]"/>
+                <filter string="Antrepo" name="antrepo" domain="[('state','=','antrepo')]"/>
                 <filter string="Released" name="released" domain="[('state','=','released')]"/>
+                <filter string="Unloading" name="unloading" domain="[('state','=','unloading')]"/>
                 <filter string="Unloaded" name="unloaded" domain="[('state','=','unloaded')]"/>
+                <filter string="At Port" name="at_port" domain="[('state','=','at_port')]"/>
+                <filter string="Purchasing" name="purchasing" domain="[('state','=','purchasing')]"/>
                 <separator/>
                 <filter string="This Month" name="this_month" 
                         domain="[('arrival_date','&gt;=',datetime.datetime.now().replace(day=1))]"/>
                 <filter string="Late Arrivals" name="late_arrivals"
-                        domain="[('arrival_date','&lt;',datetime.datetime.now()),('state','in',['shipped','in_transit'])]"/>
+                        domain="[('arrival_date','&lt;',datetime.datetime.now()),('state','in',['shipped','in_transit','antrepo'])]"/>
                 <group expand="1" string="Group By">
                     <filter string="Status" name="group_state" context="{'group_by':'state'}"/>
                     <filter string="Supplier" name="group_supplier" context="{'group_by':'supplier_id'}"/>
