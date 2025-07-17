@@ -94,11 +94,25 @@ class LogisticsContainer(models.Model):
     
     @api.model
     def create(self, vals):
-        """Override create to generate sequence number"""
+        """Override create to generate sequence number and set supplier"""
         if not vals.get('name') or vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('logistics.container') or _('New')
         
-        return super(LogisticsContainer, self).create(vals)
+        # If requisition is provided, ensure supplier is set from requisition
+        if vals.get('requisition_id'):
+            requisition = self.env['purchase.requisition'].browse(vals['requisition_id'])
+            if requisition.vendor_id and not vals.get('supplier_id'):
+                vals['supplier_id'] = requisition.vendor_id.id
+        
+        # Create the record
+        record = super(LogisticsContainer, self).create(vals)
+        
+        # Force recompute related fields if needed (fallback)
+        if record.requisition_id and not record.supplier_id:
+            record.invalidate_cache(['supplier_id'])
+            record._compute_field('supplier_id')
+        
+        return record
     
     @api.depends('container_line_ids.product_qty', 'container_line_ids.price_subtotal')
     def _compute_totals(self):
@@ -291,3 +305,4 @@ class LogisticsContainer(models.Model):
             action['views'] = [(False, 'form')]
         
         return action
+    
