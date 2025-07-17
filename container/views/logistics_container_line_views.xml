@@ -15,6 +15,12 @@
                 <field name="price_subtotal"/>
                 <field name="lot_number"/>
                 <field name="expiry_date"/>
+                <field name="gross_weight"/>
+                <field name="net_weight"/>
+                <field name="total_gross_weight"/>
+                <field name="total_net_weight"/>
+                <field name="volume_per_unit"/>
+                <field name="total_volume"/>
                 <field name="container_state"/>
                 <field name="currency_id" invisible="1"/>
             </tree>
