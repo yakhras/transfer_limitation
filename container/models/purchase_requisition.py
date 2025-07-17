@@ -16,7 +16,7 @@ class PurchaseRequisition(models.Model):
     container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
     bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
     
-    
+    supplier_ref = fields.Char('Supplier Reference', copy=False, tracking=True)
     
     @api.depends('container_ids', 'bill_lading_ids')
     def _compute_counts(self):

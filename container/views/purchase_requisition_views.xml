@@ -133,6 +133,11 @@
                     </field>
                 </page>
             </xpath>
+            <xpath expr="field[@name='vendor_id']" position="after">
+                <field name="supplier_ref" placeholder="Supplier Reference" 
+                       attrs="{'invisible': [('vendor_id', '=', False)]}" 
+                       class="oe_inline"/>
+            </xpath>
         </field>
     </record>
     
