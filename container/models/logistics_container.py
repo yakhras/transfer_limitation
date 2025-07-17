@@ -112,7 +112,7 @@ class LogisticsContainer(models.Model):
         
         # Remove any old field references that might cause issues
         if 'purchase_order_id' in vals:
-            _logger.warning("Deprecated field 'purchase_order_id' found in vals. Use 'purchase_order_ids' instead.")
+            # _logger.warning("Deprecated field 'purchase_order_id' found in vals. Use 'purchase_order_ids' instead.")
             vals.pop('purchase_order_id', None)
         
         # Create the record
