@@ -31,8 +31,7 @@ class LogisticsContainerLine(models.Model):
     # Product Physical Properties
     gross_weight = fields.Float('Gross Weight (KG)', related='product_id.weight', 
                                 store=True, readonly=False, digits=(10, 2))
-    net_weight = fields.Float('Net Weight (KG)', related='product_id.weight_net', 
-                              store=True, readonly=False, digits=(10, 2))
+    net_weight = fields.Float('Net Weight (KG)', digits=(10, 2))
     volume_per_unit = fields.Float('Volume per Unit (M³)', digits=(8, 4))
     
     # Calculated Weight Fields
@@ -77,4 +76,3 @@ class LogisticsContainerLine(models.Model):
             # self.price_unit = self.product_id.standard_price
             # if self.product_id.country_of_origin:
             #     self.country_of_origin = self.product_id.country_of_origin
-            
