@@ -129,7 +129,7 @@ class PurchaseRequisition(models.Model):
             # Create container
             container = self.env['logistics.container'].create({
                 'requisition_id': self.id,
-                'supplier_id': self.vendor_id.id if self.vendor_id else False,
+                'supplier_id': self.vendor_id.id,
                 'container_type': '40ft',  # Default, user can change
                 'state': 'draft',
             })
