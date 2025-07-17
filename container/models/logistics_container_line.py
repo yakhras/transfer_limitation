@@ -74,8 +74,7 @@ class LogisticsContainerLine(models.Model):
             self.product_uom_id = self.product_id.uom_id
             # Get gross weight from product if available
             if hasattr(self.product_id, 'weight') and self.product_id.weight:
-                self.gross_weight = self.product_id.weight
+                self.gross_weight = self.product_id.gross_weight
             # self.price_unit = self.product_id.standard_price
             # if self.product_id.country_of_origin:
             #     self.country_of_origin = self.product_id.country_of_origin
-            
