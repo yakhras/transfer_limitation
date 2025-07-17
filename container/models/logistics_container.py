@@ -32,6 +32,10 @@ class LogisticsContainer(models.Model):
                                     required=True, tracking=True, ondelete='cascade')
     purchase_order_ids = fields.Many2many('purchase.order', string='Purchase Orders', 
                                          tracking=True)
+    
+    # Compatibility field for migration - remove after fixing all references
+    purchase_order_id = fields.Many2one('purchase.order', string='Purchase Order (Deprecated)', 
+                                       help='Deprecated field for compatibility. Use purchase_order_ids instead.')
     bill_lading_id = fields.Many2one('logistics.bill.lading', string='Bill of Lading', 
                                     tracking=True, ondelete='set null')
     
@@ -66,7 +70,9 @@ class LogisticsContainer(models.Model):
     
     # Business Relations
     supplier_id = fields.Many2one('res.partner', string='Supplier', 
-                                 compute='_compute_supplier_id', store=True, tracking=True)
+                                 related='requisition_id.vendor_id', store=True, tracking=True)
+    supplier_ref = fields.Char('Supplier Reference', 
+                              related='requisition_id.supplier_ref', store=True, tracking=True)
     
     # Container Content
     container_line_ids = fields.One2many('logistics.container.line', 'container_id', 
@@ -98,13 +104,26 @@ class LogisticsContainer(models.Model):
         if not vals.get('name') or vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('logistics.container') or _('New')
         
-        # Set supplier from requisition if not already set and no purchase orders
-        if vals.get('requisition_id') and not vals.get('supplier_id') and not vals.get('purchase_order_ids'):
+        # If requisition is provided, ensure supplier is set from requisition
+        if vals.get('requisition_id'):
             requisition = self.env['purchase.requisition'].browse(vals['requisition_id'])
-            if requisition.vendor_id:
+            if requisition.vendor_id and not vals.get('supplier_id'):
                 vals['supplier_id'] = requisition.vendor_id.id
         
-        return super(LogisticsContainer, self).create(vals)
+        # Remove any old field references that might cause issues
+        if 'purchase_order_id' in vals:
+            _logger.warning("Deprecated field 'purchase_order_id' found in vals. Use 'purchase_order_ids' instead.")
+            vals.pop('purchase_order_id', None)
+        
+        # Create the record
+        record = super(LogisticsContainer, self).create(vals)
+        
+        # Force recompute related fields if needed (fallback)
+        if record.requisition_id and not record.supplier_id:
+            record.invalidate_cache(['supplier_id'])
+            record._compute_field('supplier_id')
+        
+        return record
     
     @api.depends('container_line_ids.product_qty', 'container_line_ids.price_subtotal')
     def _compute_totals(self):
@@ -120,13 +139,14 @@ class LogisticsContainer(models.Model):
                                   container.insurance_cost + container.customs_duty + 
                                   container.other_charges)
     
-    # @api.constrains('requisition_id', 'purchase_order_id')
+    # @api.constrains('requisition_id', 'purchase_order_ids')
     # def _check_purchase_order_requisition_consistency(self):
     #     for container in self:
-    #         if container.purchase_order_id.requisition_id != container.requisition_id:
-    #             raise ValidationError(_(
-    #                 'Container %s: Purchase Order must belong to the same requisition (%s).'
-    #             ) % (container.name, container.requisition_id.name))
+    #         for purchase_order in container.purchase_order_ids:
+    #             if purchase_order.requisition_id != container.requisition_id:
+    #                 raise ValidationError(_(
+    #                     'Container %s: Purchase Order %s must belong to the same requisition (%s).'
+    #                 ) % (container.name, purchase_order.name, container.requisition_id.name))
     
     @api.constrains('bill_lading_id', 'requisition_id')
     def _check_bill_lading_requisition_consistency(self):
@@ -197,13 +217,9 @@ class LogisticsContainer(models.Model):
                 
     @api.onchange('requisition_id')
     def _onchange_requisition_id_details(self):
-        """Auto-populate fields when requisition is selected"""
+        """Filter domains when requisition is selected"""
         if self.requisition_id:
-            # Set supplier from requisition vendor
-            if self.requisition_id.vendor_id:
-                self.supplier_id = self.requisition_id.vendor_id
-            
-            # Filter purchase orders by requisition
+            # Filter purchase orders and bill of lading by requisition
             return {
                 'domain': {
                     'purchase_order_ids': [('requisition_id', '=', self.requisition_id.id)],
