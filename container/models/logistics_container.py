@@ -52,7 +52,8 @@ class LogisticsContainer(models.Model):
     tracking_number = fields.Char('Tracking Number')
     vessel_name = fields.Char('Vessel Name')
     voyage_number = fields.Char('Voyage Number')
-    port_of_loading = fields.Char('Port of Loading')
+    port_of_loading = fields.Many2one('res.country.state', string='Port of Loading', 
+                                     domain="[('country_id', '=', country_id)]", tracking=True)
     port_of_discharge = fields.Many2one('res.country.state', string='Port of Discharge', tracking=True)
     
     # Status Management
@@ -174,6 +175,29 @@ class LogisticsContainer(models.Model):
             # Auto-set requisition from first purchase order if not set
             if not self.requisition_id and self.purchase_order_ids[0].requisition_id:
                 self.requisition_id = self.purchase_order_ids[0].requisition_id
+    
+    @api.onchange('country_id')
+    def _onchange_country_id(self):
+        """Reset port of loading when country changes"""
+        if self.country_id:
+            # Clear port of loading if it doesn't belong to the new country
+            if self.port_of_loading and self.port_of_loading.country_id != self.country_id:
+                self.port_of_loading = False
+            
+            # Return domain to filter states by country for port of loading
+            return {
+                'domain': {
+                    'port_of_loading': [('country_id', '=', self.country_id.id)]
+                }
+            }
+        else:
+            # If no country, clear port of loading
+            self.port_of_loading = False
+            return {
+                'domain': {
+                    'port_of_loading': []
+                }
+            }
     
     # State Management Methods
     def action_ship(self):
@@ -341,4 +365,3 @@ class LogisticsContainer(models.Model):
             action['views'] = [(False, 'form')]
         
         return action
-    

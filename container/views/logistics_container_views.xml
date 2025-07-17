@@ -127,7 +127,6 @@
                                     <field name="expiry_date"/>
                                     <field name="country_of_origin"/>
                                     <field name="gross_weight"/>
-                                    <field name="total_gross_weight"/>
                                     <field name="currency_id" invisible="1"/>
                                 </tree>
                                 <form>
@@ -186,6 +185,8 @@
                 <field name="total_value"/>
                 <field name="state"/>
                 <field name="country_id"/>
+                <field name="port_of_loading"/>
+                <field name="port_of_discharge"/>
                 <field name="currency_id"/>
                 <field name="purchase_order_ids"/>
                 <templates>
@@ -212,6 +213,10 @@
                                     <br/>
                                     <t t-if="record.country_id.raw_value">
                                         🌍 <field name="country_id"/>
+                                        <br/>
+                                    </t>
+                                    <t t-if="record.port_of_discharge.raw_value">
+                                        🚢 <field name="port_of_discharge"/>
                                         <br/>
                                     </t>
                                     <t t-if="record.arrival_date.raw_value">
@@ -272,6 +277,8 @@
                 <field name="purchase_order_ids"/>
                 <field name="container_type"/>
                 <field name="country_id"/>
+                <field name="port_of_loading"/>
+                <field name="port_of_discharge"/>
                 <field name="tracking_number"/>
                 <field name="vessel_name"/>
                 <separator/>
@@ -294,6 +301,8 @@
                     <filter string="Status" name="group_state" context="{'group_by':'state'}"/>
                     <filter string="Supplier" name="group_supplier" context="{'group_by':'supplier_id'}"/>
                     <filter string="Country" name="group_country" context="{'group_by':'country_id'}"/>
+                    <filter string="Port of Loading" name="group_port_loading" context="{'group_by':'port_of_loading'}"/>
+                    <filter string="Port of Discharge" name="group_port_discharge" context="{'group_by':'port_of_discharge'}"/>
                     <filter string="Purchase Requisition" name="group_requisition" context="{'group_by':'requisition_id'}"/>
                     <filter string="Container Type" name="group_type" context="{'group_by':'container_type'}"/>
                     <filter string="Arrival Date" name="group_arrival" context="{'group_by':'arrival_date'}"/>
