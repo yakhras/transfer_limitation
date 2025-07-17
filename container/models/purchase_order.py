@@ -9,7 +9,7 @@ class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
     
     # Direct relations
-    container_ids = fields.One2many('logistics.container', 'purchase_order_id', string='Containers')
+    container_ids = fields.One2many('logistics.container', 'purchase_order_ids', string='Containers')
     bill_lading_id = fields.Many2one('logistics.bill.lading', string='Bill of Lading')
     
     # Computed fields
