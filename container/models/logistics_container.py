@@ -60,12 +60,12 @@ class LogisticsContainer(models.Model):
         ('shipped', 'Shipped'),
         ('in_transit', 'In Transit'),
         ('arrived', 'Arrived'),
-        ('customs', 'In Customs'),
+        ('antrepo', 'Antrepo'),
         ('released', 'Released'),
         ('unloading', 'Unloading'),
         ('unloaded', 'Unloaded'),
-        ('empty', 'Empty'),
-        ('returned', 'Returned'),
+        ('at_port', 'At Port'),
+        ('purchasing', 'Purchasing'),
     ], string='Status', default='draft', tracking=True, required=True)
     
     # Business Relations
@@ -187,8 +187,8 @@ class LogisticsContainer(models.Model):
         if not self.arrival_date:
             self.arrival_date = fields.Date.context_today(self)
     
-    def action_customs(self):
-        self.state = 'customs'
+    def action_antrepo(self):
+        self.state = 'antrepo'
     
     def action_released(self):
         self.state = 'released'
@@ -199,11 +199,11 @@ class LogisticsContainer(models.Model):
     def action_unloaded(self):
         self.state = 'unloaded'
     
-    def action_empty(self):
-        self.state = 'empty'
+    def action_at_port(self):
+        self.state = 'at_port'
     
-    def action_returned(self):
-        self.state = 'returned'
+    def action_purchasing(self):
+        self.state = 'purchasing'
     
     def action_reset_to_draft(self):
         self.state = 'draft'
