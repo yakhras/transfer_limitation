@@ -29,8 +29,10 @@ class LogisticsContainerLine(models.Model):
     country_of_origin = fields.Many2one('res.country', string='Country of Origin')
     
     # Product Physical Properties
-    gross_weight = fields.Float('Gross Weight (KG)', digits=(10, 2))
-    net_weight = fields.Float('Net Weight (KG)', digits=(10, 2))
+    gross_weight = fields.Float('Gross Weight (KG)', related='product_id.weight', 
+                                store=True, readonly=False, digits=(10, 2))
+    net_weight = fields.Float('Net Weight (KG)', related='product_id.weight_net', 
+                              store=True, readonly=False, digits=(10, 2))
     volume_per_unit = fields.Float('Volume per Unit (M³)', digits=(8, 4))
     
     # Calculated Weight Fields
@@ -72,9 +74,7 @@ class LogisticsContainerLine(models.Model):
     def _onchange_product_id(self):
         if self.product_id:
             self.product_uom_id = self.product_id.uom_id
-            # Get gross weight from product if available
-            if hasattr(self.product_id, 'weight') and self.product_id.weight:
-                self.gross_weight = self.product_id.gross_weight
             # self.price_unit = self.product_id.standard_price
             # if self.product_id.country_of_origin:
             #     self.country_of_origin = self.product_id.country_of_origin
+            
