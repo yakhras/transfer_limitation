@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
 import logging
 
@@ -163,11 +164,14 @@ class SaleOrder(models.Model):
             'procurement_group_id': False,
         })
         
-        # Reset sale order lines
+        # Reset sale order lines - only update fields that exist on sale.order.line
         for line in self.order_line:
-            line.write({
-                'procurement_group_id': False,
-            })
+            # Only update fields that actually exist on sale.order.line
+            update_vals = {}
+            # Most sale order line fields are automatically handled when the SO state changes
+            # We don't need to manually update procurement_group_id on lines
+            if update_vals:  # Only write if there are actual fields to update
+                line.write(update_vals)
 
     def _capture_comprehensive_field_values(self):
         """Capture comprehensive field values for tracking ALL changes"""
