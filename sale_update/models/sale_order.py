@@ -7,6 +7,12 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+from odoo import models, fields, api
+from odoo.exceptions import UserError, ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
+
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
@@ -104,14 +110,39 @@ class SaleOrder(models.Model):
                 ]).mapped('order_id')
                 purchase_orders |= related_pos
         
-        return purchase_orders
+        # Filter out any records that might have been deleted
+        existing_pos = self.env['purchase.order']
+        for po in purchase_orders:
+            try:
+                # Test if record still exists by accessing a basic field
+                po_exists = po.exists()
+                if po_exists:
+                    existing_pos |= po_exists
+            except Exception as e:
+                _logger.warning(f"Purchase Order {po.id} no longer exists: {str(e)}")
+                continue
+        
+        return existing_pos
 
     def _check_po_goods_received(self, purchase_orders):
         """Check all related POs - any goods received?"""
         for po in purchase_orders:
-            for picking in po.picking_ids:
-                if picking.state == 'done':
-                    return True
+            try:
+                # Verify PO still exists before checking pickings
+                if not po.exists():
+                    _logger.warning(f"Purchase Order {po.id} no longer exists, skipping")
+                    continue
+                    
+                for picking in po.picking_ids:
+                    try:
+                        if picking.exists() and picking.state == 'done':
+                            return True
+                    except Exception as e:
+                        _logger.warning(f"Error checking picking {picking.id}: {str(e)}")
+                        continue
+            except Exception as e:
+                _logger.warning(f"Error checking PO {po.id}: {str(e)}")
+                continue
         return False
     
     def _check_so_deliveries_made(self):
@@ -134,22 +165,68 @@ class SaleOrder(models.Model):
     def _cancel_purchase_orders(self, purchase_orders):
         """Cancel all related purchase orders"""
         for po in purchase_orders:
-            if po.state in ['draft', 'sent', 'to approve']:
-                po.button_cancel()
-            elif po.state == 'purchase':
-                po.button_cancel()
-            else:
-                raise UserError(f"Cannot cancel Purchase Order {po.name} in state {po.state}")
+            try:
+                # Verify PO still exists before trying to cancel
+                if not po.exists():
+                    _logger.warning(f"Purchase Order {po.id} no longer exists, skipping cancellation")
+                    continue
+                
+                # Refresh the record to get latest state
+                po = po.with_context(active_test=False).browse(po.id)
+                if not po.exists():
+                    _logger.warning(f"Purchase Order {po.id} was deleted during process")
+                    continue
+                
+                current_state = po.state
+                if current_state in ['draft', 'sent', 'to approve']:
+                    po.button_cancel()
+                elif current_state == 'purchase':
+                    po.button_cancel()
+                elif current_state == 'cancel':
+                    _logger.info(f"Purchase Order {po.name} already cancelled")
+                else:
+                    _logger.warning(f"Cannot cancel Purchase Order {po.name} in state {current_state}")
+                    
+            except Exception as e:
+                _logger.error(f"Error cancelling Purchase Order {po.id}: {str(e)}")
+                # Continue with other POs instead of failing completely
+                continue
 
     def _delete_purchase_orders(self, purchase_orders):
         """Delete cancelled purchase orders"""
         for po in purchase_orders:
-            if po.state != 'cancel':
-                raise UserError(f"Cannot delete Purchase Order {po.name} - not in cancelled state")
-            
-            # Delete related records first
-            po.order_line.unlink()
-            po.unlink()
+            try:
+                # Verify PO still exists before trying to delete
+                if not po.exists():
+                    _logger.warning(f"Purchase Order {po.id} no longer exists, skipping deletion")
+                    continue
+                
+                # Refresh the record to get latest state
+                po = po.with_context(active_test=False).browse(po.id)
+                if not po.exists():
+                    _logger.warning(f"Purchase Order {po.id} was already deleted")
+                    continue
+                
+                if po.state != 'cancel':
+                    _logger.warning(f"Cannot delete Purchase Order {po.name} - not in cancelled state (current: {po.state})")
+                    continue
+                
+                # Delete related records first (if they exist)
+                try:
+                    if po.order_line.exists():
+                        po.order_line.unlink()
+                except Exception as e:
+                    _logger.warning(f"Error deleting PO lines for {po.name}: {str(e)}")
+                
+                # Delete the PO
+                po_name = po.name  # Store name before deletion for logging
+                po.unlink()
+                _logger.info(f"Successfully deleted Purchase Order {po_name}")
+                
+            except Exception as e:
+                _logger.error(f"Error deleting Purchase Order {po.id}: {str(e)}")
+                # Continue with other POs instead of failing completely
+                continue
 
     def _convert_to_quotation_state(self):
         """Convert sale order back to quotation state"""
@@ -315,13 +392,33 @@ class SaleOrder(models.Model):
         # Purchase Orders Info
         po_info = []
         for po in purchase_orders:
-            po_info.append({
-                'name': po.name,
-                'partner': po.partner_id.name,
-                'amount_total': po.amount_total,
-                'state': po.state,
-                'goods_received': any(p.state == 'done' for p in po.picking_ids),
-            })
+            try:
+                if po.exists():
+                    po_data = {
+                        'name': po.name,
+                        'partner': po.partner_id.name if po.partner_id else 'Unknown',
+                        'amount_total': po.amount_total,
+                        'state': po.state,
+                        'goods_received': any(p.state == 'done' for p in po.picking_ids if p.exists()),
+                    }
+                else:
+                    po_data = {
+                        'name': f'PO-{po.id}',
+                        'partner': 'Record Deleted',
+                        'amount_total': 0,
+                        'state': 'deleted',
+                        'goods_received': False,
+                    }
+                po_info.append(po_data)
+            except Exception as e:
+                _logger.warning(f"Error getting info for PO {po.id}: {str(e)}")
+                po_info.append({
+                    'name': f'PO-{po.id}',
+                    'partner': 'Error accessing record',
+                    'amount_total': 0,
+                    'state': 'error',
+                    'goods_received': False,
+                })
         
         # Create comprehensive log
         log_data = {
@@ -337,4 +434,3 @@ class SaleOrder(models.Model):
         }
         
         self.env['sale.order.conversion.log'].create(log_data)
-        
