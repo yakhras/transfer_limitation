@@ -28,7 +28,8 @@ class LogisticsBillLading(models.Model):
     purchase_order_ids = fields.One2many('purchase.order', 'bill_lading_id', string='Purchase Orders')
     
     # Direct container relation
-    container_ids = fields.One2many('logistics.container', 'bill_lading_id', string='Containers')
+    container_ids = fields.Many2many('logistics.container', 'bill_lading_container_rel', 
+                                    'bill_lading_id', 'container_id', string='Containers')
     
     # Parties Information
     shipper_id = fields.Many2one('res.partner', string='Shipper', required=True,
@@ -133,7 +134,7 @@ class LogisticsBillLading(models.Model):
         for bl in self:
             if bl.container_ids:
                 for container in bl.container_ids:
-                    if container.requisition_id != bl.requisition_id:
+                    if hasattr(container, 'requisition_id') and container.requisition_id != bl.requisition_id:
                         raise ValidationError(_(
                             'Container %s must belong to the same requisition (%s) as the Bill of Lading.'
                         ) % (container.name, bl.requisition_id.name))
@@ -280,3 +281,4 @@ class LogisticsBillLading(models.Model):
             action['res_id'] = purchase_orders.id
         
         return action
+    
