@@ -133,7 +133,7 @@ class LogisticsBillLading(models.Model):
         for container in self.container_ids:
             if hasattr(container, 'port_of_discharge_id'):
                 container.sudo().write({
-                    'port_of_discharge_id': self.port_of_discharge_id.id
+                    'port_of_discharge': self.port_of_discharge_id.id
                 })
     
     @api.depends('container_ids', 'purchase_order_ids')
@@ -160,7 +160,7 @@ class LogisticsBillLading(models.Model):
             if self.port_of_discharge_id:
                 for container in self.container_ids:
                     if hasattr(container, 'port_of_discharge_id'):
-                        container.port_of_discharge_id = self.port_of_discharge_id
+                        container.port_of_discharge = self.port_of_discharge_id
     
     @api.onchange('port_of_discharge_id')
     def _onchange_port_of_discharge_bl(self):
@@ -168,7 +168,7 @@ class LogisticsBillLading(models.Model):
         if self.port_of_discharge_id and self.container_ids:
             for container in self.container_ids:
                 if hasattr(container, 'port_of_discharge_id'):
-                    container.port_of_discharge_id = self.port_of_discharge_id
+                    container.port_of_discharge = self.port_of_discharge_id
         
         # Call the original onchange method for place of delivery
         self._onchange_port_of_discharge()
