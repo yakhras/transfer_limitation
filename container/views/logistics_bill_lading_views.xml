@@ -111,7 +111,7 @@
                                         <field name="name"/>
                                         <field name="container_type"/>
                                         <field name="seal_number"/>
-                                        <field name="port_of_discharge_id"/>
+                                        <field name="port_of_discharge"/>
                                         <field name="weight_kg"/>
                                         <field name="volume_m3"/>
                                         <field name="state"/>
