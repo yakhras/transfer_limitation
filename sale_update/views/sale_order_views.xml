@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Add Convert to Quotation button to Sale Order form -->
+        <record id="view_order_form_convert_to_quotation" model="ir.ui.view">
+            <field name="name">sale.order.form.convert.to.quotation</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="action_convert_to_quotation" 
+                            string="Convert to Quotation" 
+                            type="object" 
+                            class="btn-primary"
+                            attrs="{'invisible': [('state', 'not in', ['sale', 'done'])]}"
+                            confirm="Are you sure you want to convert this Sale Order to a Quotation? This will cancel and delete all related Purchase Orders."/>
+                </xpath>
+                
+                <!-- Add conversion history tab -->
+                <xpath expr="//notebook" position="inside">
+                    <page string="Conversion History" attrs="{'invisible': [('conversion_log_ids', '=', [])]}">
+                        <field name="conversion_log_ids" readonly="1">
+                            <tree decoration-success="success == True" decoration-danger="success == False">
+                                <field name="conversion_date"/>
+                                <field name="user_id"/>
+                                <field name="success" widget="boolean_toggle"/>
+                                <field name="notes"/>
+                            </tree>
+                            <form>
+                                <header>
+                                    <field name="success" widget="boolean_button" options="{'terminology': {'true': 'Success', 'false': 'Failed'}}"/>
+                                </header>
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="sale_order_id"/>
+                                            <field name="conversion_date"/>
+                                            <field name="user_id"/>
+                                        </group>
+                                    </group>
+                                    <notebook>
+                                        <page string="SO Level Changes">
+                                            <field name="so_level_changes" widget="text"/>
+                                        </page>
+                                        <page string="Line Level Changes">
+                                            <field name="line_level_changes" widget="text"/>
+                                        </page>
+                                        <page string="Related Records">
+                                            <field name="related_records_changes" widget="text"/>
+                                        </page>
+                                        <page string="Purchase Orders">
+                                            <field name="purchase_orders_info" widget="text"/>
+                                        </page>
+                                        <page string="Notes">
+                                            <field name="notes" widget="text"/>
+                                        </page>
+                                    </notebook>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
