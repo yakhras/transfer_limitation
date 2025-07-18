@@ -104,10 +104,37 @@ class LogisticsBillLading(models.Model):
 
     @api.model
     def create(self, vals):
-        """Override create to generate sequence number"""
+        """Override create to generate sequence number and update containers"""
         if vals.get('name', _('New')) == _('New'):
             vals['name'] = self.env['ir.sequence'].next_by_code('logistics.bill.lading') or _('New')
-        return super(LogisticsBillLading, self).create(vals)
+        
+        record = super(LogisticsBillLading, self).create(vals)
+        
+        # Update containers' port of discharge after creation
+        if record.container_ids and record.port_of_discharge_id:
+            record._update_containers_port_of_discharge()
+        
+        return record
+    
+    def write(self, vals):
+        """Override write to update containers when needed"""
+        result = super(LogisticsBillLading, self).write(vals)
+        
+        # If containers or port of discharge changed, update containers
+        if 'container_ids' in vals or 'port_of_discharge_id' in vals:
+            for record in self:
+                if record.container_ids and record.port_of_discharge_id:
+                    record._update_containers_port_of_discharge()
+        
+        return result
+    
+    def _update_containers_port_of_discharge(self):
+        """Helper method to update port of discharge in containers"""
+        for container in self.container_ids:
+            if hasattr(container, 'port_of_discharge_id'):
+                container.sudo().write({
+                    'port_of_discharge_id': self.port_of_discharge_id.id
+                })
     
     @api.depends('container_ids', 'purchase_order_ids')
     def _compute_counts(self):
@@ -128,6 +155,23 @@ class LogisticsBillLading(models.Model):
             # Calculate totals from containers
             self.gross_weight = sum(self.container_ids.mapped('weight_kg'))
             self.measurement = sum(self.container_ids.mapped('volume_m3'))
+            
+            # Update port of discharge in all selected containers
+            if self.port_of_discharge_id:
+                for container in self.container_ids:
+                    if hasattr(container, 'port_of_discharge_id'):
+                        container.port_of_discharge_id = self.port_of_discharge_id
+    
+    @api.onchange('port_of_discharge_id')
+    def _onchange_port_of_discharge_bl(self):
+        """Update containers' port of discharge when B/L port changes"""
+        if self.port_of_discharge_id and self.container_ids:
+            for container in self.container_ids:
+                if hasattr(container, 'port_of_discharge_id'):
+                    container.port_of_discharge_id = self.port_of_discharge_id
+        
+        # Call the original onchange method for place of delivery
+        self._onchange_port_of_discharge()
     
     @api.constrains('container_ids')
     def _check_container_requisition_consistency(self):
