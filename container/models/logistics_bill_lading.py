@@ -2,10 +2,6 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
 
-
-
-
-
 class LogisticsBillLading(models.Model):
     _name = 'logistics.bill.lading'
     _description = 'Bill of Lading'
@@ -13,8 +9,9 @@ class LogisticsBillLading(models.Model):
     _rec_name = 'name'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    # Basic Information
-    name = fields.Char('B/L Number', required=True, copy=False, tracking=True)
+    # Basic Information - Modified to auto-generate reference
+    name = fields.Char('B/L Number', required=True, copy=False, tracking=True,
+                      readonly=True, default=lambda self: _('New'))
     bl_type = fields.Selection([
         ('master', 'Master B/L'),
         ('house', 'House B/L'),
@@ -99,6 +96,13 @@ class LogisticsBillLading(models.Model):
     # Company
     company_id = fields.Many2one('res.company', string='Company', required=True,
                                 default=lambda self: self.env.company)
+
+    @api.model
+    def create(self, vals):
+        """Override create to generate sequence number"""
+        if vals.get('name', _('New')) == _('New'):
+            vals['name'] = self.env['ir.sequence'].next_by_code('logistics.bill.lading') or _('New')
+        return super(LogisticsBillLading, self).create(vals)
     
     @api.depends('container_ids', 'purchase_order_ids')
     def _compute_counts(self):
@@ -250,3 +254,4 @@ class LogisticsBillLading(models.Model):
             action['res_id'] = purchase_orders.id
         
         return action
+    

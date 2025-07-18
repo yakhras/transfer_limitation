@@ -11,5 +11,17 @@
             <field name="number_next">1</field>
             <field name="company_id" eval="False"/>
         </record>
+
+        <!-- Bill of Lading Sequence -->
+        <record id="seq_logistics_bill_lading" model="ir.sequence">
+            <field name="name">Bill of Lading Reference</field>
+            <field name="code">logistics.bill.lading</field>
+            <field name="prefix">BL</field>
+            <field name="padding">5</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+            <field name="use_date_range">False</field>
+            <field name="company_id" eval="False"/>
+        </record>
     </data>
 </odoo>
