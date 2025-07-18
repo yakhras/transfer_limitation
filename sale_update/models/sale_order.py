@@ -171,55 +171,103 @@ class SaleOrder(models.Model):
 
     def _capture_comprehensive_field_values(self):
         """Capture comprehensive field values for tracking ALL changes"""
-        # Sales Order Level Changes
-        so_values = {
-            'so_status': self.state,
-            'so_state': self.state,
-            'invoice_status': self.invoice_status,
-            'delivery_status': self.delivery_status if hasattr(self, 'delivery_status') else 'N/A',
-            'payment_status': self.payment_state if hasattr(self, 'payment_state') else 'N/A',
-            'date_order': self.date_order,
-            'validity_date': self.validity_date,
-            'commitment_date': self.commitment_date,
-            'amount_untaxed': self.amount_untaxed,
-            'amount_tax': self.amount_tax,
-            'amount_total': self.amount_total,
-            'procurement_group_id': self.procurement_group_id.id if self.procurement_group_id else False,
-        }
-        
-        # Sales Order Line Level Changes
-        line_values = []
-        for line in self.order_line:
-            line_data = {
-                'line_id': line.id,
-                'product_id': line.product_id.id,
-                'product_uom_qty': line.product_uom_qty,
-                'qty_delivered': line.qty_delivered,
-                'qty_invoiced': line.qty_invoiced,
-                'price_unit': line.price_unit,
-                'price_subtotal': line.price_subtotal,
-                'price_total': line.price_total,
-                'state': line.state if hasattr(line, 'state') else 'N/A',
-                'delivery_status': line.delivery_status if hasattr(line, 'delivery_status') else 'N/A',
+        try:
+            # Sales Order Level Changes
+            so_values = {
+                'so_status': self.state,
+                'so_state': self.state,
+                'invoice_status': getattr(self, 'invoice_status', 'N/A'),
+                'delivery_status': getattr(self, 'delivery_status', 'N/A'),
+                'payment_status': getattr(self, 'payment_state', 'N/A'),
+                'date_order': self.date_order,
+                'validity_date': self.validity_date,
+                'commitment_date': getattr(self, 'commitment_date', None),
+                'amount_untaxed': self.amount_untaxed,
+                'amount_tax': self.amount_tax,
+                'amount_total': self.amount_total,
+                'procurement_group_id': self.procurement_group_id.id if self.procurement_group_id else False,
             }
-            line_values.append(line_data)
-        
-        # Related Sale Records
-        related_records = {
-            'stock_moves_count': len(self.picking_ids.mapped('move_ids')),
-            'picking_ids_count': len(self.picking_ids),
-            'picking_states': [p.state for p in self.picking_ids],
-            'invoice_ids_count': len(self.invoice_ids),
-            'invoice_states': [i.state for i in self.invoice_ids],
-            'payment_ids_count': len(self.invoice_ids.mapped('payment_ids')),
-        }
-        
-        return {
-            'so_level': so_values,
-            'line_level': line_values,
-            'related_records': related_records,
-            'capture_timestamp': fields.Datetime.now(),
-        }
+            
+            # Sales Order Line Level Changes
+            line_values = []
+            for line in self.order_line:
+                try:
+                    line_data = {
+                        'line_id': line.id,
+                        'product_id': line.product_id.id if line.product_id else False,
+                        'product_uom_qty': line.product_uom_qty,
+                        'qty_delivered': getattr(line, 'qty_delivered', 0),
+                        'qty_invoiced': getattr(line, 'qty_invoiced', 0),
+                        'price_unit': line.price_unit,
+                        'price_subtotal': line.price_subtotal,
+                        'price_total': getattr(line, 'price_total', line.price_subtotal),
+                        'state': getattr(line, 'state', 'N/A'),
+                        'delivery_status': getattr(line, 'delivery_status', 'N/A'),
+                    }
+                    line_values.append(line_data)
+                except Exception as e:
+                    _logger.warning(f"Error capturing line data for line {line.id}: {str(e)}")
+                    continue
+            
+            # Related Sale Records
+            try:
+                # Try different field names for stock moves based on Odoo version
+                stock_moves = []
+                if self.picking_ids:
+                    for picking in self.picking_ids:
+                        if hasattr(picking, 'move_lines'):
+                            stock_moves.extend(picking.move_lines.ids)
+                        elif hasattr(picking, 'move_ids_without_package'):
+                            stock_moves.extend(picking.move_ids_without_package.ids)
+                        elif hasattr(picking, 'move_ids'):
+                            stock_moves.extend(picking.move_ids.ids)
+            except Exception as e:
+                _logger.warning(f"Error getting stock moves: {str(e)}")
+                stock_moves = []
+            
+            try:
+                payment_ids = []
+                for invoice in self.invoice_ids:
+                    if hasattr(invoice, 'payment_ids'):
+                        payment_ids.extend(invoice.payment_ids.ids)
+                    elif hasattr(invoice, 'payment_move_line_ids'):
+                        payment_ids.extend(invoice.payment_move_line_ids.ids)
+            except Exception as e:
+                _logger.warning(f"Error getting payment data: {str(e)}")
+                payment_ids = []
+            
+            related_records = {
+                'stock_moves_count': len(stock_moves),
+                'picking_ids_count': len(self.picking_ids),
+                'picking_states': [p.state for p in self.picking_ids] if self.picking_ids else [],
+                'invoice_ids_count': len(self.invoice_ids),
+                'invoice_states': [i.state for i in self.invoice_ids] if self.invoice_ids else [],
+                'payment_ids_count': len(payment_ids),
+            }
+            
+            return {
+                'so_level': so_values,
+                'line_level': line_values,
+                'related_records': related_records,
+                'capture_timestamp': fields.Datetime.now(),
+            }
+            
+        except Exception as e:
+            _logger.error(f"Error capturing comprehensive field values: {str(e)}")
+            # Return minimal data structure to prevent complete failure
+            return {
+                'so_level': {
+                    'so_status': self.state,
+                    'so_state': self.state,
+                    'amount_total': self.amount_total,
+                },
+                'line_level': [],
+                'related_records': {
+                    'picking_ids_count': 0,
+                    'invoice_ids_count': 0,
+                },
+                'capture_timestamp': fields.Datetime.now(),
+            }
 
     def _create_comprehensive_conversion_log(self, original_values, new_values, purchase_orders, success):
         """Create comprehensive log entry tracking ALL field changes"""
@@ -285,4 +333,4 @@ class SaleOrder(models.Model):
         }
         
         self.env['sale.order.conversion.log'].create(log_data)
-                
+        
