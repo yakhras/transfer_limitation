@@ -41,8 +41,12 @@ class LogisticsBillLading(models.Model):
     # Shipping Information
     vessel_name = fields.Char('Vessel Name', tracking=True)
     voyage_number = fields.Char('Voyage Number', tracking=True)
-    port_of_loading_id = fields.Many2one('logistics.port', string='Port of Loading', tracking=True)
-    port_of_discharge_id = fields.Many2one('logistics.port', string='Port of Discharge', tracking=True)
+    port_of_loading_id = fields.Many2one('res.country.state', string='Port of Loading', tracking=True)
+    port_of_loading_country_id = fields.Many2one('res.country', string='Loading Country', 
+                                                 related='port_of_loading_id.country_id', readonly=True)
+    port_of_discharge_id = fields.Many2one('res.country.state', string='Port of Discharge', tracking=True)
+    port_of_discharge_country_id = fields.Many2one('res.country', string='Discharge Country', 
+                                                   related='port_of_discharge_id.country_id', readonly=True)
     place_of_receipt = fields.Char('Place of Receipt')
     place_of_delivery = fields.Char('Place of Delivery')
     
@@ -184,6 +188,28 @@ class LogisticsBillLading(models.Model):
                 if bl.eta < bl.etd:
                     raise ValidationError(_('ETA cannot be before ETD.'))
                 
+    @api.onchange('port_of_loading_id')
+    def _onchange_port_of_loading(self):
+        """Update place of receipt when port of loading changes"""
+        if self.port_of_loading_id:
+            if not self.place_of_receipt:
+                self.place_of_receipt = f"{self.port_of_loading_id.name}, {self.port_of_loading_id.country_id.name}"
+    
+    @api.onchange('port_of_discharge_id')
+    def _onchange_port_of_discharge(self):
+        """Update place of delivery when port of discharge changes"""
+        if self.port_of_discharge_id:
+            if not self.place_of_delivery:
+                self.place_of_delivery = f"{self.port_of_discharge_id.name}, {self.port_of_discharge_id.country_id.name}"
+
+    @api.constrains('port_of_loading_id', 'port_of_discharge_id')
+    def _check_ports_different(self):
+        """Ensure loading and discharge ports are different"""
+        for bl in self:
+            if bl.port_of_loading_id and bl.port_of_discharge_id:
+                if bl.port_of_loading_id == bl.port_of_discharge_id:
+                    raise ValidationError(_('Port of Loading and Port of Discharge must be different.'))
+
     @api.onchange('requisition_id')
     def _onchange_requisition_id_details(self):
         """Auto-populate fields when requisition is selected"""
@@ -254,4 +280,3 @@ class LogisticsBillLading(models.Model):
             action['res_id'] = purchase_orders.id
         
         return action
-    
