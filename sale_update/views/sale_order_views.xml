@@ -13,7 +13,8 @@
                             type="object" 
                             class="btn-primary"
                             attrs="{'invisible': [('state', 'not in', ['sale', 'done'])]}"
-                            confirm="Are you sure you want to convert this Sale Order to a Quotation? This will cancel and delete all related Purchase Orders."/>
+                            confirm="Are you sure you want to convert this Sale Order to a Quotation? This will cancel and delete all related Purchase Orders."
+                            data-hotkey="shift+c"/>
                 </xpath>
                 
                 <!-- Add conversion history tab -->

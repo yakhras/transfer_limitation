@@ -1,13 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from odoo import models, fields, api
-from odoo.exceptions import UserError, ValidationError
-import logging
-
-_logger = logging.getLogger(__name__)
-
-from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
 import logging
 
@@ -50,6 +43,8 @@ class SaleOrder(models.Model):
         if po_goods_received or so_deliveries_made:
             # COMPLETE FAILURE PATH
             self._handle_complete_failure(original_values, purchase_orders)
+            
+            # Show error notification only - don't reload for failures
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
@@ -78,14 +73,23 @@ class SaleOrder(models.Model):
             
             _logger.info(f"Successfully converted Sale Order {self.name} to quotation")
             
+            # Force refresh by returning a window action to the same record
             return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Success',
-                    'message': f'Successfully converted to quotation',
-                    'type': 'success',
-                    'sticky': False,
+                'name': 'Sale Order',
+                'type': 'ir.actions.act_window',
+                'res_model': 'sale.order',
+                'res_id': self.id,
+                'view_mode': 'form',
+                'view_type': 'form',
+                'target': 'current',
+                'context': {
+                    **self.env.context,
+                    'show_sale': True,
+                    'default_type': 'sale',
+                },
+                'flags': {
+                    'initial_mode': 'edit',
+                    'form': {'action_buttons': True, 'options': {'mode': 'edit'}},
                 }
             }
             
