@@ -131,7 +131,7 @@ class LogisticsBillLading(models.Model):
     def _update_containers_port_of_discharge(self):
         """Helper method to update port of discharge in containers"""
         for container in self.container_ids:
-            if hasattr(container, 'port_of_discharge_id'):
+            if hasattr(container, 'port_of_discharge'):
                 container.sudo().write({
                     'port_of_discharge': self.port_of_discharge_id.id
                 })
@@ -159,7 +159,7 @@ class LogisticsBillLading(models.Model):
             # Update port of discharge in all selected containers
             if self.port_of_discharge_id:
                 for container in self.container_ids:
-                    if hasattr(container, 'port_of_discharge_id'):
+                    if hasattr(container, 'port_of_discharge'):
                         container.port_of_discharge = self.port_of_discharge_id
     
     @api.onchange('port_of_discharge_id')
@@ -167,7 +167,7 @@ class LogisticsBillLading(models.Model):
         """Update containers' port of discharge when B/L port changes"""
         if self.port_of_discharge_id and self.container_ids:
             for container in self.container_ids:
-                if hasattr(container, 'port_of_discharge_id'):
+                if hasattr(container, 'port_of_discharge'):
                     container.port_of_discharge = self.port_of_discharge_id
         
         # Call the original onchange method for place of delivery
