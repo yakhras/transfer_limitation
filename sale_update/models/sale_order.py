@@ -77,34 +77,20 @@ class SaleOrder(models.Model):
             # Check if email was sent and create appropriate notification
             email_status = self._get_email_notification_status()
             
-            # Return multi-action: notification + form reload
+            # Show notification and reload form
             return {
-                'type': 'ir.actions.act_multi',
-                'actions': [
-                    {
-                        'type': 'ir.actions.client',
-                        'tag': 'display_notification',
-                        'params': email_status
-                    },
-                    {
-                        'name': 'Sale Order',
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    **email_status,
+                    'next': {
                         'type': 'ir.actions.act_window',
                         'res_model': 'sale.order',
                         'res_id': self.id,
                         'view_mode': 'form',
-                        'view_type': 'form',
                         'target': 'current',
-                        'context': {
-                            **self.env.context,
-                            'show_sale': True,
-                            'default_type': 'sale',
-                        },
-                        'flags': {
-                            'initial_mode': 'edit',
-                            'form': {'action_buttons': True, 'options': {'mode': 'edit'}},
-                        }
                     }
-                ]
+                }
             }
             
         except Exception as e:
