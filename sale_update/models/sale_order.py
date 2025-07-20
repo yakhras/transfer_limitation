@@ -74,23 +74,17 @@ class SaleOrder(models.Model):
             
             _logger.info(f"Successfully converted Sale Order {self.name} to quotation")
             
-            # Check if email was sent and create appropriate notification
+            # Send notification via bus and reload form
             email_status = self._get_email_notification_status()
+            self._send_bus_notification(email_status)
             
-            # Show notification and reload form
+            # Simple form reload
             return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    **email_status,
-                    'next': {
-                        'type': 'ir.actions.act_window',
-                        'res_model': 'sale.order',
-                        'res_id': self.id,
-                        'view_mode': 'form',
-                        'target': 'current',
-                    }
-                }
+                'type': 'ir.actions.act_window',
+                'res_model': 'sale.order',
+                'res_id': self.id,
+                'view_mode': 'form',
+                'target': 'current',
             }
             
         except Exception as e:
@@ -564,6 +558,20 @@ class SaleOrder(models.Model):
                 'message': 'Order converted to quotation and email notification sent successfully',
                 'sticky': False,
             }
+
+    def _send_bus_notification(self, notification_data):
+        """Send notification via bus system"""
+        try:
+            # Send notification to current user
+            self.env['bus.bus']._sendone(
+                self.env.user.partner_id,
+                'simple_notification',
+                notification_data
+            )
+        except Exception as e:
+            _logger.warning(f"Could not send bus notification: {str(e)}")
+            # Fallback: log the notification info
+            _logger.info(f"Conversion notification: {notification_data['message']}")
         else:
             return {
                 'type': 'info', 
