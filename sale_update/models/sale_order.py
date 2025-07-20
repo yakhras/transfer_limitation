@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
-from odoo.exceptions import UserError, ValidationError
+
+from odoo import models
+from odoo.exceptions import UserError
 from odoo.tools.safe_eval import safe_eval
 import logging
 import time
@@ -305,35 +306,4 @@ class SaleOrder(models.Model):
             _logger.error(f"Error evaluating domain for action {action.name}: {str(e)}")
             return False
 
-    def _get_email_notification_status(self):
-        """Get email notification status for user feedback"""
-        email_sent = self.env.context.get('conversion_email_sent', False)
-        
-        if email_sent:
-            return {
-                'type': 'success',
-                'title': 'Conversion Successful',
-                'message': 'Order converted to quotation and email notification sent successfully',
-                'sticky': False,
-            }
-
-    def _send_bus_notification(self, notification_data):
-        """Send notification via bus system"""
-        try:
-            # Send notification to current user
-            self.env['bus.bus']._sendone(
-                self.env.user.partner_id,
-                'simple_notification',
-                notification_data
-            )
-        except Exception as e:
-            _logger.warning(f"Could not send bus notification: {str(e)}")
-            # Fallback: log the notification info
-            _logger.info(f"Conversion notification: {notification_data['message']}")
-        else:
-            return {
-                'type': 'info', 
-                'title': 'Conversion Successful',
-                'message': 'Order converted to quotation (no email notification required for this order)',
-                'sticky': False,
-            }
+    
