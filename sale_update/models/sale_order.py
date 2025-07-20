@@ -61,10 +61,6 @@ class SaleOrder(models.Model):
             
             _logger.info(f"Successfully converted Sale Order {self.name} to quotation")
             
-            # Send notification via bus and reload form
-            email_status = self._get_email_notification_status()
-            self._send_bus_notification(email_status)
-            
             # Simple form reload
             return {
                 'type': 'ir.actions.act_window',
@@ -233,42 +229,15 @@ class SaleOrder(models.Model):
                 line.write(update_vals)
         
         # Trigger the same automated actions by simulating a cancel->draft transition
-        email_sent = self._trigger_conversion_email_via_automated_actions(original_state)
-        
-        # Store email status for notification
-        self.env.context = dict(self.env.context, conversion_email_sent=email_sent)
+        self._trigger_conversion_email_via_automated_actions(original_state)
 
     def _trigger_conversion_email_via_automated_actions(self, original_state):
         """
         Trigger existing automated actions by simulating state transition
         This leverages your existing "Afkar Orders Canceled - Email" automated actions
-        Returns True if email was sent, False otherwise
         """
         try:
             _logger.info(f"Triggering automated actions for conversion of order {self.name}")
-            
-            # Check if there are any relevant automated actions before proceeding
-            automated_actions = self.env['ir.actions.server'].search([
-                ('model_id.model', '=', 'sale.order'),
-                ('state', '=', 'email'),
-                ('name', 'ilike', 'cancel'),
-                ('active', '=', True)
-            ])
-            
-            if not automated_actions:
-                _logger.info(f"No automated actions found for order {self.name}")
-                return False
-            
-            # Check if this order would match any automated action
-            email_would_be_sent = False
-            for action in automated_actions:
-                if self._matches_automated_action_domain(action):
-                    email_would_be_sent = True
-                    break
-            
-            if not email_would_be_sent:
-                _logger.info(f"Order {self.name} doesn't match any automated action criteria")
-                return False
             
             # Temporarily change to 'cancel' state to trigger your automated actions
             self.with_context(skip_conversion_email=True).write({'state': 'cancel'})
@@ -283,18 +252,16 @@ class SaleOrder(models.Model):
             self.with_context(skip_conversion_email=True).write({'state': 'draft'})
             
             _logger.info(f"Successfully triggered automated actions for order {self.name}")
-            return True
             
         except Exception as e:
             _logger.error(f"Error triggering automated actions for order {self.name}: {str(e)}")
             # Try fallback method
-            return self._send_conversion_canceled_email_fallback()
+            self._send_conversion_canceled_email_fallback()
 
     def _send_conversion_canceled_email_fallback(self):
         """
         Fallback method: Direct email sending with simplified logic
         Only used if the automated action approach fails
-        Returns True if email was sent, False otherwise
         """
         try:
             # Find automated actions that match cancellation criteria
@@ -307,7 +274,6 @@ class SaleOrder(models.Model):
             
             _logger.info(f"Found {len(automated_actions)} automated actions for cancellation emails")
             
-            email_sent = False
             for action in automated_actions:
                 try:
                     # Check if this order matches the action's domain filter
@@ -315,18 +281,14 @@ class SaleOrder(models.Model):
                         # Execute the email action directly
                         action.sudo().run()
                         _logger.info(f"Executed automated action: {action.name}")
-                        email_sent = True
                     else:
                         _logger.info(f"Order doesn't match domain for action: {action.name}")
                         
                 except Exception as action_error:
                     _logger.error(f"Error executing automated action {action.name}: {str(action_error)}")
-            
-            return email_sent
                     
         except Exception as e:
             _logger.error(f"Error in fallback email sending: {str(e)}")
-            return False
 
     def _matches_automated_action_domain(self, action):
         """Check if current order matches the automated action's domain"""
