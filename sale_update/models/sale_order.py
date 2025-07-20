@@ -309,7 +309,7 @@ class SaleOrder(models.Model):
 
 
 class ProductAttribute(models.Model):
-    _name = "product.attribute"
+    _inherit = "product.attribute"
 
 
     def write(self, values):
