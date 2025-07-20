@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
-from odoo.exceptions import UserError, ValidationError
+from odoo import models, fields
+from odoo.exceptions import UserError
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -503,8 +503,8 @@ class SaleOrder(models.Model):
                     _logger.info(f"Checking line: {line.product_id.name if line.product_id else 'No product'}")
                     
                     # Check if any line is from Afkar Transit Deposu warehouse
-                    if hasattr(line, 'warehouse_id') and line.warehouse_id == afkar_warehouse:
-                        _logger.info(f"Found matching warehouse on line: {line.warehouse_id.name}")
+                    if hasattr(line, 'warehouses_id') and line.warehouses_id == afkar_warehouse:
+                        _logger.info(f"Found matching warehouse on line: {line.warehouses_id.name}")
                         return True
                     
                     # Alternative: check picking warehouse
@@ -531,9 +531,9 @@ class SaleOrder(models.Model):
                     if line.product_id and line.product_id.categ_id:
                         # Check warehouse condition
                         warehouse_match = False
-                        if hasattr(line, 'warehouse_id') and line.warehouse_id == ihracat_warehouse:
+                        if hasattr(line, 'warehouses_id') and line.warehouses_id == ihracat_warehouse:
                             warehouse_match = True
-                            _logger.info(f"Found İhracat warehouse on line: {line.warehouse_id.name}")
+                            _logger.info(f"Found İhracat warehouse on line: {line.warehouses_id.name}")
                         else:
                             # Check picking warehouse
                             for picking in self.picking_ids:
