@@ -507,16 +507,6 @@ class SaleOrder(models.Model):
                         _logger.info(f"Found matching warehouse on line: {line.warehouses_id.name}")
                         return True
                     
-                    # Alternative: check picking warehouse
-                    for picking in self.picking_ids:
-                        if picking.location_id and picking.location_id.warehouse_id == afkar_warehouse:
-                            _logger.info(f"Found matching warehouse in picking: {picking.location_id.warehouse_id.name}")
-                            return True
-                        
-                        # Also check destination warehouse
-                        if picking.location_dest_id and picking.location_dest_id.warehouse_id == afkar_warehouse:
-                            _logger.info(f"Found matching destination warehouse in picking: {picking.location_dest_id.warehouse_id.name}")
-                            return True
             
             # Condition 2: Afkar Export Orders Canceled - Email
             # Order Lines > Warehouse = "İhracat Deposu" AND Product Category contains "Enjeksiyon"
@@ -534,14 +524,7 @@ class SaleOrder(models.Model):
                         if hasattr(line, 'warehouses_id') and line.warehouses_id == ihracat_warehouse:
                             warehouse_match = True
                             _logger.info(f"Found İhracat warehouse on line: {line.warehouses_id.name}")
-                        else:
-                            # Check picking warehouse
-                            for picking in self.picking_ids:
-                                if (picking.location_id and picking.location_id.warehouse_id == ihracat_warehouse) or \
-                                   (picking.location_dest_id and picking.location_dest_id.warehouse_id == ihracat_warehouse):
-                                    warehouse_match = True
-                                    _logger.info(f"Found İhracat warehouse in picking")
-                                    break
+                        
                         
                         # Check product category condition
                         if warehouse_match:
