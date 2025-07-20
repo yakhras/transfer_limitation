@@ -9,7 +9,7 @@
         with automatic purchase order cancellation and deletion. Includes comprehensive field tracking.
     """,
     'author': 'Your Company',
-    'depends': ['sale', 'purchase', 'stock'],
+    'depends': ['sale', 'purchase', 'stock', 'product'],
     'data': [
         'views/sale_order_views.xml',
     ],
