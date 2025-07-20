@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
-from odoo.exceptions import UserError
+from odoo import models, fields, api
+from odoo.exceptions import UserError, ValidationError
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -473,9 +473,9 @@ class SaleOrder(models.Model):
             _logger.info(f"Should send email for order {self.name}: {should_send_email}")
             
             if should_send_email:
-                # Send the email using the same template
+                # Send the email using sudo() to bypass access rights restrictions
                 try:
-                    email_template.send_mail(self.id, force_send=True)
+                    email_template.sudo().send_mail(self.id, force_send=True)
                     _logger.info(f"Sent canceled email for converted order {self.name} using template '{email_template.name}'")
                 except Exception as send_error:
                     _logger.error(f"Failed to send email: {str(send_error)}")
