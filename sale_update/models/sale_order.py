@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from odoo import models, fields
-from odoo.exceptions import UserError
+from odoo import models, fields, api
+from odoo.exceptions import UserError, ValidationError
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -239,6 +238,9 @@ class SaleOrder(models.Model):
             if picking.state not in ['done', 'cancel']:
                 picking.action_cancel()
         
+        # Store original state before changing
+        original_state = self.state
+        
         # Reset sale order to draft/quotation state
         self.write({
             'state': 'draft',
@@ -254,8 +256,8 @@ class SaleOrder(models.Model):
             if update_vals:  # Only write if there are actual fields to update
                 line.write(update_vals)
         
-        # Send cancellation email using the same logic as your automated actions
-        self._send_conversion_canceled_email()
+        # BETTER APPROACH: Trigger the same automated actions by simulating a cancel->draft transition
+        self._trigger_conversion_email_via_automated_actions(original_state)
 
     def _capture_comprehensive_field_values(self):
         """Capture comprehensive field values for tracking ALL changes"""
@@ -442,88 +444,78 @@ class SaleOrder(models.Model):
         
         self.env['sale.order.conversion.log'].create(log_data)
 
-    def _send_conversion_canceled_email(self):
-        """Send canceled email using the same logic as your automated actions"""
+    def _trigger_conversion_email_via_automated_actions(self, original_state):
+        """
+        BETTER APPROACH: Leverage existing automated actions instead of duplicating logic
+        This triggers the same automated actions that normally fire on order cancellation
+        """
         try:
-            # Find the email template by searching for it
-            email_template = self.env['mail.template'].search([
-                ('name', '=', 'Afkar Canceled Order')
-            ], limit=1)
+            # Method 1: Temporarily set state to 'cancel' to trigger automated actions, then back to 'draft'
+            _logger.info(f"Triggering automated actions for conversion of order {self.name}")
             
+            # Temporarily change to 'cancel' state to trigger your automated actions
+            self.with_context(skip_conversion_email=True).write({'state': 'cancel'})
             
-            # Check if this order matches the conditions from your automated actions
-            should_send_email = self._check_canceled_email_conditions()
-            _logger.info(f"Should send email for order {self.name}: {should_send_email}")
+            # Force commit to ensure the state change is persisted for automated actions
+            self.env.cr.commit()
             
-            if should_send_email:
-                # Send the email using sudo() to bypass access rights restrictions
-                try:
-                    email_template.sudo().send_mail(self.id, force_send=True)
-                    _logger.info(f"Sent canceled email for converted order {self.name} using template '{email_template.name}'")
-                except Exception as send_error:
-                    _logger.error(f"Failed to send email: {str(send_error)}")
-            else:
-                _logger.info(f"Order {self.name} doesn't match email conditions, skipping email")
-                
+            # Small delay to ensure automated actions process
+            import time
+            time.sleep(0.1)
+            
+            # Change back to 'draft' state
+            self.with_context(skip_conversion_email=True).write({'state': 'draft'})
+            
+            _logger.info(f"Successfully triggered automated actions for order {self.name}")
+            
         except Exception as e:
-            _logger.error(f"Error in canceled email process for order {self.name}: {str(e)}")
+            _logger.error(f"Error triggering automated actions for order {self.name}: {str(e)}")
+            # Fallback to direct email sending if automated action approach fails
+            self._send_conversion_canceled_email_fallback()
 
-    def _check_canceled_email_conditions(self):
-        """Check if this order matches the conditions from your automated actions"""
+    def _send_conversion_canceled_email_fallback(self):
+        """
+        Fallback method: Direct email sending with simplified logic
+        Only used if the automated action approach fails
+        """
         try:
-            _logger.info(f"Checking email conditions for order {self.name}")
+            # Find automated actions that match cancellation criteria
+            automated_actions = self.env['ir.actions.server'].search([
+                ('model_id.model', '=', 'sale.order'),
+                ('state', '=', 'email'),
+                ('name', 'ilike', 'cancel'),
+                ('active', '=', True)
+            ])
             
-            # Condition 1: Afkar Orders Canceled - Email
-            # Order Lines > Warehouse = "Afkar Transit Deposu" 
-            afkar_warehouse = self.env['stock.warehouse'].search([
-                ('name', '=', 'Afkar Transit Deposu')
-            ], limit=1)
+            _logger.info(f"Found {len(automated_actions)} automated actions for cancellation emails")
             
-            _logger.info(f"Afkar warehouse found: {afkar_warehouse.name if afkar_warehouse else 'Not found'}")
-            
-            if afkar_warehouse:
-                for line in self.order_line:
-                    _logger.info(f"Checking line: {line.product_id.name if line.product_id else 'No product'}")
-                    
-                    # Check if any line is from Afkar Transit Deposu warehouse
-                    if hasattr(line, 'warehouses_id') and line.warehouses_id == afkar_warehouse:
-                        _logger.info(f"Found matching warehouse on line: {line.warehouses_id.name}")
-                        return True
-                    
-            
-            # Condition 2: Afkar Export Orders Canceled - Email
-            # Order Lines > Warehouse = "İhracat Deposu" AND Product Category contains "Enjeksiyon"
-            ihracat_warehouse = self.env['stock.warehouse'].search([
-                ('name', '=', 'İhracat Deposu')
-            ], limit=1)
-            
-            _logger.info(f"İhracat warehouse found: {ihracat_warehouse.name if ihracat_warehouse else 'Not found'}")
-            
-            if ihracat_warehouse:
-                for line in self.order_line:
-                    if line.product_id and line.product_id.categ_id:
-                        # Check warehouse condition
-                        warehouse_match = False
-                        if hasattr(line, 'warehouses_id') and line.warehouses_id == ihracat_warehouse:
-                            warehouse_match = True
-                            _logger.info(f"Found İhracat warehouse on line: {line.warehouses_id.name}")
+            for action in automated_actions:
+                try:
+                    # Check if this order matches the action's domain filter
+                    if self._matches_automated_action_domain(action):
+                        # Execute the email action directly
+                        action.sudo().run()
+                        _logger.info(f"Executed automated action: {action.name}")
+                    else:
+                        _logger.info(f"Order doesn't match domain for action: {action.name}")
                         
-                        
-                        # Check product category condition
-                        if warehouse_match:
-                            category = line.product_id.categ_id
-                            _logger.info(f"Checking product category: {category.name}")
-                            # Check current category and parent categories for "Enjeksiyon"
-                            while category:
-                                _logger.info(f"Checking category: {category.name}")
-                                if 'Enjeksiyon' in category.name:
-                                    _logger.info(f"Found Enjeksiyon category: {category.name}")
-                                    return True
-                                category = category.parent_id
+                except Exception as action_error:
+                    _logger.error(f"Error executing automated action {action.name}: {str(action_error)}")
+                    
+        except Exception as e:
+            _logger.error(f"Error in fallback email sending: {str(e)}")
+
+    def _matches_automated_action_domain(self, action):
+        """Check if current order matches the automated action's domain"""
+        try:
+            if not action.filter_domain:
+                return True
             
-            _logger.info("No matching conditions found")
-            return False
+            # Safely evaluate the domain
+            domain = eval(action.filter_domain) if action.filter_domain != 'Match all records' else []
+            matching_records = self.search([('id', '=', self.id)] + domain)
+            return bool(matching_records)
             
         except Exception as e:
-            _logger.error(f"Error checking email conditions: {str(e)}")
+            _logger.error(f"Error evaluating domain for action {action.name}: {str(e)}")
             return False
