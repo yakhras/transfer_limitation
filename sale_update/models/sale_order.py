@@ -314,11 +314,4 @@ class ProductAttributeValue(models.Model):
 
     def write(self, values):
         
-        invalidate_cache = 'sequence' in values and any(record.sequence != values['sequence'] for record in self)
-        res = super(ProductAttributeValue, self).write(values)
-        if invalidate_cache:
-            # prefetched o2m have to be resequenced
-            # (eg. product.template.attribute.line: value_ids)
-            self.flush()
-            self.invalidate_cache()
-        return res
+        return super(ProductAttributeValue, self).write(values)
