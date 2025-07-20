@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
 import logging
@@ -253,6 +252,9 @@ class SaleOrder(models.Model):
             # We don't need to manually update procurement_group_id on lines
             if update_vals:  # Only write if there are actual fields to update
                 line.write(update_vals)
+        
+        # Send cancellation email using the same logic as your automated actions
+        self._send_conversion_cancellation_email()
 
     def _capture_comprehensive_field_values(self):
         """Capture comprehensive field values for tracking ALL changes"""
@@ -438,3 +440,99 @@ class SaleOrder(models.Model):
         }
         
         self.env['sale.order.conversion.log'].create(log_data)
+
+    def _send_conversion_cancellation_email(self):
+        """Send cancellation email using the same logic as your automated actions"""
+        try:
+            # Find the email template by searching for it
+            email_template = self.env['mail.template'].search([
+                ('name', '=', 'Afkar Cancelled Order')
+            ], limit=1)
+            
+            # Alternative search methods if above doesn't work
+            if not email_template:
+                email_template = self.env['mail.template'].search([
+                    ('name', 'ilike', 'cancelled'),
+                    ('model', '=', 'sale.order')
+                ], limit=1)
+            
+            if not email_template:
+                # Look for any template that might be used for cancellations
+                email_template = self.env['mail.template'].search([
+                    ('name', 'ilike', 'cancel'),
+                    ('model', '=', 'sale.order')
+                ], limit=1)
+            
+            if not email_template:
+                _logger.warning("Cancellation email template not found. Please check template name.")
+                return
+            
+            # Check if this order matches the conditions from your automated actions
+            should_send_email = self._check_cancellation_email_conditions()
+            
+            if should_send_email:
+                # Send the email using the same template
+                try:
+                    email_template.send_mail(self.id, force_send=True)
+                    _logger.info(f"Sent cancellation email for converted order {self.name} using template '{email_template.name}'")
+                except Exception as send_error:
+                    _logger.error(f"Failed to send email: {str(send_error)}")
+            else:
+                _logger.info(f"Order {self.name} doesn't match email conditions, skipping email")
+                
+        except Exception as e:
+            _logger.error(f"Error in cancellation email process for order {self.name}: {str(e)}")
+
+    def _check_cancellation_email_conditions(self):
+        """Check if this order matches the conditions from your automated actions"""
+        try:
+            # Condition 1: Afkar Orders Canceled - Email
+            # Order Lines > Warehouse = "Afkar Transit Deposu" 
+            afkar_warehouse = self.env['stock.warehouse'].search([
+                ('name', '=', 'Afkar Transit Deposu')
+            ], limit=1)
+            
+            if afkar_warehouse:
+                for line in self.order_line:
+                    # Check if any line is from Afkar Transit Deposu warehouse
+                    if hasattr(line, 'warehouse_id') and line.warehouse_id == afkar_warehouse:
+                        return True
+                    # Alternative: check picking warehouse
+                    for picking in self.picking_ids:
+                        if picking.location_id.warehouse_id == afkar_warehouse:
+                            return True
+            
+            # Condition 2: Afkar Export Orders Canceled - Email
+            # Order Lines > Warehouse = "İhracat Deposu" AND Product Category contains "Enjeksiyon"
+            ihracat_warehouse = self.env['stock.warehouse'].search([
+                ('name', '=', 'İhracat Deposu')
+            ], limit=1)
+            
+            if ihracat_warehouse:
+                for line in self.order_line:
+                    if line.product_id and line.product_id.categ_id:
+                        # Check warehouse condition
+                        warehouse_match = False
+                        if hasattr(line, 'warehouse_id') and line.warehouse_id == ihracat_warehouse:
+                            warehouse_match = True
+                        else:
+                            # Check picking warehouse
+                            for picking in self.picking_ids:
+                                if picking.location_id.warehouse_id == ihracat_warehouse:
+                                    warehouse_match = True
+                                    break
+                        
+                        # Check product category condition
+                        if warehouse_match:
+                            category = line.product_id.categ_id
+                            # Check current category and parent categories for "Enjeksiyon"
+                            while category:
+                                if 'Enjeksiyon' in category.name:
+                                    return True
+                                category = category.parent_id
+            
+            return False
+            
+        except Exception as e:
+            _logger.error(f"Error checking email conditions: {str(e)}")
+            return False
