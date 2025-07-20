@@ -11,9 +11,7 @@
     'author': 'Your Company',
     'depends': ['sale', 'purchase', 'stock'],
     'data': [
-        # 'security/ir.model.access.csv',
         'views/sale_order_views.xml',
-        # 'views/conversion_log_views.xml',
     ],
     'installable': True,
     'auto_install': False,

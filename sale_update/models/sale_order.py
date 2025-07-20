@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.safe_eval import safe_eval
@@ -10,7 +9,6 @@ _logger = logging.getLogger(__name__)
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
-
 
     def action_convert_to_quotation(self):
         """
@@ -27,9 +25,6 @@ class SaleOrder(models.Model):
         # Get all related purchase orders
         purchase_orders = self._get_related_purchase_orders()
         
-        # Store original field values for tracking (capture before any checks)
-        original_values = self._capture_comprehensive_field_values()
-        
         # STEP 1: Check All Related POs - Any goods received?
         po_goods_received = self._check_po_goods_received(purchase_orders)
         
@@ -39,7 +34,7 @@ class SaleOrder(models.Model):
         # BINARY LOGIC: Any goods received OR deliveries made = COMPLETE FAILURE
         if po_goods_received or so_deliveries_made:
             # COMPLETE FAILURE PATH
-            self._handle_complete_failure(original_values, purchase_orders)
+            self._handle_complete_failure()
             
             # Show error notification only - don't reload for failures
             return {
@@ -64,30 +59,19 @@ class SaleOrder(models.Model):
             # Step 3: Cancel Sale Order and return to quotation
             self._convert_to_quotation_state()
             
-            # Step 4: Comprehensive logging - track ALL field changes
-            new_values = self._capture_comprehensive_field_values()
-            self._create_comprehensive_conversion_log(original_values, new_values, purchase_orders, True)
-            
             _logger.info(f"Successfully converted Sale Order {self.name} to quotation")
             
-            # Force refresh by returning a window action to the same record
+            # Send notification via bus and reload form
+            email_status = self._get_email_notification_status()
+            self._send_bus_notification(email_status)
+            
+            # Simple form reload
             return {
-                'name': 'Sale Order',
                 'type': 'ir.actions.act_window',
                 'res_model': 'sale.order',
                 'res_id': self.id,
                 'view_mode': 'form',
-                'view_type': 'form',
                 'target': 'current',
-                'context': {
-                    **self.env.context,
-                    'show_sale': True,
-                    'default_type': 'sale',
-                },
-                'flags': {
-                    'initial_mode': 'edit',
-                    'form': {'action_buttons': True, 'options': {'mode': 'edit'}},
-                }
             }
             
         except Exception as e:
@@ -153,14 +137,8 @@ class SaleOrder(models.Model):
                 return True
         return False
     
-    def _handle_complete_failure(self, original_values, purchase_orders):
+    def _handle_complete_failure(self):
         """Handle complete failure - log attempt only, no changes made"""
-        self._create_comprehensive_conversion_log(
-            original_values, 
-            original_values,  # No changes made
-            purchase_orders, 
-            False  # Failed conversion
-        )
         _logger.warning(f"Conversion attempt failed for Sale Order {self.name} - goods received/delivered")
 
     def _cancel_purchase_orders(self, purchase_orders):
@@ -255,200 +233,42 @@ class SaleOrder(models.Model):
                 line.write(update_vals)
         
         # Trigger the same automated actions by simulating a cancel->draft transition
-        self._trigger_conversion_email_via_automated_actions(original_state)
-
-    def _capture_comprehensive_field_values(self):
-        """Capture comprehensive field values for tracking ALL changes"""
-        try:
-            # Sales Order Level Changes
-            so_values = {
-                'so_status': self.state,
-                'so_state': self.state,
-                'invoice_status': getattr(self, 'invoice_status', 'N/A'),
-                'delivery_status': getattr(self, 'delivery_status', 'N/A'),
-                'payment_status': getattr(self, 'payment_state', 'N/A'),
-                'date_order': self.date_order,
-                'validity_date': self.validity_date,
-                'commitment_date': getattr(self, 'commitment_date', None),
-                'amount_untaxed': self.amount_untaxed,
-                'amount_tax': self.amount_tax,
-                'amount_total': self.amount_total,
-                'procurement_group_id': self.procurement_group_id.id if self.procurement_group_id else False,
-            }
-            
-            # Sales Order Line Level Changes
-            line_values = []
-            for line in self.order_line:
-                try:
-                    line_data = {
-                        'line_id': line.id,
-                        'product_id': line.product_id.id if line.product_id else False,
-                        'product_uom_qty': line.product_uom_qty,
-                        'qty_delivered': getattr(line, 'qty_delivered', 0),
-                        'qty_invoiced': getattr(line, 'qty_invoiced', 0),
-                        'price_unit': line.price_unit,
-                        'price_subtotal': line.price_subtotal,
-                        'price_total': getattr(line, 'price_total', line.price_subtotal),
-                        'state': getattr(line, 'state', 'N/A'),
-                        'delivery_status': getattr(line, 'delivery_status', 'N/A'),
-                    }
-                    line_values.append(line_data)
-                except Exception as e:
-                    _logger.warning(f"Error capturing line data for line {line.id}: {str(e)}")
-                    continue
-            
-            # Related Sale Records
-            try:
-                # Try different field names for stock moves based on Odoo version
-                stock_moves = []
-                if self.picking_ids:
-                    for picking in self.picking_ids:
-                        if hasattr(picking, 'move_lines'):
-                            stock_moves.extend(picking.move_lines.ids)
-                        elif hasattr(picking, 'move_ids_without_package'):
-                            stock_moves.extend(picking.move_ids_without_package.ids)
-                        elif hasattr(picking, 'move_ids'):
-                            stock_moves.extend(picking.move_ids.ids)
-            except Exception as e:
-                _logger.warning(f"Error getting stock moves: {str(e)}")
-                stock_moves = []
-            
-            try:
-                payment_ids = []
-                for invoice in self.invoice_ids:
-                    if hasattr(invoice, 'payment_ids'):
-                        payment_ids.extend(invoice.payment_ids.ids)
-                    elif hasattr(invoice, 'payment_move_line_ids'):
-                        payment_ids.extend(invoice.payment_move_line_ids.ids)
-            except Exception as e:
-                _logger.warning(f"Error getting payment data: {str(e)}")
-                payment_ids = []
-            
-            related_records = {
-                'stock_moves_count': len(stock_moves),
-                'picking_ids_count': len(self.picking_ids),
-                'picking_states': [p.state for p in self.picking_ids] if self.picking_ids else [],
-                'invoice_ids_count': len(self.invoice_ids),
-                'invoice_states': [i.state for i in self.invoice_ids] if self.invoice_ids else [],
-                'payment_ids_count': len(payment_ids),
-            }
-            
-            return {
-                'so_level': so_values,
-                'line_level': line_values,
-                'related_records': related_records,
-                'capture_timestamp': fields.Datetime.now(),
-            }
-            
-        except Exception as e:
-            _logger.error(f"Error capturing comprehensive field values: {str(e)}")
-            # Return minimal data structure to prevent complete failure
-            return {
-                'so_level': {
-                    'so_status': self.state,
-                    'so_state': self.state,
-                    'amount_total': self.amount_total,
-                },
-                'line_level': [],
-                'related_records': {
-                    'picking_ids_count': 0,
-                    'invoice_ids_count': 0,
-                },
-                'capture_timestamp': fields.Datetime.now(),
-            }
-
-    def _create_comprehensive_conversion_log(self, original_values, new_values, purchase_orders, success):
-        """Create comprehensive log entry tracking ALL field changes"""
-        # Sales Order Level Changes
-        so_changes = []
-        for field, old_value in original_values['so_level'].items():
-            new_value = new_values['so_level'].get(field)
-            if old_value != new_value:
-                so_changes.append({
-                    'field': field,
-                    'old_value': str(old_value),
-                    'new_value': str(new_value),
-                })
+        email_sent = self._trigger_conversion_email_via_automated_actions(original_state)
         
-        # Sales Order Line Level Changes
-        line_changes = []
-        for i, old_line in enumerate(original_values['line_level']):
-            if i < len(new_values['line_level']):
-                new_line = new_values['line_level'][i]
-                for field, old_value in old_line.items():
-                    new_value = new_line.get(field)
-                    if old_value != new_value:
-                        line_changes.append({
-                            'line_id': old_line['line_id'],
-                            'field': field,
-                            'old_value': str(old_value),
-                            'new_value': str(new_value),
-                        })
-        
-        # Related Records Changes
-        related_changes = []
-        for field, old_value in original_values['related_records'].items():
-            new_value = new_values['related_records'].get(field)
-            if old_value != new_value:
-                related_changes.append({
-                    'field': field,
-                    'old_value': str(old_value),
-                    'new_value': str(new_value),
-                })
-        
-        # Purchase Orders Info
-        po_info = []
-        for po in purchase_orders:
-            try:
-                if po.exists():
-                    po_data = {
-                        'name': po.name,
-                        'partner': po.partner_id.name if po.partner_id else 'Unknown',
-                        'amount_total': po.amount_total,
-                        'state': po.state,
-                        'goods_received': any(p.state == 'done' for p in po.picking_ids if p.exists()),
-                    }
-                else:
-                    po_data = {
-                        'name': f'PO-{po.id}',
-                        'partner': 'Record Deleted',
-                        'amount_total': 0,
-                        'state': 'deleted',
-                        'goods_received': False,
-                    }
-                po_info.append(po_data)
-            except Exception as e:
-                _logger.warning(f"Error getting info for PO {po.id}: {str(e)}")
-                po_info.append({
-                    'name': f'PO-{po.id}',
-                    'partner': 'Error accessing record',
-                    'amount_total': 0,
-                    'state': 'error',
-                    'goods_received': False,
-                })
-        
-        # Create comprehensive log
-        log_data = {
-            'sale_order_id': self.id,
-            'conversion_date': fields.Datetime.now(),
-            'user_id': self.env.user.id,
-            'success': success,
-            'so_level_changes': str(so_changes),
-            'line_level_changes': str(line_changes),
-            'related_records_changes': str(related_changes),
-            'purchase_orders_info': str(po_info),
-            'notes': 'Attempt only - no changes made' if not success else 'Full conversion completed',
-        }
-        
-        self.env['sale.order.conversion.log'].create(log_data)
+        # Store email status for notification
+        self.env.context = dict(self.env.context, conversion_email_sent=email_sent)
 
     def _trigger_conversion_email_via_automated_actions(self, original_state):
         """
         Trigger existing automated actions by simulating state transition
         This leverages your existing "Afkar Orders Canceled - Email" automated actions
+        Returns True if email was sent, False otherwise
         """
         try:
             _logger.info(f"Triggering automated actions for conversion of order {self.name}")
+            
+            # Check if there are any relevant automated actions before proceeding
+            automated_actions = self.env['ir.actions.server'].search([
+                ('model_id.model', '=', 'sale.order'),
+                ('state', '=', 'email'),
+                ('name', 'ilike', 'cancel'),
+                ('active', '=', True)
+            ])
+            
+            if not automated_actions:
+                _logger.info(f"No automated actions found for order {self.name}")
+                return False
+            
+            # Check if this order would match any automated action
+            email_would_be_sent = False
+            for action in automated_actions:
+                if self._matches_automated_action_domain(action):
+                    email_would_be_sent = True
+                    break
+            
+            if not email_would_be_sent:
+                _logger.info(f"Order {self.name} doesn't match any automated action criteria")
+                return False
             
             # Temporarily change to 'cancel' state to trigger your automated actions
             self.with_context(skip_conversion_email=True).write({'state': 'cancel'})
@@ -463,6 +283,95 @@ class SaleOrder(models.Model):
             self.with_context(skip_conversion_email=True).write({'state': 'draft'})
             
             _logger.info(f"Successfully triggered automated actions for order {self.name}")
+            return True
             
         except Exception as e:
             _logger.error(f"Error triggering automated actions for order {self.name}: {str(e)}")
+            # Try fallback method
+            return self._send_conversion_canceled_email_fallback()
+
+    def _send_conversion_canceled_email_fallback(self):
+        """
+        Fallback method: Direct email sending with simplified logic
+        Only used if the automated action approach fails
+        Returns True if email was sent, False otherwise
+        """
+        try:
+            # Find automated actions that match cancellation criteria
+            automated_actions = self.env['ir.actions.server'].search([
+                ('model_id.model', '=', 'sale.order'),
+                ('state', '=', 'email'),
+                ('name', 'ilike', 'cancel'),
+                ('active', '=', True)
+            ])
+            
+            _logger.info(f"Found {len(automated_actions)} automated actions for cancellation emails")
+            
+            email_sent = False
+            for action in automated_actions:
+                try:
+                    # Check if this order matches the action's domain filter
+                    if self._matches_automated_action_domain(action):
+                        # Execute the email action directly
+                        action.sudo().run()
+                        _logger.info(f"Executed automated action: {action.name}")
+                        email_sent = True
+                    else:
+                        _logger.info(f"Order doesn't match domain for action: {action.name}")
+                        
+                except Exception as action_error:
+                    _logger.error(f"Error executing automated action {action.name}: {str(action_error)}")
+            
+            return email_sent
+                    
+        except Exception as e:
+            _logger.error(f"Error in fallback email sending: {str(e)}")
+            return False
+
+    def _matches_automated_action_domain(self, action):
+        """Check if current order matches the automated action's domain"""
+        try:
+            if not action.filter_domain:
+                return True
+            
+            # Safely evaluate the domain using safe_eval for security
+            domain = safe_eval(action.filter_domain) if action.filter_domain != 'Match all records' else []
+            matching_records = self.search([('id', '=', self.id)] + domain)
+            return bool(matching_records)
+            
+        except Exception as e:
+            _logger.error(f"Error evaluating domain for action {action.name}: {str(e)}")
+            return False
+
+    def _get_email_notification_status(self):
+        """Get email notification status for user feedback"""
+        email_sent = self.env.context.get('conversion_email_sent', False)
+        
+        if email_sent:
+            return {
+                'type': 'success',
+                'title': 'Conversion Successful',
+                'message': 'Order converted to quotation and email notification sent successfully',
+                'sticky': False,
+            }
+
+    def _send_bus_notification(self, notification_data):
+        """Send notification via bus system"""
+        try:
+            # Send notification to current user
+            self.env['bus.bus']._sendone(
+                self.env.user.partner_id,
+                'simple_notification',
+                notification_data
+            )
+        except Exception as e:
+            _logger.warning(f"Could not send bus notification: {str(e)}")
+            # Fallback: log the notification info
+            _logger.info(f"Conversion notification: {notification_data['message']}")
+        else:
+            return {
+                'type': 'info', 
+                'title': 'Conversion Successful',
+                'message': 'Order converted to quotation (no email notification required for this order)',
+                'sticky': False,
+            }
