@@ -317,10 +317,10 @@ class ProductAttribute(models.Model):
         return super(ProductAttribute, self).write(values)
     
 
-# class ProductAttributeValue(models.Model):
-#     _inherit = 'product.attribute.value'
+class ProductAttributeValue(models.Model):
+    _inherit = 'product.attribute.value'
 
-#     def write(self, values):
-#         # Bypass custom validation and cache logic
-#         # Call grandparent's write method directly
-#         return super(ProductAttributeValue, self).write(values)
+    def write(self, values):
+        # Bypass custom validation and cache logic
+        # Call grandparent's write method directly
+        return super(ProductAttributeValue, self).write(values)
