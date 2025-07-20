@@ -308,19 +308,19 @@ class SaleOrder(models.Model):
 
 
 
-# class ProductAttribute(models.Model):
-#     _name = "product.attribute"
+class ProductAttribute(models.Model):
+    _name = "product.attribute"
 
-
-#     def write(self, values):
-        
-#         return super(ProductAttribute, self).write(values)
-    
-
-class ProductAttributeValue(models.Model):
-    _inherit = 'product.attribute.value'
 
     def write(self, values):
-        # Bypass custom validation and cache logic
-        # Call grandparent's write method directly
-        return super(ProductAttributeValue, self).write(values)
+        
+        return super(ProductAttribute, self).write(values)
+    
+
+# class ProductAttributeValue(models.Model):
+#     _inherit = 'product.attribute.value'
+
+#     def write(self, values):
+#         # Bypass custom validation and cache logic
+#         # Call grandparent's write method directly
+#         return super(ProductAttributeValue, self).write(values)
