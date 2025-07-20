@@ -18,7 +18,7 @@
                 </xpath>
                 
                 <!-- Add conversion history tab -->
-                <xpath expr="//notebook" position="inside">
+                <!-- <xpath expr="//notebook" position="inside">
                     <page string="Conversion History" attrs="{'invisible': [('conversion_log_ids', '=', [])]}">
                         <field name="conversion_log_ids" readonly="1">
                             <tree decoration-success="success == True" decoration-danger="success == False">
@@ -60,7 +60,7 @@
                             </form>
                         </field>
                     </page>
-                </xpath>
+                </xpath> -->
             </field>
         </record>
     </data>

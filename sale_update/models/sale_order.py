@@ -11,11 +11,11 @@ _logger = logging.getLogger(__name__)
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    conversion_log_ids = fields.One2many(
-        'sale.order.conversion.log', 
-        'sale_order_id', 
-        string='Conversion History'
-    )
+    # conversion_log_ids = fields.One2many(
+    #     'sale.order.conversion.log', 
+    #     'sale_order_id', 
+    #     string='Conversion History'
+    # )
 
     def action_convert_to_quotation(self):
         """
