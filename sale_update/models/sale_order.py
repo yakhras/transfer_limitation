@@ -450,23 +450,6 @@ class SaleOrder(models.Model):
                 ('name', '=', 'Afkar Canceled Order')
             ], limit=1)
             
-            if not email_template:
-                # Try searching with different variations
-                email_template = self.env['mail.template'].search([
-                    ('name', 'ilike', 'Afkar'),
-                    ('name', 'ilike', 'Cancel'),
-                    ('model', '=', 'sale.order')
-                ], limit=1)
-            
-            if not email_template:
-                _logger.warning("Canceled email template not found. Available templates:")
-                # Log available templates for debugging
-                all_templates = self.env['mail.template'].search([('model', '=', 'sale.order')])
-                for template in all_templates:
-                    _logger.warning(f"Available template: '{template.name}'")
-                return
-            
-            _logger.info(f"Found email template: '{email_template.name}'")
             
             # Check if this order matches the conditions from your automated actions
             should_send_email = self._check_canceled_email_conditions()
