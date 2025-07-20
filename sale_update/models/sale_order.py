@@ -305,5 +305,3 @@ class SaleOrder(models.Model):
         except Exception as e:
             _logger.error(f"Error evaluating domain for action {action.name}: {str(e)}")
             return False
-
-    
