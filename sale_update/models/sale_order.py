@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
+from odoo.tools.safe_eval import safe_eval
 import logging
+import time
 
 _logger = logging.getLogger(__name__)
 
@@ -256,7 +259,7 @@ class SaleOrder(models.Model):
             if update_vals:  # Only write if there are actual fields to update
                 line.write(update_vals)
         
-        # BETTER APPROACH: Trigger the same automated actions by simulating a cancel->draft transition
+        # Trigger the same automated actions by simulating a cancel->draft transition
         self._trigger_conversion_email_via_automated_actions(original_state)
 
     def _capture_comprehensive_field_values(self):
@@ -446,11 +449,10 @@ class SaleOrder(models.Model):
 
     def _trigger_conversion_email_via_automated_actions(self, original_state):
         """
-        BETTER APPROACH: Leverage existing automated actions instead of duplicating logic
-        This triggers the same automated actions that normally fire on order cancellation
+        Trigger existing automated actions by simulating state transition
+        This leverages your existing "Afkar Orders Canceled - Email" automated actions
         """
         try:
-            # Method 1: Temporarily set state to 'cancel' to trigger automated actions, then back to 'draft'
             _logger.info(f"Triggering automated actions for conversion of order {self.name}")
             
             # Temporarily change to 'cancel' state to trigger your automated actions
@@ -460,7 +462,6 @@ class SaleOrder(models.Model):
             self.env.cr.commit()
             
             # Small delay to ensure automated actions process
-            import time
             time.sleep(0.1)
             
             # Change back to 'draft' state
@@ -470,52 +471,3 @@ class SaleOrder(models.Model):
             
         except Exception as e:
             _logger.error(f"Error triggering automated actions for order {self.name}: {str(e)}")
-            # Fallback to direct email sending if automated action approach fails
-            self._send_conversion_canceled_email_fallback()
-
-    def _send_conversion_canceled_email_fallback(self):
-        """
-        Fallback method: Direct email sending with simplified logic
-        Only used if the automated action approach fails
-        """
-        try:
-            # Find automated actions that match cancellation criteria
-            automated_actions = self.env['ir.actions.server'].search([
-                ('model_id.model', '=', 'sale.order'),
-                ('state', '=', 'email'),
-                ('name', 'ilike', 'cancel'),
-                ('active', '=', True)
-            ])
-            
-            _logger.info(f"Found {len(automated_actions)} automated actions for cancellation emails")
-            
-            for action in automated_actions:
-                try:
-                    # Check if this order matches the action's domain filter
-                    if self._matches_automated_action_domain(action):
-                        # Execute the email action directly
-                        action.sudo().run()
-                        _logger.info(f"Executed automated action: {action.name}")
-                    else:
-                        _logger.info(f"Order doesn't match domain for action: {action.name}")
-                        
-                except Exception as action_error:
-                    _logger.error(f"Error executing automated action {action.name}: {str(action_error)}")
-                    
-        except Exception as e:
-            _logger.error(f"Error in fallback email sending: {str(e)}")
-
-    def _matches_automated_action_domain(self, action):
-        """Check if current order matches the automated action's domain"""
-        try:
-            if not action.filter_domain:
-                return True
-            
-            # Safely evaluate the domain
-            domain = eval(action.filter_domain) if action.filter_domain != 'Match all records' else []
-            matching_records = self.search([('id', '=', self.id)] + domain)
-            return bool(matching_records)
-            
-        except Exception as e:
-            _logger.error(f"Error evaluating domain for action {action.name}: {str(e)}")
-            return False
