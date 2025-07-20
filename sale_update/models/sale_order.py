@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
 import logging
@@ -254,7 +255,7 @@ class SaleOrder(models.Model):
                 line.write(update_vals)
         
         # Send cancellation email using the same logic as your automated actions
-        self._send_conversion_cancellation_email()
+        self._send_conversion_canceled_email()
 
     def _capture_comprehensive_field_values(self):
         """Capture comprehensive field values for tracking ALL changes"""
@@ -441,49 +442,35 @@ class SaleOrder(models.Model):
         
         self.env['sale.order.conversion.log'].create(log_data)
 
-    def _send_conversion_cancellation_email(self):
-        """Send cancellation email using the same logic as your automated actions"""
+    def _send_conversion_canceled_email(self):
+        """Send canceled email using the same logic as your automated actions"""
         try:
             # Find the email template by searching for it
             email_template = self.env['mail.template'].search([
-                ('name', '=', 'Afkar Cancelled Order')
+                ('name', '=', 'Afkar Canceled Order')
             ], limit=1)
             
-            # Alternative search methods if above doesn't work
             if not email_template:
-                email_template = self.env['mail.template'].search([
-                    ('name', 'ilike', 'cancelled'),
-                    ('model', '=', 'sale.order')
-                ], limit=1)
-            
-            if not email_template:
-                # Look for any template that might be used for cancellations
-                email_template = self.env['mail.template'].search([
-                    ('name', 'ilike', 'cancel'),
-                    ('model', '=', 'sale.order')
-                ], limit=1)
-            
-            if not email_template:
-                _logger.warning("Cancellation email template not found. Please check template name.")
+                _logger.warning("Canceled email template not found. Please check template name.")
                 return
             
             # Check if this order matches the conditions from your automated actions
-            should_send_email = self._check_cancellation_email_conditions()
+            should_send_email = self._check_canceled_email_conditions()
             
             if should_send_email:
                 # Send the email using the same template
                 try:
                     email_template.send_mail(self.id, force_send=True)
-                    _logger.info(f"Sent cancellation email for converted order {self.name} using template '{email_template.name}'")
+                    _logger.info(f"Sent canceled email for converted order {self.name} using template '{email_template.name}'")
                 except Exception as send_error:
                     _logger.error(f"Failed to send email: {str(send_error)}")
             else:
                 _logger.info(f"Order {self.name} doesn't match email conditions, skipping email")
                 
         except Exception as e:
-            _logger.error(f"Error in cancellation email process for order {self.name}: {str(e)}")
+            _logger.error(f"Error in canceled email process for order {self.name}: {str(e)}")
 
-    def _check_cancellation_email_conditions(self):
+    def _check_canceled_email_conditions(self):
         """Check if this order matches the conditions from your automated actions"""
         try:
             # Condition 1: Afkar Orders Canceled - Email
