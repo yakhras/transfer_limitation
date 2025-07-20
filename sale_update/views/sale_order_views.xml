@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//header" position="inside">
                     <button name="action_convert_to_quotation" 
-                            string="Convert to Quotation" 
+                            string="Quotation" 
                             type="object" 
                             class="btn-primary"
                             attrs="{'invisible': [('state', 'not in', ['sale', 'done'])]}"
