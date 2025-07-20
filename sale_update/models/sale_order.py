@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
-from odoo.exceptions import UserError, ValidationError
+from odoo import models, fields
+from odoo.exceptions import UserError
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -451,11 +451,26 @@ class SaleOrder(models.Model):
             ], limit=1)
             
             if not email_template:
-                _logger.warning("Canceled email template not found. Please check template name.")
+                # Try searching with different variations
+                email_template = self.env['mail.template'].search([
+                    ('name', 'ilike', 'Afkar'),
+                    ('name', 'ilike', 'Cancel'),
+                    ('model', '=', 'sale.order')
+                ], limit=1)
+            
+            if not email_template:
+                _logger.warning("Canceled email template not found. Available templates:")
+                # Log available templates for debugging
+                all_templates = self.env['mail.template'].search([('model', '=', 'sale.order')])
+                for template in all_templates:
+                    _logger.warning(f"Available template: '{template.name}'")
                 return
+            
+            _logger.info(f"Found email template: '{email_template.name}'")
             
             # Check if this order matches the conditions from your automated actions
             should_send_email = self._check_canceled_email_conditions()
+            _logger.info(f"Should send email for order {self.name}: {should_send_email}")
             
             if should_send_email:
                 # Send the email using the same template
@@ -473,20 +488,34 @@ class SaleOrder(models.Model):
     def _check_canceled_email_conditions(self):
         """Check if this order matches the conditions from your automated actions"""
         try:
+            _logger.info(f"Checking email conditions for order {self.name}")
+            
             # Condition 1: Afkar Orders Canceled - Email
             # Order Lines > Warehouse = "Afkar Transit Deposu" 
             afkar_warehouse = self.env['stock.warehouse'].search([
                 ('name', '=', 'Afkar Transit Deposu')
             ], limit=1)
             
+            _logger.info(f"Afkar warehouse found: {afkar_warehouse.name if afkar_warehouse else 'Not found'}")
+            
             if afkar_warehouse:
                 for line in self.order_line:
+                    _logger.info(f"Checking line: {line.product_id.name if line.product_id else 'No product'}")
+                    
                     # Check if any line is from Afkar Transit Deposu warehouse
                     if hasattr(line, 'warehouse_id') and line.warehouse_id == afkar_warehouse:
+                        _logger.info(f"Found matching warehouse on line: {line.warehouse_id.name}")
                         return True
+                    
                     # Alternative: check picking warehouse
                     for picking in self.picking_ids:
-                        if picking.location_id.warehouse_id == afkar_warehouse:
+                        if picking.location_id and picking.location_id.warehouse_id == afkar_warehouse:
+                            _logger.info(f"Found matching warehouse in picking: {picking.location_id.warehouse_id.name}")
+                            return True
+                        
+                        # Also check destination warehouse
+                        if picking.location_dest_id and picking.location_dest_id.warehouse_id == afkar_warehouse:
+                            _logger.info(f"Found matching destination warehouse in picking: {picking.location_dest_id.warehouse_id.name}")
                             return True
             
             # Condition 2: Afkar Export Orders Canceled - Email
@@ -495,6 +524,8 @@ class SaleOrder(models.Model):
                 ('name', '=', 'İhracat Deposu')
             ], limit=1)
             
+            _logger.info(f"İhracat warehouse found: {ihracat_warehouse.name if ihracat_warehouse else 'Not found'}")
+            
             if ihracat_warehouse:
                 for line in self.order_line:
                     if line.product_id and line.product_id.categ_id:
@@ -502,22 +533,29 @@ class SaleOrder(models.Model):
                         warehouse_match = False
                         if hasattr(line, 'warehouse_id') and line.warehouse_id == ihracat_warehouse:
                             warehouse_match = True
+                            _logger.info(f"Found İhracat warehouse on line: {line.warehouse_id.name}")
                         else:
                             # Check picking warehouse
                             for picking in self.picking_ids:
-                                if picking.location_id.warehouse_id == ihracat_warehouse:
+                                if (picking.location_id and picking.location_id.warehouse_id == ihracat_warehouse) or \
+                                   (picking.location_dest_id and picking.location_dest_id.warehouse_id == ihracat_warehouse):
                                     warehouse_match = True
+                                    _logger.info(f"Found İhracat warehouse in picking")
                                     break
                         
                         # Check product category condition
                         if warehouse_match:
                             category = line.product_id.categ_id
+                            _logger.info(f"Checking product category: {category.name}")
                             # Check current category and parent categories for "Enjeksiyon"
                             while category:
+                                _logger.info(f"Checking category: {category.name}")
                                 if 'Enjeksiyon' in category.name:
+                                    _logger.info(f"Found Enjeksiyon category: {category.name}")
                                     return True
                                 category = category.parent_id
             
+            _logger.info("No matching conditions found")
             return False
             
         except Exception as e:
