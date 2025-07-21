@@ -111,25 +111,6 @@ class ProductTemplate(models.Model):
                 ('name', '=', category_name)
             ], limit=1)
             
-            if not target_category:
-                # Search for similar categories
-                similar_categories = self.env['product.category'].search([
-                    '|', '|',
-                    ('name', 'ilike', 'lotion'),
-                    ('name', 'ilike', 'pump'),
-                    ('name', 'ilike', 'sabun')
-                ])
-                
-                result = {
-                    'found_category': False,
-                    'category_name': category_name,
-                    'similar_categories': [{'id': cat.id, 'name': cat.name} for cat in similar_categories],
-                    'products_with_attributes': [],
-                    'total_count': 0
-                }
-                
-                _logger.warning(f"Category '{category_name}' not found")
-                return result
             
             # Find products with attributes in this category
             products_with_attributes = self.search([
