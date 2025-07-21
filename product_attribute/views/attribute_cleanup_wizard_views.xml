@@ -101,11 +101,5 @@
                   sequence="100"/>
 
 
-        <!-- Optional: Add to Settings/Configuration menu -->
-        <menuitem id="menu_attribute_cleanup_config" 
-                  name="Product Attribute Cleanup" 
-                  parent="product.menu_product_config" 
-                  action="action_attribute_cleanup_wizard" 
-                  sequence="30"/>
     </data>
 </odoo>
