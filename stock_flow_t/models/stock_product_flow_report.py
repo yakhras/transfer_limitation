@@ -299,18 +299,3 @@ class StockProductFlowReport(models.Model):
         self.init()
 
     
-    @api.model
-    def action_stock_move_line_report(self):
-        """Action to open report with fresh data."""
-        # Refresh the materialized view
-        self.refresh_materialized_view()
-        
-        # Return the tree view action
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Stock Product Flow',
-            'res_model': 'stock.product.flow.report',
-            'view_mode': 'tree',
-            'target': 'current',
-            'context': {}
-        }
