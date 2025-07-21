@@ -100,12 +100,6 @@
                   action="action_attribute_cleanup_wizard" 
                   sequence="100"/>
 
-        <!-- Alternative Menu Item in Product Configuration -->
-        <menuitem id="menu_attribute_cleanup_product" 
-                  name="Attribute Cleanup" 
-                  parent="product.menu_product_template_action" 
-                  action="action_attribute_cleanup_wizard" 
-                  sequence="50"/>
 
         <!-- Optional: Add to Settings/Configuration menu -->
         <menuitem id="menu_attribute_cleanup_config" 
