@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Scheduled Action to Remove All Attributes from All Products -->
+        <record id="ir_cron_remove_all_product_attributes" model="ir.cron">
+            <field name="name">Remove All Product Attributes</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="state">code</field>
+            <field name="code">model.remove_all_attributes_scheduled()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">False</field>
+            <field name="user_id" ref="base.user_admin"/>
+            <field name="doall">False</field>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+    </data>
+</odoo>
