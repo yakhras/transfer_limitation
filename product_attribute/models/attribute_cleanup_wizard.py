@@ -11,7 +11,6 @@ class AttributeCleanupWizard(models.TransientModel):
         'product.category',
         string='Product Category', 
         required=True,
-        domain=[('product_tmpl_ids', '!=', False)],  # Only categories with products
         help="Select the category to clean attributes from"
     )
     
