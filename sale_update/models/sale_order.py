@@ -305,22 +305,3 @@ class SaleOrder(models.Model):
         except Exception as e:
             _logger.error(f"Error evaluating domain for action {action.name}: {str(e)}")
             return False
-
-
-
-class ProductAttribute(models.Model):
-    _inherit = "product.attribute"
-
-
-    def write(self, values):
-        
-        return super(ProductAttribute, self).write(values)
-    
-
-class ProductAttributeValue(models.Model):
-    _inherit = 'product.attribute.value'
-
-    def write(self, values):
-        # Bypass custom validation and cache logic
-        # Call grandparent's write method directly
-        return super(ProductAttributeValue, self).write(values)

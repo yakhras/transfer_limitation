@@ -27,5 +27,12 @@
         "views/stock_flow_view.xml",
     ],
 
+    # Add this section for JavaScript assets
+    'assets': {
+        'web.assets_backend': [
+            'stock_flow_t/static/src/js/stock_flow.js',
+        ],
+    },
+
     #'post_init_hook': 'process_existing_internal_transfers',
 }

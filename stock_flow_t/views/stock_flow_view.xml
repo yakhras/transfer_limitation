@@ -53,7 +53,7 @@
             <field name="name">Stock Product Flow</field>
             <field name="res_model">stock.product.flow.report</field>
             <field name="view_mode">tree</field>
-            <field name="search_view_id" ref="stock_flow.view_stock_move_line_report_search"/>
+            <field name="search_view_id" ref="stock_flow_t.view_stock_move_line_report_search"/>
         </record>
 
 
