@@ -19,11 +19,7 @@ class ProductTemplate(models.Model):
                 ('attribute_line_ids', '!=', False)
             ])
             
-            total_products = len(products_with_attributes)
             processed_count = 0
-            
-            _logger.info(f"Starting to remove attributes from {total_products} products")
-            
             for product in products_with_attributes:
                 try:
                     # Remove attribute lines
