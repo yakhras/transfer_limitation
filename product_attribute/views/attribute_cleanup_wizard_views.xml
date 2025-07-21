@@ -36,6 +36,9 @@
                                 <field name="category_id" 
                                        options="{'no_create': True, 'no_create_edit': True}"
                                        placeholder="Select a product category"/>
+                                <field name="batch_size" 
+                                       attrs="{'readonly': [('state', '!=', 'draft')]}"
+                                       help="Number of products to process in each batch"/>
                             </group>
                             <group>
                                 <field name="products_found" readonly="1"/>
@@ -49,6 +52,11 @@
                                        attrs="{'invisible': [('variants_to_remove', '=', 0)]}"/>
                             </group>
                         </group>
+                        
+                        <!-- Real-time Processing Progress -->
+                        <div attrs="{'invisible': [('processing_progress', '=', False)]}">
+                            <field name="processing_progress" widget="html" nolabel="1"/>
+                        </div>
                         
                         <notebook>
                             <page string="📋 Preview Results" attrs="{'invisible': [('preview_results', '=', False)]}">
@@ -64,6 +72,7 @@
                                     <h4>How to Use This Tool</h4>
                                     <ol>
                                         <li><strong>Select Category:</strong> Choose the product category you want to clean from the dropdown</li>
+                                        <li><strong>Set Batch Size:</strong> Choose how many products to process at once (default: 10)</li>
                                         <li><strong>Preview:</strong> Click "Preview Category" to see what products will be affected</li>
                                         <li><strong>Review Results:</strong> Check both lists:
                                             <ul>
@@ -71,12 +80,21 @@
                                                 <li><span style="color: #27ae60;">Products WITHOUT Attributes</span> - These remain unchanged</li>
                                             </ul>
                                         </li>
-                                        <li><strong>Execute:</strong> If satisfied, click "Execute Cleanup" to remove attributes</li>
+                                        <li><strong>Execute:</strong> Click "Execute Cleanup" to start batch processing</li>
+                                        <li><strong>Monitor Progress:</strong> Watch real-time progress with batch updates</li>
                                         <li><strong>Download:</strong> Get a detailed HTML report of the operation</li>
                                     </ol>
                                     
                                     <h5>⚠️ Warning</h5>
                                     <p>This operation will permanently remove ALL attributes from products in the selected category. Make sure to backup your database before proceeding.</p>
+                                    
+                                    <h5>🔄 Batch Processing</h5>
+                                    <ul>
+                                        <li><strong>Real-time Progress:</strong> See live updates as each batch is processed</li>
+                                        <li><strong>Error Resilience:</strong> Processing continues even if individual products fail</li>
+                                        <li><strong>Batch Size:</strong> Smaller batches (5-10) = more feedback, larger batches = faster completion</li>
+                                        <li><strong>Progress Tracking:</strong> Visual progress bar and detailed statistics</li>
+                                    </ul>
                                     
                                     <h5>📊 Preview Features</h5>
                                     <ul>
@@ -90,17 +108,20 @@
                                     <ul>
                                         <li>Safe preview before execution</li>
                                         <li>Category selection with dropdown</li>
-                                        <li>Comprehensive product information display</li>
-                                        <li>Progress tracking and error handling</li>
+                                        <li>Configurable batch processing</li>
+                                        <li>Real-time progress feedback</li>
+                                        <li>Error collection and reporting</li>
                                         <li>Downloadable audit reports</li>
                                         <li>Dual product lists for complete verification</li>
                                     </ul>
                                     
                                     <h5>💡 Tips</h5>
                                     <ul>
-                                        <li>Use the preview to verify the tool found all expected products</li>
-                                        <li>Check that the total count matches your expectations</li>
-                                        <li>Products without attributes serve as a verification that all category products were found</li>
+                                        <li>Use smaller batch sizes (5-10) for better progress visibility</li>
+                                        <li>Use larger batch sizes (20-50) for faster processing of large categories</li>
+                                        <li>The tool continues processing even if some products fail</li>
+                                        <li>You can monitor progress in real-time during execution</li>
+                                        <li>All errors are collected and reported at the end</li>
                                         <li>Download the report for audit trails and documentation</li>
                                     </ul>
                                 </div>
