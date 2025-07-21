@@ -49,12 +49,12 @@
 
 
 
-        <record id="action_stock_move_line_report" model="ir.actions.act_window">
+        <!-- <record id="action_stock_move_line_report" model="ir.actions.act_window">
             <field name="name">Stock Product Flow</field>
             <field name="res_model">stock.product.flow.report</field>
             <field name="view_mode">tree</field>
             <field name="search_view_id" ref="stock_flow_t.view_stock_move_line_report_search"/>
-        </record>
+        </record> -->
 
 
         <menuitem id="menu_stock_move_line_report"
