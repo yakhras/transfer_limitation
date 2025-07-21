@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Wizard Form View -->
+        <record id="view_attribute_cleanup_wizard_form" model="ir.ui.view">
+            <field name="name">attribute.cleanup.wizard.form</field>
+            <field name="model">attribute.cleanup.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Product Attribute Cleanup">
+                    <header>
+                        <button name="action_preview_category" 
+                                string="🔍 Preview Category" 
+                                type="object" 
+                                class="btn-primary"
+                                attrs="{'invisible': [('state', 'in', ['executed'])]}"/>
+                        
+                        <button name="action_execute_cleanup" 
+                                string="🧹 Execute Cleanup" 
+                                type="object" 
+                                class="btn-warning"
+                                confirm="Are you sure you want to remove all attributes from these products? This action cannot be undone!"
+                                attrs="{'invisible': [('state', 'not in', ['preview'])]}"/>
+                        
+                        <button name="action_download_report" 
+                                string="📥 Download Report" 
+                                type="object" 
+                                class="btn-info"
+                                attrs="{'invisible': [('state', 'not in', ['preview', 'executed'])]}"/>
+                        
+                        <field name="state" widget="statusbar" statusbar_visible="draft,preview,executed"/>
+                    </header>
+                    
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="category_name" placeholder="Enter category name"/>
+                            </group>
+                            <group>
+                                <field name="products_found" readonly="1"/>
+                                <field name="attributes_to_remove" readonly="1"/>
+                                <field name="variants_to_remove" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="📋 Preview Results" attrs="{'invisible': [('preview_results', '=', False)]}">
+                                <field name="preview_results" widget="html" nolabel="1"/>
+                            </page>
+                            
+                            <page string="✅ Execution Results" attrs="{'invisible': [('execution_results', '=', False)]}">
+                                <field name="execution_results" widget="html" nolabel="1"/>
+                            </page>
+                            
+                            <page string="ℹ️ Help">
+                                <div class="alert alert-info">
+                                    <h4>How to Use This Tool</h4>
+                                    <ol>
+                                        <li><strong>Enter Category Name:</strong> Type the exact category name you want to clean</li>
+                                        <li><strong>Preview:</strong> Click "Preview Category" to see what products will be affected</li>
+                                        <li><strong>Review:</strong> Check the preview results carefully</li>
+                                        <li><strong>Execute:</strong> If satisfied, click "Execute Cleanup" to remove attributes</li>
+                                        <li><strong>Download:</strong> Get a detailed HTML report of the operation</li>
+                                    </ol>
+                                    
+                                    <h5>⚠️ Warning</h5>
+                                    <p>This operation will permanently remove ALL attributes from products in the selected category. Make sure to backup your database before proceeding.</p>
+                                    
+                                    <h5>📁 Default Category</h5>
+                                    <p>The default category is set to "Lotion Pumps (Sıvı Sabun Pompası)" but you can change it to any category.</p>
+                                    
+                                    <h5>🔧 Features</h5>
+                                    <ul>
+                                        <li>Safe preview before execution</li>
+                                        <li>Detailed product information display</li>
+                                        <li>Progress tracking and error handling</li>
+                                        <li>Downloadable audit reports</li>
+                                        <li>Category-based filtering</li>
+                                    </ul>
+                                </div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Wizard Action -->
+        <record id="action_attribute_cleanup_wizard" model="ir.actions.act_window">
+            <field name="name">Product Attribute Cleanup</field>
+            <field name="res_model">attribute.cleanup.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_attribute_cleanup_wizard_form"/>
+        </record>
+
+        <!-- Menu Item in Inventory -->
+        <menuitem id="menu_attribute_cleanup_inventory" 
+                  name="Attribute Cleanup" 
+                  parent="stock.menu_stock_root" 
+                  action="action_attribute_cleanup_wizard" 
+                  sequence="100"/>
+
+        <!-- Alternative Menu Item in Product Configuration -->
+        <menuitem id="menu_attribute_cleanup_product" 
+                  name="Attribute Cleanup" 
+                  parent="product.menu_product_template_action" 
+                  action="action_attribute_cleanup_wizard" 
+                  sequence="50"/>
+
+        <!-- Optional: Add to Settings/Configuration menu -->
+        <menuitem id="menu_attribute_cleanup_config" 
+                  name="Product Attribute Cleanup" 
+                  parent="product.menu_product_config" 
+                  action="action_attribute_cleanup_wizard" 
+                  sequence="30"/>
+    </data>
+</odoo>

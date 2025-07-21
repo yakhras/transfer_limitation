@@ -12,33 +12,48 @@ class ProductTemplate(models.Model):
         Scheduled action to remove attributes from all products in "Lotion Pumps (Sıvı Sabun Pompası)" category
         """
         try:
-            # Stage 2: Target specific category - Lotion Pumps
             category_name = "Lotion Pumps (Sıvı Sabun Pompası)"
             
-            # Find the category first
+            # Auto-preview before execution (for logging)
+            _logger.info("="*50)
+            _logger.info("STARTING CATEGORY CLEANUP WITH PREVIEW")
+            _logger.info("="*50)
+            
+            preview = self.get_category_preview(category_name)
+            if 'error' in preview:
+                _logger.error(f"Preview failed: {preview['error']}")
+                return False
+            
+            if not preview['found_category']:
+                _logger.error(f"Category '{category_name}' not found")
+                if preview.get('similar_categories'):
+                    _logger.info("Similar categories found:")
+                    for cat in preview['similar_categories']:
+                        _logger.info(f"  - {cat['name']} (ID: {cat['id']})")
+                return False
+            
+            # Log preview results
+            _logger.info(f"PREVIEW RESULTS:")
+            _logger.info(f"  Category: {preview['category_name']} (ID: {preview['category_id']})")
+            _logger.info(f"  Products with attributes: {preview['total_count']}")
+            _logger.info(f"  Total attributes to remove: {preview['summary']['total_attributes']}")
+            _logger.info(f"  Total variants to remove: {preview['summary']['total_variants']}")
+            _logger.info(f"  Active products: {preview['summary']['active_products']}")
+            _logger.info(f"  Inactive products: {preview['summary']['inactive_products']}")
+            
+            if preview['total_count'] == 0:
+                _logger.info("No products with attributes found - nothing to do")
+                return True
+            
+            # Proceed with actual cleanup
+            _logger.info("="*50)
+            _logger.info("STARTING ACTUAL CLEANUP")
+            _logger.info("="*50)
+            
+            # Find the category
             target_category = self.env['product.category'].search([
                 ('name', '=', category_name)
             ], limit=1)
-            
-            if not target_category:
-                _logger.warning(f"Category '{category_name}' not found. Searching for similar names...")
-                # Try to find similar category names
-                similar_categories = self.env['product.category'].search([
-                    '|', '|',
-                    ('name', 'ilike', 'lotion'),
-                    ('name', 'ilike', 'pump'),
-                    ('name', 'ilike', 'sabun')
-                ])
-                
-                if similar_categories:
-                    _logger.info("Found similar categories:")
-                    for cat in similar_categories:
-                        _logger.info(f"  - ID: {cat.id}, Name: {cat.name}")
-                
-                _logger.error(f"Cannot proceed without finding category '{category_name}'")
-                return False
-            
-            _logger.info(f"Found target category: {target_category.name} (ID: {target_category.id})")
             
             # Find all products in this category that have attributes
             target_products = self.search([
@@ -46,83 +61,112 @@ class ProductTemplate(models.Model):
                 ('attribute_line_ids', '!=', False)
             ])
             
-            if not target_products:
-                _logger.info(f"No products with attributes found in category '{category_name}'")
-                return True
-            
-            total_products = len(target_products)
-            _logger.info(f"Found {total_products} products with attributes in category '{category_name}'")
-            
-            # Process statistics
-            stats = {
-                'total_found': total_products,
-                'processed': 0,
-                'success': 0,
-                'errors': 0,
-                'total_attributes_removed': 0,
-                'total_variants_removed': 0
-            }
+            success_count = 0
             
             # Process each product
-            for index, product in enumerate(target_products, 1):
-                stats['processed'] += 1
-                
-                _logger.info(f"Processing {index}/{total_products}: {product.name} (ID: {product.id})")
-                
+            for product in target_products:
                 try:
-                    # Store initial state
-                    initial_attributes = len(product.attribute_line_ids)
-                    initial_variants = len(product.product_variant_ids)
-                    
-                    # Remove attribute lines
+                    # Remove attributes
                     if product.attribute_line_ids:
                         product.attribute_line_ids.unlink()
-                        stats['total_attributes_removed'] += initial_attributes
                     
-                    # Remove product template attribute values
                     if hasattr(product, 'product_template_attribute_value_ids'):
-                        if product.product_template_attribute_value_ids:
-                            product.product_template_attribute_value_ids.unlink()
+                        product.product_template_attribute_value_ids.unlink()
                     
-                    # Handle product variants - keep only the main variant
-                    variants_deleted = 0
                     if len(product.product_variant_ids) > 1:
                         variants_to_delete = product.product_variant_ids.filtered(
                             lambda v: v.id != product.product_variant_id.id
                         )
-                        variants_deleted = len(variants_to_delete)
                         variants_to_delete.unlink()
-                        stats['total_variants_removed'] += variants_deleted
                     
-                    # Clear attribute values from main variant
                     if product.product_variant_id:
                         product.product_variant_id.write({
                             'attribute_value_ids': [(5, 0, 0)]
                         })
                     
-                    stats['success'] += 1
-                    _logger.info(f"  ✓ SUCCESS: Removed {initial_attributes} attributes, {variants_deleted} variants")
+                    success_count += 1
+                    _logger.info(f"✓ Processed: {product.name}")
                     
                 except Exception as e:
-                    stats['errors'] += 1
-                    _logger.error(f"  ✗ ERROR processing {product.name}: {str(e)}")
+                    _logger.error(f"✗ Error processing {product.name}: {str(e)}")
                     continue
             
-            # Final summary
-            _logger.info("="*60)
-            _logger.info(f"CATEGORY CLEANUP COMPLETED: {category_name}")
-            _logger.info(f"Products found: {stats['total_found']}")
-            _logger.info(f"Products processed: {stats['processed']}")
-            _logger.info(f"Successful: {stats['success']}")
-            _logger.info(f"Errors: {stats['errors']}")
-            _logger.info(f"Total attributes removed: {stats['total_attributes_removed']}")
-            _logger.info(f"Total variants removed: {stats['total_variants_removed']}")
-            _logger.info("="*60)
-            
+            _logger.info("="*50)
+            _logger.info(f"CLEANUP COMPLETED: {success_count}/{len(target_products)} products processed successfully")
+            _logger.info("="*50)
             return True
             
         except Exception as e:
-            _logger.error(f"Failed to execute category-based attribute removal: {str(e)}")
+            _logger.error(f"Failed to execute category cleanup: {str(e)}")
             return False
 
-    
+    @api.model
+    def get_category_preview(self, category_name="Lotion Pumps (Sıvı Sabun Pompası)"):
+        """
+        Preview method to see what products would be affected before running the cleanup
+        """
+        try:
+            # Find the category
+            target_category = self.env['product.category'].search([
+                ('name', '=', category_name)
+            ], limit=1)
+            
+            if not target_category:
+                # Search for similar categories
+                similar_categories = self.env['product.category'].search([
+                    '|', '|',
+                    ('name', 'ilike', 'lotion'),
+                    ('name', 'ilike', 'pump'),
+                    ('name', 'ilike', 'sabun')
+                ])
+                
+                result = {
+                    'found_category': False,
+                    'category_name': category_name,
+                    'similar_categories': [{'id': cat.id, 'name': cat.name} for cat in similar_categories],
+                    'products_with_attributes': [],
+                    'total_count': 0
+                }
+                
+                _logger.warning(f"Category '{category_name}' not found")
+                return result
+            
+            # Find products with attributes in this category
+            products_with_attributes = self.search([
+                ('categ_id', '=', target_category.id),
+                ('attribute_line_ids', '!=', False)
+            ])
+            
+            # Prepare detailed preview
+            product_details = []
+            for product in products_with_attributes:
+                product_details.append({
+                    'id': product.id,
+                    'name': product.name,
+                    'attribute_count': len(product.attribute_line_ids),
+                    'variant_count': len(product.product_variant_ids),
+                    'attributes': [attr.name for attr in product.attribute_line_ids.mapped('attribute_id')],
+                    'list_price': product.list_price,
+                    'active': product.active
+                })
+            
+            result = {
+                'found_category': True,
+                'category_id': target_category.id,
+                'category_name': target_category.name,
+                'total_count': len(products_with_attributes),
+                'products_with_attributes': product_details,
+                'summary': {
+                    'total_attributes': sum(len(p.attribute_line_ids) for p in products_with_attributes),
+                    'total_variants': sum(len(p.product_variant_ids) for p in products_with_attributes),
+                    'active_products': len([p for p in products_with_attributes if p.active]),
+                    'inactive_products': len([p for p in products_with_attributes if not p.active])
+                }
+            }
+            
+            _logger.info(f"Preview for category '{category_name}': {result['total_count']} products found")
+            return result
+            
+        except Exception as e:
+            _logger.error(f"Error in category preview: {str(e)}")
+            return {'error': str(e)}
