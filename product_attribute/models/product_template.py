@@ -101,7 +101,7 @@ class ProductTemplate(models.Model):
             return False
 
     @api.model
-    def get_category_preview(self, category_name="Lotion Pumps (Sıvı Sabun Pompası)"):
+    def get_category_preview(self, category_name=None):
         """
         Preview method to see what products would be affected before running the cleanup
         """
