@@ -30,31 +30,13 @@ class ProductTemplate(models.Model):
                     if product.attribute_line_ids:
                         product.attribute_line_ids.unlink()
                     
-                    # Remove product template attribute values (for newer Odoo versions)
-                    if hasattr(product, 'product_template_attribute_value_ids'):
-                        product.product_template_attribute_value_ids.unlink()
-                    
-                    # Handle product variants - keep only the main variant
-                    if len(product.product_variant_ids) > 1:
-                        variants_to_delete = product.product_variant_ids.filtered(
-                            lambda v: v.id != product.product_variant_id.id
-                        )
-                        variants_to_delete.unlink()
-                    
-                    # Clear attribute values from the main variant
-                    if product.product_variant_id:
-                        product.product_variant_id.write({
-                            'attribute_value_ids': [(5, 0, 0)]
-                        })
                     
                     processed_count += 1
-                    _logger.info(f"Processed {processed_count}/{total_products}: {product.name}")
                     
                 except Exception as e:
                     _logger.error(f"Error removing attributes from {product.name}: {str(e)}")
                     continue
             
-            _logger.info(f"Completed: Removed attributes from {processed_count} out of {total_products} products")
             return True
             
         except Exception as e:
