@@ -33,12 +33,20 @@
                     <sheet>
                         <group>
                             <group>
-                                <field name="category_name" placeholder="Enter category name"/>
+                                <field name="category_id" 
+                                       options="{'no_create': True, 'no_create_edit': True}"
+                                       placeholder="Select a product category"/>
                             </group>
                             <group>
                                 <field name="products_found" readonly="1"/>
-                                <field name="attributes_to_remove" readonly="1"/>
-                                <field name="variants_to_remove" readonly="1"/>
+                                <field name="products_with_attributes" readonly="1" 
+                                       attrs="{'invisible': [('products_with_attributes', '=', 0)]}"/>
+                                <field name="products_without_attributes" readonly="1"
+                                       attrs="{'invisible': [('products_without_attributes', '=', 0)]}"/>
+                                <field name="attributes_to_remove" readonly="1"
+                                       attrs="{'invisible': [('attributes_to_remove', '=', 0)]}"/>
+                                <field name="variants_to_remove" readonly="1"
+                                       attrs="{'invisible': [('variants_to_remove', '=', 0)]}"/>
                             </group>
                         </group>
                         
@@ -55,9 +63,14 @@
                                 <div class="alert alert-info">
                                     <h4>How to Use This Tool</h4>
                                     <ol>
-                                        <li><strong>Enter Category Name:</strong> Type the exact category name you want to clean</li>
+                                        <li><strong>Select Category:</strong> Choose the product category you want to clean from the dropdown</li>
                                         <li><strong>Preview:</strong> Click "Preview Category" to see what products will be affected</li>
-                                        <li><strong>Review:</strong> Check the preview results carefully</li>
+                                        <li><strong>Review Results:</strong> Check both lists:
+                                            <ul>
+                                                <li><span style="color: #d68910;">Products WITH Attributes</span> - These will be processed</li>
+                                                <li><span style="color: #27ae60;">Products WITHOUT Attributes</span> - These remain unchanged</li>
+                                            </ul>
+                                        </li>
                                         <li><strong>Execute:</strong> If satisfied, click "Execute Cleanup" to remove attributes</li>
                                         <li><strong>Download:</strong> Get a detailed HTML report of the operation</li>
                                     </ol>
@@ -65,16 +78,30 @@
                                     <h5>⚠️ Warning</h5>
                                     <p>This operation will permanently remove ALL attributes from products in the selected category. Make sure to backup your database before proceeding.</p>
                                     
-                                    <h5>📁 Default Category</h5>
-                                    <p>The default category is set to "Lotion Pumps (Sıvı Sabun Pompası)" but you can change it to any category.</p>
+                                    <h5>📊 Preview Features</h5>
+                                    <ul>
+                                        <li><strong>Complete Transparency:</strong> See all products in the category</li>
+                                        <li><strong>Two Lists:</strong> Products with attributes (actionable) and without (verification)</li>
+                                        <li><strong>Detailed Stats:</strong> Attribute counts, variant counts, pricing info</li>
+                                        <li><strong>Status Indicators:</strong> Active/inactive product status</li>
+                                    </ul>
                                     
                                     <h5>🔧 Features</h5>
                                     <ul>
                                         <li>Safe preview before execution</li>
-                                        <li>Detailed product information display</li>
+                                        <li>Category selection with dropdown</li>
+                                        <li>Comprehensive product information display</li>
                                         <li>Progress tracking and error handling</li>
                                         <li>Downloadable audit reports</li>
-                                        <li>Category-based filtering</li>
+                                        <li>Dual product lists for complete verification</li>
+                                    </ul>
+                                    
+                                    <h5>💡 Tips</h5>
+                                    <ul>
+                                        <li>Use the preview to verify the tool found all expected products</li>
+                                        <li>Check that the total count matches your expectations</li>
+                                        <li>Products without attributes serve as a verification that all category products were found</li>
+                                        <li>Download the report for audit trails and documentation</li>
                                     </ul>
                                 </div>
                             </page>
@@ -99,7 +126,6 @@
                   parent="stock.menu_stock_root" 
                   action="action_attribute_cleanup_wizard" 
                   sequence="100"/>
-
 
     </data>
 </odoo>
