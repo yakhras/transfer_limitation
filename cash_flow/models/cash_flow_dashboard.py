@@ -83,7 +83,7 @@ class CashFlowDashboard(models.Model):
     @api.model
     def create_dashboard_records(self):
         """Create dashboard records for the 5 specified accounts"""
-        target_accounts = ['120002', '120003', '320002', '320003', '153000']
+        target_accounts = ['120002', '120001', '320002', '320003', '153000']
         
         for account_code in target_accounts:
             account = self.env['account.account'].search([('code', '=', account_code)], limit=1)
@@ -100,7 +100,7 @@ class CashFlowDashboard(models.Model):
     @api.model
     def get_dashboard_data(self):
         """Get dashboard data for the 5 accounts"""
-        target_accounts = ['120002', '120003', '320002', '320003', '153000']
+        target_accounts = ['120002', '120001', '320002', '320003', '153000']
         dashboard_data = []
         
         for account_code in target_accounts:
