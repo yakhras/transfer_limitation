@@ -12,20 +12,14 @@
                                 string="🔍 Preview Category" 
                                 type="object" 
                                 class="btn-primary"
-                                attrs="{'invisible': [('state', 'in', ['executed'])]}"/>
+                                attrs="{'invisible': [('state', '=', 'executed')]}"/>
                         
                         <button name="action_execute_cleanup" 
                                 string="🧹 Execute Cleanup" 
                                 type="object" 
                                 class="btn-warning"
                                 confirm="Are you sure you want to remove all attributes from these products? This action cannot be undone!"
-                                attrs="{'invisible': [('state', 'not in', ['preview'])]}"/>
-                        
-                        <button name="action_download_report" 
-                                string="📥 Download Report" 
-                                type="object" 
-                                class="btn-info"
-                                attrs="{'invisible': [('state', 'not in', ['preview', 'executed'])]}"/>
+                                attrs="{'invisible': [('state', '!=', 'preview')]}"/>
                         
                         <field name="state" widget="statusbar" statusbar_visible="draft,preview,executed"/>
                     </header>
@@ -38,133 +32,40 @@
                                        placeholder="Select a product category"/>
                                 <field name="batch_size" 
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"
-                                       help="Number of products to process in each batch (recommended: 25-100)"/>
+                                       help="Number of products to process per batch"/>
                             </group>
                             <group>
                                 <field name="products_found" readonly="1"/>
                                 <field name="products_with_attributes" readonly="1" 
                                        attrs="{'invisible': [('products_with_attributes', '=', 0)]}"/>
-                                <field name="products_without_attributes" readonly="1"
-                                       attrs="{'invisible': [('products_without_attributes', '=', 0)]}"/>
                                 <field name="attributes_to_remove" readonly="1"
                                        attrs="{'invisible': [('attributes_to_remove', '=', 0)]}"/>
-                                <field name="variants_to_remove" readonly="1"
-                                       attrs="{'invisible': [('variants_to_remove', '=', 0)]}"/>
                             </group>
                         </group>
                         
-                        <!-- MODIFIED: Simplified Processing Status -->
-                        <div attrs="{'invisible': [('processing_status', '=', False)]}">
-                            <div class="alert alert-info">
-                                <h4>🔄 Processing Status</h4>
-                                <field name="processing_status" nolabel="1"/>
-                                <p><strong>Current Batch:</strong> <field name="current_batch" nolabel="1"/> / <field name="total_batches" nolabel="1"/></p>
-                            </div>
+                        <!-- Preview Results -->
+                        <div attrs="{'invisible': [('preview_results', '=', False)]}">
+                            <separator string="Preview Results"/>
+                            <field name="preview_results" widget="html" nolabel="1"/>
                         </div>
                         
-                        <notebook>
-                            <page string="📋 Preview Results" attrs="{'invisible': [('preview_results', '=', False)]}">
-                                <field name="preview_results" widget="html" nolabel="1"/>
-                            </page>
-                            
-                            <page string="✅ Execution Results" attrs="{'invisible': [('execution_results', '=', False)]}">
-                                <field name="execution_results" widget="html" nolabel="1"/>
-                            </page>
-                            
-                            <page string="ℹ️ Help">
-                                <div class="alert alert-info">
-                                    <h4>How to Use This Tool</h4>
-                                    <ol>
-                                        <li><strong>Select Category:</strong> Choose the product category you want to clean from the dropdown</li>
-                                        <li><strong>Set Batch Size:</strong> Choose how many products to process at once (default: 50, recommended: 25-100)</li>
-                                        <li><strong>Preview:</strong> Click "Preview Category" to see what products will be affected</li>
-                                        <li><strong>Review Results:</strong> Check both lists:
-                                            <ul>
-                                                <li><span style="color: #d68910;">Products WITH Attributes</span> - These will be processed</li>
-                                                <li><span style="color: #27ae60;">Products WITHOUT Attributes</span> - These remain unchanged</li>
-                                            </ul>
-                                        </li>
-                                        <li><strong>Execute:</strong> Click "Execute Cleanup" to start batch processing</li>
-                                        <li><strong>Monitor Progress:</strong> Watch processing status and batch progress</li>
-                                        <li><strong>Download:</strong> Get a detailed HTML report of the operation</li>
-                                    </ol>
-                                    
-                                    <h5>⚠️ Warning</h5>
-                                    <p>This operation will permanently remove ALL attributes from products in the selected category. Make sure to backup your database before proceeding.</p>
-                                    
-                                    <h5>🔄 Batch Processing (OPTIMIZED)</h5>
-                                    <ul>
-                                        <li><strong>Efficient Processing:</strong> Optimized batch processing for stability and speed</li>
-                                        <li><strong>Error Resilience:</strong> Processing continues even if individual products fail</li>
-                                        <li><strong>Batch Size Guidelines:</strong>
-                                            <ul>
-                                                <li><strong>Small batches (25-50):</strong> Safer for limited server resources</li>
-                                                <li><strong>Medium batches (50-100):</strong> Balanced performance (recommended)</li>
-                                                <li><strong>Large batches (100+):</strong> Faster for powerful servers</li>
-                                            </ul>
-                                        </li>
-                                        <li><strong>Status Tracking:</strong> Simple, reliable progress indicators</li>
-                                        <li><strong>Timeout Prevention:</strong> Batch processing prevents long-running transaction timeouts</li>
-                                    </ul>
-                                    
-                                    <h5>📊 Preview Features</h5>
-                                    <ul>
-                                        <li><strong>Complete Transparency:</strong> See all products in the category</li>
-                                        <li><strong>Two Lists:</strong> Products with attributes (actionable) and without (verification)</li>
-                                        <li><strong>Detailed Stats:</strong> Attribute counts, variant counts, pricing info</li>
-                                        <li><strong>Status Indicators:</strong> Active/inactive product status</li>
-                                    </ul>
-                                    
-                                    <h5>🔧 Features</h5>
-                                    <ul>
-                                        <li>Safe preview before execution</li>
-                                        <li>Category selection with dropdown</li>
-                                        <li>Optimized batch processing (no manual commits)</li>
-                                        <li>Simplified progress feedback</li>
-                                        <li>Error collection and reporting</li>
-                                        <li>Downloadable audit reports</li>
-                                        <li>Dual product lists for complete verification</li>
-                                        <li>Timeout-resistant processing</li>
-                                    </ul>
-                                    
-                                    <h5>🚀 Performance Improvements</h5>
-                                    <ul>
-                                        <li><strong>Faster Processing:</strong> Removed artificial delays and optimized transactions</li>
-                                        <li><strong>Memory Efficient:</strong> Simplified progress tracking reduces memory usage</li>
-                                        <li><strong>Stable Execution:</strong> Fixed manual commit issues that caused freezing</li>
-                                        <li><strong>Error Recovery:</strong> Individual failures don't stop batch processing</li>
-                                    </ul>
-                                    
-                                    <h5>💡 Tips</h5>
-                                    <ul>
-                                        <li>Use batch size 25-50 for servers with limited resources</li>
-                                        <li>Use batch size 50-100 for standard servers (recommended)</li>
-                                        <li>Use batch size 100+ for powerful servers with simple products</li>
-                                        <li>The tool processes efficiently without manual delays</li>
-                                        <li>All errors are collected and reported at the end</li>
-                                        <li>Download the report for audit trails and documentation</li>
-                                        <li>Processing is now optimized to prevent timeout issues</li>
-                                    </ul>
-                                    
-                                    <h5>🔧 Troubleshooting</h5>
-                                    <ul>
-                                        <li><strong>If processing seems slow:</strong> Try larger batch sizes (75-100)</li>
-                                        <li><strong>If you get timeouts:</strong> Try smaller batch sizes (25-50)</li>
-                                        <li><strong>If individual products fail:</strong> Check logs for specific error messages</li>
-                                        <li><strong>If wizard becomes unresponsive:</strong> Refresh and check execution results</li>
-                                    </ul>
-                                    
-                                    <h5>📋 Scheduled Processing</h5>
-                                    <p>For large categories, consider using the scheduled method:</p>
-                                    <ul>
-                                        <li>Can be configured as a cron job for off-hours processing</li>
-                                        <li>Supports configurable batch sizes</li>
-                                        <li>Better suited for very large product catalogs</li>
-                                        <li>Provides detailed logging for monitoring</li>
-                                    </ul>
-                                </div>
-                            </page>
-                        </notebook>
+                        <!-- Execution Results -->
+                        <div attrs="{'invisible': [('execution_results', '=', False)]}">
+                            <separator string="Execution Results"/>
+                            <field name="execution_results" widget="html" nolabel="1"/>
+                        </div>
+                        
+                        <!-- Simple Help -->
+                        <div class="alert alert-info" attrs="{'invisible': [('state', '!=', 'draft')]}">
+                            <h5>⚠️ Important</h5>
+                            <p>This will permanently remove ALL attributes from products in the selected category.</p>
+                            <p>Make sure to backup your database before proceeding.</p>
+                            <ul>
+                                <li>Step 1: Select a category</li>
+                                <li>Step 2: Click "Preview Category" to see what will be affected</li>
+                                <li>Step 3: Click "Execute Cleanup" to remove attributes</li>
+                            </ul>
+                        </div>
                     </sheet>
                 </form>
             </field>
