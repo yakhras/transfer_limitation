@@ -95,7 +95,7 @@ class CashFlowDashboard(models.Model):
                         'account_id': account.id,
                     })
             else:
-                raise UserError(f"Account with code {account_code} not found in Chart of Accounts")
+                raise UserError("Account with code %s not found in Chart of Accounts" % account_code)
 
     @api.model
     def get_dashboard_data(self):
