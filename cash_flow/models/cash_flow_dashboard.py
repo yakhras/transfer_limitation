@@ -16,7 +16,8 @@ class CashFlowDashboard(models.Model):
     current_balance = fields.Monetary(
         string='Current Balance', 
         compute='_compute_current_balance',
-        currency_field='currency_id'
+        currency_field='currency_id',
+        store=True
     )
     
     # Currency field
@@ -38,7 +39,7 @@ class CashFlowDashboard(models.Model):
         ('blue', 'Zero')
     ], string='Balance Color', compute='_compute_balance_color')
 
-    @api.depends('account_id')
+    @api.depends('account_id', 'account_id.current_balance')
     def _compute_current_balance(self):
         """Compute current balance for each account"""
         for record in self:

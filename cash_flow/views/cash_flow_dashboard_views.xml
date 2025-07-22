@@ -118,11 +118,8 @@
                 <search string="Cash Flow Dashboard">
                     <field name="account_code"/>
                     <field name="account_name"/>
-                    <filter string="Positive Balance" name="positive" domain="[('current_balance', '>', 0)]"/>
-                    <filter string="Negative Balance" name="negative" domain="[('current_balance', '&lt;', 0)]"/>
-                    <filter string="Zero Balance" name="zero" domain="[('current_balance', '=', 0)]"/>
                     <group expand="0" string="Group By">
-                        <filter string="Balance Color" name="balance_color" context="{'group_by': 'balance_color'}"/>
+                        <filter string="Account Code" name="account_code" context="{'group_by': 'account_code'}"/>
                     </group>
                 </search>
             </field>
