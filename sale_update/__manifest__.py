@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Sales Order to Quotation Converter',
-    'version': '16.0.1.0.0',
+    'version': '15.0.1.0.0',
     'category': 'Sales',
     'summary': 'Convert Sales Orders to Quotations with PO Management',
     'description': """
         This module provides functionality to convert confirmed sales orders back to quotations
         with automatic purchase order cancellation and deletion. Includes comprehensive field tracking.
     """,
-    'author': 'Your Company',
+    'author': 'Yaser Akhras',
     'depends': ['sale', 'purchase', 'stock', 'product'],
     'data': [
         'views/sale_order_views.xml',
