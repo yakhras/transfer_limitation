@@ -20,11 +20,11 @@
             </field>
         </record>
 
-        <!-- Add Cash Flow Dashboard menu to existing Board menu -->
-        <record id="menu_cash_flow_board" model="ir.ui.menu">
+        <!-- Add Cash Flow Dashboard to Reporting menu -->
+        <record id="menu_cash_flow_dashboard" model="ir.ui.menu">
             <field name="name">Cash Flow</field>
-            <field name="parent_id" ref="board.menu_board_root"/>
-            <field name="action" ref="cash_flow.action_cash_flow_dashboard"/>
+            <field name="parent_id" ref="base.menu_reporting_dashboard"/>
+            <field name="action" ref="action_cash_flow_dashboard"/>
             <field name="sequence">10</field>
         </record>
 
