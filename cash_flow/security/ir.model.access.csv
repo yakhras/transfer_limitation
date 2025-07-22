@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cash_flow_dashboard_user,cash.flow.dashboard.user,model_cash_flow_dashboard,account.group_account_user,1,0,0,0
+access_cash_flow_dashboard_manager,cash.flow.dashboard.manager,model_cash_flow_dashboard,account.group_account_manager,1,1,1,1
+access_cash_flow_dashboard_invoice,cash.flow.dashboard.invoice,model_cash_flow_dashboard,account.group_account_invoice,1,0,0,0

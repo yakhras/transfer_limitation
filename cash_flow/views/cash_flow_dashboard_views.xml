@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Kanban View for Cash Flow Dashboard -->
+        <record id="view_cash_flow_dashboard_kanban" model="ir.ui.view">
+            <field name="name">cash.flow.dashboard.kanban</field>
+            <field name="model">cash.flow.dashboard</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_dashboard" create="false" edit="false" delete="false">
+                    <field name="id"/>
+                    <field name="account_code"/>
+                    <field name="account_name"/>
+                    <field name="current_balance"/>
+                    <field name="balance_display"/>
+                    <field name="balance_color"/>
+                    <field name="currency_id"/>
+                    
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click" 
+                                 t-att-class="record.balance_color.raw_value == 'green' ? 'border-success' : (record.balance_color.raw_value == 'red' ? 'border-danger' : 'border-info')">
+                                
+                                <div class="o_kanban_card_header">
+                                    <div class="o_kanban_card_header_title">
+                                        <div class="o_primary">
+                                            <strong t-esc="record.account_code.value"/>
+                                        </div>
+                                        <div class="text-muted">
+                                            <t t-esc="record.account_name.value"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_kanban_card_content">
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <h2 class="mb-0" 
+                                                t-att-class="record.balance_color.raw_value == 'green' ? 'text-success' : (record.balance_color.raw_value == 'red' ? 'text-danger' : 'text-info')">
+                                                <t t-esc="record.balance_display.value"/>
+                                            </h2>
+                                            <small class="text-muted">Current Balance</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                    <div class="row">
+                                        <div class="col-6 o_kanban_card_manage_section o_kanban_manage_button_section">
+                                            <a class="btn btn-primary btn-sm" name="action_view_account_moves" type="object">
+                                                View Transactions
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Tree View for Cash Flow Dashboard -->
+        <record id="view_cash_flow_dashboard_tree" model="ir.ui.view">
+            <field name="name">cash.flow.dashboard.tree</field>
+            <field name="model">cash.flow.dashboard</field>
+            <field name="arch" type="xml">
+                <tree string="Cash Flow Accounts" create="false" edit="false" delete="false">
+                    <field name="account_code"/>
+                    <field name="account_name"/>
+                    <field name="current_balance"/>
+                    <field name="balance_display"/>
+                    <field name="currency_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View for Cash Flow Dashboard -->
+        <record id="view_cash_flow_dashboard_form" model="ir.ui.view">
+            <field name="name">cash.flow.dashboard.form</field>
+            <field name="model">cash.flow.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="Cash Flow Account" create="false" edit="false" delete="false">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="account_code" readonly="1"/>
+                            </h1>
+                            <h2>
+                                <field name="account_name" readonly="1"/>
+                            </h2>
+                        </div>
+                        
+                        <group>
+                            <group string="Account Information">
+                                <field name="account_id" readonly="1"/>
+                                <field name="currency_id" readonly="1"/>
+                            </group>
+                            <group string="Balance Information">
+                                <field name="current_balance" readonly="1"/>
+                                <field name="balance_display" readonly="1"/>
+                                <field name="balance_color" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View for Cash Flow Dashboard -->
+        <record id="view_cash_flow_dashboard_search" model="ir.ui.view">
+            <field name="name">cash.flow.dashboard.search</field>
+            <field name="model">cash.flow.dashboard</field>
+            <field name="arch" type="xml">
+                <search string="Cash Flow Dashboard">
+                    <field name="account_code"/>
+                    <field name="account_name"/>
+                    <filter string="Positive Balance" name="positive" domain="[('current_balance', '>', 0)]"/>
+                    <filter string="Negative Balance" name="negative" domain="[('current_balance', '&lt;', 0)]"/>
+                    <filter string="Zero Balance" name="zero" domain="[('current_balance', '=', 0)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Balance Color" name="balance_color" context="{'group_by': 'balance_color'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>
