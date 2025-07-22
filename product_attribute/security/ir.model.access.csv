@@ -1,5 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_attribute_cleanup_wizard_manager,access.attribute.cleanup.wizard.manager,model_attribute_cleanup_wizard,stock.group_stock_manager,1,1,1,1
-access_attribute_cleanup_wizard_user,access.attribute.cleanup.wizard.user,model_attribute_cleanup_wizard,stock.group_stock_user,1,1,1,0
-access_attribute_cleanup_wizard_admin,access.attribute.cleanup.wizard.admin,model_attribute_cleanup_wizard,base.group_system,1,1,1,1
-access_product_template_extended,access.product.template.extended,product.model_product_template,stock.group_stock_manager,1,1,1,0
+access_attribute_cleanup_wizard_user,attribute.cleanup.wizard user,model_attribute_cleanup_wizard,stock.group_stock_user,1,1,1,0
+access_attribute_cleanup_wizard_manager,attribute.cleanup.wizard manager,model_attribute_cleanup_wizard,stock.group_stock_manager,1,1,1,1
+
+access_attribute_assignment_wizard_user,attribute.assignment.wizard user,model_attribute_assignment_wizard,stock.group_stock_user,1,1,1,0
+access_attribute_assignment_wizard_manager,attribute.assignment.wizard manager,model_attribute_assignment_wizard,stock.group_stock_manager,1,1,1,1

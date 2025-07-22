@@ -43,6 +43,7 @@ Make sure to backup your database before using this module.
         'security/ir.model.access.csv',
         'data/ir_cron_data.xml',
         'views/attribute_cleanup_wizard_views.xml',
+        'views/attribute_assignment_wizard_views.xml',
     ],
     'demo': [
         'demo/product_template_demo.csv',

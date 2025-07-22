@@ -3,3 +3,4 @@
 
 from . import product_template
 from . import attribute_cleanup_wizard
+from . import attribute_assignment_wizard

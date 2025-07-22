@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Wizard Form View -->
+        <record id="view_attribute_assignment_wizard_form" model="ir.ui.view">
+            <field name="name">attribute.assignment.wizard.form</field>
+            <field name="model">attribute.assignment.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Product Attribute Assignment">
+                    <header>
+                        <!-- Preview Button -->
+                        <button name="action_preview_assignment" 
+                                string="🔍 Preview Assignment" 
+                                type="object" 
+                                class="btn-primary"
+                                attrs="{'invisible': [('state', 'in', ['batch_processing', 'executed'])]}"/>
+                        
+                        <!-- Start Batch Processing Button -->
+                        <button name="action_start_batch_processing" 
+                                string="🚀 Start Assignment" 
+                                type="object" 
+                                class="btn-success"
+                                confirm="Ready to start assigning attributes? This will add selected attributes to products in batches to prevent timeouts."
+                                attrs="{'invisible': [('state', '!=', 'preview')]}"/>
+                        
+                        <!-- Process Next Batch Button -->
+                        <button name="action_process_next_batch" 
+                                string="▶️ Process Next Batch" 
+                                type="object" 
+                                class="btn-warning"
+                                attrs="{'invisible': [('state', '!=', 'batch_processing')]}"/>
+                        
+                        <!-- Status Bar with Assignment States -->
+                        <field name="state" widget="statusbar" statusbar_visible="draft,preview,batch_processing,executed"/>
+                    </header>
+                    
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="category_id" 
+                                       options="{'no_create': True, 'no_create_edit': True}"
+                                       placeholder="Select a product category"
+                                       attrs="{'readonly': [('state', 'in', ['batch_processing', 'executed'])]}"/>
+                                <field name="batch_size" 
+                                       attrs="{'readonly': [('state', 'in', ['batch_processing', 'executed'])]}"
+                                       help="Products per batch (recommended: 5-15 for assignment)"/>
+                            </group>
+                            <group>
+                                <field name="products_found" readonly="1"/>
+                                <field name="products_to_process" readonly="1" 
+                                       attrs="{'invisible': [('products_to_process', '=', 0)]}"/>
+                                <field name="attributes_selected" readonly="1"
+                                       attrs="{'invisible': [('attributes_selected', '=', 0)]}"/>
+                                <field name="total_operations" readonly="1"
+                                       attrs="{'invisible': [('total_operations', '=', 0)]}"/>
+                            </group>
+                        </group>
+                        
+                        <!-- Attribute Selection -->
+                        <div attrs="{'invisible': [('state', 'in', ['batch_processing', 'executed'])]}">
+                            <separator string="Select Attributes to Assign"/>
+                            <field name="attribute_ids" 
+                                   widget="many2many_checkboxes" 
+                                   nolabel="1"
+                                   attrs="{'readonly': [('state', 'in', ['batch_processing', 'executed'])]}"/>
+                        </div>
+                        
+                        <!-- Batch Processing Progress -->
+                        <div attrs="{'invisible': [('state', 'not in', ['batch_processing', 'executed']), ('current_batch', '=', 0)]}">
+                            <separator string="Batch Processing Progress"/>
+                            <group>
+                                <group>
+                                    <field name="current_batch" readonly="1"/>
+                                    <field name="total_batches" readonly="1"/>
+                                    <field name="products_processed" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="total_success" readonly="1"/>
+                                    <field name="total_errors" readonly="1"/>
+                                    <field name="total_attribute_lines_created" readonly="1"/>
+                                    <field name="total_values_assigned" readonly="1"/>
+                                </group>
+                            </group>
+                        </div>
+                        
+                        <!-- Preview Results -->
+                        <div attrs="{'invisible': [('preview_results', '=', False)]}">
+                            <separator string="Assignment Preview"/>
+                            <field name="preview_results" widget="html" nolabel="1"/>
+                        </div>
+                        
+                        <!-- Execution Results / Batch Status -->
+                        <div attrs="{'invisible': [('execution_results', '=', False)]}">
+                            <separator string="Processing Status" attrs="{'invisible': [('state', '!=', 'batch_processing')]}"/>
+                            <separator string="Assignment Results" attrs="{'invisible': [('state', '!=', 'executed')]}"/>
+                            <field name="execution_results" widget="html" nolabel="1"/>
+                        </div>
+                        
+                        <!-- Instructions Based on Current State -->
+                        
+                        <!-- Draft State Instructions -->
+                        <div class="alert alert-info" attrs="{'invisible': [('state', '!=', 'draft')]}">
+                            <h5>➕ Bulk Attribute Assignment (Timeout-Free!)</h5>
+                            <p><strong>This wizard assigns selected attributes (with ALL their values) to all products in a category.</strong></p>
+                            <ol>
+                                <li><strong>Select Category:</strong> Choose the product category to process</li>
+                                <li><strong>Select Attributes:</strong> Check the attributes you want to assign</li>
+                                <li><strong>Set Batch Size:</strong> 5-15 products per batch (recommended for assignment)</li>
+                                <li><strong>Preview:</strong> See assignment plan and attribute details</li>
+                                <li><strong>Process:</strong> Click through batches one at a time</li>
+                            </ol>
+                            <div class="alert alert-warning" style="margin-top: 10px;">
+                                <p><strong>🔄 How It Works:</strong></p>
+                                <ul>
+                                    <li>Each selected attribute will be assigned with <strong>ALL its values</strong></li>
+                                    <li>Odoo will automatically generate product variants from attribute combinations</li>
+                                    <li>Existing attributes on products will be preserved and merged</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Preview State Instructions -->
+                        <div class="alert alert-success" attrs="{'invisible': [('state', '!=', 'preview')]}">
+                            <h5>✅ Ready for Attribute Assignment</h5>
+                            <p>Review the assignment plan above, then click <strong>"Start Assignment"</strong> to begin.</p>
+                            <ul>
+                                <li><strong>Timeout-Free:</strong> Each batch is processed in a separate step</li>
+                                <li><strong>Smart Processing:</strong> Only processes products that need the selected attributes</li>
+                                <li><strong>Value Merging:</strong> Combines with existing attributes (no duplicates)</li>
+                                <li><strong>Auto Variants:</strong> Odoo automatically creates product variants</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Batch Processing State Instructions -->
+                        <div class="alert alert-warning" attrs="{'invisible': [('state', '!=', 'batch_processing')]}">
+                            <h5>🔄 Batch Assignment Active</h5>
+                            <p><strong>Click "Process Next Batch" to continue assigning attributes to the next batch of products.</strong></p>
+                            <ul>
+                                <li>Each batch assigns attributes and lets Odoo generate variants</li>
+                                <li>Processing typically takes 15-45 seconds per batch</li>
+                                <li>Progress is saved after each batch</li>
+                                <li>Watch the progress bar and assignment statistics update</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Completed State Instructions -->
+                        <div class="alert alert-success" attrs="{'invisible': [('state', '!=', 'executed')]}">
+                            <h5>🎉 Assignment Complete!</h5>
+                            <p>All batches have been processed successfully. Check the results above.</p>
+                            <ul>
+                                <li><strong>Attributes Assigned:</strong> Selected attributes with all their values</li>
+                                <li><strong>Variants Created:</strong> Odoo has automatically generated product variants</li>
+                                <li><strong>Ready to Use:</strong> Your products now have the assigned attributes</li>
+                            </ul>
+                            <p><strong>You can now close this window or start a new assignment for another category.</strong></p>
+                        </div>
+                        
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Wizard Action -->
+        <record id="action_attribute_assignment_wizard" model="ir.actions.act_window">
+            <field name="name">Product Attribute Assignment</field>
+            <field name="res_model">attribute.assignment.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_attribute_assignment_wizard_form"/>
+        </record>
+
+        <!-- Menu Item in Inventory -->
+        <menuitem id="menu_attribute_assignment_inventory" 
+                  name="Attribute Assignment" 
+                  parent="stock.menu_stock_root" 
+                  action="action_attribute_assignment_wizard" 
+                  sequence="101"/>
+
+    </data>
+</odoo>
