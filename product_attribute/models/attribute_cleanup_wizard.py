@@ -36,11 +36,11 @@ class AttributeCleanupWizard(models.TransientModel):
     attributes_to_remove = fields.Integer('Attributes to Remove', readonly=True)
     variants_to_remove = fields.Integer('Variants to Remove', readonly=True)
     
-    # Batching fields
-    batch_size = fields.Integer('Batch Size', default=10, help="Number of products to process per batch")
+    # Batching fields - MODIFIED: Increased default batch size
+    batch_size = fields.Integer('Batch Size', default=50, help="Number of products to process per batch")
     current_batch = fields.Integer('Current Batch', readonly=True, default=0)
     total_batches = fields.Integer('Total Batches', readonly=True, default=0)
-    processing_progress = fields.Html('Processing Progress', readonly=True)
+    processing_status = fields.Char('Processing Status', readonly=True)
     
     def action_preview_category(self):
         """Preview what will be affected"""
@@ -106,13 +106,13 @@ class AttributeCleanupWizard(models.TransientModel):
             
             # Initialize batch processing
             total_products = len(target_products)
-            batch_size = self.batch_size or 10
+            batch_size = self.batch_size or 50
             total_batches = (total_products + batch_size - 1) // batch_size  # Ceiling division
             
             self.write({
                 'total_batches': total_batches,
                 'current_batch': 0,
-                'processing_progress': self._initialize_progress_html(total_products, total_batches),
+                'processing_status': f'Starting cleanup of {total_products} products in {total_batches} batches...',
                 'state': 'executed'
             })
             
@@ -124,7 +124,7 @@ class AttributeCleanupWizard(models.TransientModel):
             
             self.write({
                 'execution_results': html_content,
-                'processing_progress': False  # Clear progress since we're done
+                'processing_status': f'Completed: {results["success_count"]}/{results["total_processed"]} products processed successfully'
             })
             
             return self._reload_wizard()
@@ -254,62 +254,9 @@ class AttributeCleanupWizard(models.TransientModel):
         html += "</div>"
         return html
 
-    def _initialize_progress_html(self, total_products, total_batches):
-        """Initialize progress HTML display"""
-        return f"""
-        <div class='alert alert-info'>
-            <h4>🔄 Processing Started</h4>
-            <p><strong>Total Products:</strong> {total_products}</p>
-            <p><strong>Total Batches:</strong> {total_batches} (batch size: {self.batch_size})</p>
-            <p><strong>Status:</strong> Initializing...</p>
-        </div>
-        """
-
-    def _update_progress_html(self, batch_num, total_batches, batch_results, overall_results):
-        """Update progress HTML with current batch results"""
-        progress_percent = (batch_num / total_batches) * 100
-        
-        # Create progress bar
-        progress_bar = f"""
-        <div style='background-color: #f0f0f0; border-radius: 10px; overflow: hidden; margin: 10px 0;'>
-            <div style='background-color: #28a745; height: 25px; width: {progress_percent:.1f}%; 
-                        display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;'>
-                {progress_percent:.1f}%
-            </div>
-        </div>
-        """
-        
-        # Latest batch info
-        latest_info = ""
-        if batch_results.get('processed_products'):
-            latest_product = batch_results['processed_products'][-1]
-            status_icon = "✅" if latest_product['status'] == 'success' else "❌"
-            latest_info = f"<p><strong>Latest:</strong> {status_icon} {latest_product['name']}</p>"
-        
-        return f"""
-        <div class='alert alert-info'>
-            <h4>🔄 Processing in Progress...</h4>
-            <p><strong>Batch {batch_num} of {total_batches}</strong> 
-               (Products {(batch_num-1) * self.batch_size + 1}-{min(batch_num * self.batch_size, overall_results['total_to_process'])})</p>
-            {progress_bar}
-            <div class='row'>
-                <div class='col-md-4'>
-                    <p>✅ <strong>Successful:</strong> {overall_results['success_count']}</p>
-                </div>
-                <div class='col-md-4'>
-                    <p>❌ <strong>Errors:</strong> {overall_results['error_count']}</p>
-                </div>
-                <div class='col-md-4'>
-                    <p>⏳ <strong>Remaining:</strong> {overall_results['total_to_process'] - overall_results['success_count'] - overall_results['error_count']}</p>
-                </div>
-            </div>
-            {latest_info}
-        </div>
-        """
-
     def _execute_cleanup_with_batching(self, target_products):
-        """Execute cleanup with batching and real-time progress updates"""
-        batch_size = self.batch_size or 10
+        """Execute cleanup with batching - SIMPLIFIED VERSION"""
+        batch_size = self.batch_size or 50
         total_products = len(target_products)
         
         # Initialize overall results tracking
@@ -323,10 +270,16 @@ class AttributeCleanupWizard(models.TransientModel):
             'processed_products': []
         }
         
-        # Process products in batches
+        # Process products in batches - REMOVED: manual commits and sleep delays
         for i in range(0, total_products, batch_size):
             batch_products = target_products[i:i + batch_size]
             batch_num = (i // batch_size) + 1
+            
+            # Update simple status
+            self.write({
+                'current_batch': batch_num,
+                'processing_status': f'Processing batch {batch_num}/{self.total_batches}...'
+            })
             
             # Process current batch
             batch_results = self._process_single_batch(batch_products, batch_num)
@@ -339,20 +292,7 @@ class AttributeCleanupWizard(models.TransientModel):
             overall_results['variants_removed'] += batch_results['variants_removed']
             overall_results['processed_products'].extend(batch_results['processed_products'])
             
-            # Update progress display
-            progress_html = self._update_progress_html(batch_num, self.total_batches, batch_results, overall_results)
-            
-            self.write({
-                'current_batch': batch_num,
-                'processing_progress': progress_html
-            })
-            
-            # Commit changes to ensure progress is saved
-            self.env.cr.commit()
-            
-            # Brief pause between batches (simulate real-time processing)
-            import time
-            time.sleep(0.5)
+            # REMOVED: Manual commits and sleep delays that caused freezing
         
         return overall_results
 
@@ -422,6 +362,8 @@ class AttributeCleanupWizard(models.TransientModel):
 
     def _generate_execution_html(self, results):
         """Generate HTML for execution results"""
+        success_color = 'green' if results['error_count'] == 0 else 'orange'
+        
         html = f"""
         <div class='alert alert-success'>
             <h4>✅ Cleanup Execution Results</h4>
@@ -429,7 +371,7 @@ class AttributeCleanupWizard(models.TransientModel):
                 <div class='col-md-6'>
                     <table class='table table-sm'>
                         <tr><td><strong>Products Processed:</strong></td><td>{results['total_processed']}</td></tr>
-                        <tr><td><strong>Successful:</strong></td><td style='color: green;'>{results['success_count']}</td></tr>
+                        <tr><td><strong>Successful:</strong></td><td style='color: {success_color};'>{results['success_count']}</td></tr>
                         <tr><td><strong>Errors:</strong></td><td style='color: red;'>{results['error_count']}</td></tr>
                         <tr><td><strong>Attributes Removed:</strong></td><td>{results['attributes_removed']}</td></tr>
                         <tr><td><strong>Variants Removed:</strong></td><td>{results['variants_removed']}</td></tr>
@@ -439,6 +381,9 @@ class AttributeCleanupWizard(models.TransientModel):
         """
         
         if results.get('processed_products'):
+            # Show only first 50 products to avoid huge HTML
+            display_products = results['processed_products'][:50]
+            
             html += """
             <h5>📋 Processing Details</h5>
             <table class='table table-striped table-sm'>
@@ -448,7 +393,7 @@ class AttributeCleanupWizard(models.TransientModel):
                 <tbody>
             """
             
-            for product in results['processed_products']:
+            for product in display_products:
                 status_icon = "✅" if product['status'] == 'success' else "❌"
                 html += f"""
                 <tr>
@@ -458,6 +403,9 @@ class AttributeCleanupWizard(models.TransientModel):
                     <td>{product.get('variants_removed', 0)}</td>
                 </tr>
                 """
+            
+            if len(results['processed_products']) > 50:
+                html += f"<tr><td colspan='4'><em>... and {len(results['processed_products']) - 50} more products (see full report for details)</em></td></tr>"
             
             html += "</tbody></table>"
         
