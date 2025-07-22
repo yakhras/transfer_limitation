@@ -9,7 +9,7 @@
         
         This module provides a dashboard view for monitoring cash flow accounts:
         - Account 120002 balance
-        - Account 120003 balance  
+        - Account 120001 balance  
         - Account 320002 balance
         - Account 320003 balance
         - Account 153000 balance
@@ -24,10 +24,10 @@
     'depends': [
         'base',
         'account',
-        'board',
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/cash_flow_data.xml',
         'views/cash_flow_dashboard_views.xml',
         'views/cash_flow_menuitem.xml',
     ],

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Server action to initialize dashboard records -->
+        <record id="action_init_cash_flow_dashboard" model="ir.actions.server">
+            <field name="name">Initialize Cash Flow Dashboard</field>
+            <field name="model_id" ref="model_cash_flow_dashboard"/>
+            <field name="state">code</field>
+            <field name="code">
+# Initialize dashboard for accounts: 120002, 120001, 320002, 320003, 153000
+target_accounts = ['120002', '120001', '320002', '320003', '153000']
+
+for account_code in target_accounts:
+    account = env['account.account'].search([('code', '=', account_code)], limit=1)
+    if account:
+        existing = env['cash.flow.dashboard'].search([('account_id', '=', account.id)])
+        if not existing:
+            env['cash.flow.dashboard'].create({
+                'account_id': account.id,
+            })
+            print(f"Created dashboard record for account {account_code}")
+    else:
+        print(f"Account {account_code} not found")
+            </field>
+        </record>
+
+        <!-- Function call to run the initialization -->
+        <function model="cash.flow.dashboard" name="create_dashboard_records"/>
+
+    </data>
+</odoo>
