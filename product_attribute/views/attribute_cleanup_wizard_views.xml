@@ -8,20 +8,30 @@
             <field name="arch" type="xml">
                 <form string="Product Attribute Cleanup">
                     <header>
+                        <!-- Preview Button -->
                         <button name="action_preview_category" 
                                 string="🔍 Preview Category" 
                                 type="object" 
                                 class="btn-primary"
-                                attrs="{'invisible': [('state', '=', 'executed')]}"/>
+                                attrs="{'invisible': [('state', 'in', ['batch_processing', 'executed'])]}"/>
                         
-                        <button name="action_execute_cleanup" 
-                                string="🧹 Execute Cleanup" 
+                        <!-- Start Batch Processing Button -->
+                        <button name="action_start_batch_processing" 
+                                string="🚀 Start Batch Processing" 
                                 type="object" 
-                                class="btn-warning"
-                                confirm="Are you sure you want to remove all attributes from these products? This action cannot be undone!"
+                                class="btn-success"
+                                confirm="Ready to start processing? This will clean attributes from products in batches to prevent timeouts."
                                 attrs="{'invisible': [('state', '!=', 'preview')]}"/>
                         
-                        <field name="state" widget="statusbar" statusbar_visible="draft,preview,executed"/>
+                        <!-- Process Next Batch Button -->
+                        <button name="action_process_next_batch" 
+                                string="▶️ Process Next Batch" 
+                                type="object" 
+                                class="btn-warning"
+                                attrs="{'invisible': [('state', '!=', 'batch_processing')]}"/>
+                        
+                        <!-- Status Bar with New State -->
+                        <field name="state" widget="statusbar" statusbar_visible="draft,preview,batch_processing,executed"/>
                     </header>
                     
                     <sheet>
@@ -29,10 +39,11 @@
                             <group>
                                 <field name="category_id" 
                                        options="{'no_create': True, 'no_create_edit': True}"
-                                       placeholder="Select a product category"/>
+                                       placeholder="Select a product category"
+                                       attrs="{'readonly': [('state', 'in', ['batch_processing', 'executed'])]}"/>
                                 <field name="batch_size" 
-                                       attrs="{'readonly': [('state', '!=', 'draft')]}"
-                                       help="Number of products to process per batch"/>
+                                       attrs="{'readonly': [('state', 'in', ['batch_processing', 'executed'])]}"
+                                       help="Products per batch (recommended: 25-50)"/>
                             </group>
                             <group>
                                 <field name="products_found" readonly="1"/>
@@ -43,29 +54,82 @@
                             </group>
                         </group>
                         
+                        <!-- Batch Processing Progress -->
+                        <div attrs="{'invisible': [('state', 'not in', ['batch_processing', 'executed']), ('current_batch', '=', 0)]}">
+                            <separator string="Batch Processing Progress"/>
+                            <group>
+                                <group>
+                                    <field name="current_batch" readonly="1"/>
+                                    <field name="total_batches" readonly="1"/>
+                                    <field name="products_processed" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="total_success" readonly="1"/>
+                                    <field name="total_errors" readonly="1"/>
+                                    <field name="total_attributes_removed" readonly="1"/>
+                                </group>
+                            </group>
+                        </div>
+                        
                         <!-- Preview Results -->
                         <div attrs="{'invisible': [('preview_results', '=', False)]}">
                             <separator string="Preview Results"/>
                             <field name="preview_results" widget="html" nolabel="1"/>
                         </div>
                         
-                        <!-- Execution Results -->
+                        <!-- Execution Results / Batch Status -->
                         <div attrs="{'invisible': [('execution_results', '=', False)]}">
-                            <separator string="Execution Results"/>
+                            <separator string="Processing Status" attrs="{'invisible': [('state', '!=', 'batch_processing')]}"/>
+                            <separator string="Final Results" attrs="{'invisible': [('state', '!=', 'executed')]}"/>
                             <field name="execution_results" widget="html" nolabel="1"/>
                         </div>
                         
-                        <!-- Simple Help -->
+                        <!-- Instructions Based on Current State -->
+                        
+                        <!-- Draft State Instructions -->
                         <div class="alert alert-info" attrs="{'invisible': [('state', '!=', 'draft')]}">
-                            <h5>⚠️ Important</h5>
-                            <p>This will permanently remove ALL attributes from products in the selected category.</p>
-                            <p>Make sure to backup your database before proceeding.</p>
+                            <h5>🚀 Multi-Step Processing (Timeout-Free!)</h5>
+                            <p><strong>This wizard processes products in batches to prevent timeouts.</strong></p>
+                            <ol>
+                                <li><strong>Select Category:</strong> Choose the product category to clean</li>
+                                <li><strong>Set Batch Size:</strong> 25-50 products per batch (recommended)</li>
+                                <li><strong>Preview:</strong> See how many batches will be needed</li>
+                                <li><strong>Process:</strong> Click through batches one at a time</li>
+                            </ol>
+                            <p style="color: #d68910;"><strong>⚠️ Warning:</strong> This will permanently remove ALL attributes from products in the selected category.</p>
+                        </div>
+                        
+                        <!-- Preview State Instructions -->
+                        <div class="alert alert-success" attrs="{'invisible': [('state', '!=', 'preview')]}">
+                            <h5>✅ Ready for Batch Processing</h5>
+                            <p>Review the processing plan above, then click <strong>"Start Batch Processing"</strong> to begin.</p>
                             <ul>
-                                <li>Step 1: Select a category</li>
-                                <li>Step 2: Click "Preview Category" to see what will be affected</li>
-                                <li>Step 3: Click "Execute Cleanup" to remove attributes</li>
+                                <li><strong>Timeout-Free:</strong> Each batch is processed in a separate step</li>
+                                <li><strong>Progress Tracking:</strong> See real-time progress and results</li>
+                                <li><strong>Error Resilient:</strong> If one batch fails, others continue</li>
+                                <li><strong>User Control:</strong> You control when each batch runs</li>
                             </ul>
                         </div>
+                        
+                        <!-- Batch Processing State Instructions -->
+                        <div class="alert alert-warning" attrs="{'invisible': [('state', '!=', 'batch_processing')]}">
+                            <h5>🔄 Batch Processing Active</h5>
+                            <p><strong>Click "Process Next Batch" to continue processing the next batch of products.</strong></p>
+                            <ul>
+                                <li>Each batch takes 10-30 seconds to complete</li>
+                                <li>Progress is saved after each batch</li>
+                                <li>You can pause between batches if needed</li>
+                                <li>Watch the progress bar and totals update</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Completed State Instructions -->
+                        <div class="alert alert-success" attrs="{'invisible': [('state', '!=', 'executed')]}">
+                            <h5>🎉 Processing Complete!</h5>
+                            <p>All batches have been processed successfully. Check the results above.</p>
+                            <p><strong>You can now close this window or start a new cleanup for another category.</strong></p>
+                        </div>
+                        
                     </sheet>
                 </form>
             </field>

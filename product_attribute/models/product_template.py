@@ -10,7 +10,7 @@ class ProductTemplate(models.Model):
     def remove_all_attributes_scheduled(self, category_id=None, category_name=None):
         """
         Scheduled action to remove attributes from all products in specified category
-        Simplified version - no complex batching for scheduled actions
+        Compatible with the multi-step wizard approach
         """
         try:
             # Determine target category
@@ -60,7 +60,7 @@ class ProductTemplate(models.Model):
             success_count = 0
             error_count = 0
             
-            # Process each product - simplified, no complex batching
+            # Process each product - scheduled actions can handle all at once
             for product in target_products:
                 try:
                     # Remove attributes
@@ -100,7 +100,8 @@ class ProductTemplate(models.Model):
     @api.model
     def get_category_preview(self, category_id=None):
         """
-        Preview method - simplified to return only essential information
+        Preview method - returns essential information for both wizard and scheduled actions
+        Optimized for multi-step wizard compatibility
         """
         try:
             if not category_id:
@@ -135,7 +136,7 @@ class ProductTemplate(models.Model):
             products_with_attributes = all_products.filtered(lambda p: p.attribute_line_ids)
             products_without_attributes = all_products.filtered(lambda p: not p.attribute_line_ids)
             
-            # Calculate totals - simplified
+            # Calculate totals efficiently
             total_attributes = sum(len(p.attribute_line_ids) for p in products_with_attributes)
             total_variants = sum(len(p.product_variant_ids) for p in products_with_attributes)
             active_products = len([p for p in all_products if p.active])
