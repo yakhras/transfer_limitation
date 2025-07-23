@@ -170,7 +170,10 @@ class CashFlowDashboard(models.Model):
 
     @api.model
     def create_dashboard_records(self, company_id=None):
-        """Create dashboard records based on configuration"""
+        """Create dashboard records based on configuration (Legacy - now automatic)"""
+        # This method is now legacy since dashboard records are automatically 
+        # created when configuration records are saved. Keeping for compatibility.
+        
         # Use provided company_id or current user's company
         if not company_id:
             company_id = self.env.company.id
@@ -186,7 +189,8 @@ class CashFlowDashboard(models.Model):
             # No configuration exists, try to auto-suggest
             try:
                 created_configs = config_model.auto_suggest_setup(company_id)
-                active_configs = created_configs
+                # Dashboard records will be created automatically by the config model overrides
+                return created_configs
             except Exception:
                 # If auto-suggestion fails, raise error
                 raise UserError(
@@ -194,18 +198,9 @@ class CashFlowDashboard(models.Model):
                     "Please configure accounts first in Settings > Cash Flow > Dashboard Configuration"
                 )
         
-        # Create dashboard records for each configured account
+        # Sync existing configurations (dashboard records auto-created by config model)
         for config in active_configs:
-            # Check if dashboard record already exists
-            existing = self.search([
-                ('account_id', '=', config.account_id.id),
-                ('company_id', '=', company_id)
-            ])
-            if not existing:
-                self.create({
-                    'account_id': config.account_id.id,
-                    'company_id': company_id,
-                })
+            config._sync_dashboard_record()
 
     @api.model
     def get_dashboard_data(self, company_id=None):
