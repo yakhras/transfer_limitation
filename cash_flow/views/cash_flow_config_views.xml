@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Tree View for Cash Flow Configuration -->
+        <record id="view_cash_flow_config_tree" model="ir.ui.view">
+            <field name="name">cash.flow.config.tree</field>
+            <field name="model">cash.flow.config</field>
+            <field name="arch" type="xml">
+                <tree string="Cash Flow Configuration" editable="bottom" create="true" delete="true">
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                    <field name="sequence" widget="handle"/>
+                    <field name="account_id" options="{'no_create': True}"/>
+                    <field name="account_code"/>
+                    <field name="account_name"/>
+                    <field name="custom_label" placeholder="Custom display name (optional)"/>
+                    <field name="display_name"/>
+                    <field name="suggested_type"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View for Cash Flow Configuration -->
+        <record id="view_cash_flow_config_form" model="ir.ui.view">
+            <field name="name">cash.flow.config.form</field>
+            <field name="model">cash.flow.config</field>
+            <field name="arch" type="xml">
+                <form string="Cash Flow Configuration">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_generate_dashboard_records" 
+                                    type="object" 
+                                    class="oe_stat_button" 
+                                    icon="fa-refresh">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_text">Refresh</span>
+                                    <span class="o_stat_text">Dashboard</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group string="Account Information">
+                                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                                <field name="account_id" options="{'no_create': True}"/>
+                                <field name="account_code"/>
+                                <field name="account_name"/>
+                                <field name="suggested_type"/>
+                            </group>
+                            <group string="Display Options">
+                                <field name="custom_label" placeholder="Leave empty to use account name"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View for Cash Flow Configuration -->
+        <record id="view_cash_flow_config_search" model="ir.ui.view">
+            <field name="name">cash.flow.config.search</field>
+            <field name="model">cash.flow.config</field>
+            <field name="arch" type="xml">
+                <search string="Cash Flow Configuration">
+                    <field name="account_code"/>
+                    <field name="account_name"/>
+                    <field name="custom_label"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    
+                    <filter string="Active" name="active" domain="[('active', '=', True)]" default="1"/>
+                    <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="Cash Accounts" name="cash_accounts" domain="[('suggested_type', 'ilike', 'cash')]"/>
+                    <filter string="Bank Accounts" name="bank_accounts" domain="[('suggested_type', 'ilike', 'bank')]"/>
+                    <filter string="Receivables" name="receivables" domain="[('suggested_type', 'ilike', 'receivable')]"/>
+                    
+                    <group expand="0" string="Group By">
+                        <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                        <filter string="Account Type" name="account_type" context="{'group_by': 'suggested_type'}"/>
+                        <filter string="Status" name="status" context="{'group_by': 'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Kanban View for Cash Flow Configuration -->
+        <record id="view_cash_flow_config_kanban" model="ir.ui.view">
+            <field name="name">cash.flow.config.kanban</field>
+            <field name="model">cash.flow.config</field>
+            <field name="arch" type="xml">
+                <kanban create="true" delete="true" class="o_kanban_mobile">
+                    <field name="id"/>
+                    <field name="company_id"/>
+                    <field name="account_code"/>
+                    <field name="display_name"/>
+                    <field name="suggested_type"/>
+                    <field name="active"/>
+                    <field name="sequence"/>
+                    
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click" 
+                                 t-att-class="!record.active.raw_value ? 'oe_kanban_color_2' : ''">
+                                
+                                <div class="o_kanban_card_header">
+                                    <div class="o_kanban_card_header_title">
+                                        <div class="o_primary">
+                                            <strong t-esc="record.account_code.value"/>
+                                        </div>
+                                        <div class="text-muted">
+                                            <t t-esc="record.display_name.value"/>
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_manage_button_section">
+                                        <a class="o_kanban_manage_toggle_button" href="#" data-bs-toggle="dropdown">
+                                            <i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_kanban_card_content">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <span class="badge badge-secondary" t-esc="record.suggested_type.value"/>
+                                        </div>
+                                        <div class="col-4 text-right">
+                                            <span class="badge" 
+                                                  t-att-class="record.active.raw_value ? 'badge-success' : 'badge-secondary'"
+                                                  t-esc="record.active.raw_value ? 'Active' : 'Inactive'"/>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2" t-if="record.company_id.value" groups="base.group_multi_company">
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                <i class="fa fa-building-o"/> <t t-esc="record.company_id.value"/>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Action for Cash Flow Configuration -->
+        <record id="action_cash_flow_config" model="ir.actions.act_window">
+            <field name="name">Dashboard Configuration</field>
+            <field name="res_model">cash.flow.config</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Configure Cash Flow Dashboard
+                </p>
+                <p>
+                    Select which accounts to monitor on your cash flow dashboard.<br/>
+                    You can customize display names and arrange the order of accounts.
+                </p>
+                <p>
+                    <a type="action" name="%(action_cash_flow_config_wizard)d" class="btn btn-primary">
+                        Auto-Suggest Accounts
+                    </a>
+                </p>
+            </field>
+        </record>
+
+        <!-- Server Action: Auto-Suggest Accounts -->
+        <record id="action_auto_suggest_accounts" model="ir.actions.server">
+            <field name="name">Auto-Suggest Accounts</field>
+            <field name="model_id" ref="model_cash_flow_config"/>
+            <field name="binding_model_id" ref="model_cash_flow_config"/>
+            <field name="state">code</field>
+            <field name="code">
+# Auto-suggest accounts for current company
+created = env['cash.flow.config'].auto_suggest_setup()
+if created:
+    action = {
+        'type': 'ir.actions.client',
+        'tag': 'display_notification',
+        'params': {
+            'title': 'Success!',
+            'message': f'Created {len(created)} suggested account configurations.',
+            'type': 'success',
+            'sticky': False,
+        }
+    }
+else:
+    action = {
+        'type': 'ir.actions.client', 
+        'tag': 'display_notification',
+        'params': {
+            'title': 'Info',
+            'message': 'No new accounts to suggest. Configuration already exists.',
+            'type': 'info',
+            'sticky': False,
+        }
+    }
+            </field>
+        </record>
+
+        <!-- Server Action: Generate Dashboard Records -->
+        <record id="action_generate_dashboard" model="ir.actions.server">
+            <field name="name">Generate Dashboard Records</field>
+            <field name="model_id" ref="model_cash_flow_config"/>
+            <field name="binding_model_id" ref="model_cash_flow_config"/>
+            <field name="state">code</field>
+            <field name="code">
+# Generate dashboard records from configuration
+env['cash.flow.config'].generate_all_dashboard_records()
+action = {
+    'type': 'ir.actions.client',
+    'tag': 'display_notification',
+    'params': {
+        'title': 'Success!',
+        'message': 'Dashboard records have been generated/updated.',
+        'type': 'success',
+        'sticky': False,
+    }
+}
+            </field>
+        </record>
+
+        <!-- Wizard Action for Auto-Suggestion -->
+        <record id="action_cash_flow_config_wizard" model="ir.actions.act_window">
+            <field name="name">Auto-Suggest Dashboard Accounts</field>
+            <field name="res_model">cash.flow.config</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_active': True}</field>
+            <field name="view_id" ref="view_cash_flow_config_form"/>
+        </record>
+
+    </data>
+</odoo>

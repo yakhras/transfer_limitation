@@ -26,6 +26,24 @@
             action="action_cash_flow_dashboard"
             sequence="10"/>
 
+        <!-- Menu item for Cash Flow Configuration -->
+        <menuitem 
+            id="menu_cash_flow_config"
+            name="Dashboard Configuration"
+            parent="account.menu_finance_configuration"
+            action="action_cash_flow_config"
+            sequence="15"
+            groups="account.group_account_manager"/>
+
+        <!-- Alternative: Add configuration to Settings menu -->
+        <menuitem 
+            id="menu_cash_flow_config_settings"
+            name="Cash Flow Dashboard"
+            parent="base.menu_administration"
+            action="action_cash_flow_config"
+            sequence="50"
+            groups="base.group_system"/>
+
         <!-- Server Action for refreshing dashboard data -->
         <record id="action_refresh_cash_flow_dashboard" model="ir.actions.server">
             <field name="name">Refresh Dashboard Data</field>
@@ -33,8 +51,8 @@
             <field name="binding_model_id" ref="model_cash_flow_dashboard"/>
             <field name="state">code</field>
             <field name="code">
-# Refresh dashboard records for current company
-action = env['cash.flow.dashboard'].create_dashboard_records()
+# Refresh dashboard records from current configuration
+action = env['cash.flow.dashboard'].refresh_dashboard_from_config()
             </field>
         </record>
 

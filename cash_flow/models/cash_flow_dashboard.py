@@ -170,81 +170,93 @@ class CashFlowDashboard(models.Model):
 
     @api.model
     def create_dashboard_records(self, company_id=None):
-        """Create dashboard records for the 5 specified accounts for the given company"""
-        target_accounts = ['120002', '120001', '320002', '320003', '153000']
-        
+        """Create dashboard records based on configuration"""
         # Use provided company_id or current user's company
         if not company_id:
             company_id = self.env.company.id
             
-        for account_code in target_accounts:
-            # Search for account in the specific company
-            account = self.env['account.account'].search([
-                ('code', '=', account_code),
+        # Get active configurations for this company
+        config_model = self.env['cash.flow.config']
+        active_configs = config_model.search([
+            ('company_id', '=', company_id),
+            ('active', '=', True)
+        ])
+        
+        if not active_configs:
+            # No configuration exists, try to auto-suggest
+            try:
+                created_configs = config_model.auto_suggest_setup(company_id)
+                active_configs = created_configs
+            except Exception:
+                # If auto-suggestion fails, raise error
+                raise UserError(
+                    "No cash flow configuration found for this company. "
+                    "Please configure accounts first in Settings > Cash Flow > Dashboard Configuration"
+                )
+        
+        # Create dashboard records for each configured account
+        for config in active_configs:
+            # Check if dashboard record already exists
+            existing = self.search([
+                ('account_id', '=', config.account_id.id),
                 ('company_id', '=', company_id)
-            ], limit=1)
-            
-            if account:
-                # Check if dashboard record already exists for this company
-                existing = self.search([
-                    ('account_id', '=', account.id),
-                    ('company_id', '=', company_id)
-                ])
-                if not existing:
-                    self.create({
-                        'account_id': account.id,
-                        'company_id': company_id,
-                    })
-            else:
-                # Only raise error if we're looking in the current company
-                if company_id == self.env.company.id:
-                    raise UserError("Account with code %s not found in Chart of Accounts for company %s" % (account_code, self.env.company.name))
+            ])
+            if not existing:
+                self.create({
+                    'account_id': config.account_id.id,
+                    'company_id': company_id,
+                })
 
     @api.model
     def get_dashboard_data(self, company_id=None):
-        """Get dashboard data for the 5 accounts for the specified company"""
-        target_accounts = ['120002', '120001', '320002', '320003', '153000']
-        dashboard_data = []
-        
+        """Get dashboard data based on configuration for the specified company"""
         # Use provided company_id or current user's company
         if not company_id:
             company_id = self.env.company.id
         
-        for account_code in target_accounts:
-            # Search for account in the specific company
-            account = self.env['account.account'].search([
-                ('code', '=', account_code),
+        # Get active configurations for this company (ordered by sequence)
+        config_model = self.env['cash.flow.config']
+        active_configs = config_model.search([
+            ('company_id', '=', company_id),
+            ('active', '=', True)
+        ], order='sequence, account_code')
+        
+        if not active_configs:
+            # No configuration, return empty or auto-suggest
+            return []
+        
+        dashboard_data = []
+        
+        for config in active_configs:
+            # Search for existing dashboard record for this company
+            dashboard_record = self.search([
+                ('account_id', '=', config.account_id.id),
                 ('company_id', '=', company_id)
             ], limit=1)
             
-            if account:
-                # Search for existing dashboard record for this company
-                dashboard_record = self.search([
-                    ('account_id', '=', account.id),
-                    ('company_id', '=', company_id)
-                ], limit=1)
-                
-                if not dashboard_record:
-                    dashboard_record = self.create({
-                        'account_id': account.id,
-                        'company_id': company_id,
-                    })
-                
-                dashboard_data.append({
-                    'id': dashboard_record.id,
-                    'account_code': account.code,
-                    'account_name': account.name,
-                    'current_balance': dashboard_record.current_balance,
-                    'balance_display': dashboard_record.balance_display,
-                    'balance_color': dashboard_record.balance_color,
+            if not dashboard_record:
+                dashboard_record = self.create({
+                    'account_id': config.account_id.id,
                     'company_id': company_id,
                 })
+            
+            dashboard_data.append({
+                'id': dashboard_record.id,
+                'account_code': config.account_code,
+                'account_name': config.account_name,
+                'display_name': config.display_name,  # Custom label or account name
+                'current_balance': dashboard_record.current_balance,
+                'balance_display': dashboard_record.balance_display,
+                'balance_color': dashboard_record.balance_color,
+                'company_id': company_id,
+                'sequence': config.sequence,
+            })
         
         return dashboard_data
 
     @api.model
     def init_dashboard_for_all_companies(self):
-        """Initialize dashboard records for all companies that have the target accounts"""
+        """Initialize dashboard records for all companies based on their configurations"""
         companies = self.env['res.company'].search([])
         
         for company in companies:
@@ -252,10 +264,28 @@ class CashFlowDashboard(models.Model):
                 # Use with_context to set the company context
                 self.with_context(force_company=company.id).create_dashboard_records(company.id)
             except UserError:
-                # Skip companies that don't have the required accounts
+                # Skip companies that don't have configuration or accounts
                 continue
 
     @api.model  
     def get_current_company_dashboard(self):
         """Get dashboard data for current user's company"""
         return self.get_dashboard_data(self.env.company.id)
+    
+    @api.model
+    def refresh_dashboard_from_config(self):
+        """Refresh dashboard records based on current configuration"""
+        # This method can be called to sync dashboard records with configuration changes
+        config_model = self.env['cash.flow.config']
+        config_model.generate_all_dashboard_records()
+        
+        # Clean up dashboard records that no longer have configuration
+        all_configs = config_model.search([('active', '=', True)])
+        configured_accounts = [(config.account_id.id, config.company_id.id) for config in all_configs]
+        
+        # Find dashboard records that don't have corresponding active configuration
+        all_dashboard_records = self.search([])
+        for dashboard_record in all_dashboard_records:
+            key = (dashboard_record.account_id.id, dashboard_record.company_id.id)
+            if key not in configured_accounts:
+                dashboard_record.unlink()  # Remove orphaned dashboard records

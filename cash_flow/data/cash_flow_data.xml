@@ -2,11 +2,11 @@
 <odoo>
     <data>
 
-        <!-- Function call to initialize dashboard records for current company -->
-        <function model="cash.flow.dashboard" name="create_dashboard_records"/>
+        <!-- Initialize configuration for companies that have common cash flow accounts -->
+        <function model="cash.flow.config" name="auto_suggest_setup"/>
 
-        <!-- Optional: Initialize for all companies (uncomment if needed) -->
-        <!-- <function model="cash.flow.dashboard" name="init_dashboard_for_all_companies"/> -->
+        <!-- Generate dashboard records from configuration -->
+        <function model="cash.flow.config" name="generate_all_dashboard_records"/>
 
     </data>
 </odoo>

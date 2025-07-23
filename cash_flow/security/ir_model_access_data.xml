@@ -14,5 +14,29 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <!-- Record Rule for Cash Flow Configuration - Company Access -->
+        <record id="cash_flow_config_company_rule" model="ir.rule">
+            <field name="name">Cash Flow Configuration: Company Access</field>
+            <field name="model_id" ref="model_cash_flow_config"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Record Rule for Cash Flow Configuration - Manager Access -->
+        <record id="cash_flow_config_manager_rule" model="ir.rule">
+            <field name="name">Cash Flow Configuration: Manager Full Access</field>
+            <field name="model_id" ref="model_cash_flow_config"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('account.group_account_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
     </data>
 </odoo>
