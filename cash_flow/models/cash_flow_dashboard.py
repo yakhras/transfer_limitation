@@ -18,10 +18,10 @@ class CashFlowDashboard(models.Model):
     # Display name from configuration (custom label or account name)
     display_name = fields.Char(string='Display Name', compute='_compute_display_name_from_config')
     
-    # Computed balance field - directly from account
+    # Computed balance field
     current_balance = fields.Monetary(
-        related='account_id.balance',
         string='Current Balance', 
+        compute='_compute_current_balance',
         currency_field='currency_id',
         store=True
     )
@@ -127,15 +127,29 @@ class CashFlowDashboard(models.Model):
         # Default to False if unable to determine
         return False
 
-    @api.depends('account_id', 'company_id')
+    @api.depends('account_id', 'account_id.current_balance', 'company_id')
     def _compute_current_balance(self):
-        """Compute current balance using Odoo's native account balance"""
+        """Compute current balance for each account (posted entries only)"""
         for record in self:
             if record.account_id and record.company_id:
-                # Use the account's native balance field
-                # This automatically handles all account types and signs correctly
-                account = record.account_id.with_context(company_id=record.company_id.id)
-                record.current_balance = account.balance
+                # Get current balance from account - filter by company and posted moves only
+                domain = [
+                    ('account_id', '=', record.account_id.id),
+                    ('company_id', '=', record.company_id.id),
+                    ('move_id.state', '=', 'posted')  # Only posted journal entries
+                ]
+                account_moves = self.env['account.move.line'].search(domain)
+                
+                # Calculate balance (debit - credit for asset accounts, credit - debit for liability/equity)
+                debit_total = sum(account_moves.mapped('debit'))
+                credit_total = sum(account_moves.mapped('credit'))
+                record.current_balance = debit_total - credit_total
+                
+                # Determine balance based on account type
+                # if self._is_asset_account(record.account_id):
+                #     record.current_balance = debit_total - credit_total
+                # else:
+                #     record.current_balance = credit_total - debit_total
             else:
                 record.current_balance = 0.0
 
