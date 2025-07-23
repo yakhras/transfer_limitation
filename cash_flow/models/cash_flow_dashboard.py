@@ -18,12 +18,11 @@ class CashFlowDashboard(models.Model):
     # Display name from configuration (custom label or account name)
     display_name = fields.Char(string='Display Name', compute='_compute_display_name_from_config')
     
-    # Computed balance field
+    # Computed balance field - REMOVED store=True to allow context-based filtering
     current_balance = fields.Monetary(
         string='Current Balance', 
         compute='_compute_current_balance',
-        currency_field='currency_id',
-        store=True
+        currency_field='currency_id'
     )
     
     # Currency field
@@ -86,19 +85,28 @@ class CashFlowDashboard(models.Model):
             else:
                 record.display_name = record.account_name or ''
 
-    
-
-    @api.depends('account_id', 'account_id.current_balance', 'company_id')
+    @api.depends('account_id', 'company_id')
     def _compute_current_balance(self):
-        """Compute current balance for each account (posted entries only)"""
+        """Compute current balance for each account with date filtering support"""
         for record in self:
             if record.account_id and record.company_id:
-                # Get current balance from account - filter by company and posted moves only
+                # Base domain for filtering account move lines
                 domain = [
                     ('account_id', '=', record.account_id.id),
                     ('company_id', '=', record.company_id.id),
                     ('move_id.state', '=', 'posted')  # Only posted journal entries
                 ]
+                
+                # Add date filtering from context (if provided by search view)
+                date_from = self.env.context.get('date_from')
+                date_to = self.env.context.get('date_to')
+                
+                if date_from:
+                    domain.append(('date', '>=', date_from))
+                if date_to:
+                    domain.append(('date', '<=', date_to))
+                
+                # Search for account move lines with the filtered domain
                 account_moves = self.env['account.move.line'].search(domain)
                 
                 # Calculate balance (debit - credit for asset accounts, credit - debit for liability/equity)
@@ -265,3 +273,19 @@ class CashFlowDashboard(models.Model):
             key = (dashboard_record.account_id.id, dashboard_record.company_id.id)
             if key not in configured_accounts:
                 dashboard_record.unlink()  # Remove orphaned dashboard records
+
+    def get_filtered_balance_info(self):
+        """Get balance information with current context (including date filters)"""
+        # This method can be called to get balance info with current filtering applied
+        result = {}
+        for record in self:
+            result[record.id] = {
+                'account_code': record.account_code,
+                'display_name': record.display_name,
+                'current_balance': record.current_balance,
+                'balance_display': record.balance_display,
+                'balance_color': record.balance_color,
+                'date_from': self.env.context.get('date_from'),
+                'date_to': self.env.context.get('date_to'),
+            }
+        return result
