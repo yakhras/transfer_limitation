@@ -81,6 +81,7 @@
                     
                     <!-- JavaScript for Chart Rendering -->
                     <script type="text/javascript">
+                        <![CDATA[
                         $(document).ready(function() {
                             // Function to render charts for all kanban cards
                             function renderCashFlowCharts() {
@@ -185,6 +186,7 @@
                                 setTimeout(renderCashFlowCharts, 100);
                             });
                         });
+                        ]]>
                     </script>
                     
                 </kanban>
