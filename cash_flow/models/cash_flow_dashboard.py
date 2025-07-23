@@ -106,7 +106,27 @@ class CashFlowDashboard(models.Model):
         """Format balance for display in kanban cards"""
         for record in self:
             if record.currency_id:
-                record.balance_display = record.currency_id.format(record.current_balance)
+                # Handle different Odoo versions with different currency formatting methods
+                try:
+                    # Try newer version method (some versions have format)
+                    if hasattr(record.currency_id, 'format'):
+                        record.balance_display = record.currency_id.format(record.current_balance)
+                    # Try round method (common in many versions)
+                    elif hasattr(record.currency_id, 'round'):
+                        rounded_amount = record.currency_id.round(record.current_balance)
+                        record.balance_display = f"{record.currency_id.symbol or ''}{rounded_amount:,.2f}".strip()
+                    # Try with_context formatting
+                    elif hasattr(record.currency_id, 'with_context'):
+                        formatted = record.currency_id.with_context(lang=self.env.user.lang).format(record.current_balance)
+                        record.balance_display = formatted
+                    else:
+                        # Fallback: manual formatting with currency symbol
+                        symbol = getattr(record.currency_id, 'symbol', '') or getattr(record.currency_id, 'name', '')
+                        record.balance_display = f"{symbol} {record.current_balance:,.2f}".strip()
+                except Exception:
+                    # Final fallback if all methods fail
+                    symbol = getattr(record.currency_id, 'symbol', '') or getattr(record.currency_id, 'name', '')
+                    record.balance_display = f"{symbol} {record.current_balance:,.2f}".strip()
             else:
                 record.balance_display = f"{record.current_balance:,.2f}"
 
