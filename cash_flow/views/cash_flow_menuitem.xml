@@ -25,7 +25,7 @@
         <menuitem 
             id="menu_cash_flow_dashboard"
             name="Cash Flow Dashboard"
-            parent="account.menu_finance_reports"
+            parent="base.menu_reporting_dashboard"
             action="action_cash_flow_dashboard"
             sequence="10"/>
 
