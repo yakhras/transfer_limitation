@@ -2,8 +2,11 @@
 <odoo>
     <data>
 
-        <!-- Function call to initialize dashboard records -->
+        <!-- Function call to initialize dashboard records for current company -->
         <function model="cash.flow.dashboard" name="create_dashboard_records"/>
+
+        <!-- Optional: Initialize for all companies (uncomment if needed) -->
+        <!-- <function model="cash.flow.dashboard" name="init_dashboard_for_all_companies"/> -->
 
     </data>
 </odoo>

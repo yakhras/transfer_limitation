@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <kanban class="o_kanban_dashboard" create="false" edit="false" delete="false">
                     <field name="id"/>
+                    <field name="company_id"/>
                     <field name="account_code"/>
                     <field name="account_name"/>
                     <field name="current_balance"/>
@@ -28,6 +29,10 @@
                                         </div>
                                         <div class="text-muted">
                                             <t t-esc="record.account_name.value"/>
+                                        </div>
+                                        <!-- Show company name in multi-company setup -->
+                                        <div class="text-muted small" t-if="record.company_id.value">
+                                            <i class="fa fa-building-o"/> <t t-esc="record.company_id.value"/>
                                         </div>
                                     </div>
                                 </div>
@@ -67,6 +72,7 @@
             <field name="model">cash.flow.dashboard</field>
             <field name="arch" type="xml">
                 <tree string="Cash Flow Accounts" create="false" edit="false" delete="false">
+                    <field name="company_id" groups="base.group_multi_company"/>
                     <field name="account_code"/>
                     <field name="account_name"/>
                     <field name="current_balance"/>
@@ -94,6 +100,7 @@
                         
                         <group>
                             <group string="Account Information">
+                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
                                 <field name="account_id" readonly="1"/>
                                 <field name="currency_id" readonly="1"/>
                             </group>
@@ -118,7 +125,12 @@
                 <search string="Cash Flow Dashboard">
                     <field name="account_code"/>
                     <field name="account_name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <filter string="Current Company" name="current_company" 
+                            domain="[('company_id', '=', context.get('force_company', company_id))]" 
+                            default="1"/>
                     <group expand="0" string="Group By">
+                        <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
                         <filter string="Account Code" name="account_code" context="{'group_by': 'account_code'}"/>
                     </group>
                 </search>

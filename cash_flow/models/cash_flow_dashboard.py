@@ -8,7 +8,10 @@ class CashFlowDashboard(models.Model):
     _order = 'account_code'
 
     # Basic fields
-    account_id = fields.Many2one('account.account', string='Account', required=True)
+    company_id = fields.Many2one('res.company', string='Company', required=True, 
+                                default=lambda self: self.env.company)
+    account_id = fields.Many2one('account.account', string='Account', required=True,
+                                domain="[('company_id', '=', company_id)]")
     account_code = fields.Char(related='account_id.code', string='Account Code', store=True)
     account_name = fields.Char(related='account_id.name', string='Account Name', store=True)
     
@@ -24,7 +27,8 @@ class CashFlowDashboard(models.Model):
     currency_id = fields.Many2one(
         'res.currency', 
         string='Currency',
-        default=lambda self: self.env.company.currency_id
+        related='company_id.currency_id',
+        store=True
     )
     
     # Display fields for kanban
@@ -38,6 +42,26 @@ class CashFlowDashboard(models.Model):
         ('red', 'Negative'),
         ('blue', 'Zero')
     ], string='Balance Color', compute='_compute_balance_color')
+
+    # Add SQL constraints for company consistency
+    _sql_constraints = [
+        ('unique_account_company', 'unique(account_id, company_id)', 
+         'Dashboard record must be unique per account and company!'),
+    ]
+
+    @api.model
+    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+        """Override search to automatically filter by current company"""
+        # Add company filter if not already present
+        company_domain = [('company_id', '=', self.env.company.id)]
+        
+        # Check if company_id is already in the domain
+        has_company_filter = any(arg[0] == 'company_id' for arg in args if isinstance(arg, (list, tuple)) and len(arg) >= 1)
+        
+        if not has_company_filter:
+            args = args + company_domain
+            
+        return super(CashFlowDashboard, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
 
     def _is_asset_account(self, account):
         """Determine if account is an asset account - compatible across Odoo versions"""
@@ -80,13 +104,16 @@ class CashFlowDashboard(models.Model):
         # Default to False if unable to determine
         return False
 
-    @api.depends('account_id', 'account_id.current_balance')
+    @api.depends('account_id', 'account_id.current_balance', 'company_id')
     def _compute_current_balance(self):
         """Compute current balance for each account"""
         for record in self:
-            if record.account_id:
-                # Get current balance from account
-                domain = [('account_id', '=', record.account_id.id)]
+            if record.account_id and record.company_id:
+                # Get current balance from account - filter by company
+                domain = [
+                    ('account_id', '=', record.account_id.id),
+                    ('company_id', '=', record.company_id.id)
+                ]
                 account_moves = self.env['account.move.line'].search(domain)
                 
                 # Calculate balance (debit - credit for asset accounts, credit - debit for liability/equity)
@@ -142,34 +169,66 @@ class CashFlowDashboard(models.Model):
                 record.balance_color = 'blue'
 
     @api.model
-    def create_dashboard_records(self):
-        """Create dashboard records for the 5 specified accounts"""
+    def create_dashboard_records(self, company_id=None):
+        """Create dashboard records for the 5 specified accounts for the given company"""
         target_accounts = ['120002', '120001', '320002', '320003', '153000']
         
+        # Use provided company_id or current user's company
+        if not company_id:
+            company_id = self.env.company.id
+            
         for account_code in target_accounts:
-            account = self.env['account.account'].search([('code', '=', account_code)], limit=1)
+            # Search for account in the specific company
+            account = self.env['account.account'].search([
+                ('code', '=', account_code),
+                ('company_id', '=', company_id)
+            ], limit=1)
+            
             if account:
-                # Check if dashboard record already exists
-                existing = self.search([('account_id', '=', account.id)])
+                # Check if dashboard record already exists for this company
+                existing = self.search([
+                    ('account_id', '=', account.id),
+                    ('company_id', '=', company_id)
+                ])
                 if not existing:
                     self.create({
                         'account_id': account.id,
+                        'company_id': company_id,
                     })
             else:
-                raise UserError("Account with code %s not found in Chart of Accounts" % account_code)
+                # Only raise error if we're looking in the current company
+                if company_id == self.env.company.id:
+                    raise UserError("Account with code %s not found in Chart of Accounts for company %s" % (account_code, self.env.company.name))
 
     @api.model
-    def get_dashboard_data(self):
-        """Get dashboard data for the 5 accounts"""
+    def get_dashboard_data(self, company_id=None):
+        """Get dashboard data for the 5 accounts for the specified company"""
         target_accounts = ['120002', '120001', '320002', '320003', '153000']
         dashboard_data = []
         
+        # Use provided company_id or current user's company
+        if not company_id:
+            company_id = self.env.company.id
+        
         for account_code in target_accounts:
-            account = self.env['account.account'].search([('code', '=', account_code)], limit=1)
+            # Search for account in the specific company
+            account = self.env['account.account'].search([
+                ('code', '=', account_code),
+                ('company_id', '=', company_id)
+            ], limit=1)
+            
             if account:
-                dashboard_record = self.search([('account_id', '=', account.id)], limit=1)
+                # Search for existing dashboard record for this company
+                dashboard_record = self.search([
+                    ('account_id', '=', account.id),
+                    ('company_id', '=', company_id)
+                ], limit=1)
+                
                 if not dashboard_record:
-                    dashboard_record = self.create({'account_id': account.id})
+                    dashboard_record = self.create({
+                        'account_id': account.id,
+                        'company_id': company_id,
+                    })
                 
                 dashboard_data.append({
                     'id': dashboard_record.id,
@@ -178,6 +237,25 @@ class CashFlowDashboard(models.Model):
                     'current_balance': dashboard_record.current_balance,
                     'balance_display': dashboard_record.balance_display,
                     'balance_color': dashboard_record.balance_color,
+                    'company_id': company_id,
                 })
         
         return dashboard_data
+
+    @api.model
+    def init_dashboard_for_all_companies(self):
+        """Initialize dashboard records for all companies that have the target accounts"""
+        companies = self.env['res.company'].search([])
+        
+        for company in companies:
+            try:
+                # Use with_context to set the company context
+                self.with_context(force_company=company.id).create_dashboard_records(company.id)
+            except UserError:
+                # Skip companies that don't have the required accounts
+                continue
+
+    @api.model  
+    def get_current_company_dashboard(self):
+        """Get dashboard data for current user's company"""
+        return self.get_dashboard_data(self.env.company.id)

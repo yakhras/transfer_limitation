@@ -27,6 +27,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'security/ir_model_access_data.xml',
         'data/cash_flow_data.xml',
         'views/cash_flow_dashboard_views.xml',
         'views/cash_flow_menuitem.xml',
