@@ -39,6 +39,47 @@ class CashFlowDashboard(models.Model):
         ('blue', 'Zero')
     ], string='Balance Color', compute='_compute_balance_color')
 
+    def _is_asset_account(self, account):
+        """Determine if account is an asset account - compatible across Odoo versions"""
+        # Try different field names depending on Odoo version
+        
+        # For newer versions (14.0+) that use account_type
+        if hasattr(account, 'account_type'):
+            asset_types = [
+                'asset_receivable', 'asset_cash', 'asset_current', 'asset_fixed',
+                'asset_prepayments', 'asset_non_current'
+            ]
+            return account.account_type in asset_types
+            
+        # For older versions (11.0-13.0) that use user_type_id
+        elif hasattr(account, 'user_type_id') and account.user_type_id:
+            # Check by user type code/name
+            user_type = account.user_type_id
+            asset_codes = ['receivable', 'asset', 'bank', 'cash']
+            
+            # Try different ways to identify asset accounts
+            if hasattr(user_type, 'type'):
+                return user_type.type in asset_codes
+            elif hasattr(user_type, 'code'):
+                return user_type.code in asset_codes
+            elif hasattr(user_type, 'name'):
+                asset_names = ['Receivable', 'Current Assets', 'Fixed Assets', 'Bank and Cash', 'Asset']
+                return any(name in user_type.name for name in asset_names)
+                
+        # For versions that use internal_type
+        elif hasattr(account, 'internal_type'):
+            asset_types = ['receivable', 'bank', 'cash', 'asset']
+            return account.internal_type in asset_types
+            
+        # Fallback: check account code patterns (first digit)
+        # Most chart of accounts use 1xxx for assets
+        if account.code and len(account.code) >= 1:
+            first_digit = account.code[0]
+            return first_digit in ['1', '2'] and not account.code.startswith('2')  # 1xxx = assets, 2xxx can be assets or liabilities
+            
+        # Default to False if unable to determine
+        return False
+
     @api.depends('account_id', 'account_id.current_balance')
     def _compute_current_balance(self):
         """Compute current balance for each account"""
@@ -53,7 +94,7 @@ class CashFlowDashboard(models.Model):
                 credit_total = sum(account_moves.mapped('credit'))
                 
                 # Determine balance based on account type
-                if record.account_id.account_type in ['asset_receivable', 'asset_cash', 'asset_current', 'asset_fixed']:
+                if self._is_asset_account(record.account_id):
                     record.current_balance = debit_total - credit_total
                 else:
                     record.current_balance = credit_total - debit_total
