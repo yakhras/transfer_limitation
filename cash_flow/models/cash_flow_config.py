@@ -25,7 +25,7 @@ class CashFlowConfig(models.Model):
                              help="Determines the order of accounts on the dashboard")
     
     # Computed fields for dashboard integration
-    suggested_type = fields.Char(string='Suggested Type', compute='_compute_suggested_type')
+    suggested_type = fields.Char(string='Suggested Type', compute='_compute_suggested_type', store=True)
     
     # SQL Constraints
     _sql_constraints = [
