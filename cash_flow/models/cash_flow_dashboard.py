@@ -1,5 +1,8 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
+import json
+from datetime import datetime, timedelta
+from collections import defaultdict
 
 
 class CashFlowDashboard(models.Model):
@@ -44,6 +47,13 @@ class CashFlowDashboard(models.Model):
         ('red', 'Negative'),
         ('blue', 'Zero')
     ], string='Balance Color', compute='_compute_balance_color')
+    
+    # Chart data for kanban cards
+    chart_data = fields.Text(
+        string='Chart Data',
+        compute='_compute_chart_data',
+        help='JSON data for rendering balance trend charts'
+    )
 
     # Add SQL constraints for company consistency
     _sql_constraints = [
@@ -156,6 +166,115 @@ class CashFlowDashboard(models.Model):
                 record.balance_color = 'red'
             else:
                 record.balance_color = 'blue'
+
+    @api.depends('account_id', 'company_id')
+    def _compute_chart_data(self):
+        """Generate chart data for balance trends"""
+        for record in self:
+            if not record.account_id or not record.company_id:
+                record.chart_data = json.dumps({'labels': [], 'data': []})
+                continue
+                
+            # Get date range for chart (default last 30 days or from context)
+            date_to = self.env.context.get('date_to')
+            date_from = self.env.context.get('date_from')
+            
+            if not date_to:
+                date_to = datetime.now().date()
+            else:
+                date_to = datetime.strptime(date_to, '%Y-%m-%d').date()
+                
+            if not date_from:
+                # Default to 30 days back from date_to
+                date_from = date_to - timedelta(days=30)
+            else:
+                date_from = datetime.strptime(date_from, '%Y-%m-%d').date()
+            
+            # Ensure reasonable date range for performance (max 90 days)
+            if (date_to - date_from).days > 90:
+                date_from = date_to - timedelta(days=90)
+            
+            # Get daily balances for the date range
+            daily_balances = record._get_daily_balances(date_from, date_to)
+            
+            # Prepare chart data in Chart.js format
+            labels = []
+            data = []
+            
+            current_date = date_from
+            while current_date <= date_to:
+                labels.append(current_date.strftime('%m/%d'))
+                data.append(daily_balances.get(current_date, 0.0))
+                current_date += timedelta(days=1)
+            
+            chart_data = {
+                'labels': labels,
+                'data': data,
+                'balance_color': record.balance_color or 'blue'
+            }
+            
+            record.chart_data = json.dumps(chart_data)
+
+    def _get_daily_balances(self, date_from, date_to):
+        """Calculate daily running balances for the account within date range"""
+        if not self.account_id or not self.company_id:
+            return {}
+        
+        # Get all move lines for this account up to date_to (to calculate running balance)
+        domain = [
+            ('account_id', '=', self.account_id.id),
+            ('company_id', '=', self.company_id.id),
+            ('move_id.state', '=', 'posted'),
+            ('date', '<=', date_to.strftime('%Y-%m-%d'))
+        ]
+        
+        # Get all move lines ordered by date
+        move_lines = self.env['account.move.line'].search(domain, order='date, id')
+        
+        # Group transactions by date and calculate running balance
+        daily_balances = {}
+        running_balance = 0.0
+        transactions_by_date = defaultdict(list)
+        
+        # Group move lines by date
+        for line in move_lines:
+            line_date = line.date
+            transactions_by_date[line_date].append(line)
+        
+        # Calculate running balance for each day
+        for date in sorted(transactions_by_date.keys()):
+            day_debit = sum(line.debit for line in transactions_by_date[date])
+            day_credit = sum(line.credit for line in transactions_by_date[date])
+            running_balance += (day_debit - day_credit)
+            
+            # Only store balances within our chart date range
+            if date_from <= date <= date_to:
+                daily_balances[date] = running_balance
+        
+        # For days without transactions in the range, use previous day's balance
+        if daily_balances:
+            current_date = date_from
+            last_known_balance = running_balance - sum(
+                (line.debit - line.credit) for line in move_lines 
+                if line.date >= date_from
+            ) if move_lines else 0.0
+            
+            while current_date <= date_to:
+                if current_date not in daily_balances:
+                    # Find the last known balance before this date
+                    previous_balance = last_known_balance
+                    for check_date in sorted(daily_balances.keys()):
+                        if check_date < current_date:
+                            previous_balance = daily_balances[check_date]
+                        else:
+                            break
+                    daily_balances[current_date] = previous_balance
+                else:
+                    last_known_balance = daily_balances[current_date]
+                
+                current_date += timedelta(days=1)
+        
+        return daily_balances
 
     @api.model
     def create_dashboard_records(self, company_id=None):
