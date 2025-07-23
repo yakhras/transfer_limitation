@@ -118,15 +118,85 @@
             </field>
         </record>
 
-        <!-- Search View for Cash Flow Dashboard -->
+        <!-- Enhanced Search View for Cash Flow Dashboard with Date Filtering -->
         <record id="view_cash_flow_dashboard_search" model="ir.ui.view">
             <field name="name">cash.flow.dashboard.search</field>
             <field name="model">cash.flow.dashboard</field>
             <field name="arch" type="xml">
                 <search string="Cash Flow Dashboard">
+                    <!-- Field Searches -->
                     <field name="account_code"/>
                     <field name="display_name"/>
                     <field name="company_id" groups="base.group_multi_company"/>
+                    
+                    <!-- Date Range Fields (Custom Date Selection) -->
+                    <field name="display_name" string="Date From" 
+                           filter_domain="[]" 
+                           context="{'date_from': self}"
+                           widget="date"/>
+                    <field name="display_name" string="Date To" 
+                           filter_domain="[]" 
+                           context="{'date_to': self}"
+                           widget="date"/>
+                    
+                    <!-- Separator -->
+                    <separator/>
+                    
+                    <!-- Preset Date Range Filters -->
+                    <filter string="All Time" name="all_time" 
+                            context="{'date_from': False, 'date_to': False}"
+                            help="Show all historical data"/>
+                    
+                    <separator/>
+                    
+                    <filter string="Today" name="today"
+                            domain="[]"
+                            context="{'date_from': context_today().strftime('%Y-%m-%d'), 'date_to': context_today().strftime('%Y-%m-%d')}"
+                            help="Show today's transactions only"/>
+                    
+                    <filter string="This Week" name="this_week"
+                            domain="[]"
+                            context="{'date_from': (context_today() + relativedelta(weekday=0, days=-6)).strftime('%Y-%m-%d'), 'date_to': context_today().strftime('%Y-%m-%d')}"
+                            help="Show current week transactions (Monday to today)"/>
+                    
+                    <filter string="This Month" name="this_month"
+                            domain="[]"
+                            context="{'date_from': context_today().strftime('%Y-%m-01'), 'date_to': (context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')}"
+                            help="Show current month transactions"/>
+                    
+                    <filter string="This Quarter" name="this_quarter"
+                            domain="[]"
+                            context="{'date_from': (context_today().replace(day=1, month=((context_today().month-1)//3)*3+1)).strftime('%Y-%m-%d'), 'date_to': (context_today().replace(day=1, month=((context_today().month-1)//3)*3+3) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')}"
+                            help="Show current quarter transactions"/>
+                    
+                    <filter string="This Year" name="this_year"
+                            domain="[]"
+                            context="{'date_from': context_today().strftime('%Y-01-01'), 'date_to': context_today().strftime('%Y-12-31')}"
+                            help="Show current year transactions"/>
+                    
+                    <separator/>
+                    
+                    <filter string="Last 30 Days" name="last_30_days"
+                            domain="[]"
+                            context="{'date_from': (context_today() + relativedelta(days=-30)).strftime('%Y-%m-%d'), 'date_to': context_today().strftime('%Y-%m-%d')}"
+                            help="Show last 30 days transactions"/>
+                    
+                    <filter string="Last Month" name="last_month"
+                            domain="[]"
+                            context="{'date_from': (context_today().replace(day=1) + relativedelta(months=-1)).strftime('%Y-%m-%d'), 'date_to': (context_today().replace(day=1) + relativedelta(days=-1)).strftime('%Y-%m-%d')}"
+                            help="Show previous month transactions"/>
+                    
+                    <filter string="Last Quarter" name="last_quarter"
+                            domain="[]"
+                            context="{'date_from': (context_today().replace(day=1, month=((context_today().month-1)//3)*3+1) + relativedelta(months=-3)).strftime('%Y-%m-%d'), 'date_to': (context_today().replace(day=1, month=((context_today().month-1)//3)*3+1) + relativedelta(days=-1)).strftime('%Y-%m-%d')}"
+                            help="Show previous quarter transactions"/>
+                    
+                    <filter string="Last Year" name="last_year"
+                            domain="[]"
+                            context="{'date_from': (context_today() + relativedelta(years=-1)).strftime('%Y-01-01'), 'date_to': (context_today() + relativedelta(years=-1)).strftime('%Y-12-31')}"
+                            help="Show previous year transactions"/>
+                    
+                    <!-- Group By Section -->
                     <group expand="0" string="Group By">
                         <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
                         <filter string="Account Code" name="account_code" context="{'group_by': 'account_code'}"/>
