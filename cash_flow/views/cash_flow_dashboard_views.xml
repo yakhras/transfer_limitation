@@ -126,9 +126,6 @@
                     <field name="account_code"/>
                     <field name="account_name"/>
                     <field name="company_id" groups="base.group_multi_company"/>
-                    <filter string="Current Company" name="current_company" 
-                            domain="[('company_id', '=', context.get('force_company', company_id))]" 
-                            default="1"/>
                     <group expand="0" string="Group By">
                         <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
                         <filter string="Account Code" name="account_code" context="{'group_by': 'account_code'}"/>
