@@ -143,12 +143,13 @@ class CashFlowDashboard(models.Model):
                 # Calculate balance (debit - credit for asset accounts, credit - debit for liability/equity)
                 debit_total = sum(account_moves.mapped('debit'))
                 credit_total = sum(account_moves.mapped('credit'))
+                record.current_balance = debit_total - credit_total
                 
                 # Determine balance based on account type
-                if self._is_asset_account(record.account_id):
-                    record.current_balance = debit_total - credit_total
-                else:
-                    record.current_balance = credit_total - debit_total
+                # if self._is_asset_account(record.account_id):
+                #     record.current_balance = debit_total - credit_total
+                # else:
+                #     record.current_balance = credit_total - debit_total
             else:
                 record.current_balance = 0.0
 
