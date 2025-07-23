@@ -129,13 +129,14 @@ class CashFlowDashboard(models.Model):
 
     @api.depends('account_id', 'account_id.current_balance', 'company_id')
     def _compute_current_balance(self):
-        """Compute current balance for each account"""
+        """Compute current balance for each account (posted entries only)"""
         for record in self:
             if record.account_id and record.company_id:
-                # Get current balance from account - filter by company
+                # Get current balance from account - filter by company and posted moves only
                 domain = [
                     ('account_id', '=', record.account_id.id),
-                    ('company_id', '=', record.company_id.id)
+                    ('company_id', '=', record.company_id.id),
+                    ('move_id.state', '=', 'posted')  # Only posted journal entries
                 ]
                 account_moves = self.env['account.move.line'].search(domain)
                 
