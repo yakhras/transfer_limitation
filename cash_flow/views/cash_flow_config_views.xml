@@ -161,7 +161,7 @@ if created:
         'tag': 'display_notification',
         'params': {
             'title': 'Success!',
-            'message': f'Created {len(created)} suggested account configurations.',
+            'message': 'Created %s suggested account configurations.' % len(created),
             'type': 'success',
             'sticky': False,
         }
