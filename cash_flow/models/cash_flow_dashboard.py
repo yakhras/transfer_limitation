@@ -15,6 +15,9 @@ class CashFlowDashboard(models.Model):
     account_code = fields.Char(related='account_id.code', string='Account Code', store=True)
     account_name = fields.Char(related='account_id.name', string='Account Name', store=True)
     
+    # Display name from configuration (custom label or account name)
+    display_name = fields.Char(string='Display Name', compute='_compute_display_name_from_config')
+    
     # Computed balance field
     current_balance = fields.Monetary(
         string='Current Balance', 
@@ -62,6 +65,26 @@ class CashFlowDashboard(models.Model):
             args = args + company_domain
             
         return super(CashFlowDashboard, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
+
+    @api.depends('account_id', 'company_id')
+    def _compute_display_name_from_config(self):
+        """Get display name from configuration (custom label or account name)"""
+        for record in self:
+            if record.account_id and record.company_id:
+                # Find corresponding configuration record
+                config = self.env['cash.flow.config'].search([
+                    ('account_id', '=', record.account_id.id),
+                    ('company_id', '=', record.company_id.id),
+                    ('active', '=', True)
+                ], limit=1)
+                
+                if config:
+                    record.display_name = config.display_name
+                else:
+                    # Fallback to account name if no config found
+                    record.display_name = record.account_name
+            else:
+                record.display_name = record.account_name or ''
 
     def _is_asset_account(self, account):
         """Determine if account is an asset account - compatible across Odoo versions"""
@@ -239,7 +262,7 @@ class CashFlowDashboard(models.Model):
                 'id': dashboard_record.id,
                 'account_code': config.account_code,
                 'account_name': config.account_name,
-                'display_name': config.display_name,  # Custom label or account name
+                'display_name': dashboard_record.display_name or config.display_name,  # Use dashboard's computed display_name with fallback
                 'current_balance': dashboard_record.current_balance,
                 'balance_display': dashboard_record.balance_display,
                 'balance_color': dashboard_record.balance_color,

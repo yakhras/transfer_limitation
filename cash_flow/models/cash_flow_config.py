@@ -250,9 +250,20 @@ class CashFlowConfig(models.Model):
 
     def write(self, vals):
         """Override write to automatically sync dashboard records"""
+        # Store old values before update to handle account changes
+        old_account_ids = {}
+        for config in self:
+            old_account_ids[config.id] = config.account_id.id
+        
         result = super(CashFlowConfig, self).write(vals)
         
         for config in self:
+            old_account_id = old_account_ids.get(config.id)
+            
+            # If account was changed, remove old dashboard record
+            if 'account_id' in vals and old_account_id != config.account_id.id:
+                config._remove_old_dashboard_record(old_account_id)
+            
             if config.active:
                 # Create or update dashboard record
                 config._sync_dashboard_record()
@@ -297,13 +308,12 @@ class CashFlowConfig(models.Model):
         ])
         
         if not dashboard_record:
-            # Create new dashboard record
+            # Create new dashboard record  
             dashboard_model.create({
                 'account_id': self.account_id.id,
                 'company_id': self.company_id.id,
             })
-        # Note: Dashboard record doesn't need updating since it uses computed fields
-        # that automatically reflect current account data
+        # Note: No need to update existing records as display_name is computed and will update automatically
 
     def _remove_dashboard_record(self):
         """Remove dashboard record for this configuration"""
@@ -317,6 +327,19 @@ class CashFlowConfig(models.Model):
         
         if dashboard_record:
             dashboard_record.unlink()
+
+    def _remove_old_dashboard_record(self, old_account_id):
+        """Remove dashboard record for old account when account is changed"""
+        dashboard_model = self.env['cash.flow.dashboard']
+        
+        # Find and remove old dashboard record
+        old_dashboard_record = dashboard_model.search([
+            ('account_id', '=', old_account_id),
+            ('company_id', '=', self.company_id.id)
+        ])
+        
+        if old_dashboard_record:
+            old_dashboard_record.unlink()
 
     def toggle_active(self):
         """Toggle active status and sync dashboard"""

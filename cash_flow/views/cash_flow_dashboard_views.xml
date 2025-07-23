@@ -12,6 +12,7 @@
                     <field name="company_id"/>
                     <field name="account_code"/>
                     <field name="account_name"/>
+                    <field name="display_name"/>
                     <field name="current_balance"/>
                     <field name="balance_display"/>
                     <field name="balance_color"/>
@@ -28,7 +29,7 @@
                                             <strong t-esc="record.account_code.value"/>
                                         </div>
                                         <div class="text-muted">
-                                            <t t-esc="record.account_name.value"/>
+                                            <t t-esc="record.display_name.value"/>
                                         </div>
                                         <!-- Show company name in multi-company setup -->
                                         <div class="text-muted small" t-if="record.company_id.value">
@@ -74,7 +75,7 @@
                 <tree string="Cash Flow Accounts" create="false" edit="false" delete="false">
                     <field name="company_id" groups="base.group_multi_company"/>
                     <field name="account_code"/>
-                    <field name="account_name"/>
+                    <field name="display_name"/>
                     <field name="current_balance"/>
                     <field name="balance_display"/>
                     <field name="currency_id"/>
@@ -94,7 +95,7 @@
                                 <field name="account_code" readonly="1"/>
                             </h1>
                             <h2>
-                                <field name="account_name" readonly="1"/>
+                                <field name="display_name" readonly="1"/>
                             </h2>
                         </div>
                         
@@ -124,7 +125,7 @@
             <field name="arch" type="xml">
                 <search string="Cash Flow Dashboard">
                     <field name="account_code"/>
-                    <field name="account_name"/>
+                    <field name="display_name"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <group expand="0" string="Group By">
                         <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
