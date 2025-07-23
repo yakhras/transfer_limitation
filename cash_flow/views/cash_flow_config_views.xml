@@ -74,16 +74,6 @@
                 <search string="Cash Flow Configuration">
                     <field name="account_code"/>
                     <field name="account_name"/>
-                    <field name="custom_label"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
-                    
-                    <filter string="Active" name="active" domain="[('active', '=', True)]" default="1"/>
-                    <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
-                    
-                    <group expand="0" string="Group By">
-                        <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                        <filter string="Status" name="status" context="{'group_by': 'active'}"/>
-                    </group>
                 </search>
             </field>
         </record>
