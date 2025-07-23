@@ -79,14 +79,9 @@
                     
                     <filter string="Active" name="active" domain="[('active', '=', True)]" default="1"/>
                     <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
-                    <separator/>
-                    <filter string="Cash Accounts" name="cash_accounts" domain="[('suggested_type', 'ilike', 'cash')]"/>
-                    <filter string="Bank Accounts" name="bank_accounts" domain="[('suggested_type', 'ilike', 'bank')]"/>
-                    <filter string="Receivables" name="receivables" domain="[('suggested_type', 'ilike', 'receivable')]"/>
                     
                     <group expand="0" string="Group By">
                         <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                        <filter string="Account Type" name="account_type" context="{'group_by': 'suggested_type'}"/>
                         <filter string="Status" name="status" context="{'group_by': 'active'}"/>
                     </group>
                 </search>
@@ -103,14 +98,12 @@
                     <field name="company_id"/>
                     <field name="account_code"/>
                     <field name="display_name"/>
-                    <field name="suggested_type"/>
                     <field name="active"/>
                     <field name="sequence"/>
                     
                     <templates>
                         <t t-name="kanban-box">
-                            <div class="oe_kanban_card oe_kanban_global_click" 
-                                 t-att-class="!record.active.raw_value ? 'oe_kanban_color_2' : ''">
+                            <div class="oe_kanban_card oe_kanban_global_click">
                                 
                                 <div class="o_kanban_card_header">
                                     <div class="o_kanban_card_header_title">
@@ -121,28 +114,19 @@
                                             <t t-esc="record.display_name.value"/>
                                         </div>
                                     </div>
-                                    <div class="o_kanban_manage_button_section">
-                                        <a class="o_kanban_manage_toggle_button" href="#" data-bs-toggle="dropdown">
-                                            <i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/>
-                                        </a>
-                                    </div>
                                 </div>
                                 
                                 <div class="o_kanban_card_content">
                                     <div class="row">
-                                        <div class="col-8">
-                                            <span class="badge badge-secondary" t-esc="record.suggested_type.value"/>
-                                        </div>
-                                        <div class="col-4 text-right">
-                                            <span class="badge" 
-                                                  t-att-class="record.active.raw_value ? 'badge-success' : 'badge-secondary'"
-                                                  t-esc="record.active.raw_value ? 'Active' : 'Inactive'"/>
+                                        <div class="col-12">
+                                            <span t-if="record.active.raw_value" class="text-success">Active</span>
+                                            <span t-if="!record.active.raw_value" class="text-muted">Inactive</span>
                                         </div>
                                     </div>
                                     <div class="row mt-2" t-if="record.company_id.value" groups="base.group_multi_company">
                                         <div class="col-12">
                                             <small class="text-muted">
-                                                <i class="fa fa-building-o"/> <t t-esc="record.company_id.value"/>
+                                                <t t-esc="record.company_id.value"/>
                                             </small>
                                         </div>
                                     </div>
@@ -168,11 +152,6 @@
                 <p>
                     Select which accounts to monitor on your cash flow dashboard.<br/>
                     You can customize display names and arrange the order of accounts.
-                </p>
-                <p>
-                    <a type="action" name="%(action_cash_flow_config_wizard)d" class="btn btn-primary">
-                        Auto-Suggest Accounts
-                    </a>
                 </p>
             </field>
         </record>
@@ -231,16 +210,6 @@ action = {
     }
 }
             </field>
-        </record>
-
-        <!-- Wizard Action for Auto-Suggestion -->
-        <record id="action_cash_flow_config_wizard" model="ir.actions.act_window">
-            <field name="name">Auto-Suggest Dashboard Accounts</field>
-            <field name="res_model">cash.flow.config</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-            <field name="context">{'default_active': True}</field>
-            <field name="view_id" ref="view_cash_flow_config_form"/>
         </record>
 
     </data>
