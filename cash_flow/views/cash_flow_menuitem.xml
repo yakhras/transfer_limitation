@@ -7,9 +7,6 @@
             <field name="name">Cash Flow Dashboard</field>
             <field name="res_model">cash.flow.dashboard</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="context">{
-                'default_company_id': company_id,
-            }</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Cash Flow Dashboard
