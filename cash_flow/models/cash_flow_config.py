@@ -194,39 +194,38 @@ class CashFlowConfig(models.Model):
         return created_configs
 
     def action_generate_dashboard_records(self):
-        """Generate dashboard records based on this configuration"""
-        # Get all active configurations for all companies
-        active_configs = self.search([('active', '=', True)])
+        """Generate dashboard records based on this configuration (Legacy method)"""
+        # This method is now legacy since records are auto-generated
+        # But keeping it for manual refresh if needed
+        active_configs = self.env['cash.flow.config'].search([('active', '=', True)])
         
-        # Group by company
-        companies = active_configs.mapped('company_id')
-        
-        for company in companies:
-            company_configs = active_configs.filtered(lambda c: c.company_id == company)
-            
-            # Create/update dashboard records for this company
-            dashboard_model = self.env['cash.flow.dashboard']
-            
-            for config in company_configs:
-                # Check if dashboard record exists
-                existing_dashboard = dashboard_model.search([
-                    ('account_id', '=', config.account_id.id),
-                    ('company_id', '=', company.id)
-                ])
-                
-                if not existing_dashboard:
-                    # Create new dashboard record
-                    dashboard_model.create({
-                        'account_id': config.account_id.id,
-                        'company_id': company.id,
-                    })
+        for config in active_configs:
+            config._sync_dashboard_record()
 
     @api.model
     def generate_all_dashboard_records(self):
-        """Generate dashboard records for all active configurations"""
-        all_configs = self.search([])
-        if all_configs:
-            all_configs[0].action_generate_dashboard_records()
+        """Generate dashboard records for all active configurations (Legacy method)"""
+        # This method is now legacy since records are auto-generated
+        # But keeping it for manual refresh/cleanup if needed
+        active_configs = self.search([('active', '=', True)])
+        
+        for config in active_configs:
+            config._sync_dashboard_record()
+            
+        # Clean up orphaned dashboard records (records without active config)
+        dashboard_model = self.env['cash.flow.dashboard']
+        all_dashboard_records = dashboard_model.search([])
+        
+        for dashboard_record in all_dashboard_records:
+            # Check if there's an active config for this dashboard record
+            config_exists = self.search([
+                ('account_id', '=', dashboard_record.account_id.id),
+                ('company_id', '=', dashboard_record.company_id.id),
+                ('active', '=', True)
+            ])
+            
+            if not config_exists:
+                dashboard_record.unlink()  # Remove orphaned dashboard record
 
     def name_get(self):
         """Custom name display for configuration records"""
@@ -237,3 +236,89 @@ class CashFlowConfig(models.Model):
                 name += " (Inactive)"
             result.append((record.id, name))
         return result
+
+    @api.model
+    def create(self, vals):
+        """Override create to automatically generate dashboard records"""
+        config = super(CashFlowConfig, self).create(vals)
+        
+        # Automatically create dashboard record if config is active
+        if config.active:
+            config._create_dashboard_record()
+            
+        return config
+
+    def write(self, vals):
+        """Override write to automatically sync dashboard records"""
+        result = super(CashFlowConfig, self).write(vals)
+        
+        for config in self:
+            if config.active:
+                # Create or update dashboard record
+                config._sync_dashboard_record()
+            else:
+                # Remove dashboard record if config is deactivated
+                config._remove_dashboard_record()
+                
+        return result
+
+    def unlink(self):
+        """Override unlink to automatically remove dashboard records"""
+        # Remove corresponding dashboard records before deleting config
+        for config in self:
+            config._remove_dashboard_record()
+            
+        return super(CashFlowConfig, self).unlink()
+
+    def _create_dashboard_record(self):
+        """Create dashboard record for this configuration"""
+        dashboard_model = self.env['cash.flow.dashboard']
+        
+        # Check if dashboard record already exists
+        existing = dashboard_model.search([
+            ('account_id', '=', self.account_id.id),
+            ('company_id', '=', self.company_id.id)
+        ])
+        
+        if not existing:
+            dashboard_model.create({
+                'account_id': self.account_id.id,
+                'company_id': self.company_id.id,
+            })
+
+    def _sync_dashboard_record(self):
+        """Create or update dashboard record for this configuration"""
+        dashboard_model = self.env['cash.flow.dashboard']
+        
+        # Find existing dashboard record
+        dashboard_record = dashboard_model.search([
+            ('account_id', '=', self.account_id.id),
+            ('company_id', '=', self.company_id.id)
+        ])
+        
+        if not dashboard_record:
+            # Create new dashboard record
+            dashboard_model.create({
+                'account_id': self.account_id.id,
+                'company_id': self.company_id.id,
+            })
+        # Note: Dashboard record doesn't need updating since it uses computed fields
+        # that automatically reflect current account data
+
+    def _remove_dashboard_record(self):
+        """Remove dashboard record for this configuration"""
+        dashboard_model = self.env['cash.flow.dashboard']
+        
+        # Find and remove corresponding dashboard record
+        dashboard_record = dashboard_model.search([
+            ('account_id', '=', self.account_id.id),
+            ('company_id', '=', self.company_id.id)
+        ])
+        
+        if dashboard_record:
+            dashboard_record.unlink()
+
+    def toggle_active(self):
+        """Toggle active status and sync dashboard"""
+        for record in self:
+            record.active = not record.active
