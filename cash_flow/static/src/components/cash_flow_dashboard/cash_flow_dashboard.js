@@ -167,7 +167,7 @@ export class CashFlowDashboard extends Component {
         
         this.state = useState({
             accounts: [],
-            period: 30,
+            period: 365 // Default to 1 year,
         })
         this.orm = useService("orm")
         this.actionService = useService("action")
