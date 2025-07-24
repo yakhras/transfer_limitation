@@ -167,7 +167,7 @@ export class CashFlowDashboard extends Component {
         
         this.state = useState({
             accounts: [],
-            period: 365 // Default to 1 year,
+            period: null // all
         })
         this.orm = useService("orm")
         this.actionService = useService("action")
@@ -202,6 +202,11 @@ export class CashFlowDashboard extends Component {
     }
 
     getDateRange(){
+        const period = this.state.period
+        if (period === "all") {
+            return { date_from: null, date_to: null }
+        }
+
         const today = new Date()
         const date_to = today.toISOString().split('T')[0]
         

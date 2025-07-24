@@ -12,6 +12,7 @@
                                     <h1 class="text-primary fw-bold">Cash Flow Dashboard</h1>
                                     <div>
                                         <select class="form-select" t-model="state.period" t-on-change="onChangePeriod">
+                                            <option value="all">All</option>
                                             <option value="7">Last 7 Days</option>
                                             <option value="30">Last 30 Days</option>
                                             <option value="90">Last 90 Days</option>
