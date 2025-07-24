@@ -220,6 +220,11 @@ class CashFlowDashboard(models.Model):
             
             # Store as JSON for dashboard_graph widget
             record.kanban_dashboard_graph = json.dumps(chart_data)
+            
+            # DEBUG: Print the data to see what's being generated
+            print(f"DEBUG - Account {record.account_code}: Chart data = {record.kanban_dashboard_graph}")
+            print(f"DEBUG - Daily balances count: {len(daily_balances)}")
+            print(f"DEBUG - Values count: {len(values)}")
 
     def _get_daily_balances(self, date_from, date_to):
         """Calculate daily running balances for the account within date range"""
