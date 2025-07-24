@@ -416,24 +416,4 @@ class CashFlowDashboard(models.Model):
         return result
     
 
-    total_balance = fields.Monetary(
-        string='Total Balance',
-        compute='_compute_total_balance',
-        currency_field='currency_id'
-    )
-
-    @api.depends('account_id', 'company_id')
-    def _compute_total_balance(self):
-        for record in self:
-            if record.account_id and record.company_id:
-                domain = [
-                    ('account_id', '=', record.account_id.id),
-                    ('company_id', '=', record.company_id.id),
-                    ('move_id.state', '=', 'posted')
-                ]
-                account_moves = self.env['account.move.line'].search(domain)
-                debit_total = sum(account_moves.mapped('debit'))
-                credit_total = sum(account_moves.mapped('credit'))
-                record.total_balance = debit_total - credit_total
-            else:
-                record.total_balance = 0.0
+    
