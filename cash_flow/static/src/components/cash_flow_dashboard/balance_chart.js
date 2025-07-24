@@ -1,24 +1,32 @@
 /** @odoo-module */
 
 import { loadJS } from "@web/core/assets"
-const { Component, useRef, onMounted } = owl
+const { Component, useRef } = owl
 
 export class BalanceChart extends Component {
     setup(){
         this.chartRef = useRef("chart")
         
-        onMounted(async ()=>{
-            await this.loadChart()
-        })
+        // Load chart immediately after component setup (Odoo 15 compatible)
+        setTimeout(() => {
+            this.loadChart()
+        }, 100)
     }
 
     async loadChart(){
         try {
+            console.log('BalanceChart: Loading Chart.js...')
+            
             // Load Chart.js library
             await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js")
             
-            // Render the chart
-            this.renderChart()
+            console.log('BalanceChart: Chart.js loaded, rendering chart...')
+            
+            // Small delay to ensure DOM is ready
+            setTimeout(() => {
+                this.renderChart()
+            }, 50)
+            
         } catch (error) {
             console.error("Error loading Chart.js:", error)
         }
@@ -26,10 +34,17 @@ export class BalanceChart extends Component {
 
     renderChart(){
         const canvas = this.chartRef.el
-        if (!canvas || typeof Chart === 'undefined') {
-            console.log("Canvas or Chart.js not available")
+        if (!canvas) {
+            console.log("BalanceChart: Canvas not found")
             return
         }
+        
+        if (typeof Chart === 'undefined') {
+            console.log("BalanceChart: Chart.js not available")
+            return
+        }
+
+        console.log('BalanceChart: Rendering chart for account:', this.props.accountCode)
 
         // Sample data - we'll make this dynamic later
         const chartData = {
@@ -52,8 +67,8 @@ export class BalanceChart extends Component {
                 borderWidth: 2,
                 fill: true,
                 tension: 0.3,
-                pointRadius: 3,
-                pointHoverRadius: 6
+                pointRadius: 2,
+                pointHoverRadius: 4
             }]
         }
 
@@ -103,6 +118,8 @@ export class BalanceChart extends Component {
                 }
             }
         })
+        
+        console.log('BalanceChart: Chart rendered successfully')
     }
 }
 
