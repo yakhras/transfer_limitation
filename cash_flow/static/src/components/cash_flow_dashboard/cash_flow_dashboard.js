@@ -52,6 +52,6 @@ export class CashFlowDashboard extends Component {
     }
 }
 
-CashFlowDashboard.template = "cash_flow.CashFlowDashboard"
+CashFlowDashboard.template = "CashFlowDashboard"
 
 registry.category("actions").add("cash_flow.dashboard", CashFlowDashboard)
