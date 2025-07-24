@@ -167,7 +167,7 @@ export class CashFlowDashboard extends Component {
         
         this.state = useState({
             accounts: [],
-            period: null // all
+            period: 500 // all
         })
         this.orm = useService("orm")
         this.actionService = useService("action")
