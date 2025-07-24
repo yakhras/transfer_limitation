@@ -3,18 +3,20 @@
 import { registry } from "@web/core/registry"
 import { useService } from "@web/core/utils/hooks"
 import { loadJS } from "@web/core/assets"
-const { Component, useState, useRef } = owl
+const { Component, useState } = owl
 
-// Inline Chart Component for testing
+// Inline Chart Component for Odoo 15 (without useRef)
 class BalanceChart extends Component {
     setup(){
-        this.chartRef = useRef("chart")
         console.log('BalanceChart component created for:', this.props.accountCode)
         
-        // Load chart immediately after component setup
+        // Generate unique ID for canvas
+        this.chartId = `chart_${Math.random().toString(36).substr(2, 9)}`
+        
+        // Load chart after component is rendered
         setTimeout(() => {
             this.loadChart()
-        }, 100)
+        }, 200)
     }
 
     async loadChart(){
@@ -29,7 +31,7 @@ class BalanceChart extends Component {
             // Small delay to ensure DOM is ready
             setTimeout(() => {
                 this.renderChart()
-            }, 50)
+            }, 100)
             
         } catch (error) {
             console.error("Error loading Chart.js:", error)
@@ -37,9 +39,10 @@ class BalanceChart extends Component {
     }
 
     renderChart(){
-        const canvas = this.chartRef.el
+        // Find canvas by ID instead of using ref
+        const canvas = document.getElementById(this.chartId)
         if (!canvas) {
-            console.log("BalanceChart: Canvas not found")
+            console.log("BalanceChart: Canvas not found with ID:", this.chartId)
             return
         }
         
@@ -188,6 +191,6 @@ export class CashFlowDashboard extends Component {
 CashFlowDashboard.template = "CashFlowDashboard"
 CashFlowDashboard.components = { BalanceChart }
 
-CashFlowDashboard.template = "CashFlowDashboard"
+CashFlowDashboard.template = "cash_flow.CashFlowDashboard"
 
 registry.category("actions").add("cash_flow.dashboard", CashFlowDashboard)
