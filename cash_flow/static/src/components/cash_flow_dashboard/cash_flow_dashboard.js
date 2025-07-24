@@ -2,10 +2,9 @@
 
 import { registry } from "@web/core/registry"
 import { useService } from "@web/core/utils/hooks"
-import { loadJS } from "@web/core/assets"
 const { Component, useState } = owl
 
-// Inline Chart Component for Odoo 15 (without useRef)
+// Inline Chart Component for Odoo 15 (without loadJS)
 class BalanceChart extends Component {
     setup(){
         console.log('BalanceChart component created for:', this.props.accountCode)
@@ -23,19 +22,57 @@ class BalanceChart extends Component {
         try {
             console.log('BalanceChart: Loading Chart.js...')
             
-            // Load Chart.js library
-            await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js")
-            
-            console.log('BalanceChart: Chart.js loaded, rendering chart...')
-            
-            // Small delay to ensure DOM is ready
-            setTimeout(() => {
+            // Alternative Chart.js loading for Odoo 15
+            if (typeof Chart === 'undefined') {
+                await this.loadChartJS()
+            } else {
+                console.log('BalanceChart: Chart.js already available')
                 this.renderChart()
-            }, 100)
+            }
             
         } catch (error) {
             console.error("Error loading Chart.js:", error)
         }
+    }
+
+    async loadChartJS() {
+        return new Promise((resolve, reject) => {
+            if (typeof Chart !== 'undefined') {
+                resolve();
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
+            script.onload = () => {
+                console.log('BalanceChart: Chart.js loaded successfully');
+                setTimeout(() => {
+                    this.renderChart();
+                    resolve();
+                }, 100);
+            };
+            script.onerror = (error) => {
+                console.error('BalanceChart: Failed to load Chart.js', error);
+                reject(error);
+            };
+            
+            // Check if script already exists
+            const existingScript = document.querySelector('script[src*="chart.umd.min.js"]');
+            if (existingScript) {
+                console.log('BalanceChart: Chart.js script already exists, waiting...');
+                setTimeout(() => {
+                    if (typeof Chart !== 'undefined') {
+                        this.renderChart();
+                        resolve();
+                    } else {
+                        reject(new Error('Chart.js script exists but Chart object not available'));
+                    }
+                }, 500);
+                return;
+            }
+            
+            document.head.appendChild(script);
+        });
     }
 
     renderChart(){
@@ -79,40 +116,44 @@ class BalanceChart extends Component {
             }]
         }
 
-        new Chart(canvas, {
-            type: 'line',
-            data: chartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            title: function(context) {
-                                return 'Month: ' + context[0].label
-                            },
-                            label: function(context) {
-                                return 'Balance: ₺' + context.parsed.y.toLocaleString()
+        try {
+            new Chart(canvas, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return 'Month: ' + context[0].label
+                                },
+                                label: function(context) {
+                                    return 'Balance: ₺' + context.parsed.y.toLocaleString()
+                                }
                             }
                         }
-                    }
-                },
-                scales: {
-                    x: {
-                        display: true,
-                        grid: { display: false },
-                        ticks: { font: { size: 10 } }
                     },
-                    y: { display: false, beginAtZero: false }
-                },
-                interaction: { intersect: false, mode: 'index' }
-            }
-        })
-        
-        console.log('BalanceChart: Chart rendered successfully')
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: { display: false },
+                            ticks: { font: { size: 10 } }
+                        },
+                        y: { display: false, beginAtZero: false }
+                    },
+                    interaction: { intersect: false, mode: 'index' }
+                }
+            })
+            
+            console.log('BalanceChart: Chart rendered successfully')
+        } catch (error) {
+            console.error('BalanceChart: Error creating chart:', error)
+        }
     }
 }
 
