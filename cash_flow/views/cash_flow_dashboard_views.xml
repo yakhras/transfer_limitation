@@ -59,9 +59,15 @@
                                                 DEBUG: <t t-esc="record.kanban_dashboard_graph.value"/>
                                             </div>
                                             
-                                            <field name="kanban_dashboard_graph" 
-                                                   graph_type="line" 
-                                                   widget="dashboard_graph"/>
+                                            <!-- Test 1: Original dashboard_graph widget -->
+                                            <field name="kanban_dashboard_graph" widget="dashboard_graph"/>
+                                            
+                                            <!-- Test 2: Try Chart.js directly as backup -->
+                                            <canvas t-att-id="'chart_' + record.id.raw_value" 
+                                                    class="cash_flow_chart" 
+                                                    width="300" 
+                                                    height="80">
+                                            </canvas>
                                         </div>
                                     </div>
                                 </div>
