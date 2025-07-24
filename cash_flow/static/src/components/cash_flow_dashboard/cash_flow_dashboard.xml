@@ -23,28 +23,28 @@
                         </div>
                     </div>
 
-                    <!-- Account Cards -->
-                    <div class="row">
-                        <div t-foreach="state.accounts" t-as="account" t-key="account.id" class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
-                            <div class="card h-100 shadow-sm cursor-pointer" 
+                    <!-- Group accounts into rows of 2 -->
+                    <t t-set="rows" t-value="Array.from({ length: Math.ceil(state.accounts.length / 2) }, (_, i) => state.accounts.slice(i * 2, i * 2 + 2))"/>
+                    <div t-foreach="rows" t-as="row" t-key="row_index" class="row">
+                        <div t-foreach="row" t-as="account" t-key="account.id" class="col-md-6 col-12 mb-3">
+                            <div class="card h-100 shadow-sm cursor-pointer"
                                  t-on-click="() => viewAccountDetails(account.id)"
                                  t-attf-class="border-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
-                                
+
                                 <div class="card-header text-center">
                                     <h5 class="card-title mb-0">
                                         <strong t-esc="account.account_code"/>
                                     </h5>
                                     <small class="text-muted" t-esc="account.display_name"/>
                                 </div>
-                                
+
                                 <div class="card-body text-center">
-                                    <h3 class="mb-0" 
+                                    <h3 class="mb-0"
                                         t-attf-class="text-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
                                         <t t-esc="account.balance_display"/>
                                     </h3>
                                     <small class="text-muted">Current Balance</small>
-                                    
-                                    <!-- Interactive Chart -->
+
                                     <div class="mt-3">
                                         <BalanceChart 
                                             currentBalance="account.current_balance"
@@ -63,7 +63,6 @@
                             <p>Please configure your cash flow accounts in the settings to see data here.</p>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
