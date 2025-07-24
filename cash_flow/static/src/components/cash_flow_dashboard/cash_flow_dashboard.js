@@ -8,6 +8,7 @@ export class CashFlowDashboard extends Component {
     setup(){
         // Debug: Check what's available in OWL
         console.log('OWL object keys:', Object.keys(owl))
+        console.log('CashFlowDashboard component loading...')
         
         this.state = useState({
             accounts: [],
