@@ -48,12 +48,8 @@ class CashFlowDashboard(models.Model):
         ('blue', 'Zero')
     ], string='Balance Color', compute='_compute_balance_color')
     
-    # Chart data for Chart.js (back to working approach)
-    chart_data = fields.Text(
-        string='Chart Data',
-        compute='_compute_chart_data',
-        help='JSON data for rendering balance trend charts with Chart.js'
-    )
+    # Chart data for dashboard_graph widget (following Odoo pattern)
+    kanban_dashboard_graph = fields.Text(compute='_kanban_dashboard_graph')
 
     # Add SQL constraints for company consistency
     _sql_constraints = [
@@ -168,11 +164,11 @@ class CashFlowDashboard(models.Model):
                 record.balance_color = 'blue'
 
     @api.depends('account_id', 'company_id')
-    def _compute_chart_data(self):
-        """Generate chart data for Chart.js (using dashboard_graph format as intermediate)"""
+    def _kanban_dashboard_graph(self):
+        """Generate chart data for dashboard_graph widget (following Odoo pattern)"""
         for record in self:
             if not record.account_id or not record.company_id:
-                record.chart_data = json.dumps([])
+                record.kanban_dashboard_graph = False
                 continue
                 
             # Get date range for chart (default last 30 days or from context)
@@ -197,7 +193,7 @@ class CashFlowDashboard(models.Model):
             # Get daily balances for the date range
             daily_balances = record._get_daily_balances(date_from, date_to)
             
-            # Prepare chart data in dashboard_graph format (for JavaScript to convert)
+            # Prepare chart data following Odoo pattern
             values = []
             
             current_date = date_from
@@ -205,21 +201,25 @@ class CashFlowDashboard(models.Model):
                 balance = daily_balances.get(current_date, 0.0)
                 values.append({
                     'label': current_date.strftime('%m/%d'),
-                    'value': float(balance)
+                    'value': float(balance),
+                    'type': 'past'  # Historical cash flow data
                 })
                 current_date += timedelta(days=1)
             
-            # Create the dashboard_graph structure for Chart.js to read
+            # Return False if no data (like Odoo pattern)
+            if not values:
+                record.kanban_dashboard_graph = False
+                continue
+            
+            # Create the exact structure as Odoo journals
             chart_data = [{
                 'values': values,
-                'title': 'Balance Trend',
-                'key': 'BALANCE',
-                'area': True,
-                'color': '#3498db'  # Blue color for cash flow charts
+                'title': 'Cash Flow Trend',
+                'key': record.display_name or record.account_code
             }]
             
-            # Store as JSON for Chart.js
-            record.chart_data = json.dumps(chart_data)
+            # Store as JSON for dashboard_graph widget
+            record.kanban_dashboard_graph = json.dumps(chart_data)
 
     def _get_daily_balances(self, date_from, date_to):
         """Calculate daily running balances for the account within date range"""
