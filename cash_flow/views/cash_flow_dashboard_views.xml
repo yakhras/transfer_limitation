@@ -17,12 +17,17 @@
                     <field name="balance_display"/>
                     <field name="balance_color"/>
                     <field name="currency_id"/>
-                    <field name="kanban_dashboard_graph"/>
+                    <field name="chart_data"/>
+                    
+                    <!-- Include Chart.js library -->
+                    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
                     
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card oe_kanban_global_click" 
-                                 t-att-class="record.balance_color.raw_value == 'green' ? 'border-success' : (record.balance_color.raw_value == 'red' ? 'border-danger' : 'border-info')">
+                                 t-att-class="record.balance_color.raw_value == 'green' ? 'border-success' : (record.balance_color.raw_value == 'red' ? 'border-danger' : 'border-info')"
+                                 t-att-data-chart='record.chart_data.raw_value'
+                                 t-att-data-record-id='record.id.raw_value'>>
                                 
                                 <div class="o_kanban_card_header">
                                     <div class="o_kanban_card_header_title">
@@ -54,19 +59,10 @@
                                     <!-- Chart Section - Full Width Bottom -->
                                     <div class="row">
                                         <div class="col-12 col-sm-12">
-                                            <!-- TEMPORARY DEBUG: Show field value -->
-                                            <div style="background: yellow; padding: 5px; font-size: 10px; max-height: 50px; overflow: auto;">
-                                                DEBUG: <t t-esc="record.kanban_dashboard_graph.value"/>
-                                            </div>
-                                            
-                                            <!-- Test 1: Original dashboard_graph widget -->
-                                            <field name="kanban_dashboard_graph" widget="dashboard_graph"/>
-                                            
-                                            <!-- Test 2: Try Chart.js directly as backup -->
                                             <canvas t-att-id="'chart_' + record.id.raw_value" 
                                                     class="cash_flow_chart" 
                                                     width="300" 
-                                                    height="80">
+                                                    height="100">
                                             </canvas>
                                         </div>
                                     </div>
@@ -85,6 +81,116 @@
                             </div>
                         </t>
                     </templates>
+                    
+                    <!-- JavaScript for Chart Rendering -->
+                    <script type="text/javascript">
+                        <![CDATA[
+                        $(document).ready(function() {
+                            // Function to render charts for all kanban cards
+                            function renderCashFlowCharts() {
+                                $('.oe_kanban_card').each(function() {
+                                    var card = $(this);
+                                    var chartDataRaw = card.data('chart');
+                                    var recordId = card.data('record-id');
+                                    
+                                    if (chartDataRaw && recordId) {
+                                        try {
+                                            // Parse the dashboard_graph format data
+                                            var dashboardData = JSON.parse(chartDataRaw);
+                                            var chartId = 'chart_' + recordId;
+                                            var canvas = document.getElementById(chartId);
+                                            
+                                            if (canvas && dashboardData.length > 0 && dashboardData[0].values) {
+                                                // Destroy existing chart if exists
+                                                var existingChart = Chart.getChart(canvas);
+                                                if (existingChart) {
+                                                    existingChart.destroy();
+                                                }
+                                                
+                                                // Convert dashboard_graph format to Chart.js format
+                                                var values = dashboardData[0].values;
+                                                var labels = values.map(function(item) { return item.label; });
+                                                var data = values.map(function(item) { return item.value; });
+                                                
+                                                // Determine chart color based on balance trend
+                                                var borderColor = '#3498db';
+                                                var backgroundColor = 'rgba(52, 152, 219, 0.1)';
+                                                
+                                                // Create new chart
+                                                new Chart(canvas, {
+                                                    type: 'line',
+                                                    data: {
+                                                        labels: labels,
+                                                        datasets: [{
+                                                            data: data,
+                                                            borderColor: borderColor,
+                                                            backgroundColor: backgroundColor,
+                                                            borderWidth: 2,
+                                                            fill: true,
+                                                            tension: 0.3,
+                                                            pointRadius: 2,
+                                                            pointHoverRadius: 4
+                                                        }]
+                                                    },
+                                                    options: {
+                                                        responsive: true,
+                                                        maintainAspectRatio: false,
+                                                        plugins: {
+                                                            legend: {
+                                                                display: false
+                                                            },
+                                                            tooltip: {
+                                                                mode: 'index',
+                                                                intersect: false,
+                                                                callbacks: {
+                                                                    title: function(context) {
+                                                                        return 'Date: ' + context[0].label;
+                                                                    },
+                                                                    label: function(context) {
+                                                                        return 'Balance: ' + context.parsed.y.toLocaleString();
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        scales: {
+                                                            x: {
+                                                                display: true,
+                                                                grid: {
+                                                                    display: false
+                                                                },
+                                                                ticks: {
+                                                                    maxTicksLimit: 5
+                                                                }
+                                                            },
+                                                            y: {
+                                                                display: false,
+                                                                beginAtZero: false
+                                                            }
+                                                        },
+                                                        interaction: {
+                                                            intersect: false,
+                                                            mode: 'index'
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        } catch (e) {
+                                            console.error('Error rendering chart for record ' + recordId + ':', e);
+                                        }
+                                    }
+                                });
+                            }
+                            
+                            // Initial chart rendering
+                            setTimeout(renderCashFlowCharts, 100);
+                            
+                            // Re-render charts when kanban is refreshed
+                            $(document).on('DOMNodeInserted', '.o_kanban_view', function() {
+                                setTimeout(renderCashFlowCharts, 100);
+                            });
+                        });
+                        ]]>
+                    </script>
                     
                 </kanban>
             </field>

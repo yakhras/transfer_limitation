@@ -48,11 +48,11 @@ class CashFlowDashboard(models.Model):
         ('blue', 'Zero')
     ], string='Balance Color', compute='_compute_balance_color')
     
-    # Chart data for dashboard_graph widget
-    kanban_dashboard_graph = fields.Text(
-        string='Kanban Dashboard Graph',
-        compute='_compute_kanban_dashboard_graph',
-        help='JSON data for rendering balance trend charts with dashboard_graph widget'
+    # Chart data for Chart.js (back to working approach)
+    chart_data = fields.Text(
+        string='Chart Data',
+        compute='_compute_chart_data',
+        help='JSON data for rendering balance trend charts with Chart.js'
     )
 
     # Add SQL constraints for company consistency
@@ -168,11 +168,11 @@ class CashFlowDashboard(models.Model):
                 record.balance_color = 'blue'
 
     @api.depends('account_id', 'company_id')
-    def _compute_kanban_dashboard_graph(self):
-        """Generate chart data for dashboard_graph widget"""
+    def _compute_chart_data(self):
+        """Generate chart data for Chart.js (using dashboard_graph format as intermediate)"""
         for record in self:
             if not record.account_id or not record.company_id:
-                record.kanban_dashboard_graph = json.dumps([])
+                record.chart_data = json.dumps([])
                 continue
                 
             # Get date range for chart (default last 30 days or from context)
@@ -197,7 +197,7 @@ class CashFlowDashboard(models.Model):
             # Get daily balances for the date range
             daily_balances = record._get_daily_balances(date_from, date_to)
             
-            # Prepare chart data in dashboard_graph widget format
+            # Prepare chart data in dashboard_graph format (for JavaScript to convert)
             values = []
             
             current_date = date_from
@@ -209,7 +209,7 @@ class CashFlowDashboard(models.Model):
                 })
                 current_date += timedelta(days=1)
             
-            # Create the correct structure for dashboard_graph widget
+            # Create the dashboard_graph structure for Chart.js to read
             chart_data = [{
                 'values': values,
                 'title': 'Balance Trend',
@@ -218,13 +218,8 @@ class CashFlowDashboard(models.Model):
                 'color': '#3498db'  # Blue color for cash flow charts
             }]
             
-            # Store as JSON for dashboard_graph widget
-            record.kanban_dashboard_graph = json.dumps(chart_data)
-            
-            # DEBUG: Print the data to see what's being generated
-            print(f"DEBUG - Account {record.account_code}: Chart data = {record.kanban_dashboard_graph}")
-            print(f"DEBUG - Daily balances count: {len(daily_balances)}")
-            print(f"DEBUG - Values count: {len(values)}")
+            # Store as JSON for Chart.js
+            record.chart_data = json.dumps(chart_data)
 
     def _get_daily_balances(self, date_from, date_to):
         """Calculate daily running balances for the account within date range"""
