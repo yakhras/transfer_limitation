@@ -54,6 +54,11 @@
                                     <!-- Chart Section - Full Width Bottom -->
                                     <div class="row">
                                         <div class="col-12 col-sm-12">
+                                            <!-- TEMPORARY DEBUG: Show field value -->
+                                            <div style="background: yellow; padding: 5px; font-size: 10px; max-height: 50px; overflow: auto;">
+                                                DEBUG: <t t-esc="record.kanban_dashboard_graph.value"/>
+                                            </div>
+                                            
                                             <field name="kanban_dashboard_graph" 
                                                    graph_type="line" 
                                                    widget="dashboard_graph"/>
