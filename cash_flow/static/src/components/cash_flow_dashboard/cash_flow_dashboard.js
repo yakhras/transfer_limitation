@@ -9,18 +9,16 @@ export class CashFlowDashboard extends Component {
         this.state = useState({
             accounts: [],
             period: 30,
-            loading: true,
         })
         this.orm = useService("orm")
         this.actionService = useService("action")
 
         onWillStart(async ()=>{
-            await this.loadAccountData()
+            await this.getAccounts()
         })
     }
 
-    async loadAccountData(){
-        this.state.loading = true
+    async getAccounts(){
         try {
             // Fetch cash flow dashboard data from your existing model
             const accounts = await this.orm.searchRead(
@@ -32,18 +30,14 @@ export class CashFlowDashboard extends Component {
         } catch (error) {
             console.error("Error loading cash flow data:", error)
             this.state.accounts = []
-        } finally {
-            this.state.loading = false
         }
     }
 
     async onChangePeriod(){
-        // Future: Update period and reload data
-        await this.loadAccountData()
+        await this.getAccounts()
     }
 
     viewAccountDetails(accountId){
-        // Navigate to account details
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "Account Details",
