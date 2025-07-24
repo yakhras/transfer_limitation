@@ -2,10 +2,13 @@
 
 import { registry } from "@web/core/registry"
 import { useService } from "@web/core/utils/hooks"
-const { Component, onWillStart, useState } = owl
+const { Component, useState } = owl
 
 export class CashFlowDashboard extends Component {
     setup(){
+        // Debug: Check what's available in OWL
+        console.log('OWL object keys:', Object.keys(owl))
+        
         this.state = useState({
             accounts: [],
             period: 30,
@@ -13,9 +16,8 @@ export class CashFlowDashboard extends Component {
         this.orm = useService("orm")
         this.actionService = useService("action")
 
-        onWillStart(async ()=>{
-            await this.getAccounts()
-        })
+        // Load data immediately without lifecycle hooks
+        this.getAccounts()
     }
 
     async getAccounts(){
