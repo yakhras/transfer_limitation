@@ -48,11 +48,11 @@ class CashFlowDashboard(models.Model):
         ('blue', 'Zero')
     ], string='Balance Color', compute='_compute_balance_color')
     
-    # Chart data for kanban cards
+    # Chart data for dashboard_graph widget
     chart_data = fields.Text(
         string='Chart Data',
         compute='_compute_chart_data',
-        help='JSON data for rendering balance trend charts'
+        help='JSON data for rendering balance trend charts with dashboard_graph widget'
     )
 
     # Add SQL constraints for company consistency
@@ -169,10 +169,10 @@ class CashFlowDashboard(models.Model):
 
     @api.depends('account_id', 'company_id')
     def _compute_chart_data(self):
-        """Generate chart data for balance trends"""
+        """Generate chart data for dashboard_graph widget"""
         for record in self:
             if not record.account_id or not record.company_id:
-                record.chart_data = json.dumps({'labels': [], 'data': []})
+                record.chart_data = json.dumps([])
                 continue
                 
             # Get date range for chart (default last 30 days or from context)
@@ -197,22 +197,20 @@ class CashFlowDashboard(models.Model):
             # Get daily balances for the date range
             daily_balances = record._get_daily_balances(date_from, date_to)
             
-            # Prepare chart data in Chart.js format
-            labels = []
-            data = []
+            # Prepare chart data in dashboard_graph widget format
+            chart_data = []
             
             current_date = date_from
             while current_date <= date_to:
-                labels.append(current_date.strftime('%m/%d'))
-                data.append(daily_balances.get(current_date, 0.0))
+                balance = daily_balances.get(current_date, 0.0)
+                chart_data.append({
+                    'label': current_date.strftime('%Y-%m-%d'),
+                    'value': float(balance),
+                    'type': 'line'
+                })
                 current_date += timedelta(days=1)
             
-            chart_data = {
-                'labels': labels,
-                'data': data,
-                'balance_color': record.balance_color or 'blue'
-            }
-            
+            # Store as JSON for dashboard_graph widget
             record.chart_data = json.dumps(chart_data)
 
     def _get_daily_balances(self, date_from, date_to):
