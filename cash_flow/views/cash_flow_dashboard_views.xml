@@ -17,14 +17,12 @@
                     <field name="balance_display"/>
                     <field name="balance_color"/>
                     <field name="currency_id"/>
-                    <field name="chart_data"/>
+                    <field name="kanban_dashboard_graph"/>
                     
                     <templates>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_card oe_kanban_global_click" 
-                                 t-att-class="record.balance_color.raw_value == 'green' ? 'border-success' : (record.balance_color.raw_value == 'red' ? 'border-danger' : 'border-info')"
-                                 t-att-data-chart='record.chart_data.raw_value'
-                                 t-att-data-record-id='record.id.raw_value'>
+                                 t-att-class="record.balance_color.raw_value == 'green' ? 'border-success' : (record.balance_color.raw_value == 'red' ? 'border-danger' : 'border-info')">
                                 
                                 <div class="o_kanban_card_header">
                                     <div class="o_kanban_card_header_title">
@@ -56,10 +54,9 @@
                                     <!-- Chart Section - Full Width Bottom -->
                                     <div class="row">
                                         <div class="col-12 col-sm-12">
-                                            <div class="o_dashboard_graph_container" style="height: 120px;">
-                                                <field name="chart_data" widget="dashboard_graph" 
-                                                       options="{'mode': 'line', 'title': false, 'legend': false}"/>
-                                            </div>
+                                            <field name="kanban_dashboard_graph" 
+                                                   graph_type="line" 
+                                                   widget="dashboard_graph"/>
                                         </div>
                                     </div>
                                 </div>

@@ -49,9 +49,9 @@ class CashFlowDashboard(models.Model):
     ], string='Balance Color', compute='_compute_balance_color')
     
     # Chart data for dashboard_graph widget
-    chart_data = fields.Text(
-        string='Chart Data',
-        compute='_compute_chart_data',
+    kanban_dashboard_graph = fields.Text(
+        string='Kanban Dashboard Graph',
+        compute='_compute_kanban_dashboard_graph',
         help='JSON data for rendering balance trend charts with dashboard_graph widget'
     )
 
@@ -168,11 +168,11 @@ class CashFlowDashboard(models.Model):
                 record.balance_color = 'blue'
 
     @api.depends('account_id', 'company_id')
-    def _compute_chart_data(self):
+    def _compute_kanban_dashboard_graph(self):
         """Generate chart data for dashboard_graph widget"""
         for record in self:
             if not record.account_id or not record.company_id:
-                record.chart_data = json.dumps([])
+                record.kanban_dashboard_graph = json.dumps([])
                 continue
                 
             # Get date range for chart (default last 30 days or from context)
@@ -204,14 +204,13 @@ class CashFlowDashboard(models.Model):
             while current_date <= date_to:
                 balance = daily_balances.get(current_date, 0.0)
                 chart_data.append({
-                    'label': current_date.strftime('%Y-%m-%d'),
-                    'value': float(balance),
-                    'type': 'line'
+                    'x': current_date.strftime('%Y-%m-%d'),
+                    'y': float(balance)
                 })
                 current_date += timedelta(days=1)
             
             # Store as JSON for dashboard_graph widget
-            record.chart_data = json.dumps(chart_data)
+            record.kanban_dashboard_graph = json.dumps(chart_data)
 
     def _get_daily_balances(self, date_from, date_to):
         """Calculate daily running balances for the account within date range"""
