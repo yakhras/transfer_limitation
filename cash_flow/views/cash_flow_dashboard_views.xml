@@ -59,10 +59,16 @@
                                     <!-- Chart Section - Full Width Bottom -->
                                     <div class="row">
                                         <div class="col-12 col-sm-12">
+                                            <!-- DEBUG: Show what we're passing to chart -->
+                                            <div style="background: lime; padding: 5px; font-size: 10px;">
+                                                CHART DEBUG: <t t-esc="record.chart_data.value"/>
+                                            </div>
+                                            
                                             <canvas t-att-id="'chart_' + record.id.raw_value" 
                                                     class="cash_flow_chart" 
                                                     width="300" 
-                                                    height="100">
+                                                    height="100"
+                                                    style="border: 2px solid red;">
                                             </canvas>
                                         </div>
                                     </div>
@@ -86,12 +92,19 @@
                     <script type="text/javascript">
                         <![CDATA[
                         $(document).ready(function() {
+                            console.log('Cash Flow Charts: JavaScript loaded');
+                            console.log('Chart.js available:', typeof Chart !== 'undefined');
+                            
                             // Function to render charts for all kanban cards
                             function renderCashFlowCharts() {
+                                console.log('Cash Flow Charts: Starting chart rendering');
+                                
                                 $('.oe_kanban_card').each(function() {
                                     var card = $(this);
                                     var chartDataRaw = card.data('chart');
                                     var recordId = card.data('record-id');
+                                    
+                                    console.log('Processing card:', recordId, 'Data:', chartDataRaw);
                                     
                                     if (chartDataRaw && recordId) {
                                         try {
@@ -99,6 +112,8 @@
                                             var dashboardData = JSON.parse(chartDataRaw);
                                             var chartId = 'chart_' + recordId;
                                             var canvas = document.getElementById(chartId);
+                                            
+                                            console.log('Chart ID:', chartId, 'Canvas found:', !!canvas);
                                             
                                             if (canvas && dashboardData.length > 0 && dashboardData[0].values) {
                                                 // Destroy existing chart if exists
@@ -116,8 +131,16 @@
                                                 var borderColor = '#3498db';
                                                 var backgroundColor = 'rgba(52, 152, 219, 0.1)';
                                                 
+                                                console.log('Creating chart with data points:', data.length);
+                                                
+                                                // Test if Chart.js is available
+                                                if (typeof Chart === 'undefined') {
+                                                    console.error('Chart.js is not loaded!');
+                                                    return;
+                                                }
+                                                
                                                 // Create new chart
-                                                new Chart(canvas, {
+                                                var chart = new Chart(canvas, {
                                                     type: 'line',
                                                     data: {
                                                         labels: labels,
@@ -173,20 +196,35 @@
                                                         }
                                                     }
                                                 });
+                                                
+                                                console.log('Chart created successfully for record:', recordId);
+                                            } else {
+                                                console.log('Skipping chart - missing canvas or data:', {
+                                                    canvas: !!canvas,
+                                                    dataLength: dashboardData.length,
+                                                    hasValues: dashboardData[0] && dashboardData[0].values
+                                                });
                                             }
                                         } catch (e) {
                                             console.error('Error rendering chart for record ' + recordId + ':', e);
                                         }
+                                    } else {
+                                        console.log('Skipping card - missing data or record ID:', {
+                                            hasData: !!chartDataRaw,
+                                            recordId: recordId
+                                        });
                                     }
                                 });
+                                
+                                console.log('Cash Flow Charts: Finished processing all cards');
                             }
                             
-                            // Initial chart rendering
-                            setTimeout(renderCashFlowCharts, 100);
+                            // Initial chart rendering with longer delay
+                            setTimeout(renderCashFlowCharts, 500);
                             
                             // Re-render charts when kanban is refreshed
                             $(document).on('DOMNodeInserted', '.o_kanban_view', function() {
-                                setTimeout(renderCashFlowCharts, 100);
+                                setTimeout(renderCashFlowCharts, 500);
                             });
                         });
                         ]]>
