@@ -198,16 +198,25 @@ class CashFlowDashboard(models.Model):
             daily_balances = record._get_daily_balances(date_from, date_to)
             
             # Prepare chart data in dashboard_graph widget format
-            chart_data = []
+            values = []
             
             current_date = date_from
             while current_date <= date_to:
                 balance = daily_balances.get(current_date, 0.0)
-                chart_data.append({
-                    'x': current_date.strftime('%Y-%m-%d'),
-                    'y': float(balance)
+                values.append({
+                    'label': current_date.strftime('%m/%d'),
+                    'value': float(balance)
                 })
                 current_date += timedelta(days=1)
+            
+            # Create the correct structure for dashboard_graph widget
+            chart_data = [{
+                'values': values,
+                'title': 'Balance Trend',
+                'key': 'BALANCE',
+                'area': True,
+                'color': '#3498db'  # Blue color for cash flow charts
+            }]
             
             # Store as JSON for dashboard_graph widget
             record.kanban_dashboard_graph = json.dumps(chart_data)
