@@ -39,8 +39,8 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'cash_flow/static/src/components/**/*.js',
             'cash_flow/static/src/components/**/*.xml',
+            'cash_flow/static/src/components/**/*.js',
             'cash_flow/static/src/components/**/*.scss',
         ],
     },
