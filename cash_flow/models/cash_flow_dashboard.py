@@ -491,26 +491,52 @@ class CashFlowDashboard(models.Model):
             }
         return result
 
-    def get_individual_balances_list(self):
-        """Get individual account balances as a list for form view"""
+    def get_form_data_with_period(self, date_from=None, date_to=None):
+        """
+        Get form data with specific period filtering
+        Called by form view to get period-specific data
+        """
         self.ensure_one()
-        if self.individual_balances:
-            return json.loads(self.individual_balances)
-        return []
+        
+        # Recalculate individual balances with period filtering
+        individual_balances = self._get_individual_balances_direct(
+            self.account_ids, date_from, date_to, self.company_id.id
+        )
+        
+        # Recalculate total balance
+        total_balance = self._calculate_balance_direct(
+            self.account_ids.ids, date_from, date_to, self.company_id.id
+        )
+        
+        # Format balance
+        balance_display = self._format_balance_simple(total_balance, self.currency_id)
+        balance_color = 'green' if total_balance > 0 else ('red' if total_balance < 0 else 'blue')
+        
+        return {
+            'individual_balances': individual_balances,
+            'current_balance': total_balance,
+            'balance_display': balance_display,
+            'balance_color': balance_color,
+            'period_info': {
+                'date_from': date_from,
+                'date_to': date_to,
+                'has_filter': bool(date_from or date_to)
+            }
+        }
 
     @api.model
-    def get_owl_dashboard_data(self, period_type='all', date_from=None, date_to=None):
+    def get_filtered_dashboard_data(self, date_from=None, date_to=None, period_type='all'):
         """
-        Enhanced method specifically for OWL dashboard with period filtering
-        Returns period-specific data (Option A implementation)
+        SIMPLE APPROACH: Get dashboard data with direct date arguments
+        No complex context handling - just direct filtering
         """
         company_id = self.env.company.id
         
         # Debug logging
         _logger = logging.getLogger(__name__)
-        _logger.info(f"OWL Dashboard Data Request - Period: {period_type}, From: {date_from}, To: {date_to}")
+        _logger.info(f"SIMPLE Dashboard Data Request - Period: {period_type}, From: {date_from}, To: {date_to}")
         
-        # Get active configurations for this company (ordered by sequence)
+        # Get active configurations
         config_model = self.env['cash.flow.config']
         active_configs = config_model.search([
             ('company_id', '=', company_id),
@@ -518,19 +544,9 @@ class CashFlowDashboard(models.Model):
         ], order='sequence, account_codes')
         
         if not active_configs:
-            _logger.warning("No active cash flow configurations found")
             return []
         
         dashboard_data = []
-        
-        # Set context for date filtering
-        context = self.env.context.copy()
-        if date_from:
-            context['date_from'] = date_from
-        if date_to:
-            context['date_to'] = date_to
-        
-        _logger.info(f"Processing {len(active_configs)} configurations with context: {context}")
         
         for config in active_configs:
             try:
@@ -547,24 +563,25 @@ class CashFlowDashboard(models.Model):
                         'company_id': company_id,
                     })
                 
-                # Calculate period-specific balance with context
-                dashboard_record_with_context = dashboard_record.with_context(context)
+                # DIRECT CALCULATION - No context tricks
+                current_balance = self._calculate_balance_direct(
+                    config.account_ids.ids, date_from, date_to, company_id
+                )
                 
-                # Explicitly calculate balance for debugging
-                current_balance = self._calculate_balance_for_period(
+                # Format balance
+                balance_display = self._format_balance_simple(current_balance, dashboard_record.currency_id)
+                balance_color = 'green' if current_balance > 0 else ('red' if current_balance < 0 else 'blue')
+                
+                # Simple chart data
+                chart_data = self._get_simple_chart_data(
+                    config.account_ids.ids, date_from, date_to, company_id
+                )
+                
+                # Individual balances for form view
+                individual_balances = self._get_individual_balances_direct(
                     config.account_ids, date_from, date_to, company_id
                 )
                 
-                # Get chart data for this period
-                chart_data = self._get_period_chart_data(
-                    dashboard_record, period_type, date_from, date_to
-                )
-                
-                # Format balance for display
-                balance_display = self._format_balance_display(current_balance, dashboard_record.currency_id)
-                balance_color = 'green' if current_balance > 0 else ('red' if current_balance < 0 else 'blue')
-                
-                # Prepare dashboard data
                 account_data = {
                     'id': dashboard_record.id,
                     'account_codes': dashboard_record.account_codes,
@@ -573,69 +590,118 @@ class CashFlowDashboard(models.Model):
                     'current_balance': current_balance,
                     'balance_display': balance_display,
                     'balance_color': balance_color,
-                    'company_id': company_id,
-                    'sequence': config.sequence,
                     'chart_data': chart_data,
+                    'individual_balances': json.dumps(individual_balances),
                     'period_info': {
                         'period_type': period_type,
                         'date_from': date_from,
                         'date_to': date_to,
-                        'formatted_period': self._format_period_label(period_type, date_from, date_to)
+                        'period_label': self._format_period_label(period_type, date_from, date_to)
                     }
                 }
                 
                 dashboard_data.append(account_data)
-                _logger.info(f"Processed config {config.display_name}: Balance {current_balance}")
+                _logger.info(f"Processed {config.display_name}: Balance {current_balance}")
                 
             except Exception as e:
                 _logger.error(f"Error processing config {config.id}: {str(e)}")
                 continue
         
-        _logger.info(f"Returning {len(dashboard_data)} dashboard records")
         return dashboard_data
 
-    def _calculate_balance_for_period(self, account_ids, date_from, date_to, company_id):
-        """Calculate balance for specific accounts and period"""
+    def _calculate_balance_direct(self, account_ids, date_from, date_to, company_id):
+        """Direct balance calculation with date filtering"""
         if not account_ids:
             return 0.0
         
-        # Build domain for account move lines
+        # Simple domain
         domain = [
-            ('account_id', 'in', account_ids.ids),
+            ('account_id', 'in', account_ids),
             ('company_id', '=', company_id),
             ('move_id.state', '=', 'posted')
         ]
         
-        # Add date filters if provided
+        # Add date filters
         if date_from:
             domain.append(('date', '>=', date_from))
         if date_to:
             domain.append(('date', '<=', date_to))
         
-        # Get move lines
+        # Get lines and calculate
         move_lines = self.env['account.move.line'].search(domain)
-        
-        # Calculate balance
         total_debit = sum(move_lines.mapped('debit'))
         total_credit = sum(move_lines.mapped('credit'))
-        balance = total_debit - total_credit
         
-        return balance
+        return total_debit - total_credit
 
-    def _format_balance_display(self, balance, currency):
-        """Format balance for display"""
+    def _format_balance_simple(self, balance, currency):
+        """Simple balance formatting"""
         if currency:
             try:
-                if hasattr(currency, 'format'):
-                    return currency.format(balance)
-                else:
-                    symbol = getattr(currency, 'symbol', '') or getattr(currency, 'name', '')
-                    return f"{symbol} {balance:,.2f}".strip()
-            except Exception:
                 symbol = getattr(currency, 'symbol', '') or getattr(currency, 'name', '')
                 return f"{symbol} {balance:,.2f}".strip()
-        else:
-            return f"{balance:,.2f}"
+            except:
+                return f"{balance:,.2f}"
+        return f"{balance:,.2f}"
+
+    def _get_simple_chart_data(self, account_ids, date_from, date_to, company_id):
+        """Simple chart data - just a few points"""
+        if not account_ids or not date_from or not date_to:
+            return []
+        
+        try:
+            start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+            end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+            
+            # Simple approach: 5 evenly spaced points
+            chart_data = []
+            date_diff = (end_date - start_date).days
+            
+            if date_diff <= 0:
+                return []
+            
+            interval = max(1, date_diff // 4)  # 5 points max
+            
+            for i in range(5):
+                check_date = start_date + timedelta(days=i * interval)
+                if check_date > end_date:
+                    check_date = end_date
+                
+                balance = self._calculate_balance_direct(
+                    account_ids, date_from, check_date.strftime('%Y-%m-%d'), company_id
+                )
+                
+                chart_data.append({
+                    'label': check_date.strftime('%b %d'),
+                    'value': float(balance)
+                })
+                
+                if check_date >= end_date:
+                    break
+            
+            return chart_data
+            
+        except Exception as e:
+            return []
+
+    def _get_individual_balances_direct(self, account_ids, date_from, date_to, company_id):
+        """Get individual account balances directly"""
+        balances = []
+        
+        for account in account_ids:
+            balance = self._calculate_balance_direct([account.id], date_from, date_to, company_id)
+            
+            # Format balance
+            formatted_balance = self._format_balance_simple(balance, account.company_id.currency_id)
+            
+            balances.append({
+                'code': account.code,
+                'name': account.name,
+                'balance': balance,
+                'formatted_balance': formatted_balance
+            })
+        
+        return balances
 
     def _get_period_chart_data(self, dashboard_record, period_type, date_from, date_to):
         """
