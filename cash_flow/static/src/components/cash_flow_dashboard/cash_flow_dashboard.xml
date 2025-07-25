@@ -161,10 +161,10 @@
 
                                         <div class="mt-3">
                                             <BalanceChart 
-                                                currentBalance="account.current_balance"
-                                                balanceColor="account.balance_color"
-                                                accountCode="account.account_codes || account.account_code"
-                                                chartData="account.chart_data"/>
+                                                t-prop-currentBalance="account.current_balance"
+                                                t-prop-balanceColor="account.balance_color"
+                                                t-prop-accountCode="account.account_codes || account.account_code"
+                                                t-prop-chartData="account.chart_data"/>
                                         </div>
                                         
                                         <!-- Additional info for multiple accounts -->
