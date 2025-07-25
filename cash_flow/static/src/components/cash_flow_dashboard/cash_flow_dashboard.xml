@@ -1,56 +1,183 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
+    <!-- Balance Chart Component Template -->
+    <t t-name="BalanceChart" owl="1">
+        <div class="balance-chart-container" style="height: 120px;">
+            <canvas t-att-id="chartId" style="width: 100%; height: 100%;"></canvas>
+        </div>
+    </t>
+
+    <!-- Main Cash Flow Dashboard Template -->
     <t t-name="cash_flow.CashFlowDashboard" owl="1">
         <div class="vh-100 overflow-auto bg-muted">
             <div class="row m-3">
                 <div class="col-12">
-                    <!-- Header -->
+                    
+                    <!-- Header with Enhanced Period Selector -->
                     <div class="row">
                         <div class="col m-0 p-0">
                             <div class="shadow-sm border m-2 p-4 bg-white">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h1 class="text-primary fw-bold">Cash Flow Dashboard</h1>
-                                    <div>
-                                        <select class="form-select" t-model="state.period" t-on-change="onChangePeriod">
-                                            <option value="all">All</option>
-                                            <option value="7">Last 7 Days</option>
-                                            <option value="30">Last 30 Days</option>
-                                            <option value="90">Last 90 Days</option>
-                                            <option value="365">Last Year</option>
-                                        </select>
+                                <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                    <div class="d-flex align-items-center mb-2 mb-md-0">
+                                        <h1 class="text-primary fw-bold mb-0 me-3">Cash Flow Dashboard</h1>
+                                        <span t-if="state.lastUpdated" class="badge bg-success">
+                                            <i class="fa fa-clock-o"/> Updated: <t t-esc="state.lastUpdated"/>
+                                        </span>
                                     </div>
+                                    
+                                    <div class="d-flex align-items-center gap-3">
+                                        <!-- Period Selector -->
+                                        <div class="d-flex align-items-center">
+                                            <label class="form-label mb-0 me-2 text-muted">Period:</label>
+                                            <select class="form-select" 
+                                                    t-model="state.period" 
+                                                    t-on-change="onChangePeriod"
+                                                    style="min-width: 180px;">
+                                                <t t-foreach="periodOptions" t-as="option" t-key="option.value">
+                                                    <option t-att-value="option.value" t-esc="option.label"/>
+                                                </t>
+                                            </select>
+                                        </div>
+                                        
+                                        <!-- Refresh Button -->
+                                        <button class="btn btn-outline-primary" 
+                                                t-on-click="retryLoadData"
+                                                t-att-disabled="state.loading">
+                                            <i t-att-class="state.loading ? 'fa fa-spinner fa-spin' : 'fa fa-refresh'"/>
+                                            <span class="d-none d-md-inline ms-1">Refresh</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Custom Date Range Picker -->
+                                <div t-if="state.period === 'custom'" class="row mt-3 pt-3 border-top">
+                                    <div class="col-12">
+                                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                                            <div class="d-flex align-items-center">
+                                                <label class="form-label mb-0 me-2 text-muted">From:</label>
+                                                <input type="date" 
+                                                       class="form-control" 
+                                                       t-model="state.customDateFrom"
+                                                       t-on-change="onCustomDateChange"
+                                                       style="width: 150px;"/>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <label class="form-label mb-0 me-2 text-muted">To:</label>
+                                                <input type="date" 
+                                                       class="form-control" 
+                                                       t-model="state.customDateTo"
+                                                       t-on-change="onCustomDateChange"
+                                                       style="width: 150px;"/>
+                                            </div>
+                                            <div t-if="!isCustomDateRangeValid()" class="text-danger small">
+                                                <i class="fa fa-exclamation-triangle"/> Please select both dates
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Period Display -->
+                                <div t-if="state.period !== 'all'" class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fa fa-calendar"/> Showing data for: <strong t-esc="getPeriodLabel()"/>
+                                    </small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Group accounts into rows of 2 -->
-                    <t t-set="rows" t-value="Array.from({ length: Math.ceil(state.accounts.length / 2) }, (_, i) => state.accounts.slice(i * 2, i * 2 + 2))"/>
-                    <div t-foreach="rows" t-as="row" t-key="row_index" class="row">
-                        <div t-foreach="row" t-as="account" t-key="account.id" class="col-md-6 col-12 mb-3">
-                            <div class="card h-100 shadow-sm cursor-pointer"
-                                 t-on-click="() => viewAccountDetails(account.id)"
-                                 t-attf-class="border-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
-
-                                <div class="card-header text-center">
-                                    <h5 class="card-title mb-0">
-                                        <strong t-esc="account.account_code"/>
-                                    </h5>
-                                    <small class="text-muted" t-esc="account.display_name"/>
+                    <!-- Error Handling Section -->
+                    <div t-if="state.error" class="row">
+                        <div class="col-12">
+                            <div class="alert alert-warning alert-dismissible m-2">
+                                <button type="button" class="btn-close" t-on-click="clearError"></button>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fa fa-exclamation-triangle"/> 
+                                        <span t-esc="state.error.message"/>
+                                    </div>
+                                    <div t-if="state.error.showRetry">
+                                        <button class="btn btn-sm btn-warning" t-on-click="retryLoadData">
+                                            <i class="fa fa-refresh"/> Retry
+                                        </button>
+                                    </div>
                                 </div>
+                            </div>
+                            
+                            <!-- Show last successful data if available -->
+                            <div t-if="state.accounts.length > 0" class="text-muted small m-2">
+                                <i class="fa fa-info-circle"/> Showing last successful data
+                            </div>
+                        </div>
+                    </div>
 
-                                <div class="card-body text-center">
-                                    <h3 class="mb-0"
-                                        t-attf-class="text-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
-                                        <t t-esc="account.balance_display"/>
-                                    </h3>
-                                    <small class="text-muted">Current Balance</small>
+                    <!-- Loading State with Skeleton UI -->
+                    <div t-if="state.loading" class="row">
+                        <t t-foreach="[1,2,3,4]" t-as="skeleton" t-key="skeleton">
+                            <div class="col-md-6 col-12 mb-3">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-header text-center">
+                                        <div class="skeleton-line skeleton-title mb-2"></div>
+                                        <div class="skeleton-line skeleton-subtitle"></div>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="skeleton-line skeleton-balance mb-2"></div>
+                                        <div class="skeleton-line skeleton-balance-label mb-3"></div>
+                                        <div class="skeleton-chart"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
 
-                                    <div class="mt-3">
-                                        <BalanceChart 
-                                            currentBalance="account.current_balance"
-                                            balanceColor="account.balance_color"
-                                            accountCode="account.account_code"/>
+                    <!-- Main Dashboard Content -->
+                    <div t-if="!state.loading">
+                        <!-- Group accounts into rows of 2 -->
+                        <t t-set="rows" t-value="Array.from({ length: Math.ceil(state.accounts.length / 2) }, (_, i) => state.accounts.slice(i * 2, i * 2 + 2))"/>
+                        <div t-foreach="rows" t-as="row" t-key="row_index" class="row">
+                            <div t-foreach="row" t-as="account" t-key="account.id" class="col-md-6 col-12 mb-3">
+                                <div class="card h-100 shadow-sm cursor-pointer hover-card"
+                                     t-on-click="() => viewAccountDetails(account.id)"
+                                     t-attf-class="border-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
+
+                                    <div class="card-header text-center">
+                                        <h5 class="card-title mb-0">
+                                            <strong t-esc="account.account_codes || account.account_code"/>
+                                        </h5>
+                                        <small class="text-muted" t-esc="account.display_name"/>
+                                        
+                                        <!-- Period indicator for filtered data -->
+                                        <div t-if="state.period !== 'all'" class="mt-1">
+                                            <span class="badge bg-light text-dark">
+                                                <i class="fa fa-calendar"/> <t t-esc="getPeriodLabel()"/>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body text-center">
+                                        <h3 class="mb-0"
+                                            t-attf-class="text-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
+                                            <t t-esc="account.balance_display"/>
+                                        </h3>
+                                        <small class="text-muted">
+                                            <span t-if="state.period === 'all'">Current Balance</span>
+                                            <span t-else="">Balance for Period</span>
+                                        </small>
+
+                                        <div class="mt-3">
+                                            <BalanceChart 
+                                                currentBalance="account.current_balance"
+                                                balanceColor="account.balance_color"
+                                                accountCode="account.account_codes || account.account_code"
+                                                chartData="account.chart_data"/>
+                                        </div>
+                                        
+                                        <!-- Additional info for multiple accounts -->
+                                        <div t-if="account.account_count and account.account_count > 1" class="mt-2">
+                                            <small class="text-info">
+                                                <i class="fa fa-layer-group"/> <t t-esc="account.account_count"/> accounts
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -58,14 +185,125 @@
                     </div>
 
                     <!-- Empty State -->
-                    <div t-if="state.accounts.length === 0" class="text-center p-5">
+                    <div t-if="!state.loading and state.accounts.length === 0 and !state.error" class="text-center p-5">
                         <div class="alert alert-info">
-                            <h4>No Cash Flow Accounts Configured</h4>
-                            <p>Please configure your cash flow accounts in the settings to see data here.</p>
+                            <h4>
+                                <i class="fa fa-info-circle"/> 
+                                <span t-if="state.period === 'all'">No Cash Flow Accounts Configured</span>
+                                <span t-else="">No Data for Selected Period</span>
+                            </h4>
+                            <p t-if="state.period === 'all'">
+                                Please configure your cash flow accounts in the settings to see data here.
+                            </p>
+                            <p t-else="">
+                                Try selecting a different period or check if there are transactions in the selected date range.
+                            </p>
+                            
+                            <div class="mt-3">
+                                <button class="btn btn-primary" t-on-click="retryLoadData">
+                                    <i class="fa fa-refresh"/> Reload Data
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        <!-- CSS Styles for Skeleton Loading and Enhanced UX -->
+        <style>
+            /* Skeleton Loading Animation */
+            .skeleton-line {
+                height: 20px;
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: skeleton-loading 1.5s infinite;
+                border-radius: 4px;
+                margin-bottom: 10px;
+            }
+            
+            .skeleton-title {
+                height: 24px;
+                width: 80%;
+                margin: 0 auto;
+            }
+            
+            .skeleton-subtitle {
+                height: 16px;
+                width: 60%;
+                margin: 0 auto;
+            }
+            
+            .skeleton-balance {
+                height: 32px;
+                width: 70%;
+                margin: 0 auto;
+            }
+            
+            .skeleton-balance-label {
+                height: 14px;
+                width: 50%;
+                margin: 0 auto;
+            }
+            
+            .skeleton-chart {
+                height: 120px;
+                width: 100%;
+                background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+                background-size: 200% 100%;
+                animation: skeleton-loading 1.5s infinite;
+                border-radius: 8px;
+            }
+            
+            @keyframes skeleton-loading {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+            
+            /* Enhanced Card Hover Effects */
+            .hover-card {
+                transition: all 0.3s ease;
+            }
+            
+            .hover-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            }
+            
+            /* Custom Date Picker Styling */
+            input[type="date"] {
+                border: 1px solid #dee2e6;
+                border-radius: 0.375rem;
+                padding: 0.375rem 0.75rem;
+            }
+            
+            input[type="date"]:focus {
+                border-color: #86b7fe;
+                outline: 0;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            }
+            
+            /* Loading Button Animation */
+            .btn:disabled {
+                opacity: 0.6;
+            }
+            
+            /* Period Badge Styling */
+            .badge {
+                font-size: 0.75em;
+            }
+            
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .d-flex.gap-3 {
+                    flex-direction: column;
+                    gap: 1rem !important;
+                }
+                
+                .form-select {
+                    min-width: 100% !important;
+                }
+            }
+        </style>
     </t>
 </templates>

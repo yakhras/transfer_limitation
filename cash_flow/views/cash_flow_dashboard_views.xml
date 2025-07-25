@@ -237,7 +237,7 @@
             </field>
         </record>
 
-        <!-- Form View for Cash Flow Dashboard - UPDATED for multiple accounts -->
+<!-- Form View for Cash Flow Dashboard - ENHANCED for period-specific data (Option A) -->
         <record id="view_cash_flow_dashboard_form" model="ir.ui.view">
             <field name="name">cash.flow.dashboard.form</field>
             <field name="model">cash.flow.dashboard</field>
@@ -253,6 +253,20 @@
                             </h2>
                         </div>
                         
+                        <!-- ADDED: Period Information Banner -->
+                        <div class="alert alert-info" id="period_info_banner" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fa fa-calendar"/> 
+                                    <strong>Filtered Period:</strong> 
+                                    <span id="period_label">All Time</span>
+                                </div>
+                                <div>
+                                    <span class="badge bg-primary" id="period_badge">Current View</span>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <group>
                             <group string="Account Group Information">
                                 <field name="company_id" readonly="1" groups="base.group_multi_company"/>
@@ -261,14 +275,29 @@
                                 <field name="sequence" readonly="1"/>
                             </group>
                             <group string="Balance Information">
-                                <field name="current_balance" readonly="1"/>
-                                <field name="balance_display" readonly="1"/>
+                                <!-- ENHANCED: Period-aware balance display -->
+                                <field name="current_balance" readonly="1" string="Balance for Period"/>
+                                <field name="balance_display" readonly="1" string="Formatted Balance"/>
                                 <field name="balance_color" readonly="1"/>
+                                
+                                <!-- ADDED: Period context information -->
+                                <div id="period_details" style="display: none;">
+                                    <span class="text-muted">
+                                        <i class="fa fa-info-circle"/> 
+                                        Balance calculated for selected date range
+                                    </span>
+                                </div>
                             </group>
                         </group>
 
-                        <!-- ADDED: Accounts Included Section -->
+                        <!-- ENHANCED: Accounts Included Section with period context -->
                         <group string="Accounts Included" col="1">
+                            <div class="text-muted mb-2">
+                                <i class="fa fa-layer-group"/> 
+                                <span id="account_count_label">
+                                    This group includes the following accounts:
+                                </span>
+                            </div>
                             <field name="account_ids" readonly="1" nolabel="1">
                                 <tree create="false" edit="false" delete="false">
                                     <field name="code"/>
@@ -278,24 +307,116 @@
                             </field>
                         </group>
 
-                        <!-- ADDED: Individual Account Balances Section -->
-                        <div class="oe_horizontal_separator">Individual Account Balances</div>
+                        <!-- ENHANCED: Individual Account Balances Section with period awareness -->
+                        <div class="oe_horizontal_separator">
+                            Individual Account Balances
+                            <span class="text-muted" id="balances_period_note" style="display: none;">
+                                (for selected period)
+                            </span>
+                        </div>
                         <div class="o_group">
                             <div id="individual_balances_container">
                                 <!-- This will be populated by JavaScript with individual balance data -->
                                 <div class="alert alert-info" id="loading_balances">
-                                    Loading individual account balances...
+                                    <i class="fa fa-spinner fa-spin"/> Loading individual account balances...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ADDED: Period Summary Statistics -->
+                        <div id="period_summary" style="display: none;">
+                            <div class="oe_horizontal_separator">Period Summary</div>
+                            <div class="row">
+                                <div class="col-md-3 col-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title text-success" id="total_balance">₺0</h5>
+                                            <p class="card-text small text-muted">Total Balance</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title text-info" id="account_count">0</h5>
+                                            <p class="card-text small text-muted">Accounts</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title text-success" id="positive_accounts">0</h5>
+                                            <p class="card-text small text-muted">Positive</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title text-danger" id="negative_accounts">0</h5>
+                                            <p class="card-text small text-muted">Negative</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                     </sheet>
                     
-                    <!-- JavaScript to load and display individual balances -->
+                    <!-- Enhanced JavaScript for period-aware form view -->
                     <script type="text/javascript">
                         <![CDATA[
                         $(document).ready(function() {
-                            // Get individual balances data
+                            // Get context information from URL or form
+                            var urlParams = new URLSearchParams(window.location.search);
+                            var periodType = urlParams.get('period_type') || 'all';
+                            var dateFrom = urlParams.get('date_from');
+                            var dateTo = urlParams.get('date_to');
+                            
+                            // Show period information if filtered
+                            if (periodType !== 'all' || dateFrom || dateTo) {
+                                $('#period_info_banner').show();
+                                $('#period_details').show();
+                                $('#balances_period_note').show();
+                                $('#period_summary').show();
+                                
+                                // Update period label
+                                var periodLabel = formatPeriodLabel(periodType, dateFrom, dateTo);
+                                $('#period_label').text(periodLabel);
+                                $('#period_badge').text('Filtered View');
+                            }
+                            
+                            // Load individual balances
+                            loadIndividualBalances();
+                            
+                            // Load period summary if available
+                            if (periodType !== 'all') {
+                                loadPeriodSummary(periodType, dateFrom, dateTo);
+                            }
+                        });
+                        
+                        function formatPeriodLabel(periodType, dateFrom, dateTo) {
+                            if (periodType === 'custom' && dateFrom && dateTo) {
+                                return dateFrom + ' to ' + dateTo;
+                            } else if (dateFrom && dateTo) {
+                                return formatDateRange(dateFrom, dateTo);
+                            } else {
+                                return periodType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            }
+                        }
+                        
+                        function formatDateRange(dateFrom, dateTo) {
+                            try {
+                                var start = new Date(dateFrom).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                var end = new Date(dateTo).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                return start + ' - ' + end;
+                            } catch (e) {
+                                return dateFrom + ' to ' + dateTo;
+                            }
+                        }
+                        
+                        function loadIndividualBalances() {
                             var individualBalancesField = $('input[name="individual_balances"]');
                             if (individualBalancesField.length > 0) {
                                 var balancesData = individualBalancesField.val();
@@ -309,34 +430,65 @@
                                             html += '<div class="row">';
                                             balances.forEach(function(balance) {
                                                 html += '<div class="col-md-6 col-sm-12 mb-3">';
-                                                html += '<div class="card">';
+                                                html += '<div class="card border-0 shadow-sm">';
                                                 html += '<div class="card-body">';
-                                                html += '<h5 class="card-title">' + balance.code + '</h5>';
-                                                html += '<p class="card-text text-muted">' + balance.name + '</p>';
-                                                html += '<h4 class="card-text ';
-                                                html += balance.balance > 0 ? 'text-success' : (balance.balance < 0 ? 'text-danger' : 'text-info');
-                                                html += '">' + balance.formatted_balance + '</h4>';
+                                                html += '<div class="d-flex justify-content-between align-items-start">';
+                                                html += '<div>';
+                                                html += '<h6 class="card-title text-primary">' + balance.code + '</h6>';
+                                                html += '<p class="card-text text-muted small mb-2">' + balance.name + '</p>';
+                                                html += '</div>';
+                                                html += '<div class="text-end">';
+                                                html += '<h5 class="mb-0 ';
+                                                html += balance.balance > 0 ? 'text-success' : (balance.balance < 0 ? 'text-danger' : 'text-secondary');
+                                                html += '">' + balance.formatted_balance + '</h5>';
+                                                html += '</div>';
+                                                html += '</div>';
                                                 html += '</div>';
                                                 html += '</div>';
                                                 html += '</div>';
                                             });
                                             html += '</div>';
+                                            
+                                            // Update account count
+                                            $('#account_count_label').text('This group includes ' + balances.length + ' accounts:');
+                                            $('#account_count').text(balances.length);
+                                            
                                         } else {
-                                            html = '<div class="alert alert-warning">No individual account data available.</div>';
+                                            html = '<div class="alert alert-warning"><i class="fa fa-exclamation-triangle"/> No individual account data available for the selected period.</div>';
                                         }
                                         
                                         container.html(html);
                                     } catch (e) {
                                         console.error('Error parsing individual balances:', e);
-                                        $('#individual_balances_container').html('<div class="alert alert-danger">Error loading individual account balances.</div>');
+                                        $('#individual_balances_container').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"/> Error loading individual account balances.</div>');
                                     }
                                 } else {
-                                    $('#individual_balances_container').html('<div class="alert alert-warning">No balance data available.</div>');
+                                    $('#individual_balances_container').html('<div class="alert alert-warning"><i class="fa fa-info-circle"/> No balance data available for the selected period.</div>');
                                 }
                             } else {
-                                $('#individual_balances_container').html('<div class="alert alert-warning">Balance data not found.</div>');
+                                $('#individual_balances_container').html('<div class="alert alert-warning"><i class="fa fa-question-circle"/> Balance data not found.</div>');
                             }
-                        });
+                        }
+                        
+                        function loadPeriodSummary(periodType, dateFrom, dateTo) {
+                            // This would typically make an RPC call to get summary data
+                            // For now, we'll calculate from available data
+                            var balancesField = $('input[name="individual_balances"]').val();
+                            if (balancesField) {
+                                try {
+                                    var balances = JSON.parse(balancesField);
+                                    var totalBalance = balances.reduce((sum, acc) => sum + acc.balance, 0);
+                                    var positiveCount = balances.filter(acc => acc.balance > 0).length;
+                                    var negativeCount = balances.filter(acc => acc.balance < 0).length;
+                                    
+                                    $('#total_balance').text('₺' + totalBalance.toLocaleString());
+                                    $('#positive_accounts').text(positiveCount);
+                                    $('#negative_accounts').text(negativeCount);
+                                } catch (e) {
+                                    console.error('Error calculating summary:', e);
+                                }
+                            }
+                        }
                         ]]>
                     </script>
                     

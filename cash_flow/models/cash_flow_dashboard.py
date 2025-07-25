@@ -496,3 +496,233 @@ class CashFlowDashboard(models.Model):
         if self.individual_balances:
             return json.loads(self.individual_balances)
         return []
+
+    @api.model
+    def get_owl_dashboard_data(self, period_type='all', date_from=None, date_to=None):
+        """
+        Enhanced method specifically for OWL dashboard with period filtering
+        Returns period-specific data (Option A implementation)
+        """
+        company_id = self.env.company.id
+        
+        # Get active configurations for this company (ordered by sequence)
+        config_model = self.env['cash.flow.config']
+        active_configs = config_model.search([
+            ('company_id', '=', company_id),
+            ('active', '=', True)
+        ], order='sequence, account_codes')
+        
+        if not active_configs:
+            return []
+        
+        dashboard_data = []
+        
+        # Set context for date filtering
+        context = self.env.context.copy()
+        if date_from:
+            context['date_from'] = date_from
+        if date_to:
+            context['date_to'] = date_to
+        
+        for config in active_configs:
+            # Get or create dashboard record
+            dashboard_record = self.search([
+                ('config_id', '=', config.id),
+                ('company_id', '=', company_id)
+            ], limit=1)
+            
+            if not dashboard_record:
+                dashboard_record = self.create({
+                    'config_id': config.id,
+                    'account_ids': [(6, 0, config.account_ids.ids)],
+                    'company_id': company_id,
+                })
+            
+            # Calculate period-specific balance with context
+            dashboard_record_with_context = dashboard_record.with_context(context)
+            
+            # Get chart data for this period
+            chart_data = self._get_period_chart_data(
+                dashboard_record, period_type, date_from, date_to
+            )
+            
+            # Prepare dashboard data
+            account_data = {
+                'id': dashboard_record.id,
+                'account_codes': dashboard_record.account_codes,
+                'account_names': dashboard_record.account_names,
+                'display_name': dashboard_record.display_name,
+                'current_balance': dashboard_record_with_context.current_balance,
+                'balance_display': dashboard_record_with_context.balance_display,
+                'balance_color': dashboard_record_with_context.balance_color,
+                'company_id': company_id,
+                'sequence': config.sequence,
+                'account_count': len(config.account_ids),
+                'chart_data': chart_data,
+                'period_info': {
+                    'period_type': period_type,
+                    'date_from': date_from,
+                    'date_to': date_to,
+                    'formatted_period': self._format_period_label(period_type, date_from, date_to)
+                }
+            }
+            
+            dashboard_data.append(account_data)
+        
+        return dashboard_data
+
+    def _get_period_chart_data(self, dashboard_record, period_type, date_from, date_to):
+        """
+        Generate chart data for specific period
+        Returns array of {label, value} for Chart.js
+        """
+        if not dashboard_record.account_ids:
+            return []
+        
+        # Default date range if not provided
+        if not date_from or not date_to:
+            if period_type == 'all':
+                # For "all" period, use last 30 days for chart
+                end_date = datetime.now().date()
+                start_date = end_date - timedelta(days=30)
+                date_from = start_date.strftime('%Y-%m-%d')
+                date_to = end_date.strftime('%Y-%m-%d')
+            else:
+                return []
+        
+        # Parse dates
+        try:
+            start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+            end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            return []
+        
+        # Limit chart data points for performance
+        date_diff = (end_date - start_date).days
+        if date_diff > 90:
+            # For long periods, use weekly data points
+            return self._get_weekly_chart_data(dashboard_record, start_date, end_date)
+        elif date_diff > 30:
+            # For medium periods, use every 2-3 days
+            return self._get_interval_chart_data(dashboard_record, start_date, end_date, 2)
+        else:
+            # For short periods, use daily data
+            return self._get_daily_chart_data(dashboard_record, start_date, end_date)
+
+    def _get_daily_chart_data(self, dashboard_record, start_date, end_date):
+        """Get daily chart data points"""
+        daily_balances = dashboard_record._get_daily_balances_multiple_accounts(start_date, end_date)
+        
+        chart_data = []
+        current_date = start_date
+        
+        while current_date <= end_date:
+            balance = daily_balances.get(current_date, 0.0)
+            chart_data.append({
+                'label': current_date.strftime('%m/%d'),
+                'value': float(balance)
+            })
+            current_date += timedelta(days=1)
+        
+        return chart_data
+
+    def _get_weekly_chart_data(self, dashboard_record, start_date, end_date):
+        """Get weekly aggregated chart data points"""
+        chart_data = []
+        current_date = start_date
+        
+        while current_date <= end_date:
+            week_end = min(current_date + timedelta(days=6), end_date)
+            
+            # Get balance at end of week
+            weekly_balances = dashboard_record._get_daily_balances_multiple_accounts(current_date, week_end)
+            balance = weekly_balances.get(week_end, 0.0)
+            
+            chart_data.append({
+                'label': f"Week {current_date.strftime('%m/%d')}",
+                'value': float(balance)
+            })
+            
+            current_date = week_end + timedelta(days=1)
+        
+        return chart_data
+
+    def _get_interval_chart_data(self, dashboard_record, start_date, end_date, interval_days):
+        """Get chart data at specified day intervals"""
+        chart_data = []
+        current_date = start_date
+        
+        while current_date <= end_date:
+            # Get balance for this date
+            daily_balances = dashboard_record._get_daily_balances_multiple_accounts(current_date, current_date)
+            balance = daily_balances.get(current_date, 0.0)
+            
+            chart_data.append({
+                'label': current_date.strftime('%m/%d'),
+                'value': float(balance)
+            })
+            
+            current_date += timedelta(days=interval_days)
+        
+        # Always include the end date
+        if current_date - timedelta(days=interval_days) != end_date:
+            daily_balances = dashboard_record._get_daily_balances_multiple_accounts(end_date, end_date)
+            balance = daily_balances.get(end_date, 0.0)
+            chart_data.append({
+                'label': end_date.strftime('%m/%d'),
+                'value': float(balance)
+            })
+        
+        return chart_data
+
+    def _format_period_label(self, period_type, date_from, date_to):
+        """Format period label for display"""
+        if period_type == 'all':
+            return 'All Time'
+        elif period_type == 'custom' and date_from and date_to:
+            return f"{date_from} to {date_to}"
+        elif date_from and date_to:
+            try:
+                start = datetime.strptime(date_from, '%Y-%m-%d').strftime('%b %d')
+                end = datetime.strptime(date_to, '%Y-%m-%d').strftime('%b %d, %Y')
+                return f"{start} - {end}"
+            except (ValueError, TypeError):
+                return period_type.replace('_', ' ').title()
+        else:
+            return period_type.replace('_', ' ').title()
+
+    @api.model
+    def get_period_summary(self, period_type='all', date_from=None, date_to=None):
+        """
+        Get summary statistics for the selected period
+        """
+        company_id = self.env.company.id
+        
+        # Set context for date filtering
+        context = {'date_from': date_from, 'date_to': date_to}
+        
+        # Get all dashboard records with context
+        dashboard_records = self.with_context(context).search([
+            ('company_id', '=', company_id)
+        ])
+        
+        if not dashboard_records:
+            return {
+                'total_balance': 0.0,
+                'positive_accounts': 0,
+                'negative_accounts': 0,
+                'total_accounts': 0,
+                'period_label': self._format_period_label(period_type, date_from, date_to)
+            }
+        
+        total_balance = sum(record.current_balance for record in dashboard_records)
+        positive_accounts = len([r for r in dashboard_records if r.current_balance > 0])
+        negative_accounts = len([r for r in dashboard_records if r.current_balance < 0])
+        
+        return {
+            'total_balance': total_balance,
+            'positive_accounts': positive_accounts,
+            'negative_accounts': negative_accounts,
+            'total_accounts': len(dashboard_records),
+            'period_label': self._format_period_label(period_type, date_from, date_to)
+        }
