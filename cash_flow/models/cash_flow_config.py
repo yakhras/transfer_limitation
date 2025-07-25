@@ -5,39 +5,60 @@ from odoo.exceptions import UserError, ValidationError
 class CashFlowConfig(models.Model):
     _name = 'cash.flow.config'
     _description = 'Cash Flow Dashboard Configuration'
-    _order = 'company_id, sequence, account_code'
+    _order = 'company_id, sequence, account_codes'
 
     # Basic Configuration Fields
     company_id = fields.Many2one('res.company', string='Company', required=True, 
                                 default=lambda self: self.env.company)
-    account_id = fields.Many2one('account.account', string='Account', required=True,
-                                domain="[('company_id', '=', company_id)]")
-    account_code = fields.Char(related='account_id.code', string='Account Code', store=True)
-    account_name = fields.Char(related='account_id.name', string='Default Account Name', store=True)
     
-    # Configuration Options
-    custom_label = fields.Char(string='Custom Label', 
-                              help="Custom display name for this account on the dashboard. Leave empty to use account name.")
+    # CHANGED: From Many2one to Many2many
+    account_ids = fields.Many2many(
+        'account.account', 
+        string='Accounts', 
+        required=True,
+        domain="[('company_id', '=', company_id)]"
+    )
+    
+    # CHANGED: Now computed fields instead of related
+    account_codes = fields.Char(string='Account Codes', compute='_compute_account_info', store=True)
+    account_names = fields.Char(string='Account Names', compute='_compute_account_info', store=True)
+    
+    # Configuration Options - CHANGED: Now required
+    custom_label = fields.Char(string='Custom Label', required=True,
+                              help="Display name for this account group on the dashboard.")
     display_name = fields.Char(string='Display Name', compute='_compute_display_name', store=True)
     active = fields.Boolean(string='Active', default=True,
-                           help="If unchecked, this account will not appear on the dashboard")
+                           help="If unchecked, this account group will not appear on the dashboard")
     sequence = fields.Integer(string='Display Order', default=10,
-                             help="Determines the order of accounts on the dashboard")
+                             help="Determines the order of account groups on the dashboard")
     
     # Computed fields for dashboard integration
     suggested_type = fields.Char(string='Suggested Type', compute='_compute_suggested_type', store=True)
     
-    # SQL Constraints
+    # SQL Constraints - UPDATED for multiple accounts
     _sql_constraints = [
-        ('unique_account_company', 'unique(account_id, company_id)', 
-         'Each account can only be configured once per company!'),
+        ('unique_label_company', 'unique(custom_label, company_id)', 
+         'Custom label must be unique per company!'),
     ]
 
-    @api.depends('custom_label', 'account_name')
-    def _compute_display_name(self):
-        """Compute the display name: custom label if provided, otherwise account name"""
+    @api.depends('account_ids')
+    def _compute_account_info(self):
+        """Compute account codes and names from selected accounts"""
         for record in self:
-            record.display_name = record.custom_label or record.account_name
+            if record.account_ids:
+                # Sort accounts by code for consistent display
+                sorted_accounts = record.account_ids.sorted('code')
+                record.account_codes = ', '.join(sorted_accounts.mapped('code'))
+                record.account_names = ', '.join(sorted_accounts.mapped('name'))
+            else:
+                record.account_codes = ''
+                record.account_names = ''
+
+    @api.depends('custom_label')
+    def _compute_display_name(self):
+        """Compute the display name from custom label"""
+        for record in self:
+            record.display_name = record.custom_label or record.account_names
 
     def _is_asset_account(self, account):
         """Determine if account is an asset account - compatible across Odoo versions"""
@@ -122,12 +143,18 @@ class CashFlowConfig(models.Model):
                 
         return 'Other'
 
-    @api.depends('account_id')
+    @api.depends('account_ids')
     def _compute_suggested_type(self):
         """Compute suggested account type for display"""
         for record in self:
-            if record.account_id:
-                record.suggested_type = self._get_account_type_name(record.account_id)
+            if record.account_ids:
+                # Get types of all selected accounts
+                types = []
+                for account in record.account_ids:
+                    account_type = self._get_account_type_name(account)
+                    if account_type not in types:
+                        types.append(account_type)
+                record.suggested_type = ', '.join(types)
             else:
                 record.suggested_type = ''
 
@@ -150,7 +177,7 @@ class CashFlowConfig(models.Model):
             if any(keyword in account_type.lower() for keyword in ['cash', 'bank', 'receivable']):
                 # Check if already configured
                 existing = self.search([
-                    ('account_id', '=', account.id),
+                    ('account_ids', 'in', [account.id]),
                     ('company_id', '=', company_id)
                 ])
                 
@@ -183,7 +210,7 @@ class CashFlowConfig(models.Model):
         for suggestion in suggested[:10]:  # Limit to top 10 suggestions
             config = self.create({
                 'company_id': company_id,
-                'account_id': suggestion['account_id'],
+                'account_ids': [(6, 0, [suggestion['account_id']])],  # CHANGED: Many2many format
                 'custom_label': suggestion['suggested_label'],
                 'sequence': sequence,
                 'active': True
@@ -217,9 +244,9 @@ class CashFlowConfig(models.Model):
         all_dashboard_records = dashboard_model.search([])
         
         for dashboard_record in all_dashboard_records:
-            # Check if there's an active config for this dashboard record
+            # Check if there's an active config for this dashboard record - UPDATED logic
             config_exists = self.search([
-                ('account_id', '=', dashboard_record.account_id.id),
+                ('account_ids', 'in', [dashboard_record.account_id.id]),
                 ('company_id', '=', dashboard_record.company_id.id),
                 ('active', '=', True)
             ])
@@ -231,7 +258,7 @@ class CashFlowConfig(models.Model):
         """Custom name display for configuration records"""
         result = []
         for record in self:
-            name = f"{record.account_code} - {record.display_name}"
+            name = f"{record.account_codes} - {record.display_name}"
             if not record.active:
                 name += " (Inactive)"
             result.append((record.id, name))
@@ -253,16 +280,16 @@ class CashFlowConfig(models.Model):
         # Store old values before update to handle account changes
         old_account_ids = {}
         for config in self:
-            old_account_ids[config.id] = config.account_id.id
+            old_account_ids[config.id] = config.account_ids.ids
         
         result = super(CashFlowConfig, self).write(vals)
         
         for config in self:
-            old_account_id = old_account_ids.get(config.id)
+            old_accounts = old_account_ids.get(config.id, [])
             
-            # If account was changed, remove old dashboard record
-            if 'account_id' in vals and old_account_id != config.account_id.id:
-                config._remove_old_dashboard_record(old_account_id)
+            # If accounts were changed, remove old dashboard record
+            if 'account_ids' in vals and set(old_accounts) != set(config.account_ids.ids):
+                config._remove_old_dashboard_record(old_accounts)
             
             if config.active:
                 # Create or update dashboard record
@@ -285,15 +312,16 @@ class CashFlowConfig(models.Model):
         """Create dashboard record for this configuration"""
         dashboard_model = self.env['cash.flow.dashboard']
         
-        # Check if dashboard record already exists
+        # Check if dashboard record already exists for this config
         existing = dashboard_model.search([
-            ('account_id', '=', self.account_id.id),
+            ('config_id', '=', self.id),
             ('company_id', '=', self.company_id.id)
         ])
         
         if not existing:
             dashboard_model.create({
-                'account_id': self.account_id.id,
+                'config_id': self.id,
+                'account_ids': [(6, 0, self.account_ids.ids)],
                 'company_id': self.company_id.id,
             })
 
@@ -303,17 +331,22 @@ class CashFlowConfig(models.Model):
         
         # Find existing dashboard record
         dashboard_record = dashboard_model.search([
-            ('account_id', '=', self.account_id.id),
+            ('config_id', '=', self.id),
             ('company_id', '=', self.company_id.id)
         ])
         
         if not dashboard_record:
             # Create new dashboard record  
             dashboard_model.create({
-                'account_id': self.account_id.id,
+                'config_id': self.id,
+                'account_ids': [(6, 0, self.account_ids.ids)],
                 'company_id': self.company_id.id,
             })
-        # Note: No need to update existing records as display_name is computed and will update automatically
+        else:
+            # Update existing dashboard record
+            dashboard_record.write({
+                'account_ids': [(6, 0, self.account_ids.ids)],
+            })
 
     def _remove_dashboard_record(self):
         """Remove dashboard record for this configuration"""
@@ -321,20 +354,20 @@ class CashFlowConfig(models.Model):
         
         # Find and remove corresponding dashboard record
         dashboard_record = dashboard_model.search([
-            ('account_id', '=', self.account_id.id),
+            ('config_id', '=', self.id),
             ('company_id', '=', self.company_id.id)
         ])
         
         if dashboard_record:
             dashboard_record.unlink()
 
-    def _remove_old_dashboard_record(self, old_account_id):
-        """Remove dashboard record for old account when account is changed"""
+    def _remove_old_dashboard_record(self, old_account_ids):
+        """Remove dashboard record for old accounts when accounts are changed"""
         dashboard_model = self.env['cash.flow.dashboard']
         
         # Find and remove old dashboard record
         old_dashboard_record = dashboard_model.search([
-            ('account_id', '=', old_account_id),
+            ('config_id', '=', self.id),
             ('company_id', '=', self.company_id.id)
         ])
         
@@ -345,3 +378,17 @@ class CashFlowConfig(models.Model):
         """Toggle active status and sync dashboard"""
         for record in self:
             record.active = not record.active
+
+    @api.constrains('account_ids')
+    def _check_accounts_company(self):
+        """Ensure all selected accounts belong to the same company"""
+        for record in self:
+            if record.account_ids:
+                wrong_company_accounts = record.account_ids.filtered(
+                    lambda acc: acc.company_id != record.company_id
+                )
+                if wrong_company_accounts:
+                    raise ValidationError(
+                        f"All selected accounts must belong to company {record.company_id.name}. "
+                        f"Invalid accounts: {', '.join(wrong_company_accounts.mapped('code'))}"
+                    )

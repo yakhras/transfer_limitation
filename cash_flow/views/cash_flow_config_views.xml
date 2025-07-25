@@ -2,26 +2,30 @@
 <odoo>
     <data>
 
-        <!-- Tree View for Cash Flow Configuration -->
+        <!-- Tree View for Cash Flow Configuration - UPDATED with handle widget and multiple accounts -->
         <record id="view_cash_flow_config_tree" model="ir.ui.view">
             <field name="name">cash.flow.config.tree</field>
             <field name="model">cash.flow.config</field>
             <field name="arch" type="xml">
                 <tree string="Cash Flow Configuration" editable="bottom" create="true" delete="true">
                     <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                    <!-- ADDED: Handle widget for drag & drop sorting -->
                     <field name="sequence" widget="handle"/>
-                    <field name="account_id" options="{'no_create': True}"/>
-                    <field name="account_code"/>
-                    <field name="account_name"/>
-                    <field name="custom_label" placeholder="Custom display name (optional)"/>
-                    <field name="display_name"/>
-                    <field name="suggested_type"/>
+                    <!-- CHANGED: Multiple accounts with tags widget -->
+                    <field name="account_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    <!-- CHANGED: Now computed fields -->
+                    <field name="account_codes" readonly="1"/>
+                    <field name="account_names" readonly="1"/>
+                    <!-- CHANGED: Now required -->
+                    <field name="custom_label" required="1" placeholder="Required: Enter display name for this account group"/>
+                    <field name="display_name" readonly="1"/>
+                    <field name="suggested_type" readonly="1"/>
                     <field name="active"/>
                 </tree>
             </field>
         </record>
 
-        <!-- Form View for Cash Flow Configuration -->
+        <!-- Form View for Cash Flow Configuration - UPDATED for multiple accounts -->
         <record id="view_cash_flow_config_form" model="ir.ui.view">
             <field name="name">cash.flow.config.form</field>
             <field name="model">cash.flow.config</field>
@@ -49,16 +53,36 @@
                         <group>
                             <group string="Account Information">
                                 <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
-                                <field name="account_id" options="{'no_create': True}"/>
-                                <field name="account_code"/>
-                                <field name="account_name"/>
-                                <field name="suggested_type"/>
+                                <!-- CHANGED: Multiple accounts selection with tags widget -->
+                                <field name="account_ids" 
+                                       widget="many2many_tags" 
+                                       options="{'no_create': True}"
+                                       help="Select one or more accounts to monitor"/>
+                                <field name="account_codes" readonly="1"/>
+                                <field name="account_names" readonly="1"/>
+                                <field name="suggested_type" readonly="1"/>
                             </group>
                             <group string="Display Options">
-                                <field name="custom_label" placeholder="Leave empty to use account name"/>
-                                <field name="sequence"/>
+                                <!-- CHANGED: Now required field -->
+                                <field name="custom_label" 
+                                       required="1" 
+                                       placeholder="Required: Enter display name for this account group"
+                                       help="This will be displayed on the dashboard"/>
+                                <field name="sequence" help="Lower numbers appear first on dashboard"/>
                                 <field name="active"/>
                             </group>
+                        </group>
+
+                        <!-- ADDED: Preview section showing selected accounts -->
+                        <group string="Selected Accounts Preview" t-if="account_ids">
+                            <div class="oe_horizontal_separator">Selected Accounts</div>
+                            <field name="account_ids" readonly="1" nolabel="1">
+                                <tree>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </tree>
+                            </field>
                         </group>
 
                     </sheet>
@@ -66,19 +90,35 @@
             </field>
         </record>
 
-        <!-- Search View for Cash Flow Configuration -->
+        <!-- Search View for Cash Flow Configuration - UPDATED -->
         <record id="view_cash_flow_config_search" model="ir.ui.view">
             <field name="name">cash.flow.config.search</field>
             <field name="model">cash.flow.config</field>
             <field name="arch" type="xml">
                 <search string="Cash Flow Configuration">
-                    <field name="account_code"/>
-                    <field name="account_name"/>
+                    <!-- UPDATED: Search by multiple account codes -->
+                    <field name="account_codes"/>
+                    <field name="account_names"/>
+                    <field name="custom_label"/>
+                    <field name="display_name"/>
+                    
+                    <!-- Filters -->
+                    <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                    
+                    <separator/>
+                    
+                    <!-- Group By -->
+                    <group expand="0" string="Group By">
+                        <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                        <filter string="Suggested Type" name="suggested_type" context="{'group_by': 'suggested_type'}"/>
+                        <filter string="Active Status" name="active_status" context="{'group_by': 'active'}"/>
+                    </group>
                 </search>
             </field>
         </record>
 
-        <!-- Kanban View for Cash Flow Configuration -->
+        <!-- Kanban View for Cash Flow Configuration - UPDATED -->
         <record id="view_cash_flow_config_kanban" model="ir.ui.view">
             <field name="name">cash.flow.config.kanban</field>
             <field name="model">cash.flow.config</field>
@@ -86,10 +126,12 @@
                 <kanban create="true" delete="true" class="o_kanban_mobile">
                     <field name="id"/>
                     <field name="company_id"/>
-                    <field name="account_code"/>
+                    <field name="account_codes"/>
+                    <field name="account_names"/>
                     <field name="display_name"/>
                     <field name="active"/>
                     <field name="sequence"/>
+                    <field name="suggested_type"/>
                     
                     <templates>
                         <t t-name="kanban-box">
@@ -98,7 +140,8 @@
                                 <div class="o_kanban_card_header">
                                     <div class="o_kanban_card_header_title">
                                         <div class="o_primary">
-                                            <strong t-esc="record.account_code.value"/>
+                                            <!-- UPDATED: Show account codes instead of single code -->
+                                            <strong t-esc="record.account_codes.value"/>
                                         </div>
                                         <div class="text-muted">
                                             <t t-esc="record.display_name.value"/>
@@ -113,10 +156,29 @@
                                             <span t-if="!record.active.raw_value" class="text-muted">Inactive</span>
                                         </div>
                                     </div>
+                                    
+                                    <!-- ADDED: Show suggested type -->
+                                    <div class="row mt-2" t-if="record.suggested_type.value">
+                                        <div class="col-12">
+                                            <small class="text-info">
+                                                <i class="fa fa-tag"/> <t t-esc="record.suggested_type.value"/>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="row mt-2" t-if="record.company_id.value" groups="base.group_multi_company">
                                         <div class="col-12">
                                             <small class="text-muted">
-                                                <t t-esc="record.company_id.value"/>
+                                                <i class="fa fa-building-o"/> <t t-esc="record.company_id.value"/>
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- ADDED: Show sequence for sorting reference -->
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <small class="text-muted">
+                                                <i class="fa fa-sort-numeric-asc"/> Order: <t t-esc="record.sequence.value"/>
                                             </small>
                                         </div>
                                     </div>
@@ -129,7 +191,7 @@
             </field>
         </record>
 
-        <!-- Action for Cash Flow Configuration -->
+        <!-- Action for Cash Flow Configuration - UPDATED -->
         <record id="action_cash_flow_config" model="ir.actions.act_window">
             <field name="name">Dashboard Configuration</field>
             <field name="res_model">cash.flow.config</field>
@@ -140,13 +202,14 @@
                     Configure Cash Flow Dashboard
                 </p>
                 <p>
-                    Select which accounts to monitor on your cash flow dashboard.<br/>
-                    You can customize display names and arrange the order of accounts.
+                    Create account groups to monitor on your cash flow dashboard.<br/>
+                    You can select single or multiple accounts per group and customize display names.<br/>
+                    Use drag &amp; drop in list view to reorder dashboard elements.
                 </p>
             </field>
         </record>
 
-        <!-- Server Action: Auto-Suggest Accounts -->
+        <!-- Server Action: Auto-Suggest Accounts - UPDATED -->
         <record id="action_auto_suggest_accounts" model="ir.actions.server">
             <field name="name">Auto-Suggest Accounts</field>
             <field name="model_id" ref="model_cash_flow_config"/>
@@ -161,7 +224,7 @@ if created:
         'tag': 'display_notification',
         'params': {
             'title': 'Success!',
-            'message': 'Created %s suggested account configurations.' % len(created),
+            'message': 'Created %s suggested account group configurations.' % len(created),
             'type': 'success',
             'sticky': False,
         }
@@ -180,7 +243,7 @@ else:
             </field>
         </record>
 
-        <!-- Server Action: Generate Dashboard Records -->
+        <!-- Server Action: Generate Dashboard Records - UPDATED -->
         <record id="action_generate_dashboard" model="ir.actions.server">
             <field name="name">Generate Dashboard Records</field>
             <field name="model_id" ref="model_cash_flow_config"/>
@@ -194,7 +257,7 @@ action = {
     'tag': 'display_notification',
     'params': {
         'title': 'Success!',
-        'message': 'Dashboard records have been generated/updated.',
+        'message': 'Dashboard records have been generated/updated for all account groups.',
         'type': 'success',
         'sticky': False,
     }
