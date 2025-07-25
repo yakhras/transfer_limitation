@@ -491,38 +491,12 @@ class CashFlowDashboard(models.Model):
             }
         return result
 
-    def get_form_data_with_period(self, date_from=None, date_to=None):
-        """
-        Get form data with specific period filtering
-        Called by form view to get period-specific data
-        """
+    def get_individual_balances_list(self):
+        """Get individual account balances as a list for form view"""
         self.ensure_one()
-        
-        # Recalculate individual balances with period filtering
-        individual_balances = self._get_individual_balances_direct(
-            self.account_ids, date_from, date_to, self.company_id.id
-        )
-        
-        # Recalculate total balance
-        total_balance = self._calculate_balance_direct(
-            self.account_ids.ids, date_from, date_to, self.company_id.id
-        )
-        
-        # Format balance
-        balance_display = self._format_balance_simple(total_balance, self.currency_id)
-        balance_color = 'green' if total_balance > 0 else ('red' if total_balance < 0 else 'blue')
-        
-        return {
-            'individual_balances': individual_balances,
-            'current_balance': total_balance,
-            'balance_display': balance_display,
-            'balance_color': balance_color,
-            'period_info': {
-                'date_from': date_from,
-                'date_to': date_to,
-                'has_filter': bool(date_from or date_to)
-            }
-        }
+        if self.individual_balances:
+            return json.loads(self.individual_balances)
+        return []
 
     @api.model
     def get_filtered_dashboard_data(self, date_from=None, date_to=None, period_type='all'):

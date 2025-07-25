@@ -250,65 +250,43 @@
                             console.log('Form view loading...');
                             
                             // Try multiple ways to get context
-                            var context = {
-                                period_type: 'all',
-                                date_from: null,
-                                date_to: null,
-                                period_label: 'All Time'
-                            };
+                            var context = {};
                             
                             // Method 1: URL parameters
                             var urlParams = new URLSearchParams(window.location.search);
-                            if (urlParams.get('period_type')) {
-                                context.period_type = urlParams.get('period_type');
-                                context.date_from = urlParams.get('date_from');
-                                context.date_to = urlParams.get('date_to');
-                                context.period_label = urlParams.get('period_label');
+                            context.period_type = urlParams.get('period_type') || 'all';
+                            context.date_from = urlParams.get('date_from');
+                            context.date_to = urlParams.get('date_to');
+                            context.period_label = urlParams.get('period_label');
+                            
+                            // Method 2: Check window context (Odoo passes this)
+                            if (window.odoo && window.odoo.session_info && window.odoo.session_info.user_context) {
+                                var user_context = window.odoo.session_info.user_context;
+                                context.period_type = user_context.period_type || context.period_type;
+                                context.date_from = user_context.date_from || context.date_from;
+                                context.date_to = user_context.date_to || context.date_to;
+                                context.period_label = user_context.period_label || context.period_label;
                             }
                             
-                            // Method 2: Session storage (set by dashboard component)
+                            // Method 3: Check if we're in an iframe with context
                             try {
-                                var storedContext = sessionStorage.getItem('cash_flow_period_context');
-                                if (storedContext) {
-                                    var parsedContext = JSON.parse(storedContext);
-                                    // Check if it's recent (within last 30 seconds)
-                                    if (Date.now() - parsedContext.timestamp < 30000) {
-                                        context = parsedContext;
-                                        console.log('Using session storage context:', context);
-                                    }
+                                if (window.parent && window.parent.odoo) {
+                                    var parent_context = window.parent.odoo.session_info.user_context;
+                                    context.period_type = parent_context.period_type || context.period_type;
+                                    context.date_from = parent_context.date_from || context.date_from;
+                                    context.date_to = parent_context.date_to || context.date_to;
+                                    context.period_label = parent_context.period_label || context.period_label;
                                 }
                             } catch (e) {
-                                console.log('Could not read session storage:', e);
+                                // Ignore cross-origin errors
                             }
                             
-                            // Method 3: Check window context
-                            if (window.odoo && window.odoo.session_info) {
-                                try {
-                                    var user_context = window.odoo.session_info.user_context || {};
-                                    if (user_context.period_type) {
-                                        context.period_type = user_context.period_type;
-                                        context.date_from = user_context.date_from;
-                                        context.date_to = user_context.date_to;
-                                        context.period_label = user_context.period_label;
-                                    }
-                                } catch (e) {
-                                    console.log('Could not read window context:', e);
-                                }
-                            }
-                            
-                            console.log('Final form context:', context);
+                            console.log('Form context found:', context);
                             
                             // Update display
                             updatePeriodDisplay(context);
                             loadIndividualBalances();
                             loadPeriodSummary();
-                            
-                            // Clear session storage after use
-                            try {
-                                sessionStorage.removeItem('cash_flow_period_context');
-                            } catch (e) {
-                                // Ignore
-                            }
                         });
                         
                         function updatePeriodDisplay(context) {

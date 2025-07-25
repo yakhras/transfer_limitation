@@ -239,17 +239,15 @@ export class CashFlowDashboard extends Component {
     viewAccountDetails(accountId){
         const dateRange = this.getDateRange()
         
-        // Create context with period information
+        // PASS PERIOD DATA IN URL PARAMETERS (Simple approach)
         const context = {
             period_type: this.state.period,
             period_label: this.getPeriodLabel()
         }
         
-        // Add date filtering to context
         if (dateRange.date_from) context.date_from = dateRange.date_from
         if (dateRange.date_to) context.date_to = dateRange.date_to
 
-        // Open form view with enhanced context
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: `Cash Flow Details - ${this.getPeriodLabel()}`,
@@ -257,32 +255,8 @@ export class CashFlowDashboard extends Component {
             res_id: accountId,
             views: [[false, "form"]],
             target: "current",
-            context: context,
-            // ALSO pass as URL parameters for JavaScript access
-            flags: {
-                mode: 'readonly'
-            },
-            additional_context: {
-                period_type: this.state.period,
-                date_from: dateRange.date_from,
-                date_to: dateRange.date_to,
-                period_label: this.getPeriodLabel()
-            }
+            context: context
         })
-        
-        // Alternative approach: Store in session storage for form view to access
-        try {
-            const periodData = {
-                period_type: this.state.period,
-                date_from: dateRange.date_from,
-                date_to: dateRange.date_to,
-                period_label: this.getPeriodLabel(),
-                timestamp: Date.now()
-            }
-            sessionStorage.setItem('cash_flow_period_context', JSON.stringify(periodData))
-        } catch (e) {
-            console.log('Session storage not available:', e)
-        }
     }
 
     isCustomDateRangeValid() {
