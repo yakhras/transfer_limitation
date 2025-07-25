@@ -29,10 +29,9 @@
                                         <!-- Period Selector -->
                                         <div class="d-flex align-items-center">
                                             <label class="form-label mb-0 me-2 text-muted">Period:</label>
-                                            <select class="form-select" 
+                                            <select class="form-select cash-flow-period-selector" 
                                                     t-model="state.period" 
-                                                    t-on-change="onChangePeriod"
-                                                    style="min-width: 180px;">
+                                                    t-on-change="onChangePeriod">
                                                 <t t-foreach="periodOptions" t-as="option" t-key="option.value">
                                                     <option t-att-value="option.value" t-esc="option.label"/>
                                                 </t>
@@ -40,10 +39,10 @@
                                         </div>
                                         
                                         <!-- Refresh Button -->
-                                        <button class="btn btn-outline-primary" 
+                                        <button class="btn btn-outline-primary cash-flow-refresh-btn" 
                                                 t-on-click="retryLoadData"
                                                 t-att-disabled="state.loading">
-                                            <i t-att-class="state.loading ? 'fa fa-spinner fa-spin' : 'fa fa-refresh'"/>
+                                            <i t-attf-class="fa fa-#{state.loading ? 'spinner fa-spin' : 'refresh'}"/>
                                             <span class="d-none d-md-inline ms-1">Refresh</span>
                                         </button>
                                     </div>
@@ -56,18 +55,16 @@
                                             <div class="d-flex align-items-center">
                                                 <label class="form-label mb-0 me-2 text-muted">From:</label>
                                                 <input type="date" 
-                                                       class="form-control" 
+                                                       class="form-control cash-flow-date-input" 
                                                        t-model="state.customDateFrom"
-                                                       t-on-change="onCustomDateChange"
-                                                       style="width: 150px;"/>
+                                                       t-on-change="onCustomDateChange"/>
                                             </div>
                                             <div class="d-flex align-items-center">
                                                 <label class="form-label mb-0 me-2 text-muted">To:</label>
                                                 <input type="date" 
-                                                       class="form-control" 
+                                                       class="form-control cash-flow-date-input" 
                                                        t-model="state.customDateTo"
-                                                       t-on-change="onCustomDateChange"
-                                                       style="width: 150px;"/>
+                                                       t-on-change="onCustomDateChange"/>
                                             </div>
                                             <div t-if="!isCustomDateRangeValid()" class="text-danger small">
                                                 <i class="fa fa-exclamation-triangle"/> Please select both dates
@@ -117,13 +114,13 @@
                             <div class="col-md-6 col-12 mb-3">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-header text-center">
-                                        <div class="skeleton-line skeleton-title mb-2"></div>
-                                        <div class="skeleton-line skeleton-subtitle"></div>
+                                        <div class="cash-flow-skeleton cash-flow-skeleton-title mb-2"></div>
+                                        <div class="cash-flow-skeleton cash-flow-skeleton-subtitle"></div>
                                     </div>
                                     <div class="card-body text-center">
-                                        <div class="skeleton-line skeleton-balance mb-2"></div>
-                                        <div class="skeleton-line skeleton-balance-label mb-3"></div>
-                                        <div class="skeleton-chart"></div>
+                                        <div class="cash-flow-skeleton cash-flow-skeleton-balance mb-2"></div>
+                                        <div class="cash-flow-skeleton cash-flow-skeleton-balance-label mb-3"></div>
+                                        <div class="cash-flow-skeleton cash-flow-skeleton-chart"></div>
                                     </div>
                                 </div>
                             </div>
@@ -136,9 +133,8 @@
                         <t t-set="rows" t-value="Array.from({ length: Math.ceil(state.accounts.length / 2) }, (_, i) => state.accounts.slice(i * 2, i * 2 + 2))"/>
                         <div t-foreach="rows" t-as="row" t-key="row_index" class="row">
                             <div t-foreach="row" t-as="account" t-key="account.id" class="col-md-6 col-12 mb-3">
-                                <div class="card h-100 shadow-sm cursor-pointer hover-card"
-                                     t-on-click="() => viewAccountDetails(account.id)"
-                                     t-attf-class="border-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
+                                <div t-attf-class="card h-100 shadow-sm cash-flow-hover-card cursor-pointer border-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}"
+                                     t-on-click="() => viewAccountDetails(account.id)">
 
                                     <div class="card-header text-center">
                                         <h5 class="card-title mb-0">
@@ -155,8 +151,7 @@
                                     </div>
 
                                     <div class="card-body text-center">
-                                        <h3 class="mb-0"
-                                            t-attf-class="text-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
+                                        <h3 t-attf-class="mb-0 text-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
                                             <t t-esc="account.balance_display"/>
                                         </h3>
                                         <small class="text-muted">
@@ -209,101 +204,5 @@
                 </div>
             </div>
         </div>
-        
-        <!-- CSS Styles for Skeleton Loading and Enhanced UX -->
-        <style>
-            /* Skeleton Loading Animation */
-            .skeleton-line {
-                height: 20px;
-                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-                background-size: 200% 100%;
-                animation: skeleton-loading 1.5s infinite;
-                border-radius: 4px;
-                margin-bottom: 10px;
-            }
-            
-            .skeleton-title {
-                height: 24px;
-                width: 80%;
-                margin: 0 auto;
-            }
-            
-            .skeleton-subtitle {
-                height: 16px;
-                width: 60%;
-                margin: 0 auto;
-            }
-            
-            .skeleton-balance {
-                height: 32px;
-                width: 70%;
-                margin: 0 auto;
-            }
-            
-            .skeleton-balance-label {
-                height: 14px;
-                width: 50%;
-                margin: 0 auto;
-            }
-            
-            .skeleton-chart {
-                height: 120px;
-                width: 100%;
-                background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
-                background-size: 200% 100%;
-                animation: skeleton-loading 1.5s infinite;
-                border-radius: 8px;
-            }
-            
-            @keyframes skeleton-loading {
-                0% { background-position: 200% 0; }
-                100% { background-position: -200% 0; }
-            }
-            
-            /* Enhanced Card Hover Effects */
-            .hover-card {
-                transition: all 0.3s ease;
-            }
-            
-            .hover-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
-            }
-            
-            /* Custom Date Picker Styling */
-            input[type="date"] {
-                border: 1px solid #dee2e6;
-                border-radius: 0.375rem;
-                padding: 0.375rem 0.75rem;
-            }
-            
-            input[type="date"]:focus {
-                border-color: #86b7fe;
-                outline: 0;
-                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-            }
-            
-            /* Loading Button Animation */
-            .btn:disabled {
-                opacity: 0.6;
-            }
-            
-            /* Period Badge Styling */
-            .badge {
-                font-size: 0.75em;
-            }
-            
-            /* Responsive adjustments */
-            @media (max-width: 768px) {
-                .d-flex.gap-3 {
-                    flex-direction: column;
-                    gap: 1rem !important;
-                }
-                
-                .form-select {
-                    min-width: 100% !important;
-                }
-            }
-        </style>
     </t>
 </templates>

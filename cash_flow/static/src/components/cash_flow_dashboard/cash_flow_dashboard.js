@@ -110,10 +110,8 @@ class BalanceChart extends Component {
         const datasets = [{
             label: 'Balance',
             data: chartData,
-            borderColor: this.props.balanceColor === 'green' ? '#28a745' : 
-                       this.props.balanceColor === 'red' ? '#dc3545' : '#17a2b8',
-            backgroundColor: this.props.balanceColor === 'green' ? 'rgba(40, 167, 69, 0.1)' : 
-                           this.props.balanceColor === 'red' ? 'rgba(220, 53, 69, 0.1)' : 'rgba(23, 162, 184, 0.1)',
+            borderColor: this.getChartColor(this.props.balanceColor, 'border'),
+            backgroundColor: this.getChartColor(this.props.balanceColor, 'background'),
             borderWidth: 2,
             fill: true,
             tension: 0.3,
@@ -160,6 +158,17 @@ class BalanceChart extends Component {
             console.error('BalanceChart: Error creating chart:', error)
         }
     }
+
+    getChartColor(balanceColor, type) {
+        const colors = {
+            green: { border: '#28a745', background: 'rgba(40, 167, 69, 0.1)' },
+            red: { border: '#dc3545', background: 'rgba(220, 53, 69, 0.1)' },
+            blue: { border: '#17a2b8', background: 'rgba(23, 162, 184, 0.1)' }
+        };
+        
+        const colorSet = colors[balanceColor] || colors.blue;
+        return colorSet[type];
+    }
 }
 
 BalanceChart.template = "BalanceChart"
@@ -196,6 +205,9 @@ export class CashFlowDashboard extends Component {
             { value: 'last_year', label: 'Last Year' },
             { value: 'custom', label: 'Custom Range' }
         ]
+
+        // Debounce timeout for custom dates
+        this.customDateTimeout = null
 
         // Load initial data
         this.getAccounts()
@@ -288,21 +300,34 @@ export class CashFlowDashboard extends Component {
             
             console.log('Loading accounts with period:', this.state.period, dateRange)
             
-            // Fetch cash flow dashboard data with date context
-            const accounts = await this.orm.call(
-                "cash.flow.dashboard", 
-                "get_owl_dashboard_data",
-                [],
-                {
-                    period_type: this.state.period,
-                    date_from: dateRange.date_from,
-                    date_to: dateRange.date_to,
-                    context: {
+            // Try to call the OWL method first, fallback to regular method
+            let accounts;
+            try {
+                accounts = await this.orm.call(
+                    "cash.flow.dashboard", 
+                    "get_owl_dashboard_data",
+                    [],
+                    {
+                        period_type: this.state.period,
                         date_from: dateRange.date_from,
                         date_to: dateRange.date_to
                     }
-                }
-            )
+                )
+            } catch (owlError) {
+                console.log('OWL method failed, trying fallback:', owlError)
+                // Fallback to regular search_read with context
+                accounts = await this.orm.searchRead(
+                    "cash.flow.dashboard", 
+                    [], 
+                    ["account_codes", "display_name", "current_balance", "balance_display", "balance_color"],
+                    {
+                        context: {
+                            date_from: dateRange.date_from,
+                            date_to: dateRange.date_to
+                        }
+                    }
+                )
+            }
             
             this.state.accounts = accounts || []
             this.state.lastUpdated = new Date().toLocaleTimeString()
@@ -391,7 +416,9 @@ export class CashFlowDashboard extends Component {
         }
         
         // Debounced update (wait for user to finish selecting dates)
-        clearTimeout(this.customDateTimeout)
+        if (this.customDateTimeout) {
+            clearTimeout(this.customDateTimeout)
+        }
         this.customDateTimeout = setTimeout(() => {
             if (this.state.customDateFrom && this.state.customDateTo) {
                 this.getAccounts()
