@@ -4,175 +4,6 @@ import { registry } from "@web/core/registry"
 import { useService } from "@web/core/utils/hooks"
 const { Component, useState } = owl
 
-// Inline Chart Component for Odoo 15 (OWL 1.x compatible)
-class BalanceChart extends Component {
-    setup(){
-        console.log('BalanceChart component created for:', this.props.accountCode)
-        
-        // Generate unique ID for canvas
-        this.chartId = `chart_${Math.random().toString(36).substr(2, 9)}`
-        
-        // Load chart after component is rendered
-        setTimeout(() => {
-            this.loadChart()
-        }, 200)
-    }
-
-    async loadChart(){
-        try {
-            console.log('BalanceChart: Loading Chart.js...')
-            
-            if (typeof Chart === 'undefined') {
-                await this.loadChartJS()
-            } else {
-                console.log('BalanceChart: Chart.js already available')
-                this.renderChart()
-            }
-            
-        } catch (error) {
-            console.error("Error loading Chart.js:", error)
-        }
-    }
-
-    async loadChartJS() {
-        return new Promise((resolve, reject) => {
-            if (typeof Chart !== 'undefined') {
-                resolve();
-                return;
-            }
-
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
-            script.onload = () => {
-                console.log('BalanceChart: Chart.js loaded successfully');
-                setTimeout(() => {
-                    this.renderChart();
-                    resolve();
-                }, 100);
-            };
-            script.onerror = (error) => {
-                console.error('BalanceChart: Failed to load Chart.js', error);
-                reject(error);
-            };
-            
-            // Check if script already exists
-            const existingScript = document.querySelector('script[src*="chart.umd.min.js"]');
-            if (existingScript) {
-                console.log('BalanceChart: Chart.js script already exists, waiting...');
-                setTimeout(() => {
-                    if (typeof Chart !== 'undefined') {
-                        this.renderChart();
-                        resolve();
-                    } else {
-                        reject(new Error('Chart.js script exists but Chart object not available'));
-                    }
-                }, 500);
-                return;
-            }
-            
-            document.head.appendChild(script);
-        });
-    }
-
-    renderChart(){
-        const canvas = document.getElementById(this.chartId)
-        if (!canvas) {
-            console.log("BalanceChart: Canvas not found with ID:", this.chartId)
-            return
-        }
-        
-        if (typeof Chart === 'undefined') {
-            console.log("BalanceChart: Chart.js not available")
-            return
-        }
-
-        console.log('BalanceChart: Rendering chart for account:', this.props.accountCode)
-
-        // Use real chart data if provided, otherwise sample data
-        let chartData, labels;
-        
-        if (this.props.chartData && this.props.chartData.length > 0) {
-            // Real data from backend
-            const data = this.props.chartData;
-            labels = data.map(item => item.label);
-            chartData = data.map(item => item.value);
-        } else {
-            // Fallback sample data
-            labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-            chartData = [
-                this.props.currentBalance * 0.8,
-                this.props.currentBalance * 0.9,
-                this.props.currentBalance * 0.95,
-                this.props.currentBalance
-            ];
-        }
-
-        const datasets = [{
-            label: 'Balance',
-            data: chartData,
-            borderColor: this.getChartColor(this.props.balanceColor, 'border'),
-            backgroundColor: this.getChartColor(this.props.balanceColor, 'background'),
-            borderWidth: 2,
-            fill: true,
-            tension: 0.3,
-            pointRadius: 2,
-            pointHoverRadius: 4
-        }];
-
-        try {
-            new Chart(canvas, {
-                type: 'line',
-                data: { labels, datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                title: function(context) {
-                                    return 'Period: ' + context[0].label
-                                },
-                                label: function(context) {
-                                    return 'Balance: ₺' + context.parsed.y.toLocaleString()
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } }
-                        },
-                        y: { display: false, beginAtZero: false }
-                    },
-                    interaction: { intersect: false, mode: 'index' }
-                }
-            })
-            
-            console.log('BalanceChart: Chart rendered successfully')
-        } catch (error) {
-            console.error('BalanceChart: Error creating chart:', error)
-        }
-    }
-
-    getChartColor(balanceColor, type) {
-        const colors = {
-            green: { border: '#28a745', background: 'rgba(40, 167, 69, 0.1)' },
-            red: { border: '#dc3545', background: 'rgba(220, 53, 69, 0.1)' },
-            blue: { border: '#17a2b8', background: 'rgba(23, 162, 184, 0.1)' }
-        };
-        
-        const colorSet = colors[balanceColor] || colors.blue;
-        return colorSet[type];
-    }
-}
-
-BalanceChart.template = "BalanceChart"
-
 export class CashFlowDashboard extends Component {
     setup(){
         console.log('CashFlowDashboard component loading with OWL 1.x...')
@@ -300,39 +131,22 @@ export class CashFlowDashboard extends Component {
             
             console.log('Loading accounts with period:', this.state.period, dateRange)
             
-            // Try to call the OWL method first, fallback to regular method
-            let accounts;
-            try {
-                accounts = await this.orm.call(
-                    "cash.flow.dashboard", 
-                    "get_owl_dashboard_data",
-                    [],
-                    {
-                        period_type: this.state.period,
-                        date_from: dateRange.date_from,
-                        date_to: dateRange.date_to
-                    }
-                )
-            } catch (owlError) {
-                console.log('OWL method failed, trying fallback:', owlError)
-                // Fallback to regular search_read with context
-                accounts = await this.orm.searchRead(
-                    "cash.flow.dashboard", 
-                    [], 
-                    ["account_codes", "display_name", "current_balance", "balance_display", "balance_color"],
-                    {
-                        context: {
-                            date_from: dateRange.date_from,
-                            date_to: dateRange.date_to
-                        }
-                    }
-                )
-            }
+            // Use enhanced OWL method with detailed logging
+            const accounts = await this.orm.call(
+                "cash.flow.dashboard", 
+                "get_owl_dashboard_data",
+                [],
+                {
+                    period_type: this.state.period,
+                    date_from: dateRange.date_from,
+                    date_to: dateRange.date_to
+                }
+            )
             
             this.state.accounts = accounts || []
             this.state.lastUpdated = new Date().toLocaleTimeString()
             
-            console.log('Loaded accounts:', accounts)
+            console.log('Successfully loaded accounts:', accounts)
             
         } catch (error) {
             console.error("Error loading cash flow data:", error)
@@ -346,6 +160,8 @@ export class CashFlowDashboard extends Component {
      * Handle different types of errors with appropriate UX
      */
     handleError(error) {
+        console.log('Handling error:', error)
+        
         // Determine error type and handle accordingly
         if (error.message && error.message.includes('network')) {
             // Network error - toast notification
@@ -353,7 +169,7 @@ export class CashFlowDashboard extends Component {
                 type: "warning",
                 title: "Connection Error"
             })
-        } else if (error.message && error.message.includes('permission')) {
+        } else if (error.message && (error.message.includes('permission') || error.message.includes('AccessError'))) {
             // Permission error - inline message
             this.state.error = {
                 message: "You don't have permission to view this data.",
@@ -362,7 +178,7 @@ export class CashFlowDashboard extends Component {
         } else {
             // API/Other errors - inline with retry
             this.state.error = {
-                message: error.message || "Failed to load cash flow data.",
+                message: error.message || "Failed to load cash flow data. Please try again.",
                 showRetry: true
             }
         }
@@ -373,6 +189,7 @@ export class CashFlowDashboard extends Component {
      */
     async retryLoadData() {
         console.log('Retrying data load...')
+        this.state.error = null
         await this.getAccounts()
     }
 
@@ -394,6 +211,9 @@ export class CashFlowDashboard extends Component {
             this.state.customDateFrom = null
             this.state.customDateTo = null
         }
+        
+        // Clear any previous errors
+        this.state.error = null
         
         await this.getAccounts()
     }
@@ -441,6 +261,7 @@ export class CashFlowDashboard extends Component {
      * Navigate to account details (form view)
      */
     viewAccountDetails(accountId){
+        const dateRange = this.getDateRange()
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "Cash Flow Details",
@@ -449,8 +270,8 @@ export class CashFlowDashboard extends Component {
             views: [[false, "form"]],
             target: "current",
             context: {
-                date_from: this.getDateRange().date_from,
-                date_to: this.getDateRange().date_to,
+                date_from: dateRange.date_from,
+                date_to: dateRange.date_to,
                 period_type: this.state.period
             }
         })
@@ -469,6 +290,7 @@ export class CashFlowDashboard extends Component {
 }
 
 CashFlowDashboard.template = "cash_flow.CashFlowDashboard"
-CashFlowDashboard.components = { BalanceChart }
+// Using existing BalanceChart component from balance_chart.xml
+// No need to define components if BalanceChart is globally available
 
 registry.category("actions").add("cash_flow.dashboard", CashFlowDashboard)

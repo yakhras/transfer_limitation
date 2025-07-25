@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 import json
+import logging
 from datetime import datetime, timedelta
 from collections import defaultdict
 
@@ -505,6 +506,10 @@ class CashFlowDashboard(models.Model):
         """
         company_id = self.env.company.id
         
+        # Debug logging
+        _logger = logging.getLogger(__name__)
+        _logger.info(f"OWL Dashboard Data Request - Period: {period_type}, From: {date_from}, To: {date_to}")
+        
         # Get active configurations for this company (ordered by sequence)
         config_model = self.env['cash.flow.config']
         active_configs = config_model.search([
@@ -513,6 +518,7 @@ class CashFlowDashboard(models.Model):
         ], order='sequence, account_codes')
         
         if not active_configs:
+            _logger.warning("No active cash flow configurations found")
             return []
         
         dashboard_data = []
@@ -524,93 +530,152 @@ class CashFlowDashboard(models.Model):
         if date_to:
             context['date_to'] = date_to
         
-        for config in active_configs:
-            # Get or create dashboard record
-            dashboard_record = self.search([
-                ('config_id', '=', config.id),
-                ('company_id', '=', company_id)
-            ], limit=1)
-            
-            if not dashboard_record:
-                dashboard_record = self.create({
-                    'config_id': config.id,
-                    'account_ids': [(6, 0, config.account_ids.ids)],
-                    'company_id': company_id,
-                })
-            
-            # Calculate period-specific balance with context
-            dashboard_record_with_context = dashboard_record.with_context(context)
-            
-            # Get chart data for this period
-            chart_data = self._get_period_chart_data(
-                dashboard_record, period_type, date_from, date_to
-            )
-            
-            # Prepare dashboard data
-            account_data = {
-                'id': dashboard_record.id,
-                'account_codes': dashboard_record.account_codes,
-                'account_names': dashboard_record.account_names,
-                'display_name': dashboard_record.display_name,
-                'current_balance': dashboard_record_with_context.current_balance,
-                'balance_display': dashboard_record_with_context.balance_display,
-                'balance_color': dashboard_record_with_context.balance_color,
-                'company_id': company_id,
-                'sequence': config.sequence,
-                'account_count': len(config.account_ids),
-                'chart_data': chart_data,
-                'period_info': {
-                    'period_type': period_type,
-                    'date_from': date_from,
-                    'date_to': date_to,
-                    'formatted_period': self._format_period_label(period_type, date_from, date_to)
-                }
-            }
-            
-            dashboard_data.append(account_data)
+        _logger.info(f"Processing {len(active_configs)} configurations with context: {context}")
         
+        for config in active_configs:
+            try:
+                # Get or create dashboard record
+                dashboard_record = self.search([
+                    ('config_id', '=', config.id),
+                    ('company_id', '=', company_id)
+                ], limit=1)
+                
+                if not dashboard_record:
+                    dashboard_record = self.create({
+                        'config_id': config.id,
+                        'account_ids': [(6, 0, config.account_ids.ids)],
+                        'company_id': company_id,
+                    })
+                
+                # Calculate period-specific balance with context
+                dashboard_record_with_context = dashboard_record.with_context(context)
+                
+                # Explicitly calculate balance for debugging
+                current_balance = self._calculate_balance_for_period(
+                    config.account_ids, date_from, date_to, company_id
+                )
+                
+                # Get chart data for this period
+                chart_data = self._get_period_chart_data(
+                    dashboard_record, period_type, date_from, date_to
+                )
+                
+                # Format balance for display
+                balance_display = self._format_balance_display(current_balance, dashboard_record.currency_id)
+                balance_color = 'green' if current_balance > 0 else ('red' if current_balance < 0 else 'blue')
+                
+                # Prepare dashboard data
+                account_data = {
+                    'id': dashboard_record.id,
+                    'account_codes': dashboard_record.account_codes,
+                    'account_names': dashboard_record.account_names,
+                    'display_name': dashboard_record.display_name,
+                    'current_balance': current_balance,
+                    'balance_display': balance_display,
+                    'balance_color': balance_color,
+                    'company_id': company_id,
+                    'sequence': config.sequence,
+                    'chart_data': chart_data,
+                    'period_info': {
+                        'period_type': period_type,
+                        'date_from': date_from,
+                        'date_to': date_to,
+                        'formatted_period': self._format_period_label(period_type, date_from, date_to)
+                    }
+                }
+                
+                dashboard_data.append(account_data)
+                _logger.info(f"Processed config {config.display_name}: Balance {current_balance}")
+                
+            except Exception as e:
+                _logger.error(f"Error processing config {config.id}: {str(e)}")
+                continue
+        
+        _logger.info(f"Returning {len(dashboard_data)} dashboard records")
         return dashboard_data
+
+    def _calculate_balance_for_period(self, account_ids, date_from, date_to, company_id):
+        """Calculate balance for specific accounts and period"""
+        if not account_ids:
+            return 0.0
+        
+        # Build domain for account move lines
+        domain = [
+            ('account_id', 'in', account_ids.ids),
+            ('company_id', '=', company_id),
+            ('move_id.state', '=', 'posted')
+        ]
+        
+        # Add date filters if provided
+        if date_from:
+            domain.append(('date', '>=', date_from))
+        if date_to:
+            domain.append(('date', '<=', date_to))
+        
+        # Get move lines
+        move_lines = self.env['account.move.line'].search(domain)
+        
+        # Calculate balance
+        total_debit = sum(move_lines.mapped('debit'))
+        total_credit = sum(move_lines.mapped('credit'))
+        balance = total_debit - total_credit
+        
+        return balance
+
+    def _format_balance_display(self, balance, currency):
+        """Format balance for display"""
+        if currency:
+            try:
+                if hasattr(currency, 'format'):
+                    return currency.format(balance)
+                else:
+                    symbol = getattr(currency, 'symbol', '') or getattr(currency, 'name', '')
+                    return f"{symbol} {balance:,.2f}".strip()
+            except Exception:
+                symbol = getattr(currency, 'symbol', '') or getattr(currency, 'name', '')
+                return f"{symbol} {balance:,.2f}".strip()
+        else:
+            return f"{balance:,.2f}"
 
     def _get_period_chart_data(self, dashboard_record, period_type, date_from, date_to):
         """
-        Generate chart data for specific period
+        Generate chart data for specific period with proper sorting
         Returns array of {label, value} for Chart.js
         """
         if not dashboard_record.account_ids:
             return []
         
-        # Default date range if not provided
-        if not date_from or not date_to:
-            if period_type == 'all':
-                # For "all" period, use last 30 days for chart
+        # Parse and validate dates
+        try:
+            if date_from and date_to:
+                start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+                end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+            else:
+                # Default date range for "all" period (last 30 days for chart display)
                 end_date = datetime.now().date()
                 start_date = end_date - timedelta(days=30)
-                date_from = start_date.strftime('%Y-%m-%d')
-                date_to = end_date.strftime('%Y-%m-%d')
-            else:
-                return []
-        
-        # Parse dates
-        try:
-            start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
-            end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
         except (ValueError, TypeError):
-            return []
+            # If date parsing fails, use default range
+            end_date = datetime.now().date()
+            start_date = end_date - timedelta(days=30)
         
-        # Limit chart data points for performance
+        # Ensure we don't have too many data points for performance
         date_diff = (end_date - start_date).days
-        if date_diff > 90:
-            # For long periods, use weekly data points
-            return self._get_weekly_chart_data(dashboard_record, start_date, end_date)
-        elif date_diff > 30:
-            # For medium periods, use every 2-3 days
-            return self._get_interval_chart_data(dashboard_record, start_date, end_date, 2)
+        
+        if date_diff <= 0:
+            return []
+        elif date_diff <= 7:
+            # Daily data for week or less
+            return self._get_daily_chart_data_fixed(dashboard_record, start_date, end_date)
+        elif date_diff <= 90:
+            # Every 2-3 days for up to 3 months
+            return self._get_interval_chart_data_fixed(dashboard_record, start_date, end_date, 3)
         else:
-            # For short periods, use daily data
-            return self._get_daily_chart_data(dashboard_record, start_date, end_date)
+            # Weekly data for longer periods
+            return self._get_weekly_chart_data_fixed(dashboard_record, start_date, end_date)
 
-    def _get_daily_chart_data(self, dashboard_record, start_date, end_date):
-        """Get daily chart data points"""
+    def _get_daily_chart_data_fixed(self, dashboard_record, start_date, end_date):
+        """Get daily chart data points with proper date sorting"""
         daily_balances = dashboard_record._get_daily_balances_multiple_accounts(start_date, end_date)
         
         chart_data = []
@@ -619,36 +684,60 @@ class CashFlowDashboard(models.Model):
         while current_date <= end_date:
             balance = daily_balances.get(current_date, 0.0)
             chart_data.append({
-                'label': current_date.strftime('%m/%d'),
-                'value': float(balance)
+                'label': current_date.strftime('%b %d'),  # Better format: "Jan 15"
+                'value': float(balance),
+                'date': current_date.strftime('%Y-%m-%d')  # For sorting
             })
             current_date += timedelta(days=1)
         
+        # Sort by date to ensure proper order
+        chart_data.sort(key=lambda x: x['date'])
+        
+        # Remove date field (only used for sorting)
+        for item in chart_data:
+            del item['date']
+        
         return chart_data
 
-    def _get_weekly_chart_data(self, dashboard_record, start_date, end_date):
-        """Get weekly aggregated chart data points"""
+    def _get_weekly_chart_data_fixed(self, dashboard_record, start_date, end_date):
+        """Get weekly aggregated chart data points with proper sorting"""
         chart_data = []
         current_date = start_date
+        week_number = 1
         
         while current_date <= end_date:
             week_end = min(current_date + timedelta(days=6), end_date)
             
             # Get balance at end of week
-            weekly_balances = dashboard_record._get_daily_balances_multiple_accounts(current_date, week_end)
+            weekly_balances = dashboard_record._get_daily_balances_multiple_accounts(week_end, week_end)
             balance = weekly_balances.get(week_end, 0.0)
             
+            # Better label format for weeks
+            if current_date.month == week_end.month:
+                label = f"Week {current_date.strftime('%b %d')}"
+            else:
+                label = f"Week {week_number}"
+            
             chart_data.append({
-                'label': f"Week {current_date.strftime('%m/%d')}",
-                'value': float(balance)
+                'label': label,
+                'value': float(balance),
+                'date': current_date.strftime('%Y-%m-%d')  # For sorting
             })
             
             current_date = week_end + timedelta(days=1)
+            week_number += 1
+        
+        # Sort by date
+        chart_data.sort(key=lambda x: x['date'])
+        
+        # Remove date field
+        for item in chart_data:
+            del item['date']
         
         return chart_data
 
-    def _get_interval_chart_data(self, dashboard_record, start_date, end_date, interval_days):
-        """Get chart data at specified day intervals"""
+    def _get_interval_chart_data_fixed(self, dashboard_record, start_date, end_date, interval_days):
+        """Get chart data at specified day intervals with proper sorting"""
         chart_data = []
         current_date = start_date
         
@@ -658,22 +747,36 @@ class CashFlowDashboard(models.Model):
             balance = daily_balances.get(current_date, 0.0)
             
             chart_data.append({
-                'label': current_date.strftime('%m/%d'),
-                'value': float(balance)
+                'label': current_date.strftime('%b %d'),  # "Jan 15" format
+                'value': float(balance),
+                'date': current_date.strftime('%Y-%m-%d')  # For sorting
             })
             
             current_date += timedelta(days=interval_days)
         
-        # Always include the end date
-        if current_date - timedelta(days=interval_days) != end_date:
+        # Always include the end date if not already included
+        if current_date - timedelta(days=interval_days) < end_date:
             daily_balances = dashboard_record._get_daily_balances_multiple_accounts(end_date, end_date)
             balance = daily_balances.get(end_date, 0.0)
             chart_data.append({
-                'label': end_date.strftime('%m/%d'),
-                'value': float(balance)
+                'label': end_date.strftime('%b %d'),
+                'value': float(balance),
+                'date': end_date.strftime('%Y-%m-%d')
             })
         
-        return chart_data
+        # Sort by date to ensure proper chronological order
+        chart_data.sort(key=lambda x: x['date'])
+        
+        # Remove duplicate dates and date field
+        seen_dates = set()
+        final_data = []
+        for item in chart_data:
+            if item['date'] not in seen_dates:
+                seen_dates.add(item['date'])
+                del item['date']
+                final_data.append(item)
+        
+        return final_data
 
     def _format_period_label(self, period_type, date_from, date_to):
         """Format period label for display"""
