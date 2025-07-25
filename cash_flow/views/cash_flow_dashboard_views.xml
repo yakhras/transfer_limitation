@@ -11,7 +11,7 @@
                     <field name="id"/>
                     <field name="company_id"/>
                     <field name="account_codes"/>
-                    <field name="account_name"/>
+                    <field name="account_names"/>
                     <field name="display_name"/>
                     <field name="current_balance"/>
                     <field name="balance_display"/>
