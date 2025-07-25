@@ -10,7 +10,7 @@
                 <kanban class="o_kanban_dashboard" create="false" edit="false" delete="false">
                     <field name="id"/>
                     <field name="company_id"/>
-                    <field name="account_code"/>
+                    <field name="account_codes"/>
                     <field name="account_name"/>
                     <field name="display_name"/>
                     <field name="current_balance"/>
@@ -27,7 +27,7 @@
                                 <div class="o_kanban_card_header">
                                     <div class="o_kanban_card_header_title">
                                         <div class="o_primary">
-                                            <strong t-esc="record.account_code.value"/>
+                                            <strong t-esc="record.account_codes.value"/>
                                         </div>
                                         <div class="text-muted">
                                             <t t-esc="record.display_name.value"/>
@@ -228,7 +228,7 @@
             <field name="arch" type="xml">
                 <tree string="Cash Flow Accounts" create="false" edit="false" delete="false">
                     <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="account_code"/>
+                    <field name="account_codes"/>
                     <field name="display_name"/>
                     <field name="current_balance"/>
                     <field name="balance_display"/>
@@ -354,7 +354,7 @@
             <field name="arch" type="xml">
                 <search string="Cash Flow Dashboard">
                     <!-- Field Searches -->
-                    <field name="account_code"/>
+                    <field name="account_codes"/>
                     <field name="display_name"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                     
@@ -428,7 +428,7 @@
                     <!-- Group By Section -->
                     <group expand="0" string="Group By">
                         <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                        <filter string="Account Code" name="account_code" context="{'group_by': 'account_code'}"/>
+                        <filter string="Account Code" name="account_codes" context="{'group_by': 'account_codes'}"/>
                     </group>
                 </search>
             </field>
