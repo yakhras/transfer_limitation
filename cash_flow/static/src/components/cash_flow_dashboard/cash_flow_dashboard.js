@@ -185,7 +185,7 @@ export class CashFlowDashboard extends Component {
             const accounts = await this.orm.call(
                 "cash.flow.dashboard", 
                 "search_read", 
-                [[], ["account_code", "display_name", "current_balance", "balance_display", "balance_color"]],
+                [[], ["account_codes", "display_name", "current_balance", "balance_display", "balance_color"]],
                 {
                     context: {
                         date_from: dateRange.date_from,
