@@ -3,6 +3,7 @@ from odoo.exceptions import UserError
 import json
 from datetime import datetime, timedelta
 from collections import defaultdict
+import logging
 
 
 class CashFlowDashboard(models.Model):

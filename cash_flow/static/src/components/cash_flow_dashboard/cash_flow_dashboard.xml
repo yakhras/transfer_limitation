@@ -189,7 +189,7 @@
                                                     <strong t-esc="account.display_name"/>
                                                 </h5>
                                                 <small class="text-muted">
-                                                    <span t-if="account.account_codes" t-esc="account.account_codes"/>
+                                                    <span t-if="account.account_code" t-esc="account.account_code"/>
                                                     <span t-if="account.period_info">
                                                         • <span t-esc="account.period_info.period_label"/>
                                                     </span>
