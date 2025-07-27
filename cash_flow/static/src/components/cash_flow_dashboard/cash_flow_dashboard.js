@@ -4,7 +4,7 @@ import { registry } from "@web/core/registry"
 import { useService } from "@web/core/utils/hooks"
 const { Component, useState } = owl
 
-// Enhanced Chart Component with proper Chart.js loading
+// Enhanced Chart Component working with the updated backend model
 class BalanceChart extends Component {
     setup() {
         console.log('BalanceChart component created for:', this.props.accountData?.display_name)
@@ -96,7 +96,7 @@ class BalanceChart extends Component {
 
         console.log('BalanceChart: Rendering chart for:', this.props.accountData?.display_name)
 
-        // Get historical data or create sample data
+        // Get chart data - now works with updated backend model
         const chartData = this.getChartData()
 
         try {
@@ -159,30 +159,30 @@ class BalanceChart extends Component {
     }
 
     getChartData() {
-        // Get historical data from props if available
-        if (this.props.historicalData && this.props.historicalData.length > 0) {
+        // Use chart_data from the updated backend if available
+        if (this.props.accountData?.chart_data && this.props.accountData.chart_data.length > 0) {
             return {
-                labels: this.props.historicalData.map(item => item.date),
-                values: this.props.historicalData.map(item => item.balance)
+                labels: this.props.accountData.chart_data.map(item => item.label),
+                values: this.props.accountData.chart_data.map(item => item.value)
             }
         }
 
-        // Generate sample trend data based on current balance
+        // Fallback: Generate sample trend data based on current balance
         const currentBalance = this.props.accountData?.current_balance || 0
-        const periods = this.props.periods || 7
+        const periods = 7
         
         const labels = []
         const values = []
         
-        // Generate last N periods (days/weeks based on filter)
+        // Generate last 7 days with realistic variation
         const today = new Date()
         for (let i = periods - 1; i >= 0; i--) {
             const date = new Date(today)
             date.setDate(today.getDate() - i)
             labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))
             
-            // Generate realistic trend (variation ±15% from current balance)
-            const variation = (Math.random() - 0.5) * 0.3 // ±15%
+            // Generate realistic trend (variation ±10% from current balance)
+            const variation = (Math.random() - 0.5) * 0.2 // ±10%
             const trendBalance = currentBalance * (1 + variation * (i / periods))
             values.push(trendBalance)
         }
@@ -234,167 +234,9 @@ class BalanceChart extends Component {
 
 BalanceChart.template = "BalanceChart"
 
-// Enhanced Data Manager with Date Filtering
-class CashFlowDataManager {
-    constructor() {
-        this.accounts = new Map()           // account configs
-        this.transactions = new Map()       // all transactions
-        this.accountTransactions = new Map() // account_id → transaction_ids
-        this.lastUpdate = null
-        this.dateFilter = null // { date_from, date_to }
-    }
-
-    clear() {
-        this.accounts.clear()
-        this.transactions.clear()
-        this.accountTransactions.clear()
-    }
-
-    setDateFilter(dateFrom, dateTo) {
-        this.dateFilter = { date_from: dateFrom, date_to: dateTo }
-        console.log('Date filter set:', this.dateFilter)
-    }
-
-    clearDateFilter() {
-        this.dateFilter = null
-        console.log('Date filter cleared')
-    }
-
-    setAccount(accountData) {
-        this.accounts.set(accountData.id, {
-            id: accountData.id,
-            displayName: accountData.display_name,
-            accountIds: new Set(accountData.account_ids),
-            sequence: accountData.sequence,
-            active: accountData.active
-        })
-    }
-
-    setTransaction(transactionData) {
-        const transaction = {
-            id: transactionData.id,
-            accountId: transactionData.account_id,
-            date: new Date(transactionData.date),
-            debit: transactionData.debit,
-            credit: transactionData.credit,
-            balance: transactionData.debit - transactionData.credit
-        }
-
-        this.transactions.set(transaction.id, transaction)
-
-        // Index by account
-        if (!this.accountTransactions.has(transaction.accountId)) {
-            this.accountTransactions.set(transaction.accountId, new Set())
-        }
-        this.accountTransactions.get(transaction.accountId).add(transaction.id)
-    }
-
-    isTransactionInDateRange(transaction) {
-        if (!this.dateFilter) return true
-        
-        const transactionDate = transaction.date
-        const fromDate = this.dateFilter.date_from ? new Date(this.dateFilter.date_from) : null
-        const toDate = this.dateFilter.date_to ? new Date(this.dateFilter.date_to) : null
-        
-        if (fromDate && transactionDate < fromDate) return false
-        if (toDate && transactionDate > toDate) return false
-        
-        return true
-    }
-
-    calculateAccountBalance(accountConfig) {
-        let totalBalance = 0.0
-        let filteredTransactions = 0
-        
-        for (const accountId of accountConfig.accountIds) {
-            const transactionIds = this.accountTransactions.get(accountId) || new Set()
-            
-            for (const transactionId of transactionIds) {
-                const transaction = this.transactions.get(transactionId)
-                if (transaction && this.isTransactionInDateRange(transaction)) {
-                    totalBalance += transaction.balance
-                    filteredTransactions++
-                }
-            }
-        }
-
-        console.log(`Balance for ${accountConfig.displayName}: ${totalBalance} (${filteredTransactions} transactions in date range)`)
-        return totalBalance
-    }
-
-    getHistoricalData(accountConfig, periods = 7) {
-        if (!this.dateFilter) return []
-        
-        // Generate daily balances for the date range
-        const fromDate = this.dateFilter.date_from ? new Date(this.dateFilter.date_from) : new Date(Date.now() - periods * 24 * 60 * 60 * 1000)
-        const toDate = this.dateFilter.date_to ? new Date(this.dateFilter.date_to) : new Date()
-        
-        const historicalData = []
-        const currentDate = new Date(fromDate)
-        
-        while (currentDate <= toDate) {
-            // Calculate balance up to this date
-            const tempFilter = this.dateFilter
-            this.dateFilter = { date_from: null, date_to: currentDate.toISOString().split('T')[0] }
-            
-            const balance = this.calculateAccountBalance(accountConfig)
-            
-            historicalData.push({
-                date: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                balance: balance
-            })
-            
-            currentDate.setDate(currentDate.getDate() + 1)
-        }
-        
-        // Restore original filter
-        this.dateFilter = tempFilter
-        
-        return historicalData
-    }
-
-    getAccountsWithBalances() {
-        const result = []
-
-        for (const accountConfig of this.accounts.values()) {
-            if (!accountConfig.active) continue
-
-            const balance = this.calculateAccountBalance(accountConfig)
-            const balanceColor = balance > 0 ? 'green' : (balance < 0 ? 'red' : 'blue')
-            const historicalData = this.getHistoricalData(accountConfig)
-
-            result.push({
-                id: accountConfig.id,
-                display_name: accountConfig.displayName,
-                current_balance: balance,
-                balance_display: this.formatBalance(balance),
-                balance_color: balanceColor,
-                sequence: accountConfig.sequence,
-                historical_data: historicalData
-            })
-        }
-
-        result.sort((a, b) => a.sequence - b.sequence)
-        return result
-    }
-
-    formatBalance(balance) {
-        return `₺${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-    }
-}
-
 export class CashFlowDashboard extends Component {
     setup() {
-        console.log('Enhanced Cash Flow Dashboard loading...')
-        
-        // Data Manager (Frontend Model)
-        this.dataManager = new CashFlowDataManager()
-        
-        // Make dataManager globally accessible for debugging
-        window.cashFlowDebug = {
-            dataManager: this.dataManager,
-            component: this
-        }
+        console.log('Enhanced Cash Flow Dashboard loading with updated backend model...')
         
         // Reactive State
         this.state = useState({
@@ -402,13 +244,29 @@ export class CashFlowDashboard extends Component {
             loading: false,
             error: null,
             lastUpdated: null,
-            dataLoaded: false,
             // Date filtering state
-            dateFilter: 'all', // 'all', '7d', '30d', '90d', 'custom'
+            period: 'all', // 'all', 'this_week', 'this_month', etc.
             customDateFrom: '',
             customDateTo: '',
-            showCustomDateInputs: false
+            showCustomDateInputs: false,
+            // Summary data
+            totalBalance: 0,
+            positiveAccounts: 0,
+            negativeAccounts: 0
         })
+        
+        // Period options
+        this.periodOptions = [
+            { value: 'all', label: 'All Time' },
+            { value: 'this_week', label: 'This Week' },
+            { value: 'this_month', label: 'This Month' },
+            { value: 'last_month', label: 'Last Month' },
+            { value: 'this_quarter', label: 'This Quarter' },
+            { value: 'last_quarter', label: 'Last Quarter' },
+            { value: 'this_year', label: 'This Year' },
+            { value: 'last_year', label: 'Last Year' },
+            { value: 'custom', label: 'Custom Range' }
+        ]
         
         // Services
         this.orm = useService("orm")
@@ -416,39 +274,43 @@ export class CashFlowDashboard extends Component {
         this.notification = useService("notification")
 
         // Load initial data
-        this.loadCompleteData()
+        this.loadDashboardData()
     }
 
-    async loadCompleteData() {
-        console.log('Loading complete dashboard data...')
+    async loadDashboardData() {
+        console.log('Loading dashboard data with updated backend model...')
         this.state.loading = true
         this.state.error = null
 
         try {
-            // Apply date filter to data loading
-            const context = this.getDateFilterContext()
+            // Get date range context
+            const dateRange = this.getDateRange()
+            console.log('Date range:', dateRange)
             
-            const response = await this.orm.call(
+            // Call the updated backend method
+            const accountsData = await this.orm.call(
                 'cash.flow.dashboard',
-                'get_complete_dashboard_data',
+                'get_filtered_dashboard_data',
                 [],
-                { context }
+                {
+                    period_type: this.state.period,
+                    date_from: dateRange.date_from,
+                    date_to: dateRange.date_to
+                }
             )
 
-            console.log('Received data:', response)
+            console.log('Received accounts data:', accountsData)
             
-            if (response.success) {
-                this.processCompleteData(response)
-                
-                this.state.lastUpdated = new Date().toLocaleTimeString()
-                this.state.dataLoaded = true
-                
-                this.notification.add(response.meta.message || "Dashboard data loaded successfully", {
+            // Process the response
+            this.state.accounts = accountsData || []
+            this.updateSummaryStats()
+            this.state.lastUpdated = new Date().toLocaleTimeString()
+            
+            if (this.state.accounts.length > 0) {
+                this.notification.add("Dashboard data loaded successfully", {
                     type: "success",
                     title: "Data Loaded"
                 })
-            } else {
-                throw new Error(response.error?.message || "Unknown error occurred")
             }
 
         } catch (error) {
@@ -467,88 +329,124 @@ export class CashFlowDashboard extends Component {
         }
     }
 
-    getDateFilterContext() {
-        const context = {}
+    getDateRange() {
+        const today = new Date()
+        const period = this.state.period
         
-        if (this.state.dateFilter === 'custom') {
-            if (this.state.customDateFrom) context.date_from = this.state.customDateFrom
-            if (this.state.customDateTo) context.date_to = this.state.customDateTo
-        } else if (this.state.dateFilter !== 'all') {
-            const days = parseInt(this.state.dateFilter.replace('d', ''))
-            const today = new Date()
-            const fromDate = new Date(today.getTime() - (days * 24 * 60 * 60 * 1000))
-            
-            context.date_from = fromDate.toISOString().split('T')[0]
-            context.date_to = today.toISOString().split('T')[0]
+        if (period === 'all') {
+            return { date_from: null, date_to: null }
         }
         
-        return context
-    }
+        if (period === 'custom') {
+            return {
+                date_from: this.state.customDateFrom,
+                date_to: this.state.customDateTo
+            }
+        }
 
-    processCompleteData(response) {
-        const accountsCount = response.data.accounts.length
-        const transactionsCount = response.data.transactions.length
+        let date_from, date_to = today.toISOString().split('T')[0]
         
-        console.log(`Processing ${accountsCount} accounts, ${transactionsCount} transactions`)
-        
-        // Clear existing data
-        this.dataManager.clear()
-        
-        // Set date filter in data manager
-        const context = this.getDateFilterContext()
-        if (context.date_from || context.date_to) {
-            this.dataManager.setDateFilter(context.date_from, context.date_to)
+        switch(period) {
+            case 'this_week':
+                const startOfWeek = new Date(today)
+                startOfWeek.setDate(today.getDate() - today.getDay() + 1)
+                date_from = startOfWeek.toISOString().split('T')[0]
+                break
+                
+            case 'this_month':
+                date_from = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
+                break
+                
+            case 'last_month':
+                const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+                date_from = lastMonth.toISOString().split('T')[0]
+                date_to = new Date(today.getFullYear(), today.getMonth(), 0).toISOString().split('T')[0]
+                break
+                
+            case 'this_quarter':
+                const quarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 1)
+                date_from = quarterStart.toISOString().split('T')[0]
+                break
+                
+            case 'last_quarter':
+                const lastQuarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3 - 3, 1)
+                const lastQuarterEnd = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 0)
+                date_from = lastQuarterStart.toISOString().split('T')[0]
+                date_to = lastQuarterEnd.toISOString().split('T')[0]
+                break
+                
+            case 'this_year':
+                date_from = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]
+                break
+                
+            case 'last_year':
+                date_from = new Date(today.getFullYear() - 1, 0, 1).toISOString().split('T')[0]
+                date_to = new Date(today.getFullYear() - 1, 11, 31).toISOString().split('T')[0]
+                break
+                
+            default:
+                date_from = null
+                date_to = null
         }
         
-        // Load accounts
-        response.data.accounts.forEach(account => {
-            this.dataManager.setAccount(account)
-        })
-        
-        // Load transactions
-        response.data.transactions.forEach(transaction => {
-            this.dataManager.setTransaction(transaction)
-        })
-        
-        // Update reactive state
-        this.updateAccountsDisplay()
-        
-        console.log(`Data processing complete. Frontend model now contains:`)
-        console.log(`- ${this.dataManager.accounts.size} account configs`)
-        console.log(`- ${this.dataManager.transactions.size} transactions`)
-        console.log(`- Calculated balances for ${this.state.accounts.length} account groups`)
+        return { date_from, date_to }
     }
 
-    updateAccountsDisplay() {
-        // Get accounts with calculated balances
-        this.state.accounts = this.dataManager.getAccountsWithBalances()
-        console.log('Updated accounts display:', this.state.accounts)
+    updateSummaryStats() {
+        let totalBalance = 0
+        let positiveAccounts = 0
+        let negativeAccounts = 0
+        
+        this.state.accounts.forEach(account => {
+            totalBalance += account.current_balance || 0
+            if (account.current_balance > 0) positiveAccounts++
+            else if (account.current_balance < 0) negativeAccounts++
+        })
+        
+        this.state.totalBalance = totalBalance
+        this.state.positiveAccounts = positiveAccounts
+        this.state.negativeAccounts = negativeAccounts
     }
 
-    async onDateFilterChange() {
-        console.log('Date filter changed to:', this.state.dateFilter)
+    async onPeriodChange() {
+        console.log('Period changed to:', this.state.period)
         
         // Show/hide custom date inputs
-        this.state.showCustomDateInputs = (this.state.dateFilter === 'custom')
+        this.state.showCustomDateInputs = (this.state.period === 'custom')
         
-        // If not custom, reload data immediately
-        if (this.state.dateFilter !== 'custom') {
-            await this.loadCompleteData()
+        // Reset custom dates when changing away from custom
+        if (this.state.period !== 'custom') {
+            this.state.customDateFrom = ''
+            this.state.customDateTo = ''
+        }
+        
+        // Reload data if not custom or if custom dates are set
+        if (this.state.period !== 'custom') {
+            await this.loadDashboardData()
         }
     }
 
     async onCustomDateChange() {
         console.log('Custom dates changed:', this.state.customDateFrom, this.state.customDateTo)
         
-        // Only reload if both dates are set
+        // Validate date range
         if (this.state.customDateFrom && this.state.customDateTo) {
-            await this.loadCompleteData()
+            if (this.state.customDateFrom > this.state.customDateTo) {
+                this.notification.add("Start date cannot be after end date", {
+                    type: "warning",
+                    title: "Invalid Date Range"
+                })
+                return
+            }
+            
+            // Reload data when both dates are set
+            await this.loadDashboardData()
         }
     }
 
     async refreshData() {
         console.log('Refreshing dashboard data...')
-        await this.loadCompleteData()
+        await this.loadDashboardData()
     }
 
     clearError() {
@@ -556,7 +454,7 @@ export class CashFlowDashboard extends Component {
     }
 
     viewAccountDetails(accountId) {
-        const context = this.getDateFilterContext()
+        const dateRange = this.getDateRange()
         
         this.actionService.doAction({
             type: "ir.actions.act_window",
@@ -565,19 +463,24 @@ export class CashFlowDashboard extends Component {
             res_id: accountId,
             views: [[false, "form"]],
             target: "current",
-            context: context
+            context: {
+                date_from: dateRange.date_from,
+                date_to: dateRange.date_to,
+                period_type: this.state.period
+            }
         })
     }
 
-    getFilterDisplayName() {
-        switch (this.state.dateFilter) {
-            case 'all': return 'All Time'
-            case '7d': return 'Last 7 Days'
-            case '30d': return 'Last 30 Days'
-            case '90d': return 'Last 90 Days'
-            case 'custom': return 'Custom Range'
-            default: return 'All Time'
+    getPeriodLabel() {
+        const option = this.periodOptions.find(opt => opt.value === this.state.period)
+        if (this.state.period === 'custom' && this.state.customDateFrom && this.state.customDateTo) {
+            return `${this.state.customDateFrom} to ${this.state.customDateTo}`
         }
+        return option ? option.label : 'All Time'
+    }
+
+    formatBalance(balance) {
+        return `₺${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
     }
 }
 

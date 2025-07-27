@@ -550,3 +550,229 @@ class CashFlowDashboard(models.Model):
                 'date_to': self.env.context.get('date_to'),
             }
         return result
+    
+    @api.model
+    def get_filtered_dashboard_data(self, period_type='all', date_from=None, date_to=None):
+        """
+        Enhanced method for OWL frontend that works with the updated Many2many model structure
+        Returns dashboard data with date filtering for account groups
+        """
+        try:
+            company_id = self.env.company.id
+            
+            # Debug logging
+            _logger = logging.getLogger(__name__)
+            _logger.info(f"Dashboard Data Request - Period: {period_type}, From: {date_from}, To: {date_to}")
+            
+            # Get active configurations for this company (ordered by sequence)
+            config_model = self.env['cash.flow.config']
+            active_configs = config_model.search([
+                ('company_id', '=', company_id),
+                ('active', '=', True)
+            ], order='sequence, account_codes')
+            
+            if not active_configs:
+                # Try auto-suggestion first
+                try:
+                    created_configs = config_model.auto_suggest_setup(company_id)
+                    if created_configs:
+                        active_configs = created_configs
+                    else:
+                        return []
+                except Exception as e:
+                    _logger.warning(f"Auto-suggestion failed: {str(e)}")
+                    return []
+            
+            dashboard_data = []
+            
+            for config in active_configs:
+                try:
+                    # Get or create dashboard record for this config
+                    dashboard_record = self.search([
+                        ('config_id', '=', config.id),
+                        ('company_id', '=', company_id)
+                    ], limit=1)
+                    
+                    if not dashboard_record:
+                        dashboard_record = self.create({
+                            'config_id': config.id,
+                            'account_ids': [(6, 0, config.account_ids.ids)],
+                            'company_id': company_id,
+                        })
+                    
+                    # Calculate balance with date filtering
+                    current_balance = self._calculate_balance_with_filter(
+                        config.account_ids.ids, date_from, date_to, company_id
+                    )
+                    
+                    # Format balance display
+                    balance_display = self._format_balance_display(current_balance, dashboard_record.currency_id)
+                    balance_color = 'green' if current_balance > 0 else ('red' if current_balance < 0 else 'blue')
+                    
+                    # Generate chart data for the filtered period
+                    chart_data = self._get_chart_data_for_period(
+                        config.account_ids.ids, date_from, date_to, company_id
+                    )
+                    
+                    # Get individual account balances
+                    individual_balances = self._get_individual_balances_for_period(
+                        config.account_ids, date_from, date_to, company_id
+                    )
+                    
+                    # Format period information
+                    period_info = {
+                        'period_type': period_type,
+                        'date_from': date_from,
+                        'date_to': date_to,
+                        'period_label': self._format_period_label(period_type, date_from, date_to)
+                    }
+                    
+                    account_data = {
+                        'id': dashboard_record.id,
+                        'account_codes': dashboard_record.account_codes,
+                        'account_names': dashboard_record.account_names,
+                        'display_name': dashboard_record.display_name,
+                        'current_balance': current_balance,
+                        'balance_display': balance_display,
+                        'balance_color': balance_color,
+                        'chart_data': chart_data,
+                        'individual_balances': json.dumps(individual_balances),
+                        'period_info': period_info
+                    }
+                    
+                    dashboard_data.append(account_data)
+                    _logger.info(f"Processed {config.display_name}: Balance {current_balance}")
+                    
+                except Exception as e:
+                    _logger.error(f"Error processing config {config.id}: {str(e)}")
+                    continue
+            
+            return dashboard_data
+            
+        except Exception as e:
+            _logger.error(f"Error in get_filtered_dashboard_data: {str(e)}")
+            return []
+
+    def _calculate_balance_with_filter(self, account_ids, date_from, date_to, company_id):
+        """Calculate balance for multiple accounts with date filtering"""
+        if not account_ids:
+            return 0.0
+        
+        # Build domain for move lines
+        domain = [
+            ('account_id', 'in', account_ids),
+            ('company_id', '=', company_id),
+            ('move_id.state', '=', 'posted')
+        ]
+        
+        # Add date filters
+        if date_from:
+            domain.append(('date', '>=', date_from))
+        if date_to:
+            domain.append(('date', '<=', date_to))
+        
+        # Get move lines and calculate balance
+        move_lines = self.env['account.move.line'].search(domain)
+        total_debit = sum(move_lines.mapped('debit'))
+        total_credit = sum(move_lines.mapped('credit'))
+        
+        return total_debit - total_credit
+
+    def _format_balance_display(self, balance, currency):
+        """Format balance for display"""
+        if currency:
+            try:
+                if hasattr(currency, 'format'):
+                    return currency.format(balance)
+                else:
+                    symbol = getattr(currency, 'symbol', '') or getattr(currency, 'name', '')
+                    return f"{symbol} {balance:,.2f}".strip()
+            except:
+                return f"₺{balance:,.2f}"
+        return f"₺{balance:,.2f}"
+
+    def _get_chart_data_for_period(self, account_ids, date_from, date_to, company_id):
+        """Generate chart data for the specified period"""
+        if not account_ids or not date_from or not date_to:
+            return self._get_sample_chart_data()
+        
+        try:
+            start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+            end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+            
+            # Generate data points (max 10 points for performance)
+            date_diff = (end_date - start_date).days
+            interval = max(1, date_diff // 9)  # 10 points max
+            
+            chart_data = []
+            current_date = start_date
+            
+            while current_date <= end_date:
+                # Calculate balance up to this date
+                balance = self._calculate_balance_with_filter(
+                    account_ids, date_from, current_date.strftime('%Y-%m-%d'), company_id
+                )
+                
+                chart_data.append({
+                    'label': current_date.strftime('%b %d'),
+                    'value': float(balance)
+                })
+                
+                current_date += timedelta(days=interval)
+                if current_date > end_date and chart_data[-1]['label'] != end_date.strftime('%b %d'):
+                    # Add final point
+                    balance = self._calculate_balance_with_filter(
+                        account_ids, date_from, end_date.strftime('%Y-%m-%d'), company_id
+                    )
+                    chart_data.append({
+                        'label': end_date.strftime('%b %d'),
+                        'value': float(balance)
+                    })
+                    break
+            
+            return chart_data
+            
+        except Exception as e:
+            return self._get_sample_chart_data()
+
+    def _get_sample_chart_data(self):
+        """Generate sample chart data as fallback"""
+        return [
+            {'label': 'Week 1', 'value': 1000},
+            {'label': 'Week 2', 'value': 1200},
+            {'label': 'Week 3', 'value': 900},
+            {'label': 'Week 4', 'value': 1100}
+        ]
+
+    def _get_individual_balances_for_period(self, account_ids, date_from, date_to, company_id):
+        """Get individual account balances for the period"""
+        balances = []
+        
+        for account in account_ids:
+            balance = self._calculate_balance_with_filter([account.id], date_from, date_to, company_id)
+            formatted_balance = self._format_balance_display(balance, account.company_id.currency_id)
+            
+            balances.append({
+                'code': account.code,
+                'name': account.name,
+                'balance': balance,
+                'formatted_balance': formatted_balance
+            })
+        
+        return balances
+
+    def _format_period_label(self, period_type, date_from, date_to):
+        """Format period label for display"""
+        if period_type == 'all':
+            return 'All Time'
+        elif period_type == 'custom' and date_from and date_to:
+            return f"{date_from} to {date_to}"
+        elif date_from and date_to:
+            try:
+                start = datetime.strptime(date_from, '%Y-%m-%d').strftime('%b %d')
+                end = datetime.strptime(date_to, '%Y-%m-%d').strftime('%b %d, %Y')
+                return f"{start} - {end}"
+            except (ValueError, TypeError):
+                return period_type.replace('_', ' ').title()
+        else:
+            return period_type.replace('_', ' ').title()
