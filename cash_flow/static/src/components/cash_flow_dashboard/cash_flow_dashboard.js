@@ -7,7 +7,9 @@ const { Component, useState } = owl
 // Enhanced Chart Component working with the updated backend model
 class BalanceChart extends Component {
     setup() {
-        console.log('BalanceChart component created for:', this.props.accountData?.display_name)
+        this.accountData = this.props.accountData || {}
+        console.log('BalanceChart component created for:', this.accountData.display_name)
+        
         this.chartId = `chart_${Math.random().toString(36).substr(2, 9)}`
         this.chartInstance = null
         
@@ -94,7 +96,7 @@ class BalanceChart extends Component {
             this.chartInstance.destroy()
         }
 
-        console.log('BalanceChart: Rendering chart for:', this.props.accountData?.display_name)
+        console.log('BalanceChart: Rendering chart for:', this.accountData.display_name)
 
         // Get chart data - now works with updated backend model
         const chartData = this.getChartData()
@@ -107,8 +109,8 @@ class BalanceChart extends Component {
                     datasets: [{
                         label: 'Balance',
                         data: chartData.values,
-                        borderColor: this.getChartColor(this.props.accountData?.balance_color, 'border'),
-                        backgroundColor: this.getChartColor(this.props.accountData?.balance_color, 'bg'),
+                        borderColor: this.getChartColor(this.accountData.balance_color, 'border'),
+                        backgroundColor: this.getChartColor(this.accountData.balance_color, 'bg'),
                         borderWidth: 2,
                         fill: true,
                         tension: 0.3,
@@ -160,15 +162,23 @@ class BalanceChart extends Component {
 
     getChartData() {
         // Use chart_data from the updated backend if available
-        if (this.props.accountData?.chart_data && this.props.accountData.chart_data.length > 0) {
+        if (this.accountData.chart_data && Array.isArray(this.accountData.chart_data) && this.accountData.chart_data.length > 0) {
             return {
-                labels: this.props.accountData.chart_data.map(item => item.label),
-                values: this.props.accountData.chart_data.map(item => item.value)
+                labels: this.accountData.chart_data.map(item => item.label || ''),
+                values: this.accountData.chart_data.map(item => parseFloat(item.value) || 0)
+            }
+        }
+
+        // Use chartData prop if available
+        if (this.props.chartData && Array.isArray(this.props.chartData) && this.props.chartData.length > 0) {
+            return {
+                labels: this.props.chartData.map(item => item.label || ''),
+                values: this.props.chartData.map(item => parseFloat(item.value) || 0)
             }
         }
 
         // Fallback: Generate sample trend data based on current balance
-        const currentBalance = this.props.accountData?.current_balance || 0
+        const currentBalance = parseFloat(this.accountData.current_balance) || 0
         const periods = 7
         
         const labels = []
@@ -301,8 +311,24 @@ export class CashFlowDashboard extends Component {
 
             console.log('Received accounts data:', accountsData)
             
-            // Process the response
-            this.state.accounts = accountsData || []
+            // Process the response with null checks
+            if (Array.isArray(accountsData)) {
+                this.state.accounts = accountsData.map(account => ({
+                    id: account.id || 0,
+                    account_codes: account.account_codes || '',
+                    account_names: account.account_names || '',
+                    display_name: account.display_name || 'Unknown',
+                    current_balance: parseFloat(account.current_balance) || 0,
+                    balance_display: account.balance_display || '₺0',
+                    balance_color: account.balance_color || 'blue',
+                    chart_data: Array.isArray(account.chart_data) ? account.chart_data : [],
+                    individual_balances: account.individual_balances || '[]',
+                    period_info: account.period_info || {}
+                }))
+            } else {
+                this.state.accounts = []
+            }
+            
             this.updateSummaryStats()
             this.state.lastUpdated = new Date().toLocaleTimeString()
             
@@ -397,11 +423,16 @@ export class CashFlowDashboard extends Component {
         let positiveAccounts = 0
         let negativeAccounts = 0
         
-        this.state.accounts.forEach(account => {
-            totalBalance += account.current_balance || 0
-            if (account.current_balance > 0) positiveAccounts++
-            else if (account.current_balance < 0) negativeAccounts++
-        })
+        try {
+            this.state.accounts.forEach(account => {
+                const balance = parseFloat(account.current_balance) || 0
+                totalBalance += balance
+                if (balance > 0) positiveAccounts++
+                else if (balance < 0) negativeAccounts++
+            })
+        } catch (error) {
+            console.warn('Error calculating summary stats:', error)
+        }
         
         this.state.totalBalance = totalBalance
         this.state.positiveAccounts = positiveAccounts
@@ -481,6 +512,32 @@ export class CashFlowDashboard extends Component {
 
     formatBalance(balance) {
         return `₺${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    }
+
+    getIndividualAccountCount(account) {
+        try {
+            if (account.individual_balances && typeof account.individual_balances === 'string') {
+                const data = JSON.parse(account.individual_balances)
+                return Array.isArray(data) ? data.length : 0
+            }
+            return 0
+        } catch (error) {
+            console.warn('Error parsing individual_balances:', error)
+            return 0
+        }
+    }
+
+    getIndividualAccountsData(account) {
+        try {
+            if (account.individual_balances && typeof account.individual_balances === 'string') {
+                const data = JSON.parse(account.individual_balances)
+                return Array.isArray(data) ? data : []
+            }
+            return []
+        } catch (error) {
+            console.warn('Error parsing individual_balances:', error)
+            return []
+        }
     }
 }
 
