@@ -392,7 +392,7 @@ export class CashFlowDashboard extends Component {
             return result
         }
 
-        let date_from, date_to = today.formatLocalDate()
+        let date_from, date_to = today.toISOString().split('T')[0]
         console.log('Initial date_to (today):', date_to)
         
         switch(period) {
@@ -400,28 +400,28 @@ export class CashFlowDashboard extends Component {
                 console.log('Calculating this_week...')
                 const startOfWeek = new Date(today)
                 startOfWeek.setDate(today.getDate() - today.getDay() + 1)
-                date_from = startOfWeek.formatLocalDate()
+                date_from = startOfWeek.toISOString().split('T')[0]
                 console.log('this_week date_from:', date_from)
                 break
                 
             case 'this_month':
                 console.log('Calculating this_month...')
-                date_from = new Date(today.getFullYear(), today.getMonth(), 1).formatLocalDate()
+                date_from = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
                 console.log('this_month date_from:', date_from)
                 break
                 
             case 'last_month':
                 console.log('Calculating last_month...')
                 const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
-                date_from = lastMonth.formatLocalDate()
-                date_to = new Date(today.getFullYear(), today.getMonth(), 0).formatLocalDate()
+                date_from = lastMonth.toISOString().split('T')[0]
+                date_to = new Date(today.getFullYear(), today.getMonth(), 0).toISOString().split('T')[0]
                 console.log('last_month date_from:', date_from, 'date_to:', date_to)
                 break
                 
             case 'this_quarter':
                 console.log('Calculating this_quarter...')
                 const quarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 1)
-                date_from = quarterStart.formatLocalDate()
+                date_from = quarterStart.toISOString().split('T')[0]
                 console.log('this_quarter date_from:', date_from)
                 break
                 
@@ -429,21 +429,21 @@ export class CashFlowDashboard extends Component {
                 console.log('Calculating last_quarter...')
                 const lastQuarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3 - 3, 1)
                 const lastQuarterEnd = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 0)
-                date_from = lastQuarterStart.formatLocalDate()
-                date_to = lastQuarterEnd.formatLocalDate()
+                date_from = lastQuarterStart.toISOString().split('T')[0]
+                date_to = lastQuarterEnd.toISOString().split('T')[0]
                 console.log('last_quarter date_from:', date_from, 'date_to:', date_to)
                 break
                 
             case 'this_year':
                 console.log('Calculating this_year...')
-                date_from = new Date(today.getFullYear(), 0, 1).formatLocalDate()
+                date_from = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]
                 console.log('this_year date_from:', date_from)
                 break
                 
             case 'last_year':
                 console.log('Calculating last_year...')
-                date_from = new Date(today.getFullYear() - 1, 0, 1).formatLocalDate()
-                date_to = new Date(today.getFullYear() - 1, 11, 31).formatLocalDate()
+                date_from = new Date(today.getFullYear() - 1, 0, 1).toISOString().split('T')[0]
+                date_to = new Date(today.getFullYear() - 1, 11, 31).toISOString().split('T')[0]
                 console.log('last_year date_from:', date_from, 'date_to:', date_to)
                 break
                 
