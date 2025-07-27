@@ -450,14 +450,24 @@ class CashFlowDashboard(models.Model):
     @api.model
     def get_filtered_dashboard_data(self, period_type='all', date_from=None, date_to=None):
         """
-        Enhanced method for OWL frontend that works with multiple accounts
+        FIXED: Enhanced method for OWL frontend that works with multiple accounts
         Returns dashboard data with date filtering for account groups
+        CRITICAL FIX: Now calculates filtered balances directly instead of using computed fields
         """
         try:
             company_id = self.env.company.id
             
-            # Debug logging
-            _logger.info(f"Dashboard Data Request - Period: {period_type}, From: {date_from}, To: {date_to}")
+            # ADDED: Console logging for debugging
+            _logger.info(f"=== DASHBOARD FILTER DEBUG ===")
+            _logger.info(f"Period: {period_type}")
+            _logger.info(f"Date From: {date_from} (type: {type(date_from)})")
+            _logger.info(f"Date To: {date_to} (type: {type(date_to)})")
+            _logger.info(f"Company ID: {company_id}")
+            
+            # ADDED: Validate and normalize date formats
+            normalized_date_from, normalized_date_to = self._normalize_date_params(date_from, date_to)
+            _logger.info(f"Normalized Date From: {normalized_date_from}")
+            _logger.info(f"Normalized Date To: {normalized_date_to}")
             
             # Get active configurations for this company (ordered by sequence)
             config_model = self.env['cash.flow.config']
@@ -466,13 +476,17 @@ class CashFlowDashboard(models.Model):
                 ('active', '=', True)
             ], order='sequence, account_codes')
             
+            _logger.info(f"Found {len(active_configs)} active configurations")
+            
             if not active_configs:
                 # Try auto-suggestion first
                 try:
                     created_configs = config_model.auto_suggest_setup(company_id)
                     if created_configs:
                         active_configs = created_configs
+                        _logger.info(f"Auto-created {len(created_configs)} configurations")
                     else:
+                        _logger.info("No configurations found and auto-suggestion returned empty")
                         return []
                 except Exception as e:
                     _logger.warning(f"Auto-suggestion failed: {str(e)}")
@@ -482,6 +496,8 @@ class CashFlowDashboard(models.Model):
             
             for config in active_configs:
                 try:
+                    _logger.info(f"Processing config: {config.display_name} with accounts: {config.account_codes}")
+                    
                     # Get or create dashboard record for this config
                     dashboard_record = self.search([
                         ('config_id', '=', config.id),
@@ -494,11 +510,14 @@ class CashFlowDashboard(models.Model):
                             'account_ids': [(6, 0, config.account_ids.ids)],
                             'company_id': company_id,
                         })
+                        _logger.info(f"Created dashboard record for config {config.id}")
                     
-                    # Calculate balance with date filtering - HANDLES MULTIPLE ACCOUNTS
+                    # FIXED: Calculate balance with date filtering - BYPASSES COMPUTED FIELDS
                     current_balance = self._calculate_balance_with_filter(
-                        config.account_ids.ids, date_from, date_to, company_id
+                        config.account_ids.ids, normalized_date_from, normalized_date_to, company_id
                     )
+                    
+                    _logger.info(f"Calculated filtered balance for {config.display_name}: {current_balance}")
                     
                     # Format balance display
                     balance_display = self._format_balance_display(current_balance, dashboard_record.currency_id)
@@ -506,20 +525,22 @@ class CashFlowDashboard(models.Model):
                     
                     # Generate chart data for the filtered period
                     chart_data = self._get_chart_data_for_period(
-                        config.account_ids.ids, date_from, date_to, company_id
+                        config.account_ids.ids, normalized_date_from, normalized_date_to, company_id
                     )
+                    
+                    _logger.info(f"Generated chart data with {len(chart_data)} points")
                     
                     # Get individual account balances - HANDLES MULTIPLE ACCOUNTS
                     individual_balances = self._get_individual_balances_for_period(
-                        config.account_ids, date_from, date_to, company_id
+                        config.account_ids, normalized_date_from, normalized_date_to, company_id
                     )
                     
                     # Format period information
                     period_info = {
                         'period_type': period_type,
-                        'date_from': date_from,
-                        'date_to': date_to,
-                        'period_label': self._format_period_label(period_type, date_from, date_to)
+                        'date_from': normalized_date_from,
+                        'date_to': normalized_date_to,
+                        'period_label': self._format_period_label(period_type, normalized_date_from, normalized_date_to)
                     }
                     
                     account_data = {
@@ -527,7 +548,7 @@ class CashFlowDashboard(models.Model):
                         'account_codes': dashboard_record.account_codes,
                         'account_names': dashboard_record.account_names,
                         'display_name': dashboard_record.display_name,
-                        'current_balance': current_balance,
+                        'current_balance': current_balance,  # FIXED: Using filtered balance
                         'balance_display': balance_display,
                         'balance_color': balance_color,
                         'chart_data': chart_data,
@@ -536,17 +557,56 @@ class CashFlowDashboard(models.Model):
                     }
                     
                     dashboard_data.append(account_data)
-                    _logger.info(f"Processed {config.display_name}: Balance {current_balance}")
+                    _logger.info(f"Completed processing {config.display_name}")
                     
                 except Exception as e:
                     _logger.error(f"Error processing config {config.id}: {str(e)}")
                     continue
             
+            _logger.info(f"=== DASHBOARD FILTER COMPLETE === Returning {len(dashboard_data)} records")
             return dashboard_data
             
         except Exception as e:
             _logger.error(f"Error in get_filtered_dashboard_data: {str(e)}")
             return []
+
+    def _normalize_date_params(self, date_from, date_to):
+        """
+        ADDED: Normalize date parameters to ensure consistent format
+        Handles both string and date object inputs
+        """
+        normalized_from = None
+        normalized_to = None
+        
+        try:
+            # Handle date_from
+            if date_from:
+                if isinstance(date_from, str):
+                    # Validate string format (YYYY-MM-DD)
+                    datetime.strptime(date_from, '%Y-%m-%d')
+                    normalized_from = date_from
+                elif hasattr(date_from, 'strftime'):
+                    # Convert date object to string
+                    normalized_from = date_from.strftime('%Y-%m-%d')
+                else:
+                    _logger.warning(f"Invalid date_from format: {date_from} (type: {type(date_from)})")
+            
+            # Handle date_to
+            if date_to:
+                if isinstance(date_to, str):
+                    # Validate string format (YYYY-MM-DD)
+                    datetime.strptime(date_to, '%Y-%m-%d')
+                    normalized_to = date_to
+                elif hasattr(date_to, 'strftime'):
+                    # Convert date object to string
+                    normalized_to = date_to.strftime('%Y-%m-%d')
+                else:
+                    _logger.warning(f"Invalid date_to format: {date_to} (type: {type(date_to)})")
+                    
+        except ValueError as e:
+            _logger.error(f"Date parsing error: {str(e)}")
+            
+        return normalized_from, normalized_to
 
     def _calculate_balance_with_filter(self, account_ids, date_from, date_to, company_id):
         """Calculate balance for multiple accounts with date filtering"""
@@ -566,12 +626,22 @@ class CashFlowDashboard(models.Model):
         if date_to:
             domain.append(('date', '<=', date_to))
         
+        # ADDED: Log the domain for debugging
+        _logger.info(f"Balance calculation domain: {domain}")
+        
         # Get move lines and calculate balance
         move_lines = self.env['account.move.line'].search(domain)
         total_debit = sum(move_lines.mapped('debit'))
         total_credit = sum(move_lines.mapped('credit'))
         
-        return total_debit - total_credit
+        balance = total_debit - total_credit
+        
+        # ADDED: Log the calculation results
+        _logger.info(f"Move lines found: {len(move_lines)}")
+        _logger.info(f"Total debit: {total_debit}, Total credit: {total_credit}")
+        _logger.info(f"Calculated balance: {balance}")
+        
+        return balance
 
     def _format_balance_display(self, balance, currency):
         """Format balance for display"""
@@ -628,6 +698,7 @@ class CashFlowDashboard(models.Model):
             return chart_data
             
         except Exception as e:
+            _logger.error(f"Error generating chart data: {str(e)}")
             return self._get_sample_chart_data()
 
     def _get_sample_chart_data(self):
