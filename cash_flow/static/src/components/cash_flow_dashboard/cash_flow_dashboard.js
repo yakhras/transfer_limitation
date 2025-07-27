@@ -4,467 +4,267 @@ import { registry } from "@web/core/registry"
 import { useService } from "@web/core/utils/hooks"
 const { Component, useState } = owl
 
-// Inline Chart Component for Odoo 15 (OWL 1.x compatible)
+// Simple Chart Component
 class BalanceChart extends Component {
-    setup(){
-        console.log('BalanceChart component created for:', this.props.accountCode)
-        
-        // Generate unique ID for canvas
+    setup() {
         this.chartId = `chart_${Math.random().toString(36).substr(2, 9)}`
-        
-        // Load chart after component is rendered
-        setTimeout(() => {
-            this.loadChart()
-        }, 200)
+        setTimeout(() => this.renderChart(), 200)
     }
 
-    async loadChart(){
-        try {
-            console.log('BalanceChart: Loading Chart.js...')
-            
-            if (typeof Chart === 'undefined') {
-                await this.loadChartJS()
-            } else {
-                console.log('BalanceChart: Chart.js already available')
-                this.renderChart()
-            }
-            
-        } catch (error) {
-            console.error("Error loading Chart.js:", error)
-        }
-    }
-
-    async loadChartJS() {
-        return new Promise((resolve, reject) => {
-            if (typeof Chart !== 'undefined') {
-                resolve();
-                return;
-            }
-
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
-            script.onload = () => {
-                console.log('BalanceChart: Chart.js loaded successfully');
-                setTimeout(() => {
-                    this.renderChart();
-                    resolve();
-                }, 100);
-            };
-            script.onerror = (error) => {
-                console.error('BalanceChart: Failed to load Chart.js', error);
-                reject(error);
-            };
-            
-            // Check if script already exists
-            const existingScript = document.querySelector('script[src*="chart.umd.min.js"]');
-            if (existingScript) {
-                console.log('BalanceChart: Chart.js script already exists, waiting...');
-                setTimeout(() => {
-                    if (typeof Chart !== 'undefined') {
-                        this.renderChart();
-                        resolve();
-                    } else {
-                        reject(new Error('Chart.js script exists but Chart object not available'));
-                    }
-                }, 500);
-                return;
-            }
-            
-            document.head.appendChild(script);
-        });
-    }
-
-    renderChart(){
+    renderChart() {
         const canvas = document.getElementById(this.chartId)
-        if (!canvas) {
-            console.log("BalanceChart: Canvas not found with ID:", this.chartId)
-            return
-        }
-        
-        if (typeof Chart === 'undefined') {
-            console.log("BalanceChart: Chart.js not available")
-            return
-        }
+        if (!canvas || typeof Chart === 'undefined') return
 
-        console.log('BalanceChart: Rendering chart for account:', this.props.accountCode)
+        // Simple sample chart for now
+        const data = [
+            this.props.currentBalance * 0.8,
+            this.props.currentBalance * 0.9,
+            this.props.currentBalance * 0.95,
+            this.props.currentBalance
+        ]
 
-        // Use real chart data if provided, otherwise sample data
-        let chartData, labels;
-        
-        if (this.props.chartData && this.props.chartData.length > 0) {
-            // Real data from backend
-            const data = this.props.chartData;
-            labels = data.map(item => item.label);
-            chartData = data.map(item => item.value);
-        } else {
-            // Fallback sample data
-            labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
-            chartData = [
-                this.props.currentBalance * 0.8,
-                this.props.currentBalance * 0.9,
-                this.props.currentBalance * 0.95,
-                this.props.currentBalance
-            ];
-        }
-
-        const datasets = [{
-            label: 'Balance',
-            data: chartData,
-            borderColor: this.getChartColor(this.props.balanceColor, 'border'),
-            backgroundColor: this.getChartColor(this.props.balanceColor, 'background'),
-            borderWidth: 2,
-            fill: true,
-            tension: 0.3,
-            pointRadius: 2,
-            pointHoverRadius: 4
-        }];
-
-        try {
-            new Chart(canvas, {
-                type: 'line',
-                data: { labels, datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: {
-                                title: function(context) {
-                                    return 'Period: ' + context[0].label
-                                },
-                                label: function(context) {
-                                    return 'Balance: ₺' + context.parsed.y.toLocaleString()
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            display: true,
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } }
-                        },
-                        y: { display: false, beginAtZero: false }
-                    },
-                    interaction: { intersect: false, mode: 'index' }
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: ['Period 1', 'Period 2', 'Period 3', 'Current'],
+                datasets: [{
+                    data: data,
+                    borderColor: this.props.balanceColor === 'green' ? '#28a745' : 
+                               this.props.balanceColor === 'red' ? '#dc3545' : '#17a2b8',
+                    backgroundColor: this.props.balanceColor === 'green' ? 'rgba(40, 167, 69, 0.1)' : 
+                                   this.props.balanceColor === 'red' ? 'rgba(220, 53, 69, 0.1)' : 'rgba(23, 162, 184, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: true, grid: { display: false } },
+                    y: { display: false }
                 }
-            })
-            
-            console.log('BalanceChart: Chart rendered successfully')
-        } catch (error) {
-            console.error('BalanceChart: Error creating chart:', error)
-        }
-    }
-
-    getChartColor(balanceColor, type) {
-        const colors = {
-            green: { border: '#28a745', background: 'rgba(40, 167, 69, 0.1)' },
-            red: { border: '#dc3545', background: 'rgba(220, 53, 69, 0.1)' },
-            blue: { border: '#17a2b8', background: 'rgba(23, 162, 184, 0.1)' }
-        };
-        
-        const colorSet = colors[balanceColor] || colors.blue;
-        return colorSet[type];
+            }
+        })
     }
 }
 
 BalanceChart.template = "BalanceChart"
 
+// Data Manager Class for Frontend Model
+class CashFlowDataManager {
+    constructor() {
+        this.accounts = new Map()           // account configs
+        this.transactions = new Map()       // all transactions
+        this.accountTransactions = new Map() // account_id → transaction_ids
+        this.lastUpdate = null
+    }
+
+    clear() {
+        this.accounts.clear()
+        this.transactions.clear()
+        this.accountTransactions.clear()
+    }
+
+    setAccount(accountData) {
+        this.accounts.set(accountData.id, {
+            id: accountData.id,
+            displayName: accountData.display_name,
+            accountIds: new Set(accountData.account_ids),
+            sequence: accountData.sequence,
+            active: accountData.active
+        })
+    }
+
+    setTransaction(transactionData) {
+        const transaction = {
+            id: transactionData.id,
+            accountId: transactionData.account_id,
+            date: new Date(transactionData.date),
+            debit: transactionData.debit,
+            credit: transactionData.credit,
+            balance: transactionData.debit - transactionData.credit
+        }
+
+        this.transactions.set(transaction.id, transaction)
+
+        // Index by account
+        if (!this.accountTransactions.has(transaction.accountId)) {
+            this.accountTransactions.set(transaction.accountId, new Set())
+        }
+        this.accountTransactions.get(transaction.accountId).add(transaction.id)
+    }
+
+    calculateAccountBalance(accountConfig) {
+        let totalBalance = 0.0
+
+        for (const accountId of accountConfig.accountIds) {
+            const transactionIds = this.accountTransactions.get(accountId) || new Set()
+            
+            for (const transactionId of transactionIds) {
+                const transaction = this.transactions.get(transactionId)
+                if (transaction) {
+                    totalBalance += transaction.balance
+                }
+            }
+        }
+
+        return totalBalance
+    }
+
+    getAccountsWithBalances() {
+        const result = []
+
+        for (const accountConfig of this.accounts.values()) {
+            if (!accountConfig.active) continue
+
+            const balance = this.calculateAccountBalance(accountConfig)
+            const balanceColor = balance > 0 ? 'green' : (balance < 0 ? 'red' : 'blue')
+
+            result.push({
+                id: accountConfig.id,
+                display_name: accountConfig.displayName,
+                current_balance: balance,
+                balance_display: this.formatBalance(balance),
+                balance_color: balanceColor,
+                sequence: accountConfig.sequence
+            })
+        }
+
+        // Sort by sequence
+        result.sort((a, b) => a.sequence - b.sequence)
+        return result
+    }
+
+    formatBalance(balance) {
+        return `₺${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    }
+}
+
 export class CashFlowDashboard extends Component {
-    setup(){
-        console.log('CashFlowDashboard component loading with OWL 1.x...')
+    setup() {
+        console.log('Basic Cash Flow Dashboard loading...')
         
-        // OWL 1.x compatible state management
+        // Data Manager (Frontend Model)
+        this.dataManager = new CashFlowDataManager()
+        
+        // Reactive State
         this.state = useState({
             accounts: [],
-            period: 'all',
-            customDateFrom: null,
-            customDateTo: null,
             loading: false,
             error: null,
-            lastUpdated: null
+            lastUpdated: null,
+            dataLoaded: false
         })
         
-        // Services for OWL 1.x
+        // Services
         this.orm = useService("orm")
         this.actionService = useService("action")
         this.notification = useService("notification")
 
-        // Period options with detailed definitions
-        this.periodOptions = [
-            { value: 'all', label: 'All Time' },
-            { value: 'this_week', label: 'This Week' },
-            { value: 'this_month', label: 'This Month' },
-            { value: 'last_month', label: 'Last Month' },
-            { value: 'this_quarter', label: 'This Quarter' },
-            { value: 'last_quarter', label: 'Last Quarter' },
-            { value: 'this_year', label: 'This Year' },
-            { value: 'last_year', label: 'Last Year' },
-            { value: 'custom', label: 'Custom Range' }
-        ]
-
-        // Debounce timeout for custom dates
-        this.customDateTimeout = null
-
         // Load initial data
-        this.getAccounts()
+        this.loadCompleteData()
     }
 
-    /**
-     * Get date range based on selected period
-     */
-    getDateRange(){
-        const today = new Date()
-        const period = this.state.period
-        
-        if (period === 'all') {
-            return { date_from: null, date_to: null }
-        }
-        
-        if (period === 'custom') {
-            return {
-                date_from: this.state.customDateFrom,
-                date_to: this.state.customDateTo
-            }
-        }
+    async loadCompleteData() {
+        console.log('Loading complete dashboard data...')
+        this.state.loading = true
+        this.state.error = null
 
-        let date_from, date_to = today.toISOString().split('T')[0]
-        
-        switch(period) {
-            case 'this_week':
-                // Monday to today
-                const startOfWeek = new Date(today)
-                startOfWeek.setDate(today.getDate() - today.getDay() + 1)
-                date_from = startOfWeek.toISOString().split('T')[0]
-                break
-                
-            case 'this_month':
-                // First day of current month to today
-                date_from = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
-                break
-                
-            case 'last_month':
-                // First to last day of previous month
-                const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
-                date_from = lastMonth.toISOString().split('T')[0]
-                date_to = new Date(today.getFullYear(), today.getMonth(), 0).toISOString().split('T')[0]
-                break
-                
-            case 'this_quarter':
-                // First day of current quarter to today
-                const quarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 1)
-                date_from = quarterStart.toISOString().split('T')[0]
-                break
-                
-            case 'last_quarter':
-                // Previous quarter
-                const lastQuarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3 - 3, 1)
-                const lastQuarterEnd = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 0)
-                date_from = lastQuarterStart.toISOString().split('T')[0]
-                date_to = lastQuarterEnd.toISOString().split('T')[0]
-                break
-                
-            case 'this_year':
-                // January 1st to today
-                date_from = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]
-                break
-                
-            case 'last_year':
-                // Previous year
-                date_from = new Date(today.getFullYear() - 1, 0, 1).toISOString().split('T')[0]
-                date_to = new Date(today.getFullYear() - 1, 11, 31).toISOString().split('T')[0]
-                break
-                
-            default:
-                date_from = null
-                date_to = null
-        }
-        
-        return { date_from, date_to }
-    }
-
-    /**
-     * Load accounts data with current period filter
-     */
-    async getAccounts(){
         try {
-            // Clear previous error
-            this.state.error = null
-            this.state.loading = true
+            const response = await this.orm.call(
+                'cash.flow.dashboard',
+                'get_complete_dashboard_data',
+                []
+            )
+
+            console.log('Received data:', response)
             
-            // Get date range based on selected period
-            const dateRange = this.getDateRange()
-            
-            console.log('Loading accounts with period:', this.state.period, dateRange)
-            
-            // Try to call the OWL method first, fallback to regular method
-            let accounts;
-            try {
-                accounts = await this.orm.call(
-                    "cash.flow.dashboard", 
-                    "get_owl_dashboard_data",
-                    [],
-                    {
-                        period_type: this.state.period,
-                        date_from: dateRange.date_from,
-                        date_to: dateRange.date_to
-                    }
-                )
-            } catch (owlError) {
-                console.log('OWL method failed, trying fallback:', owlError)
-                // Fallback to regular search_read with context
-                accounts = await this.orm.searchRead(
-                    "cash.flow.dashboard", 
-                    [], 
-                    ["account_codes", "display_name", "current_balance", "balance_display", "balance_color"],
-                    {
-                        context: {
-                            date_from: dateRange.date_from,
-                            date_to: dateRange.date_to
-                        }
-                    }
-                )
+            if (response.success) {
+                this.processCompleteData(response)
+                
+                this.state.lastUpdated = new Date().toLocaleTimeString()
+                this.state.dataLoaded = true
+                
+                this.notification.add(response.meta.message || "Dashboard data loaded successfully", {
+                    type: "success",
+                    title: "Data Loaded"
+                })
+            } else {
+                throw new Error(response.error?.message || "Unknown error occurred")
+            }
+
+        } catch (error) {
+            console.error('Failed to load dashboard data:', error)
+            this.state.error = {
+                message: error.message || "Failed to load dashboard data",
+                showRetry: true
             }
             
-            this.state.accounts = accounts || []
-            this.state.lastUpdated = new Date().toLocaleTimeString()
-            
-            console.log('Loaded accounts:', accounts)
-            
-        } catch (error) {
-            console.error("Error loading cash flow data:", error)
-            this.handleError(error)
+            this.notification.add("Failed to load dashboard data", {
+                type: "danger", 
+                title: "Loading Error"
+            })
         } finally {
             this.state.loading = false
         }
     }
 
-    /**
-     * Handle different types of errors with appropriate UX
-     */
-    handleError(error) {
-        // Determine error type and handle accordingly
-        if (error.message && error.message.includes('network')) {
-            // Network error - toast notification
-            this.notification.add("Connection issue. Please check your internet.", {
-                type: "warning",
-                title: "Connection Error"
-            })
-        } else if (error.message && error.message.includes('permission')) {
-            // Permission error - inline message
-            this.state.error = {
-                message: "You don't have permission to view this data.",
-                showRetry: false
-            }
-        } else {
-            // API/Other errors - inline with retry
-            this.state.error = {
-                message: error.message || "Failed to load cash flow data.",
-                showRetry: true
-            }
-        }
+    processCompleteData(response) {
+        const accountsCount = response.data.accounts.length
+        const transactionsCount = response.data.transactions.length
+        
+        console.log(`Processing ${accountsCount} accounts, ${transactionsCount} transactions`)
+        
+        // Clear existing data
+        this.dataManager.clear()
+        
+        // Load accounts
+        response.data.accounts.forEach(account => {
+            this.dataManager.setAccount(account)
+        })
+        
+        // Load transactions
+        response.data.transactions.forEach(transaction => {
+            this.dataManager.setTransaction(transaction)
+        })
+        
+        // Update reactive state
+        this.updateAccountsDisplay()
+        
+        console.log(`Data processing complete. Frontend model now contains:`)
+        console.log(`- ${this.dataManager.accounts.size} account configs`)
+        console.log(`- ${this.dataManager.transactions.size} transactions`)
+        console.log(`- Calculated balances for ${this.state.accounts.length} account groups`)
     }
 
-    /**
-     * Retry loading data after error
-     */
-    async retryLoadData() {
-        console.log('Retrying data load...')
-        await this.getAccounts()
+    updateAccountsDisplay() {
+        // Get accounts with calculated balances
+        this.state.accounts = this.dataManager.getAccountsWithBalances()
+        console.log('Updated accounts display:', this.state.accounts)
     }
 
-    /**
-     * Clear error state
-     */
+    async refreshData() {
+        console.log('Refreshing dashboard data...')
+        await this.loadCompleteData()
+    }
+
     clearError() {
         this.state.error = null
     }
 
-    /**
-     * Handle period change with smooth UX
-     */
-    async onChangePeriod(){
-        console.log('Period changed to:', this.state.period)
-        
-        // Reset custom dates when changing away from custom
-        if (this.state.period !== 'custom') {
-            this.state.customDateFrom = null
-            this.state.customDateTo = null
-        }
-        
-        await this.getAccounts()
-    }
-
-    /**
-     * Handle custom date changes with debouncing
-     */
-    onCustomDateChange(){
-        console.log('Custom date changed:', this.state.customDateFrom, this.state.customDateTo)
-        
-        // Validate date range
-        if (this.state.customDateFrom && this.state.customDateTo) {
-            if (this.state.customDateFrom > this.state.customDateTo) {
-                this.notification.add("Start date cannot be after end date.", {
-                    type: "warning",
-                    title: "Invalid Date Range"
-                })
-                return
-            }
-        }
-        
-        // Debounced update (wait for user to finish selecting dates)
-        if (this.customDateTimeout) {
-            clearTimeout(this.customDateTimeout)
-        }
-        this.customDateTimeout = setTimeout(() => {
-            if (this.state.customDateFrom && this.state.customDateTo) {
-                this.getAccounts()
-            }
-        }, 500)
-    }
-
-    /**
-     * Get formatted period label for display
-     */
-    getPeriodLabel() {
-        const option = this.periodOptions.find(opt => opt.value === this.state.period)
-        if (this.state.period === 'custom' && this.state.customDateFrom && this.state.customDateTo) {
-            return `${this.state.customDateFrom} to ${this.state.customDateTo}`
-        }
-        return option ? option.label : 'All Time'
-    }
-
-    /**
-     * Navigate to account details (form view)
-     */
-    viewAccountDetails(accountId){
+    viewAccountDetails(accountId) {
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "Cash Flow Details",
             res_model: "cash.flow.dashboard",
             res_id: accountId,
             views: [[false, "form"]],
-            target: "current",
-            context: {
-                date_from: this.getDateRange().date_from,
-                date_to: this.getDateRange().date_to,
-                period_type: this.state.period
-            }
+            target: "current"
         })
-    }
-
-    /**
-     * Check if custom date range is valid
-     */
-    isCustomDateRangeValid() {
-        if (this.state.period !== 'custom') return true
-        
-        return this.state.customDateFrom && 
-               this.state.customDateTo && 
-               this.state.customDateFrom <= this.state.customDateTo
     }
 }
 

@@ -869,3 +869,121 @@ class CashFlowDashboard(models.Model):
             'total_accounts': len(dashboard_records),
             'period_label': self._format_period_label(period_type, date_from, date_to)
         }
+    
+
+
+    @api.model
+    def get_complete_dashboard_data(self):
+        """
+        Load all dashboard data in one efficient call
+        For initial data loading and refresh
+        """
+        company_id = self.env.company.id
+        
+        try:
+            # Get active account configurations
+            config_model = self.env['cash.flow.config']
+            active_configs = config_model.search([
+                ('company_id', '=', company_id),
+                ('active', '=', True)
+            ], order='sequence, account_codes')
+            
+            if not active_configs:
+                return {
+                    'success': True,
+                    'data': {
+                        'accounts': [],
+                        'transactions': []
+                    },
+                    'meta': {
+                        'loaded_at': datetime.now().isoformat(),
+                        'transaction_count': 0,
+                        'accounts_count': 0,
+                        'message': 'No active account configurations found'
+                    }
+                }
+            
+            # Collect all account IDs from all configurations
+            all_account_ids = []
+            for config in active_configs:
+                all_account_ids.extend(config.account_ids.ids)
+            
+            # Remove duplicates
+            all_account_ids = list(set(all_account_ids))
+            
+            # Get ALL transactions for these accounts (reasonable date range)
+            date_limit = datetime.now().date() - timedelta(days=365)  # Last year
+            
+            transactions = self.env['account.move.line'].search([
+                ('account_id', 'in', all_account_ids),
+                ('company_id', '=', company_id),
+                ('move_id.state', '=', 'posted'),
+                ('date', '>=', date_limit)
+            ], order='date desc')
+            
+            # Prepare account data
+            accounts_data = []
+            for config in active_configs:
+                accounts_data.append({
+                    'id': config.id,
+                    'display_name': config.display_name,
+                    'account_ids': config.account_ids.ids,
+                    'sequence': config.sequence,
+                    'active': config.active,
+                    'company_id': config.company_id.id,
+                    'account_codes': config.account_codes,
+                    'account_names': config.account_names
+                })
+            
+            # Prepare transaction data
+            transactions_data = []
+            for transaction in transactions:
+                transactions_data.append({
+                    'id': transaction.id,
+                    'account_id': transaction.account_id.id,
+                    'date': transaction.date.isoformat(),
+                    'debit': float(transaction.debit),
+                    'credit': float(transaction.credit),
+                    'ref': transaction.ref or '',
+                    'name': transaction.name or '',
+                    'move_name': transaction.move_id.name or ''
+                })
+            
+            return {
+                'success': True,
+                'data': {
+                    'accounts': accounts_data,
+                    'transactions': transactions_data
+                },
+                'meta': {
+                    'loaded_at': datetime.now().isoformat(),
+                    'transaction_count': len(transactions_data),
+                    'accounts_count': len(accounts_data),
+                    'date_range': {
+                        'from': date_limit.isoformat(),
+                        'to': datetime.now().date().isoformat()
+                    },
+                    'message': f'Loaded {len(accounts_data)} account groups with {len(transactions_data)} transactions'
+                }
+            }
+            
+        except Exception as e:
+            _logger = logging.getLogger(__name__)
+            _logger.error(f"Error loading complete dashboard data: {str(e)}")
+            
+            return {
+                'success': False,
+                'error': {
+                    'message': str(e),
+                    'type': 'backend_error'
+                },
+                'data': {
+                    'accounts': [],
+                    'transactions': []
+                },
+                'meta': {
+                    'loaded_at': datetime.now().isoformat(),
+                    'transaction_count': 0,
+                    'accounts_count': 0
+                }
+            }
