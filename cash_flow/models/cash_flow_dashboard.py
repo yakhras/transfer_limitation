@@ -1,7 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 import json
-import logging
 from datetime import datetime, timedelta
 from collections import defaultdict
 
@@ -9,33 +8,20 @@ from collections import defaultdict
 class CashFlowDashboard(models.Model):
     _name = 'cash.flow.dashboard'
     _description = 'Cash Flow Dashboard'
-    _order = 'sequence, account_codes'
+    _order = 'account_code'
 
-    # Basic fields - UPDATED for multiple accounts
+    # Basic fields
     company_id = fields.Many2one('res.company', string='Company', required=True, 
                                 default=lambda self: self.env.company)
+    account_id = fields.Many2one('account.account', string='Account', required=True,
+                                domain="[('company_id', '=', company_id)]")
+    account_code = fields.Char(related='account_id.code', string='Account Code', store=True)
+    account_name = fields.Char(related='account_id.name', string='Account Name', store=True)
     
-    # ADDED: Link to configuration record
-    config_id = fields.Many2one('cash.flow.config', string='Configuration', required=True,
-                               ondelete='cascade')
+    # Display name from configuration (custom label or account name)
+    display_name = fields.Char(string='Display Name', compute='_compute_display_name_from_config')
     
-    # CHANGED: From Many2one to Many2many
-    account_ids = fields.Many2many(
-        'account.account', 
-        string='Accounts', 
-        required=True,
-        domain="[('company_id', '=', company_id)]"
-    )
-    
-    # CHANGED: Now computed from multiple accounts
-    account_codes = fields.Char(string='Account Codes', compute='_compute_account_info', store=True)
-    account_names = fields.Char(string='Account Names', compute='_compute_account_info', store=True)
-    
-    # Display name from configuration (custom label)
-    display_name = fields.Char(string='Display Name', related='config_id.display_name', store=True)
-    sequence = fields.Integer(string='Sequence', related='config_id.sequence', store=True)
-    
-    # Computed balance field - UPDATED for multiple accounts aggregation
+    # Computed balance field - REMOVED store=True to allow context-based filtering
     current_balance = fields.Monetary(
         string='Current Balance', 
         compute='_compute_current_balance',
@@ -64,31 +50,12 @@ class CashFlowDashboard(models.Model):
     
     # Chart data for dashboard_graph widget (following Odoo pattern)
     kanban_dashboard_graph = fields.Text(compute='_kanban_dashboard_graph')
-    
-    # ADDED: Individual account balances for form view
-    individual_balances = fields.Text(
-        string='Individual Account Balances',
-        compute='_compute_individual_balances'
-    )
 
     # Add SQL constraints for company consistency
     _sql_constraints = [
-        ('unique_config_company', 'unique(config_id, company_id)', 
-         'Dashboard record must be unique per configuration and company!'),
+        ('unique_account_company', 'unique(account_id, company_id)', 
+         'Dashboard record must be unique per account and company!'),
     ]
-
-    @api.depends('account_ids')
-    def _compute_account_info(self):
-        """Compute account codes and names from selected accounts"""
-        for record in self:
-            if record.account_ids:
-                # Sort accounts by code for consistent display
-                sorted_accounts = record.account_ids.sorted('code')
-                record.account_codes = ', '.join(sorted_accounts.mapped('code'))
-                record.account_names = ', '.join(sorted_accounts.mapped('name'))
-            else:
-                record.account_codes = ''
-                record.account_names = ''
 
     @api.model
     def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
@@ -104,99 +71,57 @@ class CashFlowDashboard(models.Model):
             
         return super(CashFlowDashboard, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
 
-    @api.depends('account_ids', 'company_id')
-    def _compute_current_balance(self):
-        """Compute aggregated current balance for all selected accounts with date filtering support"""
+    @api.depends('account_id', 'company_id')
+    def _compute_display_name_from_config(self):
+        """Get display name from configuration (custom label or account name)"""
         for record in self:
-            if record.account_ids and record.company_id:
-                total_balance = 0.0
+            if record.account_id and record.company_id:
+                # Find corresponding configuration record
+                config = self.env['cash.flow.config'].search([
+                    ('account_id', '=', record.account_id.id),
+                    ('company_id', '=', record.company_id.id),
+                    ('active', '=', True)
+                ], limit=1)
                 
-                # Calculate balance for each account
-                for account in record.account_ids:
-                    # Base domain for filtering account move lines
-                    domain = [
-                        ('account_id', '=', account.id),
-                        ('company_id', '=', record.company_id.id),
-                        ('move_id.state', '=', 'posted')  # Only posted journal entries
-                    ]
-                    
-                    # Add date filtering from context (if provided by search view)
-                    date_from = self.env.context.get('date_from')
-                    date_to = self.env.context.get('date_to')
-                    
-                    if date_from:
-                        domain.append(('date', '>=', date_from))
-                    if date_to:
-                        domain.append(('date', '<=', date_to))
-                    
-                    # Search for account move lines with the filtered domain
-                    account_moves = self.env['account.move.line'].search(domain)
-                    
-                    # Calculate balance (debit - credit for asset accounts, credit - debit for liability/equity)
-                    debit_total = sum(account_moves.mapped('debit'))
-                    credit_total = sum(account_moves.mapped('credit'))
-                    account_balance = debit_total - credit_total
-                    
-                    total_balance += account_balance
+                if config:
+                    record.display_name = config.display_name
+                else:
+                    # Fallback to account name if no config found
+                    record.display_name = record.account_name
+            else:
+                record.display_name = record.account_name or ''
+
+    @api.depends('account_id', 'company_id')
+    def _compute_current_balance(self):
+        """Compute current balance for each account with date filtering support"""
+        for record in self:
+            if record.account_id and record.company_id:
+                # Base domain for filtering account move lines
+                domain = [
+                    ('account_id', '=', record.account_id.id),
+                    ('company_id', '=', record.company_id.id),
+                    ('move_id.state', '=', 'posted')  # Only posted journal entries
+                ]
                 
-                record.current_balance = total_balance
+                # Add date filtering from context (if provided by search view)
+                date_from = self.env.context.get('date_from')
+                date_to = self.env.context.get('date_to')
+                
+                if date_from:
+                    domain.append(('date', '>=', date_from))
+                if date_to:
+                    domain.append(('date', '<=', date_to))
+                
+                # Search for account move lines with the filtered domain
+                account_moves = self.env['account.move.line'].search(domain)
+                
+                # Calculate balance (debit - credit for asset accounts, credit - debit for liability/equity)
+                debit_total = sum(account_moves.mapped('debit'))
+                credit_total = sum(account_moves.mapped('credit'))
+                record.current_balance = debit_total - credit_total
+                
             else:
                 record.current_balance = 0.0
-
-    @api.depends('account_ids', 'company_id')
-    def _compute_individual_balances(self):
-        """Compute individual balances for each account for form view display"""
-        for record in self:
-            if record.account_ids and record.company_id:
-                balances_data = []
-                
-                for account in record.account_ids.sorted('code'):
-                    # Base domain for filtering account move lines
-                    domain = [
-                        ('account_id', '=', account.id),
-                        ('company_id', '=', record.company_id.id),
-                        ('move_id.state', '=', 'posted')
-                    ]
-                    
-                    # Add date filtering from context (if provided)
-                    date_from = self.env.context.get('date_from')
-                    date_to = self.env.context.get('date_to')
-                    
-                    if date_from:
-                        domain.append(('date', '>=', date_from))
-                    if date_to:
-                        domain.append(('date', '<=', date_to))
-                    
-                    # Calculate individual account balance
-                    account_moves = self.env['account.move.line'].search(domain)
-                    debit_total = sum(account_moves.mapped('debit'))
-                    credit_total = sum(account_moves.mapped('credit'))
-                    account_balance = debit_total - credit_total
-                    
-                    # Format balance for display
-                    try:
-                        if record.currency_id:
-                            if hasattr(record.currency_id, 'format'):
-                                formatted_balance = record.currency_id.format(account_balance)
-                            else:
-                                symbol = getattr(record.currency_id, 'symbol', '') or getattr(record.currency_id, 'name', '')
-                                formatted_balance = f"{symbol} {account_balance:,.2f}".strip()
-                        else:
-                            formatted_balance = f"{account_balance:,.2f}"
-                    except Exception:
-                        formatted_balance = f"{account_balance:,.2f}"
-                    
-                    balances_data.append({
-                        'code': account.code,
-                        'name': account.name,
-                        'balance': account_balance,
-                        'formatted_balance': formatted_balance
-                    })
-                
-                # Store as JSON for easy access in form view
-                record.individual_balances = json.dumps(balances_data)
-            else:
-                record.individual_balances = json.dumps([])
 
     @api.depends('current_balance', 'currency_id')
     def _compute_balance_display(self):
@@ -238,11 +163,11 @@ class CashFlowDashboard(models.Model):
             else:
                 record.balance_color = 'blue'
 
-    @api.depends('account_ids', 'company_id')
+    @api.depends('account_id', 'company_id')
     def _kanban_dashboard_graph(self):
         """Generate chart data for dashboard_graph widget (following Odoo pattern)"""
         for record in self:
-            if not record.account_ids or not record.company_id:
+            if not record.account_id or not record.company_id:
                 record.kanban_dashboard_graph = False
                 continue
                 
@@ -265,8 +190,8 @@ class CashFlowDashboard(models.Model):
             if (date_to - date_from).days > 90:
                 date_from = date_to - timedelta(days=90)
             
-            # Get daily balances for the date range - UPDATED for multiple accounts
-            daily_balances = record._get_daily_balances_multiple_accounts(date_from, date_to)
+            # Get daily balances for the date range
+            daily_balances = record._get_daily_balances(date_from, date_to)
             
             # Prepare chart data following Odoo pattern
             values = []
@@ -290,20 +215,20 @@ class CashFlowDashboard(models.Model):
             chart_data = [{
                 'values': values,
                 'title': 'Cash Flow Trend',
-                'key': record.display_name or record.account_codes
+                'key': record.display_name or record.account_code
             }]
             
             # Store as JSON for dashboard_graph widget
             record.kanban_dashboard_graph = json.dumps(chart_data)
 
-    def _get_daily_balances_multiple_accounts(self, date_from, date_to):
-        """Calculate daily running balances for multiple accounts within date range"""
-        if not self.account_ids or not self.company_id:
+    def _get_daily_balances(self, date_from, date_to):
+        """Calculate daily running balances for the account within date range"""
+        if not self.account_id or not self.company_id:
             return {}
         
-        # Get all move lines for all accounts up to date_to (to calculate running balance)
+        # Get all move lines for this account up to date_to (to calculate running balance)
         domain = [
-            ('account_id', 'in', self.account_ids.ids),
+            ('account_id', '=', self.account_id.id),
             ('company_id', '=', self.company_id.id),
             ('move_id.state', '=', 'posted'),
             ('date', '<=', date_to.strftime('%Y-%m-%d'))
@@ -358,6 +283,142 @@ class CashFlowDashboard(models.Model):
         return daily_balances
 
     @api.model
+    def get_complete_dashboard_data(self):
+        """
+        New method for OWL frontend - returns all data needed for dashboard
+        """
+        try:
+            # Get current company
+            company_id = self.env.company.id
+            
+            # Get date filter from context
+            date_from = self.env.context.get('date_from')
+            date_to = self.env.context.get('date_to')
+            
+            # Get active configurations for this company (ordered by sequence)
+            config_model = self.env['cash.flow.config']
+            active_configs = config_model.search([
+                ('company_id', '=', company_id),
+                ('active', '=', True)
+            ], order='sequence, account_code')
+            
+            if not active_configs:
+                # Try auto-suggestion
+                try:
+                    created_configs = config_model.auto_suggest_setup(company_id)
+                    if created_configs:
+                        active_configs = created_configs
+                    else:
+                        return {
+                            'success': False,
+                            'error': {
+                                'message': 'No cash flow configuration found. Please configure accounts first.',
+                                'code': 'NO_CONFIG'
+                            }
+                        }
+                except Exception as e:
+                    return {
+                        'success': False,
+                        'error': {
+                            'message': f'Failed to auto-configure accounts: {str(e)}',
+                            'code': 'AUTO_CONFIG_FAILED'
+                        }
+                    }
+            
+            # Prepare account configurations data
+            accounts_data = []
+            all_account_ids = set()
+            
+            for config in active_configs:
+                account_ids = [config.account_id.id]  # For now, each config maps to one account
+                all_account_ids.update(account_ids)
+                
+                accounts_data.append({
+                    'id': config.id,
+                    'display_name': config.display_name,
+                    'account_ids': account_ids,
+                    'sequence': config.sequence,
+                    'active': config.active
+                })
+            
+            # Get all transactions for the accounts with date filtering
+            transaction_domain = [
+                ('account_id', 'in', list(all_account_ids)),
+                ('company_id', '=', company_id),
+                ('move_id.state', '=', 'posted')
+            ]
+            
+            # Apply date filters if provided
+            if date_from:
+                transaction_domain.append(('date', '>=', date_from))
+            if date_to:
+                transaction_domain.append(('date', '<=', date_to))
+            
+            # Fetch all relevant move lines
+            move_lines = self.env['account.move.line'].search(
+                transaction_domain,
+                order='account_id, date'
+            )
+            
+            # Prepare transactions data
+            transactions_data = []
+            for line in move_lines:
+                transactions_data.append({
+                    'id': line.id,
+                    'account_id': line.account_id.id,
+                    'date': line.date.strftime('%Y-%m-%d'),
+                    'debit': float(line.debit),
+                    'credit': float(line.credit),
+                    'name': line.name or '',
+                    'ref': line.ref or '',
+                    'move_name': line.move_id.name or ''
+                })
+            
+            # Determine filter info for response
+            filter_info = {}
+            if date_from or date_to:
+                filter_info = {
+                    'date_from': date_from,
+                    'date_to': date_to,
+                    'filtered': True
+                }
+            else:
+                filter_info = {
+                    'date_from': None,
+                    'date_to': None,
+                    'filtered': False
+                }
+            
+            # Success response with data
+            return {
+                'success': True,
+                'data': {
+                    'accounts': accounts_data,
+                    'transactions': transactions_data,
+                    'filter': filter_info
+                },
+                'meta': {
+                    'company_id': company_id,
+                    'accounts_count': len(accounts_data),
+                    'transactions_count': len(transactions_data),
+                    'message': f'Loaded {len(accounts_data)} accounts with {len(transactions_data)} transactions',
+                    'timestamp': datetime.now().isoformat()
+                }
+            }
+            
+        except Exception as e:
+            # Error response
+            import traceback
+            return {
+                'success': False,
+                'error': {
+                    'message': str(e),
+                    'code': 'GENERAL_ERROR',
+                    'traceback': traceback.format_exc() if self.env.user.has_group('base.group_system') else None
+                }
+            }
+
+    @api.model
     def create_dashboard_records(self, company_id=None):
         """Create dashboard records based on configuration (Legacy - now automatic)"""
         # This method is now legacy since dashboard records are automatically 
@@ -403,7 +464,7 @@ class CashFlowDashboard(models.Model):
         active_configs = config_model.search([
             ('company_id', '=', company_id),
             ('active', '=', True)
-        ], order='sequence, account_codes')
+        ], order='sequence, account_code')
         
         if not active_configs:
             # No configuration, return empty or auto-suggest
@@ -414,22 +475,21 @@ class CashFlowDashboard(models.Model):
         for config in active_configs:
             # Search for existing dashboard record for this company
             dashboard_record = self.search([
-                ('config_id', '=', config.id),
+                ('account_id', '=', config.account_id.id),
                 ('company_id', '=', company_id)
             ], limit=1)
             
             if not dashboard_record:
                 dashboard_record = self.create({
-                    'config_id': config.id,
-                    'account_ids': [(6, 0, config.account_ids.ids)],
+                    'account_id': config.account_id.id,
                     'company_id': company_id,
                 })
             
             dashboard_data.append({
                 'id': dashboard_record.id,
-                'account_codes': dashboard_record.account_codes,
-                'account_names': dashboard_record.account_names,
-                'display_name': dashboard_record.display_name,
+                'account_code': config.account_code,
+                'account_name': config.account_name,
+                'display_name': dashboard_record.display_name or config.display_name,  # Use dashboard's computed display_name with fallback
                 'current_balance': dashboard_record.current_balance,
                 'balance_display': dashboard_record.balance_display,
                 'balance_color': dashboard_record.balance_color,
@@ -466,12 +526,13 @@ class CashFlowDashboard(models.Model):
         
         # Clean up dashboard records that no longer have configuration
         all_configs = config_model.search([('active', '=', True)])
-        configured_config_ids = [config.id for config in all_configs]
+        configured_accounts = [(config.account_id.id, config.company_id.id) for config in all_configs]
         
         # Find dashboard records that don't have corresponding active configuration
         all_dashboard_records = self.search([])
         for dashboard_record in all_dashboard_records:
-            if dashboard_record.config_id.id not in configured_config_ids:
+            key = (dashboard_record.account_id.id, dashboard_record.company_id.id)
+            if key not in configured_accounts:
                 dashboard_record.unlink()  # Remove orphaned dashboard records
 
     def get_filtered_balance_info(self):
@@ -480,510 +541,12 @@ class CashFlowDashboard(models.Model):
         result = {}
         for record in self:
             result[record.id] = {
-                'account_codes': record.account_codes,
+                'account_code': record.account_code,
                 'display_name': record.display_name,
                 'current_balance': record.current_balance,
                 'balance_display': record.balance_display,
                 'balance_color': record.balance_color,
-                'individual_balances': json.loads(record.individual_balances) if record.individual_balances else [],
                 'date_from': self.env.context.get('date_from'),
                 'date_to': self.env.context.get('date_to'),
             }
         return result
-
-    def get_individual_balances_list(self):
-        """Get individual account balances as a list for form view"""
-        self.ensure_one()
-        if self.individual_balances:
-            return json.loads(self.individual_balances)
-        return []
-
-    @api.model
-    def get_filtered_dashboard_data(self, date_from=None, date_to=None, period_type='all'):
-        """
-        SIMPLE APPROACH: Get dashboard data with direct date arguments
-        No complex context handling - just direct filtering
-        """
-        company_id = self.env.company.id
-        
-        # Debug logging
-        _logger = logging.getLogger(__name__)
-        _logger.info(f"SIMPLE Dashboard Data Request - Period: {period_type}, From: {date_from}, To: {date_to}")
-        
-        # Get active configurations
-        config_model = self.env['cash.flow.config']
-        active_configs = config_model.search([
-            ('company_id', '=', company_id),
-            ('active', '=', True)
-        ], order='sequence, account_codes')
-        
-        if not active_configs:
-            return []
-        
-        dashboard_data = []
-        
-        for config in active_configs:
-            try:
-                # Get or create dashboard record
-                dashboard_record = self.search([
-                    ('config_id', '=', config.id),
-                    ('company_id', '=', company_id)
-                ], limit=1)
-                
-                if not dashboard_record:
-                    dashboard_record = self.create({
-                        'config_id': config.id,
-                        'account_ids': [(6, 0, config.account_ids.ids)],
-                        'company_id': company_id,
-                    })
-                
-                # DIRECT CALCULATION - No context tricks
-                current_balance = self._calculate_balance_direct(
-                    config.account_ids.ids, date_from, date_to, company_id
-                )
-                
-                # Format balance
-                balance_display = self._format_balance_simple(current_balance, dashboard_record.currency_id)
-                balance_color = 'green' if current_balance > 0 else ('red' if current_balance < 0 else 'blue')
-                
-                # Simple chart data
-                chart_data = self._get_simple_chart_data(
-                    config.account_ids.ids, date_from, date_to, company_id
-                )
-                
-                # Individual balances for form view
-                individual_balances = self._get_individual_balances_direct(
-                    config.account_ids, date_from, date_to, company_id
-                )
-                
-                account_data = {
-                    'id': dashboard_record.id,
-                    'account_codes': dashboard_record.account_codes,
-                    'account_names': dashboard_record.account_names,
-                    'display_name': dashboard_record.display_name,
-                    'current_balance': current_balance,
-                    'balance_display': balance_display,
-                    'balance_color': balance_color,
-                    'chart_data': chart_data,
-                    'individual_balances': json.dumps(individual_balances),
-                    'period_info': {
-                        'period_type': period_type,
-                        'date_from': date_from,
-                        'date_to': date_to,
-                        'period_label': self._format_period_label(period_type, date_from, date_to)
-                    }
-                }
-                
-                dashboard_data.append(account_data)
-                _logger.info(f"Processed {config.display_name}: Balance {current_balance}")
-                
-            except Exception as e:
-                _logger.error(f"Error processing config {config.id}: {str(e)}")
-                continue
-        
-        return dashboard_data
-
-    def _calculate_balance_direct(self, account_ids, date_from, date_to, company_id):
-        """Direct balance calculation with date filtering"""
-        if not account_ids:
-            return 0.0
-        
-        # Simple domain
-        domain = [
-            ('account_id', 'in', account_ids),
-            ('company_id', '=', company_id),
-            ('move_id.state', '=', 'posted')
-        ]
-        
-        # Add date filters
-        if date_from:
-            domain.append(('date', '>=', date_from))
-        if date_to:
-            domain.append(('date', '<=', date_to))
-        
-        # Get lines and calculate
-        move_lines = self.env['account.move.line'].search(domain)
-        total_debit = sum(move_lines.mapped('debit'))
-        total_credit = sum(move_lines.mapped('credit'))
-        
-        return total_debit - total_credit
-
-    def _format_balance_simple(self, balance, currency):
-        """Simple balance formatting"""
-        if currency:
-            try:
-                symbol = getattr(currency, 'symbol', '') or getattr(currency, 'name', '')
-                return f"{symbol} {balance:,.2f}".strip()
-            except:
-                return f"{balance:,.2f}"
-        return f"{balance:,.2f}"
-
-    def _get_simple_chart_data(self, account_ids, date_from, date_to, company_id):
-        """Simple chart data - just a few points"""
-        if not account_ids or not date_from or not date_to:
-            return []
-        
-        try:
-            start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
-            end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
-            
-            # Simple approach: 5 evenly spaced points
-            chart_data = []
-            date_diff = (end_date - start_date).days
-            
-            if date_diff <= 0:
-                return []
-            
-            interval = max(1, date_diff // 4)  # 5 points max
-            
-            for i in range(5):
-                check_date = start_date + timedelta(days=i * interval)
-                if check_date > end_date:
-                    check_date = end_date
-                
-                balance = self._calculate_balance_direct(
-                    account_ids, date_from, check_date.strftime('%Y-%m-%d'), company_id
-                )
-                
-                chart_data.append({
-                    'label': check_date.strftime('%b %d'),
-                    'value': float(balance)
-                })
-                
-                if check_date >= end_date:
-                    break
-            
-            return chart_data
-            
-        except Exception as e:
-            return []
-
-    def _get_individual_balances_direct(self, account_ids, date_from, date_to, company_id):
-        """Get individual account balances directly"""
-        balances = []
-        
-        for account in account_ids:
-            balance = self._calculate_balance_direct([account.id], date_from, date_to, company_id)
-            
-            # Format balance
-            formatted_balance = self._format_balance_simple(balance, account.company_id.currency_id)
-            
-            balances.append({
-                'code': account.code,
-                'name': account.name,
-                'balance': balance,
-                'formatted_balance': formatted_balance
-            })
-        
-        return balances
-
-    def _get_period_chart_data(self, dashboard_record, period_type, date_from, date_to):
-        """
-        Generate chart data for specific period with proper sorting
-        Returns array of {label, value} for Chart.js
-        """
-        if not dashboard_record.account_ids:
-            return []
-        
-        # Parse and validate dates
-        try:
-            if date_from and date_to:
-                start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
-                end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
-            else:
-                # Default date range for "all" period (last 30 days for chart display)
-                end_date = datetime.now().date()
-                start_date = end_date - timedelta(days=30)
-        except (ValueError, TypeError):
-            # If date parsing fails, use default range
-            end_date = datetime.now().date()
-            start_date = end_date - timedelta(days=30)
-        
-        # Ensure we don't have too many data points for performance
-        date_diff = (end_date - start_date).days
-        
-        if date_diff <= 0:
-            return []
-        elif date_diff <= 7:
-            # Daily data for week or less
-            return self._get_daily_chart_data_fixed(dashboard_record, start_date, end_date)
-        elif date_diff <= 90:
-            # Every 2-3 days for up to 3 months
-            return self._get_interval_chart_data_fixed(dashboard_record, start_date, end_date, 3)
-        else:
-            # Weekly data for longer periods
-            return self._get_weekly_chart_data_fixed(dashboard_record, start_date, end_date)
-
-    def _get_daily_chart_data_fixed(self, dashboard_record, start_date, end_date):
-        """Get daily chart data points with proper date sorting"""
-        daily_balances = dashboard_record._get_daily_balances_multiple_accounts(start_date, end_date)
-        
-        chart_data = []
-        current_date = start_date
-        
-        while current_date <= end_date:
-            balance = daily_balances.get(current_date, 0.0)
-            chart_data.append({
-                'label': current_date.strftime('%b %d'),  # Better format: "Jan 15"
-                'value': float(balance),
-                'date': current_date.strftime('%Y-%m-%d')  # For sorting
-            })
-            current_date += timedelta(days=1)
-        
-        # Sort by date to ensure proper order
-        chart_data.sort(key=lambda x: x['date'])
-        
-        # Remove date field (only used for sorting)
-        for item in chart_data:
-            del item['date']
-        
-        return chart_data
-
-    def _get_weekly_chart_data_fixed(self, dashboard_record, start_date, end_date):
-        """Get weekly aggregated chart data points with proper sorting"""
-        chart_data = []
-        current_date = start_date
-        week_number = 1
-        
-        while current_date <= end_date:
-            week_end = min(current_date + timedelta(days=6), end_date)
-            
-            # Get balance at end of week
-            weekly_balances = dashboard_record._get_daily_balances_multiple_accounts(week_end, week_end)
-            balance = weekly_balances.get(week_end, 0.0)
-            
-            # Better label format for weeks
-            if current_date.month == week_end.month:
-                label = f"Week {current_date.strftime('%b %d')}"
-            else:
-                label = f"Week {week_number}"
-            
-            chart_data.append({
-                'label': label,
-                'value': float(balance),
-                'date': current_date.strftime('%Y-%m-%d')  # For sorting
-            })
-            
-            current_date = week_end + timedelta(days=1)
-            week_number += 1
-        
-        # Sort by date
-        chart_data.sort(key=lambda x: x['date'])
-        
-        # Remove date field
-        for item in chart_data:
-            del item['date']
-        
-        return chart_data
-
-    def _get_interval_chart_data_fixed(self, dashboard_record, start_date, end_date, interval_days):
-        """Get chart data at specified day intervals with proper sorting"""
-        chart_data = []
-        current_date = start_date
-        
-        while current_date <= end_date:
-            # Get balance for this date
-            daily_balances = dashboard_record._get_daily_balances_multiple_accounts(current_date, current_date)
-            balance = daily_balances.get(current_date, 0.0)
-            
-            chart_data.append({
-                'label': current_date.strftime('%b %d'),  # "Jan 15" format
-                'value': float(balance),
-                'date': current_date.strftime('%Y-%m-%d')  # For sorting
-            })
-            
-            current_date += timedelta(days=interval_days)
-        
-        # Always include the end date if not already included
-        if current_date - timedelta(days=interval_days) < end_date:
-            daily_balances = dashboard_record._get_daily_balances_multiple_accounts(end_date, end_date)
-            balance = daily_balances.get(end_date, 0.0)
-            chart_data.append({
-                'label': end_date.strftime('%b %d'),
-                'value': float(balance),
-                'date': end_date.strftime('%Y-%m-%d')
-            })
-        
-        # Sort by date to ensure proper chronological order
-        chart_data.sort(key=lambda x: x['date'])
-        
-        # Remove duplicate dates and date field
-        seen_dates = set()
-        final_data = []
-        for item in chart_data:
-            if item['date'] not in seen_dates:
-                seen_dates.add(item['date'])
-                del item['date']
-                final_data.append(item)
-        
-        return final_data
-
-    def _format_period_label(self, period_type, date_from, date_to):
-        """Format period label for display"""
-        if period_type == 'all':
-            return 'All Time'
-        elif period_type == 'custom' and date_from and date_to:
-            return f"{date_from} to {date_to}"
-        elif date_from and date_to:
-            try:
-                start = datetime.strptime(date_from, '%Y-%m-%d').strftime('%b %d')
-                end = datetime.strptime(date_to, '%Y-%m-%d').strftime('%b %d, %Y')
-                return f"{start} - {end}"
-            except (ValueError, TypeError):
-                return period_type.replace('_', ' ').title()
-        else:
-            return period_type.replace('_', ' ').title()
-
-    @api.model
-    def get_period_summary(self, period_type='all', date_from=None, date_to=None):
-        """
-        Get summary statistics for the selected period
-        """
-        company_id = self.env.company.id
-        
-        # Set context for date filtering
-        context = {'date_from': date_from, 'date_to': date_to}
-        
-        # Get all dashboard records with context
-        dashboard_records = self.with_context(context).search([
-            ('company_id', '=', company_id)
-        ])
-        
-        if not dashboard_records:
-            return {
-                'total_balance': 0.0,
-                'positive_accounts': 0,
-                'negative_accounts': 0,
-                'total_accounts': 0,
-                'period_label': self._format_period_label(period_type, date_from, date_to)
-            }
-        
-        total_balance = sum(record.current_balance for record in dashboard_records)
-        positive_accounts = len([r for r in dashboard_records if r.current_balance > 0])
-        negative_accounts = len([r for r in dashboard_records if r.current_balance < 0])
-        
-        return {
-            'total_balance': total_balance,
-            'positive_accounts': positive_accounts,
-            'negative_accounts': negative_accounts,
-            'total_accounts': len(dashboard_records),
-            'period_label': self._format_period_label(period_type, date_from, date_to)
-        }
-    
-
-
-    
-
-    @api.model
-    def get_complete_dashboard_data(self):
-        """
-        Load all dashboard data in one efficient call
-        For initial data loading and refresh
-        """
-        company_id = self.env.company.id
-        
-        try:
-            # Get active account configurations
-            config_model = self.env['cash.flow.config']
-            active_configs = config_model.search([
-                ('company_id', '=', company_id),
-                ('active', '=', True)
-            ], order='sequence, account_codes')
-            
-            if not active_configs:
-                return {
-                    'success': True,
-                    'data': {
-                        'accounts': [],
-                        'transactions': []
-                    },
-                    'meta': {
-                        'loaded_at': datetime.now().isoformat(),
-                        'transaction_count': 0,
-                        'accounts_count': 0,
-                        'message': 'No active account configurations found'
-                    }
-                }
-            
-            # Collect all account IDs from all configurations
-            all_account_ids = []
-            for config in active_configs:
-                all_account_ids.extend(config.account_ids.ids)
-            
-            # Remove duplicates
-            all_account_ids = list(set(all_account_ids))
-            
-            # Get ALL transactions for these accounts (NO date limit for consistency)
-            transactions = self.env['account.move.line'].search([
-                ('account_id', 'in', all_account_ids),
-                ('company_id', '=', company_id),
-                ('move_id.state', '=', 'posted')
-                # REMOVED: ('date', '>=', date_limit)  # Load ALL transactions for accuracy
-            ], order='date desc')
-            
-            # Prepare account data
-            accounts_data = []
-            for config in active_configs:
-                accounts_data.append({
-                    'id': config.id,
-                    'display_name': config.display_name,
-                    'account_ids': config.account_ids.ids,
-                    'sequence': config.sequence,
-                    'active': config.active,
-                    'company_id': config.company_id.id,
-                    'account_codes': config.account_codes,
-                    'account_names': config.account_names
-                })
-            
-            # Prepare transaction data
-            transactions_data = []
-            for transaction in transactions:
-                transactions_data.append({
-                    'id': transaction.id,
-                    'account_id': transaction.account_id.id,
-                    'date': transaction.date.isoformat(),
-                    'debit': float(transaction.debit),
-                    'credit': float(transaction.credit),
-                    'ref': transaction.ref or '',
-                    'name': transaction.name or '',
-                    'move_name': transaction.move_id.name or ''
-                })
-            
-            return {
-                'success': True,
-                'data': {
-                    'accounts': accounts_data,
-                    'transactions': transactions_data
-                },
-                'meta': {
-                    'loaded_at': datetime.now().isoformat(),
-                    'transaction_count': len(transactions_data),
-                    'accounts_count': len(accounts_data),
-                    'date_range': {
-                        'from': min(t.date for t in transactions).isoformat() if transactions else datetime.now().date().isoformat(),
-                        'to': max(t.date for t in transactions).isoformat() if transactions else datetime.now().date().isoformat()
-                    },
-                    'message': f'Loaded {len(accounts_data)} account groups with {len(transactions_data)} transactions'
-                }
-            }
-            
-        except Exception as e:
-            _logger = logging.getLogger(__name__)
-            _logger.error(f"Error loading complete dashboard data: {str(e)}")
-            
-            return {
-                'success': False,
-                'error': {
-                    'message': str(e),
-                    'type': 'backend_error'
-                },
-                'data': {
-                    'accounts': [],
-                    'transactions': []
-                },
-                'meta': {
-                    'loaded_at': datetime.now().isoformat(),
-                    'transaction_count': 0,
-                    'accounts_count': 0
-                }
-            }
