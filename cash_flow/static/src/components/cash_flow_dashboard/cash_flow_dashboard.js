@@ -8,7 +8,6 @@ const { Component, useState } = owl
 class BalanceChart extends Component {
     setup() {
         this.accountData = this.props.accountData || {}
-        console.log('BalanceChart component created for:', this.accountData.display_name)
         
         this.chartId = `chart_${Math.random().toString(36).substr(2, 9)}`
         this.chartInstance = null
@@ -19,12 +18,10 @@ class BalanceChart extends Component {
 
     async loadChart() {
         try {
-            console.log('BalanceChart: Loading Chart.js...')
             
             if (typeof Chart === 'undefined') {
                 await this.loadChartJS()
             } else {
-                console.log('BalanceChart: Chart.js already available')
                 this.renderChart()
             }
             
@@ -46,7 +43,6 @@ class BalanceChart extends Component {
             // Check if script already exists
             const existingScript = document.querySelector('script[src*="chart.umd.min.js"]')
             if (existingScript) {
-                console.log('BalanceChart: Chart.js script already exists, waiting...')
                 setTimeout(() => {
                     if (typeof Chart !== 'undefined') {
                         this.renderChart()
@@ -62,7 +58,6 @@ class BalanceChart extends Component {
             const script = document.createElement('script')
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js'
             script.onload = () => {
-                console.log('BalanceChart: Chart.js loaded successfully')
                 setTimeout(() => {
                     this.renderChart()
                     resolve()
@@ -81,12 +76,10 @@ class BalanceChart extends Component {
     renderChart() {
         const canvas = document.getElementById(this.chartId)
         if (!canvas) {
-            console.log("BalanceChart: Canvas not found with ID:", this.chartId)
             return
         }
         
         if (typeof Chart === 'undefined') {
-            console.log("BalanceChart: Chart.js not available")
             this.showChartError()
             return
         }
@@ -96,7 +89,6 @@ class BalanceChart extends Component {
             this.chartInstance.destroy()
         }
 
-        console.log('BalanceChart: Rendering chart for:', this.accountData.display_name)
 
         // Get chart data - now works with updated backend model
         const chartData = this.getChartData()
@@ -153,7 +145,6 @@ class BalanceChart extends Component {
                 }
             })
             
-            console.log('BalanceChart: Chart rendered successfully')
         } catch (error) {
             console.error('BalanceChart: Error creating chart:', error)
             this.showChartError()
@@ -246,10 +237,7 @@ BalanceChart.template = "BalanceChart"
 
 export class CashFlowDashboard extends Component {
     setup() {
-        console.log('Enhanced Cash Flow Dashboard loading with updated backend model...')
         
-        // ADDED: Debug initial setup
-        console.log('=== SETUP DEBUG ===')
         
         // Reactive State
         this.state = useState({
@@ -268,7 +256,6 @@ export class CashFlowDashboard extends Component {
             negativeAccounts: 0
         })
         
-        console.log('Initial state.period after useState:', this.state.period)
         
         // Period options
         this.periodOptions = [
@@ -283,8 +270,6 @@ export class CashFlowDashboard extends Component {
             { value: 'custom', label: 'Custom Range' }
         ]
         
-        console.log('Period options defined:', this.periodOptions)
-        console.log('=== END SETUP DEBUG ===')
         
         // Services
         this.orm = useService("orm")
@@ -304,9 +289,6 @@ export class CashFlowDashboard extends Component {
     }
 
     async loadDashboardData() {
-        console.log('=== LOAD DASHBOARD DATA DEBUG ===')
-        console.log('State period at load time:', this.state.period)
-        console.log('Loading dashboard data with updated backend model...')
         
         this.state.loading = true
         this.state.error = null
@@ -314,7 +296,6 @@ export class CashFlowDashboard extends Component {
         try {
             // Get date range context
             const dateRange = this.getDateRange()
-            console.log('Date range:', dateRange)
             
             // Call the updated backend method
             const accountsData = await this.orm.call(
@@ -328,7 +309,6 @@ export class CashFlowDashboard extends Component {
                 }
             )
 
-            console.log('Received accounts data:', accountsData)
             
             // Process the response with null checks
             if (Array.isArray(accountsData)) {
@@ -373,21 +353,14 @@ export class CashFlowDashboard extends Component {
             this.state.loading = false
         }
         
-        console.log('=== END LOAD DASHBOARD DATA DEBUG ===')
     }
 
     getDateRange() {
         const today = new Date()
         const period = this.state.period
         
-        console.log('=== FRONTEND DATE RANGE DEBUG ===')
-        console.log('Period:', period)
-        console.log('Today:', today)
-        console.log('Custom Date From:', this.state.customDateFrom)
-        console.log('Custom Date To:', this.state.customDateTo)
         
         if (period === 'all') {
-            console.log('Period is ALL - returning null dates')
             return { date_from: null, date_to: null }
         }
         
@@ -396,80 +369,61 @@ export class CashFlowDashboard extends Component {
                 date_from: this.state.customDateFrom,
                 date_to: this.state.customDateTo
             }
-            console.log('Period is CUSTOM - returning:', result)
             return result
         }
 
         // FIXED: Use formatLocalDate instead of toISOString() to avoid timezone issues
         let date_from, date_to = this.formatLocalDate(today)
-        console.log('Initial date_to (today):', date_to)
         
         switch(period) {
             case 'this_week':
-                console.log('Calculating this_week...')
                 const startOfWeek = new Date(today)
                 startOfWeek.setDate(today.getDate() - today.getDay() + 1)
                 date_from = this.formatLocalDate(startOfWeek)
-                console.log('this_week date_from:', date_from)
                 break
                 
             case 'this_month':
-                console.log('Calculating this_month...')
                 const monthStart = new Date(today.getFullYear(), today.getMonth(), 1)
                 date_from = this.formatLocalDate(monthStart)
-                console.log('this_month date_from:', date_from)
                 break
                 
             case 'last_month':
-                console.log('Calculating last_month...')
                 const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1)
                 const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0)
                 date_from = this.formatLocalDate(lastMonthStart)
                 date_to = this.formatLocalDate(lastMonthEnd)
-                console.log('last_month date_from:', date_from, 'date_to:', date_to)
                 break
                 
             case 'this_quarter':
-                console.log('Calculating this_quarter...')
                 const quarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 1)
                 date_from = this.formatLocalDate(quarterStart)
-                console.log('this_quarter date_from:', date_from)
                 break
                 
             case 'last_quarter':
-                console.log('Calculating last_quarter...')
                 const lastQuarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3 - 3, 1)
                 const lastQuarterEnd = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 0)
                 date_from = this.formatLocalDate(lastQuarterStart)
                 date_to = this.formatLocalDate(lastQuarterEnd)
-                console.log('last_quarter date_from:', date_from, 'date_to:', date_to)
                 break
                 
             case 'this_year':
-                console.log('Calculating this_year...')
                 const yearStart = new Date(today.getFullYear(), 0, 1)
                 date_from = this.formatLocalDate(yearStart)
-                console.log('this_year date_from:', date_from)
                 break
                 
             case 'last_year':
-                console.log('Calculating last_year...')
                 const lastYearStart = new Date(today.getFullYear() - 1, 0, 1)
                 const lastYearEnd = new Date(today.getFullYear() - 1, 11, 31)
                 date_from = this.formatLocalDate(lastYearStart)
                 date_to = this.formatLocalDate(lastYearEnd)
-                console.log('last_year date_from:', date_from, 'date_to:', date_to)
                 break
                 
             default:
-                console.log('Unknown period type:', period)
                 date_from = null
                 date_to = null
         }
         
         const result = { date_from, date_to }
-        console.log('Final getDateRange result:', result)
-        console.log('=== END FRONTEND DATE RANGE DEBUG ===')
         
         return result
     }
@@ -496,27 +450,13 @@ export class CashFlowDashboard extends Component {
     }
 
     async onPeriodChange(event) {
-        console.log('=== PERIOD CHANGE DETAILED DEBUG ===')
-        console.log('Event object:', event)
-        console.log('Event target:', event.target)
-        console.log('Event target value:', event.target.value) 
-        console.log('Event target selectedIndex:', event.target.selectedIndex)
-        console.log('Selected option text:', event.target.options[event.target.selectedIndex].text)
-        console.log('State period BEFORE any change:', this.state.period)
-        
-        // Check if t-model updated the state
-        console.log('Checking if t-model updated state automatically...')
         setTimeout(() => {
-            console.log('State period 10ms later:', this.state.period)
         }, 10)
         
         // Manual state update to test
         const selectedValue = event.target.value
-        console.log('Manually setting state.period to:', selectedValue)
         this.state.period = selectedValue
-        console.log('State period AFTER manual update:', this.state.period)
         
-        console.log('Period changed to:', this.state.period)
         
         // Show/hide custom date inputs
         this.state.showCustomDateInputs = (this.state.period === 'custom')
@@ -529,22 +469,16 @@ export class CashFlowDashboard extends Component {
         
         // Reload data if not custom or if custom dates are set
         if (this.state.period !== 'custom') {
-            console.log('Calling loadDashboardData because period is not custom...')
             await this.loadDashboardData()
         }
         
-        console.log('=== END PERIOD CHANGE DEBUG ===')
     }
 
     async onCustomDateChange() {
-        console.log('=== CUSTOM DATE CHANGE DEBUG ===')
-        console.log('Custom date from:', this.state.customDateFrom)
-        console.log('Custom date to:', this.state.customDateTo)
         
         // Validate date range
         if (this.state.customDateFrom && this.state.customDateTo) {
             if (this.state.customDateFrom > this.state.customDateTo) {
-                console.log('Invalid date range: start date is after end date')
                 this.notification.add("Start date cannot be after end date", {
                     type: "warning",
                     title: "Invalid Date Range"
@@ -552,18 +486,14 @@ export class CashFlowDashboard extends Component {
                 return
             }
             
-            console.log('Both dates provided and valid, reloading dashboard data...')
             // Reload data when both dates are set
             await this.loadDashboardData()
         } else {
-            console.log('Waiting for both dates to be provided...')
         }
         
-        console.log('=== END CUSTOM DATE CHANGE DEBUG ===')
     }
 
     async refreshData() {
-        console.log('Refreshing dashboard data...')
         await this.loadDashboardData()
     }
 
