@@ -142,11 +142,8 @@ class BalanceChart extends Component {
                             }
                         },
                         y: { 
-                            display: false,           // Hide the axis
-                            beginAtZero: false,       // Don't start from zero
-                            grid: { display: false }, // Hide grid lines  
-                            ticks: { display: false }, // Hide tick marks
-                            border: { display: false } // Hide border
+                            display: false, 
+                            beginAtZero: false 
                         }
                     },
                     interaction: { 
