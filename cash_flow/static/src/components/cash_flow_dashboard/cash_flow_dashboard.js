@@ -295,6 +295,14 @@ export class CashFlowDashboard extends Component {
         this.loadDashboardData()
     }
 
+    // ADDED: Helper function to format dates without timezone issues
+    formatLocalDate(date) {
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, '0')
+        const day = String(date.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+    }
+
     async loadDashboardData() {
         console.log('=== LOAD DASHBOARD DATA DEBUG ===')
         console.log('State period at load time:', this.state.period)
@@ -392,7 +400,8 @@ export class CashFlowDashboard extends Component {
             return result
         }
 
-        let date_from, date_to = today.toISOString().split('T')[0]
+        // FIXED: Use formatLocalDate instead of toISOString() to avoid timezone issues
+        let date_from, date_to = this.formatLocalDate(today)
         console.log('Initial date_to (today):', date_to)
         
         switch(period) {
@@ -400,28 +409,30 @@ export class CashFlowDashboard extends Component {
                 console.log('Calculating this_week...')
                 const startOfWeek = new Date(today)
                 startOfWeek.setDate(today.getDate() - today.getDay() + 1)
-                date_from = startOfWeek.toISOString().split('T')[0]
+                date_from = this.formatLocalDate(startOfWeek)
                 console.log('this_week date_from:', date_from)
                 break
                 
             case 'this_month':
                 console.log('Calculating this_month...')
-                date_from = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
+                const monthStart = new Date(today.getFullYear(), today.getMonth(), 1)
+                date_from = this.formatLocalDate(monthStart)
                 console.log('this_month date_from:', date_from)
                 break
                 
             case 'last_month':
                 console.log('Calculating last_month...')
-                const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
-                date_from = lastMonth.toISOString().split('T')[0]
-                date_to = new Date(today.getFullYear(), today.getMonth(), 0).toISOString().split('T')[0]
+                const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+                const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0)
+                date_from = this.formatLocalDate(lastMonthStart)
+                date_to = this.formatLocalDate(lastMonthEnd)
                 console.log('last_month date_from:', date_from, 'date_to:', date_to)
                 break
                 
             case 'this_quarter':
                 console.log('Calculating this_quarter...')
                 const quarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 1)
-                date_from = quarterStart.toISOString().split('T')[0]
+                date_from = this.formatLocalDate(quarterStart)
                 console.log('this_quarter date_from:', date_from)
                 break
                 
@@ -429,21 +440,24 @@ export class CashFlowDashboard extends Component {
                 console.log('Calculating last_quarter...')
                 const lastQuarterStart = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3 - 3, 1)
                 const lastQuarterEnd = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 0)
-                date_from = lastQuarterStart.toISOString().split('T')[0]
-                date_to = lastQuarterEnd.toISOString().split('T')[0]
+                date_from = this.formatLocalDate(lastQuarterStart)
+                date_to = this.formatLocalDate(lastQuarterEnd)
                 console.log('last_quarter date_from:', date_from, 'date_to:', date_to)
                 break
                 
             case 'this_year':
                 console.log('Calculating this_year...')
-                date_from = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]
+                const yearStart = new Date(today.getFullYear(), 0, 1)
+                date_from = this.formatLocalDate(yearStart)
                 console.log('this_year date_from:', date_from)
                 break
                 
             case 'last_year':
                 console.log('Calculating last_year...')
-                date_from = new Date(today.getFullYear() - 1, 0, 1).toISOString().split('T')[0]
-                date_to = new Date(today.getFullYear() - 1, 11, 31).toISOString().split('T')[0]
+                const lastYearStart = new Date(today.getFullYear() - 1, 0, 1)
+                const lastYearEnd = new Date(today.getFullYear() - 1, 11, 31)
+                date_from = this.formatLocalDate(lastYearStart)
+                date_to = this.formatLocalDate(lastYearEnd)
                 console.log('last_year date_from:', date_from, 'date_to:', date_to)
                 break
                 
@@ -523,11 +537,14 @@ export class CashFlowDashboard extends Component {
     }
 
     async onCustomDateChange() {
-        console.log('Custom dates changed:', this.state.customDateFrom, this.state.customDateTo)
+        console.log('=== CUSTOM DATE CHANGE DEBUG ===')
+        console.log('Custom date from:', this.state.customDateFrom)
+        console.log('Custom date to:', this.state.customDateTo)
         
         // Validate date range
         if (this.state.customDateFrom && this.state.customDateTo) {
             if (this.state.customDateFrom > this.state.customDateTo) {
+                console.log('Invalid date range: start date is after end date')
                 this.notification.add("Start date cannot be after end date", {
                     type: "warning",
                     title: "Invalid Date Range"
@@ -535,9 +552,14 @@ export class CashFlowDashboard extends Component {
                 return
             }
             
+            console.log('Both dates provided and valid, reloading dashboard data...')
             // Reload data when both dates are set
             await this.loadDashboardData()
+        } else {
+            console.log('Waiting for both dates to be provided...')
         }
+        
+        console.log('=== END CUSTOM DATE CHANGE DEBUG ===')
     }
 
     async refreshData() {
