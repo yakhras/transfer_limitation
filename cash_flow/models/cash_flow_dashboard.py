@@ -872,6 +872,8 @@ class CashFlowDashboard(models.Model):
     
 
 
+    
+
     @api.model
     def get_complete_dashboard_data(self):
         """
@@ -911,14 +913,12 @@ class CashFlowDashboard(models.Model):
             # Remove duplicates
             all_account_ids = list(set(all_account_ids))
             
-            # Get ALL transactions for these accounts (reasonable date range)
-            date_limit = datetime.now().date() - timedelta(days=365)  # Last year
-            
+            # Get ALL transactions for these accounts (NO date limit for consistency)
             transactions = self.env['account.move.line'].search([
                 ('account_id', 'in', all_account_ids),
                 ('company_id', '=', company_id),
-                ('move_id.state', '=', 'posted'),
-                ('date', '>=', date_limit)
+                ('move_id.state', '=', 'posted')
+                # REMOVED: ('date', '>=', date_limit)  # Load ALL transactions for accuracy
             ], order='date desc')
             
             # Prepare account data
@@ -960,8 +960,8 @@ class CashFlowDashboard(models.Model):
                     'transaction_count': len(transactions_data),
                     'accounts_count': len(accounts_data),
                     'date_range': {
-                        'from': date_limit.isoformat(),
-                        'to': datetime.now().date().isoformat()
+                        'from': min(t.date for t in transactions).isoformat() if transactions else datetime.now().date().isoformat(),
+                        'to': max(t.date for t in transactions).isoformat() if transactions else datetime.now().date().isoformat()
                     },
                     'message': f'Loaded {len(accounts_data)} account groups with {len(transactions_data)} transactions'
                 }

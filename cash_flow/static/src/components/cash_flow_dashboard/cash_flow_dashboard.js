@@ -100,16 +100,41 @@ class CashFlowDataManager {
 
     calculateAccountBalance(accountConfig) {
         let totalBalance = 0.0
+        const debugInfo = {
+            accountConfig: accountConfig.displayName,
+            accountIds: Array.from(accountConfig.accountIds),
+            transactionDetails: []
+        }
 
         for (const accountId of accountConfig.accountIds) {
             const transactionIds = this.accountTransactions.get(accountId) || new Set()
+            let accountTotal = 0.0
             
             for (const transactionId of transactionIds) {
                 const transaction = this.transactions.get(transactionId)
                 if (transaction) {
-                    totalBalance += transaction.balance
+                    accountTotal += transaction.balance
+                    debugInfo.transactionDetails.push({
+                        id: transaction.id,
+                        accountId: transaction.accountId,
+                        date: transaction.date.toISOString().split('T')[0],
+                        debit: transaction.debit,
+                        credit: transaction.credit,
+                        balance: transaction.balance
+                    })
                 }
             }
+            
+            totalBalance += accountTotal
+            console.log(`Account ${accountId} balance: ${accountTotal} (${transactionIds.size} transactions)`)
+        }
+
+        console.log(`Total balance for ${accountConfig.displayName}: ${totalBalance}`)
+        console.log('Debug info:', debugInfo)
+        
+        // Store debug info for inspection
+        if (window.cashFlowDebug) {
+            window.cashFlowDebug.lastCalculation = debugInfo
         }
 
         return totalBalance
@@ -150,6 +175,12 @@ export class CashFlowDashboard extends Component {
         
         // Data Manager (Frontend Model)
         this.dataManager = new CashFlowDataManager()
+        
+        // Make dataManager globally accessible for debugging
+        window.cashFlowDebug = {
+            dataManager: this.dataManager,
+            component: this
+        }
         
         // Reactive State
         this.state = useState({
