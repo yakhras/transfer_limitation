@@ -248,6 +248,9 @@ export class CashFlowDashboard extends Component {
     setup() {
         console.log('Enhanced Cash Flow Dashboard loading with updated backend model...')
         
+        // ADDED: Debug initial setup
+        console.log('=== SETUP DEBUG ===')
+        
         // Reactive State
         this.state = useState({
             accounts: [],
@@ -265,6 +268,8 @@ export class CashFlowDashboard extends Component {
             negativeAccounts: 0
         })
         
+        console.log('Initial state.period after useState:', this.state.period)
+        
         // Period options
         this.periodOptions = [
             { value: 'all', label: 'All Time' },
@@ -278,6 +283,9 @@ export class CashFlowDashboard extends Component {
             { value: 'custom', label: 'Custom Range' }
         ]
         
+        console.log('Period options defined:', this.periodOptions)
+        console.log('=== END SETUP DEBUG ===')
+        
         // Services
         this.orm = useService("orm")
         this.actionService = useService("action")
@@ -288,7 +296,10 @@ export class CashFlowDashboard extends Component {
     }
 
     async loadDashboardData() {
+        console.log('=== LOAD DASHBOARD DATA DEBUG ===')
+        console.log('State period at load time:', this.state.period)
         console.log('Loading dashboard data with updated backend model...')
+        
         this.state.loading = true
         this.state.error = null
 
@@ -353,9 +364,9 @@ export class CashFlowDashboard extends Component {
         } finally {
             this.state.loading = false
         }
+        
+        console.log('=== END LOAD DASHBOARD DATA DEBUG ===')
     }
-
-// Add this to your cash_flow_dashboard.js - JUST THE getDateRange METHOD WITH DEBUG
 
     getDateRange() {
         const today = new Date()
@@ -470,7 +481,27 @@ export class CashFlowDashboard extends Component {
         this.state.negativeAccounts = negativeAccounts
     }
 
-    async onPeriodChange() {
+    async onPeriodChange(event) {
+        console.log('=== PERIOD CHANGE DETAILED DEBUG ===')
+        console.log('Event object:', event)
+        console.log('Event target:', event.target)
+        console.log('Event target value:', event.target.value) 
+        console.log('Event target selectedIndex:', event.target.selectedIndex)
+        console.log('Selected option text:', event.target.options[event.target.selectedIndex].text)
+        console.log('State period BEFORE any change:', this.state.period)
+        
+        // Check if t-model updated the state
+        console.log('Checking if t-model updated state automatically...')
+        setTimeout(() => {
+            console.log('State period 10ms later:', this.state.period)
+        }, 10)
+        
+        // Manual state update to test
+        const selectedValue = event.target.value
+        console.log('Manually setting state.period to:', selectedValue)
+        this.state.period = selectedValue
+        console.log('State period AFTER manual update:', this.state.period)
+        
         console.log('Period changed to:', this.state.period)
         
         // Show/hide custom date inputs
@@ -484,8 +515,11 @@ export class CashFlowDashboard extends Component {
         
         // Reload data if not custom or if custom dates are set
         if (this.state.period !== 'custom') {
+            console.log('Calling loadDashboardData because period is not custom...')
             await this.loadDashboardData()
         }
+        
+        console.log('=== END PERIOD CHANGE DEBUG ===')
     }
 
     async onCustomDateChange() {
