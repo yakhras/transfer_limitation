@@ -14,7 +14,7 @@
                     <!-- CHANGED: Multiple accounts with tags widget -->
                     <field name="account_ids" widget="many2many_tags" options="{'no_create': True}"/>
                     <!-- CHANGED: Now computed fields -->
-                    <field name="account_codes" readonly="1"/>
+                    <field name="account_code" readonly="1"/>
                     <field name="account_names" readonly="1"/>
                     <!-- CHANGED: Now required -->
                     <field name="custom_label" required="1" placeholder="Required: Enter display name for this account group"/>
@@ -58,7 +58,7 @@
                                        widget="many2many_tags" 
                                        options="{'no_create': True}"
                                        help="Select one or more accounts to monitor"/>
-                                <field name="account_codes" readonly="1"/>
+                                <field name="account_code" readonly="1"/>
                                 <field name="account_names" readonly="1"/>
                                 <field name="suggested_type" readonly="1"/>
                             </group>
@@ -97,7 +97,7 @@
             <field name="arch" type="xml">
                 <search string="Cash Flow Configuration">
                     <!-- UPDATED: Search by multiple account codes -->
-                    <field name="account_codes"/>
+                    <field name="account_code"/>
                     <field name="account_names"/>
                     <field name="custom_label"/>
                     <field name="display_name"/>
@@ -126,7 +126,7 @@
                 <kanban create="true" delete="true" class="o_kanban_mobile">
                     <field name="id"/>
                     <field name="company_id"/>
-                    <field name="account_codes"/>
+                    <field name="account_code"/>
                     <field name="account_names"/>
                     <field name="display_name"/>
                     <field name="active"/>
@@ -141,7 +141,7 @@
                                     <div class="o_kanban_card_header_title">
                                         <div class="o_primary">
                                             <!-- UPDATED: Show account codes instead of single code -->
-                                            <strong t-esc="record.account_codes.value"/>
+                                            <strong t-esc="record.account_code.value"/>
                                         </div>
                                         <div class="text-muted">
                                             <t t-esc="record.display_name.value"/>
