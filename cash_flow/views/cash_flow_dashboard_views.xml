@@ -590,7 +590,7 @@
                     
                     <separator/>
                     
-                    <!-- Balance Filters -->
+                    <!-- Balance Filters - Now with searchable balance_color -->
                     <filter string="Positive Balance" name="positive_balance" 
                             domain="[('balance_color', '=', 'green')]"
                             help="Show only accounts with positive balances"/>
@@ -603,11 +603,17 @@
                             domain="[('balance_color', '=', 'blue')]"
                             help="Show only accounts with zero balances"/>
                     
+                    <!-- Company Filters for Multi-Company -->
+                    <filter string="Current Company" name="current_company" 
+                            domain="[('company_id', '=', company_id)]"
+                            help="Show only current company records" groups="base.group_multi_company"/>
+                    
                     <!-- Group By Section -->
                     <group expand="0" string="Group By">
                         <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
                         <filter string="Configuration" name="config" context="{'group_by': 'config_id'}"/>
-                        <filter string="Balance Status" name="balance_color" context="{'group_by': 'balance_color'}"/>
+                        <filter string="Balance Status" name="balance_status" context="{'group_by': 'balance_color'}"/>
+                        <filter string="Display Order" name="sequence" context="{'group_by': 'sequence'}"/>
                         <filter string="Currency" name="currency" context="{'group_by': 'currency_id'}"/>
                     </group>
                 </search>

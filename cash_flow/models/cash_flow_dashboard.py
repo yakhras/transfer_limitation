@@ -52,7 +52,8 @@ class CashFlowDashboard(models.Model):
         string='Current Balance', 
         compute='_compute_current_balance',
         currency_field='currency_id',
-        help="Aggregated balance from all selected accounts"
+        help="Aggregated balance from all selected accounts",
+        search='_search_current_balance'
     )
     
     # Currency field
@@ -73,7 +74,7 @@ class CashFlowDashboard(models.Model):
         ('green', 'Positive'),
         ('red', 'Negative'),
         ('blue', 'Zero')
-    ], string='Balance Color', compute='_compute_balance_color')
+    ], string='Balance Color', compute='_compute_balance_color', search='_search_balance_color')
     
     # Chart data for dashboard_graph widget (following Odoo pattern)
     kanban_dashboard_graph = fields.Text(compute='_kanban_dashboard_graph')
@@ -156,6 +157,40 @@ class CashFlowDashboard(models.Model):
                 record.current_balance = total_balance
             else:
                 record.current_balance = 0.0
+
+    def _search_current_balance(self, operator, value):
+        """
+        Make current_balance searchable by performing the calculation
+        Note: This method may be performance-intensive for large datasets
+        as it computes balance for all records during search
+        """
+        # Get all dashboard records
+        all_records = self.search([])
+        matching_ids = []
+        
+        for record in all_records:
+            # Force computation of current_balance
+            record._compute_current_balance()
+            balance = record.current_balance
+            
+            # Apply the search operator
+            if operator == '=' and balance == value:
+                matching_ids.append(record.id)
+            elif operator == '!=' and balance != value:
+                matching_ids.append(record.id)
+            elif operator == '>' and balance > value:
+                matching_ids.append(record.id)
+            elif operator == '>=' and balance >= value:
+                matching_ids.append(record.id)
+            elif operator == '<' and balance < value:
+                matching_ids.append(record.id)
+            elif operator == '<=' and balance <= value:
+                matching_ids.append(record.id)
+            elif operator in ('in', 'not in'):
+                if (operator == 'in' and balance in value) or (operator == 'not in' and balance not in value):
+                    matching_ids.append(record.id)
+        
+        return [('id', 'in', matching_ids)]
 
     @api.depends('account_ids', 'company_id')
     def _compute_individual_balances(self):
@@ -251,6 +286,47 @@ class CashFlowDashboard(models.Model):
                 record.balance_color = 'red'
             else:
                 record.balance_color = 'blue'
+
+    def _search_balance_color(self, operator, value):
+        """Make balance_color searchable by translating to current_balance conditions"""
+        if operator not in ('=', '!=', 'in', 'not in'):
+            return []
+        
+        # Convert balance_color values to current_balance conditions
+        if operator == '=' and value == 'green':
+            return [('current_balance', '>', 0)]
+        elif operator == '=' and value == 'red':
+            return [('current_balance', '<', 0)]
+        elif operator == '=' and value == 'blue':
+            return [('current_balance', '=', 0)]
+        elif operator == '!=' and value == 'green':
+            return [('current_balance', '<=', 0)]
+        elif operator == '!=' and value == 'red':
+            return [('current_balance', '>=', 0)]
+        elif operator == '!=' and value == 'blue':
+            return [('current_balance', '!=', 0)]
+        elif operator == 'in' and isinstance(value, list):
+            conditions = []
+            for val in value:
+                if val == 'green':
+                    conditions.append(('current_balance', '>', 0))
+                elif val == 'red':
+                    conditions.append(('current_balance', '<', 0))
+                elif val == 'blue':
+                    conditions.append(('current_balance', '=', 0))
+            return ['|'] * (len(conditions) - 1) + conditions if len(conditions) > 1 else conditions
+        elif operator == 'not in' and isinstance(value, list):
+            conditions = []
+            for val in value:
+                if val == 'green':
+                    conditions.append(('current_balance', '<=', 0))
+                elif val == 'red':
+                    conditions.append(('current_balance', '>=', 0))
+                elif val == 'blue':
+                    conditions.append(('current_balance', '!=', 0))
+            return conditions
+        
+        return []
 
     @api.depends('account_ids', 'company_id')
     def _kanban_dashboard_graph(self):
