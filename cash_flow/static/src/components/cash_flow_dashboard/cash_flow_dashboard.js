@@ -103,7 +103,7 @@ class BalanceChart extends Component {
 
         try {
             this.chartInstance = new Chart(canvas, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: chartData.labels,
                     datasets: [{
