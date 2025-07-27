@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Kanban View for Cash Flow Dashboard -->
+        <record id="view_cash_flow_dashboard_kanban" model="ir.ui.view">
+            <field name="name">cash.flow.dashboard.kanban</field>
+            <field name="model">cash.flow.dashboard</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_dashboard" create="false" edit="false" delete="false">
+                    <field name="id"/>
+                    <field name="company_id"/>
+                    <field name="account_codes"/>
+                    <field name="account_names"/>
+                    <field name="display_name"/>
+                    <field name="current_balance"/>
+                    <field name="balance_display"/>
+                    <field name="balance_color"/>
+                    <field name="currency_id"/>
+                    <field name="kanban_dashboard_graph"/>
+                    
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click" 
+                                 t-att-class="record.balance_color.raw_value == 'green' ? 'border-success' : (record.balance_color.raw_value == 'red' ? 'border-danger' : 'border-info')">
+                                
+                                <div class="o_kanban_card_header">
+                                    <div class="o_kanban_card_header_title">
+                                        <div class="o_primary">
+                                            <strong t-esc="record.account_codes.value"/>
+                                        </div>
+                                        <div class="text-muted">
+                                            <t t-esc="record.display_name.value"/>
+                                        </div>
+                                        <!-- Show company name in multi-company setup -->
+                                        <div class="text-muted small" t-if="record.company_id.value">
+                                            <i class="fa fa-building-o"/> <t t-esc="record.company_id.value"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_kanban_card_content">
+                                    <!-- Balance Display Section - Full Width Top -->
+                                    <div class="row">
+                                        <div class="col-12 col-sm-12 text-center mb-3">
+                                            <h3 class="mb-0" 
+                                                t-att-class="record.balance_color.raw_value == 'green' ? 'text-success' : (record.balance_color.raw_value == 'red' ? 'text-danger' : 'text-info')">
+                                                <t t-esc="record.balance_display.value"/>
+                                            </h3>
+                                            <small class="text-muted">Current Balance</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Chart Section - Full Width Bottom -->
+                                    <div class="row">
+                                        <div class="col-12 col-sm-12">
+                                            <field name="kanban_dashboard_graph" 
+                                                   t-att-graph_type="'line'" 
+                                                   widget="dashboard_graph"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                    <div class="row">
+                                        <div class="col-6 o_kanban_card_manage_section o_kanban_manage_button_section">
+                                            <a class="btn btn-primary btn-sm" name="action_view_account_moves" type="object">
+                                                View Transactions
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </t>
+                    </templates>
+                    
+                    <!-- JavaScript for Chart Rendering -->
+                    <script type="text/javascript">
+                        <![CDATA[
+                        $(document).ready(function() {
+                            console.log('Cash Flow Charts: JavaScript loaded');
+                            console.log('Chart.js available:', typeof Chart !== 'undefined');
+                            
+                            // Function to render charts for all kanban cards
+                            function renderCashFlowCharts() {
+                                console.log('Cash Flow Charts: Starting chart rendering');
+                                
+                                $('.oe_kanban_card').each(function() {
+                                    var card = $(this);
+                                    var chartDataRaw = card.data('chart');
+                                    var recordId = card.data('record-id');
+                                    
+                                    console.log('Processing card:', recordId, 'Data:', chartDataRaw);
+                                    
+                                    if (chartDataRaw && recordId) {
+                                        try {
+                                            // Parse the dashboard_graph format data
+                                            var dashboardData = JSON.parse(chartDataRaw);
+                                            var chartId = 'chart_' + recordId;
+                                            var canvas = document.getElementById(chartId);
+                                            
+                                            console.log('Chart ID:', chartId, 'Canvas found:', !!canvas);
+                                            
+                                            if (canvas && dashboardData.length > 0 && dashboardData[0].values) {
+                                                // Destroy existing chart if exists
+                                                var existingChart = Chart.getChart(canvas);
+                                                if (existingChart) {
+                                                    existingChart.destroy();
+                                                }
+                                                
+                                                // Convert dashboard_graph format to Chart.js format
+                                                var values = dashboardData[0].values;
+                                                var labels = values.map(function(item) { return item.label; });
+                                                var data = values.map(function(item) { return item.value; });
+                                                
+                                                // Determine chart color based on balance trend
+                                                var borderColor = '#3498db';
+                                                var backgroundColor = 'rgba(52, 152, 219, 0.1)';
+                                                
+                                                console.log('Creating chart with data points:', data.length);
+                                                
+                                                // Test if Chart.js is available
+                                                if (typeof Chart === 'undefined') {
+                                                    console.error('Chart.js is not loaded!');
+                                                    return;
+                                                }
+                                                
+                                                // Create new chart
+                                                var chart = new Chart(canvas, {
+                                                    type: 'line',
+                                                    data: {
+                                                        labels: labels,
+                                                        datasets: [{
+                                                            data: data,
+                                                            borderColor: borderColor,
+                                                            backgroundColor: backgroundColor,
+                                                            borderWidth: 2,
+                                                            fill: true,
+                                                            tension: 0.3,
+                                                            pointRadius: 2,
+                                                            pointHoverRadius: 4
+                                                        }]
+                                                    },
+                                                    options: {
+                                                        responsive: true,
+                                                        maintainAspectRatio: false,
+                                                        plugins: {
+                                                            legend: {
+                                                                display: false
+                                                            },
+                                                            tooltip: {
+                                                                mode: 'index',
+                                                                intersect: false,
+                                                                callbacks: {
+                                                                    title: function(context) {
+                                                                        return 'Date: ' + context[0].label;
+                                                                    },
+                                                                    label: function(context) {
+                                                                        return 'Balance: ' + context.parsed.y.toLocaleString();
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        scales: {
+                                                            x: {
+                                                                display: true,
+                                                                grid: {
+                                                                    display: false
+                                                                },
+                                                                ticks: {
+                                                                    maxTicksLimit: 5
+                                                                }
+                                                            },
+                                                            y: {
+                                                                display: false,
+                                                                beginAtZero: false
+                                                            }
+                                                        },
+                                                        interaction: {
+                                                            intersect: false,
+                                                            mode: 'index'
+                                                        }
+                                                    }
+                                                });
+                                                
+                                                console.log('Chart created successfully for record:', recordId);
+                                            } else {
+                                                console.log('Skipping chart - missing canvas or data:', {
+                                                    canvas: !!canvas,
+                                                    dataLength: dashboardData.length,
+                                                    hasValues: dashboardData[0] && dashboardData[0].values
+                                                });
+                                            }
+                                        } catch (e) {
+                                            console.error('Error rendering chart for record ' + recordId + ':', e);
+                                        }
+                                    } else {
+                                        console.log('Skipping card - missing data or record ID:', {
+                                            hasData: !!chartDataRaw,
+                                            recordId: recordId
+                                        });
+                                    }
+                                });
+                                
+                                console.log('Cash Flow Charts: Finished processing all cards');
+                            }
+                            
+                            // Initial chart rendering with longer delay
+                            setTimeout(renderCashFlowCharts, 500);
+                            
+                            // Re-render charts when kanban is refreshed
+                            $(document).on('DOMNodeInserted', '.o_kanban_view', function() {
+                                setTimeout(renderCashFlowCharts, 500);
+                            });
+                        });
+                        ]]>
+                    </script>
+                    
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Tree View for Cash Flow Dashboard -->
+        <record id="view_cash_flow_dashboard_tree" model="ir.ui.view">
+            <field name="name">cash.flow.dashboard.tree</field>
+            <field name="model">cash.flow.dashboard</field>
+            <field name="arch" type="xml">
+                <tree string="Cash Flow Accounts" create="false" edit="false" delete="false">
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="account_codes"/>
+                    <field name="display_name"/>
+                    <field name="current_balance"/>
+                    <field name="balance_display"/>
+                    <field name="currency_id"/>
+                </tree>
+            </field>
+        </record>
+
+<!-- Form View for Cash Flow Dashboard - OPTION A: Period-Specific Data -->
+        <record id="view_cash_flow_dashboard_form" model="ir.ui.view">
+            <field name="name">cash.flow.dashboard.form</field>
+            <field name="model">cash.flow.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="Cash Flow Account Group" create="false" edit="false" delete="false">
+                    <sheet>
+                        <!-- Period Information Header -->
+                        <div class="alert alert-info" style="margin-bottom: 20px;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h4 class="alert-heading mb-1">
+                                        <i class="fa fa-calendar text-primary"/> Period-Specific View
+                                    </h4>
+                                    <p class="mb-0">
+                                        <strong>Period:</strong> <span id="period_label_display">All Time</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <span class="badge bg-primary" style="font-size: 0.9em;">
+                                        Filtered Data
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                            <h2 class="text-muted">
+                                <field name="account_codes" readonly="1"/>
+                            </h2>
+                        </div>
+                        
+                        <group>
+                            <group string="Account Group Information">
+                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                                <field name="config_id" readonly="1"/>
+                                <field name="currency_id" readonly="1"/>
+                                <field name="sequence" readonly="1" string="Display Order"/>
+                            </group>
+                            <group string="Balance for Selected Period">
+                                <field name="current_balance" readonly="1" string="Total Balance"/>
+                                <field name="balance_display" readonly="1" string="Formatted Balance"/>
+                                <field name="balance_color" readonly="1" widget="badge" 
+                                       decoration-success="balance_color == 'green'"
+                                       decoration-danger="balance_color == 'red'"
+                                       decoration-info="balance_color == 'blue'"/>
+                            </group>
+                        </group>
+
+                        <!-- Accounts Included Section -->
+                        <group string="Accounts in This Group" col="1">
+                            <field name="account_ids" readonly="1" nolabel="1">
+                                <tree create="false" edit="false" delete="false">
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </tree>
+                            </field>
+                        </group>
+
+                        <!-- Individual Account Balances Section -->
+                        <div class="oe_horizontal_separator">
+                            <strong>Individual Account Balances for Selected Period</strong>
+                        </div>
+                        
+                        <div class="o_group">
+                            <div id="individual_balances_container">
+                                <div class="alert alert-info" id="loading_balances">
+                                    <i class="fa fa-spinner fa-spin"/> Loading individual account balances for selected period...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Period Summary Statistics -->
+                        <div class="oe_horizontal_separator mt-4">
+                            <strong>Period Summary</strong>
+                        </div>
+                        
+                        <div class="row" id="period_summary_section">
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="card bg-light text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-primary" id="total_balance_display">₺0</h5>
+                                        <p class="card-text small text-muted">Total Balance</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="card bg-light text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-info" id="account_count_display">0</h5>
+                                        <p class="card-text small text-muted">Total Accounts</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="card bg-light text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-success" id="positive_accounts_display">0</h5>
+                                        <p class="card-text small text-muted">Positive Balances</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <div class="card bg-light text-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-danger" id="negative_accounts_display">0</h5>
+                                        <p class="card-text small text-muted">Negative Balances</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </sheet>
+                    
+                    <!-- Enhanced JavaScript for Option A Implementation -->
+                    <script type="text/javascript">
+                        <![CDATA[
+                        $(document).ready(function() {
+                            console.log('Form view loading with Option A implementation...');
+                            
+                            // Get context information from URL parameters
+                            var urlParams = new URLSearchParams(window.location.search);
+                            var periodType = urlParams.get('period_type') || 'all';
+                            var dateFrom = urlParams.get('date_from');
+                            var dateTo = urlParams.get('date_to');
+                            
+                            console.log('Form context:', { periodType, dateFrom, dateTo });
+                            
+                            // Update period display
+                            updatePeriodDisplay(periodType, dateFrom, dateTo);
+                            
+                            // Load and display individual balances
+                            loadIndividualBalances();
+                            
+                            // Load period summary
+                            loadPeriodSummary();
+                        });
+                        
+                        function updatePeriodDisplay(periodType, dateFrom, dateTo) {
+                            var periodLabel = formatPeriodLabel(periodType, dateFrom, dateTo);
+                            $('#period_label_display').text(periodLabel);
+                            
+                            if (periodType !== 'all') {
+                                $('.alert-info').removeClass('alert-info').addClass('alert-warning');
+                                $('#period_label_display').parent().html(
+                                    '<strong>Filtered Period:</strong> <span class="text-primary">' + periodLabel + '</span>'
+                                );
+                            }
+                        }
+                        
+                        function formatPeriodLabel(periodType, dateFrom, dateTo) {
+                            if (periodType === 'all') {
+                                return 'All Time';
+                            } else if (periodType === 'custom' && dateFrom && dateTo) {
+                                return dateFrom + ' to ' + dateTo;
+                            } else if (dateFrom && dateTo) {
+                                try {
+                                    var start = new Date(dateFrom).toLocaleDateString('en-US', { 
+                                        month: 'short', day: 'numeric' 
+                                    });
+                                    var end = new Date(dateTo).toLocaleDateString('en-US', { 
+                                        month: 'short', day: 'numeric', year: 'numeric' 
+                                    });
+                                    return start + ' - ' + end;
+                                } catch (e) {
+                                    return dateFrom + ' to ' + dateTo;
+                                }
+                            } else {
+                                return periodType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            }
+                        }
+                        
+                        function loadIndividualBalances() {
+                            var individualBalancesField = $('input[name="individual_balances"]');
+                            if (individualBalancesField.length > 0) {
+                                var balancesData = individualBalancesField.val();
+                                console.log('Individual balances data:', balancesData);
+                                
+                                if (balancesData) {
+                                    try {
+                                        var balances = JSON.parse(balancesData);
+                                        var container = $('#individual_balances_container');
+                                        var html = '';
+                                        
+                                        if (balances.length > 0) {
+                                            html += '<div class="row">';
+                                            balances.forEach(function(balance) {
+                                                var colorClass = balance.balance > 0 ? 'border-success' : 
+                                                               (balance.balance < 0 ? 'border-danger' : 'border-secondary');
+                                                var textClass = balance.balance > 0 ? 'text-success' : 
+                                                              (balance.balance < 0 ? 'text-danger' : 'text-secondary');
+                                                
+                                                html += '<div class="col-md-6 col-12 mb-3">';
+                                                html += '<div class="card ' + colorClass + '">';
+                                                html += '<div class="card-header bg-light">';
+                                                html += '<div class="d-flex justify-content-between align-items-center">';
+                                                html += '<h6 class="mb-0 text-primary">' + balance.code + '</h6>';
+                                                html += '<span class="badge bg-light text-dark">Account</span>';
+                                                html += '</div>';
+                                                html += '</div>';
+                                                html += '<div class="card-body">';
+                                                html += '<p class="card-text text-muted small mb-2">' + balance.name + '</p>';
+                                                html += '<h4 class="card-text ' + textClass + ' mb-0">' + balance.formatted_balance + '</h4>';
+                                                html += '</div>';
+                                                html += '</div>';
+                                                html += '</div>';
+                                            });
+                                            html += '</div>';
+                                            
+                                        } else {
+                                            html = '<div class="alert alert-warning">';
+                                            html += '<i class="fa fa-exclamation-triangle"/> ';
+                                            html += 'No individual account data available for the selected period.';
+                                            html += '</div>';
+                                        }
+                                        
+                                        container.html(html);
+                                    } catch (e) {
+                                        console.error('Error parsing individual balances:', e);
+                                        $('#individual_balances_container').html(
+                                            '<div class="alert alert-danger">' +
+                                            '<i class="fa fa-exclamation-circle"/> Error loading individual account balances.' +
+                                            '</div>'
+                                        );
+                                    }
+                                } else {
+                                    $('#individual_balances_container').html(
+                                        '<div class="alert alert-info">' +
+                                        '<i class="fa fa-info-circle"/> No balance data available for the selected period.' +
+                                        '</div>'
+                                    );
+                                }
+                            }
+                        }
+                        
+                        function loadPeriodSummary() {
+                            var balancesField = $('input[name="individual_balances"]').val();
+                            var currentBalance = parseFloat($('span[name="current_balance"]').text()) || 0;
+                            
+                            if (balancesField) {
+                                try {
+                                    var balances = JSON.parse(balancesField);
+                                    var totalBalance = balances.reduce((sum, acc) => sum + acc.balance, 0);
+                                    var positiveCount = balances.filter(acc => acc.balance > 0).length;
+                                    var negativeCount = balances.filter(acc => acc.balance < 0).length;
+                                    var accountCount = balances.length;
+                                    
+                                    $('#total_balance_display').text('₺' + totalBalance.toLocaleString());
+                                    $('#account_count_display').text(accountCount);
+                                    $('#positive_accounts_display').text(positiveCount);
+                                    $('#negative_accounts_display').text(negativeCount);
+                                    
+                                } catch (e) {
+                                    console.error('Error calculating summary:', e);
+                                    // Fallback to current balance display
+                                    $('#total_balance_display').text('₺' + currentBalance.toLocaleString());
+                                    $('#account_count_display').text('N/A');
+                                    $('#positive_accounts_display').text('N/A');
+                                    $('#negative_accounts_display').text('N/A');
+                                }
+                            }
+                        }
+                        ]]>
+                    </script>
+                    
+                    <!-- Hidden field to store individual balances JSON data -->
+                    <field name="individual_balances" invisible="1"/>
+                    
+                </form>
+            </field>
+        </record>
+
+        <!-- Enhanced Search View for Cash Flow Dashboard with Date Filtering -->
+        <record id="view_cash_flow_dashboard_search" model="ir.ui.view">
+            <field name="name">cash.flow.dashboard.search</field>
+            <field name="model">cash.flow.dashboard</field>
+            <field name="arch" type="xml">
+                <search string="Cash Flow Dashboard">
+                    <!-- Field Searches -->
+                    <field name="account_codes"/>
+                    <field name="display_name"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    
+                    <!-- Date Range Fields (Custom Date Selection) -->
+                    <field name="display_name" string="Date From" 
+                           filter_domain="[]" 
+                           context="{'date_from': self}"
+                           widget="date"/>
+                    <field name="display_name" string="Date To" 
+                           filter_domain="[]" 
+                           context="{'date_to': self}"
+                           widget="date"/>
+                    
+                    <!-- Separator -->
+                    <separator/>
+                    
+                    <!-- Preset Date Range Filters -->
+                    <filter string="All Time" name="all_time" 
+                            context="{'date_from': False, 'date_to': False}"
+                            help="Show all historical data"/>
+                    
+                    <separator/>
+                    
+                    <filter string="Today" name="today"
+                            domain="[]"
+                            context="{'date_from': context_today().strftime('%Y-%m-%d'), 'date_to': context_today().strftime('%Y-%m-%d')}"
+                            help="Show today's transactions only"/>
+                    
+                    <filter string="This Week" name="this_week"
+                            domain="[]"
+                            context="{'date_from': (context_today() + relativedelta(weekday=0, days=-6)).strftime('%Y-%m-%d'), 'date_to': context_today().strftime('%Y-%m-%d')}"
+                            help="Show current week transactions (Monday to today)"/>
+                    
+                    <filter string="This Month" name="this_month"
+                            domain="[]"
+                            context="{'date_from': context_today().strftime('%Y-%m-01'), 'date_to': (context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')}"
+                            help="Show current month transactions"/>
+                    
+                    <filter string="This Quarter" name="this_quarter"
+                            domain="[]"
+                            context="{'date_from': (context_today().replace(day=1, month=((context_today().month-1)//3)*3+1)).strftime('%Y-%m-%d'), 'date_to': (context_today().replace(day=1, month=((context_today().month-1)//3)*3+3) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')}"
+                            help="Show current quarter transactions"/>
+                    
+                    <filter string="This Year" name="this_year"
+                            domain="[]"
+                            context="{'date_from': context_today().strftime('%Y-01-01'), 'date_to': context_today().strftime('%Y-12-31')}"
+                            help="Show current year transactions"/>
+                    
+                    <separator/>
+                    
+                    <filter string="Last 30 Days" name="last_30_days"
+                            domain="[]"
+                            context="{'date_from': (context_today() + relativedelta(days=-30)).strftime('%Y-%m-%d'), 'date_to': context_today().strftime('%Y-%m-%d')}"
+                            help="Show last 30 days transactions"/>
+                    
+                    <filter string="Last Month" name="last_month"
+                            domain="[]"
+                            context="{'date_from': (context_today().replace(day=1) + relativedelta(months=-1)).strftime('%Y-%m-%d'), 'date_to': (context_today().replace(day=1) + relativedelta(days=-1)).strftime('%Y-%m-%d')}"
+                            help="Show previous month transactions"/>
+                    
+                    <filter string="Last Quarter" name="last_quarter"
+                            domain="[]"
+                            context="{'date_from': (context_today().replace(day=1, month=((context_today().month-1)//3)*3+1) + relativedelta(months=-3)).strftime('%Y-%m-%d'), 'date_to': (context_today().replace(day=1, month=((context_today().month-1)//3)*3+1) + relativedelta(days=-1)).strftime('%Y-%m-%d')}"
+                            help="Show previous quarter transactions"/>
+                    
+                    <filter string="Last Year" name="last_year"
+                            domain="[]"
+                            context="{'date_from': (context_today() + relativedelta(years=-1)).strftime('%Y-01-01'), 'date_to': (context_today() + relativedelta(years=-1)).strftime('%Y-12-31')}"
+                            help="Show previous year transactions"/>
+                    
+                    <!-- Group By Section -->
+                    <group expand="0" string="Group By">
+                        <filter string="Company" name="company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                        <filter string="Account Code" name="account_codes" context="{'group_by': 'account_codes'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>
