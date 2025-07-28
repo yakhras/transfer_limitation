@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from . import models
-from . import controllers
-from . import wizards
+# from . import controllers
+# from . import wizards
 
 def _post_init_setup_registry(cr, registry):
     """
