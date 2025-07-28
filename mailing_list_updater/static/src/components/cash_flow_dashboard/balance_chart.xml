@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="BalanceChart" owl="1">
+        <div class="balance-chart-container" style="height: 120px;">
+            <canvas t-att-id="chartId" style="width: 100%; height: 100%;"></canvas>
+        </div>
+    </t>
+</templates>

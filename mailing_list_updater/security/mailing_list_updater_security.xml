@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Security Groups -->
+        <record id="group_mailing_list_updater_user" model="res.groups">
+            <field name="name">Mailing List Updater: User</field>
+            <field name="category_id" ref="mass_mailing.module_category_mass_mailing"/>
+            <field name="implied_ids" eval="[(4, ref('mass_mailing.group_mass_mailing_user'))]"/>
+            <field name="comment">Can use mailing list update functionality, create and execute batches, view own operations.</field>
+        </record>
+
+        <record id="group_mailing_list_updater_manager" model="res.groups">
+            <field name="name">Mailing List Updater: Manager</field>
+            <field name="category_id" ref="mass_mailing.module_category_mass_mailing"/>
+            <field name="implied_ids" eval="[(4, ref('group_mailing_list_updater_user')), (4, ref('mass_mailing.group_mass_mailing_manager'))]"/>
+            <field name="comment">Can manage all mailing list update operations, rollback batches, configure registry, view all operations within company.</field>
+        </record>
+
+        <record id="group_mailing_list_updater_admin" model="res.groups">
+            <field name="name">Mailing List Updater: Administrator</field>
+            <field name="category_id" ref="mass_mailing.module_category_mass_mailing"/>
+            <field name="implied_ids" eval="[(4, ref('group_mailing_list_updater_manager')), (4, ref('base.group_system'))]"/>
+            <field name="comment">Full administrative access to mailing list updater, can configure system settings, manage registries across companies.</field>
+        </record>
+
+        <!-- Record Rules for Company-Scoped Data Access -->
+        
+        <!-- Mailing Source Registry: Company-scoped access -->
+        <record id="mailing_source_registry_company_rule" model="ir.rule">
+            <field name="name">Mailing Source Registry: Company Access</field>
+            <field name="model_id" ref="model_mailing_source_registry"/>
+            <field name="domain_force">[('company_id', 'in', [company_id, False])]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="mailing_source_registry_manager_rule" model="ir.rule">
+            <field name="name">Mailing Source Registry: Manager Access</field>
+            <field name="model_id" ref="model_mailing_source_registry"/>
+            <field name="domain_force">[('company_id', 'in', [company_id, False])]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Batch Operations: Users can only access their own company's batches -->
+        <record id="mailing_batch_company_rule" model="ir.rule">
+            <field name="name">Mailing Batch: Company Access</field>
+            <field name="model_id" ref="model_mailing_list_update_batch"/>
+            <field name="domain_force">[('company_id', '=', company_id)]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+        </record>
+
+        <!-- Batch Operations: Users can only modify their own batches -->
+        <record id="mailing_batch_user_rule" model="ir.rule">
+            <field name="name">Mailing Batch: User Modification</field>
+            <field name="model_id" ref="model_mailing_list_update_batch"/>
+            <field name="domain_force">[('company_id', '=', company_id), ('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Batch Operations: Managers can access all company batches -->
+        <record id="mailing_batch_manager_rule" model="ir.rule">
+            <field name="name">Mailing Batch: Manager Access</field>
+            <field name="model_id" ref="model_mailing_list_update_batch"/>
+            <field name="domain_force">[('company_id', '=', company_id)]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Contact Tracking: Company-scoped access -->
+        <record id="mailing_contact_tracking_company_rule" model="ir.rule">
+            <field name="name">Contact Tracking: Company Access</field>
+            <field name="model_id" ref="model_mailing_contact_tracking"/>
+            <field name="domain_force">[('company_id', '=', company_id)]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+        </record>
+
+        <!-- Filter Templates: Users can access their own + public templates in their company -->
+        <record id="mailing_filter_template_user_rule" model="ir.rule">
+            <field name="name">Filter Template: User Access</field>
+            <field name="model_id" ref="model_mailing_filter_template"/>
+            <field name="domain_force">[('company_id', '=', company_id), '|', ('user_id', '=', user.id), ('is_public', '=', True)]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Filter Templates: Users can modify their own templates -->
+        <record id="mailing_filter_template_user_modify_rule" model="ir.rule">
+            <field name="name">Filter Template: User Modification</field>
+            <field name="model_id" ref="model_mailing_filter_template"/>
+            <field name="domain_force">[('company_id', '=', company_id), ('user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Audit Log: Company-scoped read access -->
+        <record id="mailing_audit_company_rule" model="ir.rule">
+            <field name="name">Audit Log: Company Access</field>
+            <field name="model_id" ref="model_mailing_operation_audit"/>
+            <field name="domain_force">[('company_id', '=', company_id)]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Audit Log: Managers can create audit entries -->
+        <record id="mailing_audit_manager_rule" model="ir.rule">
+            <field name="name">Audit Log: Manager Access</field>
+            <field name="model_id" ref="model_mailing_operation_audit"/>
+            <field name="domain_force">[('company_id', '=', company_id)]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Extended Mailing Contact: Inherit existing access rules but add company scope -->
+        <record id="mailing_contact_extended_rule" model="ir.rule">
+            <field name="name">Mailing Contact Extended: Company Scope</field>
+            <field name="model_id" ref="mass_mailing.model_mailing_contact"/>
+            <field name="domain_force">[('company_id', 'in', [company_id, False])]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+        </record>
+
+        <!-- Special Rules for Rollback Operations -->
+        <record id="batch_rollback_time_limit_rule" model="ir.rule">
+            <field name="name">Batch Rollback: Time Limit</field>
+            <field name="model_id" ref="model_mailing_list_update_batch"/>
+            <field name="domain_force">[
+                ('company_id', '=', company_id),
+                ('state', '=', 'completed'),
+                ('is_rolled_back', '=', False),
+                ('create_date', '>=', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'))
+            ]</field>
+            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+            <field name="name">Rollback Access Rule</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Data Access Categories -->
+        <record id="ir_module_category_mailing_list_updater" model="ir.module.category">
+            <field name="name">Mailing List Updater</field>
+            <field name="description">Manage mailing list update operations and batch processing</field>
+            <field name="sequence">15</field>
+        </record>
+
+        <!-- Server Actions for Batch Operations (for UI buttons) -->
+        <record id="action_batch_rollback" model="ir.actions.server">
+            <field name="name">Rollback Batch</field>
+            <field name="model_id" ref="model_mailing_list_update_batch"/>
+            <field name="binding_model_id" ref="model_mailing_list_update_batch"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="groups_id" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
+            <field name="code">
+for record in records:
+    if record.can_rollback:
+        try:
+            result = record.rollback_operation("Manual rollback via UI")
+            if result.get('success'):
+                action = {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Rollback Successful',
+                        'message': f"Rolled back {result.get('contacts_removed', 0)} contacts from batch {record.batch_id}",
+                        'type': 'success',
+                        'sticky': False,
+                    }
+                }
+            else:
+                action = {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Rollback Failed',
+                        'message': result.get('error', 'Unknown error occurred'),
+                        'type': 'danger',
+                        'sticky': True,
+                    }
+                }
+        except Exception as e:
+            action = {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Rollback Error',
+                    'message': str(e),
+                    'type': 'danger',
+                    'sticky': True,
+                }
+            }
+    else:
+        action = {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Rollback Not Available',
+                'message': 'This batch cannot be rolled back (24-hour window expired or already rolled back)',
+                'type': 'warning',
+                'sticky': False,
+            }
+        }
+            </field>
+        </record>
+
+        <!-- Automated Actions for Cleanup -->
+        <record id="ir_cron_cleanup_old_batches" model="ir.cron">
+            <field name="name">Cleanup Old Mailing List Update Data</field>
+            <field name="model_id" ref="model_mailing_list_update_batch"/>
+            <field name="state">code</field>
+            <field name="code">
+# Cleanup old audit logs (keep 1 year)
+audit_model = env['mailing.operation.audit']
+audit_model.cleanup_old_audit_logs(days_to_keep=365)
+
+# Cleanup orphaned contacts (older than 90 days)
+contact_model = env['mailing.contact']
+contact_model.cleanup_orphaned_contacts(days_old=90)
+
+# Cleanup orphaned tracking records (older than 30 days)
+tracking_model = env['mailing.contact.tracking']
+tracking_model.cleanup_orphaned_tracking(days_old=30)
+
+# Cleanup unused filter templates (older than 180 days)
+template_model = env['mailing.filter.template']
+template_model.cleanup_unused_templates(days_unused=180)
+
+# Cleanup stale processing batches (older than 24 hours)
+processor_model = env['mailing.batch.processor']
+processor_model.cleanup_processing_resources(hours_old=24)
+            </field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+    </data>
+</odoo>
