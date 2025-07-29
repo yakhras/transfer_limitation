@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from . import models
-# from . import controllers  # Phase 2
+from . import controllers
 # from . import wizards      # Phase 4
 
 def _post_init_setup_registry(cr, registry):

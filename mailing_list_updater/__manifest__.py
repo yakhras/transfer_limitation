@@ -37,6 +37,8 @@ Technical Features:
         'mass_mailing',
         'contacts',
         'crm',
+        'web',
+        'bus',
     ],
     'data': [
         # Security
@@ -48,26 +50,23 @@ Technical Features:
         'data/menu_items.xml',
         
         # Views
-    #     'views/mailing_list_updater_views.xml',
-    #     'views/batch_history_views.xml',
-    #     'views/registry_config_views.xml',
-    #     'views/audit_log_views.xml',
-    #     'views/mailing_list_inherited_views.xml',
+        # 'views/mailing_list_updater_views.xml',
+        # 'views/batch_history_views.xml',
+        # 'views/registry_config_views.xml',
+        # 'views/audit_log_views.xml',
+        # 'views/mailing_list_inherited_views.xml',
         
     #     # Wizards
-    #     'wizards/mailing_list_update_wizard_views.xml',
-    #     'wizards/batch_rollback_wizard_views.xml',
-    # ],
-    # 'assets': {
-    #     'web.assets_backend': [
-    #         'mailing_list_updater/static/src/js/*.js',
-    #         'mailing_list_updater/static/src/css/*.css',
-    #         'mailing_list_updater/static/src/xml/*.xml',
-    #     ],
-    # },
-    # 'demo': [
-    #     'demo/demo_data.xml',
+        # 'wizards/mailing_list_update_wizard_views.xml',
+        # 'wizards/batch_rollback_wizard_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'mailing_list_updater/static/src/js/*.js',
+            'mailing_list_updater/static/src/css/*.css',
+            'mailing_list_updater/static/src/xml/*.xml',
+        ],
+    },
     'installable': True,
     'auto_install': False,
     'application': False,
