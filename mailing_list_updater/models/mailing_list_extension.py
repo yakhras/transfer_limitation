@@ -9,7 +9,7 @@ class MailingListExtension(models.Model):
     """
     _inherit = 'mailing.list'
     
-    @api.multi
+    
     def action_open_updater(self):
         """
         Open the mailing list updater for this specific mailing list
