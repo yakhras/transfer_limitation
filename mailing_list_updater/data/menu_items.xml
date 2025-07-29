@@ -4,13 +4,14 @@
         
         <!-- Actions for Menu Items -->
         
-        <!-- Main Mailing List Update Action -->
-        <record id="action_mailing_list_updater" model="ir.actions.act_window">
+        <!-- Main Mailing List Update Client Action -->
+        <record id="action_mailing_list_updater" model="ir.actions.client">
             <field name="name">Update Mailing Lists</field>
-            <field name="res_model">mailing.list.update.batch</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{}</field>
-            <field name="domain">[]</field>
+            <field name="tag">mailing_list_updater</field>
+            <field name="context">{
+                'initial_step': 'source_selection',
+                'show_breadcrumb': True
+            }</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
                     Create your first mailing list update batch!
@@ -23,13 +24,14 @@
             </field>
         </record>
 
-        <!-- Batch History Action -->
-        <record id="action_batch_history" model="ir.actions.act_window">
+        <!-- Batch History Client Action -->
+        <record id="action_batch_history" model="ir.actions.client">
             <field name="name">Batch History</field>
-            <field name="res_model">mailing.list.update.batch</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{'create': False}</field>
-            <field name="domain">[]</field>
+            <field name="tag">mailing_list_updater</field>
+            <field name="context">{
+                'initial_step': 'batch_management',
+                'show_breadcrumb': True
+            }</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_empty_folder">
                     No batch operations found.
@@ -41,7 +43,7 @@
             </field>
         </record>
 
-        <!-- Registry Configuration Action -->
+        <!-- Registry Configuration Action (Traditional view for admin) -->
         <record id="action_source_registry" model="ir.actions.act_window">
             <field name="name">Contact Source Registry</field>
             <field name="res_model">mailing.source.registry</field>
@@ -60,7 +62,7 @@
             </field>
         </record>
 
-        <!-- Filter Templates Action -->
+        <!-- Filter Templates Action (Traditional view) -->
         <record id="action_filter_templates" model="ir.actions.act_window">
             <field name="name">Filter Templates</field>
             <field name="res_model">mailing.filter.template</field>
@@ -78,7 +80,7 @@
             </field>
         </record>
 
-        <!-- Audit Trail Action -->
+        <!-- Audit Trail Action (Traditional view) -->
         <record id="action_audit_trail" model="ir.actions.act_window">
             <field name="name">Audit Trail</field>
             <field name="res_model">mailing.operation.audit</field>
@@ -96,7 +98,7 @@
             </field>
         </record>
 
-        <!-- Contact Tracking Action -->
+        <!-- Contact Tracking Action (Traditional view) -->
         <record id="action_contact_tracking" model="ir.actions.act_window">
             <field name="name">Contact Tracking</field>
             <field name="res_model">mailing.contact.tracking</field>
@@ -123,7 +125,7 @@
                   parent="mass_mailing.mass_mailing_menu_root"
                   action="action_mailing_list_updater"
                   sequence="15"
-                  groups="mailing_list_updater.group_mailing_list_updater_user"/>
+                  groups="group_mailing_list_updater_user"/>
 
         <!-- Sub-menu for Batch History -->
         <menuitem id="menu_batch_history"
@@ -131,7 +133,7 @@
                   parent="mass_mailing.mass_mailing_menu_root"
                   action="action_batch_history"
                   sequence="16"
-                  groups="mailing_list_updater.group_mailing_list_updater_user"/>
+                  groups="group_mailing_list_updater_user"/>
 
         <!-- Configuration Sub-menu -->
         <menuitem id="menu_mailing_updater_config"
@@ -154,7 +156,7 @@
                   parent="menu_mailing_updater_config"
                   action="action_filter_templates"
                   sequence="20"
-                  groups="mailing_list_updater.group_mailing_list_updater_user"/>
+                  groups="group_mailing_list_updater_user"/>
 
         <!-- Advanced/Debug Menus -->
         <menuitem id="menu_mailing_updater_advanced"
@@ -179,7 +181,7 @@
                   sequence="20"
                   groups="group_mailing_list_updater_manager"/>
 
-        <!-- Smart Button for Mailing Lists (will be implemented in Phase 2) 
+        <!-- Smart Button for Mailing Lists -->
         <record id="mailing_list_update_smart_button" model="ir.ui.view">
             <field name="name">mailing.list.form.inherit.updater</field>
             <field name="model">mailing.list</field>
@@ -191,7 +193,11 @@
                             class="oe_stat_button"
                             icon="fa-plus-circle"
                             groups="mailing_list_updater.group_mailing_list_updater_user"
-                            context="{'default_mailing_list_id': active_id}">
+                            context="{
+                                'default_mailing_list_id': active_id,
+                                'initial_step': 'source_selection',
+                                'from_mailing_list': True
+                            }">
                         <div class="o_field_widget o_stat_info">
                             <span class="o_stat_text">Update</span>
                             <span class="o_stat_text">Contacts</span>
@@ -200,7 +206,6 @@
                 </xpath>
             </field>
         </record>
-         -->
 
         <!-- Scheduled Actions -->
         

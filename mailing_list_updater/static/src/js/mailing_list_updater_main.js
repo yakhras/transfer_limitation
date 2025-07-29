@@ -7,6 +7,7 @@ const { Component, useState, onWillStart, onMounted } = owl;
  * 
  * This is the core component that orchestrates the entire mailing list update process.
  * It manages the overall state and coordinates child components.
+ * Enhanced with context handling for different entry points.
  */
 class MailingListUpdaterMain extends Component {
     
@@ -15,11 +16,12 @@ class MailingListUpdaterMain extends Component {
         this.rpc = this.env.services.rpc;
         this.notification = this.env.services.notification;
         this.orm = this.env.services.orm;
+        this.action = this.env.services.action;
         
         // Component State
         this.state = useState({
             // Current step in the update process
-            currentStep: 'source_selection', // source_selection, filter_building, preview, execution, batch_management
+            currentStep: 'source_selection', // Will be set from context
             
             // Loading states
             isLoading: false,
@@ -39,7 +41,12 @@ class MailingListUpdaterMain extends Component {
             
             // Progress tracking
             executionProgress: 0,
-            executionStatus: 'idle' // idle, ready, processing, completed, error
+            executionStatus: 'idle', // idle, ready, processing, completed, error
+            
+            // Context information
+            entryPoint: 'main_menu', // main_menu, smart_button, batch_history
+            preSelectedMailingListId: null,
+            showBreadcrumb: true
         });
         
         // WebSocket connection for real-time updates
@@ -47,6 +54,10 @@ class MailingListUpdaterMain extends Component {
         
         // Component references
         this.progressTrackerRef = null;
+        
+        // Store available data for child components
+        this.mailingLists = [];
+        this.availableSources = [];
         
         // Lifecycle hooks
         onWillStart(this.onWillStart);
@@ -89,6 +100,27 @@ class MailingListUpdaterMain extends Component {
     }
     
     /**
+     * Get current execution progress for progress tracking
+     */
+    get currentExecutionProgress() {
+        return this.state.executionProgress;
+    }
+    
+    /**
+     * Get current mailing list ID for batch manager
+     */
+    get currentMailingListId() {
+        return this.state.selectedMailingList?.id || null;
+    }
+    
+    /**
+     * Check if there are any recent batch operations
+     */
+    get hasRecentBatches() {
+        return this.state.lastCompletedBatch !== null;
+    }
+    
+    /**
      * Open batch management view
      */
     openBatchManager() {
@@ -125,24 +157,240 @@ class MailingListUpdaterMain extends Component {
     }
     
     /**
-     * Get current execution progress for progress tracking
+     * Initialize component data before rendering
      */
-    get currentExecutionProgress() {
-        return this.state.executionProgress;
+    async onWillStart() {
+        try {
+            this.state.isLoading = true;
+            
+            // Handle context parameters first
+            this.handleContextParameters();
+            
+            // Load initial data
+            await this.loadMailingLists();
+            await this.loadAvailableSources();
+            
+            // Apply context-based initialization
+            await this.applyContextInitialization();
+            
+        } catch (error) {
+            this.showError("Failed to initialize mailing list updater");
+            console.error("Initialization error:", error);
+        } finally {
+            this.state.isLoading = false;
+        }
     }
     
     /**
-     * Get current mailing list ID for batch manager
+     * Enhanced context parameter handling
      */
-    get currentMailingListId() {
-        return this.state.selectedMailingList?.id || null;
+    handleContextParameters() {
+        try {
+            // Get context from various possible sources (enhanced for Odoo client actions)
+            const context = this.env.services?.action?.currentController?.actionDefinition?.context || 
+                           this.props?.context || 
+                           this.env?.context ||
+                           this.props?.action?.context ||
+                           {};
+            
+            console.log('Mailing List Updater Context:', context);
+            
+            // Handle initial step from context
+            if (context.initial_step) {
+                this.state.currentStep = context.initial_step;
+                console.log('Setting initial step to:', context.initial_step);
+            }
+            
+            // Handle pre-selected mailing list
+            if (context.default_mailing_list_id) {
+                this.state.preSelectedMailingListId = context.default_mailing_list_id;
+                console.log('Pre-selected mailing list ID:', context.default_mailing_list_id);
+            }
+            
+            // Handle entry point identification
+            if (context.from_mailing_list) {
+                this.state.entryPoint = 'smart_button';
+            } else if (context.initial_step === 'batch_management') {
+                this.state.entryPoint = 'batch_history';
+            } else {
+                this.state.entryPoint = 'main_menu';
+            }
+            
+            // Handle breadcrumb visibility
+            if (context.show_breadcrumb !== undefined) {
+                this.state.showBreadcrumb = context.show_breadcrumb;
+            }
+            
+            console.log('Entry point detected:', this.state.entryPoint);
+            
+        } catch (error) {
+            console.warn('Context handling error:', error);
+            // Continue without context - not critical
+        }
     }
     
     /**
-     * Check if there are any recent batch operations
+     * Apply context-based initialization after data loading
      */
-    get hasRecentBatches() {
-        return this.state.lastCompletedBatch !== null;
+    async applyContextInitialization() {
+        // Pre-select mailing list if provided in context
+        if (this.state.preSelectedMailingListId && this.mailingLists) {
+            const preSelectedList = this.mailingLists.find(
+                list => list.id === this.state.preSelectedMailingListId
+            );
+            
+            if (preSelectedList) {
+                this.state.selectedMailingList = preSelectedList;
+                console.log('Pre-selected mailing list:', preSelectedList.name);
+                
+                // If coming from smart button, auto-select recommended sources
+                if (this.state.entryPoint === 'smart_button') {
+                    await this.autoSelectRecommendedSources();
+                }
+            }
+        }
+        
+        // Handle specific entry point logic
+        switch (this.state.entryPoint) {
+            case 'smart_button':
+                // Coming from mailing list form, make the flow more direct
+                this.showSuccess(`Ready to update "${this.state.selectedMailingList?.name}" mailing list`);
+                break;
+                
+            case 'batch_history':
+                // Coming from batch history menu, show recent batches
+                await this.loadRecentBatchInfo();
+                break;
+                
+            case 'main_menu':
+            default:
+                // Standard entry, no special handling needed
+                break;
+        }
+    }
+    
+    /**
+     * Auto-select recommended sources for smart button entry
+     */
+    async autoSelectRecommendedSources() {
+        if (this.availableSources && this.availableSources.length > 0) {
+            // Select contacts and CRM by default
+            const recommendedSources = this.availableSources.filter(source => 
+                ['res.partner', 'crm.lead'].includes(source.model_name) && source.available
+            );
+            
+            if (recommendedSources.length > 0) {
+                this.state.selectedSources = recommendedSources;
+                console.log('Auto-selected recommended sources:', recommendedSources.map(s => s.name));
+            }
+        }
+    }
+    
+    /**
+     * Load recent batch information for batch history entry point
+     */
+    async loadRecentBatchInfo() {
+        try {
+            const response = await this.rpc({
+                route: "/mailing/batch/recent",
+                params: { limit: 5 }
+            });
+            
+            if (response.success && response.data.batches.length > 0) {
+                this.state.lastCompletedBatch = response.data.batches[0].id;
+            }
+        } catch (error) {
+            console.warn('Failed to load recent batch info:', error);
+        }
+    }
+    
+    /**
+     * Setup after component is mounted to DOM
+     */
+    onMounted() {
+        // Setup keyboard shortcuts, focus management, etc.
+        this.setupKeyboardShortcuts();
+        
+        // Set page title based on entry point
+        this.updatePageTitle();
+    }
+    
+    /**
+     * Update page title based on context
+     */
+    updatePageTitle() {
+        const titles = {
+            'smart_button': `Update "${this.state.selectedMailingList?.name}" - Mailing List Updater`,
+            'batch_history': 'Batch History - Mailing List Updater',
+            'main_menu': 'Mailing List Updater'
+        };
+        
+        const title = titles[this.state.entryPoint] || titles['main_menu'];
+        
+        // Update browser title if possible
+        if (document.title) {
+            document.title = title;
+        }
+    }
+    
+    /**
+     * Load available mailing lists for selection
+     */
+    async loadMailingLists() {
+        try {
+            const result = await this.rpc({
+                model: "mailing.list",
+                method: "search_read",
+                args: [[["active", "=", true]]],
+                kwargs: {
+                    fields: ["id", "name", "contact_count", "company_id"],
+                    order: "name"
+                }
+            });
+            
+            this.mailingLists = result;
+            
+        } catch (error) {
+            this.showError("Failed to load mailing lists");
+            throw error;
+        }
+    }
+    
+    /**
+     * Load available contact sources from registry
+     */
+    async loadAvailableSources() {
+        try {
+            const response = await this.rpc({
+                route: "/mailing/update/sources"
+            });
+            
+            if (response.success) {
+                this.availableSources = response.data.sources;
+            } else {
+                throw new Error(response.error?.message || "Unknown error");
+            }
+            
+        } catch (error) {
+            this.showError("Failed to load contact sources");
+            throw error;
+        }
+    }
+    
+    /**
+     * Handle mailing list selection
+     */
+    onMailingListSelected(mailingListId) {
+        const selectedList = this.mailingLists.find(list => list.id === mailingListId);
+        this.state.selectedMailingList = selectedList;
+        
+        // Reset downstream selections when mailing list changes
+        this.state.selectedSources = [];
+        this.state.filterCriteria = {};
+        this.state.previewData = null;
+        
+        // Update page title
+        this.updatePageTitle();
     }
     
     /**
@@ -346,18 +594,6 @@ class MailingListUpdaterMain extends Component {
     }
     
     /**
-     * Find child component by name - OWL 1.0 compatible
-     */
-    findChildComponent(componentName) {
-        // In OWL 1.0, use a reference approach instead
-        // This is a simplified version - in practice, you'd use refs or direct component communication
-        if (componentName === 'ProgressTrackerComponent') {
-            return this.progressTrackerRef;
-        }
-        return null;
-    }
-    
-    /**
      * Set progress tracker reference (called from template)
      */
     setProgressTrackerRef(component) {
@@ -489,164 +725,6 @@ class MailingListUpdaterMain extends Component {
     }
     
     /**
-     * Initialize component data before rendering
-     */
-    async onWillStart() {
-        try {
-            this.state.isLoading = true;
-            
-            // Load initial data
-            await this.loadMailingLists();
-            await this.loadAvailableSources();
-            
-            // Check for pre-selected mailing list from context
-            this.handleContextParameters();
-            
-        } catch (error) {
-            this.showError("Failed to initialize mailing list updater");
-            console.error("Initialization error:", error);
-        } finally {
-            this.state.isLoading = false;
-        }
-    }
-    
-    /**
-     * Handle context parameters (e.g., from smart button)
-     */
-    handleContextParameters() {
-        try {
-            // Get context from various possible sources
-            const context = this.env.services?.action?.currentController?.actionDefinition?.context || 
-                           this.props?.context || 
-                           this.env?.context || 
-                           {};
-            
-            console.log('Mailing List Updater Context:', context);
-            
-            // Pre-select mailing list if provided in context
-            if (context.default_mailing_list_id && this.mailingLists) {
-                const preSelectedList = this.mailingLists.find(
-                    list => list.id === context.default_mailing_list_id
-                );
-                
-                if (preSelectedList) {
-                    this.state.selectedMailingList = preSelectedList;
-                    console.log('Pre-selected mailing list:', preSelectedList.name);
-                }
-            }
-        } catch (error) {
-            console.warn('Context handling error:', error);
-            // Continue without context - not critical
-        }
-    }
-    
-    /**
-     * Setup after component is mounted to DOM
-     */
-    onMounted() {
-        // Setup keyboard shortcuts, focus management, etc.
-        this.setupKeyboardShortcuts();
-    }
-    
-    /**
-     * Load available mailing lists for selection
-     */
-    async loadMailingLists() {
-        try {
-            const result = await this.rpc({
-                model: "mailing.list",
-                method: "search_read",
-                args: [[["active", "=", true]]],
-                kwargs: {
-                    fields: ["id", "name", "contact_count"],
-                    order: "name"
-                }
-            });
-            
-            this.mailingLists = result;
-            
-        } catch (error) {
-            this.showError("Failed to load mailing lists");
-            throw error;
-        }
-    }
-    
-    /**
-     * Load available contact sources from registry
-     */
-    async loadAvailableSources() {
-        try {
-            const response = await this.rpc({
-                route: "/mailing/update/sources"
-            });
-            
-            if (response.success) {
-                this.availableSources = response.data.sources;
-            } else {
-                throw new Error(response.error?.message || "Unknown error");
-            }
-            
-        } catch (error) {
-            this.showError("Failed to load contact sources");
-            throw error;
-        }
-    }
-    
-    /**
-     * Handle mailing list selection
-     */
-    onMailingListSelected(mailingListId) {
-        const selectedList = this.mailingLists.find(list => list.id === mailingListId);
-        this.state.selectedMailingList = selectedList;
-        
-        // Reset downstream selections when mailing list changes
-        this.state.selectedSources = [];
-        this.state.filterCriteria = {};
-        this.state.previewData = null;
-    }
-    
-    /**
-     * Handle source selection changes from SourceSelector
-     */
-    onSourcesChanged(event) {
-        this.state.selectedSources = event.detail.selectedSourcesData;
-        
-        // Reset filters when sources change
-        this.state.filterCriteria = {};
-        this.state.previewData = null;
-        
-        // If we're past source selection step, stay there until filters are rebuilt
-        if (this.state.currentStep !== 'source_selection') {
-            this.state.currentStep = 'filter_building';
-        }
-    }
-    
-    /**
-     * Handle filter changes from FilterBuilder
-     */
-    onFiltersChanged(event) {
-        this.state.filterCriteria = event.detail.filters;
-        
-        // Reset preview when filters change
-        this.state.previewData = null;
-        
-        // Validate step completion
-        if (event.detail.isValid && this.state.currentStep === 'filter_building') {
-            // Filters are valid, can proceed to preview
-        } else if (!event.detail.isValid) {
-            // Show validation errors
-            this.state.errors = event.detail.errors || [];
-        }
-    }
-    
-    /**
-     * Get currently selected sources for child components
-     */
-    get currentSelectedSources() {
-        return this.state.selectedSources || [];
-    }
-    
-    /**
      * Navigate between steps
      */
     goToStep(stepName) {
@@ -752,6 +830,21 @@ class MailingListUpdaterMain extends Component {
             default:
                 return false;
         }
+    }
+    
+    /**
+     * Get step display information for breadcrumbs
+     */
+    getStepInfo(stepName) {
+        const stepInfo = {
+            'source_selection': { title: 'Select Sources', icon: 'fa-database' },
+            'filter_building': { title: 'Build Filters', icon: 'fa-filter' },
+            'preview': { title: 'Preview Results', icon: 'fa-eye' },
+            'execution': { title: 'Execute', icon: 'fa-play' },
+            'batch_management': { title: 'Batch History', icon: 'fa-history' }
+        };
+        
+        return stepInfo[stepName] || { title: stepName, icon: 'fa-question' };
     }
     
     /**

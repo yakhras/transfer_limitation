@@ -7,25 +7,101 @@
     
     <t t-name="mailing_list_updater.MainTemplate" owl="1">
         <div class="mailing-list-updater">
-            <!-- Header -->
+            <!-- Context-Aware Header -->
             <div class="mailing-updater-header">
-                <h1 class="mailing-updater-title">
-                    <i class="fa fa-envelope-o"></i>
-                    Mailing List Updater
-                </h1>
-                <p class="mailing-updater-subtitle">
-                    Efficiently update your mailing lists with advanced filtering and deduplication
-                </p>
+                <div class="header-content">
+                    <h1 class="mailing-updater-title">
+                        <i class="fa fa-envelope-o"></i>
+                        <t t-if="state.entryPoint === 'smart_button'">
+                            Update "<t t-esc="state.selectedMailingList?.name"/>"
+                        </t>
+                        <t t-elif="state.entryPoint === 'batch_history'">
+                            Batch Operations History
+                        </t>
+                        <t t-else="">
+                            Mailing List Updater
+                        </t>
+                    </h1>
+                    <p class="mailing-updater-subtitle">
+                        <t t-if="state.entryPoint === 'smart_button'">
+                            Add contacts to your mailing list with advanced filtering and deduplication
+                        </t>
+                        <t t-elif="state.entryPoint === 'batch_history'">
+                            Manage and review your mailing list update operations
+                        </t>
+                        <t t-else="">
+                            Efficiently update your mailing lists with advanced filtering and deduplication
+                        </t>
+                    </p>
+                </div>
+                
+                <!-- Entry Point Indicator -->
+                <div t-if="state.entryPoint !== 'main_menu'" class="entry-point-indicator">
+                    <span t-if="state.entryPoint === 'smart_button'" class="badge badge-primary">
+                        <i class="fa fa-external-link"></i> From Mailing List
+                    </span>
+                    <span t-elif="state.entryPoint === 'batch_history'" class="badge badge-info">
+                        <i class="fa fa-history"></i> Batch Management
+                    </span>
+                </div>
             </div>
             
-            <!-- Step Navigation -->
-            <div class="step-navigation">
+            <!-- Breadcrumb Navigation (conditional) -->
+            <div t-if="state.showBreadcrumb and state.entryPoint === 'smart_button'" class="breadcrumb-nav">
+                <nav class="breadcrumb">
+                    <span class="breadcrumb-item">
+                        <i class="fa fa-envelope"></i> Email Marketing
+                    </span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item">
+                        <i class="fa fa-list"></i> Mailing Lists
+                    </span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item">
+                        <t t-esc="state.selectedMailingList?.name"/>
+                    </span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active">
+                        <i class="fa fa-plus-circle"></i> Update Contacts
+                    </span>
+                </nav>
+            </div>
+            
+            <!-- Pre-selected Mailing List Info (for smart button entry) -->
+            <div t-if="state.entryPoint === 'smart_button' and state.selectedMailingList" class="selected-list-info">
+                <div class="selected-list-card">
+                    <div class="selected-list-header">
+                        <i class="fa fa-list-alt"></i>
+                        <h4>Target Mailing List</h4>
+                        <span class="badge badge-success">Pre-selected</span>
+                    </div>
+                    <div class="selected-list-details">
+                        <div class="list-name" t-esc="state.selectedMailingList.name"></div>
+                        <div class="list-stats">
+                            <span class="stat-item">
+                                <i class="fa fa-users"></i>
+                                <t t-esc="state.selectedMailingList.contact_count"/> contacts
+                            </span>
+                            <span class="stat-item">
+                                <i class="fa fa-building"></i>
+                                <t t-esc="state.selectedMailingList.company_name"/>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step Navigation (conditional visibility) -->
+            <div t-if="state.currentStep !== 'batch_management'" class="step-navigation">
                 <ul class="step-nav-list">
                     <li class="step-nav-item" 
                         t-att-class="state.currentStep === 'source_selection' ? 'active' : (isStepComplete('source_selection') ? 'completed' : '')"
                         t-on-click="() => this.goToStep('source_selection')">
                         <i class="step-nav-icon fa fa-database"></i>
                         <span>Select Sources</span>
+                        <div t-if="state.entryPoint === 'smart_button' and state.selectedSources.length > 0" class="step-indicator">
+                            <span class="badge badge-info" t-esc="state.selectedSources.length"></span>
+                        </div>
                     </li>
                     <li class="step-nav-item"
                         t-att-class="state.currentStep === 'filter_building' ? 'active' : (isStepComplete('filter_building') ? 'completed' : (isStepComplete('source_selection') ? '' : 'disabled'))"
@@ -45,11 +121,14 @@
                         <i class="step-nav-icon fa fa-play"></i>
                         <span>Execute</span>
                     </li>
+                    <li class="step-nav-item separator">
+                        <span class="separator-line"></span>
+                    </li>
                     <li class="step-nav-item"
                         t-att-class="state.currentStep === 'batch_management' ? 'active' : ''"
                         t-on-click="() => this.goToStep('batch_management')">
                         <i class="step-nav-icon fa fa-history"></i>
-                        <span>Batch History</span>
+                        <span>History</span>
                     </li>
                 </ul>
             </div>
@@ -65,6 +144,9 @@
                 <div t-foreach="state.errors" t-as="error" class="error-message">
                     <i class="fa fa-exclamation-triangle"></i>
                     <span t-esc="error"></span>
+                    <button class="error-close" t-on-click="() => this.state.errors.splice(error_index, 1)">
+                        <i class="fa fa-times"></i>
+                    </button>
                 </div>
             </div>
             
@@ -73,6 +155,28 @@
                 
                 <!-- Step 1: Source Selection -->
                 <div t-if="state.currentStep === 'source_selection'" class="step-content fade-in">
+                    <!-- Mailing List Selection (only if not pre-selected) -->
+                    <div t-if="!state.selectedMailingList" class="mailing-list-selection">
+                        <h3>
+                            <i class="fa fa-list"></i>
+                            Select Target Mailing List
+                        </h3>
+                        <div class="mailing-list-grid">
+                            <div t-foreach="mailingLists" t-as="list" t-key="list.id" 
+                                 class="mailing-list-card"
+                                 t-on-click="() => this.onMailingListSelected(list.id)">
+                                <div class="list-card-header">
+                                    <h4 t-esc="list.name"></h4>
+                                    <span class="contact-count">
+                                        <i class="fa fa-users"></i>
+                                        <t t-esc="list.contact_count"/> contacts
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Source Selection Component -->
                     <SourceSelectorComponent 
                         selectedMailingList="currentSelectedMailingList"
                         t-on-sources-changed="onSourcesChanged"/>
@@ -103,6 +207,15 @@
                             Executing Mailing List Update
                         </h2>
                         
+                        <div t-if="state.selectedMailingList" class="execution-target-info">
+                            <div class="target-list-summary">
+                                <i class="fa fa-list-alt"></i>
+                                <span>Updating: <strong t-esc="state.selectedMailingList.name"/></strong></span>
+                                <span class="separator">|</span>
+                                <span>Sources: <strong t-esc="state.selectedSources.length"/> selected</strong></span>
+                            </div>
+                        </div>
+                        
                         <ProgressTrackerComponent 
                             batchId="currentBatchId"
                             initialProgress="currentExecutionProgress"
@@ -125,54 +238,96 @@
                                 <i class="fa fa-refresh"></i>
                                 Start New Update
                             </button>
+                            
+                            <button t-if="state.entryPoint === 'smart_button'" 
+                                    class="btn btn-outline-secondary"
+                                    t-on-click="() => this.action.doAction('close')">
+                                <i class="fa fa-arrow-left"></i>
+                                Return to Mailing List
+                            </button>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Step 5: Batch Management -->
                 <div t-if="state.currentStep === 'batch_management'" class="step-content fade-in">
+                    <div class="batch-management-header">
+                        <div class="header-actions">
+                            <button t-if="state.entryPoint !== 'batch_history'" 
+                                    class="btn btn-outline-primary"
+                                    t-on-click="() => this.goToStep('source_selection')">
+                                <i class="fa fa-plus"></i>
+                                New Update Operation
+                            </button>
+                        </div>
+                    </div>
+                    
                     <BatchManagerComponent 
                         mailingListId="currentMailingListId"
                         t-on-batch-manager-event="onBatchManagerEvent"/>
                 </div>
             </div>
             
-            <!-- Footer Actions -->
+            <!-- Context-Aware Footer Actions -->
             <div class="mailing-updater-footer">
                 <div class="footer-actions">
-                    <button t-if="state.currentStep !== 'source_selection'" 
-                            class="btn btn-outline-secondary" 
-                            t-on-click="previousStep">
-                        <i class="fa fa-arrow-left"></i>
-                        Previous
-                    </button>
+                    <!-- Navigation buttons (conditional) -->
+                    <div t-if="state.currentStep !== 'batch_management'" class="navigation-buttons">
+                        <button t-if="state.currentStep !== 'source_selection'" 
+                                class="btn btn-outline-secondary" 
+                                t-on-click="previousStep">
+                            <i class="fa fa-arrow-left"></i>
+                            Previous
+                        </button>
+                        
+                        <button t-if="state.currentStep === 'source_selection' and isStepComplete('source_selection')" 
+                                class="btn btn-primary" 
+                                t-on-click="nextStep">
+                            Continue to Filters
+                            <i class="fa fa-arrow-right"></i>
+                        </button>
+                        
+                        <button t-if="state.currentStep === 'filter_building' and isStepComplete('filter_building')" 
+                                class="btn btn-primary" 
+                                t-on-click="nextStep">
+                            Preview Results
+                            <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
                     
-                    <button t-if="state.currentStep === 'source_selection' and isStepComplete('source_selection')" 
-                            class="btn btn-primary" 
-                            t-on-click="nextStep">
-                        Continue to Filters
-                        <i class="fa fa-arrow-right"></i>
-                    </button>
-                    
-                    <button t-if="state.currentStep === 'filter_building' and isStepComplete('filter_building')" 
-                            class="btn btn-primary" 
-                            t-on-click="nextStep">
-                        Preview Results
-                        <i class="fa fa-arrow-right"></i>
-                    </button>
-                    
-                    <button class="btn btn-outline-primary" 
-                            t-on-click="openBatchManager">
-                        <i class="fa fa-history"></i>
-                        Batch History
-                    </button>
+                    <!-- Utility buttons -->
+                    <div class="utility-buttons">
+                        <button t-if="state.currentStep !== 'batch_management'" 
+                                class="btn btn-outline-primary" 
+                                t-on-click="openBatchManager">
+                            <i class="fa fa-history"></i>
+                            Batch History
+                        </button>
+                        
+                        <!-- Context-specific close/return buttons -->
+                        <button t-if="state.entryPoint === 'smart_button'" 
+                                class="btn btn-outline-secondary"
+                                t-on-click="() => this.env.services.action.doAction('close')">
+                            <i class="fa fa-times"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Context Info (debug/dev mode) -->
+                <div t-if="env.debug" class="footer-debug-info">
+                    <small class="text-muted">
+                        Entry: <t t-esc="state.entryPoint"/> | 
+                        Step: <t t-esc="state.currentStep"/> | 
+                        List: <t t-esc="state.selectedMailingList?.name || 'None'"/>
+                    </small>
                 </div>
             </div>
         </div>
     </t>
     
     <!-- ==========================================================================
-         SOURCE SELECTOR TEMPLATE
+         SOURCE SELECTOR TEMPLATE (Enhanced)
          ========================================================================== -->
     
     <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
@@ -182,6 +337,18 @@
                     <i class="fa fa-database"></i>
                     Select Contact Sources
                 </h3>
+                
+                <!-- Quick action for smart button context -->
+                <div t-if="props.selectedMailingList and state.selectedSources.size === 0" class="quick-action-hint">
+                    <div class="hint-card">
+                        <i class="fa fa-lightbulb-o"></i>
+                        <span>Tip: We recommend selecting both Contacts and CRM sources for comprehensive coverage</span>
+                        <button class="btn btn-outline-primary btn-sm" 
+                                t-on-click="selectAllRecommended">
+                            Select Recommended
+                        </button>
+                    </div>
+                </div>
                 
                 <div class="source-actions">
                     <input type="text" 
@@ -204,6 +371,23 @@
                 </div>
             </div>
             
+            <!-- Selection Summary -->
+            <div t-if="state.selectedSources.size > 0" class="selection-summary">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <i class="fa fa-check-circle text-success"></i>
+                        <span><t t-esc="state.selectedSources.size"/> source(s) selected</span>
+                    </div>
+                    <div class="selected-sources-list">
+                        <span t-foreach="getSelectedSourcesData()" t-as="source" t-key="source.model_name" 
+                              class="selected-source-tag">
+                            <i t-att-class="'fa ' + (source.icon || 'fa-database')"></i>
+                            <t t-esc="source.name"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
             <div t-if="state.isLoading" class="loading-overlay">
                 <div class="loading-spinner loading-spinner-lg"></div>
                 <p>Loading contact sources...</p>
@@ -220,6 +404,10 @@
                             <i t-att-class="'fa ' + (source.icon || 'fa-database')"></i>
                         </div>
                         <h4 class="source-name" t-esc="source.name"></h4>
+                        <div t-if="source.recommended" class="recommended-badge">
+                            <i class="fa fa-star"></i>
+                            <span>Recommended</span>
+                        </div>
                     </div>
                     
                     <p class="source-description" t-esc="source.description"></p>
@@ -234,7 +422,8 @@
                             <i t-if="isSourceSelected(source.model_name)" 
                                class="fa fa-check-circle text-success"></i>
                             <i t-elif="not source.available" 
-                               class="fa fa-exclamation-triangle text-warning"></i>
+                               class="fa fa-exclamation-triangle text-warning"
+                               title="Source not available"></i>
                             <i t-else="" 
                                class="fa fa-circle-o text-muted"></i>
                         </div>
@@ -288,6 +477,9 @@
                     <i class="fa fa-filter"></i>
                     Build Contact Filters
                 </h3>
+                <div class="filter-help-text">
+                    <p>Create filters to select specific contacts from your chosen sources. Use quick filters for common scenarios or advanced filters for complex conditions.</p>
+                </div>
             </div>
             
             <div t-if="state.isLoading" class="loading-overlay">
@@ -302,6 +494,10 @@
                         <i class="fa fa-bolt"></i>
                         Quick Filters
                     </h4>
+                    <div class="filter-section-help">
+                        <i class="fa fa-info-circle"></i>
+                        <span>Most commonly used filters for quick setup</span>
+                    </div>
                 </div>
                 
                 <div class="filter-section-content">
@@ -315,7 +511,8 @@
                                        t-model="state.quickFilters.active_only"
                                        t-on-change="() => this.onQuickFilterChange('active_only', !state.quickFilters.active_only)"/>
                                 <label class="form-check-label" for="active_only">
-                                    Active contacts only
+                                    <strong>Active contacts only</strong>
+                                    <small class="text-muted d-block">Exclude archived or inactive contacts</small>
                                 </label>
                             </div>
                         </div>
@@ -329,7 +526,8 @@
                                        t-model="state.quickFilters.date_range.enabled"
                                        t-on-change="toggleDateRange"/>
                                 <label class="form-check-label" for="date_range_enabled">
-                                    Date range filter
+                                    <strong>Date range filter</strong>
+                                    <small class="text-muted d-block">Filter by creation or modification date</small>
                                 </label>
                             </div>
                             
@@ -385,10 +583,12 @@
                             <button t-att-class="state.advancedFilters.logic === 'AND' ? 'logic-btn active' : 'logic-btn'"
                                     t-on-click="() => this.changeFilterLogic('AND')">
                                 AND
+                                <small>All conditions must match</small>
                             </button>
                             <button t-att-class="state.advancedFilters.logic === 'OR' ? 'logic-btn active' : 'logic-btn'"
                                     t-on-click="() => this.changeFilterLogic('OR')">
                                 OR
+                                <small>Any condition can match</small>
                             </button>
                         </div>
                     </div>
@@ -493,7 +693,7 @@
     </t>
     
     <!-- ==========================================================================
-         PREVIEW RESULTS TEMPLATE
+         PREVIEW RESULTS TEMPLATE  
          ========================================================================== -->
     
     <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
@@ -560,7 +760,7 @@
                         <li t-att-class="state.selectedTab === 'contacts' ? 'tab-item active' : 'tab-item'"
                             t-on-click="() => this.switchTab('contacts')">
                             <i class="fa fa-users"></i>
-                            Sample Contacts
+                            Sample Contacts (<t t-esc="state.sampleContacts.length"/>)
                         </li>
                         <li t-att-class="state.selectedTab === 'deduplication' ? 'tab-item active' : 'tab-item'"
                             t-on-click="() => this.switchTab('deduplication')">
@@ -678,7 +878,13 @@
                     <h4 class="execution-title">Ready to Execute</h4>
                     
                     <div t-if="state.executionEstimate" class="execution-estimate">
-                        Estimated execution time: <t t-esc="formatExecutionTime(state.executionEstimate.seconds)"/>
+                        <i class="fa fa-clock-o"></i>
+                        Estimated execution time: <strong t-esc="formatExecutionTime(state.executionEstimate.seconds)"/>
+                    </div>
+                    
+                    <div class="execution-warning" t-if="state.statistics.total_after_dedup > 1000">
+                        <i class="fa fa-info-circle"></i>
+                        <span>Large batch detected. This operation will run in the background with progress tracking.</span>
                     </div>
                     
                     <button t-att-class="executionButtonClass"
