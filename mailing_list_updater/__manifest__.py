@@ -57,6 +57,9 @@ Technical Features:
         'web.assets_backend': [
             'mailing_list_updater/static/src/js/*.js',
             # 'mailing_list_updater/static/src/css/*.css',
+            
+        ],
+        'web.assets_qweb': [
             'mailing_list_updater/static/src/xml/*.xml',
         ],
     },
