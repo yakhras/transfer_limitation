@@ -51,14 +51,7 @@ Technical Features:
         
         # Views
         'views/mailing_list_updater_views.xml',
-        # 'views/batch_history_views.xml',
-        # 'views/registry_config_views.xml',
-        # 'views/audit_log_views.xml',
-        # 'views/mailing_list_inherited_views.xml',
         
-    #     # Wizards
-        # 'wizards/mailing_list_update_wizard_views.xml',
-        # 'wizards/batch_rollback_wizard_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
