@@ -1,0 +1,1164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==========================================================================
+         MAIN COMPONENT TEMPLATE
+         ========================================================================== -->
+    
+    <template id="mailing_list_updater.MainTemplate" name="Mailing List Updater Main">
+        <div class="mailing-list-updater">
+            <!-- Header -->
+            <div class="mailing-updater-header">
+                <h1 class="mailing-updater-title">
+                    <i class="fa fa-envelope-o"></i>
+                    Mailing List Updater
+                </h1>
+                <p class="mailing-updater-subtitle">
+                    Efficiently update your mailing lists with advanced filtering and deduplication
+                </p>
+            </div>
+            
+            <!-- Step Navigation -->
+            <div class="step-navigation">
+                <ul class="step-nav-list">
+                    <li class="step-nav-item" 
+                        t-att-class="state.currentStep === 'source_selection' ? 'active' : (isStepComplete('source_selection') ? 'completed' : '')"
+                        t-on-click="() => this.goToStep('source_selection')">
+                        <i class="step-nav-icon fa fa-database"></i>
+                        <span>Select Sources</span>
+                    </li>
+                    <li class="step-nav-item"
+                        t-att-class="state.currentStep === 'filter_building' ? 'active' : (isStepComplete('filter_building') ? 'completed' : (isStepComplete('source_selection') ? '' : 'disabled'))"
+                        t-on-click="() => isStepComplete('source_selection') ? this.goToStep('filter_building') : null">
+                        <i class="step-nav-icon fa fa-filter"></i>
+                        <span>Build Filters</span>
+                    </li>
+                    <li class="step-nav-item"
+                        t-att-class="state.currentStep === 'preview' ? 'active' : (isStepComplete('preview') ? 'completed' : (isStepComplete('filter_building') ? '' : 'disabled'))"
+                        t-on-click="() => isStepComplete('filter_building') ? this.goToStep('preview') : null">
+                        <i class="step-nav-icon fa fa-eye"></i>
+                        <span>Preview Results</span>
+                    </li>
+                    <li class="step-nav-item"
+                        t-att-class="state.currentStep === 'execution' ? 'active' : (isStepComplete('execution') ? 'completed' : (isStepComplete('preview') ? '' : 'disabled'))"
+                        t-on-click="() => isStepComplete('preview') ? this.goToStep('execution') : null">
+                        <i class="step-nav-icon fa fa-play"></i>
+                        <span>Execute</span>
+                    </li>
+                    <li class="step-nav-item"
+                        t-att-class="state.currentStep === 'batch_management' ? 'active' : ''"
+                        t-on-click="() => this.goToStep('batch_management')">
+                        <i class="step-nav-icon fa fa-history"></i>
+                        <span>Batch History</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Loading Overlay -->
+            <div t-if="state.isLoading" class="loading-overlay">
+                <div class="loading-spinner loading-spinner-lg"></div>
+                <p>Loading...</p>
+            </div>
+            
+            <!-- Error Messages -->
+            <div t-if="state.errors.length > 0" class="error-messages">
+                <div t-foreach="state.errors" t-as="error" class="error-message">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <span t-esc="error"></span>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="mailing-updater-content">
+                
+                <!-- Step 1: Source Selection -->
+                <div t-if="state.currentStep === 'source_selection'" class="step-content fade-in">
+                    <SourceSelectorComponent 
+                        selectedMailingList="currentSelectedMailingList"
+                        t-on-sources-changed="onSourcesChanged"/>
+                </div>
+                
+                <!-- Step 2: Filter Building -->
+                <div t-if="state.currentStep === 'filter_building'" class="step-content fade-in">
+                    <FilterBuilderComponent 
+                        selectedSources="currentSelectedSources"
+                        t-on-filters-changed="onFiltersChanged"/>
+                </div>
+                
+                <!-- Step 3: Preview Results -->
+                <div t-if="state.currentStep === 'preview'" class="step-content fade-in">
+                    <PreviewResultsComponent 
+                        selectedMailingList="currentSelectedMailingList"
+                        selectedSources="currentSelectedSources"
+                        filterCriteria="currentFilterCriteria"
+                        t-on-preview-ready="onPreviewReady"
+                        t-on-execute-update="onExecuteUpdate"/>
+                </div>
+                
+                <!-- Step 4: Execution -->
+                <div t-if="state.currentStep === 'execution'" class="step-content fade-in">
+                    <div class="execution-container">
+                        <h2 class="execution-title">
+                            <i class="fa fa-cogs"></i>
+                            Executing Mailing List Update
+                        </h2>
+                        
+                        <ProgressTrackerComponent 
+                            batchId="currentBatchId"
+                            initialProgress="currentExecutionProgress"
+                            initialStatus="currentExecutionStatus"
+                            t-on-operation-completed="onOperationCompleted"
+                            t-on-operation-error="onOperationError"
+                            t-on-operation-cancelled="onOperationCancelled"
+                            t-on-progress-tracker-ready="onProgressTrackerReady"/>
+                        
+                        <div class="execution-actions">
+                            <button t-if="hasRecentBatches" 
+                                    class="btn btn-primary" 
+                                    t-on-click="viewLastCompletedBatch">
+                                <i class="fa fa-history"></i>
+                                View Batch Details
+                            </button>
+                            
+                            <button class="btn btn-secondary" 
+                                    t-on-click="() => this.goToStep('source_selection')">
+                                <i class="fa fa-refresh"></i>
+                                Start New Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Batch Management -->
+                <div t-if="state.currentStep === 'batch_management'" class="step-content fade-in">
+                    <BatchManagerComponent 
+                        mailingListId="currentMailingListId"
+                        t-on-batch-manager-event="onBatchManagerEvent"/>
+                </div>
+            </div>
+            
+            <!-- Footer Actions -->
+            <div class="mailing-updater-footer">
+                <div class="footer-actions">
+                    <button t-if="state.currentStep !== 'source_selection'" 
+                            class="btn btn-outline-secondary" 
+                            t-on-click="previousStep">
+                        <i class="fa fa-arrow-left"></i>
+                        Previous
+                    </button>
+                    
+                    <button t-if="state.currentStep === 'source_selection' and isStepComplete('source_selection')" 
+                            class="btn btn-primary" 
+                            t-on-click="nextStep">
+                        Continue to Filters
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                    
+                    <button t-if="state.currentStep === 'filter_building' and isStepComplete('filter_building')" 
+                            class="btn btn-primary" 
+                            t-on-click="nextStep">
+                        Preview Results
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                    
+                    <button class="btn btn-outline-primary" 
+                            t-on-click="openBatchManager">
+                        <i class="fa fa-history"></i>
+                        Batch History
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- ==========================================================================
+         SOURCE SELECTOR TEMPLATE
+         ========================================================================== -->
+    
+    <template id="mailing_list_updater.SourceSelectorTemplate" name="Source Selector">
+        <div class="source-selector">
+            <div class="source-selector-header">
+                <h3 class="source-selector-title">
+                    <i class="fa fa-database"></i>
+                    Select Contact Sources
+                </h3>
+                
+                <div class="source-actions">
+                    <input type="text" 
+                           class="source-search-input" 
+                           placeholder="Search sources..."
+                           t-model="state.searchTerm"
+                           t-on-input="onSearchInput"/>
+                    
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="selectAllRecommended">
+                        <i class="fa fa-check-square-o"></i>
+                        Select Recommended
+                    </button>
+                    
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="clearAllSelections">
+                        <i class="fa fa-square-o"></i>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+            
+            <div t-if="state.isLoading" class="loading-overlay">
+                <div class="loading-spinner loading-spinner-lg"></div>
+                <p>Loading contact sources...</p>
+            </div>
+            
+            <div t-else="" class="source-grid">
+                <div t-foreach="filteredSources" t-as="source" 
+                     t-key="source.model_name"
+                     t-att-class="getSourceItemClass(source)"
+                     t-on-click="() => source.available ? this.onSourceToggle(source.model_name) : null">
+                    
+                    <div class="source-header">
+                        <div class="source-icon">
+                            <i t-att-class="'fa ' + (source.icon || 'fa-database')"></i>
+                        </div>
+                        <h4 class="source-name" t-esc="source.name"></h4>
+                    </div>
+                    
+                    <p class="source-description" t-esc="source.description"></p>
+                    
+                    <div class="source-stats">
+                        <span class="source-contact-count">
+                            <i class="fa fa-users"></i>
+                            <t t-esc="formatContactCount(source.estimated_count)"/> contacts
+                        </span>
+                        
+                        <div class="source-status">
+                            <i t-if="isSourceSelected(source.model_name)" 
+                               class="fa fa-check-circle text-success"></i>
+                            <i t-elif="not source.available" 
+                               class="fa fa-exclamation-triangle text-warning"></i>
+                            <i t-else="" 
+                               class="fa fa-circle-o text-muted"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Source Details (Expandable) -->
+                    <div t-if="state.showSourceDetails[source.model_name]" class="source-details slide-in">
+                        <div class="source-capabilities">
+                            <h5>Capabilities:</h5>
+                            <ul>
+                                <li t-foreach="source.capabilities" t-as="capability" t-esc="capability"></li>
+                            </ul>
+                        </div>
+                        
+                        <div t-if="source.sample_data" class="source-sample">
+                            <h5>Sample Fields:</h5>
+                            <div class="sample-fields">
+                                <span t-foreach="source.sample_data" t-as="field" 
+                                      class="badge badge-light" t-esc="field"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-sm btn-outline-secondary" 
+                            t-on-click.stop="() => this.toggleSourceDetails(source.model_name)">
+                        <i t-att-class="state.showSourceDetails[source.model_name] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                        <t t-if="state.showSourceDetails[source.model_name]">Hide</t>
+                        <t t-else="">Show</t> Details
+                    </button>
+                </div>
+            </div>
+            
+            <div t-if="filteredSources.length === 0 and not state.isLoading" class="no-sources">
+                <div class="text-center text-muted">
+                    <i class="fa fa-search fa-3x"></i>
+                    <h4>No sources found</h4>
+                    <p>Try adjusting your search criteria</p>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- ==========================================================================
+         FILTER BUILDER TEMPLATE
+         ========================================================================== -->
+    
+    <template id="mailing_list_updater.FilterBuilderTemplate" name="Filter Builder">
+        <div class="filter-builder">
+            <div class="filter-builder-header">
+                <h3 class="filter-builder-title">
+                    <i class="fa fa-filter"></i>
+                    Build Contact Filters
+                </h3>
+            </div>
+            
+            <div t-if="state.isLoading" class="loading-overlay">
+                <div class="loading-spinner loading-spinner-lg"></div>
+                <p>Loading filter options...</p>
+            </div>
+            
+            <!-- Quick Filters Section -->
+            <div class="filter-section">
+                <div class="filter-section-header">
+                    <h4 class="filter-section-title">
+                        <i class="fa fa-bolt"></i>
+                        Quick Filters
+                    </h4>
+                </div>
+                
+                <div class="filter-section-content">
+                    <div class="quick-filters-grid">
+                        <!-- Active Only -->
+                        <div class="filter-group">
+                            <div class="form-check">
+                                <input type="checkbox" 
+                                       class="form-check-input" 
+                                       id="active_only"
+                                       t-model="state.quickFilters.active_only"
+                                       t-on-change="() => this.onQuickFilterChange('active_only', !state.quickFilters.active_only)"/>
+                                <label class="form-check-label" for="active_only">
+                                    Active contacts only
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Date Range -->
+                        <div class="filter-group">
+                            <div class="form-check">
+                                <input type="checkbox" 
+                                       class="form-check-input" 
+                                       id="date_range_enabled"
+                                       t-model="state.quickFilters.date_range.enabled"
+                                       t-on-change="toggleDateRange"/>
+                                <label class="form-check-label" for="date_range_enabled">
+                                    Date range filter
+                                </label>
+                            </div>
+                            
+                            <div t-if="state.quickFilters.date_range.enabled" class="date-range-inputs">
+                                <select class="form-control" 
+                                        t-model="state.quickFilters.date_range.field"
+                                        t-on-change="(ev) => this.onDateRangeChange('field', ev.target.value)">
+                                    <option value="create_date">Created Date</option>
+                                    <option value="write_date">Modified Date</option>
+                                </select>
+                                
+                                <input type="date" 
+                                       class="form-control" 
+                                       placeholder="From"
+                                       t-model="state.quickFilters.date_range.from"
+                                       t-on-change="(ev) => this.onDateRangeChange('from', ev.target.value)"/>
+                                
+                                <input type="date" 
+                                       class="form-control" 
+                                       placeholder="To"
+                                       t-model="state.quickFilters.date_range.to"
+                                       t-on-change="(ev) => this.onDateRangeChange('to', ev.target.value)"/>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional quick filters can be added here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Advanced Filters Section -->
+            <div class="filter-section">
+                <div class="filter-section-header">
+                    <h4 class="filter-section-title">
+                        <i class="fa fa-cogs"></i>
+                        Advanced Filters
+                    </h4>
+                    
+                    <button class="advanced-filters-toggle" 
+                            t-on-click="toggleAdvancedFilters">
+                        <i t-att-class="state.showAdvanced ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                        <t t-if="state.showAdvanced">Hide</t>
+                        <t t-else="">Show</t> Advanced
+                    </button>
+                </div>
+                
+                <div t-if="state.showAdvanced" class="filter-section-content">
+                    
+                    <!-- Logic Selector -->
+                    <div class="filter-logic-selector">
+                        <label class="filter-label">Combine rules with:</label>
+                        <div class="logic-buttons">
+                            <button t-att-class="state.advancedFilters.logic === 'AND' ? 'logic-btn active' : 'logic-btn'"
+                                    t-on-click="() => this.changeFilterLogic('AND')">
+                                AND
+                            </button>
+                            <button t-att-class="state.advancedFilters.logic === 'OR' ? 'logic-btn active' : 'logic-btn'"
+                                    t-on-click="() => this.changeFilterLogic('OR')">
+                                OR
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- New Rule Builder -->
+                    <div class="new-rule-builder">
+                        <h5>Add New Rule:</h5>
+                        <div class="filter-rule">
+                            <div class="filter-group">
+                                <label class="filter-label">Field</label>
+                                <select class="form-control" 
+                                        t-model="state.newRule.field"
+                                        t-on-change="(ev) => this.onRuleFieldChange(ev.target.value)">
+                                    <option value="">Select Field...</option>
+                                    <option t-foreach="state.availableFields" 
+                                            t-as="field" 
+                                            t-key="field.name"
+                                            t-att-value="field.name" 
+                                            t-esc="field.string"></option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="filter-label">Operator</label>
+                                <select class="form-control" 
+                                        t-model="state.newRule.operator"
+                                        t-att-disabled="!state.newRule.field">
+                                    <option value="">Select Operator...</option>
+                                    <option t-foreach="getOperatorsForFieldType(state.newRule.field_type)" 
+                                            t-as="operator" 
+                                            t-key="operator.value"
+                                            t-att-value="operator.value" 
+                                            t-esc="operator.label"></option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="filter-label">Value</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       placeholder="Enter value..."
+                                       t-model="state.newRule.value"
+                                       t-att-disabled="!state.newRule.operator"/>
+                            </div>
+                            
+                            <div class="filter-rule-actions">
+                                <button class="btn btn-primary btn-sm" 
+                                        t-on-click="addFilterRule"
+                                        t-att-disabled="!state.newRule.field or !state.newRule.operator">
+                                    <i class="fa fa-plus"></i>
+                                    Add Rule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Rules -->
+                    <div t-if="state.advancedFilters.rules.length > 0" class="active-rules">
+                        <h5>Active Rules:</h5>
+                        <div t-foreach="state.advancedFilters.rules" t-as="rule" t-key="rule.id" class="filter-rule">
+                            <div class="rule-display">
+                                <span class="rule-text" t-esc="formatRuleDisplay(rule)"></span>
+                            </div>
+                            
+                            <div class="filter-rule-actions">
+                                <button class="btn btn-danger btn-sm" 
+                                        t-on-click="() => this.removeFilterRule(rule.id)">
+                                    <i class="fa fa-trash"></i>
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Template Actions -->
+            <div class="template-actions">
+                <div class="template-presets">
+                    <h5>Filter Templates:</h5>
+                    <div class="template-buttons">
+                        <button t-foreach="state.presetTemplates" 
+                                t-as="template" 
+                                t-key="template.id"
+                                class="btn btn-outline-primary btn-sm"
+                                t-on-click="() => this.applyTemplate(template)">
+                            <i class="fa fa-bookmark"></i>
+                            <t t-esc="template.name"/>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="template-management">
+                    <button class="btn btn-outline-secondary" 
+                            t-on-click="clearAllFilters">
+                        <i class="fa fa-eraser"></i>
+                        Clear All Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- ==========================================================================
+         PREVIEW RESULTS TEMPLATE
+         ========================================================================== -->
+    
+    <template id="mailing_list_updater.PreviewResultsTemplate" name="Preview Results">
+        <div class="preview-results">
+            <div class="preview-header">
+                <h3 class="preview-title">
+                    <i class="fa fa-eye"></i>
+                    Preview Results
+                </h3>
+                
+                <div class="preview-actions">
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="refreshPreview">
+                        <i class="fa fa-refresh"></i>
+                        Refresh Preview
+                    </button>
+                    
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="exportPreviewData">
+                        <i class="fa fa-download"></i>
+                        Export Data
+                    </button>
+                </div>
+            </div>
+            
+            <div t-if="state.isGeneratingPreview" class="loading-overlay">
+                <div class="loading-spinner loading-spinner-lg"></div>
+                <p>Generating preview...</p>
+            </div>
+            
+            <div t-elif="isPreviewValid" class="preview-content">
+                
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" t-esc="formatNumber(state.statistics.total_found || 0)"></div>
+                        <div class="stat-label">Total Found</div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-value" t-esc="formatNumber(state.statistics.total_after_dedup || 0)"></div>
+                        <div class="stat-label">After Deduplication</div>
+                    </div>
+                    
+                    <div class="stat-card warning">
+                        <div class="stat-value" t-esc="formatNumber(state.statistics.duplicates_removed || 0)"></div>
+                        <div class="stat-label">Duplicates Removed</div>
+                    </div>
+                    
+                    <div class="stat-card" t-att-class="state.statistics.invalid_emails > 0 ? 'danger' : ''">
+                        <div class="stat-value" t-esc="formatNumber(state.statistics.invalid_emails || 0)"></div>
+                        <div class="stat-label">Invalid Emails</div>
+                    </div>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <ul class="tab-list">
+                        <li t-att-class="state.selectedTab === 'overview' ? 'tab-item active' : 'tab-item'"
+                            t-on-click="() => this.switchTab('overview')">
+                            <i class="fa fa-bar-chart"></i>
+                            Overview
+                        </li>
+                        <li t-att-class="state.selectedTab === 'contacts' ? 'tab-item active' : 'tab-item'"
+                            t-on-click="() => this.switchTab('contacts')">
+                            <i class="fa fa-users"></i>
+                            Sample Contacts
+                        </li>
+                        <li t-att-class="state.selectedTab === 'deduplication' ? 'tab-item active' : 'tab-item'"
+                            t-on-click="() => this.switchTab('deduplication')">
+                            <i class="fa fa-copy"></i>
+                            Deduplication
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    
+                    <!-- Overview Tab -->
+                    <div t-if="state.selectedTab === 'overview'" class="tab-pane fade-in">
+                        <div class="overview-content">
+                            <h4>Source Statistics</h4>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Source</th>
+                                        <th>Total Contacts</th>
+                                        <th>Valid Contacts</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="sourceStatistics" t-as="source" t-key="source.name">
+                                        <td t-esc="source.name"></td>
+                                        <td t-esc="formatNumber(source.total)"></td>
+                                        <td t-esc="formatNumber(source.valid)"></td>
+                                        <td t-esc="source.percentage"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Contacts Tab -->
+                    <div t-if="state.selectedTab === 'contacts'" class="tab-pane fade-in">
+                        <div class="contacts-content">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th class="sortable-header" 
+                                            t-att-class="state.sortField === 'name' ? 'active' : ''"
+                                            t-on-click="() => this.sortContacts('name')">
+                                            <span>Name</span>
+                                            <i class="sort-icon fa fa-sort"></i>
+                                        </th>
+                                        <th class="sortable-header" 
+                                            t-att-class="state.sortField === 'email' ? 'active' : ''"
+                                            t-on-click="() => this.sortContacts('email')">
+                                            <span>Email</span>
+                                            <i class="sort-icon fa fa-sort"></i>
+                                        </th>
+                                        <th class="sortable-header" 
+                                            t-att-class="state.sortField === 'source' ? 'active' : ''"
+                                            t-on-click="() => this.sortContacts('source')">
+                                            <span>Source</span>
+                                            <i class="sort-icon fa fa-sort"></i>
+                                        </th>
+                                        <th>Company</th>
+                                        <th>Phone</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="paginatedContacts" t-as="contact" t-key="contact.id">
+                                        <td t-esc="getContactFieldValue(contact, 'name')"></td>
+                                        <td t-esc="getContactFieldValue(contact, 'email')"></td>
+                                        <td t-esc="getContactFieldValue(contact, 'source')"></td>
+                                        <td t-esc="getContactFieldValue(contact, 'company_name')"></td>
+                                        <td t-esc="getContactFieldValue(contact, 'phone')"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <!-- Pagination -->
+                            <div class="pagination">
+                                <button class="pagination-btn" 
+                                        t-att-disabled="state.currentPage === 1"
+                                        t-on-click="previousPage">
+                                    <i class="fa fa-chevron-left"></i>
+                                </button>
+                                
+                                <span class="pagination-info">
+                                    Page <t t-esc="state.currentPage"/> of <t t-esc="totalPages"/>
+                                </span>
+                                
+                                <button class="pagination-btn" 
+                                        t-att-disabled="state.currentPage === totalPages"
+                                        t-on-click="nextPage">
+                                    <i class="fa fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Deduplication Tab -->
+                    <div t-if="state.selectedTab === 'deduplication'" class="tab-pane fade-in">
+                        <div class="deduplication-content">
+                            <h4>Deduplication Methods Applied</h4>
+                            <div t-foreach="state.deduplicationStats" t-as="method" t-key="method_index" class="dedup-method">
+                                <div class="dedup-method-header">
+                                    <h5 t-esc="method.name"></h5>
+                                    <span class="badge badge-info" t-esc="formatNumber(method.duplicates_found)"></span>
+                                </div>
+                                <p class="dedup-method-description" t-esc="getDeduplicationMethodDescription(method.method)"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Execution Section -->
+                <div class="execution-section">
+                    <h4 class="execution-title">Ready to Execute</h4>
+                    
+                    <div t-if="state.executionEstimate" class="execution-estimate">
+                        Estimated execution time: <t t-esc="formatExecutionTime(state.executionEstimate.seconds)"/>
+                    </div>
+                    
+                    <button t-att-class="executionButtonClass"
+                            t-att-disabled="!state.canExecute"
+                            t-on-click="executeUpdate">
+                        <i class="fa fa-play"></i>
+                        <t t-esc="executionButtonText"/>
+                    </button>
+                </div>
+            </div>
+            
+            <div t-else="" class="no-preview">
+                <div class="text-center text-muted">
+                    <i class="fa fa-exclamation-triangle fa-3x"></i>
+                    <h4>Unable to generate preview</h4>
+                    <p>Please check your source selection and filters</p>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- ==========================================================================
+         PROGRESS TRACKER TEMPLATE
+         ========================================================================== -->
+    
+    <template id="mailing_list_updater.ProgressTrackerTemplate" name="Progress Tracker">
+        <div t-if="state.isVisible" class="progress-tracker fade-in">
+            <div class="progress-header">
+                <h4 class="progress-title">
+                    <i t-att-class="'fa ' + statusIcon"></i>
+                    <t t-esc="operationDisplayText"/>
+                </h4>
+                
+                <div class="progress-actions">
+                    <button t-if="state.canCancel and isOperationActive" 
+                            class="btn btn-warning btn-sm"
+                            t-on-click="cancelOperation">
+                        <i class="fa fa-stop"></i>
+                        Cancel
+                    </button>
+                    
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="toggleDetails">
+                        <i t-att-class="state.showDetails ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                        <t t-if="state.showDetails">Hide</t>
+                        <t t-else="">Show</t> Details
+                    </button>
+                </div>
+            </div>
+            
+            <div class="progress-content">
+                <!-- Progress Bar -->
+                <div class="progress-bar-container">
+                    <div t-att-class="progressBarClass" 
+                         t-att-style="'width: ' + state.progress + '%'">
+                    </div>
+                    <div class="progress-text" t-esc="state.progress + '%'"></div>
+                </div>
+                
+                <!-- Progress Details -->
+                <div t-if="state.showDetails" class="progress-details slide-in">
+                    <div class="progress-detail-item">
+                        <div class="progress-detail-value" t-esc="formatTime(state.elapsedTime)"></div>
+                        <div class="progress-detail-label">Elapsed Time</div>
+                    </div>
+                    
+                    <div t-if="state.estimatedTimeRemaining" class="progress-detail-item">
+                        <div class="progress-detail-value" t-esc="formatTime(state.estimatedTimeRemaining)"></div>
+                        <div class="progress-detail-label">Time Remaining</div>
+                    </div>
+                    
+                    <div class="progress-detail-item">
+                        <div class="progress-detail-value" t-esc="formatNumber(state.statistics.contactsAdded)"></div>
+                        <div class="progress-detail-label">Contacts Added</div>
+                    </div>
+                    
+                    <div class="progress-detail-item">
+                        <div class="progress-detail-value" t-esc="formatNumber(state.statistics.duplicatesSkipped)"></div>
+                        <div class="progress-detail-label">Duplicates Skipped</div>
+                    </div>
+                    
+                    <div class="progress-detail-item">
+                        <div class="progress-detail-value" t-esc="successRatePercentage + '%'"></div>
+                        <div class="progress-detail-label">Success Rate</div>
+                    </div>
+                </div>
+                
+                <!-- Activity Log -->
+                <div t-if="state.showDetails and state.logs.length > 0" class="activity-log">
+                    <div t-foreach="state.logs" t-as="entry" t-key="entry.id" t-att-class="getLogEntryClass(entry.level)">
+                        <span class="log-timestamp" t-esc="entry.timestamp.toLocaleTimeString()"></span>
+                        <span class="log-message" t-esc="entry.message"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- ==========================================================================
+         BATCH MANAGER TEMPLATE
+         ========================================================================== -->
+    
+    <template id="mailing_list_updater.BatchManagerTemplate" name="Batch Manager">
+        <div class="batch-manager">
+            <div class="batch-manager-header">
+                <h3 class="batch-manager-title">
+                    <i class="fa fa-history"></i>
+                    Batch Operations Management
+                </h3>
+                
+                <div class="batch-manager-actions">
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="refresh">
+                        <i class="fa fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filters Bar -->
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <label>Status:</label>
+                    <select class="filter-select" 
+                            t-model="state.statusFilter"
+                            t-on-change="(ev) => this.onFilterChange('statusFilter', ev.target.value)">
+                        <option value="all">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="error">Error</option>
+                        <option value="processing">Processing</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Date:</label>
+                    <select class="filter-select" 
+                            t-model="state.dateFilter"
+                            t-on-change="(ev) => this.onFilterChange('dateFilter', ev.target.value)">
+                        <option value="all">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                
+                <input type="text" 
+                       class="search-input" 
+                       placeholder="Search batches..."
+                       t-model="state.searchTerm"
+                       t-on-input="onSearchInput"/>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <ul class="tab-list">
+                    <li t-att-class="state.selectedTab === 'history' ? 'tab-item active' : 'tab-item'"
+                        t-on-click="() => this.switchTab('history')">
+                        <i class="fa fa-list"></i>
+                        History (<t t-esc="state.batches.length"/>)
+                    </li>
+                    <li t-att-class="state.selectedTab === 'details' ? 'tab-item active' : 'tab-item'"
+                        t-on-click="() => this.switchTab('details')"
+                        t-att-disabled="!state.currentBatch">
+                        <i class="fa fa-info-circle"></i>
+                        Details
+                    </li>
+                    <li t-att-class="state.selectedTab === 'statistics' ? 'tab-item active' : 'tab-item'"
+                        t-on-click="() => this.switchTab('statistics')">
+                        <i class="fa fa-bar-chart"></i>
+                        Statistics
+                    </li>
+                </ul>
+            </div>
+            
+            <div t-if="state.isLoading" class="loading-overlay">
+                <div class="loading-spinner loading-spinner-lg"></div>
+                <p>Loading batch data...</p>
+            </div>
+            
+            <!-- Tab Content -->
+            <div t-else="" class="tab-content">
+                
+                <!-- History Tab -->
+                <div t-if="state.selectedTab === 'history'" class="tab-pane fade-in">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable-header" 
+                                    t-att-class="state.sortField === 'created_date' ? 'active' : ''"
+                                    t-on-click="() => this.sortBatches('created_date')">
+                                    <span>Date</span>
+                                    <i class="sort-icon fa fa-sort"></i>
+                                </th>
+                                <th class="sortable-header" 
+                                    t-att-class="state.sortField === 'status' ? 'active' : ''"
+                                    t-on-click="() => this.sortBatches('status')">
+                                    <span>Status</span>
+                                    <i class="sort-icon fa fa-sort"></i>
+                                </th>
+                                <th>Mailing List</th>
+                                <th>Contacts</th>
+                                <th>Duration</th>
+                                <th>User</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.batches" t-as="batch" t-key="batch.id">
+                                <td t-esc="formatDate(batch.created_date)"></td>
+                                <td>
+                                    <span t-att-class="getStatusClass(batch.status)">
+                                        <i t-att-class="'fa ' + getStatusIcon(batch.status)"></i>
+                                        <t t-esc="batch.status"/>
+                                    </span>
+                                </td>
+                                <td t-esc="batch.mailing_list_name"></td>
+                                <td t-esc="formatNumber(batch.contacts_processed || 0)"></td>
+                                <td t-esc="formatDuration(batch.execution_time)"></td>
+                                <td t-esc="batch.user_name"></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-outline-primary btn-sm" 
+                                                t-on-click="() => this.viewBatchDetails(batch.id)">
+                                            <i class="fa fa-eye"></i>
+                                            View
+                                        </button>
+                                        
+                                        <button t-if="canRollback(batch)" 
+                                                class="btn btn-outline-warning btn-sm" 
+                                                t-on-click="() => this.showRollbackDialog(batch)">
+                                            <i class="fa fa-undo"></i>
+                                            Rollback
+                                            <small t-esc="getRollbackDeadlineText(batch)"></small>
+                                        </button>
+                                        
+                                        <button class="btn btn-outline-secondary btn-sm" 
+                                                t-on-click="() => this.exportBatchData(batch)">
+                                            <i class="fa fa-download"></i>
+                                            Export
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button class="pagination-btn" 
+                                t-att-disabled="state.currentPage === 1"
+                                t-on-click="previousPage">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        
+                        <span class="pagination-info">
+                            Page <t t-esc="state.currentPage"/> of <t t-esc="totalPages"/>
+                        </span>
+                        
+                        <button class="pagination-btn" 
+                                t-att-disabled="state.currentPage === totalPages"
+                                t-on-click="nextPage">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Details Tab -->
+                <div t-if="state.selectedTab === 'details' and state.currentBatch" class="tab-pane fade-in">
+                    <div class="batch-details">
+                        <h4>Batch Details</h4>
+                        
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <label>Batch ID:</label>
+                                <span t-esc="state.currentBatch.id"></span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label>Status:</label>
+                                <span t-att-class="getStatusClass(state.currentBatch.status)">
+                                    <i t-att-class="'fa ' + getStatusIcon(state.currentBatch.status)"></i>
+                                    <t t-esc="state.currentBatch.status"/>
+                                </span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label>Mailing List:</label>
+                                <span t-esc="state.currentBatch.mailing_list_name"></span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label>Created By:</label>
+                                <span t-esc="state.currentBatch.user_name"></span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label>Created Date:</label>
+                                <span t-esc="formatDate(state.currentBatch.created_date)"></span>
+                            </div>
+                            
+                            <div class="detail-item">
+                                <label>Execution Time:</label>
+                                <span t-esc="formatDuration(state.currentBatch.execution_time)"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Batch Statistics -->
+                        <div t-if="state.currentBatch.statistics" class="batch-statistics">
+                            <h5>Statistics</h5>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-value" t-esc="formatNumber(state.currentBatch.statistics.contacts_added || 0)"></div>
+                                    <div class="stat-label">Contacts Added</div>
+                                </div>
+                                
+                                <div class="stat-card warning">
+                                    <div class="stat-value" t-esc="formatNumber(state.currentBatch.statistics.duplicates_skipped || 0)"></div>
+                                    <div class="stat-label">Duplicates Skipped</div>
+                                </div>
+                                
+                                <div class="stat-card danger">
+                                    <div class="stat-value" t-esc="formatNumber(state.currentBatch.statistics.errors_encountered || 0)"></div>
+                                    <div class="stat-label">Errors</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Audit Trail -->
+                        <div t-if="state.currentBatch.audit_entries" class="audit-trail">
+                            <h5>Audit Trail</h5>
+                            <div class="activity-log">
+                                <div t-foreach="state.currentBatch.audit_entries" t-as="entry" t-key="entry.id" class="log-entry">
+                                    <span class="log-timestamp" t-esc="formatDate(entry.timestamp)"></span>
+                                    <span class="log-message" t-esc="entry.description"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statistics Tab -->
+                <div t-if="state.selectedTab === 'statistics'" class="tab-pane fade-in">
+                    <div class="statistics-overview">
+                        <h4>Overall Statistics</h4>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" t-esc="formatNumber(statisticsSummary.totalBatches)"></div>
+                                <div class="stat-label">Total Batches</div>
+                            </div>
+                            
+                            <div class="stat-card success">
+                                <div class="stat-value" t-esc="formatNumber(statisticsSummary.successfulBatches)"></div>
+                                <div class="stat-label">Successful</div>
+                            </div>
+                            
+                            <div class="stat-card danger">
+                                <div class="stat-value" t-esc="formatNumber(statisticsSummary.failedBatches)"></div>
+                                <div class="stat-label">Failed</div>
+                            </div>
+                            
+                            <div class="stat-card info">
+                                <div class="stat-value" t-esc="formatNumber(statisticsSummary.totalContactsProcessed)"></div>
+                                <div class="stat-label">Total Contacts</div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-value" t-esc="formatDuration(statisticsSummary.averageExecutionTime)"></div>
+                                <div class="stat-label">Avg Duration</div>
+                            </div>
+                            
+                            <div class="stat-card" t-att-class="statisticsSummary.successRate > 90 ? 'success' : (statisticsSummary.successRate > 70 ? 'warning' : 'danger')">
+                                <div class="stat-value" t-esc="statisticsSummary.successRate + '%'"></div>
+                                <div class="stat-label">Success Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rollback Dialog -->
+            <div t-if="state.showRollbackDialog" class="modal-overlay">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h4 class="modal-title">
+                            <i class="fa fa-undo"></i>
+                            Confirm Batch Rollback
+                        </h4>
+                        <button class="modal-close" t-on-click="hideRollbackDialog">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <div class="warning-message">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            <div>
+                                <strong>Warning:</strong> This action will remove all contacts that were added during this batch operation. 
+                                This action cannot be undone.
+                            </div>
+                        </div>
+                        
+                        <div t-if="state.rollbackBatch" class="batch-summary">
+                            <h5>Batch Summary:</h5>
+                            <ul>
+                                <li>Batch ID: <strong t-esc="state.rollbackBatch.id"></strong></li>
+                                <li>Created: <strong t-esc="formatDate(state.rollbackBatch.created_date)"></strong></li>
+                                <li>Contacts Added: <strong t-esc="formatNumber(state.rollbackBatch.contacts_processed)"></strong></li>
+                                <li>Rollback Deadline: <strong t-esc="getRollbackDeadlineText(state.rollbackBatch)"></strong></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="rollback_reason">
+                                Reason for Rollback: <span class="text-danger">*</span>
+                            </label>
+                            <textarea class="form-control" 
+                                      id="rollback_reason"
+                                      rows="3" 
+                                      placeholder="Please provide a reason for this rollback..."
+                                      t-model="state.rollbackReason"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" 
+                                t-on-click="hideRollbackDialog"
+                                t-att-disabled="state.isRollingBack">
+                            Cancel
+                        </button>
+                        
+                        <button class="btn btn-warning" 
+                                t-on-click="executeRollback"
+                                t-att-disabled="!state.rollbackReason.trim() or state.isRollingBack">
+                            <i t-if="state.isRollingBack" class="fa fa-spinner fa-spin"></i>
+                            <i t-else="" class="fa fa-undo"></i>
+                            <t t-if="state.isRollingBack">Rolling Back...</t>
+                            <t t-else="">Confirm Rollback</t>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- ==========================================================================
+         ODOO VIEW INTEGRATION
+         ========================================================================== -->
+    
+    <!-- Main Action Window -->
+    <record id="action_mailing_list_updater" model="ir.actions.client">
+        <field name="name">Mailing List Updater</field>
+        <field name="tag">mailing_list_updater</field>
+        <field name="target">current</field>
+    </record>
+    
+    <!-- Menu Item -->
+    <menuitem id="menu_mailing_list_updater"
+              name="Mailing List Updater"
+              parent="mass_mailing.menu_email_marketing"
+              action="action_mailing_list_updater"
+              sequence="10"/>
+              
+    <!-- Smart Button for Mailing Lists -->
+    <record id="view_mailing_list_form_inherit" model="ir.ui.view">
+        <field name="name">mailing.list.form.inherit</field>
+        <field name="model">mailing.list</field>
+        <field name="inherit_id" ref="mass_mailing.view_mailing_list_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_open_updater" 
+                        type="object" 
+                        class="oe_stat_button" 
+                        icon="fa-refresh">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Update</span>
+                        <span class="o_stat_text">Contacts</span>
+                    </div>
+                </button>
+            </div>
+        </field>
+    </record>
+</odoo>
