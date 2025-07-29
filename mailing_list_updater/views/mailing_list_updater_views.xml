@@ -1147,7 +1147,7 @@
     <record id="view_mailing_list_form_inherit_updater" model="ir.ui.view">
         <field name="name">mailing.list.form.inherit.updater</field>
         <field name="model">mailing.list</field>
-        <field name="inherit_id" ref="mass_mailing.view_mailing_list_form"/>
+        <field name="inherit_id" ref="mass_mailing.mailing_list_view_form"/>
         <field name="arch" type="xml">
             <div name="button_box" position="inside">
                 <button name="action_open_updater" 
