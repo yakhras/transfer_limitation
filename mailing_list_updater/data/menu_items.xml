@@ -181,7 +181,7 @@
                   sequence="20"
                   groups="group_mailing_list_updater_manager"/>
 
-        <!-- Smart Button for Mailing Lists -->
+        <!-- Smart Button for Mailing Lists
         <record id="mailing_list_update_smart_button" model="ir.ui.view">
             <field name="name">mailing.list.form.inherit.updater</field>
             <field name="model">mailing.list</field>
@@ -205,7 +205,7 @@
                     </button>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
         <!-- Scheduled Actions -->
         
