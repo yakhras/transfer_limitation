@@ -252,8 +252,6 @@ if recent_batches:
             <field name="state">code</field>
             <field name="code">
 # Simple daily health check of registered models
-import json
-
 active_entries = model.search([('is_active', '=', True)])
 healthy_count = 0
 issues = []
