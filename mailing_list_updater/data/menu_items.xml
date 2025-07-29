@@ -123,7 +123,7 @@
                   parent="mass_mailing.mass_mailing_menu_root"
                   action="action_mailing_list_updater"
                   sequence="15"
-                  groups="group_mailing_list_updater_user"/>
+                  groups="mailing_list_updater.group_mailing_list_updater_user"/>
 
         <!-- Sub-menu for Batch History -->
         <menuitem id="menu_batch_history"
@@ -131,7 +131,7 @@
                   parent="mass_mailing.mass_mailing_menu_root"
                   action="action_batch_history"
                   sequence="16"
-                  groups="group_mailing_list_updater_user"/>
+                  groups="mailing_list_updater.group_mailing_list_updater_user"/>
 
         <!-- Configuration Sub-menu -->
         <menuitem id="menu_mailing_updater_config"
@@ -154,7 +154,7 @@
                   parent="menu_mailing_updater_config"
                   action="action_filter_templates"
                   sequence="20"
-                  groups="group_mailing_list_updater_user"/>
+                  groups="mailing_list_updater.group_mailing_list_updater_user"/>
 
         <!-- Advanced/Debug Menus -->
         <menuitem id="menu_mailing_updater_advanced"
