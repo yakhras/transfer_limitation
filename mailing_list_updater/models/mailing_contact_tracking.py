@@ -5,6 +5,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta
 
+
 _logger = logging.getLogger(__name__)
 
 
@@ -78,12 +79,12 @@ class MailingContactTracking(models.Model):
         store=True,
         help='Reference to the batch record'
     )
-    mailing_list_id = fields.Many2one(
+    mailing_list_ids = fields.Many2many(
         'mailing.list',
-        string='Mailing List',
+        string='Mailing Lists',
         related='mailing_contact_id.list_ids',
-        store=True,
-        help='The mailing list this contact was added to'
+        readonly=True,
+        help='The mailing lists this contact belongs to'
     )
     
     # Metadata
@@ -219,6 +220,11 @@ class MailingContactTracking(models.Model):
         
         result = []
         for record in tracking_records:
+            # Get the target mailing list from the batch record
+            target_list = None
+            if record.batch_record_id and record.batch_record_id.mailing_list_id:
+                target_list = record.batch_record_id.mailing_list_id.name
+            
             result.append({
                 'id': record.id,
                 'mailing_contact_id': record.mailing_contact_id.id,
@@ -228,6 +234,7 @@ class MailingContactTracking(models.Model):
                 'source_model': record.source_model,
                 'source_record_id': record.source_record_id,
                 'create_date': record.create_date,
+                'target_mailing_list': target_list,
                 'is_active': not record.mailing_contact_id.opt_out if record.mailing_contact_id else False,
             })
         
@@ -405,7 +412,7 @@ class MailingContactTracking(models.Model):
                 batch_info.append({
                     'batch_id': tracking.batch_id,
                     'create_date': tracking.create_date,
-                    'mailing_list': tracking.mailing_list_id.name if tracking.mailing_list_id else 'Unknown',
+                    'mailing_list': tracking.batch_record_id.mailing_list_id.name if tracking.batch_record_id.mailing_list_id else 'Unknown',
                     'is_current': tracking.id == self.id,
                 })
         

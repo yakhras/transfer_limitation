@@ -179,18 +179,19 @@
                   sequence="20"
                   groups="group_mailing_list_updater_manager"/>
 
-        <!-- Smart Button for Mailing Lists -->
+        <!-- Smart Button for Mailing Lists (will be implemented in Phase 2) -->
         <record id="mailing_list_update_smart_button" model="ir.ui.view">
             <field name="name">mailing.list.form.inherit.updater</field>
             <field name="model">mailing.list</field>
             <field name="inherit_id" ref="mass_mailing.mailing_list_view_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']" position="inside">
-                    <button name="action_open_update_contacts"
-                            type="object"
+                    <button name="%(action_mailing_list_updater)d"
+                            type="action"
                             class="oe_stat_button"
                             icon="fa-plus-circle"
-                            groups="mailing_list_updater.group_mailing_list_updater_user">
+                            groups="mailing_list_updater.group_mailing_list_updater_user"
+                            context="{'default_mailing_list_id': active_id}">
                         <div class="o_field_widget o_stat_info">
                             <span class="o_stat_text">Update</span>
                             <span class="o_stat_text">Contacts</span>
@@ -205,31 +206,32 @@
         <!-- Performance Monitoring Action -->
         <record id="ir_cron_performance_monitoring" model="ir.cron">
             <field name="name">Mailing List Updater: Performance Monitoring</field>
-            <field name="model_id" ref="model_mailing_batch_processor"/>
+            <field name="model_id" ref="model_mailing_operation_audit"/>
             <field name="state">code</field>
             <field name="code">
-# Weekly performance analysis and optimization recommendations
-processor = env['mailing.batch.processor']
-audit_model = env['mailing.operation.audit']
-
-# Analyze last week's performance
+# Simple weekly performance logging
+import json
 from datetime import datetime, timedelta
+
 week_ago = datetime.now() - timedelta(days=7)
+recent_batches = env['mailing.list.update.batch'].search([
+    ('create_date', '>=', week_ago),
+    ('state', '=', 'completed')
+])
 
-# Get performance statistics
-perf_stats = processor.analyze_batch_performance(date_from=week_ago)
-
-# Log performance summary
-if perf_stats['summary']['total_batches'] > 0:
-    env['mailing.operation.audit'].create({
+if recent_batches:
+    total_contacts = sum(batch.contacts_added for batch in recent_batches)
+    avg_time = sum(batch.execution_time for batch in recent_batches) / len(recent_batches)
+    
+    model.create({
         'batch_id': 'SYSTEM_MONITORING',
-        'operation_type': 'system_monitoring',
+        'operation_type': 'execution_completed',
         'user_id': env.ref('base.user_admin').id,
         'details': json.dumps({
-            'type': 'weekly_performance_report',
-            'period': 'last_7_days',
-            'statistics': perf_stats['summary'],
-            'recommendations': processor.optimize_batch_size()
+            'type': 'weekly_performance_summary',
+            'batches_count': len(recent_batches),
+            'total_contacts_added': total_contacts,
+            'average_execution_time': avg_time
         }),
         'success': True,
         'company_id': env.company.id,
@@ -248,62 +250,35 @@ if perf_stats['summary']['total_batches'] > 0:
             <field name="model_id" ref="model_mailing_source_registry"/>
             <field name="state">code</field>
             <field name="code">
-# Daily health check of registered models
-registry_entries = env['mailing.source.registry'].search([('is_active', '=', True)])
+# Simple daily health check of registered models
+import json
 
-health_report = {
-    'total_entries': len(registry_entries),
-    'healthy_entries': 0,
-    'issues_found': [],
-}
+active_entries = model.search([('is_active', '=', True)])
+healthy_count = 0
+issues = []
 
-for entry in registry_entries:
+for entry in active_entries:
     try:
-        # Test model access
-        model = env[entry.model_name]
-        
-        # Test field mappings
-        test_fields = [entry.email_field, entry.name_field]
-        if entry.phone_field:
-            test_fields.append(entry.phone_field)
-        if entry.company_field:
-            test_fields.append(entry.company_field)
-        if entry.active_field:
-            test_fields.append(entry.active_field)
-        
-        # Verify fields exist
-        model_fields = model._fields
-        for field_name in test_fields:
-            if field_name and field_name not in model_fields:
-                health_report['issues_found'].append({
-                    'registry_id': entry.id,
-                    'model': entry.model_name,
-                    'issue': f'Field {field_name} not found',
-                    'severity': 'high'
-                })
-        
-        if not health_report['issues_found']:
-            health_report['healthy_entries'] += 1
-            
+        # Test basic model access
+        test_model = env[entry.model_name]
+        test_model.search([], limit=1)
+        healthy_count += 1
     except Exception as e:
-        health_report['issues_found'].append({
-            'registry_id': entry.id,
-            'model': entry.model_name,
-            'issue': str(e),
-            'severity': 'critical'
-        })
+        issues.append(f"{entry.model_name}: {str(e)}")
 
-# Log health check results
+# Log health status
 env['mailing.operation.audit'].create({
     'batch_id': 'SYSTEM_HEALTH_CHECK',
-    'operation_type': 'system_monitoring',
+    'operation_type': 'execution_completed',
     'user_id': env.ref('base.user_admin').id,
     'details': json.dumps({
         'type': 'registry_health_check',
-        'report': health_report
+        'total_entries': len(active_entries),
+        'healthy_entries': healthy_count,
+        'issues': issues
     }),
-    'success': len(health_report['issues_found']) == 0,
-    'error_message': f"Found {len(health_report['issues_found'])} issues" if health_report['issues_found'] else None,
+    'success': len(issues) == 0,
+    'error_message': f"Found {len(issues)} issues" if issues else None,
     'company_id': env.company.id,
 })
             </field>

@@ -146,14 +146,13 @@
         </record>
 
         <!-- Special Rules for Rollback Operations -->
-        <record id="batch_rollback_time_limit_rule" model="ir.rule">
-            <field name="name">Batch Rollback: Time Limit</field>
+        <record id="batch_rollback_access_rule" model="ir.rule">
+            <field name="name">Batch Rollback: Access Control</field>
             <field name="model_id" ref="model_mailing_list_update_batch"/>
             <field name="domain_force">[
                 ('company_id', '=', company_id),
                 ('state', '=', 'completed'),
-                ('is_rolled_back', '=', False),
-                ('create_date', '>=', (context_today() - datetime.timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'))
+                ('is_rolled_back', '=', False)
             ]</field>
             <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
             <field name="name">Rollback Access Rule</field>
@@ -233,28 +232,11 @@ for record in records:
         <!-- Automated Actions for Cleanup -->
         <record id="ir_cron_cleanup_old_batches" model="ir.cron">
             <field name="name">Cleanup Old Mailing List Update Data</field>
-            <field name="model_id" ref="model_mailing_list_update_batch"/>
+            <field name="model_id" ref="model_mailing_operation_audit"/>
             <field name="state">code</field>
             <field name="code">
 # Cleanup old audit logs (keep 1 year)
-audit_model = env['mailing.operation.audit']
-audit_model.cleanup_old_audit_logs(days_to_keep=365)
-
-# Cleanup orphaned contacts (older than 90 days)
-contact_model = env['mailing.contact']
-contact_model.cleanup_orphaned_contacts(days_old=90)
-
-# Cleanup orphaned tracking records (older than 30 days)
-tracking_model = env['mailing.contact.tracking']
-tracking_model.cleanup_orphaned_tracking(days_old=30)
-
-# Cleanup unused filter templates (older than 180 days)
-template_model = env['mailing.filter.template']
-template_model.cleanup_unused_templates(days_unused=180)
-
-# Cleanup stale processing batches (older than 24 hours)
-processor_model = env['mailing.batch.processor']
-processor_model.cleanup_processing_resources(hours_old=24)
+model.cleanup_old_audit_logs(days_to_keep=365)
             </field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
