@@ -1128,23 +1128,24 @@
          ODOO VIEW INTEGRATION
          ========================================================================== -->
     
-    <!-- Main Action Window -->
-    <record id="action_mailing_list_updater" model="ir.actions.client">
+    <!-- Main Client Action -->
+    <record id="client_action_mailing_list_updater" model="ir.actions.client">
         <field name="name">Mailing List Updater</field>
         <field name="tag">mailing_list_updater</field>
         <field name="target">current</field>
+        <field name="context">{}</field>
     </record>
     
     <!-- Menu Item -->
-    <menuitem id="menu_mailing_list_updater"
+    <menuitem id="menu_mailing_list_updater_main"
               name="Mailing List Updater"
               parent="mass_mailing.menu_email_marketing"
-              action="action_mailing_list_updater"
+              action="client_action_mailing_list_updater"
               sequence="10"/>
               
     <!-- Smart Button for Mailing Lists -->
-    <record id="view_mailing_list_form_inherit" model="ir.ui.view">
-        <field name="name">mailing.list.form.inherit</field>
+    <record id="view_mailing_list_form_inherit_updater" model="ir.ui.view">
+        <field name="name">mailing.list.form.inherit.updater</field>
         <field name="model">mailing.list</field>
         <field name="inherit_id" ref="mass_mailing.view_mailing_list_form"/>
         <field name="arch" type="xml">
@@ -1152,7 +1153,8 @@
                 <button name="action_open_updater" 
                         type="object" 
                         class="oe_stat_button" 
-                        icon="fa-refresh">
+                        icon="fa-refresh"
+                        string="Update Contacts">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">Update</span>
                         <span class="o_stat_text">Contacts</span>

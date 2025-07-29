@@ -514,17 +514,29 @@ class MailingListUpdaterMain extends Component {
      * Handle context parameters (e.g., from smart button)
      */
     handleContextParameters() {
-        const context = this.env.services.action.currentController?.actionDefinition?.context || {};
-        
-        // Pre-select mailing list if provided in context
-        if (context.default_mailing_list_id) {
-            const preSelectedList = this.mailingLists.find(
-                list => list.id === context.default_mailing_list_id
-            );
+        try {
+            // Get context from various possible sources
+            const context = this.env.services?.action?.currentController?.actionDefinition?.context || 
+                           this.props?.context || 
+                           this.env?.context || 
+                           {};
             
-            if (preSelectedList) {
-                this.state.selectedMailingList = preSelectedList;
+            console.log('Mailing List Updater Context:', context);
+            
+            // Pre-select mailing list if provided in context
+            if (context.default_mailing_list_id && this.mailingLists) {
+                const preSelectedList = this.mailingLists.find(
+                    list => list.id === context.default_mailing_list_id
+                );
+                
+                if (preSelectedList) {
+                    this.state.selectedMailingList = preSelectedList;
+                    console.log('Pre-selected mailing list:', preSelectedList.name);
+                }
             }
+        } catch (error) {
+            console.warn('Context handling error:', error);
+            // Continue without context - not critical
         }
     }
     

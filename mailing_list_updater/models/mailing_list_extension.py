@@ -27,5 +27,6 @@ class MailingListExtension(models.Model):
                 'mailing_list_name': self.name,
                 'active_id': self.id,
                 'active_model': 'mailing.list',
-            }
+            },
+            'res_id': False,
         }
