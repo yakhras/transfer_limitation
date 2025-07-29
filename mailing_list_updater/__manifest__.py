@@ -50,7 +50,7 @@ Technical Features:
         'data/menu_items.xml',
         
         # Views
-        'views/mailing_list_updater_views.xml',
+        # 'views/mailing_list_updater_views.xml',
         
     ],
     'assets': {
