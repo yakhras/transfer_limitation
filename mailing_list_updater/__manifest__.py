@@ -40,7 +40,7 @@ Technical Features:
     ],
     'data': [
         # Security
-        # 'security/mailing_list_updater_security.xml',
+        'security/mailing_list_updater_security.xml',
         'security/ir.model.access.csv',
         
         # Data
