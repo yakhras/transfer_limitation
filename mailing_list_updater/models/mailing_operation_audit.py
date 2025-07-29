@@ -570,3 +570,361 @@ class MailingOperationAudit(models.Model):
                 'date_to': date_to.isoformat() if date_to else None,
             }
         }
+    
+
+    def export_audit_trail(self, batch_id=None, date_from=None, date_to=None, format='csv'):
+        """
+        Export audit trail data for compliance or analysis.
+        
+        Args:
+            batch_id (str, optional): Filter by batch ID
+            date_from (datetime, optional): Start date filter
+            date_to (datetime, optional): End date filter
+            format (str): Export format ('csv', 'json')
+            
+        Returns:
+            dict: Export data and metadata
+        """
+        domain = [('company_id', '=', self.env.company.id)]
+        
+        if batch_id:
+            domain.append(('batch_id', '=', batch_id))
+        if date_from:
+            domain.append(('create_date', '>=', date_from))
+        if date_to:
+            domain.append(('create_date', '<=', date_to))
+        
+        records = self.search(domain)
+        
+        export_data = []
+        for record in records:
+            export_data.append({
+                'batch_id': record.batch_id,
+                'operation_type': record.operation_type,
+                'user': record.user_id.name,
+                'company': record.company_id.name,
+                'create_date': record.create_date.isoformat() if record.create_date else None,
+                'execution_time': record.execution_time,
+                'success': record.success,
+                'error_message': record.error_message,
+                'records_processed': record.records_processed,
+                'mailing_list': record.mailing_list_id.name if record.mailing_list_id else None,
+                'details': record.details,
+                'ip_address': record.ip_address,
+                'user_agent': record.user_agent,
+            })
+        
+        return {
+            'data': export_data,
+            'format': format,
+            'record_count': len(export_data),
+            'export_date': fields.Datetime.now().isoformat(),
+            'filters': {
+                'batch_id': batch_id,
+                'date_from': date_from.isoformat() if date_from else None,
+                'date_to': date_to.isoformat() if date_to else None,
+            }
+        }
+    
+    # ========================================
+    # WEB INTEGRATION METHODS (Phase 2)
+    # ========================================
+    
+    @api.model
+    def log_web_request(self, request_data, response_data, execution_time=0.0, 
+                       success=True, error_message=None):
+        """
+        Log web requests for comprehensive audit trail.
+        
+        Args:
+            request_data (dict): Web request information
+            response_data (dict): Web response information
+            execution_time (float): Request execution time
+            success (bool): Whether request succeeded
+            error_message (str, optional): Error message if failed
+            
+        Returns:
+            mailing.operation.audit: Created audit record
+        """
+        # Extract relevant information from request
+        endpoint = request_data.get('endpoint', 'unknown')
+        method = request_data.get('method', 'GET')
+        batch_id = request_data.get('batch_id', 'WEB_REQUEST')
+        
+        # Determine operation type based on endpoint
+        operation_type = self._determine_operation_type_from_endpoint(endpoint, method)
+        
+        # Prepare detailed audit information
+        audit_details = {
+            'source': 'web_interface',
+            'endpoint': endpoint,
+            'method': method,
+            'request_size': len(str(request_data)),
+            'response_size': len(str(response_data)),
+            'status_code': response_data.get('status_code', 200),
+            'request_params': request_data.get('params', {}),
+            'response_summary': {
+                'success': success,
+                'data_count': self._count_response_data(response_data),
+            }
+        }
+        
+        # Add error details if present
+        if error_message:
+            audit_details['error_details'] = {
+                'message': error_message,
+                'type': 'web_request_error',
+            }
+        
+        # Add performance metrics
+        if execution_time > 0:
+            audit_details['performance'] = {
+                'execution_time': execution_time,
+                'requests_per_second': 1.0 / execution_time if execution_time > 0 else 0,
+            }
+        
+        # Get mailing list ID if available
+        mailing_list_id = None
+        if isinstance(request_data.get('params'), dict):
+            mailing_list_id = request_data['params'].get('mailing_list_id')
+        
+        # Create audit record
+        audit_record = self.create({
+            'batch_id': batch_id,
+            'operation_type': operation_type,
+            'user_id': self.env.user.id,
+            'details': json.dumps(audit_details),
+            'execution_time': execution_time,
+            'success': success,
+            'error_message': error_message,
+            'mailing_list_id': mailing_list_id,
+            'records_processed': self._count_response_data(response_data),
+            'company_id': self.env.company.id,
+        })
+        
+        # Log to system logger for important operations
+        if not success:
+            _logger.warning(
+                "Web request failed: %s %s - %s", 
+                method, endpoint, error_message
+            )
+        elif execution_time > 5.0:  # Log slow requests
+            _logger.info(
+                "Slow web request: %s %s took %.2fs", 
+                method, endpoint, execution_time
+            )
+        
+        return audit_record
+    
+    @api.model
+    def log_websocket_event(self, event_type, batch_id, client_info=None, data=None):
+        """
+        Log WebSocket events for real-time communication audit.
+        
+        Args:
+            event_type (str): Type of WebSocket event
+            batch_id (str): Associated batch ID
+            client_info (dict, optional): Client connection information
+            data (dict, optional): Event data
+            
+        Returns:
+            mailing.operation.audit: Created audit record
+        """
+        audit_details = {
+            'source': 'websocket',
+            'event_type': event_type,
+            'client_info': client_info or {},
+            'event_data': data or {},
+            'timestamp': fields.Datetime.now().isoformat(),
+        }
+        
+        return self.create({
+            'batch_id': batch_id,
+            'operation_type': 'websocket_event',
+            'user_id': self.env.user.id,
+            'details': json.dumps(audit_details),
+            'execution_time': 0.0,
+            'success': True,
+            'company_id': self.env.company.id,
+        })
+    
+    @api.model
+    def get_web_audit_summary(self, date_from=None, date_to=None):
+        """
+        Get audit summary specifically for web interface operations.
+        
+        Args:
+            date_from (datetime, optional): Start date filter
+            date_to (datetime, optional): End date filter
+            
+        Returns:
+            dict: Web audit summary
+        """
+        domain = [
+            ('company_id', '=', self.env.company.id),
+            ('details', 'ilike', '"source": "web_interface"')
+        ]
+        
+        if date_from:
+            domain.append(('create_date', '>=', date_from))
+        if date_to:
+            domain.append(('create_date', '<=', date_to))
+        
+        web_records = self.search(domain)
+        
+        # Analyze web requests
+        endpoint_stats = {}
+        user_stats = {}
+        error_patterns = {}
+        performance_stats = []
+        
+        for record in web_records:
+            try:
+                details = json.loads(record.details or '{}')
+                endpoint = details.get('endpoint', 'unknown')
+                method = details.get('method', 'GET')
+                endpoint_key = f"{method} {endpoint}"
+                
+                # Endpoint statistics
+                if endpoint_key not in endpoint_stats:
+                    endpoint_stats[endpoint_key] = {
+                        'count': 0,
+                        'success_count': 0,
+                        'total_time': 0.0,
+                        'errors': 0
+                    }
+                
+                stats = endpoint_stats[endpoint_key]
+                stats['count'] += 1
+                stats['total_time'] += record.execution_time or 0.0
+                
+                if record.success:
+                    stats['success_count'] += 1
+                else:
+                    stats['errors'] += 1
+                    
+                    # Track error patterns
+                    error_msg = record.error_message or 'Unknown error'
+                    error_key = error_msg[:50]  # Truncate for grouping
+                    error_patterns[error_key] = error_patterns.get(error_key, 0) + 1
+                
+                # User statistics
+                user_name = record.user_id.name
+                if user_name not in user_stats:
+                    user_stats[user_name] = {'requests': 0, 'errors': 0}
+                
+                user_stats[user_name]['requests'] += 1
+                if not record.success:
+                    user_stats[user_name]['errors'] += 1
+                
+                # Performance data
+                if record.execution_time and record.execution_time > 0:
+                    performance_stats.append({
+                        'endpoint': endpoint_key,
+                        'time': record.execution_time,
+                        'date': record.create_date,
+                    })
+                    
+            except (ValueError, TypeError):
+                continue
+        
+        # Calculate summary metrics
+        total_requests = len(web_records)
+        successful_requests = len([r for r in web_records if r.success])
+        success_rate = successful_requests / max(total_requests, 1)
+        
+        # Calculate average response times
+        for endpoint, stats in endpoint_stats.items():
+            if stats['count'] > 0:
+                stats['avg_time'] = stats['total_time'] / stats['count']
+                stats['success_rate'] = stats['success_count'] / stats['count']
+        
+        return {
+            'period': {
+                'date_from': date_from.isoformat() if date_from else None,
+                'date_to': date_to.isoformat() if date_to else None,
+            },
+            'summary': {
+                'total_requests': total_requests,
+                'successful_requests': successful_requests,
+                'failed_requests': total_requests - successful_requests,
+                'success_rate': success_rate,
+                'unique_endpoints': len(endpoint_stats),
+                'unique_users': len(user_stats),
+            },
+            'endpoint_stats': dict(sorted(
+                endpoint_stats.items(), 
+                key=lambda x: x[1]['count'], 
+                reverse=True
+            )),
+            'user_stats': dict(sorted(
+                user_stats.items(), 
+                key=lambda x: x[1]['requests'], 
+                reverse=True
+            )),
+            'error_patterns': dict(sorted(
+                error_patterns.items(), 
+                key=lambda x: x[1], 
+                reverse=True
+            )[:10]),  # Top 10 error patterns
+            'performance_metrics': {
+                'avg_response_time': (
+                    sum(p['time'] for p in performance_stats) / 
+                    max(len(performance_stats), 1)
+                ),
+                'slowest_endpoints': sorted(
+                    [(k, v['avg_time']) for k, v in endpoint_stats.items()], 
+                    key=lambda x: x[1], 
+                    reverse=True
+                )[:5],
+            }
+        }
+    
+    def _determine_operation_type_from_endpoint(self, endpoint, method):
+        """Determine audit operation type from web endpoint."""
+        endpoint_mapping = {
+            '/mailing/update/preview': 'preview_generated',
+            '/mailing/update/execute': 'execution_started',
+            '/mailing/batch/rollback': 'rollback_started',
+            '/mailing/registry/sources': 'registry_updated',
+            '/mailing/templates': 'template_applied',
+        }
+        
+        # Try exact match first
+        if endpoint in endpoint_mapping:
+            return endpoint_mapping[endpoint]
+        
+        # Try pattern matching
+        if 'preview' in endpoint:
+            return 'preview_generated'
+        elif 'execute' in endpoint:
+            return 'execution_started'
+        elif 'rollback' in endpoint:
+            return 'rollback_started'
+        elif 'registry' in endpoint:
+            return 'registry_updated'
+        elif 'template' in endpoint:
+            return 'template_applied'
+        else:
+            return 'web_request'
+    
+    def _count_response_data(self, response_data):
+        """Count meaningful data items in response."""
+        if not isinstance(response_data, dict):
+            return 0
+        
+        data = response_data.get('data', {})
+        if isinstance(data, dict):
+            # Count contacts, batches, or other meaningful items
+            return (
+                data.get('total_after_dedup', 0) or
+                data.get('contacts_added', 0) or  
+                data.get('batch_count', 0) or
+                len(data.get('sample_contacts', [])) or
+                len(data.get('sources', [])) or
+                1  # At least one item if data exists
+            )
+        elif isinstance(data, list):
+            return len(data)
+        else:
+            return 1 if data else 0

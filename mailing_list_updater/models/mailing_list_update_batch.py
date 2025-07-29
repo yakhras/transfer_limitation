@@ -608,3 +608,379 @@ class MailingListUpdateBatch(models.Model):
             'execution_time': 0.0,  # Will be updated by audit model
             'company_id': self.company_id.id,
         })
+
+
+    def _log_audit_event(self, event_type, data):
+        """Log an audit event for this batch."""
+        self.env['mailing.operation.audit'].create({
+            'batch_id': self.batch_id,
+            'operation_type': event_type,
+            'user_id': self.env.user.id,
+            'details': json.dumps(data),
+            'execution_time': 0.0,  # Will be updated by audit model
+            'company_id': self.company_id.id,
+        })
+    
+    # ========================================
+    # WEB INTEGRATION METHODS (Phase 2)
+    # ========================================
+    
+    def to_json_preview(self):
+        """
+        Convert batch preview data to JSON format for web responses.
+        
+        Returns:
+            dict: JSON-serializable preview data
+        """
+        self.ensure_one()
+        
+        # Parse source models safely
+        try:
+            source_models = json.loads(self.source_models) if self.source_models else []
+        except (ValueError, TypeError):
+            source_models = []
+        
+        # Parse filter criteria safely
+        try:
+            filter_criteria = json.loads(self.filter_criteria) if self.filter_criteria else {}
+        except (ValueError, TypeError):
+            filter_criteria = {}
+        
+        return {
+            'batch_id': self.batch_id,
+            'batch_display_name': self.batch_display_name,
+            'mailing_list': {
+                'id': self.mailing_list_id.id,
+                'name': self.mailing_list_id.name,
+                'contact_count': len(self.mailing_list_id.contact_ids),
+            } if self.mailing_list_id else None,
+            'state': self.state,
+            'source_models': source_models,
+            'filter_criteria': filter_criteria,
+            'statistics': {
+                'contacts_found': self.contacts_found,
+                'contacts_deduplicated': self.contacts_deduplicated,
+                'contacts_added': self.contacts_added,
+                'execution_time': self.execution_time,
+            },
+            'dates': {
+                'create_date': self.create_date.isoformat() if self.create_date else None,
+                'start_time': self.start_time.isoformat() if self.start_time else None,
+                'end_time': self.end_time.isoformat() if self.end_time else None,
+            },
+            'rollback_info': {
+                'can_rollback': self.can_rollback,
+                'is_rolled_back': self.is_rolled_back,
+                'rollback_date': self.rollback_date.isoformat() if self.rollback_date else None,
+                'rollback_user': self.rollback_user_id.name if self.rollback_user_id else None,
+                'rollback_reason': self.rollback_reason,
+            },
+            'user_info': {
+                'created_by': self.user_id.name if self.user_id else None,
+                'user_id': self.user_id.id if self.user_id else None,
+            },
+            'error_message': self.error_message,
+        }
+    
+    def get_progress_status(self):
+        """
+        Get current progress status for WebSocket updates.
+        
+        Returns:
+            dict: Progress information
+        """
+        self.ensure_one()
+        
+        progress_percentage = 0.0
+        estimated_remaining = 0.0
+        current_operation = 'Unknown'
+        
+        if self.state == 'draft':
+            progress_percentage = 0.0
+            current_operation = 'Waiting to start'
+        elif self.state == 'processing':
+            # Calculate progress based on execution time and estimated total
+            if self.start_time:
+                elapsed = (fields.Datetime.now() - self.start_time).total_seconds()
+                
+                # Estimate progress based on contacts found vs typical processing rate
+                if self.contacts_found > 0:
+                    # Assume ~100 contacts per second processing rate
+                    estimated_total_time = self.contacts_found / 100.0
+                    progress_percentage = min(95.0, (elapsed / estimated_total_time) * 100)
+                    estimated_remaining = max(0, estimated_total_time - elapsed)
+                else:
+                    # Default progress for early stages
+                    progress_percentage = min(90.0, (elapsed / 60.0) * 100)
+                    estimated_remaining = max(0, 60 - elapsed)
+                
+                current_operation = 'Processing contacts...'
+        elif self.state == 'completed':
+            progress_percentage = 100.0
+            current_operation = 'Completed successfully'
+        elif self.state == 'failed':
+            progress_percentage = 0.0  # Reset on failure
+            current_operation = 'Failed'
+        elif self.state == 'rolled_back':
+            progress_percentage = 0.0
+            current_operation = 'Rolled back'
+        
+        return {
+            'batch_id': self.batch_id,
+            'state': self.state,
+            'progress_percentage': round(progress_percentage, 1),
+            'current_operation': current_operation,
+            'estimated_remaining_seconds': round(estimated_remaining, 0),
+            'statistics': {
+                'contacts_found': self.contacts_found,
+                'contacts_added': self.contacts_added,
+                'execution_time': self.execution_time,
+            },
+            'timestamps': {
+                'start_time': self.start_time.isoformat() if self.start_time else None,
+                'current_time': fields.Datetime.now().isoformat(),
+            },
+            'error_message': self.error_message,
+        }
+    
+    @api.model
+    def validate_web_request(self, request_data):
+        """
+        Validate incoming web requests for batch operations.
+        
+        Args:
+            request_data (dict): Request data from web interface
+            
+        Returns:
+            dict: Validation results with errors if any
+        """
+        errors = []
+        warnings = []
+        
+        # Validate mailing list
+        mailing_list_id = request_data.get('mailing_list_id')
+        if not mailing_list_id:
+            errors.append('Mailing list is required')
+        else:
+            mailing_list = self.env['mailing.list'].browse(mailing_list_id)
+            if not mailing_list.exists():
+                errors.append('Mailing list not found')
+            else:
+                # Check permissions
+                try:
+                    mailing_list.check_access_rights('write')
+                    mailing_list.check_access_rule('write')
+                except Exception:
+                    errors.append('You do not have permission to modify this mailing list')
+        
+        # Validate source models
+        source_models = request_data.get('source_models', [])
+        if not source_models:
+            errors.append('At least one source model must be selected')
+        else:
+            registry_model = self.env['mailing.source.registry']
+            for source_config in source_models:
+                model_name = source_config.get('model_name')
+                if not model_name:
+                    errors.append('Source model name is required')
+                    continue
+                
+                # Check if model is registered
+                registry_entry = registry_model.search([
+                    ('model_name', '=', model_name),
+                    ('is_active', '=', True),
+                    ('company_id', 'in', [self.env.company.id, False])
+                ], limit=1)
+                
+                if not registry_entry:
+                    errors.append(f'Source model {model_name} is not registered or inactive')
+                    continue
+                
+                # Validate model access
+                if not registry_entry.validate_model_access():
+                    errors.append(f'You do not have access to source model {model_name}')
+        
+        # Validate filter criteria
+        filter_criteria = request_data.get('filter_criteria', {})
+        if isinstance(filter_criteria, dict):
+            # Validate date ranges
+            quick_filters = filter_criteria.get('quick_filters', {})
+            if isinstance(quick_filters, dict):
+                date_range = quick_filters.get('date_range', {})
+                if isinstance(date_range, dict):
+                    date_from = date_range.get('from')
+                    date_to = date_range.get('to')
+                    
+                    if date_from and date_to:
+                        try:
+                            from_date = fields.Datetime.from_string(date_from)
+                            to_date = fields.Datetime.from_string(date_to)
+                            
+                            if from_date > to_date:
+                                errors.append('Start date must be before end date')
+                            
+                            # Warn about very large date ranges
+                            if (to_date - from_date).days > 365 * 2:
+                                warnings.append('Large date range may result in many contacts')
+                                
+                        except (ValueError, TypeError):
+                            errors.append('Invalid date format in date range')
+        
+        # Validate batch configuration
+        batch_config = request_data.get('batch_config', {})
+        if isinstance(batch_config, dict):
+            batch_size = batch_config.get('batch_size', 1000)
+            if not isinstance(batch_size, int) or batch_size <= 0:
+                errors.append('Batch size must be a positive integer')
+            elif batch_size > 10000:
+                warnings.append('Large batch size may impact performance')
+        
+        return {
+            'valid': len(errors) == 0,
+            'errors': errors,
+            'warnings': warnings,
+            'validated_data': {
+                'mailing_list_id': mailing_list_id,
+                'source_models': source_models,
+                'filter_criteria': filter_criteria,
+            } if len(errors) == 0 else None
+        }
+    
+    @api.model
+    def create_from_web_request(self, validated_data):
+        """
+        Create a new batch from validated web request data.
+        
+        Args:
+            validated_data (dict): Pre-validated request data
+            
+        Returns:
+            mailing.list.update.batch: Created batch record
+        """
+        # Generate batch with web-specific defaults
+        vals = {
+            'mailing_list_id': validated_data['mailing_list_id'],
+            'source_models': json.dumps(validated_data['source_models']),
+            'filter_criteria': json.dumps(validated_data['filter_criteria']),
+            'state': 'draft',
+        }
+        
+        batch_record = self.create(vals)
+        
+        # Log web creation
+        self.env['mailing.operation.audit'].log_operation(
+            batch_id=batch_record.batch_id,
+            operation_type='execution_started',
+            details={
+                'source': 'web_interface',
+                'user_agent': self.env.context.get('user_agent'),
+                'source_count': len(validated_data['source_models']),
+            },
+            mailing_list_id=validated_data['mailing_list_id']
+        )
+        
+        return batch_record
+    
+    def execute_web_preview(self):
+        """
+        Execute preview specifically for web interface.
+        
+        Returns:
+            dict: Web-formatted preview results
+        """
+        self.ensure_one()
+        
+        try:
+            # Parse configuration
+            source_configs = json.loads(self.source_models) if self.source_models else []
+            filter_criteria = json.loads(self.filter_criteria) if self.filter_criteria else {}
+            
+            # Execute preview (using existing method)
+            result = self.execute_update(source_configs, filter_criteria, preview_only=True)
+            
+            if result.get('success'):
+                # Format for web response
+                web_result = {
+                    'success': True,
+                    'preview_data': {
+                        'total_found': result.get('total_found', 0),
+                        'total_after_dedup': result.get('total_after_dedup', 0),
+                        'deduplication_stats': result.get('deduplication_stats', {}),
+                        'source_stats': result.get('source_stats', {}),
+                        'sample_contacts': result.get('sample_contacts', [])[:50],  # Limit for web
+                        'estimated_execution_time': self._estimate_execution_time(
+                            result.get('total_after_dedup', 0)
+                        ),
+                    },
+                    'batch_info': self.to_json_preview(),
+                }
+                
+                # Log preview generation
+                self.env['mailing.operation.audit'].log_operation(
+                    batch_id=self.batch_id,
+                    operation_type='preview_generated',
+                    details={
+                        'total_found': result.get('total_found', 0),
+                        'total_after_dedup': result.get('total_after_dedup', 0),
+                        'source': 'web_interface',
+                    },
+                    mailing_list_id=self.mailing_list_id.id
+                )
+                
+                return web_result
+            else:
+                return {
+                    'success': False,
+                    'error': 'Preview generation failed',
+                    'details': result
+                }
+                
+        except Exception as e:
+            _logger.error("Web preview failed for batch %s: %s", self.batch_id, str(e))
+            return {
+                'success': False,
+                'error': str(e),
+                'batch_id': self.batch_id
+            }
+    
+    def _estimate_execution_time(self, contact_count):
+        """
+        Estimate execution time based on contact count.
+        
+        Args:
+            contact_count (int): Number of contacts to process
+            
+        Returns:
+            dict: Time estimates
+        """
+        # Base processing rate: ~100 contacts per second
+        base_rate = 100.0
+        
+        # Adjust rate based on system load and complexity
+        adjusted_rate = base_rate * 0.8  # Conservative estimate
+        
+        estimated_seconds = contact_count / adjusted_rate
+        
+        # Add overhead for deduplication and database operations
+        overhead_seconds = min(30, contact_count * 0.01)  # Max 30s overhead
+        total_seconds = estimated_seconds + overhead_seconds
+        
+        return {
+            'total_seconds': round(total_seconds, 0),
+            'display_time': self._format_duration(total_seconds),
+            'contact_count': contact_count,
+            'processing_rate': f"~{int(adjusted_rate)} contacts/second",
+        }
+    
+    def _format_duration(self, seconds):
+        """Format duration in human-readable format."""
+        if seconds < 60:
+            return f"{int(seconds)} seconds"
+        elif seconds < 3600:
+            minutes = int(seconds / 60)
+            remaining_seconds = int(seconds % 60)
+            return f"{minutes}m {remaining_seconds}s"
+        else:
+            hours = int(seconds / 3600)
+            minutes = int((seconds % 3600) / 60)
+            return f"{hours}h {minutes}m"
