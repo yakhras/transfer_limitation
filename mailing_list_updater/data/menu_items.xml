@@ -251,21 +251,18 @@ if recent_batches:
             <field name="model_id" ref="model_mailing_source_registry"/>
             <field name="state">code</field>
             <field name="code">
-# Simple daily health check of registered models
 active_entries = model.search([('is_active', '=', True)])
 healthy_count = 0
 issues = []
 
 for entry in active_entries:
     try:
-        # Test basic model access
         test_model = env[entry.model_name]
         test_model.search([], limit=1)
         healthy_count += 1
     except Exception as e:
-        issues.append(f"{entry.model_name}: {str(e)}")
+        issues.append("{}: {}".format(entry.model_name, str(e)))
 
-# Log health status
 details_json = json.dumps({
     'type': 'registry_health_check',
     'total_entries': len(active_entries),
@@ -276,10 +273,10 @@ details_json = json.dumps({
 env['mailing.operation.audit'].create({
     'batch_id': 'SYSTEM_HEALTH_CHECK',
     'operation_type': 'execution_completed',
-    'user_id': 1,  # Administrator user
+    'user_id': 1,
     'details': details_json,
     'success': len(issues) == 0,
-    'error_message': f"Found {len(issues)} issues" if issues else None,
+    'error_message': "Found {} issues".format(len(issues)) if issues else None,
     'company_id': env.company.id,
 })
             </field>
