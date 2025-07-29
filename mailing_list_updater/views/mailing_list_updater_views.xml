@@ -1129,19 +1129,19 @@
          ========================================================================== -->
     
     <!-- Main Client Action -->
-    <record id="client_action_mailing_list_updater" model="ir.actions.client">
+    <!-- <record id="client_action_mailing_list_updater" model="ir.actions.client">
         <field name="name">Mailing List Updater</field>
         <field name="tag">mailing_list_updater</field>
         <field name="target">current</field>
         <field name="context">{}</field>
-    </record>
+    </record> -->
     
     <!-- Menu Item -->
-    <menuitem id="menu_mailing_list_updater_main"
+    <!-- <menuitem id="menu_mailing_list_updater_main"
               name="Mailing List Updater"
               parent="mass_mailing.menu_email_marketing"
               action="client_action_mailing_list_updater"
-              sequence="10"/>
+              sequence="10"/> -->
               
     <!-- Smart Button for Mailing Lists -->
     <record id="view_mailing_list_form_inherit_updater" model="ir.ui.view">
