@@ -210,7 +210,7 @@
                         <div t-if="state.selectedMailingList" class="execution-target-info">
                             <div class="target-list-summary">
                                 <i class="fa fa-list-alt"></i>
-                                <span>Updating: <strong t-esc="state.selectedMailingList.name"/></strong></span>
+                                <span>Updating: <strong t-esc="state.selectedMailingList.name"></strong></span>
                                 <span class="separator">|</span>
                                 <span>Sources: <strong t-esc="state.selectedSources.length"/> selected</strong></span>
                             </div>
