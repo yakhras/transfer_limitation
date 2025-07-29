@@ -179,11 +179,11 @@
                   sequence="20"
                   groups="group_mailing_list_updater_manager"/>
 
-        <!-- Smart Button for Mailing Lists (will be implemented in Phase 2) -->
+        <!-- Smart Button for Mailing Lists (will be implemented in Phase 2) 
         <record id="mailing_list_update_smart_button" model="ir.ui.view">
             <field name="name">mailing.list.form.inherit.updater</field>
             <field name="model">mailing.list</field>
-            <field name="inherit_id" ref="mass_mailing.mailing_list_view_form"/>
+            <field name="inherit_id" ref="mass_mailing.view_mailing_list_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@name='button_box']" position="inside">
                     <button name="%(action_mailing_list_updater)d"
@@ -200,6 +200,7 @@
                 </xpath>
             </field>
         </record>
+         -->
 
         <!-- Scheduled Actions -->
         
@@ -223,16 +224,18 @@ if recent_batches:
     total_contacts = sum(batch.contacts_added for batch in recent_batches)
     avg_time = sum(batch.execution_time for batch in recent_batches) / len(recent_batches)
     
+    details_json = json.dumps({
+        'type': 'weekly_performance_summary',
+        'batches_count': len(recent_batches),
+        'total_contacts_added': total_contacts,
+        'average_execution_time': avg_time
+    })
+    
     model.create({
         'batch_id': 'SYSTEM_MONITORING',
         'operation_type': 'execution_completed',
-        'user_id': env.ref('base.user_admin').id,
-        'details': json.dumps({
-            'type': 'weekly_performance_summary',
-            'batches_count': len(recent_batches),
-            'total_contacts_added': total_contacts,
-            'average_execution_time': avg_time
-        }),
+        'user_id': 1,  # Administrator user
+        'details': details_json,
         'success': True,
         'company_id': env.company.id,
     })
@@ -241,7 +244,7 @@ if recent_batches:
             <field name="interval_type">weeks</field>
             <field name="numbercall">-1</field>
             <field name="active" eval="True"/>
-            <field name="user_id" ref="base.user_admin"/>
+            <field name="user_id" ref="base.user_root"/>
         </record>
 
         <!-- Registry Health Check Action -->
@@ -267,16 +270,18 @@ for entry in active_entries:
         issues.append(f"{entry.model_name}: {str(e)}")
 
 # Log health status
+details_json = json.dumps({
+    'type': 'registry_health_check',
+    'total_entries': len(active_entries),
+    'healthy_entries': healthy_count,
+    'issues': issues
+})
+
 env['mailing.operation.audit'].create({
     'batch_id': 'SYSTEM_HEALTH_CHECK',
     'operation_type': 'execution_completed',
-    'user_id': env.ref('base.user_admin').id,
-    'details': json.dumps({
-        'type': 'registry_health_check',
-        'total_entries': len(active_entries),
-        'healthy_entries': healthy_count,
-        'issues': issues
-    }),
+    'user_id': 1,  # Administrator user
+    'details': details_json,
     'success': len(issues) == 0,
     'error_message': f"Found {len(issues)} issues" if issues else None,
     'company_id': env.company.id,
@@ -286,7 +291,7 @@ env['mailing.operation.audit'].create({
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field name="active" eval="True"/>
-            <field name="user_id" ref="base.user_admin"/>
+            <field name="user_id" ref="base.user_root"/>
         </record>
 
     </data>

@@ -5,20 +5,21 @@
         <!-- Security Groups -->
         <record id="group_mailing_list_updater_user" model="res.groups">
             <field name="name">Mailing List Updater: User</field>
-            <field name="category_id" ref="mass_mailing.module_category_mass_mailing"/>
+            <field name="category_id" ref="base.module_category_marketing"/>
             <field name="implied_ids" eval="[(4, ref('mass_mailing.group_mass_mailing_user'))]"/>
+            <field name="comment">Can use mailing list update functionality, create and execute batches, view own operations.</field>
         </record>
 
         <record id="group_mailing_list_updater_manager" model="res.groups">
             <field name="name">Mailing List Updater: Manager</field>
-            <field name="category_id" ref="mass_mailing.module_category_mass_mailing"/>
+            <field name="category_id" ref="base.module_category_marketing"/>
             <field name="implied_ids" eval="[(4, ref('group_mailing_list_updater_user')), (4, ref('mass_mailing.group_mass_mailing_manager'))]"/>
             <field name="comment">Can manage all mailing list update operations, rollback batches, configure registry, view all operations within company.</field>
         </record>
 
         <record id="group_mailing_list_updater_admin" model="res.groups">
             <field name="name">Mailing List Updater: Administrator</field>
-            <field name="category_id" ref="mass_mailing.module_category_mass_mailing"/>
+            <field name="category_id" ref="base.module_category_marketing"/>
             <field name="implied_ids" eval="[(4, ref('group_mailing_list_updater_manager')), (4, ref('base.group_system'))]"/>
             <field name="comment">Full administrative access to mailing list updater, can configure system settings, manage registries across companies.</field>
         </record>
@@ -144,30 +145,6 @@
             <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
         </record>
 
-        <!-- Special Rules for Rollback Operations -->
-        <record id="batch_rollback_access_rule" model="ir.rule">
-            <field name="name">Batch Rollback: Access Control</field>
-            <field name="model_id" ref="model_mailing_list_update_batch"/>
-            <field name="domain_force">[
-                ('company_id', '=', company_id),
-                ('state', '=', 'completed'),
-                ('is_rolled_back', '=', False)
-            ]</field>
-            <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
-            <field name="name">Rollback Access Rule</field>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
-        </record>
-
-        <!-- Data Access Categories -->
-        <record id="ir_module_category_mailing_list_updater" model="ir.module.category">
-            <field name="name">Mailing List Updater</field>
-            <field name="description">Manage mailing list update operations and batch processing</field>
-            <field name="sequence">15</field>
-        </record>
-
         <!-- Server Actions for Batch Operations (for UI buttons) -->
         <record id="action_batch_rollback" model="ir.actions.server">
             <field name="name">Rollback Batch</field>
@@ -177,54 +154,10 @@
             <field name="state">code</field>
             <field name="groups_id" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
             <field name="code">
-for record in records:
-    if record.can_rollback:
-        try:
-            result = record.rollback_operation("Manual rollback via UI")
-            if result.get('success'):
-                action = {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': 'Rollback Successful',
-                        'message': f"Rolled back {result.get('contacts_removed', 0)} contacts from batch {record.batch_id}",
-                        'type': 'success',
-                        'sticky': False,
-                    }
-                }
-            else:
-                action = {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': 'Rollback Failed',
-                        'message': result.get('error', 'Unknown error occurred'),
-                        'type': 'danger',
-                        'sticky': True,
-                    }
-                }
-        except Exception as e:
-            action = {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Rollback Error',
-                    'message': str(e),
-                    'type': 'danger',
-                    'sticky': True,
-                }
-            }
-    else:
-        action = {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Rollback Not Available',
-                'message': 'This batch cannot be rolled back (24-hour window expired or already rolled back)',
-                'type': 'warning',
-                'sticky': False,
-            }
-        }
+if records:
+    for record in records:
+        if record.can_rollback:
+            record.rollback_operation("Manual rollback via UI")
             </field>
         </record>
 
@@ -240,8 +173,8 @@ model.cleanup_old_audit_logs(days_to_keep=365)
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
-            <field name="active" eval="True"/>
-            <field name="user_id" ref="base.user_admin"/>
+            <field name="active" eval="False"/>
+            <field name="user_id" ref="base.user_root"/>
         </record>
 
     </data>
