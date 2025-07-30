@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    
+    
+    <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
+        <div class="preview-results">
+            <div class="content-header">
+                <h2>
+                    <i class="fa fa-eye"></i>
+                    Preview Results
+                </h2>
+                <p>Review contacts before updating your mailing list</p>
+            </div>
+            
+            <div class="preview-content">
+                <div class="mlu-alert mlu-alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    Preview Results component will be loaded here
+                </div>
+            </div>
+        </div>
+    </t>
+    
+    
+
+</templates>
