@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
-const { Component, useState, onWillStart, onMounted } = owl;
+const { Component, useState } = owl;
 
 /**
- * Batch Manager Component for OWL 1.0
+ * Batch Manager Component for OWL 1.0 (Fixed for Odoo 15.0)
  * 
  * Manages batch operations including history viewing, rollback functionality,
  * and batch statistics display.
@@ -52,22 +52,45 @@ class BatchManagerComponent extends Component {
         // Props from parent (if needed)
         this.mailingListId = this.props.mailingListId;
         
-        // Load data when component starts
-        onWillStart(this.loadInitialData);
-        onMounted(this.setupRefreshTimer);
-        
         // Listen for view-batch events from parent
         this.env.bus?.addEventListener('view-batch', this.onViewBatchRequest.bind(this));
     }
     
     /**
+     * OWL 1.0 Lifecycle - Will Start
      * Load initial data
      */
-    async loadInitialData() {
+    async willStart() {
         await Promise.all([
             this.loadBatchHistory(),
             this.loadStatistics()
         ]);
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Mounted
+     * Setup after component is mounted
+     */
+    mounted() {
+        this.setupRefreshTimer();
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Will Unmount
+     * Component cleanup
+     */
+    willUnmount() {
+        // Clear timers
+        if (this.refreshTimer) {
+            clearInterval(this.refreshTimer);
+        }
+        
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+        
+        // Remove event listeners
+        this.env.bus?.removeEventListener('view-batch', this.onViewBatchRequest);
     }
     
     /**
@@ -400,6 +423,13 @@ class BatchManagerComponent extends Component {
     }
     
     /**
+     * Format number with thousands separator
+     */
+    formatNumber(number) {
+        return new Intl.NumberFormat().format(number);
+    }
+    
+    /**
      * Get status badge CSS class
      */
     getStatusClass(status) {
@@ -546,23 +576,6 @@ class BatchManagerComponent extends Component {
             averageExecutionTime: stats.average_execution_time || 0,
             successRate: stats.success_rate || 0
         };
-    }
-    
-    /**
-     * Component cleanup
-     */
-    willUnmount() {
-        // Clear timers
-        if (this.refreshTimer) {
-            clearInterval(this.refreshTimer);
-        }
-        
-        if (this.searchTimeout) {
-            clearTimeout(this.searchTimeout);
-        }
-        
-        // Remove event listeners
-        this.env.bus?.removeEventListener('view-batch', this.onViewBatchRequest);
     }
 }
 

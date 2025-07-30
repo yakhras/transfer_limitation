@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
-const { Component, useState, onMounted, onWillUnmount } = owl;
+const { Component, useState } = owl;
 
 /**
- * Progress Tracker Component for OWL 1.0
+ * Progress Tracker Component for OWL 1.0 (Fixed for Odoo 15.0)
  * 
  * Displays real-time progress updates during mailing list batch execution
  * with WebSocket integration and fallback mechanisms.
@@ -65,24 +65,30 @@ class ProgressTrackerComponent extends Component {
             this.state.isVisible = true;
         }
         
-        onMounted(this.onMounted);
-        onWillUnmount(this.cleanup);
-        
         // Listen for parent events as fallback
         this.env.bus?.addEventListener('progress-update', this.onProgressUpdate.bind(this));
         this.env.bus?.addEventListener('start-tracking', this.onStartTracking.bind(this));
     }
     
     /**
+     * OWL 1.0 Lifecycle - Mounted
      * Component mounted - start tracking if batch is active
      */
-    onMounted() {
+    mounted() {
         if (this.batchId && this.state.status === 'processing') {
             this.startTracking();
         }
         
         // Notify parent that component is ready
         this.trigger('progress-tracker-ready', { component: this });
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Will Unmount
+     * Component cleanup
+     */
+    willUnmount() {
+        this.cleanup();
     }
     
     /**
@@ -341,6 +347,13 @@ class ProgressTrackerComponent extends Component {
             const minutes = Math.floor((seconds % 3600) / 60);
             return `${hours}h ${minutes}m`;
         }
+    }
+    
+    /**
+     * Format number with thousands separator
+     */
+    formatNumber(number) {
+        return new Intl.NumberFormat().format(number);
     }
     
     /**

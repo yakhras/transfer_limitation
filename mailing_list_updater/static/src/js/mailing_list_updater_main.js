@@ -1,5 +1,11 @@
 /** @odoo-module **/
 
+import { SourceSelectorComponent } from './source_selector_component.js';
+import { FilterBuilderComponent } from './filter_builder_component.js';
+import { PreviewResultsComponent } from './preview_results_component.js';
+import { ProgressTrackerComponent } from './progress_tracker_component.js';
+import { BatchManagerComponent } from './batch_manager_component.js';
+
 const { Component, useState } = owl;
 
 /**
@@ -867,6 +873,15 @@ class MailingListUpdaterMain extends Component {
 
 // OWL 1.0 component registration
 MailingListUpdaterMain.template = "mailing_list_updater.MainTemplate";
+
+// Register child components for OWL 1.0
+MailingListUpdaterMain.components = {
+    SourceSelectorComponent,
+    FilterBuilderComponent,
+    PreviewResultsComponent,
+    ProgressTrackerComponent,
+    BatchManagerComponent,
+};
 
 // Note: Component imports are handled differently in Odoo 15.0
 // Child components need to be properly registered and imported separately

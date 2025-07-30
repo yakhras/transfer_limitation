@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
-const { Component, useState, onWillStart, onMounted } = owl;
+const { Component, useState } = owl;
 
 /**
- * Filter Builder Component for OWL 1.0
+ * Filter Builder Component for OWL 1.0 (Fixed for Odoo 15.0)
  * 
  * Allows users to build dynamic filters for contact selection
  * with both quick filters and advanced rule-based filtering.
@@ -57,16 +57,13 @@ class FilterBuilderComponent extends Component {
         
         // Props from parent
         this.selectedSources = this.props.selectedSources || [];
-        
-        // Load filter options when component starts
-        onWillStart(this.loadFilterOptions);
-        onMounted(this.setupDatePickers);
     }
     
     /**
+     * OWL 1.0 Lifecycle - Will Start
      * Load available filter options for selected sources
      */
-    async loadFilterOptions() {
+    async willStart() {
         if (!this.selectedSources.length) return;
         
         this.state.isLoading = true;
@@ -98,6 +95,15 @@ class FilterBuilderComponent extends Component {
         } finally {
             this.state.isLoading = false;
         }
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Mounted
+     * Setup date picker components
+     */
+    mounted() {
+        // Initialize date pickers for date range filters
+        // This would typically integrate with a date picker library
     }
     
     /**
@@ -135,14 +141,6 @@ class FilterBuilderComponent extends Component {
         } catch (error) {
             console.warn("Could not load filter templates:", error);
         }
-    }
-    
-    /**
-     * Setup date picker components
-     */
-    setupDatePickers() {
-        // Initialize date pickers for date range filters
-        // This would typically integrate with a date picker library
     }
     
     /**

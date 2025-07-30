@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
-const { Component, useState, onWillStart } = owl;
+const { Component, useState } = owl;
 
 /**
- * Source Selector Component for OWL 1.0
+ * Source Selector Component for OWL 1.0 (Fixed for Odoo 15.0)
  * 
  * Allows users to select which contact sources (models) to include
  * in their mailing list update operation.
@@ -25,15 +25,13 @@ class SourceSelectorComponent extends Component {
         
         // Props from parent
         this.selectedMailingList = this.props.selectedMailingList;
-        
-        // Load sources on component start
-        onWillStart(this.loadSources);
     }
     
     /**
+     * OWL 1.0 Lifecycle - Will Start
      * Load available contact sources from the registry
      */
-    async loadSources() {
+    async willStart() {
         this.state.isLoading = true;
         
         try {

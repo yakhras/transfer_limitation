@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
-const { Component, useState, onWillStart } = owl;
+const { Component, useState } = owl;
 
 /**
- * Preview Results Component for OWL 1.0
+ * Preview Results Component for OWL 1.0 (Fixed for Odoo 15.0)
  * 
  * Displays contact preview with statistics, sample data, and deduplication info
  * before the user executes the mailing list update.
@@ -45,9 +45,14 @@ class PreviewResultsComponent extends Component {
         this.selectedMailingList = this.props.selectedMailingList;
         this.selectedSources = this.props.selectedSources || [];
         this.filterCriteria = this.props.filterCriteria || {};
-        
-        // Auto-generate preview when component loads
-        onWillStart(this.generatePreview);
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Will Start
+     * Auto-generate preview when component loads
+     */
+    async willStart() {
+        await this.generatePreview();
     }
     
     /**
