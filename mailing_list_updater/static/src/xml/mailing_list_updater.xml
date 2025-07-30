@@ -330,7 +330,7 @@
          SOURCE SELECTOR TEMPLATE (Enhanced)
          ========================================================================== -->
     
-    <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
+    <!-- <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
         <div class="source-selector">
             <div class="source-selector-header">
                 <h3 class="source-selector-title">
@@ -338,7 +338,7 @@
                     Select Contact Sources
                 </h3>
                 
-                <!-- Quick action for smart button context -->
+                Quick action for smart button context
                 <div t-if="props.selectedMailingList and state.selectedSources.size === 0" class="quick-action-hint">
                     <div class="hint-card">
                         <i class="fa fa-lightbulb-o"></i>
@@ -371,7 +371,7 @@
                 </div>
             </div>
             
-            <!-- Selection Summary -->
+            Selection Summary
             <div t-if="state.selectedSources.size > 0" class="selection-summary">
                 <div class="summary-card">
                     <div class="summary-header">
@@ -429,7 +429,7 @@
                         </div>
                     </div>
                     
-                    <!-- Source Details (Expandable) -->
+                    Source Details (Expandable)
                     <div t-if="state.showSourceDetails[source.model_name]" class="source-details slide-in">
                         <div class="source-capabilities">
                             <h5>Capabilities:</h5>
@@ -463,6 +463,12 @@
                     <p>Try adjusting your search criteria</p>
                 </div>
             </div>
+        </div>
+    </t> -->
+    <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
+        <div class="source-selector">
+            <h3>Source Selector Test</h3>
+            <p>Component loaded successfully!</p>
         </div>
     </t>
     
