@@ -106,7 +106,7 @@
                 <!-- Dialog Footer -->
                 <div class="dialog-footer">
                     <div class="footer-info">
-                        <span>Step <t t-esc="getCurrentStepNumber()"/> of 5</span>
+                        <!-- <span>Step <t t-esc="getCurrentStepNumber()"/> of 5</span> -->
                     </div>
                     <div class="footer-actions">
                         <button t-if="state.currentStep !== 'source_selection'" 
