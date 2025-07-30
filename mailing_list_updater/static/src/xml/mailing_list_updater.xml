@@ -2,593 +2,878 @@
 <templates xml:space="preserve">
 
     <!-- ==========================================================================
-         MAIN COMPONENT TEMPLATE (Simplified for OWL 1.0)
+         MAIN COMPONENT TEMPLATE - Centered Dialog Style
          ========================================================================== -->
     
     <t t-name="mailing_list_updater.MainTemplate" owl="1">
-        <div class="mailing-list-updater">
-            <!-- Header -->
-            <div class="mailing-updater-header">
-                <h1>
-                    <i class="fa fa-envelope-o"></i>
-                    Mailing List Updater
-                </h1>
-                <p>Efficiently update your mailing lists with advanced filtering</p>
-            </div>
-            
-            <!-- Loading Overlay -->
-            <div t-if="state.isLoading" class="loading-overlay">
-                <div class="loading-spinner"></div>
-                <p>Loading...</p>
-            </div>
-            
-            <!-- Error Messages -->
-            <div t-if="state.errors.length > 0" class="error-messages">
-                <div t-foreach="state.errors" t-as="error" class="error-message">
-                    <i class="fa fa-exclamation-triangle"></i>
-                    <span t-esc="error"></span>
-                </div>
-            </div>
-            
-            <!-- Step Navigation -->
-            <div class="step-navigation">
-                <ul class="step-nav-list">
-                    <li t-att-class="state.currentStep === 'source_selection' ? 'step-nav-item active' : 'step-nav-item'">
-                        <i class="fa fa-database"></i>
-                        <span>Select Sources</span>
-                    </li>
-                    <li t-att-class="state.currentStep === 'filter_building' ? 'step-nav-item active' : 'step-nav-item'">
-                        <i class="fa fa-filter"></i>
-                        <span>Build Filters</span>
-                    </li>
-                    <li t-att-class="state.currentStep === 'preview' ? 'step-nav-item active' : 'step-nav-item'">
-                        <i class="fa fa-eye"></i>
-                        <span>Preview Results</span>
-                    </li>
-                    <li t-att-class="state.currentStep === 'execution' ? 'step-nav-item active' : 'step-nav-item'">
-                        <i class="fa fa-play"></i>
-                        <span>Execute</span>
-                    </li>
-                    <li t-att-class="state.currentStep === 'batch_management' ? 'step-nav-item active' : 'step-nav-item'">
-                        <i class="fa fa-history"></i>
-                        <span>History</span>
-                    </li>
-                </ul>
-            </div>
-            
-            <!-- Main Content Area -->
-            <div class="mailing-updater-content">
+        <!-- Modal Backdrop -->
+        <div class="mailing-updater-backdrop">
+            <!-- Centered Dialog Container -->
+            <div class="mailing-updater-dialog">
                 
-                <!-- Step 1: Source Selection -->
-                <div t-if="state.currentStep === 'source_selection'" class="step-content">
-                    <SourceSelectorComponent 
-                        selectedMailingList="currentSelectedMailingList"
-                        t-on-sources-changed="onSourcesChanged"/>
-                </div>
-                
-                <!-- Step 2: Filter Building -->
-                <div t-if="state.currentStep === 'filter_building'" class="step-content">
-                    <FilterBuilderComponent 
-                        selectedSources="currentSelectedSources"
-                        t-on-filters-changed="onFiltersChanged"/>
-                </div>
-                
-                <!-- Step 3: Preview Results -->
-                <div t-if="state.currentStep === 'preview'" class="step-content">
-                    <PreviewResultsComponent 
-                        selectedMailingList="currentSelectedMailingList"
-                        selectedSources="currentSelectedSources"
-                        filterCriteria="currentFilterCriteria"
-                        t-on-preview-ready="onPreviewReady"
-                        t-on-execute-update="onExecuteUpdate"/>
-                </div>
-                
-                <!-- Step 4: Execution -->
-                <div t-if="state.currentStep === 'execution'" class="step-content">
-                    <div class="execution-container">
-                        <h2>Executing Mailing List Update</h2>
-                        
-                        <ProgressTrackerComponent 
-                            batchId="currentBatchId"
-                            initialProgress="currentExecutionProgress"
-                            initialStatus="currentExecutionStatus"
-                            t-on-operation-completed="onOperationCompleted"
-                            t-on-operation-error="onOperationError"
-                            t-on-operation-cancelled="onOperationCancelled"/>
+                <!-- Header -->
+                <div class="dialog-header">
+                    <div class="header-content">
+                        <div class="header-icon">
+                            <i class="fa fa-envelope-o"></i>
+                        </div>
+                        <div class="header-text">
+                            <h1>Mailing List Updater</h1>
+                            <p>Efficiently update your mailing list with advanced filtering</p>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Step 5: Batch Management -->
-                <div t-if="state.currentStep === 'batch_management'" class="step-content">
-                    <BatchManagerComponent 
-                        mailingListId="currentMailingListId"/>
+                <!-- Error Messages -->
+                <div t-if="state.errors.length > 0" class="dialog-errors">
+                    <div t-foreach="state.errors" t-as="error" class="error-alert">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        <span t-esc="error"></span>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Footer Actions -->
-            <div class="mailing-updater-footer">
-                <div class="footer-actions">
-                    <button t-if="state.currentStep !== 'source_selection'" 
-                            class="btn btn-secondary" 
-                            t-on-click="previousStep">
-                        <i class="fa fa-arrow-left"></i>
-                        Previous
-                    </button>
+                
+                <!-- Step Navigation -->
+                <div class="dialog-navigation">
+                    <div class="step-pills">
+                        <div t-att-class="state.currentStep === 'source_selection' ? 'step-pill active' : 'step-pill'">
+                            <i class="fa fa-database"></i>
+                            <span>Select Sources</span>
+                        </div>
+                        <div t-att-class="state.currentStep === 'filter_building' ? 'step-pill active' : 'step-pill'">
+                            <i class="fa fa-filter"></i>
+                            <span>Build Filters</span>
+                        </div>
+                        <div t-att-class="state.currentStep === 'preview' ? 'step-pill active' : 'step-pill'">
+                            <i class="fa fa-eye"></i>
+                            <span>Preview Results</span>
+                        </div>
+                        <div t-att-class="state.currentStep === 'execution' ? 'step-pill active' : 'step-pill'">
+                            <i class="fa fa-play"></i>
+                            <span>Execute</span>
+                        </div>
+                        <div t-att-class="state.currentStep === 'batch_management' ? 'step-pill active' : 'step-pill'">
+                            <i class="fa fa-history"></i>
+                            <span>History</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dialog Content -->
+                <div class="dialog-content">
                     
-                    <button t-if="state.currentStep !== 'batch_management'" 
-                            class="btn btn-primary" 
-                            t-on-click="nextStep">
-                        Next
-                        <i class="fa fa-arrow-right"></i>
-                    </button>
+                    <!-- Step 1: Source Selection -->
+                    <div t-if="state.currentStep === 'source_selection'" class="step-content">
+                        <div class="content-header">
+                            <h2>
+                                <i class="fa fa-database"></i>
+                                Select Contact Sources
+                            </h2>
+                            <p>Choose which contact sources to include in your mailing list update</p>
+                        </div>
+                        
+                        <!-- Search and Actions -->
+                        <div class="content-actions">
+                            <div class="search-box">
+                                <i class="fa fa-search"></i>
+                                <input type="text" placeholder="Search sources..." class="search-input" />
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-outline">
+                                    <i class="fa fa-magic"></i>
+                                    Select Recommended
+                                </button>
+                                <button class="btn btn-outline">
+                                    <i class="fa fa-eraser"></i>
+                                    Clear All
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Source Cards -->
+                        <div class="source-cards">
+                            
+                            <!-- Contacts Card (Selected + Recommended) -->
+                            <div class="source-card selected recommended">
+                                <div class="card-badges">
+                                    <span class="badge badge-recommended">
+                                        <i class="fa fa-star"></i>
+                                        RECOMMENDED
+                                    </span>
+                                </div>
+                                <div class="card-header">
+                                    <div class="card-icon contacts-icon">
+                                        <i class="fa fa-users"></i>
+                                    </div>
+                                    <h3>Contacts</h3>
+                                    <div class="selection-check">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                </div>
+                                <p class="card-description">Import contacts from Contacts module</p>
+                                <div class="card-stats">
+                                    <span class="stat-item">
+                                        <i class="fa fa-users"></i>
+                                        1.2K contacts
+                                    </span>
+                                    <button class="btn-details">
+                                        <i class="fa fa-chevron-down"></i>
+                                        Show Details
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- CRM Leads Card (Selected + Recommended) -->
+                            <div class="source-card selected recommended">
+                                <div class="card-badges">
+                                    <span class="badge badge-recommended">
+                                        <i class="fa fa-star"></i>
+                                        RECOMMENDED
+                                    </span>
+                                </div>
+                                <div class="card-header">
+                                    <div class="card-icon crm-icon">
+                                        <i class="fa fa-line-chart"></i>
+                                    </div>
+                                    <h3>CRM Leads</h3>
+                                    <div class="selection-check">
+                                        <i class="fa fa-check-circle"></i>
+                                    </div>
+                                </div>
+                                <p class="card-description">Import contacts from CRM Leads</p>
+                                <div class="card-stats">
+                                    <span class="stat-item">
+                                        <i class="fa fa-users"></i>
+                                        856 contacts
+                                    </span>
+                                    <button class="btn-details">
+                                        <i class="fa fa-chevron-down"></i>
+                                        Show Details
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Employees Card (Not Selected) -->
+                            <div class="source-card">
+                                <div class="card-header">
+                                    <div class="card-icon employees-icon">
+                                        <i class="fa fa-user-tie"></i>
+                                    </div>
+                                    <h3>Employees</h3>
+                                    <div class="selection-check">
+                                        <i class="fa fa-circle-o"></i>
+                                    </div>
+                                </div>
+                                <p class="card-description">Import contacts from HR Employees</p>
+                                <div class="card-stats">
+                                    <span class="stat-item">
+                                        <i class="fa fa-users"></i>
+                                        142 contacts
+                                    </span>
+                                    <button class="btn-details">
+                                        <i class="fa fa-chevron-down"></i>
+                                        Show Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Filter Building -->
+                    <div t-if="state.currentStep === 'filter_building'" class="step-content">
+                        <FilterBuilderComponent 
+                            selectedSources="currentSelectedSources"
+                            t-on-filters-changed="onFiltersChanged"/>
+                    </div>
+                    
+                    <!-- Step 3: Preview Results -->
+                    <div t-if="state.currentStep === 'preview'" class="step-content">
+                        <PreviewResultsComponent 
+                            selectedMailingList="currentSelectedMailingList"
+                            selectedSources="currentSelectedSources"
+                            filterCriteria="currentFilterCriteria"
+                            t-on-preview-ready="onPreviewReady"
+                            t-on-execute-update="onExecuteUpdate"/>
+                    </div>
+                    
+                    <!-- Step 4: Execution -->
+                    <div t-if="state.currentStep === 'execution'" class="step-content">
+                        <div class="execution-container">
+                            <h2>Executing Mailing List Update</h2>
+                            
+                            <ProgressTrackerComponent 
+                                batchId="currentBatchId"
+                                initialProgress="currentExecutionProgress"
+                                initialStatus="currentExecutionStatus"
+                                t-on-operation-completed="onOperationCompleted"
+                                t-on-operation-error="onOperationError"
+                                t-on-operation-cancelled="onOperationCancelled"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 5: Batch Management -->
+                    <div t-if="state.currentStep === 'batch_management'" class="step-content">
+                        <BatchManagerComponent 
+                            mailingListId="currentMailingListId"/>
+                    </div>
+                </div>
+                
+                <!-- Dialog Footer -->
+                <div class="dialog-footer">
+                    <div class="footer-info">
+                        <span>Step <t t-esc="getCurrentStepNumber()"/> of 5</span>
+                    </div>
+                    <div class="footer-actions">
+                        <button t-if="state.currentStep !== 'source_selection'" 
+                                class="btn btn-secondary" 
+                                t-on-click="previousStep">
+                            <i class="fa fa-arrow-left"></i>
+                            Previous
+                        </button>
+                        
+                        <button t-if="state.currentStep !== 'batch_management'" 
+                                class="btn btn-primary" 
+                                t-on-click="nextStep">
+                            Next
+                            <i class="fa fa-arrow-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </t>
     
     <!-- ==========================================================================
-         SOURCE SELECTOR TEMPLATE (Simplified for OWL 1.0)
+         SOURCE SELECTOR TEMPLATE (For other components)
          ========================================================================== -->
     
-    <!-- <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
+    <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
         <div class="source-selector">
-            <div class="source-selector-header">
-                <h3>
-                    <i class="fa fa-database"></i>
-                    Select Contact Sources
-                </h3>
-                
-                <div class="source-actions">
-                    <input type="text" 
-                           class="form-control" 
-                           placeholder="Search sources..."
-                           t-on-input="onSearchInput"/>
-                    
-                    <button class="btn btn-outline-primary btn-sm" 
-                            t-on-click="selectAllRecommended">
-                        <i class="fa fa-check-square-o"></i>
-                        Select Recommended
-                    </button>
-                    
-                    <button class="btn btn-outline-secondary btn-sm" 
-                            t-on-click="clearAllSelections">
-                        <i class="fa fa-square-o"></i>
-                        Clear All
-                    </button>
-                </div>
-            </div>
-            
-            Selection Summary
-            <div t-if="state.selectedSources.size > 0" class="selection-summary">
-                <div class="alert alert-success">
-                    <i class="fa fa-check-circle"></i>
-                    <span t-esc="state.selectedSources.size"/> source(s) selected
-                </div>
-            </div>
-            
-            <div t-if="state.isLoading" class="text-center">
-                <div class="loading-spinner"></div>
-                <p>Loading contact sources...</p>
-            </div>
-            
-            <div t-else="" class="source-grid">
-                <div t-foreach="filteredSources" t-as="source" 
-                     t-key="source.model_name"
-                     t-att-class="getSourceItemClass(source)"
-                     t-on-click="() => this.onSourceToggle(source.model_name)">
-                    
-                    <div class="source-header">
-                        <div class="source-icon">
-                            <i class="fa fa-database"></i>
-                        </div>
-                        <h4 t-esc="source.name"></h4>
-                        <div t-if="source.recommended" class="badge badge-warning">
-                            <i class="fa fa-star"></i>
-                            Recommended
-                        </div>
-                    </div>
-                    
-                    <p t-esc="source.description"></p>
-                    
-                    <div class="source-stats">
-                        <span class="text-muted">
-                            <i class="fa fa-users"></i>
-                            <t t-esc="formatContactCount(source.estimated_count)"/> contacts
-                        </span>
-                        
-                        <div class="source-status">
-                            <i t-if="isSourceSelected(source.model_name)" 
-                               class="fa fa-check-circle text-success"></i>
-                            <i t-elif="not source.available" 
-                               class="fa fa-exclamation-triangle text-warning"></i>
-                            <i t-else="" 
-                               class="fa fa-circle-o text-muted"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div t-if="filteredSources.length === 0 and not state.isLoading" class="text-center text-muted">
-                <i class="fa fa-search fa-3x"></i>
-                <h4>No sources found</h4>
-                <p>Try adjusting your search criteria</p>
-            </div>
+            <!-- Content will be rendered by the main template for source_selection step -->
         </div>
-    </t> -->
+    </t>
     
     <!-- ==========================================================================
-         FILTER BUILDER TEMPLATE (Simplified for OWL 1.0)
+         OTHER COMPONENT TEMPLATES (Simplified)
          ========================================================================== -->
     
     <t t-name="mailing_list_updater.FilterBuilderTemplate" owl="1">
         <div class="filter-builder">
-            <div class="filter-builder-header">
-                <h3>
+            <div class="content-header">
+                <h2>
                     <i class="fa fa-filter"></i>
                     Build Contact Filters
-                </h3>
+                </h2>
+                <p>Configure filters to refine your contact selection</p>
             </div>
             
-            <div t-if="state.isLoading" class="text-center">
-                <div class="loading-spinner"></div>
-                <p>Loading filter options...</p>
-            </div>
-            
-            <!-- Quick Filters Section -->
-            <div class="filter-section">
-                <h4>Quick Filters</h4>
-                
-                <div class="form-group">
-                    <div class="form-check">
-                        <input type="checkbox" 
-                               class="form-check-input" 
-                               id="active_only"
-                               t-att-checked="state.quickFilters.active_only"
-                               t-on-change="() => this.onQuickFilterChange('active_only', !state.quickFilters.active_only)"/>
-                        <label class="form-check-label" for="active_only">
-                            Active contacts only
-                        </label>
-                    </div>
+            <div class="filter-content">
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    Filter Builder component will be loaded here
                 </div>
-                
-                <div class="form-group">
-                    <div class="form-check">
-                        <input type="checkbox" 
-                               class="form-check-input" 
-                               id="date_range_enabled"
-                               t-att-checked="state.quickFilters.date_range.enabled"
-                               t-on-change="toggleDateRange"/>
-                        <label class="form-check-label" for="date_range_enabled">
-                            Date range filter
-                        </label>
-                    </div>
-                    
-                    <div t-if="state.quickFilters.date_range.enabled" class="row">
-                        <div class="col-md-4">
-                            <select class="form-control">
-                                <option value="create_date">Created Date</option>
-                                <option value="write_date">Modified Date</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="date" class="form-control" placeholder="From"/>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="date" class="form-control" placeholder="To"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Advanced Filters Section -->
-            <div class="filter-section">
-                <h4>
-                    Advanced Filters
-                    <button class="btn btn-link btn-sm" 
-                            t-on-click="toggleAdvancedFilters">
-                        <i t-att-class="state.showAdvanced ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
-                        <t t-if="state.showAdvanced">Hide</t>
-                        <t t-else="">Show</t> Advanced
-                    </button>
-                </h4>
-                
-                <div t-if="state.showAdvanced" class="advanced-filters">
-                    <div class="alert alert-info">
-                        <p>Advanced filter functionality will be loaded here</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Actions -->
-            <div class="filter-actions">
-                <button class="btn btn-secondary" 
-                        t-on-click="clearAllFilters">
-                    <i class="fa fa-eraser"></i>
-                    Clear All Filters
-                </button>
             </div>
         </div>
     </t>
-    
-    <!-- ==========================================================================
-         PREVIEW RESULTS TEMPLATE (Simplified for OWL 1.0)
-         ========================================================================== -->
     
     <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
         <div class="preview-results">
-            <div class="preview-header">
-                <h3>
+            <div class="content-header">
+                <h2>
                     <i class="fa fa-eye"></i>
                     Preview Results
-                </h3>
-                
-                <div class="preview-actions">
-                    <button class="btn btn-outline-secondary btn-sm" 
-                            t-on-click="refreshPreview">
-                        <i class="fa fa-refresh"></i>
-                        Refresh Preview
-                    </button>
-                </div>
+                </h2>
+                <p>Review contacts before updating your mailing list</p>
             </div>
             
-            <div t-if="state.isGeneratingPreview" class="text-center">
-                <div class="loading-spinner"></div>
-                <p>Generating preview...</p>
-            </div>
-            
-            <div t-elif="isPreviewValid" class="preview-content">
-                
-                <!-- Statistics Cards -->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="stat-value" t-esc="formatNumber(state.statistics.total_found || 0)"></div>
-                            <div class="stat-label">Total Found</div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <div class="stat-card bg-success">
-                            <div class="stat-value" t-esc="formatNumber(state.statistics.total_after_dedup || 0)"></div>
-                            <div class="stat-label">After Deduplication</div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <div class="stat-card bg-warning">
-                            <div class="stat-value" t-esc="formatNumber(state.statistics.duplicates_removed || 0)"></div>
-                            <div class="stat-label">Duplicates Removed</div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-3">
-                        <div class="stat-card bg-danger">
-                            <div class="stat-value" t-esc="formatNumber(state.statistics.invalid_emails || 0)"></div>
-                            <div class="stat-label">Invalid Emails</div>
-                        </div>
-                    </div>
+            <div class="preview-content">
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    Preview Results component will be loaded here
                 </div>
-                
-                <!-- Sample Contacts Table -->
-                <div class="preview-table">
-                    <h4>Sample Contacts</h4>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Source</th>
-                                <th>Company</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr t-foreach="paginatedContacts" t-as="contact" t-key="contact.id">
-                                <td t-esc="getContactFieldValue(contact, 'name')"></td>
-                                <td t-esc="getContactFieldValue(contact, 'email')"></td>
-                                <td t-esc="getContactFieldValue(contact, 'source')"></td>
-                                <td t-esc="getContactFieldValue(contact, 'company_name')"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Execution Section -->
-                <div class="execution-section">
-                    <h4>Ready to Execute</h4>
-                    
-                    <button t-att-class="executionButtonClass"
-                            t-att-disabled="!state.canExecute"
-                            t-on-click="executeUpdate">
-                        <i class="fa fa-play"></i>
-                        <t t-esc="executionButtonText"/>
-                    </button>
-                </div>
-            </div>
-            
-            <div t-else="" class="text-center text-muted">
-                <i class="fa fa-exclamation-triangle fa-3x"></i>
-                <h4>Unable to generate preview</h4>
-                <p>Please check your source selection and filters</p>
             </div>
         </div>
     </t>
     
-    <!-- ==========================================================================
-         PROGRESS TRACKER TEMPLATE (Simplified for OWL 1.0)
-         ========================================================================== -->
-    
     <t t-name="mailing_list_updater.ProgressTrackerTemplate" owl="1">
-        <div t-if="state.isVisible" class="progress-tracker">
-            <div class="progress-header">
-                <h4>
-                    <i t-att-class="'fa ' + statusIcon"></i>
-                    <t t-esc="operationDisplayText"/>
-                </h4>
-                
-                <div class="progress-actions">
-                    <button t-if="state.canCancel and isOperationActive" 
-                            class="btn btn-warning btn-sm"
-                            t-on-click="cancelOperation">
-                        <i class="fa fa-stop"></i>
-                        Cancel
-                    </button>
-                </div>
+        <div class="progress-tracker">
+            <div class="content-header">
+                <h2>
+                    <i class="fa fa-spinner fa-spin"></i>
+                    Processing...
+                </h2>
+                <p>Your mailing list is being updated</p>
             </div>
             
             <div class="progress-content">
-                <!-- Progress Bar -->
-                <div class="progress">
-                    <div t-att-class="progressBarClass" 
-                         t-att-style="'width: ' + state.progress + '%'">
-                    </div>
-                </div>
-                <div class="text-center">
-                    <small t-esc="state.progress + '%'"></small>
-                </div>
-                
-                <!-- Progress Details -->
-                <div class="row mt-3">
-                    <div class="col-md-3 text-center">
-                        <div class="progress-detail-value" t-esc="formatTime(state.elapsedTime)"></div>
-                        <div class="progress-detail-label">Elapsed Time</div>
-                    </div>
-                    
-                    <div class="col-md-3 text-center">
-                        <div class="progress-detail-value" t-esc="formatNumber(state.statistics.contactsAdded)"></div>
-                        <div class="progress-detail-label">Contacts Added</div>
-                    </div>
-                    
-                    <div class="col-md-3 text-center">
-                        <div class="progress-detail-value" t-esc="formatNumber(state.statistics.duplicatesSkipped)"></div>
-                        <div class="progress-detail-label">Duplicates Skipped</div>
-                    </div>
-                    
-                    <div class="col-md-3 text-center">
-                        <div class="progress-detail-value" t-esc="successRatePercentage + '%'"></div>
-                        <div class="progress-detail-label">Success Rate</div>
-                    </div>
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    Progress Tracker component will be loaded here
                 </div>
             </div>
         </div>
     </t>
-    
-    <!-- ==========================================================================
-         BATCH MANAGER TEMPLATE (Simplified for OWL 1.0)
-         ========================================================================== -->
     
     <t t-name="mailing_list_updater.BatchManagerTemplate" owl="1">
         <div class="batch-manager">
-            <div class="batch-manager-header">
-                <h3>
+            <div class="content-header">
+                <h2>
                     <i class="fa fa-history"></i>
-                    Batch Operations Management
-                </h3>
-                
-                <div class="batch-manager-actions">
-                    <button class="btn btn-outline-secondary btn-sm" 
-                            t-on-click="refresh">
-                        <i class="fa fa-refresh"></i>
-                        Refresh
-                    </button>
-                </div>
+                    Batch History
+                </h2>
+                <p>View and manage your mailing list update history</p>
             </div>
             
-            <!-- Filters Bar -->
-            <div class="filters-bar row">
-                <div class="col-md-3">
-                    <label>Status:</label>
-                    <select class="form-control">
-                        <option value="all">All Status</option>
-                        <option value="completed">Completed</option>
-                        <option value="error">Error</option>
-                        <option value="processing">Processing</option>
-                    </select>
-                </div>
-                
-                <div class="col-md-3">
-                    <label>Date:</label>
-                    <select class="form-control">
-                        <option value="all">All Dates</option>
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="month">This Month</option>
-                    </select>
-                </div>
-                
-                <div class="col-md-6">
-                    <label>Search:</label>
-                    <input type="text" 
-                           class="form-control" 
-                           placeholder="Search batches..."
-                           t-on-input="onSearchInput"/>
-                </div>
-            </div>
-            
-            <div t-if="state.isLoading" class="text-center">
-                <div class="loading-spinner"></div>
-                <p>Loading batch data...</p>
-            </div>
-            
-            <!-- Batch History Table -->
-            <div t-else="" class="batch-history">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Mailing List</th>
-                            <th>Contacts</th>
-                            <th>Duration</th>
-                            <th>User</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr t-foreach="state.batches" t-as="batch" t-key="batch.id">
-                            <td t-esc="formatDate(batch.created_date)"></td>
-                            <td>
-                                <span t-att-class="getStatusClass(batch.status)">
-                                    <i t-att-class="'fa ' + getStatusIcon(batch.status)"></i>
-                                    <t t-esc="batch.status"/>
-                                </span>
-                            </td>
-                            <td t-esc="batch.mailing_list_name"></td>
-                            <td t-esc="formatNumber(batch.contacts_processed || 0)"></td>
-                            <td t-esc="formatDuration(batch.execution_time)"></td>
-                            <td t-esc="batch.user_name"></td>
-                            <td>
-                                <button class="btn btn-outline-primary btn-sm" 
-                                        t-on-click="() => this.viewBatchDetails(batch.id)">
-                                    <i class="fa fa-eye"></i>
-                                    View
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <!-- Pagination -->
-                <div class="pagination-wrapper text-center">
-                    <button class="btn btn-outline-secondary btn-sm" 
-                            t-att-disabled="state.currentPage === 1"
-                            t-on-click="previousPage">
-                        <i class="fa fa-chevron-left"></i>
-                        Previous
-                    </button>
-                    
-                    <span class="mx-3">
-                        Page <t t-esc="state.currentPage"/> of <t t-esc="totalPages"/>
-                    </span>
-                    
-                    <button class="btn btn-outline-secondary btn-sm" 
-                            t-att-disabled="state.currentPage === totalPages"
-                            t-on-click="nextPage">
-                        Next
-                        <i class="fa fa-chevron-right"></i>
-                    </button>
+            <div class="batch-content">
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    Batch Manager component will be loaded here
                 </div>
             </div>
         </div>
     </t>
+
+    <!-- ==========================================================================
+         CENTERED DIALOG STYLES
+         ========================================================================== -->
     
+    <style>
+        /* Reset and Base */
+        .mailing-updater-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .mailing-updater-dialog {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Dialog Header */
+        .dialog-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 24px 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .header-text h1 {
+            margin: 0 0 4px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-text p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        /* Error Messages */
+        .dialog-errors {
+            background: #fef2f2;
+            border-bottom: 1px solid #fecaca;
+            padding: 16px 32px;
+        }
+
+        .error-alert {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #dc2626;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .error-alert:last-child {
+            margin-bottom: 0;
+        }
+
+        .error-alert i {
+            color: #ef4444;
+        }
+
+        /* Step Navigation */
+        .dialog-navigation {
+            background: #f8fafc;
+            padding: 20px 32px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .step-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px;
+        }
+
+        .step-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            text-align: center;
+            background: white;
+            border: 2px solid transparent;
+        }
+
+        .step-pill:hover {
+            background: #f1f5f9;
+            transform: translateY(-1px);
+        }
+
+        .step-pill.active {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .step-pill i {
+            font-size: 16px;
+        }
+
+        .step-pill span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Dialog Content */
+        .dialog-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .step-content {
+            min-height: 400px;
+        }
+
+        .content-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .content-header h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .content-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Content Actions */
+        .content-actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #374151;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-outline:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            border: 2px solid transparent;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        /* Source Cards */
+        .source-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .source-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .source-card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(79, 70, 229, 0.3);
+        }
+
+        .source-card.selected {
+            border-color: #4f46e5;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(124, 58, 237, 0.05));
+            transform: translateY(-1px);
+        }
+
+        .source-card.recommended {
+            border-color: #f59e0b;
+        }
+
+        .source-card.selected.recommended {
+            border-color: #4f46e5;
+        }
+
+        .card-badges {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-recommended {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: white;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .contacts-icon {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .crm-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .employees-icon {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .card-header h3 {
+            flex: 1;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .selection-check {
+            color: #10b981;
+            font-size: 20px;
+        }
+
+        .source-card:not(.selected) .selection-check {
+            color: #d1d5db;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0 0 16px 0;
+            line-height: 1.5;
+        }
+
+        .card-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .btn-details {
+            background: none;
+            border: none;
+            color: #4f46e5;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-details:hover {
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        /* Dialog Footer */
+        .dialog-footer {
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-info {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .mailing-updater-backdrop {
+                padding: 10px;
+            }
+
+            .mailing-updater-dialog {
+                max-height: 95vh;
+            }
+
+            .dialog-header {
+                padding: 20px 24px;
+            }
+
+            .header-text h1 {
+                font-size: 20px;
+            }
+
+            .dialog-content {
+                padding: 24px 20px;
+            }
+
+            .step-pills {
+                gap: 4px;
+            }
+
+            .step-pill {
+                min-width: 80px;
+                padding: 10px 12px;
+            }
+
+            .step-pill span {
+                font-size: 11px;
+            }
+
+            .content-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: unset;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+
+            .source-cards {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .dialog-footer {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .footer-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .content-header h2 {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .card-stats {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+    </style>
+
 </templates>
