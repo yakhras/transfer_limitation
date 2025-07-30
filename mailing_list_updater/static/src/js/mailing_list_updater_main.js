@@ -883,7 +883,4 @@ MailingListUpdaterMain.components = {
     BatchManagerComponent,
 };
 
-// Note: Component imports are handled differently in Odoo 15.0
-// Child components need to be properly registered and imported separately
-
 export { MailingListUpdaterMain };

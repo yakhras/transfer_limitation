@@ -582,7 +582,7 @@ class BatchManagerComponent extends Component {
 // OWL 1.0 component registration
 BatchManagerComponent.template = 'mailing_list_updater.BatchManagerTemplate';
 BatchManagerComponent.props = {
-    mailingListId: { type: Number, optional: true },
+    mailingListId: { validate: (value) => value === null || value === undefined || typeof value === 'number' },
 };
 
 export { BatchManagerComponent };

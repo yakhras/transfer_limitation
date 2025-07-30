@@ -207,7 +207,7 @@ class SourceSelectorComponent extends Component {
 // OWL 1.0 component registration
 SourceSelectorComponent.template = 'mailing_list_updater.SourceSelectorTemplate';
 SourceSelectorComponent.props = {
-    selectedMailingList: { type: Object, optional: true },
+    selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
 };
 
 export { SourceSelectorComponent };

@@ -399,9 +399,9 @@ class PreviewResultsComponent extends Component {
 // OWL 1.0 component registration
 PreviewResultsComponent.template = 'mailing_list_updater.PreviewResultsTemplate';
 PreviewResultsComponent.props = {
-    selectedMailingList: { type: Object, optional: true },
-    selectedSources: { type: Array, optional: true },
-    filterCriteria: { type: Object, optional: true },
+    selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
+    selectedSources: { validate: (value) => Array.isArray(value) },
+    filterCriteria: { validate: (value) => value === null || typeof value === 'object' },
 };
 
 export { PreviewResultsComponent };

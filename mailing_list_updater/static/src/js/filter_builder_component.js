@@ -439,7 +439,7 @@ class FilterBuilderComponent extends Component {
 // OWL 1.0 component registration
 FilterBuilderComponent.template = 'mailing_list_updater.FilterBuilderTemplate';
 FilterBuilderComponent.props = {
-    selectedSources: { type: Array, optional: true },
+    selectedSources: { validate: (value) => Array.isArray(value) },
 };
 
 export { FilterBuilderComponent };

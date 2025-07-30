@@ -509,9 +509,9 @@ class ProgressTrackerComponent extends Component {
 // OWL 1.0 component registration
 ProgressTrackerComponent.template = 'mailing_list_updater.ProgressTrackerTemplate';
 ProgressTrackerComponent.props = {
-    batchId: { type: String, optional: true },
-    initialProgress: { type: Number, optional: true },
-    initialStatus: { type: String, optional: true },
+    batchId: { validate: (value) => value === null || value === undefined || typeof value === 'string' },
+    initialProgress: { validate: (value) => value === null || value === undefined || typeof value === 'number' },
+    initialStatus: { validate: (value) => value === null || value === undefined || typeof value === 'string' },
 };
 
 export { ProgressTrackerComponent };
