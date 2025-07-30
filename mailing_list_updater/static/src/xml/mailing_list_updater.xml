@@ -2,1143 +2,593 @@
 <templates xml:space="preserve">
 
     <!-- ==========================================================================
-         MAIN COMPONENT TEMPLATE - Enhanced UI Design
+         MAIN COMPONENT TEMPLATE (Simplified for OWL 1.0)
          ========================================================================== -->
     
     <t t-name="mailing_list_updater.MainTemplate" owl="1">
-        <div class="mailing-list-updater-enhanced">
-            
+        <div class="mailing-list-updater">
             <!-- Header -->
             <div class="mailing-updater-header">
-                <div class="header-content">
-                    <div class="header-title">
-                        <i class="fa fa-envelope-o"></i>
-                        <span>📧 Update Mailing List - Enhanced Filtering Interface</span>
+                <h1>
+                    <i class="fa fa-envelope-o"></i>
+                    Mailing List Updater
+                </h1>
+                <p>Efficiently update your mailing lists with advanced filtering</p>
+            </div>
+            
+            <!-- Loading Overlay -->
+            <div t-if="state.isLoading" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <p>Loading...</p>
+            </div>
+            
+            <!-- Error Messages -->
+            <div t-if="state.errors.length > 0" class="error-messages">
+                <div t-foreach="state.errors" t-as="error" class="error-message">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <span t-esc="error"></span>
+                </div>
+            </div>
+            
+            <!-- Step Navigation -->
+            <div class="step-navigation">
+                <ul class="step-nav-list">
+                    <li t-att-class="state.currentStep === 'source_selection' ? 'step-nav-item active' : 'step-nav-item'">
+                        <i class="fa fa-database"></i>
+                        <span>Select Sources</span>
+                    </li>
+                    <li t-att-class="state.currentStep === 'filter_building' ? 'step-nav-item active' : 'step-nav-item'">
+                        <i class="fa fa-filter"></i>
+                        <span>Build Filters</span>
+                    </li>
+                    <li t-att-class="state.currentStep === 'preview' ? 'step-nav-item active' : 'step-nav-item'">
+                        <i class="fa fa-eye"></i>
+                        <span>Preview Results</span>
+                    </li>
+                    <li t-att-class="state.currentStep === 'execution' ? 'step-nav-item active' : 'step-nav-item'">
+                        <i class="fa fa-play"></i>
+                        <span>Execute</span>
+                    </li>
+                    <li t-att-class="state.currentStep === 'batch_management' ? 'step-nav-item active' : 'step-nav-item'">
+                        <i class="fa fa-history"></i>
+                        <span>History</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="mailing-updater-content">
+                
+                <!-- Step 1: Source Selection -->
+                <div t-if="state.currentStep === 'source_selection'" class="step-content">
+                    <SourceSelectorComponent 
+                        selectedMailingList="currentSelectedMailingList"
+                        t-on-sources-changed="onSourcesChanged"/>
+                </div>
+                
+                <!-- Step 2: Filter Building -->
+                <div t-if="state.currentStep === 'filter_building'" class="step-content">
+                    <FilterBuilderComponent 
+                        selectedSources="currentSelectedSources"
+                        t-on-filters-changed="onFiltersChanged"/>
+                </div>
+                
+                <!-- Step 3: Preview Results -->
+                <div t-if="state.currentStep === 'preview'" class="step-content">
+                    <PreviewResultsComponent 
+                        selectedMailingList="currentSelectedMailingList"
+                        selectedSources="currentSelectedSources"
+                        filterCriteria="currentFilterCriteria"
+                        t-on-preview-ready="onPreviewReady"
+                        t-on-execute-update="onExecuteUpdate"/>
+                </div>
+                
+                <!-- Step 4: Execution -->
+                <div t-if="state.currentStep === 'execution'" class="step-content">
+                    <div class="execution-container">
+                        <h2>Executing Mailing List Update</h2>
+                        
+                        <ProgressTrackerComponent 
+                            batchId="currentBatchId"
+                            initialProgress="currentExecutionProgress"
+                            initialStatus="currentExecutionStatus"
+                            t-on-operation-completed="onOperationCompleted"
+                            t-on-operation-error="onOperationError"
+                            t-on-operation-cancelled="onOperationCancelled"/>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Batch Management -->
+                <div t-if="state.currentStep === 'batch_management'" class="step-content">
+                    <BatchManagerComponent 
+                        mailingListId="currentMailingListId"/>
+                </div>
+            </div>
+            
+            <!-- Footer Actions -->
+            <div class="mailing-updater-footer">
+                <div class="footer-actions">
+                    <button t-if="state.currentStep !== 'source_selection'" 
+                            class="btn btn-secondary" 
+                            t-on-click="previousStep">
+                        <i class="fa fa-arrow-left"></i>
+                        Previous
+                    </button>
+                    
+                    <button t-if="state.currentStep !== 'batch_management'" 
+                            class="btn btn-primary" 
+                            t-on-click="nextStep">
+                        Next
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+    
+    <!-- ==========================================================================
+         SOURCE SELECTOR TEMPLATE (Simplified for OWL 1.0)
+         ========================================================================== -->
+    
+    <!-- <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
+        <div class="source-selector">
+            <div class="source-selector-header">
+                <h3>
+                    <i class="fa fa-database"></i>
+                    Select Contact Sources
+                </h3>
+                
+                <div class="source-actions">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Search sources..."
+                           t-on-input="onSearchInput"/>
+                    
+                    <button class="btn btn-outline-primary btn-sm" 
+                            t-on-click="selectAllRecommended">
+                        <i class="fa fa-check-square-o"></i>
+                        Select Recommended
+                    </button>
+                    
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="clearAllSelections">
+                        <i class="fa fa-square-o"></i>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+            
+            Selection Summary
+            <div t-if="state.selectedSources.size > 0" class="selection-summary">
+                <div class="alert alert-success">
+                    <i class="fa fa-check-circle"></i>
+                    <span t-esc="state.selectedSources.size"/> source(s) selected
+                </div>
+            </div>
+            
+            <div t-if="state.isLoading" class="text-center">
+                <div class="loading-spinner"></div>
+                <p>Loading contact sources...</p>
+            </div>
+            
+            <div t-else="" class="source-grid">
+                <div t-foreach="filteredSources" t-as="source" 
+                     t-key="source.model_name"
+                     t-att-class="getSourceItemClass(source)"
+                     t-on-click="() => this.onSourceToggle(source.model_name)">
+                    
+                    <div class="source-header">
+                        <div class="source-icon">
+                            <i class="fa fa-database"></i>
+                        </div>
+                        <h4 t-esc="source.name"></h4>
+                        <div t-if="source.recommended" class="badge badge-warning">
+                            <i class="fa fa-star"></i>
+                            Recommended
+                        </div>
+                    </div>
+                    
+                    <p t-esc="source.description"></p>
+                    
+                    <div class="source-stats">
+                        <span class="text-muted">
+                            <i class="fa fa-users"></i>
+                            <t t-esc="formatContactCount(source.estimated_count)"/> contacts
+                        </span>
+                        
+                        <div class="source-status">
+                            <i t-if="isSourceSelected(source.model_name)" 
+                               class="fa fa-check-circle text-success"></i>
+                            <i t-elif="not source.available" 
+                               class="fa fa-exclamation-triangle text-warning"></i>
+                            <i t-else="" 
+                               class="fa fa-circle-o text-muted"></i>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Main Container - Two Panel Layout -->
-            <div class="main-container">
+            <div t-if="filteredSources.length === 0 and not state.isLoading" class="text-center text-muted">
+                <i class="fa fa-search fa-3x"></i>
+                <h4>No sources found</h4>
+                <p>Try adjusting your search criteria</p>
+            </div>
+        </div>
+    </t> -->
+    
+    <!-- ==========================================================================
+         FILTER BUILDER TEMPLATE (Simplified for OWL 1.0)
+         ========================================================================== -->
+    
+    <t t-name="mailing_list_updater.FilterBuilderTemplate" owl="1">
+        <div class="filter-builder">
+            <div class="filter-builder-header">
+                <h3>
+                    <i class="fa fa-filter"></i>
+                    Build Contact Filters
+                </h3>
+            </div>
+            
+            <div t-if="state.isLoading" class="text-center">
+                <div class="loading-spinner"></div>
+                <p>Loading filter options...</p>
+            </div>
+            
+            <!-- Quick Filters Section -->
+            <div class="filter-section">
+                <h4>Quick Filters</h4>
                 
-                <!-- Left Panel - Configuration -->
-                <div class="left-panel">
-                    <div class="panel-header">
-                        <i class="fa fa-clipboard"></i>
-                        <span>📋 Filter Configuration</span>
-                    </div>
-                    
-                    <!-- Target Mailing List Selection -->
-                    <div class="config-section">
-                        <label class="section-label">Target Mailing List *</label>
-                        <div class="mailing-list-selector">
-                            <select class="form-control" t-model="state.selectedMailingListId">
-                                <option value="">Select a mailing list...</option>
-                                <t t-foreach="mailingLists" t-as="list" t-key="list.id">
-                                    <option t-att-value="list.id">
-                                        📝 <t t-esc="list.name"/> (<t t-esc="list.contact_count"/> contacts) - Company: <t t-esc="list.company_id[1] || 'YourCompany Ltd'"/>
-                                    </option>
-                                </t>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Source Selection -->
-                    <div class="config-section">
-                        <label class="section-label">Contact Sources</label>
-                        <div class="source-checkboxes">
-                            <div class="source-checkbox-item">
-                                <input type="checkbox" id="source_contacts" checked="checked"/>
-                                <label for="source_contacts">📞 Contacts Module (res.partner)</label>
-                            </div>
-                            <div class="source-checkbox-item">
-                                <input type="checkbox" id="source_crm" checked="checked"/>
-                                <label for="source_crm">📈 CRM Module (crm.lead)</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Filters Section -->
-                    <div class="config-section quick-filters-section">
-                        <div class="section-header">
-                            <i class="fa fa-bolt"></i>
-                            <span>🎯 Quick Filters (Predefined)</span>
-                        </div>
-                        
-                        <!-- Creation Date Range -->
-                        <div class="filter-group">
-                            <label class="filter-label">Creation Date Range</label>
-                            <div class="date-range-container">
-                                <div class="date-inputs">
-                                    <div class="date-input-group">
-                                        <input type="date" class="form-control" placeholder="From: 2024-01-01" value="2024-01-01"/>
-                                    </div>
-                                    <div class="date-input-group">
-                                        <input type="date" class="form-control" placeholder="To: 2024-12-31" value="2024-12-31"/>
-                                    </div>
-                                </div>
-                                <div class="preset-buttons">
-                                    <button class="btn btn-preset">Last 30d</button>
-                                    <button class="btn btn-preset">This Year</button>
-                                    <button class="btn btn-preset">Custom</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Salesperson Selection -->
-                        <div class="filter-group">
-                            <label class="filter-label">Salesperson / Responsible</label>
-                            <div class="salesperson-selector">
-                                <input type="text" class="form-control" placeholder="John Smith, Sarah Johnson, Mike Davis" value="John Smith, Sarah Johnson, Mike Davis"/>
-                            </div>
-                        </div>
-                        
-                        <!-- Status Filters -->
-                        <div class="filter-group">
-                            <div class="status-checkboxes">
-                                <div class="status-checkbox-item">
-                                    <input type="checkbox" id="active_only" checked="checked"/>
-                                    <label for="active_only">Only active contacts/leads</label>
-                                </div>
-                                <div class="status-checkbox-item">
-                                    <input type="checkbox" id="exclude_blocked" checked="checked"/>
-                                    <label for="exclude_blocked">Exclude blocked contacts</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Advanced Dynamic Filters Section -->
-                    <div class="config-section advanced-filters-section">
-                        <div class="section-header">
-                            <i class="fa fa-bolt"></i>
-                            <span>⚡ Advanced Dynamic Filters</span>
-                            <button class="btn btn-add-rule">+ Add Rule</button>
-                        </div>
-                        
-                        <!-- Filter Rules -->
-                        <div class="filter-rules">
-                            <!-- Rule 1 -->
-                            <div class="filter-rule">
-                                <div class="rule-header">
-                                    <span class="rule-label">Rule 1:</span>
-                                    <button class="btn btn-delete-rule">×</button>
-                                </div>
-                                <div class="rule-controls">
-                                    <select class="form-control rule-field">
-                                        <option value="country_id">country_id</option>
-                                        <option value="category_id">category_id</option>
-                                        <option value="user_id">user_id</option>
-                                    </select>
-                                    <select class="form-control rule-operator">
-                                        <option value="in">in</option>
-                                        <option value="=">=</option>
-                                        <option value="!=">!=</option>
-                                    </select>
-                                    <input type="text" class="form-control rule-value" placeholder="United States, Canada" value="United States, Canada"/>
-                                    <select class="form-control rule-logic">
-                                        <option value="AND">AND</option>
-                                        <option value="OR">OR</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <!-- Rule 2 -->
-                            <div class="filter-rule">
-                                <div class="rule-header">
-                                    <span class="rule-label">Rule 2:</span>
-                                    <button class="btn btn-delete-rule">×</button>
-                                </div>
-                                <div class="rule-controls">
-                                    <select class="form-control rule-field">
-                                        <option value="category_id">category_id</option>
-                                        <option value="country_id">country_id</option>
-                                    </select>
-                                    <select class="form-control rule-operator">
-                                        <option value="=">=</option>
-                                        <option value="in">in</option>
-                                    </select>
-                                    <input type="text" class="form-control rule-value" placeholder="VIP Customer" value="VIP Customer"/>
-                                    <select class="form-control rule-logic">
-                                        <option value="OR">OR</option>
-                                        <option value="AND">AND</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <!-- Rule 3 (CRM Only) -->
-                            <div class="filter-rule crm-only">
-                                <div class="rule-header">
-                                    <span class="rule-label">Rule 3:</span>
-                                    <span class="crm-only-label">(CRM Only)</span>
-                                    <button class="btn btn-delete-rule">×</button>
-                                </div>
-                                <div class="rule-controls">
-                                    <select class="form-control rule-field">
-                                        <option value="stage_id">stage_id</option>
-                                        <option value="team_id">team_id</option>
-                                    </select>
-                                    <select class="form-control rule-operator">
-                                        <option value="not in">not in</option>
-                                        <option value="in">in</option>
-                                    </select>
-                                    <input type="text" class="form-control rule-value" placeholder="Lost, Cancelled" value="Lost, Cancelled"/>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Group Operations -->
-                        <div class="group-operations">
-                            <div class="group-logic">
-                                <span class="group-label">Group Logic:</span>
-                                <div class="logic-display">(Rule1 AND Rule2) OR Rule3</div>
-                                <span class="field-suggestions">Field suggestions based on selected models ↗</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Save Template -->
-                        <div class="save-template">
-                            <span class="save-label">💾 Save as template:</span>
-                            <input type="text" class="form-control template-name" placeholder="VIP International Customers" value="VIP International Customers"/>
-                            <button class="btn btn-save">Save</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="config-actions">
-                        <button class="btn btn-preview">🔍 Preview Results</button>
-                        <button class="btn btn-reset">Reset</button>
-                        <button class="btn btn-update">Update List</button>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" 
+                               class="form-check-input" 
+                               id="active_only"
+                               t-att-checked="state.quickFilters.active_only"
+                               t-on-change="() => this.onQuickFilterChange('active_only', !state.quickFilters.active_only)"/>
+                        <label class="form-check-label" for="active_only">
+                            Active contacts only
+                        </label>
                     </div>
                 </div>
                 
-                <!-- Right Panel - Preview Results & Analysis -->
-                <div class="right-panel">
-                    <div class="panel-header">
-                        <i class="fa fa-bar-chart"></i>
-                        <span>📊 Preview Results &amp; Analysis</span>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" 
+                               class="form-check-input" 
+                               id="date_range_enabled"
+                               t-att-checked="state.quickFilters.date_range.enabled"
+                               t-on-change="toggleDateRange"/>
+                        <label class="form-check-label" for="date_range_enabled">
+                            Date range filter
+                        </label>
                     </div>
                     
-                    <!-- Detailed Statistics -->
-                    <div class="preview-section statistics-section">
-                        <div class="section-header">
-                            <i class="fa fa-line-chart"></i>
-                            <span>📈 Detailed Statistics</span>
+                    <div t-if="state.quickFilters.date_range.enabled" class="row">
+                        <div class="col-md-4">
+                            <select class="form-control">
+                                <option value="create_date">Created Date</option>
+                                <option value="write_date">Modified Date</option>
+                            </select>
                         </div>
-                        <div class="statistics-content">
-                            <div class="stat-line">• Contacts Module: 234 found, 67 duplicates → 167 new</div>
-                            <div class="stat-line">• CRM Module: 108 found, 22 duplicates → 86 new</div>
-                            <div class="stat-line">• Cross-module duplicates: 18 contacts</div>
-                            <div class="stat-result">✅ Final result: 235 new contacts to add</div>
-                            <div class="processing-time">Processing time estimate: ~45 seconds</div>
+                        <div class="col-md-4">
+                            <input type="date" class="form-control" placeholder="From"/>
                         </div>
-                    </div>
-                    
-                    <!-- Sample Contacts Table -->
-                    <div class="preview-section sample-section">
-                        <div class="sample-table">
-                            <div class="table-header">
-                                <div class="table-cell">Name</div>
-                                <div class="table-cell">Email</div>
-                                <div class="table-cell">Source</div>
-                                <div class="table-cell">Country</div>
-                            </div>
-                            <div class="table-row">
-                                <div class="table-cell">Alice Cooper</div>
-                                <div class="table-cell">alice@company.com</div>
-                                <div class="table-cell">Contact</div>
-                                <div class="table-cell">USA</div>
-                            </div>
-                            <div class="table-row">
-                                <div class="table-cell">Bob Johnson</div>
-                                <div class="table-cell">bob.johnson@email.com</div>
-                                <div class="table-cell">CRM</div>
-                                <div class="table-cell">Canada</div>
-                            </div>
-                            <div class="table-row">
-                                <div class="table-cell">Carol Smith</div>
-                                <div class="table-cell">carol@business.com</div>
-                                <div class="table-cell">Contact</div>
-                                <div class="table-cell">USA</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Show More Section -->
-                        <div class="show-more-section">
-                            <span class="showing-text">Showing first 5 results of 235 total</span>
-                            <div class="show-more-actions">
-                                <button class="btn btn-show-all">Show All</button>
-                                <button class="btn btn-export">Export</button>
-                            </div>
+                        <div class="col-md-4">
+                            <input type="date" class="form-control" placeholder="To"/>
                         </div>
                     </div>
-                    
-                    <!-- Deduplication Analysis -->
-                    <div class="preview-section deduplication-section">
-                        <div class="section-header">
-                            <i class="fa fa-shield"></i>
-                            <span>🛡️ Multi-Phase Deduplication Analysis</span>
-                        </div>
-                        <div class="deduplication-content">
-                            <div class="dedup-line">Phase 1 (Internal): 18 contacts exist in both Contact &amp; CRM modules</div>
-                            <div class="dedup-line">Phase 2 (External): 71 contacts already exist in target mailing list</div>
-                            <div class="dedup-criteria">Matching criteria: email (exact) + partner_id (when available)</div>
-                            <div class="dedup-note">All duplicates will be automatically excluded from the update</div>
-                        </div>
+                </div>
+            </div>
+            
+            <!-- Advanced Filters Section -->
+            <div class="filter-section">
+                <h4>
+                    Advanced Filters
+                    <button class="btn btn-link btn-sm" 
+                            t-on-click="toggleAdvancedFilters">
+                        <i t-att-class="state.showAdvanced ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                        <t t-if="state.showAdvanced">Hide</t>
+                        <t t-else="">Show</t> Advanced
+                    </button>
+                </h4>
+                
+                <div t-if="state.showAdvanced" class="advanced-filters">
+                    <div class="alert alert-info">
+                        <p>Advanced filter functionality will be loaded here</p>
                     </div>
-                    
-                    <!-- Rollback Information -->
-                    <div class="preview-section rollback-section">
-                        <div class="section-header">
-                            <i class="fa fa-undo"></i>
-                            <span>🔄 Rollback Capability</span>
-                        </div>
-                        <div class="rollback-content">
-                            <div class="rollback-line">This operation will be tagged with batch ID: BATCH_20241231_143052</div>
-                            <div class="rollback-line">You can undo this specific batch for up to 24 hours after completion</div>
-                            <div class="rollback-access">Access via: Email Marketing → History → Recent Updates</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Company Scope -->
-                    <div class="preview-section company-section">
-                        <div class="section-header">
-                            <i class="fa fa-building"></i>
-                            <span>🏢 Company Scope: YourCompany Ltd</span>
-                        </div>
-                        <div class="company-content">
-                            <div class="company-line">All operations are restricted to your company's data only</div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="filter-actions">
+                <button class="btn btn-secondary" 
+                        t-on-click="clearAllFilters">
+                    <i class="fa fa-eraser"></i>
+                    Clear All Filters
+                </button>
+            </div>
+        </div>
+    </t>
+    
+    <!-- ==========================================================================
+         PREVIEW RESULTS TEMPLATE (Simplified for OWL 1.0)
+         ========================================================================== -->
+    
+    <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
+        <div class="preview-results">
+            <div class="preview-header">
+                <h3>
+                    <i class="fa fa-eye"></i>
+                    Preview Results
+                </h3>
+                
+                <div class="preview-actions">
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="refreshPreview">
+                        <i class="fa fa-refresh"></i>
+                        Refresh Preview
+                    </button>
+                </div>
+            </div>
+            
+            <div t-if="state.isGeneratingPreview" class="text-center">
+                <div class="loading-spinner"></div>
+                <p>Generating preview...</p>
+            </div>
+            
+            <div t-elif="isPreviewValid" class="preview-content">
+                
+                <!-- Statistics Cards -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-value" t-esc="formatNumber(state.statistics.total_found || 0)"></div>
+                            <div class="stat-label">Total Found</div>
                         </div>
                     </div>
                     
-                    <!-- Filter Summary -->
-                    <div class="preview-section summary-section">
-                        <div class="section-header">
-                            <i class="fa fa-list"></i>
-                            <span>📋 Applied Filters Summary</span>
-                        </div>
-                        <div class="summary-content">
-                            <div class="summary-line">Quick Filters: Creation Date (2024-01-01 to 2024-12-31), Salesperson (3 selected)</div>
-                            <div class="summary-line">Advanced Filters: (country_id in [USA, Canada] AND category_id = VIP) OR stage_id not in [Lost, Cancelled]</div>
-                            <div class="summary-line">Additional: Active contacts only, Exclude blocked contacts</div>
-                            <div class="summary-saved">This filter configuration has been saved as "VIP International Customers"</div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-success">
+                            <div class="stat-value" t-esc="formatNumber(state.statistics.total_after_dedup || 0)"></div>
+                            <div class="stat-label">After Deduplication</div>
                         </div>
                     </div>
                     
-                    <!-- Progress Indicator -->
-                    <div class="preview-section progress-section">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 0%"></div>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-warning">
+                            <div class="stat-value" t-esc="formatNumber(state.statistics.duplicates_removed || 0)"></div>
+                            <div class="stat-label">Duplicates Removed</div>
                         </div>
-                        <div class="progress-text">Ready to execute - Click "Update List" to proceed</div>
                     </div>
                     
-                    <!-- UX Tips -->
-                    <div class="preview-section tips-section">
-                        <div class="section-header">
-                            <i class="fa fa-lightbulb-o"></i>
-                            <span>💡 UX Tips</span>
+                    <div class="col-md-3">
+                        <div class="stat-card bg-danger">
+                            <div class="stat-value" t-esc="formatNumber(state.statistics.invalid_emails || 0)"></div>
+                            <div class="stat-label">Invalid Emails</div>
                         </div>
-                        <div class="tips-content">
-                            <div class="tip-line">• Use Quick Filters for common scenarios, Advanced Filters for complex conditions</div>
-                            <div class="tip-line">• Field suggestions adapt based on selected source modules</div>
-                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sample Contacts Table -->
+                <div class="preview-table">
+                    <h4>Sample Contacts</h4>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Source</th>
+                                <th>Company</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="paginatedContacts" t-as="contact" t-key="contact.id">
+                                <td t-esc="getContactFieldValue(contact, 'name')"></td>
+                                <td t-esc="getContactFieldValue(contact, 'email')"></td>
+                                <td t-esc="getContactFieldValue(contact, 'source')"></td>
+                                <td t-esc="getContactFieldValue(contact, 'company_name')"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Execution Section -->
+                <div class="execution-section">
+                    <h4>Ready to Execute</h4>
+                    
+                    <button t-att-class="executionButtonClass"
+                            t-att-disabled="!state.canExecute"
+                            t-on-click="executeUpdate">
+                        <i class="fa fa-play"></i>
+                        <t t-esc="executionButtonText"/>
+                    </button>
+                </div>
+            </div>
+            
+            <div t-else="" class="text-center text-muted">
+                <i class="fa fa-exclamation-triangle fa-3x"></i>
+                <h4>Unable to generate preview</h4>
+                <p>Please check your source selection and filters</p>
+            </div>
+        </div>
+    </t>
+    
+    <!-- ==========================================================================
+         PROGRESS TRACKER TEMPLATE (Simplified for OWL 1.0)
+         ========================================================================== -->
+    
+    <t t-name="mailing_list_updater.ProgressTrackerTemplate" owl="1">
+        <div t-if="state.isVisible" class="progress-tracker">
+            <div class="progress-header">
+                <h4>
+                    <i t-att-class="'fa ' + statusIcon"></i>
+                    <t t-esc="operationDisplayText"/>
+                </h4>
+                
+                <div class="progress-actions">
+                    <button t-if="state.canCancel and isOperationActive" 
+                            class="btn btn-warning btn-sm"
+                            t-on-click="cancelOperation">
+                        <i class="fa fa-stop"></i>
+                        Cancel
+                    </button>
+                </div>
+            </div>
+            
+            <div class="progress-content">
+                <!-- Progress Bar -->
+                <div class="progress">
+                    <div t-att-class="progressBarClass" 
+                         t-att-style="'width: ' + state.progress + '%'">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <small t-esc="state.progress + '%'"></small>
+                </div>
+                
+                <!-- Progress Details -->
+                <div class="row mt-3">
+                    <div class="col-md-3 text-center">
+                        <div class="progress-detail-value" t-esc="formatTime(state.elapsedTime)"></div>
+                        <div class="progress-detail-label">Elapsed Time</div>
+                    </div>
+                    
+                    <div class="col-md-3 text-center">
+                        <div class="progress-detail-value" t-esc="formatNumber(state.statistics.contactsAdded)"></div>
+                        <div class="progress-detail-label">Contacts Added</div>
+                    </div>
+                    
+                    <div class="col-md-3 text-center">
+                        <div class="progress-detail-value" t-esc="formatNumber(state.statistics.duplicatesSkipped)"></div>
+                        <div class="progress-detail-label">Duplicates Skipped</div>
+                    </div>
+                    
+                    <div class="col-md-3 text-center">
+                        <div class="progress-detail-value" t-esc="successRatePercentage + '%'"></div>
+                        <div class="progress-detail-label">Success Rate</div>
                     </div>
                 </div>
             </div>
         </div>
     </t>
-
+    
     <!-- ==========================================================================
-         ENHANCED UI STYLES - Matching SVG Design
+         BATCH MANAGER TEMPLATE (Simplified for OWL 1.0)
          ========================================================================== -->
     
-    <t t-name="mailing_list_updater.EnhancedStyles" owl="1">
-        <style>
-            /* Enhanced UI Styles - Matching the SVG Design */
-            .mailing-list-updater-enhanced {
-                font-family: Arial, sans-serif;
-                background: #f8fafc;
-                min-height: 100vh;
-            }
-
-            /* Header */
-            .mailing-updater-header {
-                background: #4f46e5;
-                color: white;
-                padding: 15px 20px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-
-            .header-content {
-                max-width: 1400px;
-                margin: 0 auto;
-            }
-
-            .header-title {
-                font-size: 18px;
-                font-weight: bold;
-                margin: 0;
-            }
-
-            .header-title i {
-                margin-right: 8px;
-            }
-
-            /* Main Container */
-            .main-container {
-                max-width: 1400px;
-                margin: 0 auto;
-                display: grid;
-                grid-template-columns: 680px 1fr;
-                gap: 20px;
-                padding: 20px;
-                min-height: calc(100vh - 80px);
-            }
-
-            /* Panel Styles */
-            .left-panel, .right-panel {
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                border: 1px solid #e5e7eb;
-                overflow: hidden;
-            }
-
-            .panel-header {
-                background: #fefefe;
-                border-bottom: 1px solid #e5e7eb;
-                padding: 15px 20px;
-                font-size: 16px;
-                font-weight: bold;
-                color: #374151;
-            }
-
-            .panel-header i {
-                margin-right: 8px;
-            }
-
-            /* Left Panel Configuration */
-            .left-panel {
-                height: fit-content;
-            }
-
-            .config-section {
-                padding: 20px;
-                border-bottom: 1px solid #f3f4f6;
-            }
-
-            .config-section:last-child {
-                border-bottom: none;
-            }
-
-            .section-label {
-                display: block;
-                font-size: 12px;
-                font-weight: bold;
-                color: #374151;
-                margin-bottom: 8px;
-            }
-
-            .mailing-list-selector select {
-                width: 100%;
-                padding: 8px 12px;
-                border: 1px solid #d1d5db;
-                border-radius: 4px;
-                font-size: 12px;
-                color: #374151;
-            }
-
-            /* Source Checkboxes */
-            .source-checkboxes {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .source-checkbox-item {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .source-checkbox-item input[type="checkbox"] {
-                width: 15px;
-                height: 15px;
-                accent-color: #4f46e5;
-            }
-
-            .source-checkbox-item label {
-                font-size: 12px;
-                color: #374151;
-                margin: 0;
-            }
-
-            /* Quick Filters Section */
-            .quick-filters-section {
-                background: #f1f5f9;
-                border: 1px solid #cbd5e1;
-                border-radius: 6px;
-                margin: 0 20px;
-            }
-
-            .section-header {
-                background: transparent;
-                padding: 15px 20px;
-                border-bottom: 1px solid #cbd5e1;
-                font-size: 14px;
-                font-weight: bold;
-                color: #1e293b;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            .section-header i {
-                margin-right: 8px;
-            }
-
-            .filter-group {
-                padding: 15px 20px;
-            }
-
-            .filter-label {
-                display: block;
-                font-size: 11px;
-                font-weight: bold;
-                color: #475569;
-                margin-bottom: 8px;
-            }
-
-            .date-range-container {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .date-inputs {
-                display: flex;
-                gap: 12px;
-            }
-
-            .date-input-group {
-                flex: 1;
-            }
-
-            .date-input-group input {
-                width: 100%;
-                padding: 8px 12px;
-                border: 1px solid #d1d5db;
-                border-radius: 4px;
-                font-size: 11px;
-                color: #374151;
-            }
-
-            .preset-buttons {
-                display: flex;
-                gap: 8px;
-            }
-
-            .btn-preset {
-                padding: 6px 12px;
-                background: #e2e8f0;
-                border: 1px solid #cbd5e1;
-                border-radius: 4px;
-                font-size: 10px;
-                color: #475569;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-
-            .btn-preset:hover {
-                background: #cbd5e1;
-            }
-
-            .salesperson-selector input {
-                width: 100%;
-                padding: 8px 12px;
-                border: 1px solid #d1d5db;
-                border-radius: 4px;
-                font-size: 11px;
-                color: #374151;
-            }
-
-            .status-checkboxes {
-                display: flex;
-                gap: 20px;
-            }
-
-            .status-checkbox-item {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-            }
-
-            .status-checkbox-item input[type="checkbox"] {
-                width: 15px;
-                height: 15px;
-                accent-color: #4f46e5;
-            }
-
-            .status-checkbox-item label {
-                font-size: 11px;
-                color: #374151;
-                margin: 0;
-            }
-
-            /* Advanced Filters Section */
-            .advanced-filters-section {
-                background: #fef7ff;
-                border: 1px solid #c084fc;
-                border-radius: 6px;
-                margin: 0 20px;
-            }
-
-            .advanced-filters-section .section-header {
-                color: #7c2d12;
-                border-bottom-color: #c084fc;
-            }
-
-            .btn-add-rule {
-                background: #a855f7;
-                color: white;
-                border: none;
-                border-radius: 12px;
-                padding: 6px 12px;
-                font-size: 10px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-
-            .filter-rules {
-                padding: 15px 20px;
-            }
-
-            .filter-rule {
-                background: white;
-                border: 1px solid #c084fc;
-                border-radius: 4px;
-                padding: 15px;
-                margin-bottom: 12px;
-            }
-
-            .filter-rule.crm-only {
-                background: #fefefe;
-            }
-
-            .rule-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 12px;
-            }
-
-            .rule-label {
-                font-size: 10px;
-                font-weight: bold;
-                color: #7c2d12;
-            }
-
-            .crm-only-label {
-                font-size: 9px;
-                color: #6b7280;
-            }
-
-            .btn-delete-rule {
-                background: #fef2f2;
-                border: 1px solid #fca5a5;
-                border-radius: 3px;
-                color: #dc2626;
-                font-size: 12px;
-                width: 26px;
-                height: 26px;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .rule-controls {
-                display: flex;
-                gap: 8px;
-                align-items: center;
-            }
-
-            .rule-controls select,
-            .rule-controls input {
-                padding: 6px 8px;
-                border: 1px solid #d1d5db;
-                border-radius: 3px;
-                font-size: 10px;
-                color: #374151;
-            }
-
-            .rule-field {
-                width: 120px;
-                background: #f3f4f6;
-            }
-
-            .rule-operator {
-                width: 80px;
-                background: #f3f4f6;
-            }
-
-            .rule-value {
-                flex: 1;
-                background: white;
-            }
-
-            .rule-logic {
-                width: 50px;
-                background: #e0e7ff;
-                border-color: #a5b4fc;
-                color: #3730a3;
-                font-weight: bold;
-            }
-
-            /* Group Operations */
-            .group-operations {
-                padding: 15px 20px;
-                background: #f0f9ff;
-                border: 1px solid #7dd3fc;
-                border-radius: 4px;
-                margin: 0 20px 15px;
-            }
-
-            .group-logic {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-size: 10px;
-                color: #0c4a6e;
-            }
-
-            .group-label {
-                font-weight: bold;
-            }
-
-            .logic-display {
-                background: #0ea5e9;
-                color: white;
-                padding: 4px 8px;
-                border-radius: 8px;
-                font-size: 9px;
-                font-weight: bold;
-            }
-
-            .field-suggestions {
-                margin-left: auto;
-                font-size: 10px;
-            }
-
-            /* Save Template */
-            .save-template {
-                padding: 15px 20px;
-                background: #f0fdf4;
-                border: 1px solid #86efac;
-                border-radius: 4px;
-                margin: 0 20px 15px;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-size: 10px;
-                color: #166534;
-            }
-
-            .save-label {
-                font-weight: bold;
-            }
-
-            .template-name {
-                flex: 1;
-                padding: 4px 8px;
-                border: 1px solid #86efac;
-                border-radius: 3px;
-                font-size: 9px;
-                background: white;
-            }
-
-            .btn-save {
-                background: #16a34a;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 4px 12px;
-                font-size: 8px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-
-            /* Config Actions */
-            .config-actions {
-                padding: 20px;
-                display: flex;
-                gap: 12px;
-            }
-
-            .btn-preview {
-                background: #f3f4f6;
-                border: 1px solid #d1d5db;
-                border-radius: 6px;
-                padding: 10px 16px;
-                font-size: 12px;
-                font-weight: bold;
-                color: #374151;
-                cursor: pointer;
-            }
-
-            .btn-reset {
-                background: #dc2626;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 10px 16px;
-                font-size: 12px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-
-            .btn-update {
-                background: #059669;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                padding: 10px 16px;
-                font-size: 12px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-
-            /* Right Panel Preview */
-            .right-panel {
-                height: fit-content;
-            }
-
-            .preview-section {
-                padding: 20px;
-                border-bottom: 1px solid #f3f4f6;
-            }
-
-            .preview-section:last-child {
-                border-bottom: none;
-            }
-
-            /* Statistics Section */
-            .statistics-section {
-                background: #f0f9ff;
-                border: 1px solid #0ea5e9;
-                border-radius: 4px;
-                margin: 20px;
-            }
-
-            .statistics-section .section-header {
-                color: #0c4a6e;
-                border-bottom-color: #0ea5e9;
-                font-size: 12px;
-                font-weight: bold;
-            }
-
-            .statistics-content {
-                padding: 15px 20px;
-            }
-
-            .stat-line {
-                font-size: 11px;
-                color: #0c4a6e;
-                margin-bottom: 4px;
-            }
-
-            .stat-result {
-                font-size: 12px;
-                color: #059669;
-                font-weight: bold;
-                margin: 8px 0;
-            }
-
-            .processing-time {
-                font-size: 10px;
-                color: #6b7280;
-            }
-
-            /* Sample Table */
-            .sample-section {
-                padding: 0;
-            }
-
-            .sample-table {
-                border-collapse: collapse;
-                width: 100%;
-            }
-
-            .table-header {
-                background: #374151;
-                color: white;
-                display: flex;
-                font-size: 11px;
-                font-weight: bold;
-            }
-
-            .table-row {
-                display: flex;
-                border-bottom: 1px solid #f3f4f6;
-                font-size: 10px;
-                color: #374151;
-            }
-
-            .table-row:nth-child(even) {
-                background: #f9fafb;
-            }
-
-            .table-cell {
-                flex: 1;
-                padding: 8px 12px;
-                border-right: 1px solid rgba(255,255,255,0.2);
-            }
-
-            .table-cell:last-child {
-                border-right: none;
-            }
-
-            .show-more-section {
-                background: #fef3c7;
-                border: 1px solid #f59e0b;
-                border-radius: 4px;
-                padding: 10px 20px;
-                margin: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                font-size: 11px;
-                color: #92400e;
-            }
-
-            .show-more-actions {
-                display: flex;
-                gap: 8px;
-            }
-
-            .btn-show-all {
-                background: #f59e0b;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 4px 12px;
-                font-size: 9px;
-                font-weight: bold;
-                cursor: pointer;
-            }
-
-            .btn-export {
-                background: #e2e8f0;
-                border: 1px solid #cbd5e1;
-                border-radius: 8px;
-                padding: 4px 12px;
-                font-size: 9px;
-                color: #475569;
-                font-weight: bold;
-                cursor: pointer;
-            }
-
-            /* Other Preview Sections */
-            .deduplication-section {
-                background: #fef2f2;
-                border: 1px solid #fca5a5;
-                border-radius: 4px;
-                margin: 20px;
-            }
-
-            .deduplication-section .section-header {
-                color: #dc2626;
-                border-bottom-color: #fca5a5;
-                font-size: 12px;
-                font-weight: bold;
-            }
-
-            .deduplication-content,
-            .rollback-content,
-            .company-content,
-            .summary-content,
-            .tips-content {
-                padding: 15px 20px;
-            }
-
-            .dedup-line,
-            .rollback-line,
-            .company-line,
-            .summary-line,
-            .tip-line {
-                font-size: 11px;
-                margin-bottom: 4px;
-            }
-
-            .deduplication-content .dedup-line {
-                color: #dc2626;
-            }
-
-            .dedup-criteria,
-            .dedup-note {
-                font-size: 10px;
-                color: #7f1d1d;
-                margin-top: 8px;
-            }
-
-            .rollback-section {
-                background: #f0fdf4;
-                border: 1px solid #86efac;
-                border-radius: 4px;
-                margin: 20px;
-            }
-
-            .rollback-section .section-header {
-                color: #166534;
-                border-bottom-color: #86efac;
-            }
-
-            .rollback-content .rollback-line {
-                color: #166534;
-            }
-
-            .rollback-access {
-                font-size: 10px;
-                color: #065f46;
-                margin-top: 8px;
-            }
-
-            .company-section {
-                background: #fffbeb;
-                border: 1px solid #fbbf24;
-                border-radius: 4px;
-                margin: 20px;
-            }
-
-            .company-section .section-header {
-                color: #92400e;
-                border-bottom-color: #fbbf24;
-            }
-
-            .company-content .company-line {
-                color: #92400e;
-            }
-
-            .summary-section {
-                background: #f8fafc;
-                border: 1px solid #cbd5e1;
-                border-radius: 4px;
-                margin: 20px;
-            }
-
-            .summary-section .section-header {
-                color: #1e293b;
-                border-bottom-color: #cbd5e1;
-            }
-
-            .summary-content .summary-line {
-                color: #475569;
-            }
-
-            .summary-saved {
-                font-size: 10px;
-                color: #6366f1;
-                font-weight: bold;
-                margin-top: 8px;
-            }
-
-            .progress-section {
-                margin: 20px;
-            }
-
-            .progress-bar {
-                width: 100%;
-                height: 4px;
-                background: #e5e7eb;
-                border-radius: 2px;
-                overflow: hidden;
-                margin-bottom: 8px;
-            }
-
-            .progress-fill {
-                height: 100%;
-                background: #4f46e5;
-                border-radius: 2px;
-                transition: width 0.3s ease;
-            }
-
-            .progress-text {
-                font-size: 10px;
-                color: #6b7280;
-            }
-
-            .tips-section {
-                background: #f1f5f9;
-                border: 1px solid #cbd5e1;
-                border-radius: 4px;
-                margin: 20px;
-            }
-
-            .tips-section .section-header {
-                color: #374151;
-                border-bottom-color: #cbd5e1;
-            }
-
-            .tips-content .tip-line {
-                color: #475569;
-            }
-
-            /* Responsive Design */
-            @media (max-width: 1200px) {
-                .main-container {
-                    grid-template-columns: 1fr;
-                    gap: 20px;
-                }
+    <t t-name="mailing_list_updater.BatchManagerTemplate" owl="1">
+        <div class="batch-manager">
+            <div class="batch-manager-header">
+                <h3>
+                    <i class="fa fa-history"></i>
+                    Batch Operations Management
+                </h3>
                 
-                .left-panel {
-                    order: 1;
-                }
+                <div class="batch-manager-actions">
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-on-click="refresh">
+                        <i class="fa fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filters Bar -->
+            <div class="filters-bar row">
+                <div class="col-md-3">
+                    <label>Status:</label>
+                    <select class="form-control">
+                        <option value="all">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="error">Error</option>
+                        <option value="processing">Processing</option>
+                    </select>
+                </div>
                 
-                .right-panel {
-                    order: 2;
-                }
-            }
-
-            @media (max-width: 768px) {
-                .main-container {
-                    padding: 10px;
-                }
+                <div class="col-md-3">
+                    <label>Date:</label>
+                    <select class="form-control">
+                        <option value="all">All Dates</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
                 
-                .date-inputs {
-                    flex-direction: column;
-                }
+                <div class="col-md-6">
+                    <label>Search:</label>
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Search batches..."
+                           t-on-input="onSearchInput"/>
+                </div>
+            </div>
+            
+            <div t-if="state.isLoading" class="text-center">
+                <div class="loading-spinner"></div>
+                <p>Loading batch data...</p>
+            </div>
+            
+            <!-- Batch History Table -->
+            <div t-else="" class="batch-history">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Mailing List</th>
+                            <th>Contacts</th>
+                            <th>Duration</th>
+                            <th>User</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="state.batches" t-as="batch" t-key="batch.id">
+                            <td t-esc="formatDate(batch.created_date)"></td>
+                            <td>
+                                <span t-att-class="getStatusClass(batch.status)">
+                                    <i t-att-class="'fa ' + getStatusIcon(batch.status)"></i>
+                                    <t t-esc="batch.status"/>
+                                </span>
+                            </td>
+                            <td t-esc="batch.mailing_list_name"></td>
+                            <td t-esc="formatNumber(batch.contacts_processed || 0)"></td>
+                            <td t-esc="formatDuration(batch.execution_time)"></td>
+                            <td t-esc="batch.user_name"></td>
+                            <td>
+                                <button class="btn btn-outline-primary btn-sm" 
+                                        t-on-click="() => this.viewBatchDetails(batch.id)">
+                                    <i class="fa fa-eye"></i>
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 
-                .preset-buttons {
-                    flex-wrap: wrap;
-                }
-                
-                .status-checkboxes {
-                    flex-direction: column;
-                    gap: 8px;
-                }
-                
-                .rule-controls {
-                    flex-direction: column;
-                    align-items: stretch;
-                }
-                
-                .config-actions {
-                    flex-direction: column;
-                }
-                
-                .table-header,
-                .table-row {
-                    flex-direction: column;
-                }
-                
-                .show-more-section {
-                    flex-direction: column;
-                    gap: 12px;
-                    text-align: center;
-                }
-            }
-        </style>
+                <!-- Pagination -->
+                <div class="pagination-wrapper text-center">
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-att-disabled="state.currentPage === 1"
+                            t-on-click="previousPage">
+                        <i class="fa fa-chevron-left"></i>
+                        Previous
+                    </button>
+                    
+                    <span class="mx-3">
+                        Page <t t-esc="state.currentPage"/> of <t t-esc="totalPages"/>
+                    </span>
+                    
+                    <button class="btn btn-outline-secondary btn-sm" 
+                            t-att-disabled="state.currentPage === totalPages"
+                            t-on-click="nextPage">
+                        Next
+                        <i class="fa fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </t>
-
+    
 </templates>
