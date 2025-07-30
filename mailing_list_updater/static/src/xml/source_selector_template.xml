@@ -52,7 +52,7 @@
             
             <!-- Source Cards - DYNAMIC FROM JS -->
             <div t-if="!state.isLoading" class="source-cards">
-                <div t-foreach="filteredSources" 
+                <div t-foreach="state.filteredSources" 
                      t-as="source" 
                      t-key="source.model_name"
                      t-att-class="getSourceItemClass(source)"
