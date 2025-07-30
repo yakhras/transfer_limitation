@@ -17,16 +17,16 @@
                            class="form-control" 
                            placeholder="Search sources..."
                            t-att-value="state.searchTerm"
-                           t-on-input="component.onSearchInput"/>
+                           t-on-input="onSearchInput"/>
                     
                     <button class="btn btn-outline-primary btn-sm" 
-                            t-on-click="component.selectAllRecommended">
+                            t-on-click="selectAllRecommended">
                         <i class="fa fa-check-square-o"></i>
                         Select Recommended
                     </button>
                     
                     <button class="btn btn-outline-secondary btn-sm" 
-                            t-on-click="component.clearAllSelections">
+                            t-on-click="clearAllSelections">
                         <i class="fa fa-square-o"></i>
                         Clear All
                     </button>
@@ -49,9 +49,9 @@
             <div t-else="" class="source-grid">
                 <div t-foreach="state.filteredSources" t-as="source" 
                      t-key="source.model_name"
-                     t-att-class="component.getSourceItemClass(source)"
+                     t-att-class="getSourceItemClass(source)"
                      t-att-data-model="source.model_name"
-                     t-on-click="component.onSourceToggle">
+                     t-on-click="onSourceToggle">
                     
                     <div class="source-header">
                         <div class="source-icon">
@@ -69,11 +69,11 @@
                     <div class="source-stats">
                         <span class="text-muted">
                             <i class="fa fa-users"></i>
-                            <t t-esc="component.formatContactCount(source.estimated_count)"/> contacts
+                            <t t-esc="formatContactCount(source.estimated_count)"/> contacts
                         </span>
                         
                         <div class="source-status">
-                            <i t-if="component.isSourceSelected(source.model_name)" 
+                            <i t-if="isSourceSelected(source.model_name)" 
                                class="fa fa-check-circle text-success"></i>
                             <i t-elif="!source.available" 
                                class="fa fa-exclamation-triangle text-warning"></i>
@@ -86,7 +86,7 @@
                     <div class="source-details-toggle">
                         <button class="btn btn-link btn-sm" 
                                 t-att-data-model="source.model_name"
-                                t-on-click="component.toggleSourceDetails">
+                                t-on-click="toggleSourceDetails">
                             <i t-att-class="state.showSourceDetails[source.model_name] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                             <t t-if="state.showSourceDetails[source.model_name]">Hide</t>
                             <t t-else="">Show</t> Details
