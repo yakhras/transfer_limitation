@@ -34,7 +34,7 @@
             </div>
             
             <!-- Selection Summary -->
-            <div t--if="state.selectedSources.size > 0" class="selection-summary">
+            <div t-if="state.selectedSources.size > 0" class="selection-summary">
                 <div class="alert alert-success">
                     <i class="fa fa-check-circle"></i>
                     <span t-esc="state.selectedSources.size"/> source(s) selected

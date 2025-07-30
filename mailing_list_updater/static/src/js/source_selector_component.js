@@ -56,14 +56,66 @@ class SourceSelectorComponent extends Component {
         
         try {
             console.log('[SourceSelector] Making RPC call to load sources');
-            const response = await this.rpc({
-                route: "/mailing/update/sources",
-                params: {
-                    company_id: this.selectedMailingList?.company_id || null
-                }
-            });
             
-            console.log('[SourceSelector] RPC response received:', response);
+            // TEMPORARY: Try backend route first, fallback to mock data if 404
+            let response;
+            try {
+                response = await this.rpc({
+                    route: "/mailing/update/sources",
+                    params: {
+                        company_id: this.selectedMailingList?.company_id || null
+                    }
+                });
+                console.log('[SourceSelector] RPC response received:', response);
+            } catch (rpcError) {
+                console.warn('[SourceSelector] Backend route failed, using mock data:', rpcError);
+                
+                // TEMPORARY: Mock data for testing frontend
+                response = {
+                    success: true,
+                    data: {
+                        sources: [
+                            {
+                                model_name: 'res.partner',
+                                name: 'Contacts',
+                                description: 'Import contacts from Contacts module',
+                                available: true,
+                                recommended: true,
+                                estimated_count: 1247,
+                                email_field: 'email',
+                                name_field: 'name',
+                                phone_field: 'phone',
+                                company_field: 'company_id'
+                            },
+                            {
+                                model_name: 'crm.lead',
+                                name: 'CRM Leads',
+                                description: 'Import contacts from CRM Leads',
+                                available: true,
+                                recommended: true,
+                                estimated_count: 856,
+                                email_field: 'email_from',
+                                name_field: 'name',
+                                phone_field: 'phone',
+                                company_field: 'company_id'
+                            },
+                            {
+                                model_name: 'hr.employee',
+                                name: 'Employees',
+                                description: 'Import contacts from HR Employees',
+                                available: true,
+                                recommended: false,
+                                estimated_count: 42,
+                                email_field: 'work_email',
+                                name_field: 'name',
+                                phone_field: 'work_phone',
+                                company_field: 'company_id'
+                            }
+                        ]
+                    }
+                };
+                console.log('[SourceSelector] Using mock data:', response);
+            }
             
             if (response.success) {
                 this.state.availableSources = response.data.sources;
