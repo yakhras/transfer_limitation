@@ -224,14 +224,14 @@
                     </div>
                     <div class="footer-actions">
                         <button t-if="state.currentStep !== 'source_selection'" 
-                                class="btn btn-secondary" 
+                                class="mlu-btn mlu-btn-secondary" 
                                 t-on-click="previousStep">
                             <i class="fa fa-arrow-left"></i>
                             Previous
                         </button>
                         
                         <button t-if="state.currentStep !== 'batch_management'" 
-                                class="btn btn-primary" 
+                                class="mlu-btn mlu-btn-primary" 
                                 t-on-click="nextStep">
                             Next
                             <i class="fa fa-arrow-right"></i>
@@ -267,7 +267,7 @@
             </div>
             
             <div class="filter-content">
-                <div class="alert alert-info">
+                <div class="mlu-alert mlu-alert-info">
                     <i class="fa fa-info-circle"></i>
                     Filter Builder component will be loaded here
                 </div>
@@ -286,7 +286,7 @@
             </div>
             
             <div class="preview-content">
-                <div class="alert alert-info">
+                <div class="mlu-alert mlu-alert-info">
                     <i class="fa fa-info-circle"></i>
                     Preview Results component will be loaded here
                 </div>
@@ -305,7 +305,7 @@
             </div>
             
             <div class="progress-content">
-                <div class="alert alert-info">
+                <div class="mlu-alert mlu-alert-info">
                     <i class="fa fa-info-circle"></i>
                     Progress Tracker component will be loaded here
                 </div>
@@ -324,7 +324,7 @@
             </div>
             
             <div class="batch-content">
-                <div class="alert alert-info">
+                <div class="mlu-alert mlu-alert-info">
                     <i class="fa fa-info-circle"></i>
                     Batch Manager component will be loaded here
                 </div>
@@ -335,6 +335,6 @@
     <!-- ==========================================================================
          CENTERED DIALOG STYLES
          ========================================================================== -->
-
+    
 
 </templates>

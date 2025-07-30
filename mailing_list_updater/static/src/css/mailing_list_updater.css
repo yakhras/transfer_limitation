@@ -1,4 +1,12 @@
-/* Reset and Base */
+/* =================================================================
+           MAILING LIST UPDATER - SCOPED STYLES 
+           =================================================================
+           All styles are scoped to .mailing-updater-backdrop and 
+           .mailing-updater-dialog to prevent conflicts with Odoo's base 
+           styling. Uses unique class prefixes (mlu-*) for components.
+           ================================================================= */
+           
+        /* SCOPED STYLES - Only affects Mailing List Updater Component */
         .mailing-updater-backdrop {
             position: fixed;
             top: 0;
@@ -215,7 +223,8 @@
             gap: 8px;
         }
 
-        .btn {
+        /* Scoped Button Styles - Only within dialog (MLU = Mailing List Updater) */
+        .mailing-updater-dialog .mlu-btn {
             padding: 10px 16px;
             border-radius: 8px;
             font-size: 14px;
@@ -228,37 +237,37 @@
             border: none;
         }
 
-        .btn-outline {
-            background: white;
-            color: #374151;
-            border: 2px solid #e5e7eb;
+        .mailing-updater-dialog .mlu-btn-outline {
+            background: white !important;
+            color: #374151 !important;
+            border: 2px solid #e5e7eb !important;
         }
 
-        .btn-outline:hover {
-            background: #f9fafb;
-            border-color: #d1d5db;
+        .mailing-updater-dialog .mlu-btn-outline:hover {
+            background: #f9fafb !important;
+            border-color: #d1d5db !important;
             transform: translateY(-1px);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            border: 2px solid transparent;
+        .mailing-updater-dialog .mlu-btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+            color: white !important;
+            border: 2px solid transparent !important;
         }
 
-        .btn-primary:hover {
+        .mailing-updater-dialog .mlu-btn-primary:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-            border: 2px solid transparent;
+        .mailing-updater-dialog .mlu-btn-secondary {
+            background: #6b7280 !important;
+            color: white !important;
+            border: 2px solid transparent !important;
         }
 
-        .btn-secondary:hover {
-            background: #4b5563;
+        .mailing-updater-dialog .mlu-btn-secondary:hover {
+            background: #4b5563 !important;
             transform: translateY(-1px);
         }
 
@@ -429,8 +438,8 @@
             gap: 12px;
         }
 
-        /* Alert Styles */
-        .alert {
+        /* Scoped Alert Styles - Only within dialog */
+        .mailing-updater-dialog .mlu-alert {
             padding: 16px;
             border-radius: 8px;
             display: flex;
@@ -439,10 +448,10 @@
             margin: 20px 0;
         }
 
-        .alert-info {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
+        .mailing-updater-dialog .mlu-alert-info {
+            background: #eff6ff !important;
+            border: 1px solid #bfdbfe !important;
+            color: #1e40af !important;
         }
 
         /* Responsive Design */
