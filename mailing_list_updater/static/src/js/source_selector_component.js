@@ -3,28 +3,47 @@
 const { Component, useState } = owl;
 
 /**
- * Source Selector Component for OWL 1.0 (Fixed for Odoo 15.0)
+ * Source Selector Component for OWL 1.0 (FIXED for Odoo 15.0)
  * 
  * Allows users to select which contact sources (models) to include
  * in their mailing list update operation.
+ * 
+ * FIXED ISSUES:
+ * - Moved computed properties to state for template access
+ * - Fixed event handlers to work with OWL 1.0
+ * - Added console logs for tracking
+ * - Corrected method binding patterns
  */
 class SourceSelectorComponent extends Component {
     
     setup() {
+        console.log('[SourceSelector] Component setup started');
+        
         // Services (OWL 1.0 style) 
         this.rpc = this.env.services.rpc;
+        console.log('[SourceSelector] RPC service initialized');
         
-        // Component state
+        // Component state (FIXED: Added filteredSources to state)
         this.state = useState({
             availableSources: [],
+            filteredSources: [], // MOVED: From computed property to state
             selectedSources: new Set(),
             isLoading: false,
             searchTerm: '',
             showSourceDetails: {},
         });
         
+        console.log('[SourceSelector] State initialized:', {
+            availableSources: this.state.availableSources.length,
+            selectedSources: this.state.selectedSources.size,
+            isLoading: this.state.isLoading
+        });
+        
         // Props from parent
         this.selectedMailingList = this.props.selectedMailingList;
+        console.log('[SourceSelector] Props received:', {
+            selectedMailingList: this.selectedMailingList?.name || 'None'
+        });
     }
     
     /**
@@ -32,9 +51,11 @@ class SourceSelectorComponent extends Component {
      * Load available contact sources from the registry
      */
     async willStart() {
+        console.log('[SourceSelector] willStart lifecycle started');
         this.state.isLoading = true;
         
         try {
+            console.log('[SourceSelector] Making RPC call to load sources');
             const response = await this.rpc({
                 route: "/mailing/update/sources",
                 params: {
@@ -42,49 +63,106 @@ class SourceSelectorComponent extends Component {
                 }
             });
             
+            console.log('[SourceSelector] RPC response received:', response);
+            
             if (response.success) {
                 this.state.availableSources = response.data.sources;
+                console.log('[SourceSelector] Available sources loaded:', this.state.availableSources.length);
+                
+                // FIXED: Update filteredSources in state
+                this.updateFilteredSources();
+                
                 this.preSelectRecommended();
             } else {
+                console.error('[SourceSelector] RPC call failed:', response.error);
                 this.trigger('show-error', { 
                     message: response.error?.message || "Failed to load sources" 
                 });
             }
         } catch (error) {
+            console.error('[SourceSelector] Exception during source loading:', error);
             this.trigger('show-error', { 
                 message: "Error loading contact sources" 
             });
-            console.error("Source loading error:", error);
         } finally {
             this.state.isLoading = false;
+            console.log('[SourceSelector] willStart lifecycle completed');
         }
+    }
+    
+    /**
+     * FIXED: Update filtered sources in state (was computed property)
+     */
+    updateFilteredSources() {
+        console.log('[SourceSelector] Updating filtered sources with search term:', this.state.searchTerm);
+        
+        if (!this.state.searchTerm) {
+            this.state.filteredSources = [...this.state.availableSources];
+        } else {
+            const searchLower = this.state.searchTerm.toLowerCase();
+            this.state.filteredSources = this.state.availableSources.filter(source => 
+                source.name.toLowerCase().includes(searchLower) ||
+                source.description?.toLowerCase().includes(searchLower)
+            );
+        }
+        
+        console.log('[SourceSelector] Filtered sources updated:', {
+            total: this.state.availableSources.length,
+            filtered: this.state.filteredSources.length,
+            searchTerm: this.state.searchTerm
+        });
     }
     
     /**
      * Pre-select recommended sources based on mailing list context
      */
     preSelectRecommended() {
+        console.log('[SourceSelector] Pre-selecting recommended sources');
+        
+        let recommendedCount = 0;
         this.state.availableSources.forEach(source => {
             if (source.recommended) {
+                console.log('[SourceSelector] Pre-selecting recommended source:', source.name);
                 this.state.selectedSources.add(source.model_name);
+                recommendedCount++;
             }
         });
         
+        console.log('[SourceSelector] Pre-selected recommended sources:', recommendedCount);
         this.notifyParentOfSelection();
     }
     
     /**
-     * Handle source selection/deselection
+     * FIXED: Handle source selection/deselection with proper event handling
      */
-    onSourceToggle(modelName) {
-        if (this.state.selectedSources.has(modelName)) {
+    onSourceToggle(event) {
+        // FIXED: Get model name from data attribute instead of parameter
+        const modelName = event.currentTarget.dataset.model;
+        console.log('[SourceSelector] Source toggle clicked:', modelName);
+        
+        if (!modelName) {
+            console.error('[SourceSelector] No model name found for toggle event');
+            return;
+        }
+        
+        const wasSelected = this.state.selectedSources.has(modelName);
+        
+        if (wasSelected) {
+            console.log('[SourceSelector] Deselecting source:', modelName);
             this.state.selectedSources.delete(modelName);
         } else {
+            console.log('[SourceSelector] Selecting source:', modelName);
             this.state.selectedSources.add(modelName);
         }
         
         // Force reactivity update for Set
         this.state.selectedSources = new Set(this.state.selectedSources);
+        
+        console.log('[SourceSelector] Selection updated:', {
+            modelName,
+            action: wasSelected ? 'deselected' : 'selected',
+            totalSelected: this.state.selectedSources.size
+        });
         
         this.notifyParentOfSelection();
     }
@@ -93,45 +171,67 @@ class SourceSelectorComponent extends Component {
      * Check if a source is currently selected
      */
     isSourceSelected(modelName) {
-        return this.state.selectedSources.has(modelName);
+        const selected = this.state.selectedSources.has(modelName);
+        console.log('[SourceSelector] Checking if source selected:', modelName, selected);
+        return selected;
     }
     
     /**
-     * Toggle source details visibility
+     * FIXED: Toggle source details visibility with proper event handling
      */
-    toggleSourceDetails(modelName) {
-        this.state.showSourceDetails[modelName] = !this.state.showSourceDetails[modelName];
-    }
-    
-    /**
-     * Filter sources based on search term
-     */
-    get filteredSources() {
-        if (!this.state.searchTerm) {
-            return this.state.availableSources;
+    toggleSourceDetails(event) {
+        // FIXED: Get model name from data attribute
+        const modelName = event.currentTarget.dataset.model;
+        console.log('[SourceSelector] Toggle details for source:', modelName);
+        
+        if (!modelName) {
+            console.error('[SourceSelector] No model name found for details toggle');
+            return;
         }
         
-        const searchLower = this.state.searchTerm.toLowerCase();
-        return this.state.availableSources.filter(source => 
-            source.name.toLowerCase().includes(searchLower) ||
-            source.description?.toLowerCase().includes(searchLower)
-        );
+        const wasShowing = this.state.showSourceDetails[modelName];
+        this.state.showSourceDetails[modelName] = !wasShowing;
+        
+        console.log('[SourceSelector] Details toggled:', {
+            modelName,
+            wasShowing,
+            nowShowing: this.state.showSourceDetails[modelName]
+        });
+        
+        // Prevent event bubbling to parent source toggle
+        event.stopPropagation();
     }
     
     /**
-     * Handle search input
+     * FIXED: Handle search input with proper state management
      */
     onSearchInput(event) {
-        this.state.searchTerm = event.target.value;
+        const newSearchTerm = event.target.value;
+        console.log('[SourceSelector] Search input changed:', {
+            oldTerm: this.state.searchTerm,
+            newTerm: newSearchTerm
+        });
+        
+        this.state.searchTerm = newSearchTerm;
+        
+        // FIXED: Update filtered sources when search changes
+        this.updateFilteredSources();
     }
     
     /**
-     * Get selected sources data
+     * Get selected sources data for parent component
      */
     getSelectedSourcesData() {
-        return this.state.availableSources.filter(source => 
+        const selectedData = this.state.availableSources.filter(source => 
             this.state.selectedSources.has(source.model_name)
         );
+        
+        console.log('[SourceSelector] Getting selected sources data:', {
+            selectedCount: selectedData.length,
+            selectedNames: selectedData.map(s => s.name)
+        });
+        
+        return selectedData;
     }
     
     /**
@@ -139,6 +239,12 @@ class SourceSelectorComponent extends Component {
      */
     notifyParentOfSelection() {
         const selectedData = this.getSelectedSourcesData();
+        
+        console.log('[SourceSelector] Notifying parent of selection change:', {
+            selectedSources: Array.from(this.state.selectedSources),
+            selectedCount: selectedData.length,
+            isValid: selectedData.length > 0
+        });
         
         this.trigger('sources-changed', {
             selectedSources: Array.from(this.state.selectedSources),
@@ -148,7 +254,7 @@ class SourceSelectorComponent extends Component {
     }
     
     /**
-     * Get CSS classes for source item
+     * FIXED: Get CSS classes for source item (now accessible from template)
      */
     getSourceItemClass(source) {
         let classes = ['source-item'];
@@ -165,20 +271,36 @@ class SourceSelectorComponent extends Component {
             classes.push('recommended');
         }
         
-        return classes.join(' ');
+        const classString = classes.join(' ');
+        console.log('[SourceSelector] Generated CSS classes for', source.name, ':', classString);
+        
+        return classString;
     }
     
     /**
      * Handle select all recommended sources
      */
     selectAllRecommended() {
+        console.log('[SourceSelector] Selecting all recommended sources');
+        
+        let addedCount = 0;
         this.state.availableSources.forEach(source => {
             if (source.recommended && source.available) {
-                this.state.selectedSources.add(source.model_name);
+                if (!this.state.selectedSources.has(source.model_name)) {
+                    console.log('[SourceSelector] Adding recommended source:', source.name);
+                    this.state.selectedSources.add(source.model_name);
+                    addedCount++;
+                }
             }
         });
         
         this.state.selectedSources = new Set(this.state.selectedSources);
+        
+        console.log('[SourceSelector] Selected all recommended sources:', {
+            addedCount,
+            totalSelected: this.state.selectedSources.size
+        });
+        
         this.notifyParentOfSelection();
     }
     
@@ -186,8 +308,17 @@ class SourceSelectorComponent extends Component {
      * Handle clear all selections
      */
     clearAllSelections() {
+        console.log('[SourceSelector] Clearing all selections');
+        
+        const previousCount = this.state.selectedSources.size;
         this.state.selectedSources.clear();
         this.state.selectedSources = new Set();
+        
+        console.log('[SourceSelector] All selections cleared:', {
+            previousCount,
+            currentCount: this.state.selectedSources.size
+        });
+        
         this.notifyParentOfSelection();
     }
     
@@ -195,12 +326,17 @@ class SourceSelectorComponent extends Component {
      * Format contact count for display
      */
     formatContactCount(count) {
+        let formatted;
         if (count >= 1000000) {
-            return `${(count / 1000000).toFixed(1)}M`;
+            formatted = `${(count / 1000000).toFixed(1)}M`;
         } else if (count >= 1000) {
-            return `${(count / 1000).toFixed(1)}K`;
+            formatted = `${(count / 1000).toFixed(1)}K`;
+        } else {
+            formatted = count.toString();
         }
-        return count.toString();
+        
+        console.log('[SourceSelector] Formatted contact count:', count, '→', formatted);
+        return formatted;
     }
 }
 
@@ -209,5 +345,7 @@ SourceSelectorComponent.template = 'mailing_list_updater.SourceSelectorTemplate'
 SourceSelectorComponent.props = {
     selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
 };
+
+console.log('[SourceSelector] Component class definition completed');
 
 export { SourceSelectorComponent };
