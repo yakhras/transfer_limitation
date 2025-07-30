@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
-
-    <!-- ==========================================================================
-         MAIN COMPONENT TEMPLATE - Centered Dialog Style
-         ========================================================================== -->
-    
     <t t-name="mailing_list_updater.MainTemplate" owl="1">
         <!-- Modal Backdrop -->
         <div class="mailing-updater-backdrop">
@@ -35,192 +30,83 @@
                 <!-- Step Navigation -->
                 <div class="dialog-navigation">
                     <div class="step-pills">
-                        <div t-att-class="state.currentStep === 'source_selection' ? 'step-pill active' : 'step-pill'">
+                        <div t-att-class="state.currentStep === 'source_selection' ? 'step-pill active' : 'step-pill'"
+                             t-on-click="() => this.goToStep('source_selection')">
                             <i class="fa fa-database"></i>
                             <span>Select Sources</span>
                         </div>
-                        <div t-att-class="state.currentStep === 'filter_building' ? 'step-pill active' : 'step-pill'">
+                        <div t-att-class="state.currentStep === 'filter_building' ? 'step-pill active' : 'step-pill'"
+                             t-on-click="() => this.goToStep('filter_building')">
                             <i class="fa fa-filter"></i>
                             <span>Build Filters</span>
                         </div>
-                        <div t-att-class="state.currentStep === 'preview' ? 'step-pill active' : 'step-pill'">
+                        <div t-att-class="state.currentStep === 'preview' ? 'step-pill active' : 'step-pill'"
+                             t-on-click="() => this.goToStep('preview')">
                             <i class="fa fa-eye"></i>
                             <span>Preview Results</span>
                         </div>
-                        <div t-att-class="state.currentStep === 'execution' ? 'step-pill active' : 'step-pill'">
+                        <div t-att-class="state.currentStep === 'execution' ? 'step-pill active' : 'step-pill'"
+                             t-on-click="() => this.goToStep('execution')">
                             <i class="fa fa-play"></i>
                             <span>Execute</span>
                         </div>
-                        <div t-att-class="state.currentStep === 'batch_management' ? 'step-pill active' : 'step-pill'">
+                        <div t-att-class="state.currentStep === 'batch_management' ? 'step-pill active' : 'step-pill'"
+                             t-on-click="() => this.goToStep('batch_management')">
                             <i class="fa fa-history"></i>
                             <span>History</span>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Dialog Content -->
+                <!-- Dialog Content - USE REAL COMPONENTS -->
                 <div class="dialog-content">
                     
-                    <!-- Step 1: Source Selection -->
+                    <!-- Step 1: Source Selection - USE YOUR COMPONENT -->
                     <div t-if="state.currentStep === 'source_selection'" class="step-content">
-                        <div class="content-header">
-                            <h2>
-                                <i class="fa fa-database"></i>
-                                Select Contact Sources
-                            </h2>
-                            <p>Choose which contact sources to include in your mailing list update</p>
-                        </div>
-                        
-                        <!-- Search and Actions -->
-                        <div class="content-actions">
-                            <div class="search-box">
-                                <i class="fa fa-search"></i>
-                                <input type="text" placeholder="Search sources..." class="search-input" />
-                            </div>
-                            <div class="action-buttons">
-                                <button class="btn btn-outline">
-                                    <i class="fa fa-magic"></i>
-                                    Select Recommended
-                                </button>
-                                <button class="btn btn-outline">
-                                    <i class="fa fa-eraser"></i>
-                                    Clear All
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Source Cards -->
-                        <div class="source-cards">
-                            
-                            <!-- Contacts Card (Selected + Recommended) -->
-                            <div class="source-card selected recommended">
-                                <div class="card-badges">
-                                    <span class="badge badge-recommended">
-                                        <i class="fa fa-star"></i>
-                                        RECOMMENDED
-                                    </span>
-                                </div>
-                                <div class="card-header">
-                                    <div class="card-icon contacts-icon">
-                                        <i class="fa fa-users"></i>
-                                    </div>
-                                    <h3>Contacts</h3>
-                                    <div class="selection-check">
-                                        <i class="fa fa-check-circle"></i>
-                                    </div>
-                                </div>
-                                <p class="card-description">Import contacts from Contacts module</p>
-                                <div class="card-stats">
-                                    <span class="stat-item">
-                                        <i class="fa fa-users"></i>
-                                        1.2K contacts
-                                    </span>
-                                    <button class="btn-details">
-                                        <i class="fa fa-chevron-down"></i>
-                                        Show Details
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- CRM Leads Card (Selected + Recommended) -->
-                            <div class="source-card selected recommended">
-                                <div class="card-badges">
-                                    <span class="badge badge-recommended">
-                                        <i class="fa fa-star"></i>
-                                        RECOMMENDED
-                                    </span>
-                                </div>
-                                <div class="card-header">
-                                    <div class="card-icon crm-icon">
-                                        <i class="fa fa-line-chart"></i>
-                                    </div>
-                                    <h3>CRM Leads</h3>
-                                    <div class="selection-check">
-                                        <i class="fa fa-check-circle"></i>
-                                    </div>
-                                </div>
-                                <p class="card-description">Import contacts from CRM Leads</p>
-                                <div class="card-stats">
-                                    <span class="stat-item">
-                                        <i class="fa fa-users"></i>
-                                        856 contacts
-                                    </span>
-                                    <button class="btn-details">
-                                        <i class="fa fa-chevron-down"></i>
-                                        Show Details
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Employees Card (Not Selected) -->
-                            <div class="source-card">
-                                <div class="card-header">
-                                    <div class="card-icon employees-icon">
-                                        <i class="fa fa-user-tie"></i>
-                                    </div>
-                                    <h3>Employees</h3>
-                                    <div class="selection-check">
-                                        <i class="fa fa-circle-o"></i>
-                                    </div>
-                                </div>
-                                <p class="card-description">Import contacts from HR Employees</p>
-                                <div class="card-stats">
-                                    <span class="stat-item">
-                                        <i class="fa fa-users"></i>
-                                        142 contacts
-                                    </span>
-                                    <button class="btn-details">
-                                        <i class="fa fa-chevron-down"></i>
-                                        Show Details
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <SourceSelectorComponent 
+                            selectedMailingList="state.selectedMailingList"
+                            t-on-sources-changed="onSourcesChanged"/>
                     </div>
                     
-                    <!-- Step 2: Filter Building -->
+                    <!-- Step 2: Filter Building - USE YOUR COMPONENT -->
                     <div t-if="state.currentStep === 'filter_building'" class="step-content">
                         <FilterBuilderComponent 
-                            selectedSources="currentSelectedSources"
+                            selectedSources="state.selectedSources"
                             t-on-filters-changed="onFiltersChanged"/>
                     </div>
                     
-                    <!-- Step 3: Preview Results -->
+                    <!-- Step 3: Preview Results - USE YOUR COMPONENT -->
                     <div t-if="state.currentStep === 'preview'" class="step-content">
                         <PreviewResultsComponent 
-                            selectedMailingList="currentSelectedMailingList"
-                            selectedSources="currentSelectedSources"
-                            filterCriteria="currentFilterCriteria"
+                            selectedMailingList="state.selectedMailingList"
+                            selectedSources="state.selectedSources"
+                            filterCriteria="state.filterCriteria"
                             t-on-preview-ready="onPreviewReady"
                             t-on-execute-update="onExecuteUpdate"/>
                     </div>
                     
-                    <!-- Step 4: Execution -->
+                    <!-- Step 4: Execution - USE YOUR COMPONENT -->
                     <div t-if="state.currentStep === 'execution'" class="step-content">
-                        <div class="execution-container">
-                            <h2>Executing Mailing List Update</h2>
-                            
-                            <ProgressTrackerComponent 
-                                batchId="currentBatchId"
-                                initialProgress="currentExecutionProgress"
-                                initialStatus="currentExecutionStatus"
-                                t-on-operation-completed="onOperationCompleted"
-                                t-on-operation-error="onOperationError"
-                                t-on-operation-cancelled="onOperationCancelled"/>
-                        </div>
+                        <ProgressTrackerComponent 
+                            batchId="state.currentBatch?.batch_id"
+                            initialProgress="state.executionProgress"
+                            initialStatus="state.executionStatus"
+                            t-on-operation-completed="onOperationCompleted"
+                            t-on-operation-error="onOperationError"
+                            t-on-operation-cancelled="onOperationCancelled"/>
                     </div>
                     
-                    <!-- Step 5: Batch Management -->
+                    <!-- Step 5: Batch Management - USE YOUR COMPONENT -->
                     <div t-if="state.currentStep === 'batch_management'" class="step-content">
                         <BatchManagerComponent 
-                            mailingListId="currentMailingListId"/>
+                            mailingListId="state.selectedMailingList?.id"/>
                     </div>
                 </div>
                 
                 <!-- Dialog Footer -->
                 <div class="dialog-footer">
                     <div class="footer-info">
-                        <!-- <span>Step <t t-esc="getCurrentStepNumber()"/> of 5</span> -->
+                        <span>Step <t t-esc="getCurrentStepNumber()"/> of 5</span>
                     </div>
                     <div class="footer-actions">
                         <button t-if="state.currentStep !== 'source_selection'" 
@@ -241,5 +127,4 @@
             </div>
         </div>
     </t>
-    
 </templates>
