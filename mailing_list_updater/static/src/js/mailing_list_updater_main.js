@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
-const { Component, useState, onWillStart, onMounted } = owl;
+const { Component, useState } = owl;
 
 /**
- * Main Mailing List Updater Component - OWL 1.0
+ * Main Mailing List Updater Component - OWL 1.0 (Fixed for Odoo 15.0)
  * 
  * This is the core component that orchestrates the entire mailing list update process.
  * It manages the overall state and coordinates child components.
@@ -58,10 +58,44 @@ class MailingListUpdaterMain extends Component {
         // Store available data for child components
         this.mailingLists = [];
         this.availableSources = [];
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Will Start
+     * Initialize component data before rendering
+     */
+    async willStart() {
+        try {
+            this.state.isLoading = true;
+            
+            // Handle context parameters first
+            this.handleContextParameters();
+            
+            // Load initial data
+            await this.loadMailingLists();
+            await this.loadAvailableSources();
+            
+            // Apply context-based initialization
+            await this.applyContextInitialization();
+            
+        } catch (error) {
+            this.showError("Failed to initialize mailing list updater");
+            console.error("Initialization error:", error);
+        } finally {
+            this.state.isLoading = false;
+        }
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Mounted
+     * Setup after component is mounted to DOM
+     */
+    mounted() {
+        // Setup keyboard shortcuts, focus management, etc.
+        this.setupKeyboardShortcuts();
         
-        // Lifecycle hooks
-        onWillStart(this.onWillStart);
-        onMounted(this.onMounted);
+        // Set page title based on entry point
+        this.updatePageTitle();
     }
     
     /**
@@ -153,31 +187,6 @@ class MailingListUpdaterMain extends Component {
             case 'rollback_failed':
                 this.showError(`Rollback failed: ${event.detail.error}`);
                 break;
-        }
-    }
-    
-    /**
-     * Initialize component data before rendering
-     */
-    async onWillStart() {
-        try {
-            this.state.isLoading = true;
-            
-            // Handle context parameters first
-            this.handleContextParameters();
-            
-            // Load initial data
-            await this.loadMailingLists();
-            await this.loadAvailableSources();
-            
-            // Apply context-based initialization
-            await this.applyContextInitialization();
-            
-        } catch (error) {
-            this.showError("Failed to initialize mailing list updater");
-            console.error("Initialization error:", error);
-        } finally {
-            this.state.isLoading = false;
         }
     }
     
@@ -302,17 +311,6 @@ class MailingListUpdaterMain extends Component {
         } catch (error) {
             console.warn('Failed to load recent batch info:', error);
         }
-    }
-    
-    /**
-     * Setup after component is mounted to DOM
-     */
-    onMounted() {
-        // Setup keyboard shortcuts, focus management, etc.
-        this.setupKeyboardShortcuts();
-        
-        // Set page title based on entry point
-        this.updatePageTitle();
     }
     
     /**
@@ -869,12 +867,8 @@ class MailingListUpdaterMain extends Component {
 
 // OWL 1.0 component registration
 MailingListUpdaterMain.template = "mailing_list_updater.MainTemplate";
-MailingListUpdaterMain.components = {
-    SourceSelectorComponent: () => import('./source_selector_component.js').then(m => m.SourceSelectorComponent),
-    FilterBuilderComponent: () => import('./filter_builder_component.js').then(m => m.FilterBuilderComponent),
-    PreviewResultsComponent: () => import('./preview_results_component.js').then(m => m.PreviewResultsComponent),
-    ProgressTrackerComponent: () => import('./progress_tracker_component.js').then(m => m.ProgressTrackerComponent),
-    BatchManagerComponent: () => import('./batch_manager_component.js').then(m => m.BatchManagerComponent),
-};
+
+// Note: Component imports are handled differently in Odoo 15.0
+// Child components need to be properly registered and imported separately
 
 export { MailingListUpdaterMain };
