@@ -130,7 +130,7 @@
             </div>
             
             <!-- Empty State -->
-            <div t-if="!state.isLoading and filteredSources.length === 0" class="empty-state">
+            <div t-if="!state.isLoading and state.filteredSources.length === 0" class="empty-state">
                 <div class="empty-content">
                     <i class="fa fa-search fa-3x"></i>
                     <h3>No sources found</h3>
