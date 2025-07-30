@@ -1,14 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
-
-    
-    
     <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
         <div class="source-selector">
-            <!-- Content will be rendered by the main template for source_selection step -->
+            
+            <!-- Content Header -->
+            <div class="content-header">
+                <h2>
+                    <i class="fa fa-database"></i>
+                    Select Contact Sources
+                </h2>
+                <p>Choose which contact sources to include in your mailing list update</p>
+            </div>
+            
+            <!-- Search and Actions - CONNECTED TO JS -->
+            <div class="content-actions">
+                <div class="search-box">
+                    <i class="fa fa-search"></i>
+                    <input type="text" 
+                           placeholder="Search sources..." 
+                           class="search-input"
+                           t-model="state.searchTerm"
+                           t-on-input="onSearchInput"/>
+                </div>
+                <div class="action-buttons">
+                    <button class="mlu-btn mlu-btn-outline" 
+                            t-on-click="selectAllRecommended">
+                        <i class="fa fa-magic"></i>
+                        Select Recommended
+                    </button>
+                    <button class="mlu-btn mlu-btn-outline"
+                            t-on-click="clearAllSelections">
+                        <i class="fa fa-eraser"></i>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Loading State -->
+            <div t-if="state.isLoading" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading contact sources...</p>
+            </div>
+            
+            <!-- Selection Summary -->
+            <div t-if="state.selectedSources.size > 0" class="selection-summary">
+                <div class="mlu-alert mlu-alert-success">
+                    <i class="fa fa-check-circle"></i>
+                    <span t-esc="state.selectedSources.size"/> source(s) selected • Ready to proceed
+                </div>
+            </div>
+            
+            <!-- Source Cards - DYNAMIC FROM JS -->
+            <div t-if="!state.isLoading" class="source-cards">
+                <div t-foreach="filteredSources" 
+                     t-as="source" 
+                     t-key="source.model_name"
+                     t-att-class="getSourceItemClass(source)"
+                     t-on-click="() => this.onSourceToggle(source.model_name)">
+                    
+                    <!-- Badges -->
+                    <div t-if="source.recommended || isSourceSelected(source.model_name)" 
+                         class="card-badges">
+                        <span t-if="source.recommended" 
+                              class="badge badge-recommended">
+                            <i class="fa fa-star"></i>
+                            RECOMMENDED
+                        </span>
+                        <span t-if="isSourceSelected(source.model_name)"
+                              class="badge badge-selected">
+                            <i class="fa fa-check"></i>
+                            SELECTED
+                        </span>
+                    </div>
+                    
+                    <!-- Card Header -->
+                    <div class="card-header">
+                        <div t-att-class="'card-icon ' + source.model_name.replace('.', '-') + '-icon'">
+                            <i t-att-class="source.icon || 'fa fa-users'"></i>
+                        </div>
+                        <h3 t-esc="source.name"></h3>
+                        <div class="selection-check">
+                            <i t-if="isSourceSelected(source.model_name)" 
+                               class="fa fa-check-circle"></i>
+                            <i t-else="" 
+                               class="fa fa-circle-o"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Description -->
+                    <p class="card-description" t-esc="source.description"></p>
+                    
+                    <!-- Card Stats -->
+                    <div class="card-stats">
+                        <span class="stat-item">
+                            <i class="fa fa-users"></i>
+                            <span t-esc="formatContactCount(source.estimated_count)"/> contacts
+                        </span>
+                        <button class="btn-details" 
+                                t-on-click.stop="() => this.toggleSourceDetails(source.model_name)">
+                            <i t-att-class="state.showSourceDetails[source.model_name] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                            <span t-if="state.showSourceDetails[source.model_name]">Hide Details</span>
+                            <span t-else="">Show Details</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Expandable Details -->
+                    <div t-if="state.showSourceDetails[source.model_name]" class="card-details">
+                        <div class="details-content">
+                            <div class="detail-item">
+                                <strong>Model:</strong> <span t-esc="source.model_name"/>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Email Field:</strong> <span t-esc="source.email_field || 'email'"/>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Name Field:</strong> <span t-esc="source.name_field || 'name'"/>
+                            </div>
+                            <div t-if="source.company_field" class="detail-item">
+                                <strong>Company Field:</strong> <span t-esc="source.company_field"/>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Status:</strong> 
+                                <span t-if="source.available" class="status-available">Available</span>
+                                <span t-else="" class="status-unavailable">Unavailable</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div t-if="!state.isLoading and filteredSources.length === 0" class="empty-state">
+                <div class="empty-content">
+                    <i class="fa fa-search fa-3x"></i>
+                    <h3>No sources found</h3>
+                    <p>Try adjusting your search criteria or check if sources are properly configured.</p>
+                </div>
+            </div>
         </div>
     </t>
-    
-    
-
 </templates>
