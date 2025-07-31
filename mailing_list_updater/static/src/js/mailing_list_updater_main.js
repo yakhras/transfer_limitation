@@ -766,7 +766,8 @@ class MailingListUpdaterMain extends Component {
 
     closeUpdater() {
         // Just go back in browser history
-        window.history.back();
+        // window.history.back();
+        window.location.href = '/web';
     }
 
     
