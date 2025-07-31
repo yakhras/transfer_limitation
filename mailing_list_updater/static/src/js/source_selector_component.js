@@ -16,6 +16,7 @@ class SourceSelectorComponent extends Component {
             isLoading: false,
             searchTerm: '',
             showSourceDetails: {},
+            companyRecordCounts: {},
         });
 
         this.selectedMailingList = this.props.selectedMailingList;
