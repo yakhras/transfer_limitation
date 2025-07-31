@@ -6,6 +6,8 @@ class SourceSelectorComponent extends Component {
 
     setup() {
         this.rpc = this.env.services.rpc;
+        this.company = this.env.services.company;
+        console.log(this.company)
 
         this.state = useState({
             
