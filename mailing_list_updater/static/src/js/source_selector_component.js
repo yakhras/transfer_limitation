@@ -219,7 +219,7 @@ class SourceSelectorComponent extends Component {
             console.log('Fetching count for model:', modelName);
             console.log('Using domain:', domain);
             
-            const count = this.rpc({
+            const count = await this.rpc({
                 model: modelName,
                 method: 'search_count',
                 args: [domain]
