@@ -15,7 +15,7 @@ class MailingListUpdateController(http.Controller):
     Main controller for mailing list update operations.
     
     This controller handles the core functionality including:
-    - Contact source selection and configuration
+    - Mailing list source selection and configuration
     - Filter criteria management
     - Preview generation
     - Batch execution
@@ -34,7 +34,7 @@ class MailingListUpdateController(http.Controller):
         Expected JSON payload:
         {
             "mailing_list_id": 123,
-            "source_models": [{"model_name": "res.partner", "enabled": true}, ...],
+            "source_mailing_lists": [{"mailing_list_id": 456, "enabled": true}, ...],
             "filter_criteria": {...}
         }
         
@@ -204,24 +204,29 @@ class MailingListUpdateController(http.Controller):
     @http.route('/mailing/update/sources', type='json', auth='user', methods=['GET'])
     def get_sources(self, **kwargs):
         """
-        Get available contact sources for the current company.
+        Get available mailing lists that can be used as sources for the current company.
         
         Query parameters:
         - company_id (optional): Specific company ID
+        - target_mailing_list_id (optional): Target list ID to exclude from sources
         - include_stats (optional): Include usage statistics
         
         Returns:
-            dict: Available contact sources with metadata
+            dict: Available source mailing lists with metadata
         """
         start_time = time.time()
         
         try:
             company_id = kwargs.get('company_id') or request.env.company.id
+            target_mailing_list_id = kwargs.get('target_mailing_list_id')
             include_stats = kwargs.get('include_stats', True)
             
-            # Get sources from registry
-            registry_model = request.env['mailing.source.registry']
-            sources_data = registry_model.get_sources_for_web(company_id=company_id)
+            # Get available mailing lists as sources
+            sources_data = self._get_mailing_lists_for_sources(
+                company_id=company_id,
+                target_mailing_list_id=target_mailing_list_id,
+                include_stats=include_stats
+            )
             
             execution_time = time.time() - start_time
             
@@ -239,7 +244,7 @@ class MailingListUpdateController(http.Controller):
             
             return self._success_response(
                 data=sources_data,
-                message=f"Found {sources_data['summary']['total_sources']} available sources",
+                message=f"Found {sources_data['summary']['total_sources']} available mailing lists",
                 meta={
                     'execution_time': round(execution_time, 2),
                     'company_id': company_id,
@@ -247,61 +252,205 @@ class MailingListUpdateController(http.Controller):
             )
             
         except Exception as e:
-            _logger.error("Failed to get sources: %s", str(e), exc_info=True)
+            _logger.error("Failed to get mailing list sources: %s", str(e), exc_info=True)
             return self._error_response(
-                message="Failed to retrieve sources",
+                message="Failed to retrieve mailing list sources",
                 details=str(e),
                 code=500
             )
     
-    @http.route('/mailing/update/filters/<string:model_name>', type='json', auth='user', methods=['GET'])
-    def get_model_filters(self, model_name, **kwargs):
+    @http.route('/mailing/update/mailing-lists', type='json', auth='user', methods=['GET'])
+    def get_mailing_lists(self, **kwargs):
         """
-        Get available filter options for a specific source model.
-        
-        Parameters:
-        - model_name: The source model name (e.g., 'res.partner', 'crm.lead')
+        Dedicated endpoint to get available mailing lists for source selection.
         
         Query parameters:
-        - include_samples (optional): Include sample data for relation fields
+        - company_id (optional): Filter by company
+        - search (optional): Search term for mailing list names
+        - target_list_id (optional): Target list to exclude
+        - limit (optional): Maximum results (default: 50)
+        - offset (optional): Pagination offset (default: 0)
+        - include_inactive (optional): Include inactive lists (default: false)
         
         Returns:
-            dict: Available filter fields and options for the model
+            dict: Paginated mailing lists with detailed information
         """
         start_time = time.time()
         
         try:
-            include_samples = kwargs.get('include_samples', False)
+            # Extract parameters
+            company_id = kwargs.get('company_id') or request.env.company.id
+            search = kwargs.get('search', '').strip()
+            target_list_id = kwargs.get('target_list_id')
+            limit = min(kwargs.get('limit', 50), 100)  # Max 100 per request
+            offset = kwargs.get('offset', 0)
+            include_inactive = kwargs.get('include_inactive', False)
             
-            # Get registry entry for the model
-            registry_model = request.env['mailing.source.registry']
-            registry_entry = registry_model.search([
-                ('model_name', '=', model_name),
-                ('is_active', '=', True),
-                ('company_id', 'in', [request.env.company.id, False])
-            ], limit=1)
+            # Build domain for mailing list search
+            domain = [
+                ('company_id', '=', company_id),
+            ]
             
-            if not registry_entry:
-                return self._error_response(
-                    message=f"Model '{model_name}' is not registered or inactive",
-                    code=404
-                )
+            # Exclude target list
+            if target_list_id:
+                domain.append(('id', '!=', target_list_id))
             
-            # Get filter options
-            filter_options = registry_entry.get_filter_options_json(include_sample_data=include_samples)
+            # Include/exclude inactive lists
+            if not include_inactive:
+                domain.append(('is_public', '=', True))  # Assuming public lists are active
             
-            if 'error' in filter_options:
-                return self._error_response(
-                    message="Failed to get filter options",
-                    details=filter_options['error']
-                )
+            # Add search term
+            if search:
+                domain.append(('name', 'ilike', search))
+            
+            # Execute search
+            MailingList = request.env['mailing.list']
+            total_count = MailingList.search_count(domain)
+            mailing_lists = MailingList.search(domain, limit=limit, offset=offset, order='name asc')
+            
+            # Format results
+            sources_data = []
+            for mailing_list in mailing_lists:
+                # Get contact count
+                contact_count = len(mailing_list.contact_ids)
+                
+                # Calculate activity metrics
+                last_mailing = request.env['mailing.mailing'].search([
+                    ('contact_list_ids', 'in', mailing_list.id)
+                ], limit=1, order='create_date desc')
+                
+                source_data = {
+                    'mailing_list_id': mailing_list.id,
+                    'name': mailing_list.name,
+                    'description': self._get_mailing_list_description(mailing_list),
+                    'contact_count': contact_count,
+                    'estimated_count': contact_count,  # For compatibility with frontend
+                    'available': True,
+                    'recommended': self._is_mailing_list_recommended(mailing_list, contact_count),
+                    'created_date': mailing_list.create_date.isoformat() if mailing_list.create_date else None,
+                    'last_updated': mailing_list.write_date.isoformat() if mailing_list.write_date else None,
+                    'last_mailing_date': last_mailing.create_date.isoformat() if last_mailing else None,
+                    'is_public': mailing_list.is_public,
+                    'company_id': mailing_list.company_id.id,
+                    'company_name': mailing_list.company_id.name,
+                    # Additional metadata for the frontend
+                    'model_name': f'mailing.list.{mailing_list.id}',  # For compatibility
+                    'email_field': 'email',
+                    'name_field': 'name',
+                    'phone_field': 'mobile',
+                    'company_field': 'company_name',
+                }
+                sources_data.append(source_data)
+            
+            # Prepare response with pagination info
+            response_data = {
+                'sources': sources_data,
+                'summary': {
+                    'total_sources': len(sources_data),
+                    'total_available': total_count,
+                    'recommended_count': len([s for s in sources_data if s['recommended']]),
+                    'has_more': (offset + limit) < total_count,
+                    'next_offset': offset + limit if (offset + limit) < total_count else None,
+                },
+                'pagination': {
+                    'limit': limit,
+                    'offset': offset,
+                    'total': total_count,
+                    'page': (offset // limit) + 1,
+                    'total_pages': (total_count + limit - 1) // limit,
+                }
+            }
             
             execution_time = time.time() - start_time
             
             # Log request
             request.env['mailing.operation.audit'].log_web_request(
                 request_data={
-                    'endpoint': f'/mailing/update/filters/{model_name}',
+                    'endpoint': '/mailing/update/mailing-lists',
+                    'method': 'GET',
+                    'params': kwargs,
+                },
+                response_data=response_data,
+                execution_time=execution_time,
+                success=True
+            )
+            
+            return self._success_response(
+                data=response_data,
+                message=f"Found {total_count} mailing lists ({len(sources_data)} returned)",
+                meta={
+                    'execution_time': round(execution_time, 2),
+                    'search_term': search,
+                    'company_id': company_id,
+                }
+            )
+            
+        except Exception as e:
+            _logger.error("Failed to get mailing lists: %s", str(e), exc_info=True)
+            return self._error_response(
+                message="Failed to retrieve mailing lists",
+                details=str(e),
+                code=500
+            )
+    
+    @http.route('/mailing/update/filters/<string:mailing_list_id>', type='json', auth='user', methods=['GET'])
+    def get_mailing_list_filters(self, mailing_list_id, **kwargs):
+        """
+        Get available filter options for contacts within a specific mailing list.
+        
+        Parameters:
+        - mailing_list_id: The mailing list ID
+        
+        Query parameters:
+        - include_samples (optional): Include sample data for relation fields
+        
+        Returns:
+            dict: Available filter fields and options for mailing list contacts
+        """
+        start_time = time.time()
+        
+        try:
+            include_samples = kwargs.get('include_samples', False)
+            
+            # Get mailing list
+            try:
+                mailing_list_id = int(mailing_list_id)
+            except (ValueError, TypeError):
+                return self._error_response(
+                    message="Invalid mailing list ID format",
+                    code=400
+                )
+            
+            mailing_list = request.env['mailing.list'].browse(mailing_list_id)
+            
+            if not mailing_list.exists():
+                return self._error_response(
+                    message=f"Mailing list with ID {mailing_list_id} not found",
+                    code=404
+                )
+            
+            # Check access permissions
+            try:
+                mailing_list.check_access_rights('read')
+                mailing_list.check_access_rule('read')
+            except AccessError:
+                return self._error_response(
+                    message="Access denied to mailing list",
+                    code=403
+                )
+            
+            # Get filter options for mailing list contacts (mailing.contact model)
+            filter_options = self._get_mailing_contact_filter_options(
+                mailing_list=mailing_list,
+                include_sample_data=include_samples
+            )
+            
+            execution_time = time.time() - start_time
+            
+            # Log request
+            request.env['mailing.operation.audit'].log_web_request(
+                request_data={
+                    'endpoint': f'/mailing/update/filters/{mailing_list_id}',
                     'method': 'GET',
                     'params': kwargs,
                 },
@@ -312,17 +461,18 @@ class MailingListUpdateController(http.Controller):
             
             return self._success_response(
                 data=filter_options,
-                message=f"Filter options retrieved for {filter_options.get('display_name', model_name)}",
+                message=f"Filter options retrieved for {mailing_list.name}",
                 meta={
                     'execution_time': round(execution_time, 2),
                     'field_count': filter_options.get('field_count', 0),
+                    'mailing_list_name': mailing_list.name,
                 }
             )
             
         except Exception as e:
-            _logger.error("Failed to get filters for model %s: %s", model_name, str(e), exc_info=True)
+            _logger.error("Failed to get filters for mailing list %s: %s", mailing_list_id, str(e), exc_info=True)
             return self._error_response(
-                message=f"Failed to retrieve filters for model '{model_name}'",
+                message=f"Failed to retrieve filters for mailing list",
                 details=str(e),
                 code=500
             )
@@ -330,18 +480,18 @@ class MailingListUpdateController(http.Controller):
     @http.route('/mailing/update/validate-filters', type='json', auth='user', methods=['POST'])
     def validate_filters(self, **kwargs):
         """
-        Validate filter criteria for specific models.
+        Validate filter criteria for specific mailing lists.
         
         Expected JSON payload:
         {
             "filters": {
-                "res.partner": {"create_date": {"operator": ">=", "value": "2024-01-01"}},
-                "crm.lead": {"probability": {"operator": ">=", "value": 75}}
+                "mailing_list_123": {"create_date": {"operator": ">=", "value": "2024-01-01"}},
+                "mailing_list_456": {"opt_out": {"operator": "=", "value": false}}
             }
         }
         
         Returns:
-            dict: Validation results for each model
+            dict: Validation results for each mailing list
         """
         start_time = time.time()
         
@@ -351,13 +501,26 @@ class MailingListUpdateController(http.Controller):
             if not filters:
                 return self._error_response(message="No filters provided for validation")
             
-            registry_model = request.env['mailing.source.registry']
             validation_results = {}
             overall_valid = True
             
-            for model_name, filter_criteria in filters.items():
-                validation_result = registry_model.validate_filter_criteria(model_name, filter_criteria)
-                validation_results[model_name] = validation_result
+            for mailing_list_key, filter_criteria in filters.items():
+                # Extract mailing list ID from key (format: "mailing_list_123")
+                try:
+                    mailing_list_id = int(mailing_list_key.replace('mailing_list_', ''))
+                except (ValueError, AttributeError):
+                    validation_results[mailing_list_key] = {
+                        'valid': False,
+                        'errors': [f"Invalid mailing list identifier: {mailing_list_key}"]
+                    }
+                    overall_valid = False
+                    continue
+                
+                # Validate filters for this mailing list
+                validation_result = self._validate_mailing_list_filter_criteria(
+                    mailing_list_id, filter_criteria
+                )
+                validation_results[mailing_list_key] = validation_result
                 
                 if not validation_result.get('valid'):
                     overall_valid = False
@@ -380,7 +543,7 @@ class MailingListUpdateController(http.Controller):
                 data={
                     'validation_results': validation_results,
                     'overall_valid': overall_valid,
-                    'models_validated': len(validation_results),
+                    'mailing_lists_validated': len(validation_results),
                 },
                 message="Filter validation completed",
                 meta={
@@ -440,6 +603,259 @@ class MailingListUpdateController(http.Controller):
             )
     
     # ========================================
+    # HELPER METHODS FOR MAILING LIST OPERATIONS
+    # ========================================
+    
+    def _get_mailing_lists_for_sources(self, company_id, target_mailing_list_id=None, include_stats=True):
+        """
+        Get available mailing lists that can be used as sources.
+        
+        Returns:
+            dict: Formatted data structure compatible with frontend
+        """
+        # Build domain
+        domain = [
+            ('company_id', '=', company_id),
+            ('is_public', '=', True),  # Only public/active lists
+        ]
+        
+        # Exclude target list
+        if target_mailing_list_id:
+            domain.append(('id', '!=', target_mailing_list_id))
+        
+        # Get mailing lists
+        MailingList = request.env['mailing.list']
+        mailing_lists = MailingList.search(domain, order='name asc')
+        
+        sources = []
+        for mailing_list in mailing_lists:
+            contact_count = len(mailing_list.contact_ids)
+            
+            source_data = {
+                'mailing_list_id': mailing_list.id,
+                'model_name': f'mailing.list.{mailing_list.id}',  # For compatibility
+                'name': mailing_list.name,
+                'description': self._get_mailing_list_description(mailing_list),
+                'available': True,
+                'recommended': self._is_mailing_list_recommended(mailing_list, contact_count),
+                'estimated_count': contact_count,
+                'contact_count': contact_count,
+                'email_field': 'email',
+                'name_field': 'name',
+                'phone_field': 'mobile',
+                'company_field': 'company_name',
+                'created_date': mailing_list.create_date.isoformat() if mailing_list.create_date else None,
+                'is_public': mailing_list.is_public,
+            }
+            
+            if include_stats:
+                source_data.update(self._get_mailing_list_stats(mailing_list))
+            
+            sources.append(source_data)
+        
+        return {
+            'sources': sources,
+            'summary': {
+                'total_sources': len(sources),
+                'recommended_count': len([s for s in sources if s['recommended']]),
+                'total_contacts': sum(s['contact_count'] for s in sources),
+            }
+        }
+    
+    def _get_mailing_list_description(self, mailing_list):
+        """Generate description for mailing list."""
+        contact_count = len(mailing_list.contact_ids)
+        
+        if contact_count == 0:
+            return "Empty mailing list - no contacts"
+        elif contact_count == 1:
+            return "1 contact in this mailing list"
+        else:
+            return f"{contact_count} contacts in this mailing list"
+    
+    def _is_mailing_list_recommended(self, mailing_list, contact_count):
+        """Determine if a mailing list should be marked as recommended."""
+        # Recommend lists with good contact count and recent activity
+        if contact_count < 10:
+            return False
+        
+        # Check for recent mailing activity
+        recent_mailings = request.env['mailing.mailing'].search_count([
+            ('contact_list_ids', 'in', mailing_list.id),
+            ('create_date', '>=', fields.Datetime.now() - fields.timedelta(days=90))
+        ])
+        
+        return recent_mailings > 0 or contact_count > 100
+    
+    def _get_mailing_list_stats(self, mailing_list):
+        """Get additional statistics for mailing list."""
+        stats = {}
+        
+        # Last mailing sent
+        last_mailing = request.env['mailing.mailing'].search([
+            ('contact_list_ids', 'in', mailing_list.id)
+        ], limit=1, order='create_date desc')
+        
+        if last_mailing:
+            stats['last_mailing_date'] = last_mailing.create_date.isoformat()
+            stats['last_mailing_subject'] = last_mailing.subject
+        
+        # Opt-out statistics
+        opt_out_count = request.env['mailing.contact'].search_count([
+            ('list_ids', 'in', mailing_list.id),
+            ('opt_out', '=', True)
+        ])
+        stats['opt_out_count'] = opt_out_count
+        stats['active_contact_count'] = len(mailing_list.contact_ids) - opt_out_count
+        
+        return stats
+    
+    def _get_mailing_contact_filter_options(self, mailing_list, include_sample_data=False):
+        """
+        Get filter options for mailing list contacts.
+        
+        Returns available fields that can be used for filtering contacts
+        within the specified mailing list.
+        """
+        MailingContact = request.env['mailing.contact']
+        
+        # Define available filter fields for mailing contacts
+        filter_fields = {
+            'name': {
+                'type': 'char',
+                'string': 'Contact Name',
+                'operators': ['=', '!=', 'ilike', 'not ilike', 'in', 'not in'],
+            },
+            'email': {
+                'type': 'char',
+                'string': 'Email Address',
+                'operators': ['=', '!=', 'ilike', 'not ilike', 'in', 'not in'],
+            },
+            'mobile': {
+                'type': 'char',
+                'string': 'Mobile Phone',
+                'operators': ['=', '!=', 'ilike', 'not ilike'],
+            },
+            'company_name': {
+                'type': 'char',
+                'string': 'Company Name',
+                'operators': ['=', '!=', 'ilike', 'not ilike', 'in', 'not in'],
+            },
+            'country_id': {
+                'type': 'many2one',
+                'string': 'Country',
+                'operators': ['=', '!=', 'in', 'not in'],
+                'relation': 'res.country',
+            },
+            'title_id': {
+                'type': 'many2one',
+                'string': 'Title',
+                'operators': ['=', '!=', 'in', 'not in'],
+                'relation': 'res.partner.title',
+            },
+            'opt_out': {
+                'type': 'boolean',
+                'string': 'Opted Out',
+                'operators': ['=', '!='],
+            },
+            'create_date': {
+                'type': 'datetime',
+                'string': 'Created Date',
+                'operators': ['=', '!=', '<', '<=', '>', '>=', 'between'],
+            },
+            'write_date': {
+                'type': 'datetime',
+                'string': 'Last Updated',
+                'operators': ['=', '!=', '<', '<=', '>', '>=', 'between'],
+            },
+        }
+        
+        # Add sample data if requested
+        if include_sample_data:
+            contacts = MailingContact.search([
+                ('list_ids', 'in', mailing_list.id)
+            ], limit=10)
+            
+            # Add sample values for relation fields
+            if contacts:
+                countries = contacts.mapped('country_id')
+                if countries:
+                    filter_fields['country_id']['sample_values'] = [
+                        {'id': c.id, 'name': c.name} for c in countries[:5]
+                    ]
+                
+                titles = contacts.mapped('title_id')
+                if titles:
+                    filter_fields['title_id']['sample_values'] = [
+                        {'id': t.id, 'name': t.name} for t in titles[:5]
+                    ]
+        
+        return {
+            'model_name': 'mailing.contact',
+            'display_name': f'Contacts from {mailing_list.name}',
+            'fields': filter_fields,
+            'field_count': len(filter_fields),
+            'mailing_list_id': mailing_list.id,
+            'mailing_list_name': mailing_list.name,
+        }
+    
+    def _validate_mailing_list_filter_criteria(self, mailing_list_id, filter_criteria):
+        """
+        Validate filter criteria for a specific mailing list.
+        
+        Returns:
+            dict: Validation result with valid flag and any errors
+        """
+        try:
+            # Get mailing list
+            mailing_list = request.env['mailing.list'].browse(mailing_list_id)
+            if not mailing_list.exists():
+                return {
+                    'valid': False,
+                    'errors': [f'Mailing list with ID {mailing_list_id} not found']
+                }
+            
+            # Get available fields
+            filter_options = self._get_mailing_contact_filter_options(mailing_list, False)
+            available_fields = filter_options['fields']
+            
+            errors = []
+            warnings = []
+            
+            # Validate each filter criterion
+            for field_name, criterion in filter_criteria.items():
+                if field_name not in available_fields:
+                    errors.append(f"Field '{field_name}' is not available for filtering")
+                    continue
+                
+                field_info = available_fields[field_name]
+                operator = criterion.get('operator')
+                value = criterion.get('value')
+                
+                # Validate operator
+                if operator not in field_info['operators']:
+                    errors.append(f"Operator '{operator}' is not valid for field '{field_name}'")
+                
+                # Validate value type based on field type
+                if field_info['type'] == 'boolean' and not isinstance(value, bool):
+                    errors.append(f"Field '{field_name}' requires a boolean value")
+                elif field_info['type'] in ['datetime', 'date'] and not isinstance(value, str):
+                    errors.append(f"Field '{field_name}' requires a date/datetime string")
+                
+            return {
+                'valid': len(errors) == 0,
+                'errors': errors,
+                'warnings': warnings,
+                'validated_fields': len(filter_criteria),
+            }
+            
+        except Exception as e:
+            return {
+                'valid': False,
+                'errors': [f'Validation error: {str(e)}']
+            }
+    
+    # ========================================
     # UTILITY METHODS
     # ========================================
     
@@ -447,7 +863,7 @@ class MailingListUpdateController(http.Controller):
         """Extract and normalize request data."""
         return {
             'mailing_list_id': kwargs.get('mailing_list_id'),
-            'source_models': kwargs.get('source_models', []),
+            'source_mailing_lists': kwargs.get('source_mailing_lists', []),  # Changed from source_models
             'filter_criteria': kwargs.get('filter_criteria', {}),
             'batch_config': kwargs.get('batch_config', {}),
         }
