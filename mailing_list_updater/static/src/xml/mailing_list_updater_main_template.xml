@@ -35,6 +35,11 @@
                             <i class="fa fa-database"></i>
                             <span>Select Sources</span>
                         </div>
+                        <div t-att-class="state.currentStep === 'source_selection' ? 'step-pill active' : 'step-pill'"
+                             t-on-click="() => this.goToStep('source_selection')">
+                            <i class="fa fa-database"></i>
+                            <span>Select Sources</span>
+                        </div>
                         <div t-att-class="state.currentStep === 'filter_building' ? 'step-pill active' : 'step-pill'"
                              t-on-click="() => this.goToStep('filter_building')">
                             <i class="fa fa-filter"></i>
