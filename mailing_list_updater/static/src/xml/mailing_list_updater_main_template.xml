@@ -77,6 +77,7 @@
                     <div t-if="state.currentStep === 'source_selection'" class="step-content">
                         <SourceSelectorComponent 
                             selectedMailingList="state.selectedMailingList"
+                            selectedSources="state.selectedSources.map(s => s.model_name)"
                             t-on-sources-changed="onSourcesChanged"/>
                     </div>
                     
