@@ -765,13 +765,8 @@ class MailingListUpdaterMain extends Component {
     }
 
     closeUpdater() {
-        if (this.env.services.action && this.env.services.action.closeDialog) {
-            // If opened as dialog
-            this.env.services.action.closeDialog();
-        } else {
-            // Return to email marketing main menu
-            this.env.services.action.doAction('mass_mailing.mass_mailing_menu_root');
-        }
+        // Just go back in browser history
+        window.history.back();
     }
 
     
