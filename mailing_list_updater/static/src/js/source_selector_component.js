@@ -216,6 +216,8 @@ class SourceSelectorComponent extends Component {
     async fetchCompanyRecordCount(modelName) {
         try {
             const domain = [['company_id', '=', this.company.currentCompany.id]];
+            console.log('Fetching count for model:', modelName);
+            console.log('Using domain:', domain);
             
             const count = await this.rpc({
                 model: modelName,
