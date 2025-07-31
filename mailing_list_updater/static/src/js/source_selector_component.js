@@ -51,7 +51,7 @@ class SourceSelectorComponent extends Component {
             const response = await this.env.services.orm.searchRead(
                 'mailing.list',
                 [['name', 'ilike', this.state.targetSearchTerm]],
-                ['id', 'name'],
+                ['id', 'name', 'contact_count'], // Only fetch id, name, and contact_count
                 { limit: 20, context: {} }
             );
 
@@ -60,7 +60,7 @@ class SourceSelectorComponent extends Component {
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
                 name: list.name,
-                contact_count: 0, // Skip contact count for now
+                contact_count: list.contact_count, // Skip contact count for now
                 estimated_count: 0,
                 description: `Mailing list: ${list.name}`,
                 available: true,
@@ -233,6 +233,8 @@ class SourceSelectorComponent extends Component {
     }
 
     formatContactCount(count) {
+        count = Number(count);
+        if (isNaN(count)) return '0';
         if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
         if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
         return count.toString();
