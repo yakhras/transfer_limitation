@@ -217,7 +217,11 @@ class SourceSelectorComponent extends Component {
         try {
             const domain = [['company_id', '=', this.company.currentCompany.id]];
             
-            const count = await this.env.services.orm.searchCount(modelName, domain);
+            const count = await this.rpc({
+                model: modelName,
+                method: 'search_count',
+                args: [domain]
+            });
             this.state.companyRecordCounts[modelName] = count;
         } catch (error) {
             console.error(`Failed to get record count for ${modelName}:`, error);
