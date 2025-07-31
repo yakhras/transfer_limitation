@@ -204,7 +204,22 @@ class SourceSelectorComponent extends Component {
     toggleSourceDetails(event) {
         const modelName = event.currentTarget.dataset.model;
         this.state.showSourceDetails[modelName] = !this.state.showSourceDetails[modelName];
+        if (this.state.showSourceDetails[modelName] && !this.state.companyRecordCounts[modelName]) {
+            await this.fetchCompanyRecordCount(modelName);
+        }
         event.stopPropagation();
+    }
+
+    async fetchCompanyRecordCount(modelName) {
+        try {
+            const domain = [['company_id', '=', this.company.currentCompany.id]];
+            
+            const count = await this.env.services.orm.searchCount(modelName, domain);
+            this.state.companyRecordCounts[modelName] = count;
+        } catch (error) {
+            console.error(`Failed to get record count for ${modelName}:`, error);
+            this.state.companyRecordCounts[modelName] = 'N/A';
+        }
     }
 
     onSearchInput(event) {
