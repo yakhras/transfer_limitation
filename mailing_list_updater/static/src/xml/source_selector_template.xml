@@ -179,7 +179,7 @@
                          t-on-click="onSourceToggle">
                         
                         <!-- Badges -->
-                        <div t-if="source.recommended || isSourceSelected(source.model_name)" 
+                        <!-- <div t-if="source.recommended || isSourceSelected(source.model_name)" 
                              class="card-badges">
                             <span t-if="source.recommended" 
                                   class="badge badge-recommended">
@@ -191,7 +191,7 @@
                                 <i class="fa fa-check"></i>
                                 SELECTED
                             </span>
-                        </div>
+                        </div> -->
                         
                         <!-- Card Header -->
                         <div class="card-header">
