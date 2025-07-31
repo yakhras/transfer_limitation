@@ -8,6 +8,7 @@
             <!-- ========================================= -->
             <div class="target-selection-section">
                 
+                
                 <div class="content-header">
                     <h2>
                         <i class="fa fa-bullseye"></i>
@@ -36,7 +37,7 @@
                             <i class="fa fa-info-circle"></i>
                             Start typing to search for mailing lists
                         </div>
-                        <div t-elif="state.targetSearchTerm.length < 2" class="search-hint">
+                        <div t-elif="state.targetSearchTerm.length &lt; 2" class="search-hint">
                             <i class="fa fa-edit"></i>
                             Type at least 2 characters to search
                         </div>
@@ -44,11 +45,11 @@
                             <i class="fa fa-spinner fa-spin"></i>
                             Searching...
                         </div>
-                        <div t-elif="!state.targetListsLoading and state.availableTargetLists.length > 0" class="search-hint success">
+                        <div t-elif="!state.targetListsLoading and state.availableTargetLists.length &gt; 0" class="search-hint success">
                             <i class="fa fa-check"></i>
                             Found <span t-esc="state.availableTargetLists.length"/> mailing list(s)
                         </div>
-                        <div t-elif="!state.targetListsLoading and state.targetSearchTerm.length >= 2 and state.availableTargetLists.length === 0" class="search-hint no-results">
+                        <div t-elif="!state.targetListsLoading and state.targetSearchTerm.length &gt;= 2 and state.availableTargetLists.length === 0" class="search-hint no-results">
                             <i class="fa fa-exclamation-triangle"></i>
                             No mailing lists found matching "<span t-esc="state.targetSearchTerm"/>"
                         </div>
@@ -56,7 +57,7 @@
                 </div>
 
                 <!-- Target Selection Results -->
-                <div t-if="state.targetSearchTerm.length >= 2 and !state.targetListsLoading and state.availableTargetLists.length > 0" class="target-results">
+                <div t-if="state.targetSearchTerm.length &gt;= 2 and !state.targetListsLoading and state.availableTargetLists.length &gt; 0" class="target-results">
                     <div class="results-header">
                         <span class="results-count"><span t-esc="state.availableTargetLists.length"/> result(s)</span>
                     </div>
@@ -114,7 +115,7 @@
                 </div>
                 
                 <!-- Source Selection Summary -->
-                <div t-if="state.selectedSources.length > 0" class="selection-summary">
+                <div t-if="state.selectedSources.length &gt; 0" class="selection-summary">
                     <div class="mlu-alert mlu-alert-success">
                         <i class="fa fa-check-circle"></i>
                         <span t-esc="state.selectedSources.length"/> source(s) selected • Ready to proceed
