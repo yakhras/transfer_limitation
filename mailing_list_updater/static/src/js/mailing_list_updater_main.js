@@ -763,6 +763,17 @@ class MailingListUpdaterMain extends Component {
             this.state.currentStep = stepOrder[currentIndex - 1];
         }
     }
+
+    closeUpdater() {
+        if (this.env.services.action && this.env.services.action.closeDialog) {
+            // If opened as dialog
+            this.env.services.action.closeDialog();
+        } else {
+            // Fallback: close the current client action
+            this.env.services.action.doAction('ir.actions.act_window_close');
+        }
+    }
+
     
     /**
      * Setup keyboard shortcuts

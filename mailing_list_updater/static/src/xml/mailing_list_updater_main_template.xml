@@ -121,6 +121,12 @@
                         <!-- <span>Step <t t-esc="getCurrentStepNumber()"/> of 5</span> -->
                     </div>
                     <div class="footer-actions">
+                        <button class="mlu-btn mlu-btn-secondary"
+                                t-on-click="closeUpdater">
+                            <i class="fa fa-times"></i>
+                            Exit
+                        </button>
+
                         <button t-if="state.currentStep !== 'target_selection'" 
                                 class="mlu-btn mlu-btn-secondary" 
                                 t-on-click="previousStep">
