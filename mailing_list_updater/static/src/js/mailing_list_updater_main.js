@@ -768,10 +768,10 @@ class MailingListUpdaterMain extends Component {
         if (this.env.services.action && this.env.services.action.closeDialog) {
             // If opened as dialog
             this.env.services.action.closeDialog();
-        } //else {
-        //     // Fallback: close the current client action
-        //     this.env.services.action.doAction('ir.actions.act_window_close');
-        // }
+        } else {
+            // Fallback: close the current client action
+            this.env.services.action.doAction('ir.actions.act_window_close');
+        }
     }
 
     
