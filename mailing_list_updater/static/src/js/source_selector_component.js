@@ -174,10 +174,10 @@ class SourceSelectorComponent extends Component {
     }
 
     willUpdateProps(nextProps) {
-        if (nextProps.selectedSources !== this.props.selectedSources) {
-            this.state.selectedSources = nextProps.selectedSources || [];
-        }
+    if (nextProps.selectedSources !== this.props.selectedSources) {
+        this.state.selectedSources = nextProps.selectedSources || [];
     }
+}
 
     onSourceToggle(event) {
         const modelName = event.currentTarget.dataset.model;
@@ -253,6 +253,7 @@ class SourceSelectorComponent extends Component {
 
 SourceSelectorComponent.template = 'mailing_list_updater.SourceSelectorTemplate';
 SourceSelectorComponent.props = {
+    selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
     selectedSources: { validate: (value) => Array.isArray(value), optional: true },
 };
 
