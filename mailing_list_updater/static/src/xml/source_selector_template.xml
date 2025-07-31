@@ -82,9 +82,9 @@
                                     <i class="fa fa-list-alt"></i>
                                 </div>
                                 <h3 t-esc="targetList.name"></h3>
-                                <div class="selection-radio">
+                                <div class="selection-check">
                                     <i t-if="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id" 
-                                       class="fa fa-dot-circle-o selected-icon"></i>
+                                       class="fa fa-check-circle"></i>
                                     <i t-else="" 
                                        class="fa fa-circle-o"></i>
                                 </div>

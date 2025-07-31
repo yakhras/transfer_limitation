@@ -81,10 +81,7 @@ class SourceSelectorComponent extends Component {
         }
     }
 
-    // onTargetListSelect(targetList) {
-    //     this.state.selectedTargetList = targetList;
-    //     this.notifyParentOfSelection();
-    // }
+
     onTargetListSelect(targetList) {
         this.state.selectedTargetList = targetList;
 
