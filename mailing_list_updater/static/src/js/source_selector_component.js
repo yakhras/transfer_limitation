@@ -22,6 +22,8 @@ class SourceSelectorComponent extends Component {
             searchTerm: '',
             showSourceDetails: {},
         });
+
+        this.selectedMailingList = this.props.selectedMailingList;
     }
 
     async willStart() {
@@ -213,6 +215,8 @@ class SourceSelectorComponent extends Component {
 }
 
 SourceSelectorComponent.template = 'mailing_list_updater.SourceSelectorTemplate';
-SourceSelectorComponent.props = {};
+SourceSelectorComponent.props = {
+    selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
+};
 
 export { SourceSelectorComponent };
