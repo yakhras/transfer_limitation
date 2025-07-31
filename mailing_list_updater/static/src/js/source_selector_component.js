@@ -19,6 +19,7 @@ class SourceSelectorComponent extends Component {
             searchTerm: '',
             showSourceDetails: {},
             companyRecordCounts: {},
+            currentCompany: null,
         });
 
         this.selectedMailingList = this.props.selectedMailingList;
@@ -26,6 +27,9 @@ class SourceSelectorComponent extends Component {
 
     async willStart() {
         // Only load contact sources on init, target lists load on search
+        if (this.company && this.company.currentCompany) {
+            this.state.currentCompany = this.company.currentCompany;
+        }
         await this.loadContactSources();
     }
 
