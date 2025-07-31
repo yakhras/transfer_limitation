@@ -30,10 +30,10 @@
                 <!-- Step Navigation -->
                 <div class="dialog-navigation">
                     <div class="step-pills">
-                        <div t-att-class="state.currentStep === 'source_selection' ? 'step-pill active' : 'step-pill'"
-                             t-on-click="() => this.goToStep('source_selection')">
-                            <i class="fa fa-database"></i>
-                            <span>Select Sources</span>
+                        <div t-att-class="state.currentStep === 'target_selection' ? 'step-pill active' : 'step-pill'"
+                             t-on-click="() => this.goToStep('target_selection')">
+                            <i class="fa fa-envelope"></i>
+                            <span>Select Target</span>
                         </div>
                         <div t-att-class="state.currentStep === 'source_selection' ? 'step-pill active' : 'step-pill'"
                              t-on-click="() => this.goToStep('source_selection')">
@@ -67,7 +67,7 @@
                 <div class="dialog-content">
                     
                     <!-- Step 1: Target Selection - USE YOUR COMPONENT -->
-                    <div t-if="state.currentStep === 'source_selection'" class="step-content">
+                    <div t-if="state.currentStep === 'target_selection'" class="step-content">
                         <TargetSelectorComponent 
                             selectedMailingList="state.selectedMailingList"
                             t-on-sources-changed="onSourcesChanged"/>
@@ -121,7 +121,7 @@
                         <!-- <span>Step <t t-esc="getCurrentStepNumber()"/> of 5</span> -->
                     </div>
                     <div class="footer-actions">
-                        <button t-if="state.currentStep !== 'source_selection'" 
+                        <button t-if="state.currentStep !== 'target_selection'" 
                                 class="mlu-btn mlu-btn-secondary" 
                                 t-on-click="previousStep">
                             <i class="fa fa-arrow-left"></i>

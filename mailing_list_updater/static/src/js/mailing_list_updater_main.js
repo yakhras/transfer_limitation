@@ -28,7 +28,7 @@ class MailingListUpdaterMain extends Component {
         // Component State
         this.state = useState({
             // Current step in the update process
-            currentStep: 'source_selection', // Will be set from context
+            currentStep: 'target_selection', // Will be set from context
             
             // Loading states
             isLoading: false,
@@ -733,7 +733,7 @@ class MailingListUpdaterMain extends Component {
      * Navigate between steps
      */
     goToStep(stepName) {
-        const validSteps = ['source_selection', 'filter_building', 'preview', 'execution', 'batch_management'];
+        const validSteps = ['target_selection', 'source_selection', 'filter_building', 'preview', 'execution', 'batch_management'];
         
         if (validSteps.includes(stepName)) {
             this.state.currentStep = stepName;
@@ -744,7 +744,7 @@ class MailingListUpdaterMain extends Component {
      * Move to next step in the process
      */
     nextStep() {
-        const stepOrder = ['source_selection', 'filter_building', 'preview', 'execution', 'batch_management'];
+        const stepOrder = ['target_selection', 'source_selection', 'filter_building', 'preview', 'execution', 'batch_management'];
         const currentIndex = stepOrder.indexOf(this.state.currentStep);
         
         if (currentIndex < stepOrder.length - 1) {
@@ -756,7 +756,7 @@ class MailingListUpdaterMain extends Component {
      * Move to previous step
      */
     previousStep() {
-        const stepOrder = ['source_selection', 'filter_building', 'preview', 'execution', 'batch_management'];
+        const stepOrder = ['target_selection', 'source_selection', 'filter_building', 'preview', 'execution', 'batch_management'];
         const currentIndex = stepOrder.indexOf(this.state.currentStep);
         
         if (currentIndex > 0) {
@@ -822,8 +822,10 @@ class MailingListUpdaterMain extends Component {
      */
     isStepComplete(stepName) {
         switch (stepName) {
+            case 'target_selection':
+                return this.state.selectedMailingList !== null;
             case 'source_selection':
-                return this.state.selectedMailingList && this.state.selectedSources.length > 0;
+                return this.state.selectedSources.length > 0;
             case 'filter_building':
                 return Object.keys(this.state.filterCriteria).length > 0 && this.state.errors.length === 0;
             case 'preview':
@@ -842,6 +844,7 @@ class MailingListUpdaterMain extends Component {
      */
     getStepInfo(stepName) {
         const stepInfo = {
+            'target_selection': { title: 'Select Target', icon: 'fa-envelope' },
             'source_selection': { title: 'Select Sources', icon: 'fa-database' },
             'filter_building': { title: 'Build Filters', icon: 'fa-filter' },
             'preview': { title: 'Preview Results', icon: 'fa-eye' },
