@@ -61,6 +61,13 @@
                 <!-- Dialog Content - USE REAL COMPONENTS -->
                 <div class="dialog-content">
                     
+                    <!-- Step 1: Target Selection - USE YOUR COMPONENT -->
+                    <div t-if="state.currentStep === 'source_selection'" class="step-content">
+                        <TargetSelectorComponent 
+                            selectedMailingList="state.selectedMailingList"
+                            t-on-sources-changed="onSourcesChanged"/>
+                    </div>
+
                     <!-- Step 1: Source Selection - USE YOUR COMPONENT -->
                     <div t-if="state.currentStep === 'source_selection'" class="step-content">
                         <SourceSelectorComponent 

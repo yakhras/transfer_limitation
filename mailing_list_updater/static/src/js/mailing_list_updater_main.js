@@ -876,6 +876,7 @@ MailingListUpdaterMain.template = "mailing_list_updater.MainTemplate";
 
 // Register child components for OWL 1.0
 MailingListUpdaterMain.components = {
+    TargetSelectorComponent,
     SourceSelectorComponent,
     FilterBuilderComponent,
     PreviewResultsComponent,
