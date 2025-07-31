@@ -9,7 +9,7 @@
             <field name="name">Update Mailing Lists</field>
             <field name="tag">mailing_list_updater</field>
             <field name="context">{
-                'initial_step': 'source_selection',
+                'initial_step': 'target_selection',
                 'show_breadcrumb': True
             }</field>
             <field name="help" type="html">
