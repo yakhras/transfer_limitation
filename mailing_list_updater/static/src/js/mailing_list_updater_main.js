@@ -769,8 +769,10 @@ class MailingListUpdaterMain extends Component {
             // If opened as dialog
             this.env.services.action.closeDialog();
         } else {
-            // Correct syntax for Odoo 15
-            this.env.services.action.restore();
+            this.env.services.action.doAction({
+                type: 'ir.actions.client',
+                tag: 'menu'
+            });
         }
     }
 
