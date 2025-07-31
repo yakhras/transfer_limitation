@@ -40,46 +40,36 @@ class SourceSelectorComponent extends Component {
 
     async loadTargetMailingLists() {
         this.state.targetListsLoading = true;
-        console.log('=== TARGET MAILING LIST DEBUG ===');
-        console.log('Search term:', this.state.targetSearchTerm);
+        console.log('=== TARGET SIMPLE DEBUG ===');
         
         try {
-            console.log('Making RPC call to search_read mailing.list');
-            
-            const domain = this.state.targetSearchTerm ? 
-                [['name', 'ilike', this.state.targetSearchTerm]] : [];
-                
-            console.log('Domain:', domain);
-            
-            const response = await this.env.services.orm.call(
+            // Simple direct search without company domain
+            const response = await this.env.services.orm.searchRead(
                 'mailing.list',
-                'search_read',
-                [domain, ['id', 'name', 'contact_ids']],
-                { limit: 100 }
+                this.state.targetSearchTerm ? [['name', 'ilike', this.state.targetSearchTerm]] : [],
+                ['id', 'name'],
+                { limit: 100, context: {} }
             );
 
-            console.log('ORM call SUCCESS, response:', response);
+            console.log('Simple search response:', response);
 
-            const mailingLists = response.map(list => ({
+            this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
                 name: list.name,
-                contact_count: list.contact_ids ? list.contact_ids.length : 0,
-                estimated_count: list.contact_ids ? list.contact_ids.length : 0,
-                description: `${list.contact_ids ? list.contact_ids.length : 0} contacts in this mailing list`,
+                contact_count: 0,
+                estimated_count: 0,
+                description: list.name,
                 available: true,
-                recommended: (list.contact_ids ? list.contact_ids.length : 0) > 50
+                recommended: false
             }));
 
-            this.state.availableTargetLists = mailingLists;
-            console.log('Target lists loaded:', this.state.availableTargetLists);
+            console.log('Lists loaded:', this.state.availableTargetLists.length);
 
         } catch (error) {
-            console.error('ORM ERROR in loadTargetMailingLists:', error);
-            console.error('Error details:', error.message, error.data);
+            console.error('Simple search failed:', error.message);
             this.state.availableTargetLists = [];
         } finally {
             this.state.targetListsLoading = false;
-            console.log('=== END TARGET DEBUG ===');
         }
     }
 
