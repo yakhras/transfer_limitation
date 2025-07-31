@@ -81,10 +81,22 @@ class SourceSelectorComponent extends Component {
         }
     }
 
+    // onTargetListSelect(targetList) {
+    //     this.state.selectedTargetList = targetList;
+    //     this.notifyParentOfSelection();
+    // }
     onTargetListSelect(targetList) {
         this.state.selectedTargetList = targetList;
+
+        // ✅ Replace search results with only the selected list
+        this.state.availableTargetLists = [targetList];
+
+        // ✅ Clear the search term to hide search UI/status
+        this.state.targetSearchTerm = '';
+
         this.notifyParentOfSelection();
     }
+
 
     onTargetSearchInput(event) {
         this.state.targetSearchTerm = event.target.value;
