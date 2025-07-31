@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { SourceSelectorComponent } from './source_selector_component.js';
+import { TargetSelectorComponent } from './target_selector_component.js';
 import { FilterBuilderComponent } from './filter_builder_component.js';
 import { PreviewResultsComponent } from './preview_results_component.js';
 import { ProgressTrackerComponent } from './progress_tracker_component.js';
