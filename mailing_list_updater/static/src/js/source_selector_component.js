@@ -45,19 +45,20 @@ class SourceSelectorComponent extends Component {
         
         try {
             console.log('Making RPC call to search_read mailing.list');
-            console.log('URL:', window.location.origin);
             
             const domain = this.state.targetSearchTerm ? 
                 [['name', 'ilike', this.state.targetSearchTerm]] : [];
                 
-            const response = await this.rpc({
-                model: 'mailing.list',
-                method: 'search_read',
-                args: [domain, ['id', 'name', 'contact_ids']],
-                kwargs: { limit: 100 }
-            });
+            console.log('Domain:', domain);
+            
+            const response = await this.env.services.orm.call(
+                'mailing.list',
+                'search_read',
+                [domain, ['id', 'name', 'contact_ids']],
+                { limit: 100 }
+            );
 
-            console.log('Search_read SUCCESS, response:', response);
+            console.log('ORM call SUCCESS, response:', response);
 
             const mailingLists = response.map(list => ({
                 mailing_list_id: list.id,
@@ -73,7 +74,7 @@ class SourceSelectorComponent extends Component {
             console.log('Target lists loaded:', this.state.availableTargetLists);
 
         } catch (error) {
-            console.error('RPC ERROR in loadTargetMailingLists:', error);
+            console.error('ORM ERROR in loadTargetMailingLists:', error);
             console.error('Error details:', error.message, error.data);
             this.state.availableTargetLists = [];
         } finally {
