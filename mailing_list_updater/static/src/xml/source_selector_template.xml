@@ -94,7 +94,7 @@
                             <div class="card-stats">
                                 <span class="stat-item">
                                     <i class="fa fa-users"></i>
-                                    <span t-esc="formatContactCount(targetList.contact_count)"/> contacts
+                                    <span t-esc="targetList.contact_count"/> contacts
                                 </span>
                                 <span t-if="targetList.recommended" class="stat-item recommended">
                                     <i class="fa fa-star"></i>
@@ -110,7 +110,7 @@
                     <div class="mlu-alert mlu-alert-success">
                         <i class="fa fa-check-circle"></i>
                         Target: <strong t-esc="state.selectedTargetList.name"/> 
-                        (<span t-esc="formatContactCount(state.selectedTargetList.contact_count)"/> contacts)
+                        (<span t-esc="state.selectedTargetList.contact_count"/> contacts)
                     </div>
                 </div>
             </div>
@@ -189,7 +189,7 @@
                         <div class="card-stats">
                             <span class="stat-item">
                                 <i class="fa fa-users"></i>
-                                <span t-esc="formatContactCount(source.estimated_count)"/> contacts
+                                <span t-esc="source.estimated_count"/> contacts
                             </span>
                             <button class="btn-details" 
                                     t-att-data-model="source.model_name"
