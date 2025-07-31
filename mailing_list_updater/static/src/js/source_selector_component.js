@@ -50,18 +50,18 @@ class SourceSelectorComponent extends Component {
             const response = await this.env.services.orm.searchRead(
                 'mailing.list',
                 [['name', 'ilike', this.state.targetSearchTerm]],
-                ['id', 'name'],
+                ['id', 'name', 'contact_ids'],
                 { limit: 20, context: {} }
             );
 
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
                 name: list.name,
-                contact_count: 0,
-                estimated_count: 0,
-                description: list.name,
+                contact_count: list.contact_ids ? list.contact_ids.length : 0,
+                estimated_count: list.contact_ids ? list.contact_ids.length : 0,
+                description: `${list.contact_ids ? list.contact_ids.length : 0} contacts in this mailing list`,
                 available: true,
-                recommended: false
+                recommended: (list.contact_ids ? list.contact_ids.length : 0) > 50
             }));
 
         } catch (error) {

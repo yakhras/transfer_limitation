@@ -8,7 +8,6 @@
             <!-- ========================================= -->
             <div class="target-selection-section">
                 
-                
                 <div class="content-header">
                     <h2>
                         <i class="fa fa-bullseye"></i>
@@ -62,23 +61,45 @@
                         <span class="results-count"><span t-esc="state.availableTargetLists.length"/> result(s)</span>
                     </div>
                     
-                    <div class="target-lists modern-list">
+                    <div class="target-lists target-cards"> <!-- Changed to target-cards for better styling -->
                         <div t-foreach="state.availableTargetLists" 
                              t-as="targetList" 
                              t-key="targetList.mailing_list_id"
-                             t-att-class="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id ? 'target-item selected modern-item' : 'target-item modern-item'"
+                             t-att-class="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id ? 'target-card selected' : 'target-card'"
                              t-on-click="() => this.onTargetListSelect(targetList)">
                             
-                            <div class="target-info">
-                                <h3 t-esc="targetList.name"></h3>
-                                <span class="mailing-list-id">ID: <span t-esc="targetList.mailing_list_id"/></span>
+                            <!-- Selection indicator -->
+                            <div t-if="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id" class="card-badges">
+                                <span class="badge badge-selected">
+                                    <i class="fa fa-check"></i>
+                                    SELECTED
+                                </span>
                             </div>
                             
-                            <div class="selection-radio">
-                                <i t-if="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id" 
-                                   class="fa fa-dot-circle-o selected-icon"></i>
-                                <i t-else="" 
-                                   class="fa fa-circle-o"></i>
+                            <!-- Card Header -->
+                            <div class="card-header">
+                                <div class="card-icon target-icon">
+                                    <i class="fa fa-list-alt"></i>
+                                </div>
+                                <h3 t-esc="targetList.name"></h3>
+                                <div class="selection-radio">
+                                    <i t-if="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id" 
+                                       class="fa fa-dot-circle-o selected-icon"></i>
+                                    <i t-else="" 
+                                       class="fa fa-circle-o"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Card Stats -->
+                            <div class="card-stats">
+                                <span class="stat-item">
+                                    <i class="fa fa-users"></i>
+                                    <span t-esc="formatContactCount(targetList.contact_count)"/> contacts
+                                </span>
+                                <span t-if="targetList.recommended" class="stat-item recommended">
+                                    <i class="fa fa-star"></i>
+                                    Recommended
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -88,7 +109,8 @@
                 <div t-if="state.selectedTargetList" class="selection-summary">
                     <div class="mlu-alert mlu-alert-success">
                         <i class="fa fa-check-circle"></i>
-                        Target: <strong t-esc="state.selectedTargetList.name"/>
+                        Target: <strong t-esc="state.selectedTargetList.name"/> 
+                        (<span t-esc="formatContactCount(state.selectedTargetList.contact_count)"/> contacts)
                     </div>
                 </div>
             </div>
