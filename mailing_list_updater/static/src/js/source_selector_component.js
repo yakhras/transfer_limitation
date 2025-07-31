@@ -45,6 +45,8 @@ class SourceSelectorComponent extends Component {
         
         try {
             console.log('Making RPC call to search_read mailing.list');
+            console.log('URL:', window.location.origin);
+            
             const domain = this.state.targetSearchTerm ? 
                 [['name', 'ilike', this.state.targetSearchTerm]] : [];
                 
@@ -55,7 +57,7 @@ class SourceSelectorComponent extends Component {
                 kwargs: { limit: 100 }
             });
 
-            console.log('Search_read response:', response);
+            console.log('Search_read SUCCESS, response:', response);
 
             const mailingLists = response.map(list => ({
                 mailing_list_id: list.id,
@@ -71,7 +73,8 @@ class SourceSelectorComponent extends Component {
             console.log('Target lists loaded:', this.state.availableTargetLists);
 
         } catch (error) {
-            console.error('RPC Error:', error);
+            console.error('RPC ERROR in loadTargetMailingLists:', error);
+            console.error('Error details:', error.message, error.data);
             this.state.availableTargetLists = [];
         } finally {
             this.state.targetListsLoading = false;
@@ -100,33 +103,11 @@ class SourceSelectorComponent extends Component {
         this.state.isLoading = true;
         console.log('=== CONTACT SOURCES DEBUG ===');
         
-        try {
-            console.log('Making RPC call to /mailing/update/sources');
-            const response = await this.rpc({
-                route: "/mailing/update/sources",
-                params: {}
-            });
-
-            console.log('Contact sources response:', response);
-
-            if (response.success) {
-                this.state.availableSources = response.data.sources;
-                this.updateFilteredSources();
-                this.preSelectRecommended();
-                console.log('Contact sources loaded:', this.state.availableSources);
-            } else {
-                console.error('Contact sources RPC failed:', response.error);
-                // Fallback to basic sources
-                this.loadFallbackSources();
-            }
-        } catch (error) {
-            console.error('Contact sources RPC Error:', error);
-            // Fallback to basic sources
-            this.loadFallbackSources();
-        } finally {
-            this.state.isLoading = false;
-            console.log('=== END CONTACT SOURCES DEBUG ===');
-        }
+        console.log('Skipping /mailing/update/sources - using fallback directly');
+        this.loadFallbackSources();
+        
+        this.state.isLoading = false;
+        console.log('=== END CONTACT SOURCES DEBUG ===');
     }
 
     loadFallbackSources() {
