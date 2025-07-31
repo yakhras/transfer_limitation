@@ -19,10 +19,10 @@ class TargetSelectorComponent extends Component {
         this.selectedMailingList = this.props.selectedMailingList;
     }
 
-    async willStart() {
-        // Only load contact sources on init, target lists load on search
-        await this.loadContactSources();
-    }
+    // async willStart() {
+    //     // Only load contact sources on init, target lists load on search
+    //     await this.loadContactSources();
+    // }
 
     // ========================================
     // TARGET MAILING LIST METHODS (NEW)
@@ -114,16 +114,16 @@ class TargetSelectorComponent extends Component {
     // ORIGINAL CONTACT SOURCE METHODS (KEEP)
     // ========================================
 
-    async loadContactSources() {
-        this.state.isLoading = true;
-        console.log('=== CONTACT SOURCES DEBUG ===');
+    // async loadContactSources() {
+    //     this.state.isLoading = true;
+    //     console.log('=== CONTACT SOURCES DEBUG ===');
         
-        console.log('Skipping /mailing/update/sources - using fallback directly');
-        this.loadFallbackSources();
+    //     console.log('Skipping /mailing/update/sources - using fallback directly');
+    //     this.loadFallbackSources();
         
-        this.state.isLoading = false;
-        console.log('=== END CONTACT SOURCES DEBUG ===');
-    }
+    //     this.state.isLoading = false;
+    //     console.log('=== END CONTACT SOURCES DEBUG ===');
+    // }
 
     loadFallbackSources() {
         console.log('Using fallback contact sources');
@@ -213,20 +213,14 @@ class TargetSelectorComponent extends Component {
     // ========================================
 
     notifyParentOfSelection() {
-        const selectedSourcesData = this.state.availableSources.filter(source =>
-            this.state.selectedSources.includes(source.model_name)
-        );
+        
 
         this.trigger('sources-changed', {
             // Target mailing list (NEW)
             targetMailingList: this.state.selectedTargetList,
             
-            // Contact sources (ORIGINAL)
-            selectedSources: this.state.selectedSources,
-            selectedSourcesData: selectedSourcesData,
-            
             // Validation
-            isValid: this.state.selectedTargetList !== null && selectedSourcesData.length > 0,
+            isValid: this.state.selectedTargetList !== null,
         });
     }
 
