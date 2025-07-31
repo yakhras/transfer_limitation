@@ -376,7 +376,7 @@ class MailingListUpdaterMain extends Component {
             }
             
         } catch (error) {
-            this.showError("Failed to load contact sources");
+            // this.showError("Failed to load contact sources");
             throw error;
         }
     }
