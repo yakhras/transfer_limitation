@@ -56,6 +56,10 @@ class SourceSelectorComponent extends Component {
             );
 
             console.log('Search successful:', response.length, 'results');
+            // Log each list with its contact count
+            response.forEach(list => {
+                console.log(`List: ${list.name} | ID: ${list.id} | Contact Count: ${list.contact_count}`);
+            });
 
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
