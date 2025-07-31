@@ -7,6 +7,87 @@
             <!-- TARGET MAILING LIST SELECTION (NEW) -->
             <!-- ========================================= -->
             <div class="target-selection-section">
+                
+                <!-- Source Cards -->
+                <div t-if="!state.isLoading" class="source-cards">
+                    <div t-foreach="state.filteredSources" 
+                         t-as="source" 
+                         t-key="source.model_name"
+                         t-att-class="getSourceItemClass(source)"
+                         t-att-data-model="source.model_name"
+                         t-on-click="onSourceToggle">
+                        
+                        <!-- Badges -->
+                        <div t-if="source.recommended || isSourceSelected(source.model_name)" 
+                             class="card-badges">
+                            <span t-if="source.recommended" 
+                                  class="badge badge-recommended">
+                                <i class="fa fa-star"></i>
+                                RECOMMENDED
+                            </span>
+                            <span t-if="isSourceSelected(source.model_name)"
+                                  class="badge badge-selected">
+                                <i class="fa fa-check"></i>
+                                SELECTED
+                            </span>
+                        </div>
+                        
+                        <!-- Card Header -->
+                        <div class="card-header">
+                            <div t-att-class="'card-icon ' + source.model_name.replace('.', '-') + '-icon'">
+                                <i t-att-class="source.icon || 'fa fa-users'"></i>
+                            </div>
+                            <h3 t-esc="source.name"></h3>
+                            <div class="selection-check">
+                                <i t-if="isSourceSelected(source.model_name)" 
+                                   class="fa fa-check-circle"></i>
+                                <i t-else="" 
+                                   class="fa fa-circle-o"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Description -->
+                        <p class="card-description" t-esc="source.description"></p>
+                        
+                        <!-- Card Stats -->
+                        <div class="card-stats">
+                            <span class="stat-item">
+                                <i class="fa fa-users"></i>
+                                <span t-esc="formatContactCount(source.estimated_count)"/> contacts
+                            </span>
+                            <button class="btn-details" 
+                                    t-att-data-model="source.model_name"
+                                    t-on-click.stop="toggleSourceDetails">
+                                <i t-att-class="state.showSourceDetails[source.model_name] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                                <span t-if="state.showSourceDetails[source.model_name]">Hide Details</span>
+                                <span t-else="">Show Details</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Expandable Details -->
+                        <div t-if="state.showSourceDetails[source.model_name]" class="card-details">
+                            <div class="details-content">
+                                <div class="detail-item">
+                                    <strong>Model:</strong> <span t-esc="source.model_name"/>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Email Field:</strong> <span t-esc="source.email_field || 'email'"/>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Name Field:</strong> <span t-esc="source.name_field || 'name'"/>
+                                </div>
+                                <div t-if="source.company_field" class="detail-item">
+                                    <strong>Company Field:</strong> <span t-esc="source.company_field"/>
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Status:</strong> 
+                                    <span t-if="source.available" class="status-available">Available</span>
+                                    <span t-else="" class="status-unavailable">Unavailable</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="content-header">
                     <h2>
                         <i class="fa fa-bullseye"></i>
@@ -188,7 +269,7 @@
 
             <!-- Overall Validation Summary -->
             <div class="overall-validation">
-                <div t-if="state.selectedTargetList and state.selectedSources.length > 0" 
+                <div t-if="state.selectedTargetList && state.selectedSources.length > 0" 
                      class="mlu-alert mlu-alert-success">
                     <i class="fa fa-check-circle"></i>
                     <strong>Ready:</strong> Will import from <span t-esc="state.selectedSources.length"/> source(s) 
