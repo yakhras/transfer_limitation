@@ -47,7 +47,7 @@ class SourceSelectorComponent extends Component {
         console.log('Searching for:', this.state.targetSearchTerm);
         
         try {
-            // Simple search - just get basic fields
+            // Simple search - just get basic fields without contact counts for now
             const response = await this.env.services.orm.searchRead(
                 'mailing.list',
                 [['name', 'ilike', this.state.targetSearchTerm]],
@@ -55,72 +55,23 @@ class SourceSelectorComponent extends Component {
                 { limit: 20, context: {} }
             );
 
-            console.log('Basic search successful:', response.length, 'results');
+            console.log('Search successful:', response.length, 'results');
 
-            // Get contact counts separately for each list
-            const listsWithCounts = await Promise.all(
-                response.map(async (list) => {
-                    try {
-                        const contactCount = await this.env.services.orm.call(
-                            'mailing.contact',
-                            'search_count',
-                            [[['list_ids', 'in', list.id]]],
-                            {}
-                        );
-                        
-                        return {
-                            mailing_list_id: list.id,
-                            name: list.name,
-                            contact_count: contactCount || 0,
-                            estimated_count: contactCount || 0,
-                            description: `${contactCount || 0} contacts in this mailing list`,
-                            available: true,
-                            recommended: (contactCount || 0) > 50
-                        };
-                    } catch (countError) {
-                        console.warn('Could not get contact count for list', list.id, countError);
-                        return {
-                            mailing_list_id: list.id,
-                            name: list.name,
-                            contact_count: 0,
-                            estimated_count: 0,
-                            description: 'Contact count unavailable',
-                            available: true,
-                            recommended: false
-                        };
-                    }
-                })
-            );
+            this.state.availableTargetLists = response.map(list => ({
+                mailing_list_id: list.id,
+                name: list.name,
+                contact_count: 0, // Skip contact count for now
+                estimated_count: 0,
+                description: `Mailing list: ${list.name}`,
+                available: true,
+                recommended: false // Skip recommendation logic for now
+            }));
 
-            this.state.availableTargetLists = listsWithCounts;
-            console.log('Lists with counts loaded:', this.state.availableTargetLists);
+            console.log('Lists loaded:', this.state.availableTargetLists);
 
         } catch (error) {
             console.error('Search failed:', error.message, error);
-            // Fallback to basic search without counts
-            try {
-                const basicResponse = await this.env.services.orm.searchRead(
-                    'mailing.list',
-                    [['name', 'ilike', this.state.targetSearchTerm]],
-                    ['id', 'name'],
-                    { limit: 20, context: {} }
-                );
-                
-                this.state.availableTargetLists = basicResponse.map(list => ({
-                    mailing_list_id: list.id,
-                    name: list.name,
-                    contact_count: 0,
-                    estimated_count: 0,
-                    description: list.name,
-                    available: true,
-                    recommended: false
-                }));
-                
-                console.log('Fallback search successful');
-            } catch (fallbackError) {
-                console.error('Fallback search also failed:', fallbackError);
-                this.state.availableTargetLists = [];
-            }
+            this.state.availableTargetLists = [];
         } finally {
             this.state.targetListsLoading = false;
         }
