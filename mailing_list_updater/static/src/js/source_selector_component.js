@@ -8,16 +8,11 @@ class SourceSelectorComponent extends Component {
         this.rpc = this.env.services.rpc;
 
         this.state = useState({
-            // Target mailing list selection (NEW)
-            availableTargetLists: [],
-            selectedTargetList: null,
-            targetListsLoading: false,
-            targetSearchTerm: '',
             
             // Original contact source selection (KEEP)
             availableSources: [],
             filteredSources: [],
-            selectedSources: [],
+            selectedSources: this.props.selectedSources || [],
             isLoading: false,
             searchTerm: '',
             showSourceDetails: {},
@@ -170,10 +165,18 @@ class SourceSelectorComponent extends Component {
     }
 
     preSelectRecommended() {
-        this.state.selectedSources = this.state.availableSources
-            .filter(s => s.recommended)
-            .map(s => s.model_name);
-        this.notifyParentOfSelection();
+        if (this.state.selectedSources.length === 0) {
+            this.state.selectedSources = this.state.availableSources
+                .filter(s => s.recommended)
+                .map(s => s.model_name);
+            this.notifyParentOfSelection();
+        }
+    }
+
+    willUpdateProps(nextProps) {
+        if (nextProps.selectedSources !== this.props.selectedSources) {
+            this.state.selectedSources = nextProps.selectedSources || [];
+        }
     }
 
     onSourceToggle(event) {
@@ -250,7 +253,7 @@ class SourceSelectorComponent extends Component {
 
 SourceSelectorComponent.template = 'mailing_list_updater.SourceSelectorTemplate';
 SourceSelectorComponent.props = {
-    selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
+    selectedSources: { validate: (value) => Array.isArray(value), optional: true },
 };
 
 export { SourceSelectorComponent };
