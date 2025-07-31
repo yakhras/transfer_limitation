@@ -10,13 +10,20 @@ class TargetSelectorComponent extends Component {
         this.state = useState({
             // Target mailing list selection (NEW)
             availableTargetLists: [],
-            selectedTargetList: null,
+            selectedTargetList: this.props.selectedMailingList,
             targetListsLoading: false,
             targetSearchTerm: '',
             
         });
 
         this.selectedMailingList = this.props.selectedMailingList;
+    }
+
+    willUpdateProps(nextProps) {
+        // Sync local state with parent when props change
+        if (nextProps.selectedMailingList !== this.props.selectedMailingList) {
+            this.state.selectedTargetList = nextProps.selectedMailingList;
+        }
     }
 
     // async willStart() {
