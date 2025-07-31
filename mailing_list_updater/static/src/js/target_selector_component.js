@@ -213,13 +213,8 @@ class TargetSelectorComponent extends Component {
     // ========================================
 
     notifyParentOfSelection() {
-        
-
         this.trigger('sources-changed', {
-            // Target mailing list (NEW)
             targetMailingList: this.state.selectedTargetList,
-            
-            // Validation
             isValid: this.state.selectedTargetList !== null,
         });
     }

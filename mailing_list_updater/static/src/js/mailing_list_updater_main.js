@@ -398,6 +398,15 @@ class MailingListUpdaterMain extends Component {
         this.updatePageTitle();
     }
     
+
+    // Add new method
+    onTargetSelected(event) {
+        this.state.selectedMailingList = event.detail.targetMailingList;
+        
+        // Don't auto-navigate - let user click Next
+        // this.state.currentStep = 'source_selection'; // Remove this
+    }
+    
     /**
      * Handle source selection changes from SourceSelector
      */
@@ -413,6 +422,8 @@ class MailingListUpdaterMain extends Component {
             this.state.currentStep = 'filter_building';
         }
     }
+
+
     
     /**
      * Handle filter changes from FilterBuilder

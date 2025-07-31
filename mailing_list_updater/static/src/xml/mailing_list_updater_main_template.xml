@@ -70,7 +70,7 @@
                     <div t-if="state.currentStep === 'target_selection'" class="step-content">
                         <TargetSelectorComponent 
                             selectedMailingList="state.selectedMailingList"
-                            t-on-sources-changed="onSourcesChanged"/>
+                            t-on-sources-changed="onTargetSelected"/>
                     </div>
 
                     <!-- Step 1: Source Selection - USE YOUR COMPONENT -->
