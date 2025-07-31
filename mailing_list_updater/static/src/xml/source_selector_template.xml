@@ -106,13 +106,38 @@
                 </div>
 
                 <!-- Target Selection Status -->
-                <div t-if="state.selectedTargetList" class="selection-summary">
-                    <div class="mlu-alert mlu-alert-success">
-                        <i class="fa fa-check-circle"></i>
-                        Target: <strong t-esc="state.selectedTargetList.name"/> 
-                        (<span t-esc="state.selectedTargetList.contact_count"/> contacts)
+                <div t-if="state.selectedTargetList" class="source-cards single-selected-target">
+                    <div class="source-item selected">
+                        <!-- Badge -->
+                        <div class="card-badges">
+                            <span class="badge badge-selected">
+                                <i class="fa fa-check"></i>
+                                SELECTED
+                            </span>
+                        </div>
+
+                        <!-- Card Header -->
+                        <div class="card-header">
+                            <div class="card-icon target-icon">
+                                <i class="fa fa-list-alt"></i>
+                            </div>
+                            <h3 t-esc="state.selectedTargetList.name"></h3>
+                            <div class="selection-check">
+                                <i class="fa fa-check-circle"></i>
+                            </div>
+                        </div>
+
+                        <!-- Card Stats -->
+                        <p class="card-description">Import into selected mailing list</p>
+                        <div class="card-stats">
+                            <span class="stat-item">
+                                <i class="fa fa-users"></i>
+                                <span t-esc="state.selectedTargetList.contact_count"/> contacts
+                            </span>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Divider -->
