@@ -204,7 +204,7 @@ class SourceSelectorComponent extends Component {
     toggleSourceDetails(event) {
         const modelName = event.currentTarget.dataset.model;
         this.state.showSourceDetails[modelName] = !this.state.showSourceDetails[modelName];
-        if (this.state.showSourceDetails[modelName] && !this.state.companyRecordCounts[modelName]) {
+        if (this.state.showSourceDetails[modelName]) {
             await this.fetchCompanyRecordCount(modelName);
         }
         event.stopPropagation();
