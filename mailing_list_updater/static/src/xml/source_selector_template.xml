@@ -214,7 +214,7 @@
 
             <!-- Overall Validation Summary -->
             <div class="overall-validation">
-                <div t-if="state.selectedTargetList && state.selectedSources.length > 0" 
+                <div t-if="state.selectedTargetList and state.selectedSources.length > 0" 
                      class="mlu-alert mlu-alert-success">
                     <i class="fa fa-check-circle"></i>
                     <strong>Ready:</strong> Will import from <span t-esc="state.selectedSources.length"/> source(s) 
