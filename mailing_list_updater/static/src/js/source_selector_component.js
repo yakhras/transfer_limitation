@@ -27,11 +27,8 @@ class SourceSelectorComponent extends Component {
     }
 
     async willStart() {
-        // Load both target lists and contact sources
-        await Promise.all([
-            this.loadTargetMailingLists(),
-            this.loadContactSources()
-        ]);
+        // Only load contact sources on init, target lists load on search
+        await this.loadContactSources();
     }
 
     // ========================================
@@ -39,19 +36,23 @@ class SourceSelectorComponent extends Component {
     // ========================================
 
     async loadTargetMailingLists() {
+        // Don't load if search is empty
+        if (!this.state.targetSearchTerm || this.state.targetSearchTerm.length < 2) {
+            this.state.availableTargetLists = [];
+            this.state.targetListsLoading = false;
+            return;
+        }
+
         this.state.targetListsLoading = true;
-        console.log('=== TARGET SIMPLE DEBUG ===');
+        console.log('Searching for:', this.state.targetSearchTerm);
         
         try {
-            // Simple direct search without company domain
             const response = await this.env.services.orm.searchRead(
                 'mailing.list',
-                this.state.targetSearchTerm ? [['name', 'ilike', this.state.targetSearchTerm]] : [],
+                [['name', 'ilike', this.state.targetSearchTerm]],
                 ['id', 'name'],
-                { limit: 100, context: {} }
+                { limit: 20, context: {} }
             );
-
-            console.log('Simple search response:', response);
 
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
@@ -63,10 +64,8 @@ class SourceSelectorComponent extends Component {
                 recommended: false
             }));
 
-            console.log('Lists loaded:', this.state.availableTargetLists.length);
-
         } catch (error) {
-            console.error('Simple search failed:', error.message);
+            console.error('Search failed:', error.message);
             this.state.availableTargetLists = [];
         } finally {
             this.state.targetListsLoading = false;
@@ -80,10 +79,24 @@ class SourceSelectorComponent extends Component {
 
     onTargetSearchInput(event) {
         this.state.targetSearchTerm = event.target.value;
+        
+        // Clear previous timeout
         clearTimeout(this.targetSearchTimeout);
+        
+        // Instant search with shorter debounce (150ms)
         this.targetSearchTimeout = setTimeout(() => {
             this.loadTargetMailingLists();
-        }, 300);
+        }, 150);
+    }
+
+    clearTargetSearch() {
+        this.state.targetSearchTerm = '';
+        this.state.availableTargetLists = [];
+        // Clear selection if target was selected
+        if (this.state.selectedTargetList) {
+            this.state.selectedTargetList = null;
+            this.notifyParentOfSelection();
+        }
     }
 
     // ========================================
@@ -134,13 +147,8 @@ class SourceSelectorComponent extends Component {
     }
 
     updateFilteredSources() {
-        const term = this.state.searchTerm.toLowerCase();
-        this.state.filteredSources = term
-            ? this.state.availableSources.filter(s =>
-                s.name.toLowerCase().includes(term) ||
-                s.description?.toLowerCase().includes(term)
-            )
-            : [...this.state.availableSources];
+        // Show all sources since search was removed
+        this.state.filteredSources = [...this.state.availableSources];
     }
 
     preSelectRecommended() {
@@ -173,16 +181,20 @@ class SourceSelectorComponent extends Component {
     }
 
     onSearchInput(event) {
-        this.state.searchTerm = event.target.value;
-        this.updateFilteredSources();
+        // Method kept for compatibility but does nothing since search was removed
     }
 
     selectAllRecommended() {
-        // Method kept for compatibility but does nothing
+        const recommended = this.state.availableSources
+            .filter(s => s.recommended && s.available)
+            .map(s => s.model_name);
+        this.state.selectedSources = Array.from(new Set([...this.state.selectedSources, ...recommended]));
+        this.notifyParentOfSelection();
     }
 
     clearAllSelections() {
-        // Method kept for compatibility but does nothing
+        this.state.selectedSources = [];
+        this.notifyParentOfSelection();
     }
 
     // ========================================

@@ -8,7 +8,6 @@
             <!-- ========================================= -->
             <div class="target-selection-section">
                 
-                
                 <div class="content-header">
                     <h2>
                         <i class="fa fa-bullseye"></i>
@@ -19,42 +18,67 @@
 
                 <!-- Target Search -->
                 <div class="target-search">
-                    <div class="search-box">
+                    <div class="search-box modern-search">
                         <i class="fa fa-search"></i>
                         <input type="text" 
-                               placeholder="Search target mailing lists..." 
+                               placeholder="Type to search mailing lists..." 
                                class="search-input"
                                t-model="state.targetSearchTerm"
                                t-on-input="onTargetSearchInput"/>
+                        <div t-if="state.targetSearchTerm" class="search-clear" t-on-click="clearTargetSearch">
+                            <i class="fa fa-times"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Status -->
+                    <div class="search-status">
+                        <div t-if="!state.targetSearchTerm" class="search-hint">
+                            <i class="fa fa-info-circle"></i>
+                            Start typing to search for mailing lists
+                        </div>
+                        <div t-elif="state.targetSearchTerm.length < 2" class="search-hint">
+                            <i class="fa fa-edit"></i>
+                            Type at least 2 characters to search
+                        </div>
+                        <div t-elif="state.targetListsLoading" class="search-hint loading">
+                            <i class="fa fa-spinner fa-spin"></i>
+                            Searching...
+                        </div>
+                        <div t-elif="!state.targetListsLoading and state.availableTargetLists.length > 0" class="search-hint success">
+                            <i class="fa fa-check"></i>
+                            Found <span t-esc="state.availableTargetLists.length"/> mailing list(s)
+                        </div>
+                        <div t-elif="!state.targetListsLoading and state.targetSearchTerm.length >= 2 and state.availableTargetLists.length === 0" class="search-hint no-results">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            No mailing lists found matching "<span t-esc="state.targetSearchTerm"/>"
+                        </div>
                     </div>
                 </div>
 
-                <!-- Target Selection -->
-                <div t-if="state.targetListsLoading" class="loading-container">
-                    <div class="loading-spinner"></div>
-                    <p>Loading mailing lists...</p>
-                </div>
-
-                <div t-if="!state.targetListsLoading" class="target-lists">
-                    <div t-foreach="state.availableTargetLists" 
-                         t-as="targetList" 
-                         t-key="targetList.mailing_list_id"
-                         t-att-class="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id ? 'target-item selected' : 'target-item'"
-                         t-on-click="() => this.onTargetListSelect(targetList)">
-                        
-                        <div class="target-info">
-                            <h3 t-esc="targetList.name"></h3>
-                            <span class="contact-count">
-                                <i class="fa fa-users"></i>
-                                <span t-esc="formatContactCount(targetList.contact_count)"/> contacts
-                            </span>
-                        </div>
-                        
-                        <div class="selection-radio">
-                            <i t-if="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id" 
-                               class="fa fa-dot-circle-o"></i>
-                            <i t-else="" 
-                               class="fa fa-circle-o"></i>
+                <!-- Target Selection Results -->
+                <div t-if="state.targetSearchTerm.length >= 2 and !state.targetListsLoading and state.availableTargetLists.length > 0" class="target-results">
+                    <div class="results-header">
+                        <span class="results-count"><span t-esc="state.availableTargetLists.length"/> result(s)</span>
+                    </div>
+                    
+                    <div class="target-lists modern-list">
+                        <div t-foreach="state.availableTargetLists" 
+                             t-as="targetList" 
+                             t-key="targetList.mailing_list_id"
+                             t-att-class="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id ? 'target-item selected modern-item' : 'target-item modern-item'"
+                             t-on-click="() => this.onTargetListSelect(targetList)">
+                            
+                            <div class="target-info">
+                                <h3 t-esc="targetList.name"></h3>
+                                <span class="mailing-list-id">ID: <span t-esc="targetList.mailing_list_id"/></span>
+                            </div>
+                            
+                            <div class="selection-radio">
+                                <i t-if="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id" 
+                                   class="fa fa-dot-circle-o selected-icon"></i>
+                                <i t-else="" 
+                                   class="fa fa-circle-o"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -190,7 +214,7 @@
 
             <!-- Overall Validation Summary -->
             <div class="overall-validation">
-                <div t-if="state.selectedTargetList and state.selectedSources.length > 0" 
+                <div t-if="state.selectedTargetList && state.selectedSources.length > 0" 
                      class="mlu-alert mlu-alert-success">
                     <i class="fa fa-check-circle"></i>
                     <strong>Ready:</strong> Will import from <span t-esc="state.selectedSources.length"/> source(s) 
@@ -199,7 +223,7 @@
                 <div t-elif="!state.selectedTargetList" 
                      class="mlu-alert mlu-alert-warning">
                     <i class="fa fa-exclamation-triangle"></i>
-                    Please select a target mailing list
+                    Please search and select a target mailing list
                 </div>
                 <div t-elif="state.selectedSources.length === 0" 
                      class="mlu-alert mlu-alert-warning">
