@@ -17,7 +17,7 @@
                 <div class="search-box">
                     <i class="fa fa-search"></i>
                     <input type="text" 
-                           placeholder="Search mailing lists..." <!-- Updated placeholder -->
+                           placeholder="Search mailing lists..."
                            class="search-input"
                            t-model="state.searchTerm"
                            t-on-input="onSearchInput"/>
