@@ -769,8 +769,10 @@ class MailingListUpdaterMain extends Component {
             // If opened as dialog
             this.env.services.action.closeDialog();
         } else {
-            // Fallback: close the current client action
-            this.env.services.action.doAction('ir.actions.act_window_close');
+            // Correct syntax for Odoo 15
+            this.env.services.action.doAction({
+                type: 'ir.actions.act_window_close'
+            });
         }
     }
 
