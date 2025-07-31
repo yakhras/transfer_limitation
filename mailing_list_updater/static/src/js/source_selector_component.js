@@ -6,8 +6,7 @@ class SourceSelectorComponent extends Component {
 
     setup() {
         this.rpc = this.env.services.rpc;
-        this.company = this.env.services.company.currentCompany;
-        console.log(this.company)
+        this.company = this.env.services.company;
 
         this.state = useState({
             
@@ -19,7 +18,7 @@ class SourceSelectorComponent extends Component {
             searchTerm: '',
             showSourceDetails: {},
             companyRecordCounts: {},
-            currentCompany: this.company ? this.company.currentCompany : null ,
+            currentCompany: this.company?.currentCompany || null,
         });
 
         this.selectedMailingList = this.props.selectedMailingList;
