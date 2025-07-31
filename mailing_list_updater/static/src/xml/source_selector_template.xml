@@ -81,30 +81,6 @@
                     <p>Choose which contact sources to import from</p>
                 </div>
                 
-                <!-- Source Search and Actions -->
-                <div class="content-actions">
-                    <div class="search-box">
-                        <i class="fa fa-search"></i>
-                        <input type="text" 
-                               placeholder="Search sources..." 
-                               class="search-input"
-                               t-model="state.searchTerm"
-                               t-on-input="onSearchInput"/>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="mlu-btn mlu-btn-outline" 
-                                t-on-click="selectAllRecommended">
-                            <i class="fa fa-magic"></i>
-                            Select Recommended
-                        </button>
-                        <button class="mlu-btn mlu-btn-outline"
-                                t-on-click="clearAllSelections">
-                            <i class="fa fa-eraser"></i>
-                            Clear All
-                        </button>
-                    </div>
-                </div>
-                
                 <!-- Source Loading State -->
                 <div t-if="state.isLoading" class="loading-container">
                     <div class="loading-spinner"></div>
@@ -203,9 +179,9 @@
                 <!-- Source Empty State -->
                 <div t-if="!state.isLoading and state.filteredSources.length === 0" class="empty-state">
                     <div class="empty-content">
-                        <i class="fa fa-search fa-3x"></i>
-                        <h3>No sources found</h3>
-                        <p>Try adjusting your search criteria or check if sources are properly configured.</p>
+                        <i class="fa fa-database fa-3x"></i>
+                        <h3>No contact sources available</h3>
+                        <p>Check if contact sources are properly configured in the system.</p>
                     </div>
                 </div>
             </div>

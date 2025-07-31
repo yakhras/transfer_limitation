@@ -40,7 +40,11 @@ class SourceSelectorComponent extends Component {
 
     async loadTargetMailingLists() {
         this.state.targetListsLoading = true;
+        console.log('=== TARGET MAILING LIST DEBUG ===');
+        console.log('Search term:', this.state.targetSearchTerm);
+        
         try {
+            console.log('Making RPC call to /mailing/update/mailing-lists');
             const response = await this.rpc({
                 route: "/mailing/update/mailing-lists",
                 params: {
@@ -49,17 +53,21 @@ class SourceSelectorComponent extends Component {
                 }
             });
 
+            console.log('RPC Response:', response);
+
             if (response.success) {
                 this.state.availableTargetLists = response.data.sources || [];
+                console.log('Target lists loaded:', this.state.availableTargetLists);
+            } else {
+                console.error('RPC failed:', response.error);
+                this.state.availableTargetLists = [];
             }
         } catch (error) {
-            // Fallback mock data
-            this.state.availableTargetLists = [
-                { mailing_list_id: 1, name: 'Newsletter Subscribers', contact_count: 1247 },
-                { mailing_list_id: 2, name: 'Product Updates', contact_count: 856 }
-            ];
+            console.error('RPC Error:', error);
+            this.state.availableTargetLists = [];
         } finally {
             this.state.targetListsLoading = false;
+            console.log('=== END TARGET DEBUG ===');
         }
     }
 
@@ -82,41 +90,32 @@ class SourceSelectorComponent extends Component {
 
     async loadContactSources() {
         this.state.isLoading = true;
+        console.log('=== CONTACT SOURCES DEBUG ===');
+        
         try {
+            console.log('Making RPC call to /mailing/update/sources');
             const response = await this.rpc({
                 route: "/mailing/update/sources",
                 params: {}
             });
 
+            console.log('Contact sources response:', response);
+
             if (response.success) {
                 this.state.availableSources = response.data.sources;
                 this.updateFilteredSources();
                 this.preSelectRecommended();
+                console.log('Contact sources loaded:', this.state.availableSources);
+            } else {
+                console.error('Contact sources RPC failed:', response.error);
+                this.state.availableSources = [];
             }
         } catch (error) {
-            // Original fallback
-            this.state.availableSources = [
-                {
-                    model_name: 'res.partner',
-                    name: 'Contacts',
-                    description: 'Import contacts from Contacts module',
-                    available: true,
-                    recommended: true,
-                    estimated_count: 1247
-                },
-                {
-                    model_name: 'crm.lead',
-                    name: 'CRM Leads',
-                    description: 'Import contacts from CRM Leads',
-                    available: true,
-                    recommended: true,
-                    estimated_count: 856
-                }
-            ];
-            this.updateFilteredSources();
-            this.preSelectRecommended();
+            console.error('Contact sources RPC Error:', error);
+            this.state.availableSources = [];
         } finally {
             this.state.isLoading = false;
+            console.log('=== END CONTACT SOURCES DEBUG ===');
         }
     }
 
@@ -165,16 +164,11 @@ class SourceSelectorComponent extends Component {
     }
 
     selectAllRecommended() {
-        const recommended = this.state.availableSources
-            .filter(s => s.recommended && s.available)
-            .map(s => s.model_name);
-        this.state.selectedSources = Array.from(new Set([...this.state.selectedSources, ...recommended]));
-        this.notifyParentOfSelection();
+        // Method kept for compatibility but does nothing
     }
 
     clearAllSelections() {
-        this.state.selectedSources = [];
-        this.notifyParentOfSelection();
+        // Method kept for compatibility but does nothing
     }
 
     // ========================================
