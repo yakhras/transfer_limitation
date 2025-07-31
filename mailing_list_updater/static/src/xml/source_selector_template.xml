@@ -1,269 +1,232 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
     <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
-        <div class="mailing-list-selector"> <!-- Changed from source-selector -->
+        <div class="source-selector">
             
-            <!-- Content Header -->
-            <div class="content-header">
-                <h2>
-                    <i class="fa fa-list-alt"></i> <!-- Changed from fa-database -->
-                    Select Source Mailing Lists <!-- Changed from Select Contact Sources -->
-                </h2>
-                <p>Choose existing mailing lists to copy contacts from into your target mailing list</p> <!-- Updated description -->
-            </div>
-            
-            <!-- Search and Actions -->
-            <div class="content-actions">
-                <div class="search-box">
-                    <i class="fa fa-search"></i>
-                    <input type="text" 
-                           placeholder="Search mailing lists..."
-                           class="search-input"
-                           t-model="state.searchTerm"
-                           t-on-input="onSearchInput"/>
+            <!-- ========================================= -->
+            <!-- TARGET MAILING LIST SELECTION (NEW) -->
+            <!-- ========================================= -->
+            <div class="target-selection-section">
+                <div class="content-header">
+                    <h2>
+                        <i class="fa fa-bullseye"></i>
+                        Select Target Mailing List
+                    </h2>
+                    <p>Choose which mailing list to update with new contacts</p>
                 </div>
-                <div class="action-buttons">
-                    <button class="mlu-btn mlu-btn-outline" 
-                            t-on-click="selectAllRecommended">
-                        <i class="fa fa-magic"></i>
-                        Select Recommended
-                    </button>
-                    <button class="mlu-btn mlu-btn-outline"
-                            t-on-click="clearAllSelections">
-                        <i class="fa fa-eraser"></i>
-                        Clear All
-                    </button>
-                    <button class="mlu-btn mlu-btn-outline"
-                            t-on-click="refreshMailingLists">
-                        <i class="fa fa-refresh"></i>
-                        Refresh
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Loading State -->
-            <div t-if="state.isLoading" class="loading-container">
-                <div class="loading-spinner"></div>
-                <p>Loading mailing lists...</p> <!-- Updated loading text -->
-            </div>
-            
-            <!-- Selection Summary -->
-            <div t-if="state.selectedMailingLists.length > 0" class="selection-summary">
-                <div class="mlu-alert mlu-alert-success">
-                    <i class="fa fa-check-circle"></i>
-                    <span t-esc="state.selectedMailingLists.length"/> mailing list(s) selected • 
-                    <span t-esc="formatContactCount(getTotalSelectedContacts())"/> total contacts • Ready to proceed
-                </div>
-            </div>
-            
-            <!-- Mailing List Cards -->
-            <div t-if="!state.isLoading" class="mailing-list-cards"> <!-- Changed from source-cards -->
-                <div t-foreach="state.filteredMailingLists" 
-                     t-as="mailingList" 
-                     t-key="mailingList.mailing_list_id"
-                     t-att-class="getMailingListItemClass(mailingList)"
-                     t-att-data-mailing-list-id="mailingList.mailing_list_id"
-                     t-on-click="() => this.onMailingListToggle(mailingList.mailing_list_id)">
-                    
-                    <!-- Badges -->
-                    <div t-if="mailingList.recommended || isMailingListSelected(mailingList.mailing_list_id)" 
-                         class="card-badges">
-                        <span t-if="mailingList.recommended" 
-                              class="badge badge-recommended">
-                            <i class="fa fa-star"></i>
-                            RECOMMENDED
-                        </span>
-                        <span t-if="isMailingListSelected(mailingList.mailing_list_id)"
-                              class="badge badge-selected">
-                            <i class="fa fa-check"></i>
-                            SELECTED
-                        </span>
+
+                <!-- Target Search -->
+                <div class="target-search">
+                    <div class="search-box">
+                        <i class="fa fa-search"></i>
+                        <input type="text" 
+                               placeholder="Search target mailing lists..." 
+                               class="search-input"
+                               t-model="state.targetSearchTerm"
+                               t-on-input="onTargetSearchInput"/>
                     </div>
-                    
-                    <!-- Card Header -->
-                    <div class="card-header">
-                        <div t-att-class="'card-icon mailing-list-icon'"> <!-- Updated class -->
-                            <i t-att-class="'fa ' + getMailingListIcon(mailingList)"></i>
+                </div>
+
+                <!-- Target Selection -->
+                <div t-if="state.targetListsLoading" class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Loading mailing lists...</p>
+                </div>
+
+                <div t-if="!state.targetListsLoading" class="target-lists">
+                    <div t-foreach="state.availableTargetLists" 
+                         t-as="targetList" 
+                         t-key="targetList.mailing_list_id"
+                         t-att-class="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id ? 'target-item selected' : 'target-item'"
+                         t-on-click="() => this.onTargetListSelect(targetList)">
+                        
+                        <div class="target-info">
+                            <h3 t-esc="targetList.name"></h3>
+                            <span class="contact-count">
+                                <i class="fa fa-users"></i>
+                                <span t-esc="formatContactCount(targetList.contact_count)"/> contacts
+                            </span>
                         </div>
-                        <h3 t-esc="mailingList.name"></h3>
-                        <div class="selection-check">
-                            <i t-if="isMailingListSelected(mailingList.mailing_list_id)" 
-                               class="fa fa-check-circle"></i>
+                        
+                        <div class="selection-radio">
+                            <i t-if="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id" 
+                               class="fa fa-dot-circle-o"></i>
                             <i t-else="" 
                                class="fa fa-circle-o"></i>
                         </div>
                     </div>
-                    
-                    <!-- Card Description -->
-                    <p class="card-description" t-esc="mailingList.description"></p>
-                    
-                    <!-- Card Stats -->
-                    <div class="card-stats">
-                        <span class="stat-item">
-                            <i class="fa fa-users"></i>
-                            <span t-esc="formatContactCount(mailingList.contact_count)"/> contacts
-                        </span>
-                        <span t-if="mailingList.last_mailing_date" class="stat-item">
-                            <i class="fa fa-envelope"></i>
-                            <span t-esc="formatDate(mailingList.last_mailing_date)"/>
-                        </span>
-                        <button class="btn-details" 
-                                t-att-data-mailing-list-id="mailingList.mailing_list_id"
-                                t-on-click.stop="toggleSourceDetails"> <!-- Compatibility method -->
-                            <i t-att-class="state.showMailingListDetails[mailingList.mailing_list_id] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
-                            <span t-if="state.showMailingListDetails[mailingList.mailing_list_id]">Hide Details</span>
-                            <span t-else="">Show Details</span>
+                </div>
+
+                <!-- Target Selection Status -->
+                <div t-if="state.selectedTargetList" class="selection-summary">
+                    <div class="mlu-alert mlu-alert-success">
+                        <i class="fa fa-check-circle"></i>
+                        Target: <strong t-esc="state.selectedTargetList.name"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="section-divider"></div>
+
+            <!-- ========================================= -->
+            <!-- CONTACT SOURCE SELECTION (ORIGINAL) -->
+            <!-- ========================================= -->
+            <div class="source-selection-section">
+                <div class="content-header">
+                    <h2>
+                        <i class="fa fa-database"></i>
+                        Select Contact Sources
+                    </h2>
+                    <p>Choose which contact sources to import from</p>
+                </div>
+                
+                <!-- Source Search and Actions -->
+                <div class="content-actions">
+                    <div class="search-box">
+                        <i class="fa fa-search"></i>
+                        <input type="text" 
+                               placeholder="Search sources..." 
+                               class="search-input"
+                               t-model="state.searchTerm"
+                               t-on-input="onSearchInput"/>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="mlu-btn mlu-btn-outline" 
+                                t-on-click="selectAllRecommended">
+                            <i class="fa fa-magic"></i>
+                            Select Recommended
+                        </button>
+                        <button class="mlu-btn mlu-btn-outline"
+                                t-on-click="clearAllSelections">
+                            <i class="fa fa-eraser"></i>
+                            Clear All
                         </button>
                     </div>
-                    
-                    <!-- Expandable Details -->
-                    <div t-if="state.showMailingListDetails[mailingList.mailing_list_id]" class="card-details">
-                        <div class="details-content">
-                            <!-- Basic Information -->
-                            <div class="detail-section">
-                                <h4>Basic Information</h4>
+                </div>
+                
+                <!-- Source Loading State -->
+                <div t-if="state.isLoading" class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Loading contact sources...</p>
+                </div>
+                
+                <!-- Source Selection Summary -->
+                <div t-if="state.selectedSources.length > 0" class="selection-summary">
+                    <div class="mlu-alert mlu-alert-success">
+                        <i class="fa fa-check-circle"></i>
+                        <span t-esc="state.selectedSources.length"/> source(s) selected • Ready to proceed
+                    </div>
+                </div>
+                
+                <!-- Source Cards -->
+                <div t-if="!state.isLoading" class="source-cards">
+                    <div t-foreach="state.filteredSources" 
+                         t-as="source" 
+                         t-key="source.model_name"
+                         t-att-class="getSourceItemClass(source)"
+                         t-att-data-model="source.model_name"
+                         t-on-click="onSourceToggle">
+                        
+                        <!-- Badges -->
+                        <div t-if="source.recommended || isSourceSelected(source.model_name)" 
+                             class="card-badges">
+                            <span t-if="source.recommended" 
+                                  class="badge badge-recommended">
+                                <i class="fa fa-star"></i>
+                                RECOMMENDED
+                            </span>
+                            <span t-if="isSourceSelected(source.model_name)"
+                                  class="badge badge-selected">
+                                <i class="fa fa-check"></i>
+                                SELECTED
+                            </span>
+                        </div>
+                        
+                        <!-- Card Header -->
+                        <div class="card-header">
+                            <div t-att-class="'card-icon ' + source.model_name.replace('.', '-') + '-icon'">
+                                <i t-att-class="source.icon || 'fa fa-users'"></i>
+                            </div>
+                            <h3 t-esc="source.name"></h3>
+                            <div class="selection-check">
+                                <i t-if="isSourceSelected(source.model_name)" 
+                                   class="fa fa-check-circle"></i>
+                                <i t-else="" 
+                                   class="fa fa-circle-o"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Description -->
+                        <p class="card-description" t-esc="source.description"></p>
+                        
+                        <!-- Card Stats -->
+                        <div class="card-stats">
+                            <span class="stat-item">
+                                <i class="fa fa-users"></i>
+                                <span t-esc="formatContactCount(source.estimated_count)"/> contacts
+                            </span>
+                            <button class="btn-details" 
+                                    t-att-data-model="source.model_name"
+                                    t-on-click.stop="toggleSourceDetails">
+                                <i t-att-class="state.showSourceDetails[source.model_name] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                                <span t-if="state.showSourceDetails[source.model_name]">Hide Details</span>
+                                <span t-else="">Show Details</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Expandable Details -->
+                        <div t-if="state.showSourceDetails[source.model_name]" class="card-details">
+                            <div class="details-content">
                                 <div class="detail-item">
-                                    <strong>Mailing List ID:</strong> <span t-esc="mailingList.mailing_list_id"/>
+                                    <strong>Model:</strong> <span t-esc="source.model_name"/>
                                 </div>
                                 <div class="detail-item">
-                                    <strong>Company:</strong> <span t-esc="mailingList.company_name || 'Not specified'"/>
+                                    <strong>Email Field:</strong> <span t-esc="source.email_field || 'email'"/>
                                 </div>
                                 <div class="detail-item">
-                                    <strong>Contact Count:</strong> <span t-esc="mailingList.contact_count"/>
+                                    <strong>Name Field:</strong> <span t-esc="source.name_field || 'name'"/>
+                                </div>
+                                <div t-if="source.company_field" class="detail-item">
+                                    <strong>Company Field:</strong> <span t-esc="source.company_field"/>
                                 </div>
                                 <div class="detail-item">
                                     <strong>Status:</strong> 
-                                    <span t-if="mailingList.is_public" class="status-public">Public</span>
-                                    <span t-else="" class="status-private">Private</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Date Information -->
-                            <div class="detail-section">
-                                <h4>Timeline</h4>
-                                <div class="detail-item">
-                                    <strong>Created:</strong> <span t-esc="formatDateTime(mailingList.created_date)"/>
-                                </div>
-                                <div class="detail-item">
-                                    <strong>Last Updated:</strong> <span t-esc="formatDateTime(mailingList.last_updated)"/>
-                                </div>
-                                <div class="detail-item">
-                                    <strong>Last Mailing:</strong> <span t-esc="formatDateTime(mailingList.last_mailing_date)"/>
-                                </div>
-                            </div>
-                            
-                            <!-- Field Mapping Information -->
-                            <div class="detail-section">
-                                <h4>Contact Field Mapping</h4>
-                                <div class="detail-item">
-                                    <strong>Email Field:</strong> <span t-esc="mailingList.email_field || 'email'"/>
-                                </div>
-                                <div class="detail-item">
-                                    <strong>Name Field:</strong> <span t-esc="mailingList.name_field || 'name'"/>
-                                </div>
-                                <div t-if="mailingList.phone_field" class="detail-item">
-                                    <strong>Phone Field:</strong> <span t-esc="mailingList.phone_field"/>
-                                </div>
-                                <div t-if="mailingList.company_field" class="detail-item">
-                                    <strong>Company Field:</strong> <span t-esc="mailingList.company_field"/>
-                                </div>
-                            </div>
-                            
-                            <!-- Activity Information (if available) -->
-                            <div t-if="mailingList.opt_out_count !== undefined" class="detail-section">
-                                <h4>Activity Statistics</h4>
-                                <div class="detail-item">
-                                    <strong>Active Contacts:</strong> <span t-esc="mailingList.active_contact_count || mailingList.contact_count"/>
-                                </div>
-                                <div t-if="mailingList.opt_out_count" class="detail-item">
-                                    <strong>Opted Out:</strong> <span t-esc="mailingList.opt_out_count"/>
-                                </div>
-                                <div t-if="mailingList.last_mailing_subject" class="detail-item">
-                                    <strong>Last Campaign:</strong> <span t-esc="mailingList.last_mailing_subject"/>
+                                    <span t-if="source.available" class="status-available">Available</span>
+                                    <span t-else="" class="status-unavailable">Unavailable</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Load More Button -->
-            <div t-if="!state.isLoading and state.pagination.hasMore" class="load-more-container">
-                <button class="mlu-btn mlu-btn-outline mlu-btn-wide"
-                        t-att-disabled="state.loadingMore"
-                        t-on-click="loadMoreMailingLists">
-                    <i t-if="state.loadingMore" class="fa fa-spinner fa-spin"></i>
-                    <i t-else="" class="fa fa-plus"></i>
-                    <span t-if="state.loadingMore">Loading more...</span>
-                    <span t-else="">Load More Mailing Lists</span>
-                </button>
-            </div>
-            
-            <!-- Pagination Info -->
-            <div t-if="!state.isLoading and state.filteredMailingLists.length > 0" class="pagination-info">
-                <small class="text-muted">
-                    Showing <span t-esc="state.filteredMailingLists.length"/> of <span t-esc="state.pagination.total"/> mailing lists
-                    <span t-if="state.searchTerm">matching "<span t-esc="state.searchTerm"/>"</span>
-                </small>
-            </div>
-            
-            <!-- Empty State -->
-            <div t-if="!state.isLoading and state.filteredMailingLists.length === 0" class="empty-state">
-                <div class="empty-content">
-                    <i class="fa fa-list-alt fa-3x"></i> <!-- Changed icon -->
-                    <h3 t-if="state.searchTerm">No mailing lists found</h3>
-                    <h3 t-else="">No mailing lists available</h3>
-                    <p t-if="state.searchTerm">
-                        No mailing lists match your search "<strong t-esc="state.searchTerm"/>".<br/>
-                        Try adjusting your search criteria.
-                    </p>
-                    <p t-else="">
-                        No mailing lists are available as sources.<br/>
-                        Create some mailing lists first, or check if they are properly configured.
-                    </p>
-                    <div class="empty-actions">
-                        <button t-if="state.searchTerm" 
-                                class="mlu-btn mlu-btn-outline"
-                                t-on-click="() => { this.state.searchTerm = ''; this.onSearchInput({target: {value: ''}}); }">
-                            <i class="fa fa-times"></i>
-                            Clear Search
-                        </button>
-                        <button class="mlu-btn mlu-btn-outline"
-                                t-on-click="refreshMailingLists">
-                            <i class="fa fa-refresh"></i>
-                            Refresh Lists
-                        </button>
+                
+                <!-- Source Empty State -->
+                <div t-if="!state.isLoading and state.filteredSources.length === 0" class="empty-state">
+                    <div class="empty-content">
+                        <i class="fa fa-search fa-3x"></i>
+                        <h3>No sources found</h3>
+                        <p>Try adjusting your search criteria or check if sources are properly configured.</p>
                     </div>
                 </div>
             </div>
-            
-            <!-- Target List Warning -->
-            <div t-if="!state.isLoading and targetMailingListId" class="target-warning">
-                <div class="mlu-alert mlu-alert-info">
-                    <i class="fa fa-info-circle"></i>
-                    <strong>Note:</strong> The target mailing list "<span t-esc="selectedMailingList?.name || 'Current List'"/>" is automatically excluded from the source options to prevent circular references.
+
+            <!-- Overall Validation Summary -->
+            <div class="overall-validation">
+                <div t-if="state.selectedTargetList && state.selectedSources.length > 0" 
+                     class="mlu-alert mlu-alert-success">
+                    <i class="fa fa-check-circle"></i>
+                    <strong>Ready:</strong> Will import from <span t-esc="state.selectedSources.length"/> source(s) 
+                    into "<span t-esc="state.selectedTargetList.name"/>"
                 </div>
-            </div>
-            
-            <!-- Quick Stats Summary -->
-            <div t-if="!state.isLoading and state.availableMailingLists.length > 0" class="quick-stats">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number" t-esc="state.availableMailingLists.length"/>
-                        <div class="stat-label">Available Lists</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" t-esc="state.availableMailingLists.filter(l => l.recommended).length"/>
-                        <div class="stat-label">Recommended</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" t-esc="formatContactCount(state.availableMailingLists.reduce((sum, l) => sum + l.contact_count, 0))"/>
-                        <div class="stat-label">Total Contacts</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" t-esc="state.selectedMailingLists.length"/>
-                        <div class="stat-label">Selected</div>
-                    </div>
+                <div t-elif="!state.selectedTargetList" 
+                     class="mlu-alert mlu-alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Please select a target mailing list
+                </div>
+                <div t-elif="state.selectedSources.length === 0" 
+                     class="mlu-alert mlu-alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Please select at least one contact source
                 </div>
             </div>
         </div>

@@ -204,47 +204,66 @@ class MailingListUpdateController(http.Controller):
     @http.route('/mailing/update/sources', type='json', auth='user', methods=['GET'])
     def get_sources(self, **kwargs):
         """
-        Get available mailing lists that can be used as sources for the current company.
+        Get available contact sources from source registry (ORIGINAL FUNCTIONALITY).
         
         Query parameters:
         - company_id (optional): Specific company ID
-        - target_mailing_list_id (optional): Target list ID to exclude from sources
         - include_stats (optional): Include usage statistics
         
         Returns:
-            dict: Available source mailing lists with metadata
+            dict: Available contact sources with metadata
         """
         start_time = time.time()
         
         try:
             company_id = kwargs.get('company_id') or request.env.company.id
-            target_mailing_list_id = kwargs.get('target_mailing_list_id')
             include_stats = kwargs.get('include_stats', True)
             
-            # Get available mailing lists as sources
-            sources_data = self._get_mailing_lists_for_sources(
-                company_id=company_id,
-                target_mailing_list_id=target_mailing_list_id,
-                include_stats=include_stats
-            )
+            # Get sources from registry (ORIGINAL FUNCTIONALITY)
+            try:
+                registry_model = request.env['mailing.source.registry']
+                sources_data = registry_model.get_sources_for_web(company_id=company_id)
+            except Exception as registry_error:
+                _logger.warning("Source registry not available, using fallback: %s", str(registry_error))
+                # Fallback to basic contact sources
+                sources_data = {
+                    'sources': [
+                        {
+                            'model_name': 'res.partner',
+                            'name': 'Contacts',
+                            'description': 'Import contacts from Contacts module',
+                            'available': True,
+                            'recommended': True,
+                            'estimated_count': request.env['res.partner'].search_count([]),
+                            'email_field': 'email',
+                            'name_field': 'name',
+                            'phone_field': 'phone',
+                            'company_field': 'company_id'
+                        },
+                        {
+                            'model_name': 'crm.lead',
+                            'name': 'CRM Leads',
+                            'description': 'Import contacts from CRM Leads',  
+                            'available': True,
+                            'recommended': True,
+                            'estimated_count': request.env['crm.lead'].search_count([]),
+                            'email_field': 'email_from',
+                            'name_field': 'name',
+                            'phone_field': 'phone',
+                            'company_field': 'company_id'
+                        }
+                    ],
+                    'summary': {
+                        'total_sources': 2,
+                        'recommended_count': 2,
+                    }
+                }
             
             execution_time = time.time() - start_time
             
-            # Log request
-            request.env['mailing.operation.audit'].log_web_request(
-                request_data={
-                    'endpoint': '/mailing/update/sources',
-                    'method': 'GET',
-                    'params': kwargs,
-                },
-                response_data=sources_data,
-                execution_time=execution_time,
-                success=True
-            )
-            
             return self._success_response(
                 data=sources_data,
-                message=f"Found {sources_data['summary']['total_sources']} available mailing lists",
+                message=f"Found {sources_data['summary']['total_sources']} available contact sources",
                 meta={
                     'execution_time': round(execution_time, 2),
                     'company_id': company_id,
@@ -252,9 +271,9 @@ class MailingListUpdateController(http.Controller):
             )
             
         except Exception as e:
-            _logger.error("Failed to get mailing list sources: %s", str(e), exc_info=True)
+            _logger.error("Failed to get contact sources: %s", str(e), exc_info=True)
             return self._error_response(
-                message="Failed to retrieve mailing list sources",
+                message="Failed to retrieve contact sources",
                 details=str(e),
                 code=500
             )
@@ -262,42 +281,26 @@ class MailingListUpdateController(http.Controller):
     @http.route('/mailing/update/mailing-lists', type='json', auth='user', methods=['GET'])
     def get_mailing_lists(self, **kwargs):
         """
-        Dedicated endpoint to get available mailing lists for source selection.
+        Get available mailing lists for target selection.
         
         Query parameters:
-        - company_id (optional): Filter by company
         - search (optional): Search term for mailing list names
-        - target_list_id (optional): Target list to exclude
         - limit (optional): Maximum results (default: 50)
         - offset (optional): Pagination offset (default: 0)
-        - include_inactive (optional): Include inactive lists (default: false)
         
         Returns:
-            dict: Paginated mailing lists with detailed information
+            dict: Available mailing lists for target selection
         """
         start_time = time.time()
         
         try:
             # Extract parameters
-            company_id = kwargs.get('company_id') or request.env.company.id
             search = kwargs.get('search', '').strip()
-            target_list_id = kwargs.get('target_list_id')
             limit = min(kwargs.get('limit', 50), 100)  # Max 100 per request
             offset = kwargs.get('offset', 0)
-            include_inactive = kwargs.get('include_inactive', False)
             
             # Build domain for mailing list search
-            domain = [
-                ('company_id', '=', company_id),
-            ]
-            
-            # Exclude target list
-            if target_list_id:
-                domain.append(('id', '!=', target_list_id))
-            
-            # Include/exclude inactive lists
-            if not include_inactive:
-                domain.append(('is_public', '=', True))  # Assuming public lists are active
+            domain = []
             
             # Add search term
             if search:
@@ -314,35 +317,21 @@ class MailingListUpdateController(http.Controller):
                 # Get contact count
                 contact_count = len(mailing_list.contact_ids)
                 
-                # Calculate activity metrics
-                last_mailing = request.env['mailing.mailing'].search([
-                    ('contact_list_ids', 'in', mailing_list.id)
-                ], limit=1, order='create_date desc')
-                
                 source_data = {
                     'mailing_list_id': mailing_list.id,
                     'name': mailing_list.name,
-                    'description': self._get_mailing_list_description(mailing_list),
+                    'description': f'{contact_count} contacts in this mailing list',
                     'contact_count': contact_count,
-                    'estimated_count': contact_count,  # For compatibility with frontend
+                    'estimated_count': contact_count,  # For compatibility
                     'available': True,
-                    'recommended': self._is_mailing_list_recommended(mailing_list, contact_count),
+                    'recommended': contact_count > 50,  # Simple recommendation logic
                     'created_date': mailing_list.create_date.isoformat() if mailing_list.create_date else None,
                     'last_updated': mailing_list.write_date.isoformat() if mailing_list.write_date else None,
-                    'last_mailing_date': last_mailing.create_date.isoformat() if last_mailing else None,
-                    'is_public': mailing_list.is_public,
-                    'company_id': mailing_list.company_id.id,
-                    'company_name': mailing_list.company_id.name,
-                    # Additional metadata for the frontend
-                    'model_name': f'mailing.list.{mailing_list.id}',  # For compatibility
-                    'email_field': 'email',
-                    'name_field': 'name',
-                    'phone_field': 'mobile',
-                    'company_field': 'company_name',
+                    'is_public': getattr(mailing_list, 'is_public', True),
                 }
                 sources_data.append(source_data)
             
-            # Prepare response with pagination info
+            # Prepare response
             response_data = {
                 'sources': sources_data,
                 'summary': {
@@ -350,38 +339,22 @@ class MailingListUpdateController(http.Controller):
                     'total_available': total_count,
                     'recommended_count': len([s for s in sources_data if s['recommended']]),
                     'has_more': (offset + limit) < total_count,
-                    'next_offset': offset + limit if (offset + limit) < total_count else None,
                 },
                 'pagination': {
                     'limit': limit,
                     'offset': offset,
                     'total': total_count,
-                    'page': (offset // limit) + 1,
-                    'total_pages': (total_count + limit - 1) // limit,
                 }
             }
             
             execution_time = time.time() - start_time
             
-            # Log request
-            request.env['mailing.operation.audit'].log_web_request(
-                request_data={
-                    'endpoint': '/mailing/update/mailing-lists',
-                    'method': 'GET',
-                    'params': kwargs,
-                },
-                response_data=response_data,
-                execution_time=execution_time,
-                success=True
-            )
-            
             return self._success_response(
                 data=response_data,
-                message=f"Found {total_count} mailing lists ({len(sources_data)} returned)",
+                message=f"Found {total_count} mailing lists",
                 meta={
                     'execution_time': round(execution_time, 2),
                     'search_term': search,
-                    'company_id': company_id,
                 }
             )
             
