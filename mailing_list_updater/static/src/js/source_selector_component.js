@@ -60,7 +60,7 @@ class SourceSelectorComponent extends Component {
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
                 name: list.name,
-                contact_count: 0, // Skip contact count for now
+                contact_count: list.contact_count, // Skip contact count for now
                 estimated_count: 0,
                 description: `Mailing list: ${list.name}`,
                 available: true,
