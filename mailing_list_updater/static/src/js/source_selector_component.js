@@ -236,13 +236,7 @@ class SourceSelectorComponent extends Component {
         return classes.join(' ');
     }
 
-    formatContactCount(count) {
-        count = Number(count);
-        if (isNaN(count)) return '0';
-        if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
-        if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
-        return count.toString();
-    }
+    
 }
 
 SourceSelectorComponent.template = 'mailing_list_updater.SourceSelectorTemplate';
