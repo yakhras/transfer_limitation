@@ -224,6 +224,7 @@ class SourceSelectorComponent extends Component {
                 method: 'search_count',
                 args: [domain]
             });
+            console.log(`Count for ${modelName}:`, count);
             this.state.companyRecordCounts[modelName] = count;
         } catch (error) {
             console.error(`Failed to get record count for ${modelName}:`, error);
