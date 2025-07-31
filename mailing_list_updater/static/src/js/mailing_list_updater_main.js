@@ -78,14 +78,14 @@ class MailingListUpdaterMain extends Component {
             this.handleContextParameters();
             
             // Load initial data
-            await this.loadMailingLists();
+            // await this.loadMailingLists();
             await this.loadAvailableSources();
             
             // Apply context-based initialization
             await this.applyContextInitialization();
             
         } catch (error) {
-            this.showError("Failed to initialize mailing list updater");
+            // this.showError("Failed to initialize mailing list updater");
             console.error("Initialization error:", error);
         } finally {
             this.state.isLoading = false;
@@ -340,25 +340,25 @@ class MailingListUpdaterMain extends Component {
     /**
      * Load available mailing lists for selection
      */
-    async loadMailingLists() {
-        try {
-            const result = await this.rpc({
-                model: "mailing.list",
-                method: "search_read",
-                args: [[["active", "=", true]]],
-                kwargs: {
-                    fields: ["id", "name", "contact_count", "company_id"],
-                    order: "name"
-                }
-            });
+    // async loadMailingLists() {
+    //     try {
+    //         const result = await this.rpc({
+    //             model: "mailing.list",
+    //             method: "search_read",
+    //             args: [[["active", "=", true]]],
+    //             kwargs: {
+    //                 fields: ["id", "name", "contact_count", "company_id"],
+    //                 order: "name"
+    //             }
+    //         });
             
-            this.mailingLists = result;
+    //         this.mailingLists = result;
             
-        } catch (error) {
-            this.showError("Failed to load mailing lists");
-            throw error;
-        }
-    }
+    //     } catch (error) {
+    //         this.showError("Failed to load mailing lists");
+    //         throw error;
+    //     }
+    // }
     
     /**
      * Load available contact sources from registry
