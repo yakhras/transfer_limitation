@@ -19,7 +19,7 @@ class SourceSelectorComponent extends Component {
             searchTerm: '',
             showSourceDetails: {},
             companyRecordCounts: {},
-            currentCompany: null,
+            currentCompany: this.company ? this.company.currentCompany : null ,
         });
 
         this.selectedMailingList = this.props.selectedMailingList;
