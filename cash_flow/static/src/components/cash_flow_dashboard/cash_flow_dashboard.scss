@@ -285,10 +285,10 @@ $badge-colors: (
   }
 }
 
-// Currency options - Enhanced visibility
+// Currency options
 .currency-option {
   background: $currency-bg-primary;
-  border: 2px solid $currency-border;  // Thicker border for better visibility
+  border: 1px solid $currency-border;
   color: $currency-text;
   padding: 0.25rem 0.75rem;
   border-radius: 15px;
@@ -300,25 +300,12 @@ $badge-colors: (
   font-size: 0.8rem;
   user-select: none;
   white-space: nowrap;
-  
-  // Ensure always visible with box-shadow
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  
-  // Add a subtle glow to make them more visible
-  &:not(.selected) {
-    box-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  }
 
   &:hover {
     background: $currency-bg-secondary;
     border-color: $currency-border-hover;
     transform: translateY(-1px);
-    box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    color: white; // Ensure text is white on hover
+    box-shadow: 0 2px 8px $currency-shadow;
   }
 
   &.selected {
@@ -326,9 +313,7 @@ $badge-colors: (
     color: $currency-text-selected;
     border-color: $currency-bg-selected;
     font-weight: 600;
-    box-shadow: 
-      0 0 15px rgba(255, 255, 255, 0.4),
-      0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   }
 
   .currency-check {
