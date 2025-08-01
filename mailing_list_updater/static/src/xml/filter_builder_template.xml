@@ -45,14 +45,14 @@
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.from"
                                        t-on-change="(ev) => this.onDateRangeChange('from', ev.target.value)"
-                                       value="2025-01-01"/>
+                                       value="2024-01-01"/>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">To:</label>
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.to"
                                        t-on-change="(ev) => this.onDateRangeChange('to', ev.target.value)"
-                                       value="2025-12-31"/>
+                                       value="2024-12-31"/>
                             </div>
                         </div>
                     </div>
@@ -60,13 +60,58 @@
                     <!-- Salesperson / Responsible -->
                     <div class="mb-3">
                         <label class="form-label fw-bold">Salesperson / Responsible</label>
-                        <select multiple="multiple" class="form-select" size="3"
-                                t-on-change="(ev) => this.onQuickFilterChange('responsible_users', Array.from(ev.target.selectedOptions).map(o => o.value))">
-                            <option value="john_smith" selected="selected">John Smith</option>
-                            <option value="sarah_johnson" selected="selected">Sarah Johnson</option>
-                            <option value="mike_davis" selected="selected">Mike Davis</option>
-                        </select>
-                        <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple users</small>
+                        
+                        <!-- User Search Input -->
+                        <div class="position-relative">
+                            <input type="text" class="form-control"
+                                   t-model="state.userSearch.query"
+                                   t-on-input="(ev) => this.onUserSearch(ev.target.value)"
+                                   t-on-focus="() => this.showUserSuggestions(true)"
+                                   placeholder="Search users..."
+                                   autocomplete="off"/>
+                            <i class="fa fa-search position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #999;"></i>
+                            
+                            <!-- Search Results Dropdown -->
+                            <div t-if="state.userSearch.showSuggestions and state.userSearch.results.length" 
+                                 class="user-suggestions position-absolute w-100 bg-white border rounded shadow-sm mt-1" 
+                                 style="z-index: 1000; max-height: 200px; overflow-y: auto;">
+                                <div t-foreach="state.userSearch.results" t-as="user" t-key="user.id"
+                                     class="suggestion-item p-2 border-bottom cursor-pointer hover-bg-light"
+                                     t-on-click="() => this.selectUser(user)"
+                                     style="cursor: pointer;">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-user me-2 text-muted"></i>
+                                        <div>
+                                            <div class="fw-medium" t-esc="user.name"></div>
+                                            <small class="text-muted" t-esc="user.email"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- No Results Message -->
+                            <div t-if="state.userSearch.showSuggestions and state.userSearch.query and !state.userSearch.results.length and !state.userSearch.loading" 
+                                 class="position-absolute w-100 bg-white border rounded shadow-sm mt-1 p-3 text-center text-muted"
+                                 style="z-index: 1000;">
+                                <i class="fa fa-search me-2"></i>No users found
+                            </div>
+                        </div>
+                        
+                        <!-- Selected Users Display -->
+                        <div t-if="state.quickFilters.responsible_users.length" class="selected-users mt-2">
+                            <div class="d-flex flex-wrap gap-2">
+                                <span t-foreach="state.quickFilters.responsible_users" t-as="user" t-key="user.id"
+                                      class="badge bg-primary d-flex align-items-center">
+                                    <i class="fa fa-user me-1"></i>
+                                    <span t-esc="user.name"></span>
+                                    <button type="button" class="btn-close btn-close-white ms-2" 
+                                            t-on-click="() => this.removeSelectedUser(user.id)"
+                                            style="font-size: 0.7em;" aria-label="Remove"></button>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <small class="form-text text-muted">Search and select multiple users</small>
                     </div>
                 </div>
                 
