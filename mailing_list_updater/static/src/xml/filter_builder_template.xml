@@ -292,13 +292,6 @@
                     </div>
                 </div>
                 
-                <!-- Action Buttons -->
-                <div class="filter-actions d-flex justify-content-start mb-3">
-                    <button class="btn btn-outline-secondary"
-                            t-on-click="() => this.clearAllFilters()">
-                        <i class="fa fa-times"></i> Clear All
-                    </button>
-                </div>
                 
                 <!-- Filter Preview -->
                 <div t-if="state.advancedFilters.rules.length || state.quickFilters.responsible_users.length || (state.quickFilters.date_range.from and state.quickFilters.date_range.to)" 
@@ -345,6 +338,14 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="filter-actions d-flex justify-content-start mb-3">
+                    <button class="btn-details"
+                            t-on-click="() => this.clearAllFilters()">
+                        <i class="fa fa-times"></i> Clear All
+                    </button>
                 </div>
             </div>
         </div>
