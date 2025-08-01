@@ -16,6 +16,29 @@
                                             Last updated: <span t-esc="state.lastUpdated"/>
                                         </div>
                                     </div>
+
+                                    <!-- Clean Currency Selection Section - CSS Classes Only -->
+                                    <div class="row mt-3 pt-3 border-top">
+                                        <div class="col-12">
+                                            <div class="currency-selection-container">
+                                                
+                                                <!-- Currency Selection Group -->
+                                                <div class="currency-group">
+                                                    
+                                                    <!-- Currency Options -->
+                                                    <t t-foreach="state.availableCurrencies" t-as="currency" t-key="currency.code">
+                                                        <div class="currency-option" 
+                                                            t-att-class="getCurrencyOptionClass(currency.code)"
+                                                            t-on-click="() => toggleCurrency(currency.code)">
+                                                            <span t-esc="currency.code"/>
+                                                            <i t-if="isSelectedCurrency(currency.code)" 
+                                                            class="fa fa-check currency-check"></i>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     
                                     <!-- Date Filter Controls -->
                                     <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -63,28 +86,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Clean Currency Selection Section - CSS Classes Only -->
-                                <div class="row mt-3 pt-3 border-top">
-                                    <div class="col-12">
-                                        <div class="currency-selection-container">
-                                            
-                                            <!-- Currency Selection Group -->
-                                            <div class="currency-group">
-                                                
-                                                <!-- Currency Options -->
-                                                <t t-foreach="state.availableCurrencies" t-as="currency" t-key="currency.code">
-                                                    <div class="currency-option" 
-                                                        t-att-class="getCurrencyOptionClass(currency.code)"
-                                                        t-on-click="() => toggleCurrency(currency.code)">
-                                                        <span t-esc="currency.code"/>
-                                                        <i t-if="isSelectedCurrency(currency.code)" 
-                                                        class="fa fa-check currency-check"></i>
-                                                    </div>
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                 
                                 <!-- Filter Status & Summary -->
                                 <div t-if="state.period !== 'all' or state.accounts.length > 0" class="row mt-2">
