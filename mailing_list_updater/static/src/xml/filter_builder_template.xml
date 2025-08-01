@@ -2,6 +2,7 @@
 <templates xml:space="preserve">
 
     <t t-name="mailing_list_updater.FilterBuilderTemplate" owl="1">
+        
         <div class="filter-builder">
             <div class="content-header">
                 <h2>
@@ -61,6 +62,16 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">Salesperson / Responsible</label>
                         
+                        <!-- Debug Info -->
+                        <div class="mb-2 p-2 bg-info text-white small rounded">
+                            <strong>DEBUG INFO:</strong><br/>
+                            Query: "<span t-esc="state.userSearch.query"/>"<br/>
+                            Loading: <span t-esc="state.userSearch.loading ? 'Yes' : 'No'"/><br/>
+                            Show Suggestions: <span t-esc="state.userSearch.showSuggestions ? 'Yes' : 'No'"/><br/>
+                            Results Count: <span t-esc="state.userSearch.results.length"/><br/>
+                            Selected Users: <span t-esc="state.quickFilters.responsible_users.length"/>
+                        </div>
+                        
                         <!-- User Search Input -->
                         <div class="position-relative">
                             <input type="text" class="form-control"
@@ -89,11 +100,18 @@
                                 </div>
                             </div>
                             
+                            <!-- Loading Indicator -->
+                            <div t-if="state.userSearch.loading" 
+                                 class="position-absolute w-100 bg-white border rounded shadow-sm mt-1 p-3 text-center"
+                                 style="z-index: 1000;">
+                                <i class="fa fa-spinner fa-spin me-2"></i>Searching users...
+                            </div>
+                            
                             <!-- No Results Message -->
                             <div t-if="state.userSearch.showSuggestions and state.userSearch.query and !state.userSearch.results.length and !state.userSearch.loading" 
                                  class="position-absolute w-100 bg-white border rounded shadow-sm mt-1 p-3 text-center text-muted"
                                  style="z-index: 1000;">
-                                <i class="fa fa-search me-2"></i>No users found
+                                <i class="fa fa-search me-2"></i>No users found for "<span t-esc="state.userSearch.query"/>"
                             </div>
                         </div>
                         
@@ -259,8 +277,11 @@
                     </button>
                     
                     <div class="filter-info">
-                        <span t-if="state.quickFilters.active_only" class="badge bg-info me-2">Active Only</span>
-                        <span t-if="state.quickFilters.date_range.enabled" class="badge bg-info me-2">Date Range</span>
+                        <span t-if="state.quickFilters.date_range.enabled and state.quickFilters.date_range.from and state.quickFilters.date_range.to" 
+                              class="badge bg-info me-2">Date Range</span>
+                        <span t-if="state.quickFilters.responsible_users.length" class="badge bg-success me-2">
+                            <t t-esc="state.quickFilters.responsible_users.length"/> User<t t-if="state.quickFilters.responsible_users.length > 1">s</t>
+                        </span>
                         <span t-if="state.advancedFilters.rules.length" class="badge bg-warning me-2">
                             <t t-esc="state.advancedFilters.rules.length"/> Advanced Rules
                         </span>
@@ -268,15 +289,32 @@
                 </div>
                 
                 <!-- Filter Preview -->
-                <div t-if="state.advancedFilters.rules.length || state.quickFilters.date_range.enabled" 
+                <div t-if="state.advancedFilters.rules.length || state.quickFilters.responsible_users.length || (state.quickFilters.date_range.from and state.quickFilters.date_range.to)" 
                      class="filter-preview mt-3 p-3 bg-light rounded">
                     <h6><i class="fa fa-eye"></i> Filter Preview</h6>
-                    <small class="text-muted">
-                        Filters will be applied when you proceed to the next step.
-                        <span t-if="state.advancedFilters.rules.length">
-                            Advanced rules combined with <strong t-esc="state.advancedFilters.logic"/> logic.
-                        </span>
-                    </small>
+                    <div class="filter-summary">
+                        <div t-if="state.quickFilters.date_range.from and state.quickFilters.date_range.to" class="mb-2">
+                            <small class="text-muted">
+                                <i class="fa fa-calendar me-1"></i>
+                                Creation Date: <strong t-esc="state.quickFilters.date_range.from"/> to <strong t-esc="state.quickFilters.date_range.to"/>
+                            </small>
+                        </div>
+                        <div t-if="state.quickFilters.responsible_users.length" class="mb-2">
+                            <small class="text-muted">
+                                <i class="fa fa-users me-1"></i>
+                                Responsible Users: 
+                                <span t-foreach="state.quickFilters.responsible_users" t-as="user" t-key="user.id">
+                                    <strong t-esc="user.name"/><t t-if="!user_last">, </t>
+                                </span>
+                            </small>
+                        </div>
+                        <div t-if="state.advancedFilters.rules.length" class="mb-2">
+                            <small class="text-muted">
+                                <i class="fa fa-cogs me-1"></i>
+                                Advanced rules combined with <strong t-esc="state.advancedFilters.logic"/> logic.
+                            </small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

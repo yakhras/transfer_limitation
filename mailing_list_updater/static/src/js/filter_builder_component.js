@@ -12,7 +12,13 @@ class FilterBuilderComponent extends Component {
     
     setup() {
         // Services (OWL 1.0 style)
+        console.log('=== COMPONENT SETUP ===');
+        console.log('Environment:', this.env);
+        console.log('Environment services:', this.env.services);
+        
         this.rpc = this.env.services.rpc;
+        console.log('RPC service initialized:', !!this.rpc);
+        console.log('RPC service type:', typeof this.rpc);
         
         // Component state
         this.state = useState({
@@ -64,8 +70,11 @@ class FilterBuilderComponent extends Component {
             }
         });
         
+        console.log('Component state initialized:', this.state);
+        
         // Props from parent
         this.selectedSources = this.props.selectedSources || [];
+        console.log('Selected sources:', this.selectedSources);
         
         // Debounce timer for user search
         this.searchTimeout = null;
@@ -146,7 +155,14 @@ class FilterBuilderComponent extends Component {
      * Load default users (e.g., current user or sales team)
      */
     async loadDefaultUsers() {
+        console.log('=== LOAD DEFAULT USERS ===');
+        
         try {
+            console.log('Attempting to load default users via RPC...');
+            
+            // First, let's test a simple RPC call
+            console.log('Testing basic RPC connectivity...');
+            
             const response = await this.rpc({
                 model: 'res.users',
                 method: 'search_read',
@@ -157,11 +173,28 @@ class FilterBuilderComponent extends Component {
                 kwargs: { limit: 3 }  // Load first 3 users as default
             });
             
+            console.log('Default users RPC response:', response);
+            console.log('Response type:', typeof response);
+            console.log('Is array:', Array.isArray(response));
+            
             if (response && response.length) {
+                console.log('Loading', response.length, 'default users');
+                console.log('Default users data:', response);
+                
                 this.state.quickFilters.responsible_users = response;
+                console.log('Updated responsible_users state:', this.state.quickFilters.responsible_users);
+            } else {
+                console.log('No default users found or empty response');
             }
         } catch (error) {
-            console.warn("Could not load default users:", error);
+            console.error("=== DEFAULT USERS LOAD ERROR ===");
+            console.error("Error object:", error);
+            console.error("Error message:", error.message);
+            console.error("Error stack:", error.stack);
+            
+            if (error.data) {
+                console.error("Error data:", error.data);
+            }
         }
     }
     
@@ -169,29 +202,42 @@ class FilterBuilderComponent extends Component {
      * Handle user search input
      */
     onUserSearch(query) {
+        console.log('=== USER SEARCH DEBUG ===');
+        console.log('Search query input:', query);
+        
         this.state.userSearch.query = query;
         
         // Clear previous timeout
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout);
+            console.log('Cleared previous search timeout');
         }
         
         // Debounce search
         this.searchTimeout = setTimeout(() => {
+            console.log('Executing debounced search for:', query);
             this.searchUsers(query);
         }, 300);
+        
+        console.log('Search timeout set for 300ms');
     }
     
     /**
      * Search users in res.users model
      */
     async searchUsers(query) {
+        console.log('=== SEARCH USERS METHOD ===');
+        console.log('Query:', query);
+        console.log('Query length:', query ? query.length : 0);
+        
         if (!query || query.length < 2) {
+            console.log('Query too short, clearing results');
             this.state.userSearch.results = [];
             return;
         }
         
         this.state.userSearch.loading = true;
+        console.log('Set loading to true');
         
         try {
             const domain = [
@@ -202,22 +248,58 @@ class FilterBuilderComponent extends Component {
                 ['email', 'ilike', query]
             ];
             
-            const response = await this.rpc({
+            console.log('Search domain:', JSON.stringify(domain, null, 2));
+            
+            const rpcParams = {
                 model: 'res.users',
                 method: 'search_read',
                 args: [domain, ['id', 'name', 'email']],
                 kwargs: { limit: 10 }
-            });
+            };
+            
+            console.log('RPC call parameters:', JSON.stringify(rpcParams, null, 2));
+            console.log('RPC service available:', !!this.rpc);
+            
+            const response = await this.rpc(rpcParams);
+            
+            console.log('RPC response received:', response);
+            console.log('Response type:', typeof response);
+            console.log('Response length:', response ? response.length : 'N/A');
+            
+            if (response && response.length > 0) {
+                console.log('Sample user from response:', response[0]);
+            }
             
             // Filter out already selected users
             const selectedIds = this.state.quickFilters.responsible_users.map(u => u.id);
-            this.state.userSearch.results = response.filter(user => !selectedIds.includes(user.id));
+            console.log('Currently selected user IDs:', selectedIds);
+            
+            const filteredResults = response.filter(user => !selectedIds.includes(user.id));
+            console.log('Filtered results (excluding selected):', filteredResults);
+            
+            this.state.userSearch.results = filteredResults;
+            console.log('Updated search results state:', this.state.userSearch.results);
             
         } catch (error) {
-            console.error("User search error:", error);
+            console.error("=== USER SEARCH ERROR ===");
+            console.error("Error object:", error);
+            console.error("Error message:", error.message);
+            console.error("Error stack:", error.stack);
+            
+            if (error.data) {
+                console.error("Error data:", error.data);
+            }
+            
             this.state.userSearch.results = [];
         } finally {
             this.state.userSearch.loading = false;
+            console.log('Set loading to false');
+            console.log('Final search state:', {
+                query: this.state.userSearch.query,
+                results: this.state.userSearch.results,
+                showSuggestions: this.state.userSearch.showSuggestions,
+                loading: this.state.userSearch.loading
+            });
         }
     }
     
@@ -225,36 +307,64 @@ class FilterBuilderComponent extends Component {
      * Show/hide user suggestions
      */
     showUserSuggestions(show) {
+        console.log('=== SHOW USER SUGGESTIONS ===');
+        console.log('Show suggestions:', show);
+        console.log('Current query:', this.state.userSearch.query);
+        
         this.state.userSearch.showSuggestions = show;
+        
         if (show && this.state.userSearch.query) {
+            console.log('Triggering search because suggestions shown and query exists');
             this.searchUsers(this.state.userSearch.query);
+        } else {
+            console.log('Not triggering search - show:', show, 'query:', this.state.userSearch.query);
         }
+        
+        console.log('Updated showSuggestions state:', this.state.userSearch.showSuggestions);
     }
     
     /**
      * Select a user from search results
      */
     selectUser(user) {
+        console.log('=== SELECT USER ===');
+        console.log('Selected user:', user);
+        console.log('Current responsible users:', this.state.quickFilters.responsible_users);
+        
         // Add user to selected list
         this.state.quickFilters.responsible_users.push(user);
+        console.log('Updated responsible users:', this.state.quickFilters.responsible_users);
         
         // Clear search
         this.state.userSearch.query = '';
         this.state.userSearch.results = [];
         this.state.userSearch.showSuggestions = false;
         
+        console.log('Cleared search state');
+        console.log('Final user search state:', this.state.userSearch);
+        
         // Notify change
         this.notifyFilterChange();
+        console.log('Notified filter change');
     }
     
     /**
      * Remove selected user
      */
     removeSelectedUser(userId) {
+        console.log('=== REMOVE USER ===');
+        console.log('Removing user ID:', userId);
+        console.log('Current users:', this.state.quickFilters.responsible_users);
+        
         const index = this.state.quickFilters.responsible_users.findIndex(u => u.id === userId);
+        console.log('Found user at index:', index);
+        
         if (index !== -1) {
             this.state.quickFilters.responsible_users.splice(index, 1);
+            console.log('User removed, updated list:', this.state.quickFilters.responsible_users);
             this.notifyFilterChange();
+        } else {
+            console.log('User not found in list');
         }
     }
     
