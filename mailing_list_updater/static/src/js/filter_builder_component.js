@@ -41,8 +41,8 @@ class FilterBuilderComponent extends Component {
                 active_only: true,
                 date_range: {
                     enabled: true,  // Always enabled now
-                    from: '2024-01-01',
-                    to: '2024-12-31',
+                    from: '2025-01-01',
+                    to: '2025-12-31',
                     field: 'create_date'
                 },
                 responsible_users: [],  // Array of user objects
@@ -763,7 +763,7 @@ class FilterBuilderComponent extends Component {
         // Reset quick filters
         this.state.quickFilters = {
             active_only: true,
-            date_range: { enabled: true, from: '2024-01-01', to: '2024-12-31', field: 'create_date' },
+            date_range: { enabled: true, from: '2025-01-01', to: '2025-12-31', field: 'create_date' },
             responsible_users: [],
             tags: [],
             category_ids: [],
