@@ -99,22 +99,6 @@
                         </div>
                     </div>
                     
-                    <!-- Categories Filter -->
-                    <div class="mt-3">
-                        <label class="form-label">Filter by categories</label>
-                        <div class="mlu-alert mlu-alert-info">
-                            <small><i class="fa fa-info-circle"></i> Category selection widget would be implemented here</small>
-                        </div>
-                    </div>
-                    
-                    <!-- Countries Filter -->
-                    <div class="mt-3">
-                        <label class="form-label">Filter by countries</label>
-                        <div class="mlu-alert mlu-alert-info">
-                            <small><i class="fa fa-info-circle"></i> Country selection widget would be implemented here</small>
-                        </div>
-                    </div>
-                </div>
                 
                 <!-- Advanced Filters Section -->
                 <div class="advanced-filters-section mb-4">
