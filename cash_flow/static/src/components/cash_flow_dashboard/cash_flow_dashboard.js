@@ -250,6 +250,12 @@ export class CashFlowDashboard extends Component {
             customDateFrom: '',
             customDateTo: '',
             showCustomDateInputs: false,
+            selectedCurrencies: ['TRY'],
+            availableCurrencies: [
+                {code: 'TRY', name: 'TL', symbol: '₺', flag: '🇹🇷'},
+                {code: 'USD', name: 'USD', symbol: '$', flag: '🇺🇸'},
+                {code: 'EUR', name: 'Eur', symbol: '€', flag: '🇪🇺'},
+            ],
             // Summary data
             totalBalance: 0,
             positiveAccounts: 0,
@@ -278,6 +284,45 @@ export class CashFlowDashboard extends Component {
 
         // Load initial data
         this.loadDashboardData()
+    }
+
+    toggleCurrency(currencyCode) {
+        const index = this.state.selectedCurrencies.indexOf(currencyCode);
+        if (index > -1) {
+            this.state.selectedCurrencies.splice(index, 1);
+        } else {
+            this.state.selectedCurrencies.push(currencyCode);
+        }
+        this.loadDashboardData(); // Reload with new filter
+    }
+
+    selectAllCurrencies() {
+        this.state.selectedCurrencies = this.state.availableCurrencies.map(c => c.code);
+        this.loadDashboardData();
+    }
+
+    clearAllCurrencies() {
+        this.state.selectedCurrencies = [];
+        this.loadDashboardData();
+    }
+
+    getCurrencyOptionClass(code) {
+        return this.state.selectedCurrencies.includes(code) ? 'selected' : '';
+    }
+
+    isSelectedCurrency(code) {
+        return this.state.selectedCurrencies.includes(code);
+    }
+
+    getSelectedCurrencyTags() {
+        return this.state.availableCurrencies.filter(c => 
+            this.state.selectedCurrencies.includes(c.code)
+        );
+    }
+
+    getCurrencyFlag(code) {
+        const currency = this.state.availableCurrencies.find(c => c.code === code);
+        return currency ? currency.flag : '';
     }
 
     // ADDED: Helper function to format dates without timezone issues
