@@ -62,16 +62,6 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">Salesperson / Responsible</label>
                         
-                        <!-- Debug Info -->
-                        <div class="mb-2 p-2 bg-info text-white small rounded">
-                            <strong>DEBUG INFO:</strong><br/>
-                            Query: "<span t-esc="state.userSearch.query"/>"<br/>
-                            Loading: <span t-esc="state.userSearch.loading ? 'Yes' : 'No'"/><br/>
-                            Show Suggestions: <span t-esc="state.userSearch.showSuggestions ? 'Yes' : 'No'"/><br/>
-                            Results Count: <span t-esc="state.userSearch.results.length"/><br/>
-                            Selected Users: <span t-esc="state.quickFilters.responsible_users.length"/>
-                        </div>
-                        
                         <!-- User Search Input -->
                         <div class="position-relative">
                             <input type="text" class="form-control"
@@ -303,28 +293,30 @@
                 </div>
                 
                 <!-- Action Buttons -->
-                <div class="filter-actions d-flex justify-content-between">
+                <div class="filter-actions d-flex justify-content-start mb-3">
                     <button class="btn btn-outline-secondary"
                             t-on-click="() => this.clearAllFilters()">
                         <i class="fa fa-times"></i> Clear All
                     </button>
-                    
-                    <div class="filter-info">
-                        <span t-if="state.quickFilters.date_range.enabled and state.quickFilters.date_range.from and state.quickFilters.date_range.to" 
-                              class="badge bg-info me-2">Date Range</span>
-                        <span t-if="state.quickFilters.responsible_users.length" class="badge bg-success me-2">
-                            <t t-esc="state.quickFilters.responsible_users.length"/> User<t t-if="state.quickFilters.responsible_users.length > 1">s</t>
-                        </span>
-                        <span t-if="state.advancedFilters.rules.length" class="badge bg-warning me-2">
-                            <t t-esc="state.advancedFilters.rules.length"/> Advanced Rules
-                        </span>
-                    </div>
                 </div>
                 
                 <!-- Filter Preview -->
                 <div t-if="state.advancedFilters.rules.length || state.quickFilters.responsible_users.length || (state.quickFilters.date_range.from and state.quickFilters.date_range.to)" 
-                     class="filter-preview mt-3 p-3 bg-light rounded">
-                    <h6><i class="fa fa-eye"></i> Filter Preview</h6>
+                     class="filter-preview p-3 bg-light rounded">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h6><i class="fa fa-eye"></i> Filter Preview</h6>
+                        <div class="filter-badges">
+                            <span t-if="state.quickFilters.date_range.from and state.quickFilters.date_range.to" 
+                                  class="badge bg-info me-2">Date Range</span>
+                            <span t-if="state.quickFilters.responsible_users.length" class="badge bg-success me-2">
+                                <t t-esc="state.quickFilters.responsible_users.length"/> User<t t-if="state.quickFilters.responsible_users.length > 1">s</t>
+                            </span>
+                            <span t-if="state.advancedFilters.rules.length" class="badge bg-warning me-2">
+                                <t t-esc="state.advancedFilters.rules.length"/> Advanced Rules
+                            </span>
+                        </div>
+                    </div>
+                    
                     <div class="filter-summary">
                         <div t-if="state.quickFilters.date_range.from and state.quickFilters.date_range.to" class="mb-2">
                             <small class="text-muted">
@@ -344,8 +336,13 @@
                         <div t-if="state.advancedFilters.rules.length" class="mb-2">
                             <small class="text-muted">
                                 <i class="fa fa-cogs me-1"></i>
-                                Advanced rules combined with <strong t-esc="state.advancedFilters.logic"/> logic.
+                                Advanced rules combined with <strong t-esc="state.advancedFilters.logic"/> logic:
                             </small>
+                            <ul class="mt-1 mb-0 ps-3">
+                                <li t-foreach="state.advancedFilters.rules" t-as="rule" t-key="rule.id">
+                                    <small class="text-muted" t-esc="formatRuleDisplay(rule)"></small>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
