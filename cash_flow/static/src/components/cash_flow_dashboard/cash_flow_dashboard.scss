@@ -240,26 +240,26 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
-    .currency-option.selected {
-        background: rgba(255,255,255,0.9) !important;
-        color: #667eea !important;
-        border-color: rgba(255,255,255,0.9) !important;
-        font-weight: 600;
-        box-shadow: 0 0 20px rgba(255,255,255,0.3);
-    }
-    .currency-option .flag {
-        font-size: 1.1rem;
-    }
-    .account-currency-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.25rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-    .account-currency-badge.try { background-color: #e74c3c; color: white; }
-    .account-currency-badge.usd { background-color: #3498db; color: white; }
-    .account-currency-badge.eur { background-color: #f39c12; color: white; }
-    .account-currency-badge.gbp { background-color: #9b59b6; color: white; }
+.currency-option.selected {
+    background: rgba(255,255,255,0.9) !important;
+    color: #667eea !important;
+    border-color: rgba(255,255,255,0.9) !important;
+    font-weight: 600;
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+.currency-option .flag {
+    font-size: 1.1rem;
+}
+.account-currency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.account-currency-badge.try { background-color: #e74c3c; color: white; }
+.account-currency-badge.usd { background-color: #3498db; color: white; }
+.account-currency-badge.eur { background-color: #f39c12; color: white; }
+.account-currency-badge.gbp { background-color: #9b59b6; color: white; }
