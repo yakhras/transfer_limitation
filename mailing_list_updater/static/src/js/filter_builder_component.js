@@ -20,14 +20,23 @@ class FilterBuilderComponent extends Component {
             quickFilters: {
                 active_only: true,
                 date_range: {
-                    enabled: false,
-                    from: '',
-                    to: '',
+                    enabled: true,  // Always enabled now
+                    from: '2024-01-01',
+                    to: '2024-12-31',
                     field: 'create_date'
                 },
+                responsible_users: [],  // Array of user objects
                 tags: [],
                 category_ids: [],
                 country_ids: []
+            },
+            
+            // User search functionality
+            userSearch: {
+                query: '',
+                results: [],
+                showSuggestions: false,
+                loading: false
             },
             
             // Advanced filters
@@ -57,6 +66,9 @@ class FilterBuilderComponent extends Component {
         
         // Props from parent
         this.selectedSources = this.props.selectedSources || [];
+        
+        // Debounce timer for user search
+        this.searchTimeout = null;
     }
     
     /**
@@ -87,6 +99,9 @@ class FilterBuilderComponent extends Component {
             // Load filter templates
             await this.loadFilterTemplates();
             
+            // Load initial users (optional - could load default salespeople)
+            await this.loadDefaultUsers();
+            
         } catch (error) {
             this.trigger('show-error', { 
                 message: "Failed to load filter options" 
@@ -99,11 +114,148 @@ class FilterBuilderComponent extends Component {
     
     /**
      * OWL 1.0 Lifecycle - Mounted
-     * Setup date picker components
+     * Setup event listeners for click outside
      */
     mounted() {
-        // Initialize date pickers for date range filters
-        // This would typically integrate with a date picker library
+        // Close user suggestions when clicking outside
+        document.addEventListener('click', this.handleClickOutside.bind(this));
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Will Unmount
+     * Cleanup event listeners
+     */
+    willUnmount() {
+        document.removeEventListener('click', this.handleClickOutside.bind(this));
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+    }
+    
+    /**
+     * Handle click outside to close user suggestions
+     */
+    handleClickOutside(event) {
+        const userSearchContainer = event.target.closest('.position-relative');
+        if (!userSearchContainer) {
+            this.state.userSearch.showSuggestions = false;
+        }
+    }
+    
+    /**
+     * Load default users (e.g., current user or sales team)
+     */
+    async loadDefaultUsers() {
+        try {
+            const response = await this.rpc({
+                model: 'res.users',
+                method: 'search_read',
+                args: [
+                    [['active', '=', true], ['share', '=', false]], // Active internal users
+                    ['id', 'name', 'email']
+                ],
+                kwargs: { limit: 3 }  // Load first 3 users as default
+            });
+            
+            if (response && response.length) {
+                this.state.quickFilters.responsible_users = response;
+            }
+        } catch (error) {
+            console.warn("Could not load default users:", error);
+        }
+    }
+    
+    /**
+     * Handle user search input
+     */
+    onUserSearch(query) {
+        this.state.userSearch.query = query;
+        
+        // Clear previous timeout
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+        
+        // Debounce search
+        this.searchTimeout = setTimeout(() => {
+            this.searchUsers(query);
+        }, 300);
+    }
+    
+    /**
+     * Search users in res.users model
+     */
+    async searchUsers(query) {
+        if (!query || query.length < 2) {
+            this.state.userSearch.results = [];
+            return;
+        }
+        
+        this.state.userSearch.loading = true;
+        
+        try {
+            const domain = [
+                ['active', '=', true],
+                ['share', '=', false], // Internal users only
+                '|',
+                ['name', 'ilike', query],
+                ['email', 'ilike', query]
+            ];
+            
+            const response = await this.rpc({
+                model: 'res.users',
+                method: 'search_read',
+                args: [domain, ['id', 'name', 'email']],
+                kwargs: { limit: 10 }
+            });
+            
+            // Filter out already selected users
+            const selectedIds = this.state.quickFilters.responsible_users.map(u => u.id);
+            this.state.userSearch.results = response.filter(user => !selectedIds.includes(user.id));
+            
+        } catch (error) {
+            console.error("User search error:", error);
+            this.state.userSearch.results = [];
+        } finally {
+            this.state.userSearch.loading = false;
+        }
+    }
+    
+    /**
+     * Show/hide user suggestions
+     */
+    showUserSuggestions(show) {
+        this.state.userSearch.showSuggestions = show;
+        if (show && this.state.userSearch.query) {
+            this.searchUsers(this.state.userSearch.query);
+        }
+    }
+    
+    /**
+     * Select a user from search results
+     */
+    selectUser(user) {
+        // Add user to selected list
+        this.state.quickFilters.responsible_users.push(user);
+        
+        // Clear search
+        this.state.userSearch.query = '';
+        this.state.userSearch.results = [];
+        this.state.userSearch.showSuggestions = false;
+        
+        // Notify change
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * Remove selected user
+     */
+    removeSelectedUser(userId) {
+        const index = this.state.quickFilters.responsible_users.findIndex(u => u.id === userId);
+        if (index !== -1) {
+            this.state.quickFilters.responsible_users.splice(index, 1);
+            this.notifyFilterChange();
+        }
     }
     
     /**
@@ -347,7 +499,8 @@ class FilterBuilderComponent extends Component {
         // Reset quick filters
         this.state.quickFilters = {
             active_only: true,
-            date_range: { enabled: false, from: '', to: '', field: 'create_date' },
+            date_range: { enabled: true, from: '2024-01-01', to: '2024-12-31', field: 'create_date' },
+            responsible_users: [],
             tags: [],
             category_ids: [],
             country_ids: []
@@ -360,6 +513,14 @@ class FilterBuilderComponent extends Component {
             rules: []
         };
         
+        // Reset user search
+        this.state.userSearch = {
+            query: '',
+            results: [],
+            showSuggestions: false,
+            loading: false
+        };
+        
         this.state.showAdvanced = false;
         this.notifyFilterChange();
     }
@@ -369,7 +530,10 @@ class FilterBuilderComponent extends Component {
      */
     getCurrentFilters() {
         return {
-            quick_filters: this.state.quickFilters,
+            quick_filters: {
+                ...this.state.quickFilters,
+                responsible_users: this.state.quickFilters.responsible_users.map(u => u.id) // Send only IDs
+            },
             advanced_filters: this.state.advancedFilters
         };
     }
