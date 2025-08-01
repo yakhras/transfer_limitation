@@ -658,7 +658,7 @@ class CashFlowDashboard(models.Model):
 
     def _get_chart_data_for_period(self, account_ids, date_from, date_to, company_id):
         """Generate chart data for the specified period - HANDLES MULTIPLE ACCOUNTS"""
-        if not account_ids or not date_from or not date_to:
+        if not account_ids :
             return self._get_sample_chart_data()
         
         if not date_from or not date_to:
