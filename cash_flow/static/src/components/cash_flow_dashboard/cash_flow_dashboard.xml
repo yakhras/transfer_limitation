@@ -17,15 +17,11 @@
                                         </div>
                                     </div>
 
-                                    <!-- Clean Currency Selection Section - CSS Classes Only -->
-                                    <div class="row mt-3 pt-3 ">
+                                    <!-- Clean Currency Selection Section -->
+                                    <!-- <div class="row mt-3 pt-3 ">
                                         <div class="col-12">
                                             <div class="currency-selection-container">
-                                                
-                                                <!-- Currency Selection Group -->
                                                 <div class="currency-group">
-                                                    
-                                                    <!-- Currency Options -->
                                                     <t t-foreach="state.availableCurrencies" t-as="currency" t-key="currency.code">
                                                         <div class="currency-option" 
                                                             t-att-class="getCurrencyOptionClass(currency.code)"
@@ -36,6 +32,24 @@
                                                         </div>
                                                     </t>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <div class="currency-selection-container">
+                                            <!-- Currency Selection Group -->
+                                            <div class="currency-group">
+                                                <!-- Currency Options -->
+                                                <t t-foreach="state.availableCurrencies" t-as="currency" t-key="currency.code">
+                                                    <div class="currency-option" 
+                                                        t-att-class="getCurrencyOptionClass(currency.code)"
+                                                        t-on-click="() => toggleCurrency(currency.code)">
+                                                        <span t-esc="currency.code"/>
+                                                        <i t-if="isSelectedCurrency(currency.code)" 
+                                                        class="fa fa-check currency-check"></i>
+                                                    </div>
+                                                </t>
                                             </div>
                                         </div>
                                     </div>
