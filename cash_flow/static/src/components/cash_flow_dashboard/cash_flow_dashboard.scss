@@ -236,12 +236,60 @@
 
 // Currency Selection Styles - SCSS Version
 
-// HIGH CONTRAST VERSION - Always Visible
+// Currency Selection Styles - SCSS Version
+
+// Variables - Fixed for better visibility
+$currency-bg-primary: rgba(255, 255, 255, 0.15);  // More visible
+$currency-bg-secondary: rgba(255, 255, 255, 0.25); // More visible on hover
+$currency-bg-selected: rgba(255, 255, 255, 0.9);
+$currency-border: rgba(255, 255, 255, 0.5);        // Much more visible border
+$currency-border-hover: rgba(255, 255, 255, 0.7);  // Even more visible on hover
+$currency-text: rgba(255, 255, 255, 0.95);         // Almost fully opaque text
+$currency-text-selected: #667eea;
+$currency-shadow: rgba(0, 0, 0, 0.2);
+$currency-check-color: #4CAF50;
+
+// Currency badge colors
+$badge-colors: (
+  try: #e74c3c,
+  usd: #3498db,
+  eur: #f39c12,
+  gbp: #9b59b6
+);
+
+// Main container
+.currency-selection-container {
+  background: $currency-bg-primary;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid $currency-border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+// Currency group
+.currency-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  .currency-label {
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
+// Currency options - Enhanced visibility
 .currency-option {
-  // Solid background for maximum visibility
-  background: rgba(255, 255, 255, 0.8) !important;
-  border: 2px solid rgba(255, 255, 255, 0.9) !important;
-  color: #333 !important; // Dark text on light background
+  background: $currency-bg-primary;
+  border: 2px solid $currency-border;  // Thicker border for better visibility
+  color: $currency-text;
   padding: 0.25rem 0.75rem;
   border-radius: 15px;
   cursor: pointer;
@@ -252,32 +300,122 @@
   font-size: 0.8rem;
   user-select: none;
   white-space: nowrap;
-  font-weight: 500;
   
-  // Always visible shadow
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+  // Ensure always visible with box-shadow
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  
+  // Add a subtle glow to make them more visible
+  &:not(.selected) {
+    box-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
 
   &:hover {
-    background: white !important;
-    border-color: white !important;
-    color: #667eea !important;
+    background: $currency-bg-secondary;
+    border-color: $currency-border-hover;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-    font-weight: 600;
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    color: white; // Ensure text is white on hover
   }
 
   &.selected {
-    background: #667eea !important;
-    color: white !important;
-    border-color: #667eea !important;
+    background: $currency-bg-selected;
+    color: $currency-text-selected;
+    border-color: $currency-bg-selected;
     font-weight: 600;
     box-shadow: 
-      0 0 15px rgba(102, 126, 234, 0.5),
-      0 2px 8px rgba(0, 0, 0, 0.3) !important;
+      0 0 15px rgba(255, 255, 255, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
   .currency-check {
     font-size: 0.7rem;
-    color: #4CAF50;
+    color: $currency-check-color;
+  }
+}
+
+// Currency controls
+.currency-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  .selection-count {
+    color: white;
+    background: $currency-bg-secondary;
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
+    border: 1px solid $currency-border;
+    font-size: 0.8rem;
+  }
+  
+  .currency-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+// Currency info
+.currency-info {
+  color: white;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .currency-selection-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .currency-group {
+    width: 100%;
+  }
+  
+  .currency-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .d-none.d-lg-block {
+    display: block !important;
+  }
+}
+
+// Account currency badges
+.account-currency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+
+  // Generate badge colors using SCSS map
+  @each $currency, $color in $badge-colors {
+    &.#{$currency} {
+      background-color: $color;
+    }
+  }
+}
+
+// Additional mixins (if you want to use them)
+@mixin currency-transition($property: all, $duration: 0.3s) {
+  transition: $property $duration ease;
+}
+
+@mixin currency-shadow($level: 1) {
+  @if $level == 1 {
+    box-shadow: 0 2px 8px $currency-shadow;
+  } @else if $level == 2 {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   }
 }
