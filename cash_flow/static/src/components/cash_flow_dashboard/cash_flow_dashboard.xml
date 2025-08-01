@@ -18,7 +18,7 @@
                                     </div>
 
                                     <!-- Clean Currency Selection Section -->
-                                    <div class="d-flex align-items-center mb-3">
+                                    <div class="d-flex justify-content-center mb-3">
                                         <div class="currency-selection-container">
                                             <!-- Currency Selection Group -->
                                             <div class="currency-group">
