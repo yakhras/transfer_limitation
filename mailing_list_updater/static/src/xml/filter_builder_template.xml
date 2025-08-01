@@ -45,14 +45,14 @@
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.from"
                                        t-on-change="(ev) => this.onDateRangeChange('from', ev.target.value)"
-                                       value="2024-01-01"/>
+                                       value="2025-01-01"/>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">To:</label>
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.to"
                                        t-on-change="(ev) => this.onDateRangeChange('to', ev.target.value)"
-                                       value="2024-12-31"/>
+                                       value="2025-12-31"/>
                             </div>
                         </div>
                     </div>
