@@ -236,26 +236,48 @@
 
 // Currency Selection Styles - SCSS Version
 
+// HIGH CONTRAST VERSION - Always Visible
 .currency-option {
-    background: rgba(255, 255, 255, 0.8) !important;
-    border: 2px solid rgba(255, 255, 255, 0.9) !important;
-    color: #333 !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
-    font-weight: 500;
-}
+  // Solid background for maximum visibility
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 2px solid rgba(255, 255, 255, 0.9) !important;
+  color: #333 !important; // Dark text on light background
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.3s ease;
+  font-size: 0.8rem;
+  user-select: none;
+  white-space: nowrap;
+  font-weight: 500;
+  
+  // Always visible shadow
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
 
-.currency-option:hover {
+  &:hover {
     background: white !important;
+    border-color: white !important;
     color: #667eea !important;
-    font-weight: 600;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-}
+    font-weight: 600;
+  }
 
-.currency-option.selected {
+  &.selected {
     background: #667eea !important;
     color: white !important;
     border-color: #667eea !important;
     font-weight: 600;
-    box-shadow: 0 0 15px rgba(102, 126, 234, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 
+      0 0 15px rgba(102, 126, 234, 0.5),
+      0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .currency-check {
+    font-size: 0.7rem;
+    color: #4CAF50;
+  }
 }
