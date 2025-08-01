@@ -34,72 +34,42 @@
                 
                 <!-- Quick Filters Section -->
                 <div class="quick-filters-section mb-4">
-                    <h4><i class="fa fa-bolt"></i> Quick Filters</h4>
+                    <h4><i class="fa fa-bolt text-primary"></i> Quick Filters (Predefined)</h4>
                     
-                    <div class="row">
-                        <!-- Active Only Filter -->
-                        <div class="col-md-6 mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" 
-                                       t-att-checked="state.quickFilters.active_only"
-                                       t-on-change="(ev) => this.onQuickFilterChange('active_only', ev.target.checked)"
-                                       id="activeOnlyFilter"/>
-                                <label class="form-check-label" for="activeOnlyFilter">
-                                    Show active contacts only
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <!-- Date Range Filter -->
-                        <div class="col-md-6 mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" 
-                                       t-att-checked="state.quickFilters.date_range.enabled"
-                                       t-on-change="() => this.toggleDateRange()"
-                                       id="dateRangeFilter"/>
-                                <label class="form-check-label" for="dateRangeFilter">
-                                    Filter by date range
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Date Range Controls -->
-                    <div t-if="state.quickFilters.date_range.enabled" class="date-range-controls mt-2">
+                    <!-- Creation Date Range -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Creation Date Range</label>
                         <div class="row">
-                            <div class="col-md-4">
-                                <label class="form-label">Date field</label>
-                                <select class="form-select" 
-                                        t-model="state.quickFilters.date_range.field"
-                                        t-on-change="(ev) => this.onDateRangeChange('field', ev.target.value)">
-                                    <option value="create_date">Created Date</option>
-                                    <option value="write_date">Modified Date</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">From</label>
+                            <div class="col-md-6">
+                                <label class="form-label">From:</label>
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.from"
-                                       t-on-change="(ev) => this.onDateRangeChange('from', ev.target.value)"/>
+                                       t-on-change="(ev) => this.onDateRangeChange('from', ev.target.value)"
+                                       value="2024-01-01"/>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">To</label>
+                            <div class="col-md-6">
+                                <label class="form-label">To:</label>
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.to"
-                                       t-on-change="(ev) => this.onDateRangeChange('to', ev.target.value)"/>
+                                       t-on-change="(ev) => this.onDateRangeChange('to', ev.target.value)"
+                                       value="2024-12-31"/>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Tags Filter -->
-                    <div class="mt-3">
-                        <label class="form-label">Filter by tags</label>
-                        <div class="mlu-alert mlu-alert-info">
-                            <small><i class="fa fa-info-circle"></i> Tag selection widget would be implemented here</small>
-                        </div>
+                    <!-- Salesperson / Responsible -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Salesperson / Responsible</label>
+                        <select multiple="multiple" class="form-select" size="3"
+                                t-on-change="(ev) => this.onQuickFilterChange('responsible_users', Array.from(ev.target.selectedOptions).map(o => o.value))">
+                            <option value="john_smith" selected="selected">John Smith</option>
+                            <option value="sarah_johnson" selected="selected">Sarah Johnson</option>
+                            <option value="mike_davis" selected="selected">Mike Davis</option>
+                        </select>
+                        <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple users</small>
                     </div>
-                    
                 </div>
+                
                 <!-- Advanced Filters Section -->
                 <div class="advanced-filters-section mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
