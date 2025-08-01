@@ -62,16 +62,6 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">Salesperson / Responsible</label>
                         
-                        <!-- Debug Info -->
-                        <div class="mb-2 p-2 bg-info text-white small rounded">
-                            <strong>DEBUG INFO:</strong><br/>
-                            Query: "<span t-esc="state.userSearch.query"/>"<br/>
-                            Loading: <span t-esc="state.userSearch.loading ? 'Yes' : 'No'"/><br/>
-                            Show Suggestions: <span t-esc="state.userSearch.showSuggestions ? 'Yes' : 'No'"/><br/>
-                            Results Count: <span t-esc="state.userSearch.results.length"/><br/>
-                            Selected Users: <span t-esc="state.quickFilters.responsible_users.length"/>
-                        </div>
-                        
                         <!-- User Search Input -->
                         <div class="position-relative">
                             <input type="text" class="form-control"
