@@ -661,6 +661,9 @@ class CashFlowDashboard(models.Model):
         if not account_ids or not date_from or not date_to:
             return self._get_sample_chart_data()
         
+        if not date_from or not date_to:
+            return self._get_all_time_chart_data(account_ids, company_id)
+        
         try:
             start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
             end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
@@ -700,6 +703,155 @@ class CashFlowDashboard(models.Model):
         except Exception as e:
             _logger.error(f"Error generating chart data: {str(e)}")
             return self._get_sample_chart_data()
+    
+    def _get_all_time_chart_data(self, account_ids, company_id):
+        """Generate chart data for All Time view - dynamic intervals based on data span"""
+        
+        # Find the actual date range of transactions
+        domain = [
+            ('account_id', 'in', account_ids),
+            ('company_id', '=', company_id),
+            ('move_id.state', '=', 'posted')
+        ]
+        
+        # Get earliest and latest transaction dates
+        earliest_line = self.env['account.move.line'].search(domain, order='date asc', limit=1)
+        latest_line = self.env['account.move.line'].search(domain, order='date desc', limit=1)
+        
+        if not earliest_line or not latest_line:
+            return self._get_sample_chart_data()  # No transactions found
+        
+        start_date = earliest_line.date
+        end_date = latest_line.date
+        today = datetime.now().date()
+        
+        # Use today as end_date if it's more recent (for current balance)
+        if today > end_date:
+            end_date = today
+        
+        # Calculate total span to determine appropriate intervals
+        total_days = (end_date - start_date).days
+        
+        # Determine interval based on data span
+        if total_days <= 30:        # 1 month or less - Weekly
+            return self._get_weekly_chart_data(account_ids, company_id, start_date, end_date)
+        elif total_days <= 365:     # 1 year or less - Monthly  
+            return self._get_monthly_chart_data(account_ids, company_id, start_date, end_date)
+        elif total_days <= 1095:    # 3 years or less - Quarterly
+            return self._get_quarterly_chart_data(account_ids, company_id, start_date, end_date)
+        else:                       # More than 3 years - Yearly
+            return self._get_yearly_chart_data(account_ids, company_id, start_date, end_date)
+
+    def _get_weekly_chart_data(self, account_ids, company_id, start_date, end_date):
+        """Generate weekly chart data"""
+        chart_data = []
+        current_date = start_date
+        
+        while current_date <= end_date:
+            # Calculate balance up to this date
+            balance = self._calculate_balance_with_filter(
+                account_ids, None, current_date.strftime('%Y-%m-%d'), company_id
+            )
+            
+            chart_data.append({
+                'label': current_date.strftime('%b %d'),  # Mar 15
+                'value': float(balance)
+            })
+            
+            current_date += timedelta(days=7)  # Next week
+        
+        return chart_data
+
+    def _get_monthly_chart_data(self, account_ids, company_id, start_date, end_date):
+        """Generate monthly chart data"""
+        chart_data = []
+        current_date = start_date.replace(day=1)  # Start from first day of month
+        
+        while current_date <= end_date:
+            # Get last day of current month
+            if current_date.month == 12:
+                next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
+            else:
+                next_month = current_date.replace(month=current_date.month + 1, day=1)
+            
+            month_end = next_month - timedelta(days=1)
+            period_end = min(month_end, end_date)
+            
+            # Calculate balance up to end of this month (or end_date)
+            balance = self._calculate_balance_with_filter(
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
+            )
+            
+            chart_data.append({
+                'label': current_date.strftime('%b %Y'),  # Mar 2024
+                'value': float(balance)
+            })
+            
+            current_date = next_month  # Move to next month
+        
+        return chart_data
+
+    def _get_quarterly_chart_data(self, account_ids, company_id, start_date, end_date):
+        """Generate quarterly chart data"""
+        chart_data = []
+        
+        # Start from the beginning of the quarter containing start_date
+        start_quarter = ((start_date.month - 1) // 3) + 1
+        current_date = start_date.replace(month=(start_quarter - 1) * 3 + 1, day=1)
+        
+        while current_date <= end_date:
+            # Calculate quarter end
+            quarter = ((current_date.month - 1) // 3) + 1
+            if quarter == 4:
+                quarter_end = current_date.replace(month=12, day=31)
+            else:
+                next_quarter_start = current_date.replace(month=quarter * 3 + 1, day=1)
+                quarter_end = next_quarter_start - timedelta(days=1)
+            
+            period_end = min(quarter_end, end_date)
+            
+            # Calculate balance up to end of this quarter
+            balance = self._calculate_balance_with_filter(
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
+            )
+            
+            chart_data.append({
+                'label': f'Q{quarter} {current_date.year}',  # Q1 2024
+                'value': float(balance)
+            })
+            
+            # Move to next quarter
+            if quarter == 4:
+                current_date = current_date.replace(year=current_date.year + 1, month=1, day=1)
+            else:
+                current_date = current_date.replace(month=quarter * 3 + 1, day=1)
+        
+        return chart_data
+
+    def _get_yearly_chart_data(self, account_ids, company_id, start_date, end_date):
+        """Generate yearly chart data"""
+        chart_data = []
+        current_year = start_date.year
+        end_year = end_date.year
+        
+        while current_year <= end_year:
+            # Calculate year end
+            year_end = datetime(current_year, 12, 31).date()
+            period_end = min(year_end, end_date)
+            
+            # Calculate balance up to end of this year
+            balance = self._calculate_balance_with_filter(
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
+            )
+            
+            chart_data.append({
+                'label': str(current_year),  # 2024
+                'value': float(balance)
+            })
+            
+            current_year += 1  # Move to next year
+        
+        return chart_data
 
     def _get_sample_chart_data(self):
         """Generate sample chart data as fallback"""
