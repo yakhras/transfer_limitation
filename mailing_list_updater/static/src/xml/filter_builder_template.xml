@@ -46,14 +46,14 @@
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.from"
                                        t-on-change="(ev) => this.onDateRangeChange('from', ev.target.value)"
-                                       value="2025-01-01"/>
+                                       value="2024-01-01"/>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">To:</label>
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.to"
                                        t-on-change="(ev) => this.onDateRangeChange('to', ev.target.value)"
-                                       value="2025-12-31"/>
+                                       value="2024-12-31"/>
                             </div>
                         </div>
                     </div>
@@ -61,6 +61,16 @@
                     <!-- Salesperson / Responsible -->
                     <div class="mb-3">
                         <label class="form-label fw-bold">Salesperson / Responsible</label>
+                        
+                        <!-- Debug Info -->
+                        <div class="mb-2 p-2 bg-info text-white small rounded">
+                            <strong>DEBUG INFO:</strong><br/>
+                            Query: "<span t-esc="state.userSearch.query"/>"<br/>
+                            Loading: <span t-esc="state.userSearch.loading ? 'Yes' : 'No'"/><br/>
+                            Show Suggestions: <span t-esc="state.userSearch.showSuggestions ? 'Yes' : 'No'"/><br/>
+                            Results Count: <span t-esc="state.userSearch.results.length"/><br/>
+                            Selected Users: <span t-esc="state.quickFilters.responsible_users.length"/>
+                        </div>
                         
                         <!-- User Search Input -->
                         <div class="position-relative">
@@ -126,13 +136,24 @@
                 <!-- Advanced Filters Section -->
                 <div class="advanced-filters-section mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4><i class="fa fa-cogs"></i> Advanced Filters</h4>
+                        <div>
+                            <h4><i class="fa fa-cogs"></i> Advanced Filters</h4>
+                            <small class="text-muted">Filter contacts using res.partner model fields</small>
+                        </div>
                         <button class="btn btn-outline-secondary"
                                 t-on-click="() => this.toggleAdvancedFilters()">
                             <i t-att-class="state.showAdvanced ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                             <t t-if="state.showAdvanced">Hide</t>
                             <t t-if="!state.showAdvanced">Show</t> Advanced
                         </button>
+                    </div>
+                    
+                    <!-- Field Loading Info -->
+                    <div t-if="!state.isLoading and state.availableFields.length" class="mb-2">
+                        <small class="text-success">
+                            <i class="fa fa-check-circle me-1"></i>
+                            Loaded <strong t-esc="state.availableFields.length"/> res.partner fields
+                        </small>
                     </div>
                     
                     <!-- Advanced Filters Content -->
@@ -168,6 +189,7 @@
                                     <span class="rule-display">
                                         <i class="fa fa-filter me-2"></i>
                                         <t t-esc="formatRuleDisplay(rule)"/>
+                                        <small class="text-muted ms-2">(<t t-esc="rule.field_type"/>)</small>
                                     </span>
                                     <button class="btn btn-outline-danger btn-sm"
                                             t-on-click="() => this.removeFilterRule(rule.id)">
@@ -179,7 +201,7 @@
                         
                         <!-- Add New Rule Form -->
                         <div class="new-rule-form border p-3 rounded">
-                            <h5>Add New Rule</h5>
+                            <h5>Add New Rule <small class="text-muted">(res.partner fields)</small></h5>
                             <div class="row">
                                 <!-- Field Selection -->
                                 <div class="col-md-3 mb-3">
@@ -189,10 +211,14 @@
                                             t-on-change="(ev) => this.onRuleFieldChange(ev.target.value)">
                                         <option value="">Select field...</option>
                                         <option t-foreach="state.availableFields" t-as="field" t-key="field.name"
-                                                t-att-value="field.name">
-                                            <t t-esc="field.string"/>
+                                                t-att-value="field.name"
+                                                t-att-title="field.name + ' (' + field.type + ')'">
+                                            <t t-esc="field.string"/> (<t t-esc="field.type"/>)
                                         </option>
                                     </select>
+                                    <small t-if="state.newRule.field" class="form-text text-muted">
+                                        Field: <code t-esc="state.newRule.field"/> | Type: <strong t-esc="state.newRule.field_type"/>
+                                    </small>
                                 </div>
                                 
                                 <!-- Operator Selection -->
@@ -224,11 +250,17 @@
                                     <input t-if="['integer', 'float'].includes(state.newRule.field_type)" 
                                            type="number" class="form-control"
                                            t-model="state.newRule.value"
+                                           t-att-step="state.newRule.field_type === 'float' ? '0.01' : '1'"
                                            placeholder="Enter number..."/>
                                     
                                     <!-- Date Input -->
-                                    <input t-if="['date', 'datetime'].includes(state.newRule.field_type)" 
+                                    <input t-if="state.newRule.field_type === 'date'" 
                                            type="date" class="form-control"
+                                           t-model="state.newRule.value"/>
+                                    
+                                    <!-- DateTime Input -->
+                                    <input t-if="state.newRule.field_type === 'datetime'" 
+                                           type="datetime-local" class="form-control"
                                            t-model="state.newRule.value"/>
                                     
                                     <!-- Boolean Input -->
@@ -239,11 +271,22 @@
                                         <option value="false">False</option>
                                     </select>
                                     
+                                    <!-- Many2one Input (ID or name) -->
+                                    <input t-if="['many2one', 'many2many', 'one2many'].includes(state.newRule.field_type)" 
+                                           type="text" class="form-control"
+                                           t-model="state.newRule.value"
+                                           placeholder="Enter ID or name..."/>
+                                    
                                     <!-- Default Input -->
-                                    <input t-if="!['char', 'text', 'integer', 'float', 'date', 'datetime', 'boolean'].includes(state.newRule.field_type)" 
+                                    <input t-if="!['char', 'text', 'integer', 'float', 'date', 'datetime', 'boolean', 'many2one', 'many2many', 'one2many'].includes(state.newRule.field_type)" 
                                            type="text" class="form-control"
                                            t-model="state.newRule.value"
                                            placeholder="Enter value..."/>
+                                    
+                                    <small t-if="['many2one', 'many2many'].includes(state.newRule.field_type)" 
+                                           class="form-text text-muted">
+                                        Enter record ID or name for relation fields
+                                    </small>
                                 </div>
                                 
                                 <!-- Add Button -->

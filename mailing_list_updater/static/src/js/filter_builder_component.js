@@ -41,8 +41,8 @@ class FilterBuilderComponent extends Component {
                 active_only: true,
                 date_range: {
                     enabled: true,  // Always enabled now
-                    from: '2025-01-01',
-                    to: '2025-12-31',
+                    from: '2024-01-01',
+                    to: '2024-12-31',
                     field: 'create_date'
                 },
                 responsible_users: [],  // Array of user objects
@@ -99,25 +99,11 @@ class FilterBuilderComponent extends Component {
      * Load available filter options for selected sources
      */
     async willStart() {
-        if (!this.selectedSources.length) return;
-        
         this.state.isLoading = true;
         
         try {
-            // Load filter options for each selected source model
-            for (const source of this.selectedSources) {
-                const response = await this.rpc({
-                    route: `/mailing/update/filters/${source.model_name}`,
-                    params: { include_sample_data: true }
-                });
-                
-                if (response.success) {
-                    this.state.filterOptions[source.model_name] = response.data;
-                }
-            }
-            
-            // Merge available fields from all sources
-            this.mergeAvailableFields();
+            // Load res.partner fields for advanced filters
+            await this.loadPartnerFields();
             
             // Load filter templates
             await this.loadFilterTemplates();
@@ -133,6 +119,201 @@ class FilterBuilderComponent extends Component {
         } finally {
             this.state.isLoading = false;
         }
+    }
+    
+    /**
+     * Load res.partner model fields for advanced filtering
+     */
+    async loadPartnerFields() {
+        console.log('=== LOAD PARTNER FIELDS ===');
+        
+        try {
+            let response = null;
+            
+            // Method 1: Try ORM service to get field definitions
+            if (this.orm) {
+                console.log('Trying ORM service for partner fields...');
+                try {
+                    response = await this.orm.call('res.partner', 'fields_get', [], {
+                        attributes: ['string', 'type', 'required', 'readonly', 'selection']
+                    });
+                    console.log('ORM fields_get response:', response);
+                } catch (ormError) {
+                    console.log('ORM fields_get failed:', ormError);
+                }
+            }
+            
+            // Method 2: Try RPC service
+            if (!response && this.rpc) {
+                console.log('Trying RPC service for partner fields...');
+                try {
+                    response = await this.rpc('/web/dataset/call_kw', {
+                        model: 'res.partner',
+                        method: 'fields_get',
+                        args: [],
+                        kwargs: {
+                            attributes: ['string', 'type', 'required', 'readonly', 'selection']
+                        }
+                    });
+                    console.log('RPC fields_get response:', response);
+                } catch (rpcError) {
+                    console.log('RPC fields_get failed:', rpcError);
+                }
+            }
+            
+            // Method 3: Use mock fields if API fails
+            if (!response) {
+                console.log('Using mock partner fields');
+                response = this.getMockPartnerFields();
+            }
+            
+            console.log('Processing partner fields response:', response);
+            
+            // Convert fields response to array format
+            const fieldsArray = [];
+            
+            if (response && typeof response === 'object') {
+                // Filter out system fields and include commonly used ones
+                const commonFields = [
+                    'name', 'email', 'phone', 'mobile', 'street', 'street2', 'city', 
+                    'state_id', 'country_id', 'zip', 'website', 'is_company', 'category_id',
+                    'user_id', 'create_date', 'write_date', 'active', 'customer_rank',
+                    'supplier_rank', 'title', 'function', 'industry_id', 'comment'
+                ];
+                
+                Object.keys(response).forEach(fieldName => {
+                    const field = response[fieldName];
+                    
+                    // Include common fields or non-system fields
+                    if (commonFields.includes(fieldName) || 
+                        (!fieldName.startsWith('__') && !fieldName.startsWith('message_') && 
+                         !fieldName.startsWith('activity_'))) {
+                        
+                        fieldsArray.push({
+                            name: fieldName,
+                            string: field.string || fieldName,
+                            type: field.type || 'char',
+                            required: field.required || false,
+                            readonly: field.readonly || false,
+                            selection: field.selection || null
+                        });
+                    }
+                });
+                
+                // Sort fields alphabetically by display name
+                fieldsArray.sort((a, b) => a.string.localeCompare(b.string));
+            }
+            
+            this.state.availableFields = fieldsArray;
+            console.log('Loaded partner fields:', this.state.availableFields.length);
+            console.log('Sample fields:', this.state.availableFields.slice(0, 5));
+            
+        } catch (error) {
+            console.error("=== PARTNER FIELDS LOAD ERROR ===");
+            console.error("Error:", error);
+            
+            // Fallback to mock fields
+            this.state.availableFields = this.getMockPartnerFieldsArray();
+        }
+    }
+    
+    /**
+     * Get mock partner fields for development/fallback
+     */
+    getMockPartnerFields() {
+        return {
+            'name': { string: 'Name', type: 'char', required: true },
+            'email': { string: 'Email', type: 'char' },
+            'phone': { string: 'Phone', type: 'char' },
+            'mobile': { string: 'Mobile', type: 'char' },
+            'street': { string: 'Street', type: 'char' },
+            'city': { string: 'City', type: 'char' },
+            'state_id': { string: 'State', type: 'many2one' },
+            'country_id': { string: 'Country', type: 'many2one' },
+            'zip': { string: 'ZIP', type: 'char' },
+            'website': { string: 'Website', type: 'char' },
+            'is_company': { string: 'Is a Company', type: 'boolean' },
+            'category_id': { string: 'Tags', type: 'many2many' },
+            'user_id': { string: 'Salesperson', type: 'many2one' },
+            'create_date': { string: 'Created on', type: 'datetime' },
+            'write_date': { string: 'Last Updated on', type: 'datetime' },
+            'active': { string: 'Active', type: 'boolean' },
+            'customer_rank': { string: 'Customer Rank', type: 'integer' },
+            'supplier_rank': { string: 'Vendor Rank', type: 'integer' },
+            'title': { string: 'Title', type: 'many2one' },
+            'function': { string: 'Job Position', type: 'char' },
+            'industry_id': { string: 'Industry', type: 'many2one' },
+            'comment': { string: 'Notes', type: 'text' }
+        };
+    }
+    
+    /**
+     * Get mock partner fields as array for development/fallback
+     */
+    getMockPartnerFieldsArray() {
+        const mockFields = this.getMockPartnerFields();
+        return Object.keys(mockFields).map(fieldName => ({
+            name: fieldName,
+            string: mockFields[fieldName].string,
+            type: mockFields[fieldName].type,
+            required: mockFields[fieldName].required || false,
+            readonly: mockFields[fieldName].readonly || false,
+            selection: mockFields[fieldName].selection || null
+        })).sort((a, b) => a.string.localeCompare(b.string));
+    }
+    
+    /**
+     * Load saved filter templates
+     */
+    async loadFilterTemplates() {
+        try {
+            // For now, use mock templates since we don't have the backend route
+            console.log('Loading filter templates (mock data)');
+            this.state.presetTemplates = [
+                { id: 1, name: 'Active Customers', description: 'Active customers only' },
+                { id: 2, name: 'Recent Contacts', description: 'Contacts created in last 30 days' },
+                { id: 3, name: 'Companies Only', description: 'Company contacts only' }
+            ];
+        } catch (error) {
+            console.warn("Could not load filter templates:", error);
+        }
+    }
+    
+    /**
+     * Handle quick filter changes
+     */
+    onQuickFilterChange(filterType, value) {
+        console.log('Quick filter change:', filterType, value);
+        this.state.quickFilters[filterType] = value;
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * Handle date range filter changes
+     */
+    onDateRangeChange(field, value) {
+        console.log('Date range change:', field, value);
+        this.state.quickFilters.date_range[field] = value;
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * Toggle date range filter
+     */
+    toggleDateRange() {
+        this.state.quickFilters.date_range.enabled = !this.state.quickFilters.date_range.enabled;
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * Toggle advanced filters
+     */
+    toggleAdvancedFilters() {
+        console.log('Toggling advanced filters');
+        this.state.showAdvanced = !this.state.showAdvanced;
+        this.state.advancedFilters.enabled = this.state.showAdvanced;
+        console.log('Advanced filters now:', this.state.showAdvanced ? 'shown' : 'hidden');
+        this.notifyFilterChange();
     }
     
     /**
@@ -523,85 +704,21 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * Merge available fields from all selected sources
-     */
-    mergeAvailableFields() {
-        const fieldsMap = new Map();
-        
-        Object.values(this.state.filterOptions).forEach(options => {
-            if (options.fields) {
-                options.fields.forEach(field => {
-                    if (!fieldsMap.has(field.name)) {
-                        fieldsMap.set(field.name, field);
-                    }
-                });
-            }
-        });
-        
-        this.state.availableFields = Array.from(fieldsMap.values());
-    }
-    
-    /**
-     * Load saved filter templates
-     */
-    async loadFilterTemplates() {
-        try {
-            const response = await this.rpc({
-                route: "/mailing/templates",
-                params: { template_type: 'filter' }
-            });
-            
-            if (response.success) {
-                this.state.presetTemplates = response.data.templates;
-            }
-        } catch (error) {
-            console.warn("Could not load filter templates:", error);
-        }
-    }
-    
-    /**
-     * Handle quick filter changes
-     */
-    onQuickFilterChange(filterType, value) {
-        this.state.quickFilters[filterType] = value;
-        this.notifyFilterChange();
-    }
-    
-    /**
-     * Handle date range filter changes
-     */
-    onDateRangeChange(field, value) {
-        this.state.quickFilters.date_range[field] = value;
-        this.notifyFilterChange();
-    }
-    
-    /**
-     * Toggle date range filter
-     */
-    toggleDateRange() {
-        this.state.quickFilters.date_range.enabled = !this.state.quickFilters.date_range.enabled;
-        this.notifyFilterChange();
-    }
-    
-    /**
-     * Toggle advanced filters
-     */
-    toggleAdvancedFilters() {
-        this.state.showAdvanced = !this.state.showAdvanced;
-        this.state.advancedFilters.enabled = this.state.showAdvanced;
-        this.notifyFilterChange();
-    }
-    
-    /**
      * Handle new rule field selection
      */
     onRuleFieldChange(fieldName) {
+        console.log('=== RULE FIELD CHANGE ===');
+        console.log('Selected field name:', fieldName);
+        
         const field = this.state.availableFields.find(f => f.name === fieldName);
+        console.log('Found field definition:', field);
         
         this.state.newRule.field = fieldName;
         this.state.newRule.field_type = field?.type || '';
         this.state.newRule.operator = this.getDefaultOperator(field?.type);
         this.state.newRule.value = '';
+        
+        console.log('Updated new rule state:', this.state.newRule);
     }
     
     /**
@@ -618,7 +735,8 @@ class FilterBuilderComponent extends Component {
             'boolean': '=',
             'selection': '=',
             'many2one': '=',
-            'many2many': 'in'
+            'many2many': 'in',
+            'one2many': 'in'
         };
         
         return defaultOperators[fieldType] || '=';
@@ -633,12 +751,15 @@ class FilterBuilderComponent extends Component {
                 { value: 'ilike', label: 'Contains' },
                 { value: '=', label: 'Equals' },
                 { value: '!=', label: 'Not equals' },
-                { value: 'not ilike', label: 'Does not contain' }
+                { value: 'not ilike', label: 'Does not contain' },
+                { value: 'in', label: 'In list' },
+                { value: 'not in', label: 'Not in list' }
             ],
             'text': [
                 { value: 'ilike', label: 'Contains' },
                 { value: '=', label: 'Equals' },
-                { value: '!=', label: 'Not equals' }
+                { value: '!=', label: 'Not equals' },
+                { value: 'not ilike', label: 'Does not contain' }
             ],
             'integer': [
                 { value: '=', label: 'Equals' },
@@ -646,7 +767,9 @@ class FilterBuilderComponent extends Component {
                 { value: '>', label: 'Greater than' },
                 { value: '<', label: 'Less than' },
                 { value: '>=', label: 'Greater or equal' },
-                { value: '<=', label: 'Less or equal' }
+                { value: '<=', label: 'Less or equal' },
+                { value: 'in', label: 'In list' },
+                { value: 'not in', label: 'Not in list' }
             ],
             'float': [
                 { value: '=', label: 'Equals' },
@@ -657,33 +780,45 @@ class FilterBuilderComponent extends Component {
                 { value: '<=', label: 'Less or equal' }
             ],
             'date': [
-                { value: '=', label: 'Equals' },
-                { value: '!=', label: 'Not equals' },
+                { value: '=', label: 'On date' },
+                { value: '!=', label: 'Not on date' },
                 { value: '>', label: 'After' },
                 { value: '<', label: 'Before' },
-                { value: '>=', label: 'After or on' },
-                { value: '<=', label: 'Before or on' }
+                { value: '>=', label: 'On or after' },
+                { value: '<=', label: 'On or before' }
             ],
             'datetime': [
-                { value: '=', label: 'Equals' },
-                { value: '!=', label: 'Not equals' },
+                { value: '=', label: 'At exact time' },
+                { value: '!=', label: 'Not at time' },
                 { value: '>', label: 'After' },
                 { value: '<', label: 'Before' },
-                { value: '>=', label: 'After or on' },
-                { value: '<=', label: 'Before or on' }
+                { value: '>=', label: 'On or after' },
+                { value: '<=', label: 'On or before' }
             ],
             'boolean': [
                 { value: '=', label: 'Is' }
             ],
             'selection': [
                 { value: '=', label: 'Equals' },
-                { value: '!=', label: 'Not equals' }
+                { value: '!=', label: 'Not equals' },
+                { value: 'in', label: 'In list' },
+                { value: 'not in', label: 'Not in list' }
             ],
             'many2one': [
                 { value: '=', label: 'Equals' },
-                { value: '!=', label: 'Not equals' }
+                { value: '!=', label: 'Not equals' },
+                { value: 'ilike', label: 'Name contains' },
+                { value: 'not ilike', label: 'Name does not contain' },
+                { value: 'in', label: 'In list' },
+                { value: 'not in', label: 'Not in list' }
             ],
             'many2many': [
+                { value: 'in', label: 'Contains any' },
+                { value: 'not in', label: 'Does not contain' },
+                { value: '=', label: 'Exact match' },
+                { value: '!=', label: 'Not exact match' }
+            ],
+            'one2many': [
                 { value: 'in', label: 'Contains' },
                 { value: 'not in', label: 'Does not contain' }
             ]
@@ -763,7 +898,7 @@ class FilterBuilderComponent extends Component {
         // Reset quick filters
         this.state.quickFilters = {
             active_only: true,
-            date_range: { enabled: true, from: '2025-01-01', to: '2025-12-31', field: 'create_date' },
+            date_range: { enabled: true, from: '2024-01-01', to: '2024-12-31', field: 'create_date' },
             responsible_users: [],
             tags: [],
             category_ids: [],
