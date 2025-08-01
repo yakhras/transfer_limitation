@@ -130,7 +130,7 @@
                             <h4><i class="fa fa-cogs"></i> Advanced Filters</h4>
                             <small class="text-muted">Filter contacts using res.partner model fields</small>
                         </div>
-                        <button class="btn btn-outline-secondary"
+                        <button class="btn-details"
                                 t-on-click="() => this.toggleAdvancedFilters()">
                             <i t-att-class="state.showAdvanced ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                             <t t-if="state.showAdvanced">Hide</t>
