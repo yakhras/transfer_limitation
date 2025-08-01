@@ -41,8 +41,8 @@ class FilterBuilderComponent extends Component {
                 active_only: true,
                 date_range: {
                     enabled: true,  // Always enabled now
-                    from: '2024-01-01',
-                    to: '2024-12-31',
+                    from: '2025-01-01',
+                    to: '2025-12-31',
                     field: 'create_date'
                 },
                 responsible_users: [],  // Array of user objects
@@ -73,7 +73,6 @@ class FilterBuilderComponent extends Component {
             isLoading: false,
             showAdvanced: false,
             availableFields: [],
-            presetTemplates: [],
             
             // Form state
             newRule: {
@@ -262,22 +261,7 @@ class FilterBuilderComponent extends Component {
         })).sort((a, b) => a.string.localeCompare(b.string));
     }
     
-    /**
-     * Load saved filter templates
-     */
-    async loadFilterTemplates() {
-        try {
-            // For now, use mock templates since we don't have the backend route
-            console.log('Loading filter templates (mock data)');
-            this.state.presetTemplates = [
-                { id: 1, name: 'Active Customers', description: 'Active customers only' },
-                { id: 2, name: 'Recent Contacts', description: 'Contacts created in last 30 days' },
-                { id: 3, name: 'Companies Only', description: 'Company contacts only' }
-            ];
-        } catch (error) {
-            console.warn("Could not load filter templates:", error);
-        }
-    }
+    
     
     /**
      * Handle quick filter changes
@@ -898,7 +882,7 @@ class FilterBuilderComponent extends Component {
         // Reset quick filters
         this.state.quickFilters = {
             active_only: true,
-            date_range: { enabled: true, from: '2024-01-01', to: '2024-12-31', field: 'create_date' },
+            date_range: { enabled: true, from: '2025-01-01', to: '2025-12-31', field: 'create_date' },
             responsible_users: [],
             tags: [],
             category_ids: [],

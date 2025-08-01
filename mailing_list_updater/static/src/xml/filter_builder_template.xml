@@ -20,18 +20,6 @@
             
             <div t-if="!state.isLoading" class="filter-content">
                 
-                <!-- Filter Templates -->
-                <div t-if="state.presetTemplates.length" class="filter-templates mb-3">
-                    <h4><i class="fa fa-magic"></i> Quick Templates</h4>
-                    <div class="template-buttons">
-                        <button t-foreach="state.presetTemplates" t-as="template" t-key="template.id"
-                                t-on-click="() => this.applyTemplate(template)"
-                                class="btn btn-outline-primary btn-sm me-2 mb-2">
-                            <i class="fa fa-magic"></i>
-                            <t t-esc="template.name"/>
-                        </button>
-                    </div>
-                </div>
                 
                 <!-- Quick Filters Section -->
                 <div class="quick-filters-section mb-4">
@@ -46,14 +34,14 @@
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.from"
                                        t-on-change="(ev) => this.onDateRangeChange('from', ev.target.value)"
-                                       value="2024-01-01"/>
+                                       value="2025-01-01"/>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">To:</label>
                                 <input type="date" class="form-control"
                                        t-model="state.quickFilters.date_range.to"
                                        t-on-change="(ev) => this.onDateRangeChange('to', ev.target.value)"
-                                       value="2024-12-31"/>
+                                       value="2025-12-31"/>
                             </div>
                         </div>
                     </div>
