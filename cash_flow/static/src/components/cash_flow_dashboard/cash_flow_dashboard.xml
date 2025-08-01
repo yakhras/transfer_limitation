@@ -63,63 +63,52 @@
                                     </div>
                                 </div>
 
-                                <!-- Currency Selection Section -->
+                                <!-- Clean Currency Selection Section - CSS Classes Only -->
                                 <div class="row mt-3 pt-3 border-top">
                                     <div class="col-12">
-                                        <div class="currency-filter-section" style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 1rem; border: 1px solid rgba(255,255,255,0.2);">
-                                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                                <h6 class="mb-0 text-white">
-                                                    <i class="fa fa-coins me-2"></i>
-                                                    Select Currencies
-                                                </h6>
-                                                <div class="d-flex gap-2">
-                                                    <button class="btn btn-outline-light btn-sm" t-on-click="selectAllCurrencies">
-                                                        <i class="fa fa-check-double me-1"></i>
-                                                        Select All
-                                                    </button>
-                                                    <button class="btn btn-outline-danger btn-sm" t-on-click="clearAllCurrencies">
-                                                        <i class="fa fa-times me-1"></i>
-                                                        Clear All
-                                                    </button>
-                                                </div>
-                                            </div>
+                                        <div class="currency-selection-container">
                                             
-                                            <div class="currency-grid d-flex flex-wrap gap-2 align-items-center">
+                                            <!-- Currency Selection Group -->
+                                            <div class="currency-group">
+                                                <span class="currency-label">
+                                                    <i class="fa fa-coins me-1"></i>Currencies:
+                                                </span>
+                                                
+                                                <!-- Currency Options -->
                                                 <t t-foreach="state.availableCurrencies" t-as="currency" t-key="currency.code">
                                                     <div class="currency-option" 
                                                         t-att-class="getCurrencyOptionClass(currency.code)"
-                                                        t-on-click="() => toggleCurrency(currency.code)"
-                                                        style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.9); padding: 0.5rem 1rem; border-radius: 25px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
-                                                        <span class="flag" t-esc="currency.flag"/>
-                                                        <span t-esc="currency.name"/> (<span t-esc="currency.symbol"/>)
-                                                        <div class="checkmark" 
-                                                            t-att-style="isSelectedCurrency(currency.code) ? 'opacity: 1;' : 'opacity: 0;'"
-                                                            style="width: 16px; height: 16px; border-radius: 50%; background: #4CAF50; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: opacity 0.3s ease; margin-left: 0.25rem;">
-                                                            <i class="fa fa-check"></i>
-                                                        </div>
+                                                        t-on-click="() => toggleCurrency(currency.code)">
+                                                        <span t-esc="currency.flag"/>
+                                                        <span t-esc="currency.code"/>
+                                                        <i t-if="isSelectedCurrency(currency.code)" 
+                                                        class="fa fa-check currency-check"></i>
                                                     </div>
                                                 </t>
                                             </div>
                                             
-                                            <!-- Selection Summary -->
-                                            <div class="selection-summary mt-3 d-flex align-items-center gap-3 flex-wrap" 
-                                                style="background: rgba(255,255,255,0.1); padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3);">
-                                                <div class="selection-count" 
-                                                    style="background: rgba(255,255,255,0.9); color: #667eea; padding: 0.25rem 0.75rem; border-radius: 15px; font-weight: 600; font-size: 0.8rem;">
-                                                    <span t-esc="state.selectedCurrencies.length"/> of <span t-esc="state.availableCurrencies.length"/> currencies selected
+                                            <!-- Selection Summary & Controls -->
+                                            <div class="currency-controls">
+                                                <!-- Selection Count -->
+                                                <div class="selection-count">
+                                                    <span t-esc="state.selectedCurrencies.length"/> of <span t-esc="state.availableCurrencies.length"/> selected
                                                 </div>
-                                                <div class="selected-currencies d-flex flex-wrap gap-2">
-                                                    <t t-foreach="getSelectedCurrencyTags()" t-as="currencyTag" t-key="currencyTag.code">
-                                                        <div class="selected-currency-tag" 
-                                                            style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.3);">
-                                                            <span t-esc="currencyTag.flag"/> <span t-esc="currencyTag.code"/>
-                                                        </div>
-                                                    </t>
-                                                </div>
-                                                <div class="ms-auto small" style="opacity: 0.75;">
-                                                    <i class="fa fa-info-circle me-1"></i>
-                                                    Charts will show selected currencies only
-                                                </div>
+                                                
+                                                <!-- Quick Actions -->
+                                                <button class="btn btn-outline-light btn-sm currency-btn" 
+                                                        t-on-click="selectAllCurrencies">
+                                                    <i class="fa fa-check-double me-1"></i>All
+                                                </button>
+                                                <button class="btn btn-outline-danger btn-sm currency-btn" 
+                                                        t-on-click="clearAllCurrencies">
+                                                    <i class="fa fa-times me-1"></i>Clear
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Info Text -->
+                                            <div class="currency-info d-none d-lg-block">
+                                                <i class="fa fa-info-circle me-1"></i>
+                                                Charts show selected currencies only
                                             </div>
                                         </div>
                                     </div>

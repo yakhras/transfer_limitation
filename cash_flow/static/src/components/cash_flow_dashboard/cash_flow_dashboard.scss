@@ -234,32 +234,171 @@
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
 
-.currency-option:hover {
-        background: rgba(255,255,255,0.2) !important;
-        border-color: rgba(255,255,255,0.5) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-.currency-option.selected {
-    background: rgba(255,255,255,0.9) !important;
-    color: #667eea !important;
-    border-color: rgba(255,255,255,0.9) !important;
+// Currency Selection Styles - SCSS Version
+
+// Variables
+$currency-bg-primary: rgba(255, 255, 255, 0.1);
+$currency-bg-secondary: rgba(255, 255, 255, 0.2);
+$currency-bg-selected: rgba(255, 255, 255, 0.9);
+$currency-border: rgba(255, 255, 255, 0.3);
+$currency-border-hover: rgba(255, 255, 255, 0.5);
+$currency-text: rgba(255, 255, 255, 0.9);
+$currency-text-selected: #667eea;
+$currency-shadow: rgba(0, 0, 0, 0.2);
+$currency-check-color: #4CAF50;
+
+// Currency badge colors
+$badge-colors: (
+  try: #e74c3c,
+  usd: #3498db,
+  eur: #f39c12,
+  gbp: #9b59b6
+);
+
+// Main container
+.currency-selection-container {
+  background: $currency-bg-primary;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid $currency-border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+// Currency group
+.currency-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  .currency-label {
+    color: white;
+    font-size: 0.875rem;
     font-weight: 600;
-    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    white-space: nowrap;
+  }
 }
-.currency-option .flag {
-    font-size: 1.1rem;
+
+// Currency options
+.currency-option {
+  background: $currency-bg-primary;
+  border: 1px solid $currency-border;
+  color: $currency-text;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.3s ease;
+  font-size: 0.8rem;
+  user-select: none;
+  white-space: nowrap;
+
+  &:hover {
+    background: $currency-bg-secondary;
+    border-color: $currency-border-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px $currency-shadow;
+  }
+
+  &.selected {
+    background: $currency-bg-selected;
+    color: $currency-text-selected;
+    border-color: $currency-bg-selected;
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+
+  .currency-check {
+    font-size: 0.7rem;
+    color: $currency-check-color;
+  }
 }
-.account-currency-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
+
+// Currency controls
+.currency-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  
+  .selection-count {
+    color: white;
+    background: $currency-bg-secondary;
     padding: 0.25rem 0.5rem;
-    border-radius: 12px;
+    border-radius: 10px;
+    border: 1px solid $currency-border;
+    font-size: 0.8rem;
+  }
+  
+  .currency-btn {
     font-size: 0.75rem;
-    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+  }
 }
-.account-currency-badge.try { background-color: #e74c3c; color: white; }
-.account-currency-badge.usd { background-color: #3498db; color: white; }
-.account-currency-badge.eur { background-color: #f39c12; color: white; }
-.account-currency-badge.gbp { background-color: #9b59b6; color: white; }
+
+// Currency info
+.currency-info {
+  color: white;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .currency-selection-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .currency-group {
+    width: 100%;
+  }
+  
+  .currency-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .d-none.d-lg-block {
+    display: block !important;
+  }
+}
+
+// Account currency badges
+.account-currency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+
+  // Generate badge colors using SCSS map
+  @each $currency, $color in $badge-colors {
+    &.#{$currency} {
+      background-color: $color;
+    }
+  }
+}
+
+// Additional mixins (if you want to use them)
+@mixin currency-transition($property: all, $duration: 0.3s) {
+  transition: $property $duration ease;
+}
+
+@mixin currency-shadow($level: 1) {
+  @if $level == 1 {
+    box-shadow: 0 2px 8px $currency-shadow;
+  } @else if $level == 2 {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+}
