@@ -366,12 +366,6 @@ export class CashFlowDashboard extends Component {
             this.updateSummaryStats()
             this.state.lastUpdated = new Date().toLocaleTimeString()
             
-            if (this.state.accounts.length > 0) {
-                this.notification.add("Dashboard data loaded successfully", {
-                    type: "success",
-                    title: "Data Loaded"
-                })
-            }
 
         } catch (error) {
             console.error('Failed to load dashboard data:', error)
