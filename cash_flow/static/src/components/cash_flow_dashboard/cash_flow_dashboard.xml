@@ -20,7 +20,7 @@
                                     <!-- Clean Currency Selection Section - CSS Classes Only -->
                                     <div class="row mt-3 pt-3 ">
                                         <div class="col-12">
-                                            <div class="currency-selection-container align-items-center">
+                                            <div class="currency-selection-container">
                                                 
                                                 <!-- Currency Selection Group -->
                                                 <div class="currency-group">
