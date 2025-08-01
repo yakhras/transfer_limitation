@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
 
-    
-    
     <t t-name="mailing_list_updater.FilterBuilderTemplate" owl="1">
         <div class="filter-builder">
             <div class="content-header">
@@ -13,14 +11,276 @@
                 <p>Configure filters to refine your contact selection</p>
             </div>
             
-            <div class="filter-content">
-                <div class="mlu-alert mlu-alert-info">
-                    <i class="fa fa-info-circle"></i>
-                    Filter Builder component will be loaded here
+            <!-- Loading State -->
+            <div t-if="state.isLoading" class="mlu-alert mlu-alert-info">
+                <i class="fa fa-spinner fa-spin"></i>
+                Loading filter options...
+            </div>
+            
+            <div t-if="!state.isLoading" class="filter-content">
+                
+                <!-- Filter Templates -->
+                <div t-if="state.presetTemplates.length" class="filter-templates mb-3">
+                    <h4><i class="fa fa-magic"></i> Quick Templates</h4>
+                    <div class="template-buttons">
+                        <button t-foreach="state.presetTemplates" t-as="template" t-key="template.id"
+                                t-on-click="() => this.applyTemplate(template)"
+                                class="btn btn-outline-primary btn-sm me-2 mb-2">
+                            <i class="fa fa-magic"></i>
+                            <t t-esc="template.name"/>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quick Filters Section -->
+                <div class="quick-filters-section mb-4">
+                    <h4><i class="fa fa-bolt"></i> Quick Filters</h4>
+                    
+                    <div class="row">
+                        <!-- Active Only Filter -->
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                       t-att-checked="state.quickFilters.active_only"
+                                       t-on-change="(ev) => this.onQuickFilterChange('active_only', ev.target.checked)"
+                                       id="activeOnlyFilter"/>
+                                <label class="form-check-label" for="activeOnlyFilter">
+                                    Show active contacts only
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Date Range Filter -->
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                       t-att-checked="state.quickFilters.date_range.enabled"
+                                       t-on-change="() => this.toggleDateRange()"
+                                       id="dateRangeFilter"/>
+                                <label class="form-check-label" for="dateRangeFilter">
+                                    Filter by date range
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Date Range Controls -->
+                    <div t-if="state.quickFilters.date_range.enabled" class="date-range-controls mt-2">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-label">Date field</label>
+                                <select class="form-select" 
+                                        t-model="state.quickFilters.date_range.field"
+                                        t-on-change="(ev) => this.onDateRangeChange('field', ev.target.value)">
+                                    <option value="create_date">Created Date</option>
+                                    <option value="write_date">Modified Date</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">From</label>
+                                <input type="date" class="form-control"
+                                       t-model="state.quickFilters.date_range.from"
+                                       t-on-change="(ev) => this.onDateRangeChange('from', ev.target.value)"/>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">To</label>
+                                <input type="date" class="form-control"
+                                       t-model="state.quickFilters.date_range.to"
+                                       t-on-change="(ev) => this.onDateRangeChange('to', ev.target.value)"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tags Filter -->
+                    <div class="mt-3">
+                        <label class="form-label">Filter by tags</label>
+                        <div class="mlu-alert mlu-alert-info">
+                            <small><i class="fa fa-info-circle"></i> Tag selection widget would be implemented here</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Categories Filter -->
+                    <div class="mt-3">
+                        <label class="form-label">Filter by categories</label>
+                        <div class="mlu-alert mlu-alert-info">
+                            <small><i class="fa fa-info-circle"></i> Category selection widget would be implemented here</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Countries Filter -->
+                    <div class="mt-3">
+                        <label class="form-label">Filter by countries</label>
+                        <div class="mlu-alert mlu-alert-info">
+                            <small><i class="fa fa-info-circle"></i> Country selection widget would be implemented here</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Advanced Filters Section -->
+                <div class="advanced-filters-section mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4><i class="fa fa-cogs"></i> Advanced Filters</h4>
+                        <button class="btn btn-outline-secondary"
+                                t-on-click="() => this.toggleAdvancedFilters()">
+                            <i t-att-class="state.showAdvanced ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                            <t t-if="state.showAdvanced">Hide</t>
+                            <t t-if="!state.showAdvanced">Show</t> Advanced
+                        </button>
+                    </div>
+                    
+                    <!-- Advanced Filters Content -->
+                    <div t-if="state.showAdvanced" class="advanced-content">
+                        
+                        <!-- Logic Selection -->
+                        <div class="logic-selection mb-3">
+                            <label class="form-label">Rule logic</label>
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" 
+                                       t-att-checked="state.advancedFilters.logic === 'AND'"
+                                       t-on-change="() => this.changeFilterLogic('AND')"
+                                       id="logicAND"/>
+                                <label class="btn btn-outline-primary" for="logicAND">AND</label>
+                                
+                                <input type="radio" class="btn-check" 
+                                       t-att-checked="state.advancedFilters.logic === 'OR'"
+                                       t-on-change="() => this.changeFilterLogic('OR')"
+                                       id="logicOR"/>
+                                <label class="btn btn-outline-primary" for="logicOR">OR</label>
+                            </div>
+                            <small class="form-text text-muted">
+                                AND: All rules must match | OR: Any rule can match
+                            </small>
+                        </div>
+                        
+                        <!-- Existing Rules -->
+                        <div t-if="state.advancedFilters.rules.length" class="existing-rules mb-3">
+                            <h5>Current Rules</h5>
+                            <div class="rules-list">
+                                <div t-foreach="state.advancedFilters.rules" t-as="rule" t-key="rule.id"
+                                     class="rule-item d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                    <span class="rule-display">
+                                        <i class="fa fa-filter me-2"></i>
+                                        <t t-esc="formatRuleDisplay(rule)"/>
+                                    </span>
+                                    <button class="btn btn-outline-danger btn-sm"
+                                            t-on-click="() => this.removeFilterRule(rule.id)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Add New Rule Form -->
+                        <div class="new-rule-form border p-3 rounded">
+                            <h5>Add New Rule</h5>
+                            <div class="row">
+                                <!-- Field Selection -->
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Field</label>
+                                    <select class="form-select" 
+                                            t-model="state.newRule.field"
+                                            t-on-change="(ev) => this.onRuleFieldChange(ev.target.value)">
+                                        <option value="">Select field...</option>
+                                        <option t-foreach="state.availableFields" t-as="field" t-key="field.name"
+                                                t-att-value="field.name">
+                                            <t t-esc="field.string"/>
+                                        </option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Operator Selection -->
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Operator</label>
+                                    <select class="form-select" 
+                                            t-model="state.newRule.operator"
+                                            t-att-disabled="!state.newRule.field_type">
+                                        <option value="">Select operator...</option>
+                                        <option t-foreach="getOperatorsForFieldType(state.newRule.field_type)" 
+                                                t-as="operator" t-key="operator.value"
+                                                t-att-value="operator.value">
+                                            <t t-esc="operator.label"/>
+                                        </option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Value Input -->
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Value</label>
+                                    
+                                    <!-- Text/Char Input -->
+                                    <input t-if="['char', 'text'].includes(state.newRule.field_type)" 
+                                           type="text" class="form-control"
+                                           t-model="state.newRule.value"
+                                           placeholder="Enter value..."/>
+                                    
+                                    <!-- Number Input -->
+                                    <input t-if="['integer', 'float'].includes(state.newRule.field_type)" 
+                                           type="number" class="form-control"
+                                           t-model="state.newRule.value"
+                                           placeholder="Enter number..."/>
+                                    
+                                    <!-- Date Input -->
+                                    <input t-if="['date', 'datetime'].includes(state.newRule.field_type)" 
+                                           type="date" class="form-control"
+                                           t-model="state.newRule.value"/>
+                                    
+                                    <!-- Boolean Input -->
+                                    <select t-if="state.newRule.field_type === 'boolean'" 
+                                            class="form-select" t-model="state.newRule.value">
+                                        <option value="">Select...</option>
+                                        <option value="true">True</option>
+                                        <option value="false">False</option>
+                                    </select>
+                                    
+                                    <!-- Default Input -->
+                                    <input t-if="!['char', 'text', 'integer', 'float', 'date', 'datetime', 'boolean'].includes(state.newRule.field_type)" 
+                                           type="text" class="form-control"
+                                           t-model="state.newRule.value"
+                                           placeholder="Enter value..."/>
+                                </div>
+                                
+                                <!-- Add Button -->
+                                <div class="col-md-2 mb-3 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100"
+                                            t-on-click="() => this.addFilterRule()"
+                                            t-att-disabled="!state.newRule.field || !state.newRule.operator">
+                                        <i class="fa fa-plus"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="filter-actions d-flex justify-content-between">
+                    <button class="btn btn-outline-secondary"
+                            t-on-click="() => this.clearAllFilters()">
+                        <i class="fa fa-times"></i> Clear All
+                    </button>
+                    
+                    <div class="filter-info">
+                        <span t-if="state.quickFilters.active_only" class="badge bg-info me-2">Active Only</span>
+                        <span t-if="state.quickFilters.date_range.enabled" class="badge bg-info me-2">Date Range</span>
+                        <span t-if="state.advancedFilters.rules.length" class="badge bg-warning me-2">
+                            <t t-esc="state.advancedFilters.rules.length"/> Advanced Rules
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Filter Preview -->
+                <div t-if="state.advancedFilters.rules.length || state.quickFilters.date_range.enabled" 
+                     class="filter-preview mt-3 p-3 bg-light rounded">
+                    <h6><i class="fa fa-eye"></i> Filter Preview</h6>
+                    <small class="text-muted">
+                        Filters will be applied when you proceed to the next step.
+                        <span t-if="state.advancedFilters.rules.length">
+                            Advanced rules combined with <strong t-esc="state.advancedFilters.logic"/> logic.
+                        </span>
+                    </small>
                 </div>
             </div>
         </div>
     </t>
-    
 
 </templates>
