@@ -296,16 +296,6 @@ export class CashFlowDashboard extends Component {
         this.loadDashboardData(); // Reload with new filter
     }
 
-    selectAllCurrencies() {
-        this.state.selectedCurrencies = this.state.availableCurrencies.map(c => c.code);
-        this.loadDashboardData();
-    }
-
-    clearAllCurrencies() {
-        this.state.selectedCurrencies = [];
-        this.loadDashboardData();
-    }
-
     getCurrencyOptionClass(code) {
         return this.state.selectedCurrencies.includes(code) ? 'selected' : '';
     }

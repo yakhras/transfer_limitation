@@ -70,45 +70,17 @@
                                             
                                             <!-- Currency Selection Group -->
                                             <div class="currency-group">
-                                                <span class="currency-label">
-                                                    <i class="fa fa-coins me-1"></i>Currencies:
-                                                </span>
                                                 
                                                 <!-- Currency Options -->
                                                 <t t-foreach="state.availableCurrencies" t-as="currency" t-key="currency.code">
                                                     <div class="currency-option" 
                                                         t-att-class="getCurrencyOptionClass(currency.code)"
                                                         t-on-click="() => toggleCurrency(currency.code)">
-                                                        <span t-esc="currency.flag"/>
                                                         <span t-esc="currency.code"/>
                                                         <i t-if="isSelectedCurrency(currency.code)" 
                                                         class="fa fa-check currency-check"></i>
                                                     </div>
                                                 </t>
-                                            </div>
-                                            
-                                            <!-- Selection Summary & Controls -->
-                                            <div class="currency-controls">
-                                                <!-- Selection Count -->
-                                                <div class="selection-count">
-                                                    <span t-esc="state.selectedCurrencies.length"/> of <span t-esc="state.availableCurrencies.length"/> selected
-                                                </div>
-                                                
-                                                <!-- Quick Actions -->
-                                                <button class="btn btn-outline-light btn-sm currency-btn" 
-                                                        t-on-click="selectAllCurrencies">
-                                                    <i class="fa fa-check-double me-1"></i>All
-                                                </button>
-                                                <button class="btn btn-outline-danger btn-sm currency-btn" 
-                                                        t-on-click="clearAllCurrencies">
-                                                    <i class="fa fa-times me-1"></i>Clear
-                                                </button>
-                                            </div>
-                                            
-                                            <!-- Info Text -->
-                                            <div class="currency-info d-none d-lg-block">
-                                                <i class="fa fa-info-circle me-1"></i>
-                                                Charts show selected currencies only
                                             </div>
                                         </div>
                                     </div>
