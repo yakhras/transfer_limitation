@@ -18,9 +18,9 @@
                                     </div>
 
                                     <!-- Clean Currency Selection Section - CSS Classes Only -->
-                                    <div class="row mt-3 pt-3 align-items-center">
+                                    <div class="row mt-3 pt-3 ">
                                         <div class="col-12">
-                                            <div class="currency-selection-container">
+                                            <div class="currency-selection-container align-items-center">
                                                 
                                                 <!-- Currency Selection Group -->
                                                 <div class="currency-group">
