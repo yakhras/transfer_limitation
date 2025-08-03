@@ -690,7 +690,11 @@ class CashFlowDashboard(models.Model):
                     balance_color = 'green' if current_balance > 0 else ('red' if current_balance < 0 else 'blue')
                     
                     # UPDATED: Generate chart data for the filtered period with currency filter
-                    chart_data = self._get_chart_data_for_period(
+                    # chart_data = self._get_chart_data_for_period(
+                    #     config.account_ids.ids, normalized_date_from, normalized_date_to, 
+                    #     company_id, normalized_currencies
+                    # )
+                    chart_data = self._get_multi_currency_chart_data(
                         config.account_ids.ids, normalized_date_from, normalized_date_to, 
                         company_id, normalized_currencies
                     )
