@@ -738,8 +738,8 @@ class CashFlowDashboard(models.Model):
             _logger.error(f"Error generating chart data: {str(e)}")
             return self._get_sample_chart_data()
     
-    def _get_all_time_chart_data(self, account_ids, company_id):
-        """Generate chart data for All Time view - dynamic intervals based on data span"""
+    def _get_all_time_chart_data(self, account_ids, company_id, currencies=None):
+        """UPDATED: Generate chart data for All Time view with currency filtering"""
         
         # Find the actual date range of transactions
         domain = [
@@ -747,6 +747,12 @@ class CashFlowDashboard(models.Model):
             ('company_id', '=', company_id),
             ('move_id.state', '=', 'posted')
         ]
+        
+        # ADDED: Currency filtering for all-time chart
+        if currencies:
+            currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
+            if currency_ids:
+                domain.append(('currency_id', 'in', currency_ids))
         
         # Get earliest and latest transaction dates
         earliest_line = self.env['account.move.line'].search(domain, order='date asc', limit=1)
@@ -768,23 +774,23 @@ class CashFlowDashboard(models.Model):
         
         # Determine interval based on data span
         if total_days <= 30:        # 1 month or less - Weekly
-            return self._get_weekly_chart_data(account_ids, company_id, start_date, end_date)
+            return self._get_weekly_chart_data(account_ids, company_id, start_date, end_date, currencies)
         elif total_days <= 365:     # 1 year or less - Monthly  
-            return self._get_monthly_chart_data(account_ids, company_id, start_date, end_date)
+            return self._get_monthly_chart_data(account_ids, company_id, start_date, end_date, currencies)
         elif total_days <= 1095:    # 3 years or less - Quarterly
-            return self._get_quarterly_chart_data(account_ids, company_id, start_date, end_date)
+            return self._get_quarterly_chart_data(account_ids, company_id, start_date, end_date, currencies)
         else:                       # More than 3 years - Yearly
-            return self._get_yearly_chart_data(account_ids, company_id, start_date, end_date)
+            return self._get_yearly_chart_data(account_ids, company_id, start_date, end_date, currencies)
 
-    def _get_weekly_chart_data(self, account_ids, company_id, start_date, end_date):
-        """Generate weekly chart data"""
+    def _get_weekly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
+        """UPDATED: Generate weekly chart data with currency filtering"""
         chart_data = []
         current_date = start_date
         
         while current_date <= end_date:
-            # Calculate balance up to this date
+            # UPDATED: Calculate balance up to this date with currency filter
             balance = self._calculate_balance_with_filter(
-                account_ids, None, current_date.strftime('%Y-%m-%d'), company_id
+                account_ids, None, current_date.strftime('%Y-%m-%d'), company_id, currencies
             )
             
             chart_data.append({
@@ -796,8 +802,8 @@ class CashFlowDashboard(models.Model):
         
         return chart_data
 
-    def _get_monthly_chart_data(self, account_ids, company_id, start_date, end_date):
-        """Generate monthly chart data"""
+    def _get_monthly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
+        """UPDATED: Generate monthly chart data with currency filtering"""
         chart_data = []
         current_date = start_date.replace(day=1)  # Start from first day of month
         
@@ -811,9 +817,9 @@ class CashFlowDashboard(models.Model):
             month_end = next_month - timedelta(days=1)
             period_end = min(month_end, end_date)
             
-            # Calculate balance up to end of this month (or end_date)
+            # UPDATED: Calculate balance up to end of this month with currency filter
             balance = self._calculate_balance_with_filter(
-                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id, currencies
             )
             
             chart_data.append({
@@ -825,8 +831,8 @@ class CashFlowDashboard(models.Model):
         
         return chart_data
 
-    def _get_quarterly_chart_data(self, account_ids, company_id, start_date, end_date):
-        """Generate quarterly chart data"""
+    def _get_quarterly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
+        """UPDATED: Generate quarterly chart data with currency filtering"""
         chart_data = []
         
         # Start from the beginning of the quarter containing start_date
@@ -844,9 +850,9 @@ class CashFlowDashboard(models.Model):
             
             period_end = min(quarter_end, end_date)
             
-            # Calculate balance up to end of this quarter
+            # UPDATED: Calculate balance up to end of this quarter with currency filter
             balance = self._calculate_balance_with_filter(
-                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id, currencies
             )
             
             chart_data.append({
@@ -862,8 +868,8 @@ class CashFlowDashboard(models.Model):
         
         return chart_data
 
-    def _get_yearly_chart_data(self, account_ids, company_id, start_date, end_date):
-        """Generate yearly chart data"""
+    def _get_yearly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
+        """UPDATED: Generate yearly chart data with currency filtering"""
         chart_data = []
         current_year = start_date.year
         end_year = end_date.year
@@ -873,9 +879,9 @@ class CashFlowDashboard(models.Model):
             year_end = datetime(current_year, 12, 31).date()
             period_end = min(year_end, end_date)
             
-            # Calculate balance up to end of this year
+            # UPDATED: Calculate balance up to end of this year with currency filter
             balance = self._calculate_balance_with_filter(
-                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id, currencies
             )
             
             chart_data.append({
