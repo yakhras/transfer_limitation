@@ -358,7 +358,8 @@ export class CashFlowDashboard extends Component {
                     balance_color: account.balance_color || 'blue',
                     chart_data: Array.isArray(account.chart_data) ? account.chart_data : [],
                     individual_balances: account.individual_balances || '[]',
-                    period_info: account.period_info || {}
+                    period_info: account.period_info || {},
+                    current_balance_usd: parseFloat(account.current_balance_usd) || 0,  // Add this line
                 }))
             } else {
                 this.state.accounts = []
@@ -366,6 +367,16 @@ export class CashFlowDashboard extends Component {
             
             this.updateSummaryStats()
             this.state.lastUpdated = new Date().toLocaleTimeString()
+            // Console log USD total balance if USD is selected
+            if (this.state.selectedCurrencies.includes('USD')) {
+                const totalUsdBalance = this.state.accounts.reduce((sum, account) => {
+                    return sum + (parseFloat(account.current_balance_usd) || 0)
+                }, 0)
+                console.log(`=== USD TOTAL BALANCE ===`)
+                console.log(`Total Balance in USD: $${totalUsdBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+                console.log(`Number of accounts: ${this.state.accounts.length}`)
+                console.log(`=========================`)
+            }
             
 
         } catch (error) {

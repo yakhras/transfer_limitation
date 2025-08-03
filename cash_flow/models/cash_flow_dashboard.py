@@ -717,7 +717,8 @@ class CashFlowDashboard(models.Model):
                         'balance_color': balance_color,
                         'chart_data': chart_data,
                         'individual_balances': json.dumps(individual_balances),
-                        'period_info': period_info
+                        'period_info': period_info,
+                        'current_balance_usd': dashboard_record.current_balance_usd,  # Add this line
                     }
                     
                     dashboard_data.append(account_data)
