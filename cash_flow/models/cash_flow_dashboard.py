@@ -575,7 +575,7 @@ class CashFlowDashboard(models.Model):
         except Exception as e:
             _logger.error(f"Error in get_filtered_dashboard_data: {str(e)}")
             return []
-    
+
     def _normalize_currency_params(self, currencies):
         """
         ADDED: Normalize currency parameters
@@ -591,44 +591,6 @@ class CashFlowDashboard(models.Model):
         else:
             _logger.warning(f"Invalid currency format: {currencies} (type: {type(currencies)})")
             return None
-
-    def _normalize_date_params(self, date_from, date_to):
-        """
-        ADDED: Normalize date parameters to ensure consistent format
-        Handles both string and date object inputs
-        """
-        normalized_from = None
-        normalized_to = None
-        
-        try:
-            # Handle date_from
-            if date_from:
-                if isinstance(date_from, str):
-                    # Validate string format (YYYY-MM-DD)
-                    datetime.strptime(date_from, '%Y-%m-%d')
-                    normalized_from = date_from
-                elif hasattr(date_from, 'strftime'):
-                    # Convert date object to string
-                    normalized_from = date_from.strftime('%Y-%m-%d')
-                else:
-                    _logger.warning(f"Invalid date_from format: {date_from} (type: {type(date_from)})")
-            
-            # Handle date_to
-            if date_to:
-                if isinstance(date_to, str):
-                    # Validate string format (YYYY-MM-DD)
-                    datetime.strptime(date_to, '%Y-%m-%d')
-                    normalized_to = date_to
-                elif hasattr(date_to, 'strftime'):
-                    # Convert date object to string
-                    normalized_to = date_to.strftime('%Y-%m-%d')
-                else:
-                    _logger.warning(f"Invalid date_to format: {date_to} (type: {type(date_to)})")
-                    
-        except ValueError as e:
-            _logger.error(f"Date parsing error: {str(e)}")
-            
-        return normalized_from, normalized_to
 
     def _calculate_balance_with_filter(self, account_ids, date_from, date_to, company_id, currencies=None):
         """UPDATED: Calculate balance for multiple accounts with date and currency filtering"""
@@ -648,30 +610,15 @@ class CashFlowDashboard(models.Model):
         if date_to:
             domain.append(('date', '<=', date_to))
         
-        # UPDATED: Currency filtering with TRY special handling
+        # ADDED: Currency filtering
         if currencies:
-            # SPECIAL CASE: If TRY is selected, don't filter by currency (show all/null currencies)
-            if 'TRY' in currencies and len(currencies) == 1:
-                # TRY only selected = no currency filtering (show all)
-                _logger.info(f"TRY selected - no currency filtering applied")
-            elif 'TRY' in currencies and len(currencies) > 1:
-                # TRY + other currencies = filter for non-TRY currencies + null currencies
-                other_currencies = [c for c in currencies if c != 'TRY']
-                currency_ids = self.env['res.currency'].search([('name', 'in', other_currencies)]).ids
-                if currency_ids:
-                    # Include specific currencies OR null currency (TRY/base currency)
-                    domain.append('|')
-                    domain.append(('currency_id', 'in', currency_ids))
-                    domain.append(('currency_id', '=', False))
-                    _logger.info(f"TRY + others: {other_currencies} -> IDs: {currency_ids} + null")
+            # Get currency IDs from currency codes
+            currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
+            if currency_ids:
+                domain.append(('currency_id', 'in', currency_ids))
+                _logger.info(f"Applied currency filter: {currencies} -> IDs: {currency_ids}")
             else:
-                # Only non-TRY currencies selected
-                currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
-                if currency_ids:
-                    domain.append(('currency_id', 'in', currency_ids))
-                    _logger.info(f"Applied currency filter: {currencies} -> IDs: {currency_ids}")
-                else:
-                    _logger.warning(f"No currencies found for codes: {currencies}")
+                _logger.warning(f"No currencies found for codes: {currencies}")
         
         # ADDED: Log the domain for debugging
         _logger.info(f"Balance calculation domain: {domain}")
@@ -690,7 +637,6 @@ class CashFlowDashboard(models.Model):
         
         return balance
 
-
     def _format_balance_display(self, balance, currency):
         """Format balance for display"""
         if currency:
@@ -704,7 +650,6 @@ class CashFlowDashboard(models.Model):
                 return f"₺{balance:,.2f}"
         return f"₺{balance:,.2f}"
 
-    
     def _get_chart_data_for_period(self, account_ids, date_from, date_to, company_id, currencies=None):
         """UPDATED: Generate chart data for the specified period with currency filtering"""
         if not account_ids :
@@ -767,26 +712,11 @@ class CashFlowDashboard(models.Model):
             ('move_id.state', '=', 'posted')
         ]
         
-        # UPDATED: Currency filtering for all-time chart with TRY special handling
+        # ADDED: Currency filtering for all-time chart
         if currencies:
-            # SPECIAL CASE: If TRY is selected, don't filter by currency (show all/null currencies)
-            if 'TRY' in currencies and len(currencies) == 1:
-                # TRY only selected = no currency filtering (show all)
-                pass  # Don't add currency filter
-            elif 'TRY' in currencies and len(currencies) > 1:
-                # TRY + other currencies = filter for non-TRY currencies + null currencies
-                other_currencies = [c for c in currencies if c != 'TRY']
-                currency_ids = self.env['res.currency'].search([('name', 'in', other_currencies)]).ids
-                if currency_ids:
-                    # Include specific currencies OR null currency (TRY/base currency)
-                    domain.append('|')
-                    domain.append(('currency_id', 'in', currency_ids))
-                    domain.append(('currency_id', '=', False))
-            else:
-                # Only non-TRY currencies selected
-                currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
-                if currency_ids:
-                    domain.append(('currency_id', 'in', currency_ids))
+            currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
+            if currency_ids:
+                domain.append(('currency_id', 'in', currency_ids))
         
         # Get earliest and latest transaction dates
         earliest_line = self.env['account.move.line'].search(domain, order='date asc', limit=1)
@@ -926,14 +856,15 @@ class CashFlowDashboard(models.Model):
             current_year += 1  # Move to next year
         
         return chart_data
-        def _get_sample_chart_data(self):
-            """Generate sample chart data as fallback"""
-            return [
-                {'label': 'Week 1', 'value': 1000},
-                {'label': 'Week 2', 'value': 1200},
-                {'label': 'Week 3', 'value': 900},
-                {'label': 'Week 4', 'value': 1100}
-            ]
+
+    def _get_sample_chart_data(self):
+        """Generate sample chart data as fallback"""
+        return [
+            {'label': 'Week 1', 'value': 1000},
+            {'label': 'Week 2', 'value': 1200},
+            {'label': 'Week 3', 'value': 900},
+            {'label': 'Week 4', 'value': 1100}
+        ]
 
     def _get_individual_balances_for_period(self, account_ids, date_from, date_to, company_id, currencies=None):
         """UPDATED: Get individual account balances for the period with currency filtering"""
