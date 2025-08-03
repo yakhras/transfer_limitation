@@ -200,14 +200,14 @@ class CashFlowDashboard(models.Model):
                     # Check if this move line has a currency
                     if move_line.currency_id and move_line.currency_id.name == 'USD':
                         # Already in USD, use amount_currency with sign
-                        usd_amount = move_line.amount_currency or try_amount
+                        usd_amount = move_line.amount_currency
                     elif move_line.currency_id and move_line.currency_id.name == 'TRY':
                         # TRY to USD conversion using move line date
                         rate_record, rate_value, rate_date = record._get_usd_rate_for_date(
                             move_line.date, record.company_id.id
                         )
                         if rate_record and rate_value:
-                            usd_amount = (move_line.amount_currency or try_amount) * rate_value
+                            usd_amount = move_line.amount_currency * rate_value
                             latest_rate = rate_value
                             latest_rate_date = rate_date
                         else:
