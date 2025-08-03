@@ -173,7 +173,7 @@
                             <div class="col-md-4 col-12 mb-2">
                                 <div class="card bg-primary text-white h-100">
                                     <div class="card-body text-center">
-                                        <h4 class="mb-1" t-esc="formatBalance(state.totalBalance)"/>
+                                        <h4 class="mb-1" t-esc="getFormattedTotalBalance()"/>
                                         <small>Total Balance</small>
                                     </div>
                                 </div>
@@ -237,7 +237,7 @@
                                         <div class="text-center mb-3">
                                             <h3 class="mb-0"
                                                 t-attf-class="text-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
-                                                <span t-esc="account.balance_display || '₺0'"/>
+                                                <span t-esc="getFormattedBalance(account)"/>
                                             </h3>
                                             <small class="text-muted">
                                                 <span t-if="state.period === 'all'">Current Balance</span>

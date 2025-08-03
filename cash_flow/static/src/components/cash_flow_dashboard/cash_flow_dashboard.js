@@ -354,12 +354,14 @@ export class CashFlowDashboard extends Component {
                     account_names: account.account_names || '',
                     display_name: account.display_name || 'Unknown',
                     current_balance: parseFloat(account.current_balance) || 0,
-                    balance_display: account.balance_display || '₺0',
+                    current_balance_usd: parseFloat(account.current_balance_usd) || 0,
+                    // ADD: Use USD balance and display when USD is selected
+                    display_balance: this.getDisplayBalance(account),
+                    balance_display: this.getFormattedBalance(account),
                     balance_color: account.balance_color || 'blue',
                     chart_data: Array.isArray(account.chart_data) ? account.chart_data : [],
                     individual_balances: account.individual_balances || '[]',
-                    period_info: account.period_info || {},
-                    current_balance_usd: parseFloat(account.current_balance_usd) || 0,  // Add this line
+                    period_info: account.period_info || {}
                 }))
             } else {
                 this.state.accounts = []
@@ -396,6 +398,28 @@ export class CashFlowDashboard extends Component {
             this.state.loading = false
         }
         
+    }
+
+    getDisplayBalance(account) {
+        if (this.state.selectedCurrencies.includes('USD') && !this.state.selectedCurrencies.includes('TRY')) {
+            return parseFloat(account.current_balance_usd) || 0
+        }
+        return parseFloat(account.current_balance) || 0
+    }
+
+    getFormattedBalance(account) {
+        if (this.state.selectedCurrencies.includes('USD') && !this.state.selectedCurrencies.includes('TRY')) {
+            const usdBalance = parseFloat(account.current_balance_usd) || 0
+            return `$${usdBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+        }
+        return account.balance_display || '₺0'
+    }
+
+    getFormattedTotalBalance() {
+        if (this.state.selectedCurrencies.includes('USD') && !this.state.selectedCurrencies.includes('TRY')) {
+            return `$${this.state.totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+        }
+        return this.formatBalance(this.state.totalBalance)
     }
 
     getDateRange() {
@@ -476,16 +500,12 @@ export class CashFlowDashboard extends Component {
         let positiveAccounts = 0
         let negativeAccounts = 0
         
-        try {
-            this.state.accounts.forEach(account => {
-                const balance = parseFloat(account.current_balance) || 0
-                totalBalance += balance
-                if (balance > 0) positiveAccounts++
-                else if (balance < 0) negativeAccounts++
-            })
-        } catch (error) {
-            console.warn('Error calculating summary stats:', error)
-        }
+        this.state.accounts.forEach(account => {
+            const balance = this.getDisplayBalance(account)  // Use this method
+            totalBalance += balance
+            if (balance > 0) positiveAccounts++
+            else if (balance < 0) negativeAccounts++
+        })
         
         this.state.totalBalance = totalBalance
         this.state.positiveAccounts = positiveAccounts
