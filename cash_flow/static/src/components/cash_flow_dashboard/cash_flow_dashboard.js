@@ -463,14 +463,7 @@ export class CashFlowDashboard extends Component {
     }
 
     async loadDashboardData() {
-        console.log("=== BACKEND CALL DEBUG ===")
-        console.log("Sending to backend:", {
-            period_type: this.state.period,
-            date_from: dateRange.date_from,
-            date_to: dateRange.date_to,
-            currencies: this.state.selectedCurrencies
-        })
-        console.log("=========================")
+        
     
         this.state.loading = true
         this.state.error = null
@@ -478,6 +471,15 @@ export class CashFlowDashboard extends Component {
         try {
             // Get date range context
             const dateRange = this.getDateRange()
+
+            console.log("=== BACKEND CALL DEBUG ===")
+            console.log("Sending to backend:", {
+                period_type: this.state.period,
+                date_from: dateRange.date_from,
+                date_to: dateRange.date_to,
+                currencies: this.state.selectedCurrencies
+            })
+            console.log("=========================")
             
             // UPDATED: Call the backend method with currency filtering
             const accountsData = await this.orm.call(
