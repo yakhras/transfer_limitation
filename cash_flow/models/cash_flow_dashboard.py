@@ -806,52 +806,149 @@ class CashFlowDashboard(models.Model):
             return total_balance_usd
     
     def _get_multi_currency_chart_data(self, account_ids, date_from, date_to, company_id, currencies=None):
-        """Generate chart data for multiple currencies or single currency"""
-        
-        # Create debug info that will be sent to frontend
-        debug_info = {
-            'method_called': True,
-            'input_currencies': currencies,
-            'currencies_type': str(type(currencies)),
-            'currencies_length': len(currencies) if currencies else 0,
-            'not_currencies': not currencies,
-            'len_equals_1': len(currencies) == 1 if currencies else False
-        }
+        """Generate chart data for multiple currencies or single currency - FIXED"""
         
         if not currencies or len(currencies) == 1:
-            debug_info['path_taken'] = 'single_currency'
             # Single currency - use existing logic
-            single_currency = currencies[0] if currencies else None
-            result = self._get_chart_data_for_period(
+            return self._get_chart_data_for_period(
                 account_ids, date_from, date_to, company_id, currencies
             )
-            debug_info['result_type'] = str(type(result))
-            
-            # Add debug to result
-            if isinstance(result, list):
-                return {'debug': debug_info, 'data': result, 'is_debug': True}
-            else:
-                return result
         
-        debug_info['path_taken'] = 'multi_currency'
+        # Multiple currencies - return data for each currency separately
+        chart_data = {}
         
-        # Multiple currencies - return data for each currency
-        chart_data = {'debug': debug_info}
+        # Get base move lines without currency filtering
+        base_domain = [
+            ('account_id', 'in', account_ids),
+            ('company_id', '=', company_id),
+            ('move_id.state', '=', 'posted')
+        ]
+        
+        if date_from:
+            base_domain.append(('date', '>=', date_from))
+        if date_to:
+            base_domain.append(('date', '<=', date_to))
         
         if 'TRY' in currencies:
-            debug_info['try_added'] = True
-            chart_data['TRY'] = self._get_chart_data_for_period(
-                account_ids, date_from, date_to, company_id, ['TRY']
+            chart_data['TRY'] = self._get_currency_specific_chart_data(
+                account_ids, date_from, date_to, company_id, 'TRY'
             )
         
         if 'USD' in currencies:
-            debug_info['usd_added'] = True
-            chart_data['USD'] = self._get_chart_data_for_period_usd(
-                account_ids, date_from, date_to, company_id
+            chart_data['USD'] = self._get_currency_specific_chart_data(
+                account_ids, date_from, date_to, company_id, 'USD'
             )
         
-        debug_info['final_keys'] = list(chart_data.keys())
+        if 'EUR' in currencies:
+            chart_data['EUR'] = self._get_currency_specific_chart_data(
+                account_ids, date_from, date_to, company_id, 'EUR'
+            )
+        
         return chart_data
+    
+    def _get_currency_specific_chart_data(self, account_ids, date_from, date_to, company_id, target_currency):
+        """Generate chart data for a specific currency"""
+        if not account_ids:
+            return self._get_sample_chart_data()
+        
+        if not date_from or not date_to:
+            return self._get_all_time_chart_data_currency(account_ids, company_id, target_currency)
+        
+        try:
+            start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+            end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+            
+            # Generate data points (max 10 points for performance)
+            date_diff = (end_date - start_date).days
+            interval = max(1, date_diff // 9)  # 10 points max
+            
+            chart_data = []
+            current_date = start_date
+            
+            while current_date <= end_date:
+                # Calculate balance up to this date in target currency
+                balance = self._calculate_balance_in_currency(
+                    account_ids, date_from, current_date.strftime('%Y-%m-%d'), 
+                    company_id, target_currency
+                )
+                
+                chart_data.append({
+                    'label': current_date.strftime('%b %d'),
+                    'value': float(balance)
+                })
+                
+                current_date += timedelta(days=interval)
+                if current_date > end_date and chart_data[-1]['label'] != end_date.strftime('%b %d'):
+                    # Add final point
+                    balance = self._calculate_balance_in_currency(
+                        account_ids, date_from, end_date.strftime('%Y-%m-%d'), 
+                        company_id, target_currency
+                    )
+                    chart_data.append({
+                        'label': end_date.strftime('%b %d'),
+                        'value': float(balance)
+                    })
+                    break
+            
+            return chart_data
+            
+        except Exception as e:
+            _logger.error(f"Error generating {target_currency} chart data: {str(e)}")
+            return self._get_sample_chart_data()
+        
+
+    
+    def _calculate_balance_in_currency(self, account_ids, date_from, date_to, company_id, target_currency):
+        """Calculate balance converted to target currency"""
+        if not account_ids:
+            return 0.0
+        
+        # Build domain for move lines (NO CURRENCY FILTERING)
+        domain = [
+            ('account_id', 'in', account_ids),
+            ('company_id', '=', company_id),
+            ('move_id.state', '=', 'posted')
+        ]
+        
+        # Add date filters
+        if date_from:
+            domain.append(('date', '>=', date_from))
+        if date_to:
+            domain.append(('date', '<=', date_to))
+        
+        # Get ALL move lines for the date range
+        move_lines = self.env['account.move.line'].search(domain)
+        
+        total_balance = 0.0
+        
+        if target_currency == 'TRY':
+            # For TRY, use company currency amounts (debit - credit)
+            total_debit = sum(move_lines.mapped('debit'))
+            total_credit = sum(move_lines.mapped('credit'))
+            total_balance = total_debit - total_credit
+            
+        elif target_currency == 'USD':
+            # For USD, convert each move line to USD
+            for move_line in move_lines:
+                try_amount = move_line.debit - move_line.credit
+                
+                # Check if this move line already has USD currency
+                if move_line.currency_id and move_line.currency_id.name == 'USD':
+                    # Already in USD, use amount_currency
+                    total_balance += move_line.amount_currency
+                else:
+                    # Convert TRY to USD using move line date
+                    rate_record, rate_value, rate_date = self._get_usd_rate_for_date(
+                        move_line.date, company_id
+                    )
+                    if rate_record and rate_value:
+                        usd_amount = try_amount * rate_value
+                        total_balance += usd_amount
+                    else:
+                        # If no rate found, skip this move line for USD calculation
+                        continue
+        
+        return total_balance
     
 
     def _get_chart_data_for_period_usd(self, account_ids, date_from, date_to, company_id):
@@ -959,11 +1056,11 @@ class CashFlowDashboard(models.Model):
         return normalized_from, normalized_to
 
     def _calculate_balance_with_filter(self, account_ids, date_from, date_to, company_id, currencies=None):
-        """UPDATED: Calculate balance for multiple accounts with date and currency filtering"""
+        """FIXED: Calculate balance for multiple accounts with date filtering (removed currency filtering)"""
         if not account_ids:
             return 0.0
         
-        # Build domain for move lines
+        # Build domain for move lines (REMOVED CURRENCY FILTERING)
         domain = [
             ('account_id', 'in', account_ids),
             ('company_id', '=', company_id),
@@ -976,18 +1073,8 @@ class CashFlowDashboard(models.Model):
         if date_to:
             domain.append(('date', '<=', date_to))
         
-        # ADDED: Currency filtering
-        if currencies:
-            # Get currency IDs from currency codes
-            currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
-            if currency_ids:
-                domain.append(('currency_id', 'in', currency_ids))
-                _logger.info(f"Applied currency filter: {currencies} -> IDs: {currency_ids}")
-            else:
-                _logger.warning(f"No currencies found for codes: {currencies}")
-        
-        # ADDED: Log the domain for debugging
-        _logger.info(f"Balance calculation domain: {domain}")
+        # NOTE: Removed currency filtering as it was causing issues
+        # For multi-currency support, use _calculate_balance_in_currency instead
         
         # Get move lines and calculate balance
         move_lines = self.env['account.move.line'].search(domain)
@@ -996,10 +1083,7 @@ class CashFlowDashboard(models.Model):
         
         balance = total_debit - total_credit
         
-        # ADDED: Log the calculation results
-        _logger.info(f"Move lines found: {len(move_lines)}")
-        _logger.info(f"Total debit: {total_debit}, Total credit: {total_credit}")
-        _logger.info(f"Calculated balance: {balance}")
+        _logger.info(f"Balance calculation - Move lines: {len(move_lines)}, Balance: {balance}")
         
         return balance
 

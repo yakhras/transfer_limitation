@@ -95,16 +95,33 @@ class BalanceChart extends Component {
 
         // Get chart data - now works with multiple currencies
         const chartData = this.getChartData()
+        console.log("Processed chart data:", chartData)
 
         try {
             // Check if we have multiple currencies
             const isMultiCurrency = this.isMultipleCurrencies(chartData)
+            console.log("Is multi currency:", isMultiCurrency)
+            
             let datasets = []
             let labels = []
 
             if (isMultiCurrency) {
+                console.log("Rendering multi-currency chart")
                 // Multiple currencies - create dataset for each
-                if (chartData.TRY) {
+                
+                // Get labels from first available currency data
+                if (chartData.TRY && Array.isArray(chartData.TRY) && chartData.TRY.length > 0) {
+                    labels = chartData.TRY.map(item => item.label || '')
+                } else if (chartData.USD && Array.isArray(chartData.USD) && chartData.USD.length > 0) {
+                    labels = chartData.USD.map(item => item.label || '')
+                } else if (chartData.EUR && Array.isArray(chartData.EUR) && chartData.EUR.length > 0) {
+                    labels = chartData.EUR.map(item => item.label || '')
+                }
+                
+                // Add TRY dataset if available and selected
+                if (chartData.TRY && Array.isArray(chartData.TRY) && 
+                    this.props.selectedCurrencies && this.props.selectedCurrencies.includes('TRY')) {
+                    console.log("Adding TRY dataset with", chartData.TRY.length, "points")
                     datasets.push({
                         label: 'TRY Balance',
                         data: chartData.TRY.map(item => parseFloat(item.value) || 0),
@@ -113,13 +130,16 @@ class BalanceChart extends Component {
                         borderWidth: 2,
                         fill: false,
                         tension: 0.3,
-                        pointRadius: 2,
-                        pointHoverRadius: 4,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
                         yAxisID: 'y-try'
                     })
                 }
 
-                if (chartData.USD) {
+                // Add USD dataset if available and selected
+                if (chartData.USD && Array.isArray(chartData.USD) && 
+                    this.props.selectedCurrencies && this.props.selectedCurrencies.includes('USD')) {
+                    console.log("Adding USD dataset with", chartData.USD.length, "points")
                     datasets.push({
                         label: 'USD Balance',
                         data: chartData.USD.map(item => parseFloat(item.value) || 0),
@@ -128,17 +148,32 @@ class BalanceChart extends Component {
                         borderWidth: 2,
                         fill: false,
                         tension: 0.3,
-                        pointRadius: 2,
-                        pointHoverRadius: 4,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
                         yAxisID: 'y-usd'
                     })
                 }
 
-                // Use labels from first available currency
-                labels = chartData.TRY?.map(item => item.label) || 
-                        chartData.USD?.map(item => item.label) || []
+                // Add EUR dataset if available and selected
+                if (chartData.EUR && Array.isArray(chartData.EUR) && 
+                    this.props.selectedCurrencies && this.props.selectedCurrencies.includes('EUR')) {
+                    console.log("Adding EUR dataset with", chartData.EUR.length, "points")
+                    datasets.push({
+                        label: 'EUR Balance',
+                        data: chartData.EUR.map(item => parseFloat(item.value) || 0),
+                        borderColor: '#6f42c1', // Purple line for EUR
+                        backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        yAxisID: 'y-eur'
+                    })
+                }
 
             } else {
+                console.log("Rendering single currency chart")
                 // Single currency - existing logic
                 datasets = [{
                     label: 'Balance',
@@ -148,11 +183,14 @@ class BalanceChart extends Component {
                     borderWidth: 2,
                     fill: true,
                     tension: 0.3,
-                    pointRadius: 2,
-                    pointHoverRadius: 4
+                    pointRadius: 3,
+                    pointHoverRadius: 5
                 }]
                 labels = chartData.labels || []
             }
+
+            console.log("Final datasets count:", datasets.length)
+            console.log("Final labels count:", labels.length)
 
             // Chart configuration
             const config = {
@@ -171,7 +209,8 @@ class BalanceChart extends Component {
                             labels: {
                                 usePointStyle: true,
                                 pointStyle: 'line',
-                                font: { size: 10 }
+                                font: { size: 11 },
+                                padding: 15
                             }
                         },
                         tooltip: {
@@ -182,11 +221,13 @@ class BalanceChart extends Component {
                                 label: (context) => {
                                     const value = context.parsed.y
                                     if (context.dataset.label === 'TRY Balance') {
-                                        return `TRY: ₺${value.toLocaleString()}`
+                                        return `TRY: ₺${value.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                                     } else if (context.dataset.label === 'USD Balance') {
                                         return `USD: $${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                    } else if (context.dataset.label === 'EUR Balance') {
+                                        return `EUR: €${value.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                                     } else {
-                                        return `Balance: ₺${value.toLocaleString()}`
+                                        return `Balance: ₺${value.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                                     }
                                 }
                             }
@@ -198,12 +239,13 @@ class BalanceChart extends Component {
                             grid: { display: false },
                             ticks: { 
                                 font: { size: 10 },
-                                maxTicksLimit: 5
+                                maxTicksLimit: 6
                             }
                         },
                         y: { 
                             display: !isMultiCurrency,
-                            beginAtZero: false 
+                            beginAtZero: false,
+                            grid: { display: true }
                         }
                     },
                     interaction: { 
@@ -215,7 +257,8 @@ class BalanceChart extends Component {
 
             // Add separate Y-axes for multi-currency
             if (isMultiCurrency) {
-                if (chartData.TRY) {
+                // Add TRY Y-axis (left side)
+                if (datasets.some(d => d.yAxisID === 'y-try')) {
                     config.options.scales['y-try'] = {
                         type: 'linear',
                         display: true,
@@ -224,20 +267,24 @@ class BalanceChart extends Component {
                             display: true,
                             text: 'TRY (₺)',
                             color: '#dc3545',
-                            font: { size: 10 }
+                            font: { size: 11, weight: 'bold' }
                         },
                         ticks: {
                             color: '#dc3545',
-                            font: { size: 9 },
+                            font: { size: 10 },
                             callback: function(value) {
-                                return '₺' + value.toLocaleString()
+                                return '₺' + value.toLocaleString('tr-TR', { maximumFractionDigits: 0 })
                             }
                         },
-                        grid: { display: false }
+                        grid: { 
+                            display: true,
+                            color: 'rgba(220, 53, 69, 0.1)'
+                        }
                     }
                 }
 
-                if (chartData.USD) {
+                // Add USD Y-axis (right side)
+                if (datasets.some(d => d.yAxisID === 'y-usd')) {
                     config.options.scales['y-usd'] = {
                         type: 'linear',
                         display: true,
@@ -246,20 +293,48 @@ class BalanceChart extends Component {
                             display: true,
                             text: 'USD ($)',
                             color: '#28a745',
-                            font: { size: 10 }
+                            font: { size: 11, weight: 'bold' }
                         },
                         ticks: {
                             color: '#28a745',
-                            font: { size: 9 },
+                            font: { size: 10 },
                             callback: function(value) {
-                                return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                                return '$' + value.toLocaleString('en-US', { maximumFractionDigits: 0 })
                             }
                         },
-                        grid: { display: false }
+                        grid: { 
+                            display: false  // Hide grid for secondary axis
+                        }
+                    }
+                }
+
+                // Add EUR Y-axis (right side, offset)
+                if (datasets.some(d => d.yAxisID === 'y-eur')) {
+                    config.options.scales['y-eur'] = {
+                        type: 'linear',
+                        display: datasets.filter(d => d.yAxisID.startsWith('y-')).length <= 2, // Only show if 2 or fewer currencies
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'EUR (€)',
+                            color: '#6f42c1',
+                            font: { size: 11, weight: 'bold' }
+                        },
+                        ticks: {
+                            color: '#6f42c1',
+                            font: { size: 10 },
+                            callback: function(value) {
+                                return '€' + value.toLocaleString('de-DE', { maximumFractionDigits: 0 })
+                            }
+                        },
+                        grid: { 
+                            display: false
+                        }
                     }
                 }
             }
 
+            console.log("Creating chart with config:", config)
             this.chartInstance = new Chart(canvas, config)
             
         } catch (error) {
@@ -270,24 +345,42 @@ class BalanceChart extends Component {
 
     isMultipleCurrencies(chartData) {
         // Check if chartData is an object with currency keys (TRY, USD, EUR)
-        return chartData && typeof chartData === 'object' && 
+        const isMulti = chartData && typeof chartData === 'object' && 
             !Array.isArray(chartData) && 
             (chartData.TRY || chartData.USD || chartData.EUR) &&
             !chartData.values && !chartData.labels
+        
+        console.log("isMultipleCurrencies check:", {
+            chartData: chartData,
+            isObject: typeof chartData === 'object',
+            isNotArray: !Array.isArray(chartData),
+            hasCurrencyKeys: (chartData && (chartData.TRY || chartData.USD || chartData.EUR)),
+            hasNoFallbackKeys: chartData && !chartData.values && !chartData.labels,
+            result: isMulti
+        })
+        
+        return isMulti
     }
 
     getChartData() {
+        console.log("getChartData called with accountData:", this.accountData)
+        
         // Use chart_data from the updated backend if available
         if (this.accountData.chart_data) {
+            console.log("Found chart_data:", this.accountData.chart_data)
+            
             // Check if it's multi-currency data (object with currency keys)
             if (typeof this.accountData.chart_data === 'object' && 
                 !Array.isArray(this.accountData.chart_data) &&
                 (this.accountData.chart_data.TRY || this.accountData.chart_data.USD || this.accountData.chart_data.EUR)) {
-                // Multi-currency chart data
+                
+                console.log("Detected multi-currency chart data")
+                // Multi-currency chart data - return as-is
                 return this.accountData.chart_data
             } 
             // Single currency chart data (array format)
             else if (Array.isArray(this.accountData.chart_data) && this.accountData.chart_data.length > 0) {
+                console.log("Detected single currency array chart data")
                 return {
                     labels: this.accountData.chart_data.map(item => item.label || ''),
                     values: this.accountData.chart_data.map(item => parseFloat(item.value) || 0)
@@ -297,12 +390,14 @@ class BalanceChart extends Component {
 
         // Use chartData prop if available
         if (this.props.chartData && Array.isArray(this.props.chartData) && this.props.chartData.length > 0) {
+            console.log("Using props chartData")
             return {
                 labels: this.props.chartData.map(item => item.label || ''),
                 values: this.props.chartData.map(item => parseFloat(item.value) || 0)
             }
         }
 
+        console.log("Generating fallback chart data")
         // Fallback: Generate sample trend data
         return this.generateFallbackChartData()
     }
