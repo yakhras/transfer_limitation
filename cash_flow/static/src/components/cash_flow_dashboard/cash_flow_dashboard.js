@@ -324,7 +324,7 @@ export class CashFlowDashboard extends Component {
     }
 
     async loadDashboardData() {
-        
+    
         this.state.loading = true
         this.state.error = null
 
@@ -332,7 +332,7 @@ export class CashFlowDashboard extends Component {
             // Get date range context
             const dateRange = this.getDateRange()
             
-            // Call the updated backend method
+            // UPDATED: Call the backend method with currency filtering
             const accountsData = await this.orm.call(
                 'cash.flow.dashboard',
                 'get_filtered_dashboard_data',
@@ -340,7 +340,8 @@ export class CashFlowDashboard extends Component {
                 {
                     period_type: this.state.period,
                     date_from: dateRange.date_from,
-                    date_to: dateRange.date_to
+                    date_to: dateRange.date_to,
+                    currencies: this.state.selectedCurrencies  // ADDED: Pass selected currencies
                 }
             )
 
