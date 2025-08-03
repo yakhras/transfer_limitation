@@ -575,7 +575,7 @@ class CashFlowDashboard(models.Model):
         except Exception as e:
             _logger.error(f"Error in get_filtered_dashboard_data: {str(e)}")
             return []
-
+    
     def _normalize_currency_params(self, currencies):
         """
         ADDED: Normalize currency parameters
@@ -648,15 +648,30 @@ class CashFlowDashboard(models.Model):
         if date_to:
             domain.append(('date', '<=', date_to))
         
-        # ADDED: Currency filtering
+        # UPDATED: Currency filtering with TRY special handling
         if currencies:
-            # Get currency IDs from currency codes
-            currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
-            if currency_ids:
-                domain.append(('currency_id', 'in', currency_ids))
-                _logger.info(f"Applied currency filter: {currencies} -> IDs: {currency_ids}")
+            # SPECIAL CASE: If TRY is selected, don't filter by currency (show all/null currencies)
+            if 'TRY' in currencies and len(currencies) == 1:
+                # TRY only selected = no currency filtering (show all)
+                _logger.info(f"TRY selected - no currency filtering applied")
+            elif 'TRY' in currencies and len(currencies) > 1:
+                # TRY + other currencies = filter for non-TRY currencies + null currencies
+                other_currencies = [c for c in currencies if c != 'TRY']
+                currency_ids = self.env['res.currency'].search([('name', 'in', other_currencies)]).ids
+                if currency_ids:
+                    # Include specific currencies OR null currency (TRY/base currency)
+                    domain.append('|')
+                    domain.append(('currency_id', 'in', currency_ids))
+                    domain.append(('currency_id', '=', False))
+                    _logger.info(f"TRY + others: {other_currencies} -> IDs: {currency_ids} + null")
             else:
-                _logger.warning(f"No currencies found for codes: {currencies}")
+                # Only non-TRY currencies selected
+                currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
+                if currency_ids:
+                    domain.append(('currency_id', 'in', currency_ids))
+                    _logger.info(f"Applied currency filter: {currencies} -> IDs: {currency_ids}")
+                else:
+                    _logger.warning(f"No currencies found for codes: {currencies}")
         
         # ADDED: Log the domain for debugging
         _logger.info(f"Balance calculation domain: {domain}")
@@ -740,6 +755,8 @@ class CashFlowDashboard(models.Model):
             _logger.error(f"Error generating chart data: {str(e)}")
             return self._get_sample_chart_data()
     
+    # Add this method to cash_flow_dashboard.py
+
     def _get_all_time_chart_data(self, account_ids, company_id, currencies=None):
         """UPDATED: Generate chart data for All Time view with currency filtering"""
         
@@ -750,11 +767,26 @@ class CashFlowDashboard(models.Model):
             ('move_id.state', '=', 'posted')
         ]
         
-        # ADDED: Currency filtering for all-time chart
+        # UPDATED: Currency filtering for all-time chart with TRY special handling
         if currencies:
-            currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
-            if currency_ids:
-                domain.append(('currency_id', 'in', currency_ids))
+            # SPECIAL CASE: If TRY is selected, don't filter by currency (show all/null currencies)
+            if 'TRY' in currencies and len(currencies) == 1:
+                # TRY only selected = no currency filtering (show all)
+                pass  # Don't add currency filter
+            elif 'TRY' in currencies and len(currencies) > 1:
+                # TRY + other currencies = filter for non-TRY currencies + null currencies
+                other_currencies = [c for c in currencies if c != 'TRY']
+                currency_ids = self.env['res.currency'].search([('name', 'in', other_currencies)]).ids
+                if currency_ids:
+                    # Include specific currencies OR null currency (TRY/base currency)
+                    domain.append('|')
+                    domain.append(('currency_id', 'in', currency_ids))
+                    domain.append(('currency_id', '=', False))
+            else:
+                # Only non-TRY currencies selected
+                currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
+                if currency_ids:
+                    domain.append(('currency_id', 'in', currency_ids))
         
         # Get earliest and latest transaction dates
         earliest_line = self.env['account.move.line'].search(domain, order='date asc', limit=1)
@@ -783,7 +815,6 @@ class CashFlowDashboard(models.Model):
             return self._get_quarterly_chart_data(account_ids, company_id, start_date, end_date, currencies)
         else:                       # More than 3 years - Yearly
             return self._get_yearly_chart_data(account_ids, company_id, start_date, end_date, currencies)
-        
 
     def _get_weekly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
         """UPDATED: Generate weekly chart data with currency filtering"""
@@ -895,15 +926,14 @@ class CashFlowDashboard(models.Model):
             current_year += 1  # Move to next year
         
         return chart_data
-
-    def _get_sample_chart_data(self):
-        """Generate sample chart data as fallback"""
-        return [
-            {'label': 'Week 1', 'value': 1000},
-            {'label': 'Week 2', 'value': 1200},
-            {'label': 'Week 3', 'value': 900},
-            {'label': 'Week 4', 'value': 1100}
-        ]
+        def _get_sample_chart_data(self):
+            """Generate sample chart data as fallback"""
+            return [
+                {'label': 'Week 1', 'value': 1000},
+                {'label': 'Week 2', 'value': 1200},
+                {'label': 'Week 3', 'value': 900},
+                {'label': 'Week 4', 'value': 1100}
+            ]
 
     def _get_individual_balances_for_period(self, account_ids, date_from, date_to, company_id, currencies=None):
         """UPDATED: Get individual account balances for the period with currency filtering"""
