@@ -149,7 +149,7 @@ class CashFlowDashboard(models.Model):
         rate_record = self.env['res.currency.rate'].search([
             ('currency_id.name', '=', 'USD'),
             ('company_id', '=', company_id),
-            ('name', '<=', move_line_date)
+            ('name', '<', move_line_date)
         ], order='name desc', limit=1)
         
         if rate_record:
