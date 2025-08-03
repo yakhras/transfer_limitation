@@ -377,6 +377,8 @@ export class CashFlowDashboard extends Component {
                 console.log(`Number of accounts: ${this.state.accounts.length}`)
                 console.log(`=========================`)
             }
+            console.log("Selected currencies:", this.state.selectedCurrencies)
+            console.log("Accounts data:", accountsData)
             
 
         } catch (error) {
