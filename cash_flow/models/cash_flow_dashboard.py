@@ -677,6 +677,11 @@ class CashFlowDashboard(models.Model):
                         config.account_ids.ids, normalized_date_from, normalized_date_to, 
                         company_id, normalized_currencies
                     )
+
+                    current_balance_usd = self._calculate_balance_usd_with_filter(
+                        config.account_ids.ids, normalized_date_from, normalized_date_to, 
+                        company_id
+                    )
                     
                     _logger.info(f"Calculated filtered balance for {config.display_name}: {current_balance}")
                     
@@ -713,12 +718,12 @@ class CashFlowDashboard(models.Model):
                         'account_names': dashboard_record.account_names,
                         'display_name': dashboard_record.display_name,
                         'current_balance': current_balance,
+                        'current_balance_usd': current_balance_usd,  # Use filtered USD amount
                         'balance_display': balance_display,
                         'balance_color': balance_color,
                         'chart_data': chart_data,
                         'individual_balances': json.dumps(individual_balances),
-                        'period_info': period_info,
-                        'current_balance_usd': dashboard_record.current_balance_usd,  # Add this line
+                        'period_info': period_info
                     }
                     
                     dashboard_data.append(account_data)
@@ -734,6 +739,63 @@ class CashFlowDashboard(models.Model):
         except Exception as e:
             _logger.error(f"Error in get_filtered_dashboard_data: {str(e)}")
             return []
+    def _calculate_balance_usd_with_filter(self, account_ids, date_from, date_to, company_id):
+            """Calculate USD balance for specific date range with proper conversion"""
+            if not account_ids:
+                return 0.0
+            
+            # Build domain for move lines
+            domain = [
+                ('account_id', 'in', account_ids),
+                ('company_id', '=', company_id),
+                ('move_id.state', '=', 'posted')
+            ]
+            
+            # Add date filters
+            if date_from:
+                domain.append(('date', '>=', date_from))
+            if date_to:
+                domain.append(('date', '<=', date_to))
+            
+            # Get all move lines for the filtered period
+            move_lines = self.env['account.move.line'].search(domain)
+            
+            total_balance_usd = 0.0
+            
+            # Convert each move line to USD and aggregate
+            for move_line in move_lines:
+                try_amount = move_line.debit - move_line.credit
+                
+                # Check if this move line has a currency
+                if move_line.currency_id and move_line.currency_id.name == 'USD':
+                    # Already in USD, use amount_currency with sign
+                    usd_amount = move_line.amount_currency
+                elif move_line.currency_id and move_line.currency_id.name == 'TRY':
+                    # TRY to USD conversion using move line date
+                    rate_record, rate_value, rate_date = self._get_usd_rate_for_date(
+                        move_line.date, company_id
+                    )
+                    if rate_record and rate_value:
+                        usd_amount = move_line.amount_currency * rate_value
+                    else:
+                        # Fallback: use TRY amount as-is if no rate found
+                        usd_amount = try_amount
+                        _logger.warning(f"No USD rate found for move line {move_line.id} on {move_line.date}")
+                else:
+                    # Company currency (assumed TRY) or other currency
+                    # Convert TRY amount to USD using move line date
+                    rate_record, rate_value, rate_date = self._get_usd_rate_for_date(
+                        move_line.date, company_id
+                    )
+                    if rate_record and rate_value:
+                        usd_amount = try_amount * rate_value
+                    else:
+                        # Fallback: use amount as-is if no rate found
+                        usd_amount = try_amount
+                
+                total_balance_usd += usd_amount
+            
+            return total_balance_usd
 
     def _normalize_currency_params(self, currencies):
         """
