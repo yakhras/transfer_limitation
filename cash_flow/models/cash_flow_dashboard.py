@@ -808,49 +808,32 @@ class CashFlowDashboard(models.Model):
     def _get_multi_currency_chart_data(self, account_ids, date_from, date_to, company_id, currencies=None):
         """Generate chart data for multiple currencies or single currency"""
         
-        # Create debug info that will be sent to frontend
-        debug_info = {
-            'method_called': True,
-            'input_currencies': currencies,
-            'currencies_type': str(type(currencies)),
-            'currencies_length': len(currencies) if currencies else 0,
-            'not_currencies': not currencies,
-            'len_equals_1': len(currencies) == 1 if currencies else False
-        }
-        
         if not currencies or len(currencies) == 1:
-            debug_info['path_taken'] = 'single_currency'
             # Single currency - use existing logic
-            single_currency = currencies[0] if currencies else None
-            result = self._get_chart_data_for_period(
+            return self._get_chart_data_for_period(
                 account_ids, date_from, date_to, company_id, currencies
             )
-            debug_info['result_type'] = str(type(result))
-            
-            # Add debug to result
-            if isinstance(result, list):
-                return {'debug': debug_info, 'data': result, 'is_debug': True}
-            else:
-                return result
-        
-        debug_info['path_taken'] = 'multi_currency'
         
         # Multiple currencies - return data for each currency
-        chart_data = {'debug': debug_info}
+        chart_data = {}
         
         if 'TRY' in currencies:
-            debug_info['try_added'] = True
             chart_data['TRY'] = self._get_chart_data_for_period(
                 account_ids, date_from, date_to, company_id, ['TRY']
             )
         
         if 'USD' in currencies:
-            debug_info['usd_added'] = True
             chart_data['USD'] = self._get_chart_data_for_period_usd(
                 account_ids, date_from, date_to, company_id
             )
         
-        debug_info['final_keys'] = list(chart_data.keys())
+        # Add debug info
+        chart_data['debug'] = {
+            'currencies_received': currencies,
+            'currencies_count': len(currencies),
+            'keys_generated': list(chart_data.keys())
+        }
+        
         return chart_data
     
 

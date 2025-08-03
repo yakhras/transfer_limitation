@@ -530,23 +530,20 @@ export class CashFlowDashboard extends Component {
             }
             console.log("Selected currencies:", this.state.selectedCurrencies)
             console.log("Accounts data:", accountsData)
-            // ADD BACKEND DEBUG:
+            console.log("Selected currencies:", this.state.selectedCurrencies)
+            console.log("Accounts data:", accountsData)
+
+            // ADD THIS BLOCK:
             if (accountsData && accountsData.length > 0) {
                 const firstAccount = accountsData[0]
-                console.log("=== BACKEND DEBUG ===")
-                console.log("Backend received currencies:", firstAccount.debug_currencies)
-                console.log("Currency count:", firstAccount.debug_currency_count)
-                console.log("Chart data type:", firstAccount.debug_chart_type)
-                console.log("Chart data keys:", firstAccount.debug_chart_keys)
-                
-                // ADD CHART METHOD DEBUG:
+                console.log("=== DETAILED DEBUG ===")
+                console.log("Chart data:", firstAccount.chart_data)
+                console.log("Chart data type:", typeof firstAccount.chart_data)
+                console.log("Chart data keys:", Object.keys(firstAccount.chart_data || {}))
                 if (firstAccount.chart_data && firstAccount.chart_data.debug) {
-                    console.log("=== CHART METHOD DEBUG ===")
-                    console.log("Method debug info:", firstAccount.chart_data.debug)
-                    console.log("========================")
+                    console.log("Debug info:", firstAccount.chart_data.debug)
                 }
-                
-                console.log("===================")
+                console.log("=====================")
             }
             
 
