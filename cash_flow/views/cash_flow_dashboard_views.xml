@@ -162,6 +162,8 @@
                                 <field name="config_id" readonly="1"/>
                                 <field name="currency_id" readonly="1"/>
                                 <field name="sequence" readonly="1" string="Display Order"/>
+                                <field name="debug_usd_rate"/>
+                                <field name="debug_rate_date"/>
                             </group>
                             <group string="Aggregated Balance Information">
                                 <field name="current_balance" readonly="1" string="Total Aggregated Balance" 

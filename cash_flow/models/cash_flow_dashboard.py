@@ -86,11 +86,153 @@ class CashFlowDashboard(models.Model):
         help="JSON data of individual account balances"
     )
 
+    # USD converted balance field
+    current_balance_usd = fields.Monetary(
+        string='Current Balance (USD)', 
+        compute='_compute_current_balance_usd',
+        currency_field='usd_currency_id',
+        help="Current balance converted to USD"
+    )
+
+    # USD currency reference
+    usd_currency_id = fields.Many2one(
+        'res.currency', 
+        string='USD Currency',
+        compute='_compute_usd_currency',
+        help="USD currency reference"
+    )
+
+    # DEBUG: Temporary field to see the rate being used
+    debug_usd_rate = fields.Float(
+        string='Debug USD Rate',
+        compute='_compute_current_balance_usd',
+        help="Debug: USD rate used for conversion"
+    )
+
+    # DEBUG: Temporary field to see the rate date
+    debug_rate_date = fields.Date(
+        string='Debug Rate Date',
+        compute='_compute_current_balance_usd',
+        help="Debug: Date of USD rate used"
+    )
+
     # Add SQL constraints for company consistency
     _sql_constraints = [
         ('unique_config_company', 'unique(config_id, company_id)', 
          'Dashboard record must be unique per configuration and company!'),
     ]
+
+    @api.depends('company_id')
+    def _compute_usd_currency(self):
+        """Get USD currency reference"""
+        for record in self:
+            usd_currency = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
+            record.usd_currency_id = usd_currency.id if usd_currency else False
+
+    def _get_usd_rate_for_date(self, move_line_date, company_id):
+        """
+        Get USD exchange rate for a specific move line date
+        Returns the most recent rate on or before the given date
+        """
+        if not move_line_date or not company_id:
+            return False, None, None
+        
+        # Convert string date to date object if needed
+        if isinstance(move_line_date, str):
+            try:
+                move_line_date = datetime.strptime(move_line_date, '%Y-%m-%d').date()
+            except ValueError:
+                _logger.error(f"Invalid date format: {move_line_date}")
+                return False, None, None
+        
+        # Search for USD currency rate
+        rate_record = self.env['res.currency.rate'].search([
+            ('currency_id.name', '=', 'USD'),
+            ('company_id', '=', company_id),
+            ('name', '<=', move_line_date)
+        ], order='name desc', limit=1)
+        
+        if rate_record:
+            return rate_record, rate_record.inverse_company_rate, rate_record.name
+        else:
+            _logger.warning(f"No USD rate found for date {move_line_date} and company {company_id}")
+            return False, None, None
+
+    @api.depends('account_ids', 'company_id')
+    def _compute_current_balance_usd(self):
+        """Compute current balance converted to USD"""
+        for record in self:
+            if not record.account_ids or not record.company_id:
+                record.current_balance_usd = 0.0
+                record.debug_usd_rate = 0.0
+                record.debug_rate_date = False
+                continue
+            
+            total_balance_usd = 0.0
+            latest_rate = 0.0
+            latest_rate_date = False
+            
+            # Get all move lines for all accounts
+            for account in record.account_ids:
+                # Base domain for filtering account move lines
+                domain = [
+                    ('account_id', '=', account.id),
+                    ('company_id', '=', record.company_id.id),
+                    ('move_id.state', '=', 'posted')
+                ]
+                
+                # Add date filtering from context (if provided by search view)
+                date_from = self.env.context.get('date_from')
+                date_to = self.env.context.get('date_to')
+                
+                if date_from:
+                    domain.append(('date', '>=', date_from))
+                if date_to:
+                    domain.append(('date', '<=', date_to))
+                
+                # Get account move lines
+                account_moves = self.env['account.move.line'].search(domain)
+                
+                # Convert each move line to USD and aggregate
+                for move_line in account_moves:
+                    try_amount = move_line.debit - move_line.credit
+                    
+                    # Check if this move line has a currency
+                    if move_line.currency_id and move_line.currency_id.name == 'USD':
+                        # Already in USD, use amount_currency with sign
+                        usd_amount = move_line.amount_currency or try_amount
+                    elif move_line.currency_id and move_line.currency_id.name == 'TRY':
+                        # TRY to USD conversion using move line date
+                        rate_record, rate_value, rate_date = record._get_usd_rate_for_date(
+                            move_line.date, record.company_id.id
+                        )
+                        if rate_record and rate_value:
+                            usd_amount = (move_line.amount_currency or try_amount) * rate_value
+                            latest_rate = rate_value
+                            latest_rate_date = rate_date
+                        else:
+                            # Fallback: use TRY amount as-is if no rate found
+                            usd_amount = try_amount
+                            _logger.warning(f"No USD rate found for move line {move_line.id} on {move_line.date}")
+                    else:
+                        # Company currency (assumed TRY) or other currency
+                        # Convert TRY amount to USD using move line date
+                        rate_record, rate_value, rate_date = record._get_usd_rate_for_date(
+                            move_line.date, record.company_id.id
+                        )
+                        if rate_record and rate_value:
+                            usd_amount = try_amount * rate_value
+                            latest_rate = rate_value
+                            latest_rate_date = rate_date
+                        else:
+                            # Fallback: use amount as-is if no rate found
+                            usd_amount = try_amount
+                    
+                    total_balance_usd += usd_amount
+            
+            record.current_balance_usd = total_balance_usd
+            record.debug_usd_rate = latest_rate
+            record.debug_rate_date = latest_rate_date
 
     @api.depends('account_ids')
     def _compute_account_info(self):
