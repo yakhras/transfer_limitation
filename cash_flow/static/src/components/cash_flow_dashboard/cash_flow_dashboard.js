@@ -74,6 +74,10 @@ class BalanceChart extends Component {
     }
 
     renderChart() {
+        console.log("=== CHART DEBUG ===")
+        console.log("Account chart_data:", this.accountData.chart_data)
+        console.log("Selected currencies:", this.state?.selectedCurrencies || "No state available")
+        console.log("==================")
         const canvas = document.getElementById(this.chartId)
         if (!canvas) {
             return
