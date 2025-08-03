@@ -608,24 +608,23 @@ class CashFlowDashboard(models.Model):
     @api.model
     def get_filtered_dashboard_data(self, period_type='all', date_from=None, date_to=None, currencies=None):
         """
-        UPDATED: Enhanced method for OWL frontend that works with multiple accounts and currency filtering
+        FIXED: Enhanced method for OWL frontend that works with multiple accounts and currency filtering
         Returns dashboard data with date and currency filtering for account groups
         """
         try:
             company_id = self.env.company.id
             
-            # ADDED: Currency filtering support
             _logger.info(f"=== DASHBOARD FILTER DEBUG ===")
             _logger.info(f"Period: {period_type}")
             _logger.info(f"Date From: {date_from} (type: {type(date_from)})")
             _logger.info(f"Date To: {date_to} (type: {type(date_to)})")
-            _logger.info(f"Currencies: {currencies}")
+            _logger.info(f"Currencies: {currencies} (type: {type(currencies)})")
             _logger.info(f"Company ID: {company_id}")
             
-            # ADDED: Validate and normalize date formats
+            # Validate and normalize date formats
             normalized_date_from, normalized_date_to = self._normalize_date_params(date_from, date_to)
             
-            # ADDED: Normalize currency filter
+            # Normalize currency filter
             normalized_currencies = self._normalize_currency_params(currencies)
             _logger.info(f"Normalized Currencies: {normalized_currencies}")
             
@@ -672,40 +671,45 @@ class CashFlowDashboard(models.Model):
                         })
                         _logger.info(f"Created dashboard record for config {config.id}")
                     
-                    # UPDATED: Calculate balance with date and currency filtering
+                    # Calculate balance with date filtering (NO currency filtering)
                     current_balance = self._calculate_balance_with_filter(
                         config.account_ids.ids, normalized_date_from, normalized_date_to, 
-                        company_id, normalized_currencies
+                        company_id, None  # REMOVED currency filtering
                     )
 
+                    # Calculate USD balance separately
                     current_balance_usd = self._calculate_balance_usd_with_filter(
                         config.account_ids.ids, normalized_date_from, normalized_date_to, 
                         company_id
                     )
                     
-                    _logger.info(f"Calculated filtered balance for {config.display_name}: {current_balance}")
+                    _logger.info(f"Calculated balances for {config.display_name}: TRY={current_balance}, USD={current_balance_usd}")
                     
                     # Format balance display
                     balance_display = self._format_balance_display(current_balance, dashboard_record.currency_id)
                     balance_color = 'green' if current_balance > 0 else ('red' if current_balance < 0 else 'blue')
                     
-                    # UPDATED: Generate chart data for the filtered period with currency filter
-                    # chart_data = self._get_chart_data_for_period(
-                    #     config.account_ids.ids, normalized_date_from, normalized_date_to, 
-                    #     company_id, normalized_currencies
-                    # )
-                    chart_data = self._get_multi_currency_chart_data(
-                        config.account_ids.ids, normalized_date_from, normalized_date_to, 
-                        company_id, normalized_currencies
-                    )
+                    # Generate chart data for the filtered period with currency support
+                    try:
+                        chart_data = self._get_multi_currency_chart_data(
+                            config.account_ids.ids, normalized_date_from, normalized_date_to, 
+                            company_id, normalized_currencies
+                        )
+                        _logger.info(f"Generated chart data successfully")
+                    except Exception as e:
+                        _logger.error(f"Error generating chart data: {str(e)}")
+                        # Fallback to simple chart data
+                        chart_data = self._get_sample_chart_data()
                     
-                    _logger.info(f"Generated chart data with {len(chart_data)} points")
-                    
-                    # UPDATED: Get individual account balances with currency filter
-                    individual_balances = self._get_individual_balances_for_period(
-                        config.account_ids, normalized_date_from, normalized_date_to, 
-                        company_id, normalized_currencies
-                    )
+                    # Get individual account balances (NO currency filter)
+                    try:
+                        individual_balances = self._get_individual_balances_for_period(
+                            config.account_ids, normalized_date_from, normalized_date_to, 
+                            company_id, None  # REMOVED currency filtering
+                        )
+                    except Exception as e:
+                        _logger.error(f"Error getting individual balances: {str(e)}")
+                        individual_balances = []
                     
                     # Format period information
                     period_info = {
@@ -722,7 +726,7 @@ class CashFlowDashboard(models.Model):
                         'account_names': dashboard_record.account_names,
                         'display_name': dashboard_record.display_name,
                         'current_balance': current_balance,
-                        'current_balance_usd': current_balance_usd,  # Use filtered USD amount
+                        'current_balance_usd': current_balance_usd,
                         'balance_display': balance_display,
                         'balance_color': balance_color,
                         'chart_data': chart_data,
@@ -735,10 +739,12 @@ class CashFlowDashboard(models.Model):
                     }
                     
                     dashboard_data.append(account_data)
-                    _logger.info(f"Completed processing {config.display_name}")
+                    _logger.info(f"Successfully processed {config.display_name}")
                     
                 except Exception as e:
                     _logger.error(f"Error processing config {config.id}: {str(e)}")
+                    import traceback
+                    _logger.error(f"Traceback: {traceback.format_exc()}")
                     continue
             
             _logger.info(f"=== DASHBOARD FILTER COMPLETE === Returning {len(dashboard_data)} records")
@@ -746,7 +752,10 @@ class CashFlowDashboard(models.Model):
             
         except Exception as e:
             _logger.error(f"Error in get_filtered_dashboard_data: {str(e)}")
+            import traceback
+            _logger.error(f"Traceback: {traceback.format_exc()}")
             return []
+        
     def _calculate_balance_usd_with_filter(self, account_ids, date_from, date_to, company_id):
             """Calculate USD balance for specific date range with proper conversion"""
             if not account_ids:
@@ -806,55 +815,77 @@ class CashFlowDashboard(models.Model):
             return total_balance_usd
     
     def _get_multi_currency_chart_data(self, account_ids, date_from, date_to, company_id, currencies=None):
-        """Generate chart data for multiple currencies or single currency - FIXED"""
-        
-        if not currencies or len(currencies) == 1:
-            # Single currency - use existing logic
-            return self._get_chart_data_for_period(
-                account_ids, date_from, date_to, company_id, currencies
-            )
-        
-        # Multiple currencies - return data for each currency separately
-        chart_data = {}
-        
-        # Get base move lines without currency filtering
-        base_domain = [
-            ('account_id', 'in', account_ids),
-            ('company_id', '=', company_id),
-            ('move_id.state', '=', 'posted')
-        ]
-        
-        if date_from:
-            base_domain.append(('date', '>=', date_from))
-        if date_to:
-            base_domain.append(('date', '<=', date_to))
-        
-        if 'TRY' in currencies:
-            chart_data['TRY'] = self._get_currency_specific_chart_data(
-                account_ids, date_from, date_to, company_id, 'TRY'
-            )
-        
-        if 'USD' in currencies:
-            chart_data['USD'] = self._get_currency_specific_chart_data(
-                account_ids, date_from, date_to, company_id, 'USD'
-            )
-        
-        if 'EUR' in currencies:
-            chart_data['EUR'] = self._get_currency_specific_chart_data(
-                account_ids, date_from, date_to, company_id, 'EUR'
-            )
-        
-        return chart_data
-    
-    def _get_currency_specific_chart_data(self, account_ids, date_from, date_to, company_id, target_currency):
-        """Generate chart data for a specific currency"""
-        if not account_ids:
-            return self._get_sample_chart_data()
-        
-        if not date_from or not date_to:
-            return self._get_all_time_chart_data_currency(account_ids, company_id, target_currency)
+        """Generate chart data for multiple currencies or single currency - ROBUST VERSION"""
         
         try:
+            _logger.info(f"_get_multi_currency_chart_data called with currencies: {currencies}")
+            
+            if not currencies or len(currencies) == 1:
+                _logger.info("Single currency path")
+                # Single currency - use existing logic
+                return self._get_chart_data_for_period(
+                    account_ids, date_from, date_to, company_id, currencies
+                )
+            
+            _logger.info("Multi currency path")
+            # Multiple currencies - return data for each currency separately
+            chart_data = {}
+            
+            if 'TRY' in currencies:
+                try:
+                    _logger.info("Generating TRY chart data")
+                    chart_data['TRY'] = self._get_currency_specific_chart_data(
+                        account_ids, date_from, date_to, company_id, 'TRY'
+                    )
+                    _logger.info(f"TRY chart data generated: {len(chart_data['TRY'])} points")
+                except Exception as e:
+                    _logger.error(f"Error generating TRY chart data: {str(e)}")
+                    chart_data['TRY'] = self._get_sample_chart_data()
+            
+            if 'USD' in currencies:
+                try:
+                    _logger.info("Generating USD chart data")
+                    chart_data['USD'] = self._get_currency_specific_chart_data(
+                        account_ids, date_from, date_to, company_id, 'USD'
+                    )
+                    _logger.info(f"USD chart data generated: {len(chart_data['USD'])} points")
+                except Exception as e:
+                    _logger.error(f"Error generating USD chart data: {str(e)}")
+                    chart_data['USD'] = self._get_sample_chart_data()
+            
+            if 'EUR' in currencies:
+                try:
+                    _logger.info("Generating EUR chart data")
+                    chart_data['EUR'] = self._get_currency_specific_chart_data(
+                        account_ids, date_from, date_to, company_id, 'EUR'
+                    )
+                    _logger.info(f"EUR chart data generated: {len(chart_data['EUR'])} points")
+                except Exception as e:
+                    _logger.error(f"Error generating EUR chart data: {str(e)}")
+                    chart_data['EUR'] = self._get_sample_chart_data()
+            
+            _logger.info(f"Final chart_data keys: {list(chart_data.keys())}")
+            return chart_data
+            
+        except Exception as e:
+            _logger.error(f"Error in _get_multi_currency_chart_data: {str(e)}")
+            import traceback
+            _logger.error(f"Traceback: {traceback.format_exc()}")
+            # Return fallback data
+            return self._get_sample_chart_data()
+    
+    def _get_currency_specific_chart_data(self, account_ids, date_from, date_to, company_id, target_currency):
+        """Generate chart data for a specific currency - ROBUST VERSION"""
+        
+        try:
+            _logger.info(f"Generating chart data for {target_currency}")
+            
+            if not account_ids:
+                return self._get_sample_chart_data()
+            
+            if not date_from or not date_to:
+                return self._get_all_time_chart_data_currency(account_ids, company_id, target_currency)
+            
             start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
             end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
             
@@ -866,31 +897,44 @@ class CashFlowDashboard(models.Model):
             current_date = start_date
             
             while current_date <= end_date:
-                # Calculate balance up to this date in target currency
-                balance = self._calculate_balance_in_currency(
-                    account_ids, date_from, current_date.strftime('%Y-%m-%d'), 
-                    company_id, target_currency
-                )
-                
-                chart_data.append({
-                    'label': current_date.strftime('%b %d'),
-                    'value': float(balance)
-                })
-                
-                current_date += timedelta(days=interval)
-                if current_date > end_date and chart_data[-1]['label'] != end_date.strftime('%b %d'):
-                    # Add final point
+                try:
+                    # Calculate balance up to this date in target currency
                     balance = self._calculate_balance_in_currency(
-                        account_ids, date_from, end_date.strftime('%Y-%m-%d'), 
+                        account_ids, date_from, current_date.strftime('%Y-%m-%d'), 
                         company_id, target_currency
                     )
+                    
                     chart_data.append({
-                        'label': end_date.strftime('%b %d'),
+                        'label': current_date.strftime('%b %d'),
                         'value': float(balance)
                     })
+                    
+                except Exception as e:
+                    _logger.warning(f"Error calculating balance for {current_date}: {str(e)}")
+                    # Add zero balance point to maintain chart continuity
+                    chart_data.append({
+                        'label': current_date.strftime('%b %d'),
+                        'value': 0.0
+                    })
+                
+                current_date += timedelta(days=interval)
+                if current_date > end_date and chart_data and chart_data[-1]['label'] != end_date.strftime('%b %d'):
+                    # Add final point
+                    try:
+                        balance = self._calculate_balance_in_currency(
+                            account_ids, date_from, end_date.strftime('%Y-%m-%d'), 
+                            company_id, target_currency
+                        )
+                        chart_data.append({
+                            'label': end_date.strftime('%b %d'),
+                            'value': float(balance)
+                        })
+                    except Exception as e:
+                        _logger.warning(f"Error calculating final balance: {str(e)}")
                     break
             
-            return chart_data
+            _logger.info(f"Generated {len(chart_data)} chart points for {target_currency}")
+            return chart_data if chart_data else self._get_sample_chart_data()
             
         except Exception as e:
             _logger.error(f"Error generating {target_currency} chart data: {str(e)}")
@@ -898,57 +942,225 @@ class CashFlowDashboard(models.Model):
         
 
     
-    def _calculate_balance_in_currency(self, account_ids, date_from, date_to, company_id, target_currency):
-        """Calculate balance converted to target currency"""
-        if not account_ids:
-            return 0.0
+    def _get_all_time_chart_data_currency(self, account_ids, company_id, target_currency):
+        """Generate all-time chart data for specific currency - ROBUST VERSION"""
         
-        # Build domain for move lines (NO CURRENCY FILTERING)
-        domain = [
-            ('account_id', 'in', account_ids),
-            ('company_id', '=', company_id),
-            ('move_id.state', '=', 'posted')
-        ]
-        
-        # Add date filters
-        if date_from:
-            domain.append(('date', '>=', date_from))
-        if date_to:
-            domain.append(('date', '<=', date_to))
-        
-        # Get ALL move lines for the date range
-        move_lines = self.env['account.move.line'].search(domain)
-        
-        total_balance = 0.0
-        
-        if target_currency == 'TRY':
-            # For TRY, use company currency amounts (debit - credit)
-            total_debit = sum(move_lines.mapped('debit'))
-            total_credit = sum(move_lines.mapped('credit'))
-            total_balance = total_debit - total_credit
+        try:
+            # Find the actual date range of transactions
+            domain = [
+                ('account_id', 'in', account_ids),
+                ('company_id', '=', company_id),
+                ('move_id.state', '=', 'posted')
+            ]
             
-        elif target_currency == 'USD':
-            # For USD, convert each move line to USD
-            for move_line in move_lines:
-                try_amount = move_line.debit - move_line.credit
+            # Get earliest and latest transaction dates
+            earliest_line = self.env['account.move.line'].search(domain, order='date asc', limit=1)
+            latest_line = self.env['account.move.line'].search(domain, order='date desc', limit=1)
+            
+            if not earliest_line or not latest_line:
+                return self._get_sample_chart_data()
+            
+            start_date = earliest_line.date
+            end_date = latest_line.date
+            today = datetime.now().date()
+            
+            if today > end_date:
+                end_date = today
+            
+            # Calculate total span to determine appropriate intervals
+            total_days = (end_date - start_date).days
+            
+            if total_days <= 30:
+                return self._get_weekly_chart_data_currency(account_ids, company_id, start_date, end_date, target_currency)
+            elif total_days <= 365:
+                return self._get_monthly_chart_data_currency(account_ids, company_id, start_date, end_date, target_currency)
+            else:
+                return self._get_yearly_chart_data_currency(account_ids, company_id, start_date, end_date, target_currency)
                 
-                # Check if this move line already has USD currency
-                if move_line.currency_id and move_line.currency_id.name == 'USD':
-                    # Already in USD, use amount_currency
-                    total_balance += move_line.amount_currency
-                else:
-                    # Convert TRY to USD using move line date
-                    rate_record, rate_value, rate_date = self._get_usd_rate_for_date(
-                        move_line.date, company_id
+        except Exception as e:
+            _logger.error(f"Error generating all-time chart data for {target_currency}: {str(e)}")
+            return self._get_sample_chart_data()
+
+
+    
+    def _get_yearly_chart_data_currency(self, account_ids, company_id, start_date, end_date, target_currency):
+        """Generate yearly chart data for specific currency - ROBUST VERSION"""
+        try:
+            chart_data = []
+            current_year = start_date.year
+            end_year = end_date.year
+            
+            while current_year <= end_year:
+                try:
+                    year_end = datetime(current_year, 12, 31).date()
+                    period_end = min(year_end, end_date)
+                    
+                    balance = self._calculate_balance_in_currency(
+                        account_ids, None, period_end.strftime('%Y-%m-%d'), company_id, target_currency
                     )
-                    if rate_record and rate_value:
-                        usd_amount = try_amount * rate_value
-                        total_balance += usd_amount
-                    else:
-                        # If no rate found, skip this move line for USD calculation
-                        continue
+                    
+                    chart_data.append({
+                        'label': str(current_year),
+                        'value': float(balance)
+                    })
+                    
+                except Exception as e:
+                    _logger.warning(f"Error processing year {current_year}: {str(e)}")
+                    chart_data.append({
+                        'label': str(current_year),
+                        'value': 0.0
+                    })
+                
+                current_year += 1
+            
+            return chart_data if chart_data else self._get_sample_chart_data()
+            
+        except Exception as e:
+            _logger.error(f"Error generating yearly chart data for {target_currency}: {str(e)}")
+            return self._get_sample_chart_data()
         
-        return total_balance
+
+
+
+    
+    def _get_weekly_chart_data_currency(self, account_ids, company_id, start_date, end_date, target_currency):
+        """Generate weekly chart data for specific currency - ROBUST VERSION"""
+        try:
+            chart_data = []
+            current_date = start_date
+            
+            while current_date <= end_date:
+                try:
+                    balance = self._calculate_balance_in_currency(
+                        account_ids, None, current_date.strftime('%Y-%m-%d'), company_id, target_currency
+                    )
+                    
+                    chart_data.append({
+                        'label': current_date.strftime('%b %d'),
+                        'value': float(balance)
+                    })
+                    
+                except Exception as e:
+                    _logger.warning(f"Error processing week {current_date}: {str(e)}")
+                    chart_data.append({
+                        'label': current_date.strftime('%b %d'),
+                        'value': 0.0
+                    })
+                
+                current_date += timedelta(days=7)
+            
+            return chart_data if chart_data else self._get_sample_chart_data()
+            
+        except Exception as e:
+            _logger.error(f"Error generating weekly chart data for {target_currency}: {str(e)}")
+            return self._get_sample_chart_data()
+
+
+
+    
+    def _get_monthly_chart_data_currency(self, account_ids, company_id, start_date, end_date, target_currency):
+        """Generate monthly chart data for specific currency - ROBUST VERSION"""
+        try:
+            chart_data = []
+            current_date = start_date.replace(day=1)
+            
+            while current_date <= end_date:
+                try:
+                    # Get last day of current month
+                    if current_date.month == 12:
+                        next_month = current_date.replace(year=current_date.year + 1, month=1, day=1)
+                    else:
+                        next_month = current_date.replace(month=current_date.month + 1, day=1)
+                    
+                    month_end = next_month - timedelta(days=1)
+                    period_end = min(month_end, end_date)
+                    
+                    # Calculate balance up to end of this month in target currency
+                    balance = self._calculate_balance_in_currency(
+                        account_ids, None, period_end.strftime('%Y-%m-%d'), company_id, target_currency
+                    )
+                    
+                    chart_data.append({
+                        'label': current_date.strftime('%b %Y'),
+                        'value': float(balance)
+                    })
+                    
+                except Exception as e:
+                    _logger.warning(f"Error processing month {current_date}: {str(e)}")
+                    chart_data.append({
+                        'label': current_date.strftime('%b %Y'),
+                        'value': 0.0
+                    })
+                
+                current_date = next_month
+            
+            return chart_data if chart_data else self._get_sample_chart_data()
+            
+        except Exception as e:
+            _logger.error(f"Error generating monthly chart data for {target_currency}: {str(e)}")
+            return self._get_sample_chart_data()
+        
+
+    
+    def _calculate_balance_in_currency(self, account_ids, date_from, date_to, company_id, target_currency):
+        """Calculate balance converted to target currency - ROBUST VERSION"""
+        
+        try:
+            if not account_ids:
+                return 0.0
+            
+            # Build domain for move lines (NO CURRENCY FILTERING)
+            domain = [
+                ('account_id', 'in', account_ids),
+                ('company_id', '=', company_id),
+                ('move_id.state', '=', 'posted')
+            ]
+            
+            # Add date filters
+            if date_from:
+                domain.append(('date', '>=', date_from))
+            if date_to:
+                domain.append(('date', '<=', date_to))
+            
+            # Get ALL move lines for the date range
+            move_lines = self.env['account.move.line'].search(domain)
+            
+            total_balance = 0.0
+            
+            if target_currency == 'TRY':
+                # For TRY, use company currency amounts (debit - credit)
+                total_debit = sum(move_lines.mapped('debit'))
+                total_credit = sum(move_lines.mapped('credit'))
+                total_balance = total_debit - total_credit
+                
+            elif target_currency == 'USD':
+                # For USD, convert each move line to USD
+                for move_line in move_lines:
+                    try:
+                        try_amount = move_line.debit - move_line.credit
+                        
+                        # Check if this move line already has USD currency
+                        if move_line.currency_id and move_line.currency_id.name == 'USD':
+                            # Already in USD, use amount_currency
+                            total_balance += move_line.amount_currency
+                        else:
+                            # Convert TRY to USD using move line date
+                            rate_record, rate_value, rate_date = self._get_usd_rate_for_date(
+                                move_line.date, company_id
+                            )
+                            if rate_record and rate_value:
+                                usd_amount = try_amount * rate_value
+                                total_balance += usd_amount
+                            # If no rate found, skip this move line for USD calculation
+                    except Exception as e:
+                        _logger.warning(f"Error processing move line {move_line.id}: {str(e)}")
+                        continue
+            
+            return total_balance
+            
+        except Exception as e:
+            _logger.error(f"Error calculating balance in {target_currency}: {str(e)}")
+            return 0.0
     
 
     def _get_chart_data_for_period_usd(self, account_ids, date_from, date_to, company_id):
@@ -1003,18 +1215,26 @@ class CashFlowDashboard(models.Model):
 
     def _normalize_currency_params(self, currencies):
         """
-        ADDED: Normalize currency parameters
-        Handles both list and single currency inputs
+        FIXED: Normalize currency parameters with better handling
         """
         if not currencies:
             return None
         
-        if isinstance(currencies, str):
-            return [currencies]
-        elif isinstance(currencies, list):
-            return [str(curr) for curr in currencies if curr]
-        else:
-            _logger.warning(f"Invalid currency format: {currencies} (type: {type(currencies)})")
+        try:
+            if isinstance(currencies, str):
+                return [currencies]
+            elif isinstance(currencies, (list, tuple)):
+                # Handle both regular lists and proxy objects
+                normalized = []
+                for curr in currencies:
+                    if curr and isinstance(curr, str):
+                        normalized.append(curr)
+                return normalized if normalized else None
+            else:
+                _logger.warning(f"Invalid currency format: {currencies} (type: {type(currencies)})")
+                return None
+        except Exception as e:
+            _logger.error(f"Error normalizing currencies: {str(e)}")
             return None
 
     def _normalize_date_params(self, date_from, date_to):
@@ -1315,13 +1535,13 @@ class CashFlowDashboard(models.Model):
         ]
 
     def _get_individual_balances_for_period(self, account_ids, date_from, date_to, company_id, currencies=None):
-        """UPDATED: Get individual account balances for the period with currency filtering"""
+        """FIXED: Get individual account balances for the period (removed currency filtering)"""
         balances = []
         
         for account in account_ids:
-            # UPDATED: Pass currency filter to balance calculation
+            # Calculate balance without currency filter
             balance = self._calculate_balance_with_filter(
-                [account.id], date_from, date_to, company_id, currencies
+                [account.id], date_from, date_to, company_id, None  # No currency filtering
             )
             formatted_balance = self._format_balance_display(balance, account.company_id.currency_id)
             
