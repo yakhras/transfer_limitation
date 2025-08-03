@@ -234,6 +234,22 @@ class CashFlowDashboard(models.Model):
             record.debug_usd_rate = latest_rate
             record.debug_rate_date = latest_rate_date
 
+
+    def action_view_dashboard_tree(self):
+        """Action to view dashboard tree view"""
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Cash Flow Dashboard',
+            'res_model': 'cash.flow.dashboard',
+            'view_mode': 'tree,form',
+            'view_type': 'form',
+            'target': 'current',
+            'domain': [('company_id', '=', self.company_id.id)],
+            'context': {
+                'default_company_id': self.company_id.id,
+            }
+        }
+
     @api.depends('account_ids')
     def _compute_account_info(self):
         """Compute account codes and names from selected accounts - HANDLES MULTIPLE ACCOUNTS"""
