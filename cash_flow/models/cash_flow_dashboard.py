@@ -802,34 +802,49 @@ class CashFlowDashboard(models.Model):
             return total_balance_usd
     
     def _get_multi_currency_chart_data(self, account_ids, date_from, date_to, company_id, currencies=None):
-            """Generate chart data for multiple currencies or single currency"""
-            if not currencies or len(currencies) == 1:
-                # Single currency - use existing logic
-                single_currency = currencies[0] if currencies else None
-                return self._get_chart_data_for_period(
-                    account_ids, date_from, date_to, company_id, currencies
-                )
-            
-            # Multiple currencies - return data for each currency
-            chart_data = {}
-            
-            if 'TRY' in currencies:
-                chart_data['TRY'] = self._get_chart_data_for_period(
-                    account_ids, date_from, date_to, company_id, ['TRY']
-                )
-            
-            if 'USD' in currencies:
-                chart_data['USD'] = self._get_chart_data_for_period_usd(
-                    account_ids, date_from, date_to, company_id
-                )
-            
-            if 'EUR' in currencies:
-                # Add EUR logic if needed later
-                chart_data['EUR'] = self._get_chart_data_for_period(
-                    account_ids, date_from, date_to, company_id, ['EUR']
-                )
-            
-            return chart_data
+        """Generate chart data for multiple currencies or single currency"""
+        
+        # DEBUG: Add detailed logging
+        print(f"=== _get_multi_currency_chart_data DEBUG ===")
+        print(f"Input currencies: {currencies}")
+        print(f"Type of currencies: {type(currencies)}")
+        print(f"Length of currencies: {len(currencies) if currencies else 0}")
+        print(f"Condition check: not currencies = {not currencies}")
+        print(f"Condition check: len(currencies) == 1 = {len(currencies) == 1 if currencies else 'N/A'}")
+        
+        if not currencies or len(currencies) == 1:
+            print("=== TAKING SINGLE CURRENCY PATH ===")
+            # Single currency - use existing logic
+            single_currency = currencies[0] if currencies else None
+            result = self._get_chart_data_for_period(
+                account_ids, date_from, date_to, company_id, currencies
+            )
+            print(f"Single currency result type: {type(result)}")
+            return result
+        
+        print("=== TAKING MULTI-CURRENCY PATH ===")
+        # Multiple currencies - return data for each currency
+        chart_data = {}
+        
+        if 'TRY' in currencies:
+            print("Adding TRY data...")
+            chart_data['TRY'] = self._get_chart_data_for_period(
+                account_ids, date_from, date_to, company_id, ['TRY']
+            )
+            print(f"TRY data type: {type(chart_data['TRY'])}")
+        
+        if 'USD' in currencies:
+            print("Adding USD data...")
+            chart_data['USD'] = self._get_chart_data_for_period_usd(
+                account_ids, date_from, date_to, company_id
+            )
+            print(f"USD data type: {type(chart_data['USD'])}")
+        
+        print(f"Final chart_data type: {type(chart_data)}")
+        print(f"Final chart_data keys: {list(chart_data.keys())}")
+        print("=== END DEBUG ===")
+        
+        return chart_data
     
 
     def _get_chart_data_for_period_usd(self, account_ids, date_from, date_to, company_id):
