@@ -723,7 +723,11 @@ class CashFlowDashboard(models.Model):
                         'balance_color': balance_color,
                         'chart_data': chart_data,
                         'individual_balances': json.dumps(individual_balances),
-                        'period_info': period_info
+                        'period_info': period_info,
+                        'debug_currencies': normalized_currencies,
+                        'debug_currency_count': len(normalized_currencies) if normalized_currencies else 0,
+                        'debug_chart_type': type(chart_data).__name__,
+                        'debug_chart_keys': list(chart_data.keys()) if isinstance(chart_data, dict) else 'not_dict'
                     }
                     
                     dashboard_data.append(account_data)
