@@ -89,38 +89,102 @@ class BalanceChart extends Component {
             this.chartInstance.destroy()
         }
 
-
-        // Get chart data - now works with updated backend model
+        // Get chart data - now works with multiple currencies
         const chartData = this.getChartData()
 
         try {
-            this.chartInstance = new Chart(canvas, {
-                type: 'line',
-                data: {
-                    labels: chartData.labels,
-                    datasets: [{
-                        label: 'Balance',
-                        data: chartData.values,
-                        borderColor: this.getChartColor(this.accountData.balance_color, 'border'),
-                        backgroundColor: this.getChartColor(this.accountData.balance_color, 'bg'),
+            // Check if we have multiple currencies
+            const isMultiCurrency = this.isMultipleCurrencies(chartData)
+            let datasets = []
+            let labels = []
+
+            if (isMultiCurrency) {
+                // Multiple currencies - create dataset for each
+                if (chartData.TRY) {
+                    datasets.push({
+                        label: 'TRY Balance',
+                        data: chartData.TRY.map(item => parseFloat(item.value) || 0),
+                        borderColor: '#dc3545', // Red line for TRY
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
                         borderWidth: 2,
-                        fill: true,
+                        fill: false,
                         tension: 0.3,
                         pointRadius: 2,
-                        pointHoverRadius: 4
-                    }]
+                        pointHoverRadius: 4,
+                        yAxisID: 'y-try'
+                    })
+                }
+
+                if (chartData.USD) {
+                    datasets.push({
+                        label: 'USD Balance',
+                        data: chartData.USD.map(item => parseFloat(item.value) || 0),
+                        borderColor: '#28a745', // Green line for USD
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 2,
+                        pointHoverRadius: 4,
+                        yAxisID: 'y-usd'
+                    })
+                }
+
+                // Use labels from first available currency
+                labels = chartData.TRY?.map(item => item.label) || 
+                        chartData.USD?.map(item => item.label) || []
+
+            } else {
+                // Single currency - existing logic
+                datasets = [{
+                    label: 'Balance',
+                    data: chartData.values || [],
+                    borderColor: this.getChartColor(this.accountData.balance_color, 'border'),
+                    backgroundColor: this.getChartColor(this.accountData.balance_color, 'bg'),
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 2,
+                    pointHoverRadius: 4
+                }]
+                labels = chartData.labels || []
+            }
+
+            // Chart configuration
+            const config = {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
+                        legend: { 
+                            display: isMultiCurrency,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'line',
+                                font: { size: 10 }
+                            }
+                        },
                         tooltip: {
                             mode: 'index',
                             intersect: false,
                             callbacks: {
                                 title: (context) => 'Date: ' + context[0].label,
-                                label: (context) => 'Balance: ₺' + context.parsed.y.toLocaleString()
+                                label: (context) => {
+                                    const value = context.parsed.y
+                                    if (context.dataset.label === 'TRY Balance') {
+                                        return `TRY: ₺${value.toLocaleString()}`
+                                    } else if (context.dataset.label === 'USD Balance') {
+                                        return `USD: $${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                                    } else {
+                                        return `Balance: ₺${value.toLocaleString()}`
+                                    }
+                                }
                             }
                         }
                     },
@@ -134,7 +198,7 @@ class BalanceChart extends Component {
                             }
                         },
                         y: { 
-                            display: false, 
+                            display: !isMultiCurrency,
                             beginAtZero: false 
                         }
                     },
@@ -143,7 +207,56 @@ class BalanceChart extends Component {
                         mode: 'index' 
                     }
                 }
-            })
+            }
+
+            // Add separate Y-axes for multi-currency
+            if (isMultiCurrency) {
+                if (chartData.TRY) {
+                    config.options.scales['y-try'] = {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'TRY (₺)',
+                            color: '#dc3545',
+                            font: { size: 10 }
+                        },
+                        ticks: {
+                            color: '#dc3545',
+                            font: { size: 9 },
+                            callback: function(value) {
+                                return '₺' + value.toLocaleString()
+                            }
+                        },
+                        grid: { display: false }
+                    }
+                }
+
+                if (chartData.USD) {
+                    config.options.scales['y-usd'] = {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'USD ($)',
+                            color: '#28a745',
+                            font: { size: 10 }
+                        },
+                        ticks: {
+                            color: '#28a745',
+                            font: { size: 9 },
+                            callback: function(value) {
+                                return '$' + value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
+                            }
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+
+            this.chartInstance = new Chart(canvas, config)
             
         } catch (error) {
             console.error('BalanceChart: Error creating chart:', error)
@@ -151,12 +264,30 @@ class BalanceChart extends Component {
         }
     }
 
+    isMultipleCurrencies(chartData) {
+        // Check if chartData is an object with currency keys (TRY, USD, EUR)
+        return chartData && typeof chartData === 'object' && 
+            !Array.isArray(chartData) && 
+            (chartData.TRY || chartData.USD || chartData.EUR) &&
+            !chartData.values && !chartData.labels
+    }
+
     getChartData() {
         // Use chart_data from the updated backend if available
-        if (this.accountData.chart_data && Array.isArray(this.accountData.chart_data) && this.accountData.chart_data.length > 0) {
-            return {
-                labels: this.accountData.chart_data.map(item => item.label || ''),
-                values: this.accountData.chart_data.map(item => parseFloat(item.value) || 0)
+        if (this.accountData.chart_data) {
+            // Check if it's multi-currency data (object with currency keys)
+            if (typeof this.accountData.chart_data === 'object' && 
+                !Array.isArray(this.accountData.chart_data) &&
+                (this.accountData.chart_data.TRY || this.accountData.chart_data.USD || this.accountData.chart_data.EUR)) {
+                // Multi-currency chart data
+                return this.accountData.chart_data
+            } 
+            // Single currency chart data (array format)
+            else if (Array.isArray(this.accountData.chart_data) && this.accountData.chart_data.length > 0) {
+                return {
+                    labels: this.accountData.chart_data.map(item => item.label || ''),
+                    values: this.accountData.chart_data.map(item => parseFloat(item.value) || 0)
+                }
             }
         }
 
@@ -168,7 +299,30 @@ class BalanceChart extends Component {
             }
         }
 
-        // Fallback: Generate sample trend data based on current balance
+        // Fallback: Generate sample trend data
+        return this.generateFallbackChartData()
+    }
+
+    getChartColor(balanceColor, type) {
+        const colors = {
+            green: { 
+                border: '#28a745', 
+                bg: 'rgba(40, 167, 69, 0.1)' 
+            },
+            red: { 
+                border: '#dc3545', 
+                bg: 'rgba(220, 53, 69, 0.1)' 
+            },
+            blue: { 
+                border: '#17a2b8', 
+                bg: 'rgba(23, 162, 184, 0.1)' 
+            }
+        }
+        
+        return (colors[balanceColor] || colors.blue)[type]
+    }
+
+    generateFallbackChartData() {
         const currentBalance = parseFloat(this.accountData.current_balance) || 0
         const periods = 7
         
@@ -192,25 +346,6 @@ class BalanceChart extends Component {
         values[values.length - 1] = currentBalance
         
         return { labels, values }
-    }
-
-    getChartColor(balanceColor, type) {
-        const colors = {
-            green: { 
-                border: '#28a745', 
-                bg: 'rgba(40, 167, 69, 0.1)' 
-            },
-            red: { 
-                border: '#dc3545', 
-                bg: 'rgba(220, 53, 69, 0.1)' 
-            },
-            blue: { 
-                border: '#17a2b8', 
-                bg: 'rgba(23, 162, 184, 0.1)' 
-            }
-        }
-        
-        return (colors[balanceColor] || colors.blue)[type]
     }
 
     showChartError() {

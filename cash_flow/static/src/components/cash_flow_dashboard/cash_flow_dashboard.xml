@@ -246,7 +246,7 @@
                                         </div>
 
                                         <!-- Chart Section -->
-                                        <div class="chart-container">
+                                        <div class="chart-container" style="height: 140px; position: relative;">
                                             <BalanceChart 
                                                 accountData="account"/>
                                         </div>

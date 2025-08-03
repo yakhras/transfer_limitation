@@ -796,6 +796,87 @@ class CashFlowDashboard(models.Model):
                 total_balance_usd += usd_amount
             
             return total_balance_usd
+    
+    def _get_multi_currency_chart_data(self, account_ids, date_from, date_to, company_id, currencies=None):
+            """Generate chart data for multiple currencies or single currency"""
+            if not currencies or len(currencies) == 1:
+                # Single currency - use existing logic
+                single_currency = currencies[0] if currencies else None
+                return self._get_chart_data_for_period(
+                    account_ids, date_from, date_to, company_id, currencies
+                )
+            
+            # Multiple currencies - return data for each currency
+            chart_data = {}
+            
+            if 'TRY' in currencies:
+                chart_data['TRY'] = self._get_chart_data_for_period(
+                    account_ids, date_from, date_to, company_id, ['TRY']
+                )
+            
+            if 'USD' in currencies:
+                chart_data['USD'] = self._get_chart_data_for_period_usd(
+                    account_ids, date_from, date_to, company_id
+                )
+            
+            if 'EUR' in currencies:
+                # Add EUR logic if needed later
+                chart_data['EUR'] = self._get_chart_data_for_period(
+                    account_ids, date_from, date_to, company_id, ['EUR']
+                )
+            
+            return chart_data
+    
+
+    def _get_chart_data_for_period_usd(self, account_ids, date_from, date_to, company_id):
+            """Generate USD chart data for the specified period"""
+            if not account_ids:
+                return self._get_sample_chart_data()
+            
+            if not date_from or not date_to:
+                return self._get_all_time_chart_data_usd(account_ids, company_id)
+            
+            try:
+                start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+                end_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+                
+                # Generate data points (max 10 points for performance)
+                date_diff = (end_date - start_date).days
+                interval = max(1, date_diff // 9)  # 10 points max
+                
+                chart_data = []
+                current_date = start_date
+                
+                while current_date <= end_date:
+                    # Calculate USD balance up to this date
+                    balance_usd = self._calculate_balance_usd_with_filter(
+                        account_ids, date_from, current_date.strftime('%Y-%m-%d'), 
+                        company_id
+                    )
+                    
+                    chart_data.append({
+                        'label': current_date.strftime('%b %d'),
+                        'value': float(balance_usd)
+                    })
+                    
+                    current_date += timedelta(days=interval)
+                    if current_date > end_date and chart_data[-1]['label'] != end_date.strftime('%b %d'):
+                        # Add final point
+                        balance_usd = self._calculate_balance_usd_with_filter(
+                            account_ids, date_from, end_date.strftime('%Y-%m-%d'), 
+                            company_id
+                        )
+                        chart_data.append({
+                            'label': end_date.strftime('%b %d'),
+                            'value': float(balance_usd)
+                        })
+                        break
+                
+                return chart_data
+                
+            except Exception as e:
+                _logger.error(f"Error generating USD chart data: {str(e)}")
+                return self._get_sample_chart_data()
 
     def _normalize_currency_params(self, currencies):
         """
