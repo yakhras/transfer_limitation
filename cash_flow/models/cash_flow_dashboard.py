@@ -448,28 +448,26 @@ class CashFlowDashboard(models.Model):
         return daily_balances
 
     @api.model
-    def get_filtered_dashboard_data(self, period_type='all', date_from=None, date_to=None, currencies=None):
+    def get_filtered_dashboard_data(self, period_type='all', date_from=None, date_to=None):
         """
-        UPDATED: Enhanced method for OWL frontend that works with multiple accounts and currency filtering
-        Returns dashboard data with date and currency filtering for account groups
+        FIXED: Enhanced method for OWL frontend that works with multiple accounts
+        Returns dashboard data with date filtering for account groups
+        CRITICAL FIX: Now calculates filtered balances directly instead of using computed fields
         """
         try:
             company_id = self.env.company.id
             
-            # ADDED: Currency filtering support
+            # ADDED: Console logging for debugging
             _logger.info(f"=== DASHBOARD FILTER DEBUG ===")
             _logger.info(f"Period: {period_type}")
             _logger.info(f"Date From: {date_from} (type: {type(date_from)})")
             _logger.info(f"Date To: {date_to} (type: {type(date_to)})")
-            _logger.info(f"Currencies: {currencies}")
             _logger.info(f"Company ID: {company_id}")
             
             # ADDED: Validate and normalize date formats
             normalized_date_from, normalized_date_to = self._normalize_date_params(date_from, date_to)
-            
-            # ADDED: Normalize currency filter
-            normalized_currencies = self._normalize_currency_params(currencies)
-            _logger.info(f"Normalized Currencies: {normalized_currencies}")
+            _logger.info(f"Normalized Date From: {normalized_date_from}")
+            _logger.info(f"Normalized Date To: {normalized_date_to}")
             
             # Get active configurations for this company (ordered by sequence)
             config_model = self.env['cash.flow.config']
@@ -514,10 +512,9 @@ class CashFlowDashboard(models.Model):
                         })
                         _logger.info(f"Created dashboard record for config {config.id}")
                     
-                    # UPDATED: Calculate balance with date and currency filtering
+                    # FIXED: Calculate balance with date filtering - BYPASSES COMPUTED FIELDS
                     current_balance = self._calculate_balance_with_filter(
-                        config.account_ids.ids, normalized_date_from, normalized_date_to, 
-                        company_id, normalized_currencies
+                        config.account_ids.ids, normalized_date_from, normalized_date_to, company_id
                     )
                     
                     _logger.info(f"Calculated filtered balance for {config.display_name}: {current_balance}")
@@ -526,18 +523,16 @@ class CashFlowDashboard(models.Model):
                     balance_display = self._format_balance_display(current_balance, dashboard_record.currency_id)
                     balance_color = 'green' if current_balance > 0 else ('red' if current_balance < 0 else 'blue')
                     
-                    # UPDATED: Generate chart data for the filtered period with currency filter
+                    # Generate chart data for the filtered period
                     chart_data = self._get_chart_data_for_period(
-                        config.account_ids.ids, normalized_date_from, normalized_date_to, 
-                        company_id, normalized_currencies
+                        config.account_ids.ids, normalized_date_from, normalized_date_to, company_id
                     )
                     
                     _logger.info(f"Generated chart data with {len(chart_data)} points")
                     
-                    # UPDATED: Get individual account balances with currency filter
+                    # Get individual account balances - HANDLES MULTIPLE ACCOUNTS
                     individual_balances = self._get_individual_balances_for_period(
-                        config.account_ids, normalized_date_from, normalized_date_to, 
-                        company_id, normalized_currencies
+                        config.account_ids, normalized_date_from, normalized_date_to, company_id
                     )
                     
                     # Format period information
@@ -545,7 +540,6 @@ class CashFlowDashboard(models.Model):
                         'period_type': period_type,
                         'date_from': normalized_date_from,
                         'date_to': normalized_date_to,
-                        'currencies': normalized_currencies,
                         'period_label': self._format_period_label(period_type, normalized_date_from, normalized_date_to)
                     }
                     
@@ -554,7 +548,7 @@ class CashFlowDashboard(models.Model):
                         'account_codes': dashboard_record.account_codes,
                         'account_names': dashboard_record.account_names,
                         'display_name': dashboard_record.display_name,
-                        'current_balance': current_balance,
+                        'current_balance': current_balance,  # FIXED: Using filtered balance
                         'balance_display': balance_display,
                         'balance_color': balance_color,
                         'chart_data': chart_data,
@@ -576,24 +570,46 @@ class CashFlowDashboard(models.Model):
             _logger.error(f"Error in get_filtered_dashboard_data: {str(e)}")
             return []
 
-    def _normalize_currency_params(self, currencies):
+    def _normalize_date_params(self, date_from, date_to):
         """
-        ADDED: Normalize currency parameters
-        Handles both list and single currency inputs
+        ADDED: Normalize date parameters to ensure consistent format
+        Handles both string and date object inputs
         """
-        if not currencies:
-            return None
+        normalized_from = None
+        normalized_to = None
         
-        if isinstance(currencies, str):
-            return [currencies]
-        elif isinstance(currencies, list):
-            return [str(curr) for curr in currencies if curr]
-        else:
-            _logger.warning(f"Invalid currency format: {currencies} (type: {type(currencies)})")
-            return None
+        try:
+            # Handle date_from
+            if date_from:
+                if isinstance(date_from, str):
+                    # Validate string format (YYYY-MM-DD)
+                    datetime.strptime(date_from, '%Y-%m-%d')
+                    normalized_from = date_from
+                elif hasattr(date_from, 'strftime'):
+                    # Convert date object to string
+                    normalized_from = date_from.strftime('%Y-%m-%d')
+                else:
+                    _logger.warning(f"Invalid date_from format: {date_from} (type: {type(date_from)})")
+            
+            # Handle date_to
+            if date_to:
+                if isinstance(date_to, str):
+                    # Validate string format (YYYY-MM-DD)
+                    datetime.strptime(date_to, '%Y-%m-%d')
+                    normalized_to = date_to
+                elif hasattr(date_to, 'strftime'):
+                    # Convert date object to string
+                    normalized_to = date_to.strftime('%Y-%m-%d')
+                else:
+                    _logger.warning(f"Invalid date_to format: {date_to} (type: {type(date_to)})")
+                    
+        except ValueError as e:
+            _logger.error(f"Date parsing error: {str(e)}")
+            
+        return normalized_from, normalized_to
 
-    def _calculate_balance_with_filter(self, account_ids, date_from, date_to, company_id, currencies=None):
-        """UPDATED: Calculate balance for multiple accounts with date and currency filtering"""
+    def _calculate_balance_with_filter(self, account_ids, date_from, date_to, company_id):
+        """Calculate balance for multiple accounts with date filtering"""
         if not account_ids:
             return 0.0
         
@@ -609,16 +625,6 @@ class CashFlowDashboard(models.Model):
             domain.append(('date', '>=', date_from))
         if date_to:
             domain.append(('date', '<=', date_to))
-        
-        # ADDED: Currency filtering
-        if currencies:
-            # Get currency IDs from currency codes
-            currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
-            if currency_ids:
-                domain.append(('currency_id', 'in', currency_ids))
-                _logger.info(f"Applied currency filter: {currencies} -> IDs: {currency_ids}")
-            else:
-                _logger.warning(f"No currencies found for codes: {currencies}")
         
         # ADDED: Log the domain for debugging
         _logger.info(f"Balance calculation domain: {domain}")
@@ -650,13 +656,13 @@ class CashFlowDashboard(models.Model):
                 return f"₺{balance:,.2f}"
         return f"₺{balance:,.2f}"
 
-    def _get_chart_data_for_period(self, account_ids, date_from, date_to, company_id, currencies=None):
-        """UPDATED: Generate chart data for the specified period with currency filtering"""
+    def _get_chart_data_for_period(self, account_ids, date_from, date_to, company_id):
+        """Generate chart data for the specified period - HANDLES MULTIPLE ACCOUNTS"""
         if not account_ids :
             return self._get_sample_chart_data()
         
         if not date_from or not date_to:
-            return self._get_all_time_chart_data(account_ids, company_id, currencies)
+            return self._get_all_time_chart_data(account_ids, company_id)
         
         try:
             start_date = datetime.strptime(date_from, '%Y-%m-%d').date()
@@ -670,10 +676,9 @@ class CashFlowDashboard(models.Model):
             current_date = start_date
             
             while current_date <= end_date:
-                # UPDATED: Calculate balance up to this date for all accounts with currency filter
+                # Calculate balance up to this date for all accounts
                 balance = self._calculate_balance_with_filter(
-                    account_ids, date_from, current_date.strftime('%Y-%m-%d'), 
-                    company_id, currencies
+                    account_ids, date_from, current_date.strftime('%Y-%m-%d'), company_id
                 )
                 
                 chart_data.append({
@@ -685,8 +690,7 @@ class CashFlowDashboard(models.Model):
                 if current_date > end_date and chart_data[-1]['label'] != end_date.strftime('%b %d'):
                     # Add final point
                     balance = self._calculate_balance_with_filter(
-                        account_ids, date_from, end_date.strftime('%Y-%m-%d'), 
-                        company_id, currencies
+                        account_ids, date_from, end_date.strftime('%Y-%m-%d'), company_id
                     )
                     chart_data.append({
                         'label': end_date.strftime('%b %d'),
@@ -700,10 +704,8 @@ class CashFlowDashboard(models.Model):
             _logger.error(f"Error generating chart data: {str(e)}")
             return self._get_sample_chart_data()
     
-    # Add this method to cash_flow_dashboard.py
-
-    def _get_all_time_chart_data(self, account_ids, company_id, currencies=None):
-        """UPDATED: Generate chart data for All Time view with currency filtering"""
+    def _get_all_time_chart_data(self, account_ids, company_id):
+        """Generate chart data for All Time view - dynamic intervals based on data span"""
         
         # Find the actual date range of transactions
         domain = [
@@ -711,12 +713,6 @@ class CashFlowDashboard(models.Model):
             ('company_id', '=', company_id),
             ('move_id.state', '=', 'posted')
         ]
-        
-        # ADDED: Currency filtering for all-time chart
-        if currencies:
-            currency_ids = self.env['res.currency'].search([('name', 'in', currencies)]).ids
-            if currency_ids:
-                domain.append(('currency_id', 'in', currency_ids))
         
         # Get earliest and latest transaction dates
         earliest_line = self.env['account.move.line'].search(domain, order='date asc', limit=1)
@@ -738,23 +734,23 @@ class CashFlowDashboard(models.Model):
         
         # Determine interval based on data span
         if total_days <= 30:        # 1 month or less - Weekly
-            return self._get_weekly_chart_data(account_ids, company_id, start_date, end_date, currencies)
+            return self._get_weekly_chart_data(account_ids, company_id, start_date, end_date)
         elif total_days <= 365:     # 1 year or less - Monthly  
-            return self._get_monthly_chart_data(account_ids, company_id, start_date, end_date, currencies)
+            return self._get_monthly_chart_data(account_ids, company_id, start_date, end_date)
         elif total_days <= 1095:    # 3 years or less - Quarterly
-            return self._get_quarterly_chart_data(account_ids, company_id, start_date, end_date, currencies)
+            return self._get_quarterly_chart_data(account_ids, company_id, start_date, end_date)
         else:                       # More than 3 years - Yearly
-            return self._get_yearly_chart_data(account_ids, company_id, start_date, end_date, currencies)
+            return self._get_yearly_chart_data(account_ids, company_id, start_date, end_date)
 
-    def _get_weekly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
-        """UPDATED: Generate weekly chart data with currency filtering"""
+    def _get_weekly_chart_data(self, account_ids, company_id, start_date, end_date):
+        """Generate weekly chart data"""
         chart_data = []
         current_date = start_date
         
         while current_date <= end_date:
-            # UPDATED: Calculate balance up to this date with currency filter
+            # Calculate balance up to this date
             balance = self._calculate_balance_with_filter(
-                account_ids, None, current_date.strftime('%Y-%m-%d'), company_id, currencies
+                account_ids, None, current_date.strftime('%Y-%m-%d'), company_id
             )
             
             chart_data.append({
@@ -766,8 +762,8 @@ class CashFlowDashboard(models.Model):
         
         return chart_data
 
-    def _get_monthly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
-        """UPDATED: Generate monthly chart data with currency filtering"""
+    def _get_monthly_chart_data(self, account_ids, company_id, start_date, end_date):
+        """Generate monthly chart data"""
         chart_data = []
         current_date = start_date.replace(day=1)  # Start from first day of month
         
@@ -781,9 +777,9 @@ class CashFlowDashboard(models.Model):
             month_end = next_month - timedelta(days=1)
             period_end = min(month_end, end_date)
             
-            # UPDATED: Calculate balance up to end of this month with currency filter
+            # Calculate balance up to end of this month (or end_date)
             balance = self._calculate_balance_with_filter(
-                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id, currencies
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
             )
             
             chart_data.append({
@@ -795,8 +791,8 @@ class CashFlowDashboard(models.Model):
         
         return chart_data
 
-    def _get_quarterly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
-        """UPDATED: Generate quarterly chart data with currency filtering"""
+    def _get_quarterly_chart_data(self, account_ids, company_id, start_date, end_date):
+        """Generate quarterly chart data"""
         chart_data = []
         
         # Start from the beginning of the quarter containing start_date
@@ -814,9 +810,9 @@ class CashFlowDashboard(models.Model):
             
             period_end = min(quarter_end, end_date)
             
-            # UPDATED: Calculate balance up to end of this quarter with currency filter
+            # Calculate balance up to end of this quarter
             balance = self._calculate_balance_with_filter(
-                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id, currencies
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
             )
             
             chart_data.append({
@@ -832,8 +828,8 @@ class CashFlowDashboard(models.Model):
         
         return chart_data
 
-    def _get_yearly_chart_data(self, account_ids, company_id, start_date, end_date, currencies=None):
-        """UPDATED: Generate yearly chart data with currency filtering"""
+    def _get_yearly_chart_data(self, account_ids, company_id, start_date, end_date):
+        """Generate yearly chart data"""
         chart_data = []
         current_year = start_date.year
         end_year = end_date.year
@@ -843,9 +839,9 @@ class CashFlowDashboard(models.Model):
             year_end = datetime(current_year, 12, 31).date()
             period_end = min(year_end, end_date)
             
-            # UPDATED: Calculate balance up to end of this year with currency filter
+            # Calculate balance up to end of this year
             balance = self._calculate_balance_with_filter(
-                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id, currencies
+                account_ids, None, period_end.strftime('%Y-%m-%d'), company_id
             )
             
             chart_data.append({
@@ -866,15 +862,12 @@ class CashFlowDashboard(models.Model):
             {'label': 'Week 4', 'value': 1100}
         ]
 
-    def _get_individual_balances_for_period(self, account_ids, date_from, date_to, company_id, currencies=None):
-        """UPDATED: Get individual account balances for the period with currency filtering"""
+    def _get_individual_balances_for_period(self, account_ids, date_from, date_to, company_id):
+        """Get individual account balances for the period - HANDLES MULTIPLE ACCOUNTS"""
         balances = []
         
         for account in account_ids:
-            # UPDATED: Pass currency filter to balance calculation
-            balance = self._calculate_balance_with_filter(
-                [account.id], date_from, date_to, company_id, currencies
-            )
+            balance = self._calculate_balance_with_filter([account.id], date_from, date_to, company_id)
             formatted_balance = self._format_balance_display(balance, account.company_id.currency_id)
             
             balances.append({
