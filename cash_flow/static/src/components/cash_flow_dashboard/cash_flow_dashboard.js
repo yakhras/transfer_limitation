@@ -401,14 +401,14 @@ export class CashFlowDashboard extends Component {
     }
 
     getDisplayBalance(account) {
-        if (this.state.selectedCurrencies.includes('USD') && !this.state.selectedCurrencies.includes('TRY')) {
+        if (this.state.selectedCurrencies.includes('USD')) {
             return parseFloat(account.current_balance_usd) || 0
         }
         return parseFloat(account.current_balance) || 0
     }
 
     getFormattedBalance(account) {
-        if (this.state.selectedCurrencies.includes('USD') && !this.state.selectedCurrencies.includes('TRY')) {
+        if (this.state.selectedCurrencies.includes('USD')) {
             const usdBalance = parseFloat(account.current_balance_usd) || 0
             return `$${usdBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
         }
@@ -416,7 +416,7 @@ export class CashFlowDashboard extends Component {
     }
 
     getFormattedTotalBalance() {
-        if (this.state.selectedCurrencies.includes('USD') && !this.state.selectedCurrencies.includes('TRY')) {
+        if (this.state.selectedCurrencies.includes('USD')) {
             return `$${this.state.totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
         }
         return this.formatBalance(this.state.totalBalance)
