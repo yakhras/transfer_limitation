@@ -248,7 +248,7 @@
                                         <!-- Chart Section -->
                                         <div class="chart-container" style="height: 140px; position: relative;">
                                             <BalanceChart 
-                                                accountData="account"/>
+                                                accountData="account" selectedCurrencies="state.selectedCurrencies"/>
                                         </div>
                                         
                                         <!-- Individual Accounts Summary -->

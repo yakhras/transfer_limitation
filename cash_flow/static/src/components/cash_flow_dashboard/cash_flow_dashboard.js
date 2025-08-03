@@ -76,7 +76,7 @@ class BalanceChart extends Component {
     renderChart() {
         console.log("=== CHART DEBUG ===")
         console.log("Account chart_data:", this.accountData.chart_data)
-        console.log("Selected currencies:", this.state?.selectedCurrencies || "No state available")
+        console.log("Selected currencies from props:", this.props.selectedCurrencies)
         console.log("==================")
         const canvas = document.getElementById(this.chartId)
         if (!canvas) {
@@ -463,6 +463,14 @@ export class CashFlowDashboard extends Component {
     }
 
     async loadDashboardData() {
+        console.log("=== BACKEND CALL DEBUG ===")
+        console.log("Sending to backend:", {
+            period_type: this.state.period,
+            date_from: dateRange.date_from,
+            date_to: dateRange.date_to,
+            currencies: this.state.selectedCurrencies
+        })
+        console.log("=========================")
     
         this.state.loading = true
         this.state.error = null
