@@ -1220,7 +1220,9 @@ class FilterBuilderComponent extends Component {
                 totalModels: results.length,
                 totalConditions: results.reduce((sum, r) => sum + (r.conditionCount || 0), 0),
                 timestamp: new Date().toLocaleString(),
-                error: null
+                error: null,
+                domains: domains,  // ← FIX
+                preview: preview    // ← OPTIONAL, for human readable text in template
             };
             
             console.log('Simple test results:', this.state.domainTestResults);
