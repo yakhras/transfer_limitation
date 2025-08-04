@@ -1747,40 +1747,83 @@ class CashFlowDashboard(models.Model):
             }
         }
 
-    # ADD THIS TO YOUR cash_flow_dashboard.py file temporarily
-    # Just add this method to test what data you have
+    # ADD TO YOUR cash_flow_dashboard.py file
 
-    @api.model  
-    def debug_currency_data(self):
-        """Debug method - check what currency data exists"""
-        
-        # 1. Check USD currency rates
-        usd_rates = self.env['res.currency.rate'].search([
-            ('currency_id.name', '=', 'USD')
-        ], limit=5, order='name desc')
-        
-        print("=== USD RATES ===")
-        for rate in usd_rates:
-            print(f"Date: {rate.name}, Rate: {rate.rate}, Inverse: {rate.inverse_company_rate}")
-        
-        # 2. Check move lines with USD currency
-        usd_moves = self.env['account.move.line'].search([
-            ('currency_id.name', '=', 'USD'),
-            ('move_id.state', '=', 'posted')
-        ], limit=5)
-        
-        print("=== USD MOVE LINES ===")
-        for move in usd_moves:
-            print(f"Date: {move.date}, Amount Currency: {move.amount_currency}, TRY: {move.debit - move.credit}")
-        
-        # 3. Check regular TRY move lines
-        try_moves = self.env['account.move.line'].search([
-            ('currency_id', '=', False),
-            ('move_id.state', '=', 'posted')
-        ], limit=5)
-        
-        print("=== TRY MOVE LINES ===")
-        for move in try_moves:
-            print(f"Date: {move.date}, TRY Amount: {move.debit - move.credit}")
-        
-        return "Debug complete - check server logs"
+    # 1. ADD THIS FIELD after your other fields (around line 100)
+    debug_currency_info = fields.Text(
+        string='Currency Debug Info',
+        compute='_compute_debug_currency_info',
+        help="Debug information about currency data"
+    )
+
+    # 2. ADD THIS METHOD at the end of your class
+    @api.depends('company_id')
+    def _compute_debug_currency_info(self):
+        """Compute debug info about currency data"""
+        for record in self:
+            debug_info = []
+            
+            try:
+                # Check USD currency rates
+                debug_info.append("=== USD EXCHANGE RATES ===")
+                usd_rates = self.env['res.currency.rate'].search([
+                    ('currency_id.name', '=', 'USD'),
+                    ('company_id', '=', record.company_id.id)
+                ], limit=5, order='name desc')
+                
+                if usd_rates:
+                    for rate in usd_rates:
+                        debug_info.append(f"Date: {rate.name} | Rate: {rate.rate} | Inverse: {rate.inverse_company_rate}")
+                else:
+                    debug_info.append("❌ NO USD RATES FOUND!")
+                
+                debug_info.append("")
+                
+                # Check USD move lines
+                debug_info.append("=== USD MOVE LINES (Last 5) ===")
+                usd_moves = self.env['account.move.line'].search([
+                    ('currency_id.name', '=', 'USD'),
+                    ('company_id', '=', record.company_id.id),
+                    ('move_id.state', '=', 'posted')
+                ], limit=5, order='date desc')
+                
+                if usd_moves:
+                    for move in usd_moves:
+                        debug_info.append(f"Date: {move.date} | USD: ${move.amount_currency} | TRY: ₺{move.debit - move.credit}")
+                else:
+                    debug_info.append("❌ NO USD MOVE LINES FOUND!")
+                
+                debug_info.append("")
+                
+                # Check TRY move lines
+                debug_info.append("=== TRY MOVE LINES (Last 5) ===")
+                try_moves = self.env['account.move.line'].search([
+                    ('currency_id', '=', False),
+                    ('company_id', '=', record.company_id.id),
+                    ('move_id.state', '=', 'posted')
+                ], limit=5, order='date desc')
+                
+                if try_moves:
+                    for move in try_moves:
+                        debug_info.append(f"Date: {move.date} | TRY: ₺{move.debit - move.credit}")
+                else:
+                    debug_info.append("❌ NO TRY MOVE LINES FOUND!")
+                
+                debug_info.append("")
+                
+                # Test conversion for latest TRY move
+                if try_moves and usd_rates:
+                    latest_try_move = try_moves[0]
+                    latest_rate = usd_rates[0]
+                    try_amount = latest_try_move.debit - latest_try_move.credit
+                    converted_usd = try_amount * latest_rate.inverse_company_rate
+                    
+                    debug_info.append("=== CONVERSION TEST ===")
+                    debug_info.append(f"TRY Amount: ₺{try_amount}")
+                    debug_info.append(f"USD Rate: {latest_rate.inverse_company_rate}")
+                    debug_info.append(f"Converted: ${converted_usd}")
+                
+            except Exception as e:
+                debug_info.append(f"ERROR: {str(e)}")
+            
+            record.debug_currency_info = "\n".join(debug_info)

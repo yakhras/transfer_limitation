@@ -184,6 +184,11 @@
                         <group string="Balance Trend Chart" col="1">
                             <field name="kanban_dashboard_graph" widget="dashboard_graph" nolabel="1"/>
                         </group>
+                        <group string="Currency Debug Info" name="debug_info">
+                            <field name="debug_currency_info" widget="text" readonly="1" 
+                                options="{'no_resize': false}" 
+                                style="font-family: monospace; font-size: 12px; height: 300px;"/>
+                        </group>
 
                         <!-- Accounts Included Section - MULTIPLE ACCOUNTS DISPLAY -->
                         <group string="Accounts in This Group" col="1">
