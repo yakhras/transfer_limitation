@@ -439,7 +439,7 @@
                         <!-- Actual Domain (for developers) -->
                         <div class="domain-code mb-2">
                             <label class="form-label small fw-bold">Odoo Domain:</label>
-                            <pre class="bg-light p-2 rounded small"><code t-esc="JSON.stringify(state.domainTestResults.domains[modelName], null, 2)"/></pre>
+                            <pre class="bg-light p-2 rounded small"><t t-esc="result.domainString"/></pre>
                         </div>
                         
                         <!-- Human Readable (for users) -->
