@@ -1756,10 +1756,10 @@ class CashFlowDashboard(models.Model):
         help="Debug information about currency data"
     )
 
-    # ADD THIS NEW METHOD to your cash_flow_dashboard.py (don't replace anything)
+    # REPLACE your debug_balance_calculation method with this enhanced version:
 
     def debug_balance_calculation(self, account_ids, date_from, date_to, company_id, target_currency):
-        """Debug method to see what data flows through the calculation"""
+        """Enhanced debug method to see currency rates and USD values for each record"""
         
         debug_info = []
         debug_info.append(f"=== DEBUG BALANCE CALCULATION ===")
@@ -1800,65 +1800,90 @@ class CashFlowDashboard(models.Model):
         debug_info.append(f"  Total: {len(move_lines)} lines")
         debug_info.append("")
         
-        # Show sample move lines
-        debug_info.append(f"=== SAMPLE MOVE LINES (First 10) ===")
-        for i, line in enumerate(move_lines[:10]):
-            currency = line.currency_id.name if line.currency_id else 'Company Currency'
-            debug_info.append(f"  {i+1}. Date: {line.date} | Currency: {currency}")
-            debug_info.append(f"      amount_currency: {line.amount_currency}")
-            debug_info.append(f"      debit: {line.debit} | credit: {line.credit}")
-            debug_info.append(f"      debit-credit: {line.debit - line.credit}")
+        # DETAILED ANALYSIS FOR EACH MOVE LINE
+        debug_info.append(f"=== DETAILED MOVE LINE ANALYSIS ===")
+        total_usd_calculated = 0.0
+        
+        for i, line in enumerate(move_lines[:15]):  # Show first 15 lines
+            debug_info.append(f"--- LINE {i+1} ---")
+            debug_info.append(f"Date: {line.date}")
+            debug_info.append(f"Account: {line.account_id.code}")
+            
+            # Currency info
+            if line.currency_id:
+                currency_name = line.currency_id.name
+                debug_info.append(f"Currency: {currency_name}")
+                debug_info.append(f"Amount Currency: {line.amount_currency}")
+            else:
+                currency_name = "Company Currency (TRY)"
+                debug_info.append(f"Currency: {currency_name}")
+                debug_info.append(f"Amount Currency: N/A")
+            
+            # TRY amounts
+            try_amount = line.debit - line.credit
+            debug_info.append(f"TRY Amount (debit-credit): {try_amount}")
+            
+            # USD CONVERSION LOGIC
+            usd_value = 0.0
+            rate_info = "N/A"
+            
+            if target_currency == 'USD':
+                if line.currency_id and line.currency_id.name == 'USD':
+                    # Already USD
+                    usd_value = line.amount_currency
+                    rate_info = "Already USD - no conversion"
+                    debug_info.append(f"USD Rate: {rate_info}")
+                    debug_info.append(f"USD Value: ${usd_value}")
+                    
+                elif line.currency_id and line.currency_id.name == 'TRY':
+                    # TRY currency to USD
+                    rate_record, rate_value, rate_date = self._get_usd_rate_for_date(line.date, company_id)
+                    if rate_record and rate_value:
+                        usd_value = line.amount_currency * rate_value
+                        rate_info = f"Rate: {rate_value} (from {rate_date})"
+                        debug_info.append(f"USD Rate: {rate_info}")
+                        debug_info.append(f"TRY amount_currency: {line.amount_currency}")
+                        debug_info.append(f"USD Value: ${usd_value}")
+                    else:
+                        usd_value = try_amount  # Fallback
+                        rate_info = "No rate found - using TRY amount"
+                        debug_info.append(f"USD Rate: {rate_info}")
+                        debug_info.append(f"USD Value: ${usd_value}")
+                        
+                else:
+                    # Company currency (TRY) to USD
+                    rate_record, rate_value, rate_date = self._get_usd_rate_for_date(line.date, company_id)
+                    if rate_record and rate_value:
+                        usd_value = try_amount * rate_value
+                        rate_info = f"Rate: {rate_value} (from {rate_date})"
+                        debug_info.append(f"USD Rate: {rate_info}")
+                        debug_info.append(f"USD Value: ${usd_value}")
+                    else:
+                        usd_value = try_amount  # Fallback
+                        rate_info = "No rate found - using TRY amount"
+                        debug_info.append(f"USD Rate: {rate_info}")
+                        debug_info.append(f"USD Value: ${usd_value}")
+            
+            total_usd_calculated += usd_value
             debug_info.append("")
         
-        # Calculate totals
-        debug_info.append(f"=== CALCULATIONS ===")
+        if len(move_lines) > 15:
+            debug_info.append(f"... and {len(move_lines) - 15} more lines")
+            debug_info.append("")
         
-        # USD lines
+        # SUMMARY
+        debug_info.append(f"=== SUMMARY ===")
+        debug_info.append(f"Total USD from first 15 lines: ${total_usd_calculated}")
+        
+        # Quick totals for all lines
         usd_lines = move_lines.filtered(lambda l: l.currency_id and l.currency_id.name == 'USD')
         if usd_lines:
             usd_total = sum(usd_lines.mapped('amount_currency'))
-            debug_info.append(f"  USD lines: {len(usd_lines)}")
-            debug_info.append(f"  USD total (amount_currency): {usd_total}")
-        else:
-            debug_info.append(f"  USD lines: 0")
+            debug_info.append(f"All USD lines total: ${usd_total} ({len(usd_lines)} lines)")
         
-        # TRY/Company currency lines
         try_lines = move_lines.filtered(lambda l: not l.currency_id)
         if try_lines:
             try_total = sum(try_lines.mapped('debit')) - sum(try_lines.mapped('credit'))
-            debug_info.append(f"  TRY lines: {len(try_lines)}")
-            debug_info.append(f"  TRY total (debit-credit): {try_total}")
-        else:
-            debug_info.append(f"  TRY lines: 0")
+            debug_info.append(f"All TRY lines total: ₺{try_total} ({len(try_lines)} lines)")
         
         return "\n".join(debug_info)
-
-    # UPDATE YOUR EXISTING debug_currency_info compute method to include this
-    @api.depends('company_id', 'account_ids')  # Add account_ids dependency
-    def _compute_debug_currency_info(self):
-        """Enhanced debug info"""
-        for record in self:
-            debug_info = []
-            
-            # Your existing debug code...
-            # (keep all the existing code)
-            
-            # ADD THIS AT THE END:
-            debug_info.append("\n" + "="*50)
-            debug_info.append("BALANCE CALCULATION DEBUG")
-            debug_info.append("="*50)
-            
-            if record.account_ids:
-                # Test with current period settings
-                balance_debug = record.debug_balance_calculation(
-                    record.account_ids.ids,
-                    None,  # No date filter for now
-                    None,  
-                    record.company_id.id,
-                    'USD'
-                )
-                debug_info.append(balance_debug)
-            else:
-                debug_info.append("No accounts configured for this record")
-            
-            record.debug_currency_info = "\n".join(debug_info)
