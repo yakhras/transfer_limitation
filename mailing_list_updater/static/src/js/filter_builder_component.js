@@ -1216,14 +1216,21 @@ class FilterBuilderComponent extends Component {
             // Store simple results in state
             this.state.domainTestResults = {
                 success: true,
-                results: results, // Simple array instead of complex object
+                results: results,
                 totalModels: results.length,
                 totalConditions: results.reduce((sum, r) => sum + (r.conditionCount || 0), 0),
                 timestamp: new Date().toLocaleString(),
                 error: null,
-                domains: domains,  // ← FIX
-                preview: preview    // ← OPTIONAL, for human readable text in template
+                domains: domains || {}, // ✅ always an object
+                preview: results.reduce((acc, r) => {
+                    acc[r.modelName] = {
+                        readable: r.readable,
+                        domain: r.domainString
+                    };
+                    return acc;
+                }, {}) // ✅ fallback preview if needed in XML
             };
+
             
             console.log('Simple test results:', this.state.domainTestResults);
             
