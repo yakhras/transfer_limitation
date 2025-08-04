@@ -24,9 +24,9 @@ class MailingListUpdateController(http.Controller):
     """
 
 
-    # In your controller or model
     @http.route('/mailing/test/domains', type='json', auth='user')
     def test_filter_domains(self, domains, models, test_only=True):
+        """Test filter domains and return actual record counts"""
         results = []
         total_records = 0
         start_time = time.time()
@@ -35,14 +35,19 @@ class MailingListUpdateController(http.Controller):
             try:
                 # Apply domain to model and count records
                 model = request.env[model_name]
-                count = model.search_count(domain)
+                
+                # Measure actual query time
+                query_start = time.time()
+                count = model.search_count(domain)  # THIS gives you real count
+                query_end = time.time()
+                query_time = int((query_end - query_start) * 1000)
                 
                 results.append({
                     'model': model_name,
                     'source_name': self._get_source_name(model_name),
-                    'record_count': count,
+                    'record_count': count,  # Real count from database
                     'domain_conditions': len(domain),
-                    'query_time': f"{random.randint(5, 50)}ms"  # Or measure actual time
+                    'query_time': f"{query_time}ms"
                 })
                 total_records += count
                 
@@ -56,12 +61,23 @@ class MailingListUpdateController(http.Controller):
                     'error': str(e)
                 })
         
+        execution_time = int((time.time() - start_time) * 1000)
+        
         return {
             'success': True,
             'results': results,
             'total_records': total_records,
-            'execution_time': f"{int((time.time() - start_time) * 1000)}ms"
+            'execution_time': f"{execution_time}ms"
         }
+    
+    def _get_source_name(self, model_name):
+        """Get display name for model"""
+        source_names = {
+            'res.partner': 'Contacts',
+            'crm.lead': 'CRM Leads'
+        }
+        return source_names.get(model_name, model_name)
+
     
     # ========================================
     # MAIN FUNCTIONALITY ROUTES
