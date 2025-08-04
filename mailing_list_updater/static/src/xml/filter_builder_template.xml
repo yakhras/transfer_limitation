@@ -18,12 +18,32 @@
                 Loading filter options...
             </div>
             
-            <div t-if="!state.isLoading" class="filter-content">
+            <!-- No Sources Selected State -->
+            <div t-if="!state.isLoading and state.selectedModels.length === 0" class="mlu-alert mlu-alert-warning">
+                <i class="fa fa-exclamation-triangle"></i>
+                <strong>No sources selected.</strong> Please select contact sources first to enable filtering options.
+            </div>
+            
+            <div t-if="!state.isLoading and state.selectedModels.length > 0" class="filter-content">
                 
+                <!-- Available Sources Info -->
+                <div class="selected-sources-info mb-4">
+                    <h6><i class="fa fa-info-circle text-primary"></i> Advanced Filters Available For:</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span t-foreach="selectedSources" t-as="source" t-key="source.model_name"
+                              class="badge bg-success">
+                            <i t-att-class="source.model_name === 'res.partner' ? 'fa fa-user' : 'fa fa-star'"></i>
+                            <span t-esc="source.name"/> (<span t-esc="source.model_name"/>)
+                        </span>
+                    </div>
+                    <small class="text-muted">
+                        Total <strong t-esc="state.availableFields.length"/> fields available for advanced filtering
+                    </small>
+                </div>
                 
                 <!-- Quick Filters Section -->
                 <div class="quick-filters-section mb-4">
-                    <h4><i class="fa fa-bolt text-primary"></i> Quick Filters (Predefined)</h4>
+                    <h4><i class="fa fa-bolt text-primary"></i> Quick Filters (Common for all sources)</h4>
                     
                     <!-- Creation Date Range -->
                     <div class="mb-3">
@@ -115,10 +135,16 @@
                 <div class="advanced-filters-section mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <h4><i class="fa fa-cogs"></i> Advanced Filters</h4>
-                            <small class="text-muted">Filter contacts using res.partner model fields</small>
+                            <h4><i class="fa fa-cogs"></i> Advanced Filters (Model-Specific)</h4>
+                            <small class="text-muted">
+                                Filter contacts using fields from selected source models
+                                <span t-if="state.selectedModels.length > 1" class="text-info">
+                                    • Multi-model filtering enabled
+                                </span>
+                            </small>
                         </div>
                         <button class="btn-details"
+                                t-att-disabled="state.availableFields.length === 0"
                                 t-on-click="() => this.toggleAdvancedFilters()">
                             <i t-att-class="state.showAdvanced ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                             <t t-if="state.showAdvanced">Hide</t>
@@ -127,10 +153,14 @@
                     </div>
                     
                     <!-- Field Loading Info -->
-                    <div t-if="!state.isLoading and state.availableFields.length" class="mb-2">
+                    <div t-if="state.availableFields.length" class="mb-2">
                         <small class="text-success">
                             <i class="fa fa-check-circle me-1"></i>
-                            Loaded <strong t-esc="state.availableFields.length"/> res.partner fields
+                            Loaded <strong t-esc="state.availableFields.length"/> fields from 
+                            <strong t-esc="state.selectedModels.length"/> model<t t-if="state.selectedModels.length > 1">s</t>
+                            (<t t-foreach="state.selectedModels" t-as="model" t-key="model">
+                                <code t-esc="model"/><t t-if="!model_last">, </t>
+                            </t>)
                         </small>
                     </div>
                     
@@ -166,8 +196,10 @@
                                      class="rule-item d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
                                     <span class="rule-display">
                                         <i class="fa fa-filter me-2"></i>
-                                        <t t-esc="formatRuleDisplay(rule)"/>
-                                        <small class="text-muted ms-2">(<t t-esc="rule.field_type"/>)</small>
+                                        <span t-esc="formatRuleDisplay(rule)"></span>
+                                        <small class="text-muted ms-2">
+                                            (<code t-esc="rule.model || 'unknown'"/>.<code t-esc="rule.original_field || rule.field"/>, <span t-esc="rule.field_type"/>)
+                                        </small>
                                     </span>
                                     <button class="btn btn-outline-danger btn-sm"
                                             t-on-click="() => this.removeFilterRule(rule.id)">
@@ -179,7 +211,14 @@
                         
                         <!-- Add New Rule Form -->
                         <div class="new-rule-form border p-3 rounded">
-                            <h5>Add New Rule <small class="text-muted">(res.partner fields)</small></h5>
+                            <h5>Add New Rule 
+                                <small class="text-muted">
+                                    (Fields from: 
+                                    <t t-foreach="state.selectedModels" t-as="model" t-key="model">
+                                        <code t-esc="model"/><t t-if="!model_last">, </t>
+                                    </t>)
+                                </small>
+                            </h5>
                             <div class="row">
                                 <!-- Field Selection -->
                                 <div class="col-md-3 mb-3">
@@ -188,14 +227,37 @@
                                             t-model="state.newRule.field"
                                             t-on-change="(ev) => this.onRuleFieldChange(ev.target.value)">
                                         <option value="">Select field...</option>
-                                        <option t-foreach="state.availableFields" t-as="field" t-key="field.name"
-                                                t-att-value="field.name"
-                                                t-att-title="field.name + ' (' + field.type + ')'">
-                                            <t t-esc="field.string"/> (<t t-esc="field.type"/>)
-                                        </option>
+                                        
+                                        <!-- Group fields by model if multiple models -->
+                                        <t t-if="state.selectedModels.length > 1">
+                                            <t t-foreach="state.selectedModels" t-as="modelName" t-key="modelName">
+                                                <!-- Find source name for this model -->
+                                                <t t-set="sourceName" t-value="selectedSources.find(s => s.model_name === modelName)?.name || modelName"/>
+                                                <optgroup t-att-label="sourceName + ' (' + modelName + ')'">
+                                                    <option t-foreach="state.availableFields.filter(f => f.model === modelName)" 
+                                                            t-as="field" t-key="field.name"
+                                                            t-att-value="field.name"
+                                                            t-att-title="field.originalName + ' (' + field.type + ')'">
+                                                        <t t-esc="field.string.replace(' (' + sourceName + ')', '')"/>
+                                                        (<t t-esc="field.type"/>)
+                                                    </option>
+                                                </optgroup>
+                                            </t>
+                                        </t>
+                                        
+                                        <!-- Simple list if single model -->
+                                        <t t-if="state.selectedModels.length === 1">
+                                            <option t-foreach="state.availableFields" t-as="field" t-key="field.name"
+                                                    t-att-value="field.name"
+                                                    t-att-title="field.originalName + ' (' + field.type + ')'">
+                                                <t t-esc="field.string"/> (<t t-esc="field.type"/>)
+                                            </option>
+                                        </t>
                                     </select>
                                     <small t-if="state.newRule.field" class="form-text text-muted">
-                                        Field: <code t-esc="state.newRule.field"/> | Type: <strong t-esc="state.newRule.field_type"/>
+                                        Model: <code t-esc="state.newRule.model"/> | 
+                                        Field: <code t-esc="extractOriginalFieldName(state.newRule.field)"/> | 
+                                        Type: <strong t-esc="state.newRule.field_type"/>
                                     </small>
                                 </div>
                                 
@@ -225,10 +287,10 @@
                                            placeholder="Enter value..."/>
                                     
                                     <!-- Number Input -->
-                                    <input t-if="['integer', 'float'].includes(state.newRule.field_type)" 
+                                    <input t-if="['integer', 'float', 'monetary'].includes(state.newRule.field_type)" 
                                            type="number" class="form-control"
                                            t-model="state.newRule.value"
-                                           t-att-step="state.newRule.field_type === 'float' ? '0.01' : '1'"
+                                           t-att-step="['float', 'monetary'].includes(state.newRule.field_type) ? '0.01' : '1'"
                                            placeholder="Enter number..."/>
                                     
                                     <!-- Date Input -->
@@ -256,7 +318,7 @@
                                            placeholder="Enter ID or name..."/>
                                     
                                     <!-- Default Input -->
-                                    <input t-if="!['char', 'text', 'integer', 'float', 'date', 'datetime', 'boolean', 'many2one', 'many2many', 'one2many'].includes(state.newRule.field_type)" 
+                                    <input t-if="!['char', 'text', 'integer', 'float', 'monetary', 'date', 'datetime', 'boolean', 'many2one', 'many2many', 'one2many'].includes(state.newRule.field_type)" 
                                            type="text" class="form-control"
                                            t-model="state.newRule.value"
                                            placeholder="Enter value..."/>
@@ -280,7 +342,6 @@
                     </div>
                 </div>
                 
-                
                 <!-- Filter Preview -->
                 <div t-if="state.advancedFilters.rules.length || state.quickFilters.responsible_users.length || (state.quickFilters.date_range.from and state.quickFilters.date_range.to)" 
                      class="filter-preview p-3 bg-light rounded">
@@ -294,6 +355,9 @@
                             </span>
                             <span t-if="state.advancedFilters.rules.length" class="badge bg-warning me-2">
                                 <t t-esc="state.advancedFilters.rules.length"/> Advanced Rules
+                            </span>
+                            <span t-if="state.selectedModels.length > 1" class="badge bg-secondary me-2">
+                                Multi-Model
                             </span>
                         </div>
                     </div>
@@ -321,7 +385,9 @@
                             </small>
                             <ul class="mt-1 mb-0 ps-3">
                                 <li t-foreach="state.advancedFilters.rules" t-as="rule" t-key="rule.id">
-                                    <small class="text-muted" t-esc="formatRuleDisplay(rule)"></small>
+                                    <small class="text-muted">
+                                        <code t-esc="rule.model"/>: </code><span t-esc="formatRuleDisplay(rule)"/>
+                                    </small>
                                 </li>
                             </ul>
                         </div>
