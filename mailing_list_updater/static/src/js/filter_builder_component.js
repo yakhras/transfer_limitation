@@ -69,7 +69,9 @@ class FilterBuilderComponent extends Component {
         
         // Store selected sources from props
         this.selectedSources = this.props.selectedSources || [];
-        console.log('Initial selectedSources:', this.selectedSources);
+        console.log('Initial selectedSources from props:', this.selectedSources);
+        console.log('Props selectedSources type:', typeof this.props.selectedSources);
+        console.log('Props selectedSources length:', this.props.selectedSources?.length || 0);
         
         // Debounce timer for user search
         this.searchTimeout = null;
@@ -93,6 +95,22 @@ class FilterBuilderComponent extends Component {
             console.error("Filter options loading error:", error);
         } finally {
             this.state.isLoading = false;
+        }
+    }
+    
+    /**
+     * FIX: Add mounted lifecycle to handle initial props
+     */
+    mounted() {
+        console.log('=== FILTER BUILDER MOUNTED ===');
+        console.log('Props selectedSources on mount:', this.props.selectedSources);
+        console.log('State selectedSources on mount:', this.selectedSources);
+        
+        // If we have initial sources from props, update fields
+        if (this.props.selectedSources && this.props.selectedSources.length > 0) {
+            console.log('Processing initial selectedSources from props');
+            this.selectedSources = this.props.selectedSources;
+            this.updateFieldsForSelectedSources();
         }
     }
     

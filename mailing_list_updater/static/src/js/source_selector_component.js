@@ -9,7 +9,6 @@ class SourceSelectorComponent extends Component {
         this.company = this.env.services.company;
 
         this.state = useState({
-            
             // Original contact source selection (KEEP)
             availableSources: [],
             filteredSources: [],
@@ -32,88 +31,14 @@ class SourceSelectorComponent extends Component {
         await this.loadContactSources();
     }
 
-    // ========================================
-    // TARGET MAILING LIST METHODS (NEW)
-    // ========================================
-
-    async loadTargetMailingLists() {
-        // Don't load if search is empty
-        if (!this.state.targetSearchTerm || this.state.targetSearchTerm.length < 2) {
-            this.state.availableTargetLists = [];
-            this.state.targetListsLoading = false;
-            return;
-        }
-
-        this.state.targetListsLoading = true;
-        console.log('Searching for:', this.state.targetSearchTerm);
+    // ===== FIX: Add mounted lifecycle to trigger initial notification =====
+    mounted() {
+        console.log('=== SOURCE SELECTOR MOUNTED ===');
+        console.log('Initial selected sources:', this.state.selectedSources);
         
-        try {
-            // Simple search - just get basic fields without contact counts for now
-            const response = await this.env.services.orm.searchRead(
-                'mailing.list',
-                [['name', 'ilike', this.state.targetSearchTerm]],
-                ['id', 'name', 'contact_count'], // Only fetch id, name, and contact_count
-                { limit: 20, context: {} }
-            );
-
-            console.log('Search successful:', response.length, 'results');
-            // Log each list with its contact count
-            response.forEach(list => {
-                console.log(`List: ${list.name} | ID: ${list.id} | Contact Count: ${list.contact_count}`);
-            });
-
-            this.state.availableTargetLists = response.map(list => ({
-                mailing_list_id: list.id,
-                name: list.name,
-                contact_count: list.contact_count, // Skip contact count for now
-                estimated_count: 0,
-                description: `Mailing list: ${list.name}`,
-                available: true,
-                recommended: false // Skip recommendation logic for now
-            }));
-
-            console.log('Lists loaded:', this.state.availableTargetLists);
-
-        } catch (error) {
-            console.error('Search failed:', error.message, error);
-            this.state.availableTargetLists = [];
-        } finally {
-            this.state.targetListsLoading = false;
-        }
-    }
-
-
-    onTargetListSelect(targetList) {
-        this.state.selectedTargetList = targetList;
-
-        // ✅ Replace search results with only the selected list
-        this.state.availableTargetLists = [targetList];
-
-        // ✅ Clear the search term to hide search UI/status
-        this.state.targetSearchTerm = '';
-
-        this.notifyParentOfSelection();
-    }
-
-
-    onTargetSearchInput(event) {
-        this.state.targetSearchTerm = event.target.value;
-        
-        // Clear previous timeout
-        clearTimeout(this.targetSearchTimeout);
-        
-        // Instant search with shorter debounce (150ms)
-        this.targetSearchTimeout = setTimeout(() => {
-            this.loadTargetMailingLists();
-        }, 150);
-    }
-
-    clearTargetSearch() {
-        this.state.targetSearchTerm = '';
-        this.state.availableTargetLists = [];
-        // Clear selection if target was selected
-        if (this.state.selectedTargetList) {
-            this.state.selectedTargetList = null;
+        // Trigger initial notification if sources are pre-selected
+        if (this.state.selectedSources.length > 0) {
+            console.log('Triggering initial notification for pre-selected sources');
             this.notifyParentOfSelection();
         }
     }
@@ -170,30 +95,50 @@ class SourceSelectorComponent extends Component {
         this.state.filteredSources = [...this.state.availableSources];
     }
 
+    // ===== FIX: Modified preSelectRecommended to NOT notify initially =====
     preSelectRecommended() {
+        console.log('=== PRE-SELECT RECOMMENDED ===');
+        console.log('Current selected sources:', this.state.selectedSources);
+        console.log('Props selected sources:', this.props.selectedSources);
+        
         if (this.state.selectedSources.length === 0) {
             this.state.selectedSources = this.state.availableSources
                 .filter(s => s.recommended)
                 .map(s => s.model_name);
-            this.notifyParentOfSelection();
+            
+            console.log('Pre-selected recommended sources:', this.state.selectedSources);
+            
+            // DON'T notify here - let mounted() handle it
+            // this.notifyParentOfSelection(); // REMOVED
         }
     }
 
     willUpdateProps(nextProps) {
-    if (nextProps.selectedSources !== this.props.selectedSources) {
-        this.state.selectedSources = nextProps.selectedSources || [];
+        console.log('=== SOURCE SELECTOR PROPS UPDATE ===');
+        console.log('Current props selectedSources:', this.props.selectedSources);
+        console.log('Next props selectedSources:', nextProps.selectedSources);
+        
+        if (nextProps.selectedSources !== this.props.selectedSources) {
+            this.state.selectedSources = nextProps.selectedSources || [];
+            console.log('Updated selectedSources from props:', this.state.selectedSources);
+        }
     }
-}
 
     onSourceToggle(event) {
         const modelName = event.currentTarget.dataset.model;
         const index = this.state.selectedSources.indexOf(modelName);
+
+        console.log('=== SOURCE TOGGLE ===');
+        console.log('Toggling model:', modelName);
+        console.log('Current selected:', this.state.selectedSources);
 
         if (index >= 0) {
             this.state.selectedSources = this.state.selectedSources.filter(name => name !== modelName);
         } else {
             this.state.selectedSources.push(modelName);
         }
+        
+        console.log('New selected sources:', this.state.selectedSources);
         this.notifyParentOfSelection();
     }
 
@@ -253,22 +198,33 @@ class SourceSelectorComponent extends Component {
     // SHARED METHODS
     // ========================================
 
+    // ===== FIX: Enhanced notification with better logging =====
     notifyParentOfSelection() {
+        console.log('=== NOTIFY PARENT OF SELECTION ===');
+        console.log('Selected source model names:', this.state.selectedSources);
+        console.log('Available sources:', this.state.availableSources);
+        
         const selectedSourcesData = this.state.availableSources.filter(source =>
             this.state.selectedSources.includes(source.model_name)
         );
-
-        this.trigger('sources-changed', {
-            // Target mailing list (NEW)
-            targetMailingList: this.state.selectedTargetList,
+        
+        console.log('Selected sources data:', selectedSourcesData);
+        
+        const eventData = {
+            // Target mailing list (if applicable)
+            targetMailingList: this.state.selectedTargetList || null,
             
             // Contact sources (ORIGINAL)
             selectedSources: this.state.selectedSources,
             selectedSourcesData: selectedSourcesData,
             
             // Validation
-            isValid: this.state.selectedTargetList !== null && selectedSourcesData.length > 0,
-        });
+            isValid: selectedSourcesData.length > 0,
+        };
+        
+        console.log('Triggering sources-changed event with:', eventData);
+        
+        this.trigger('sources-changed', eventData);
     }
 
     getSourceItemClass(source) {
@@ -278,8 +234,6 @@ class SourceSelectorComponent extends Component {
         if (source.recommended) classes.push('recommended');
         return classes.join(' ');
     }
-
-    
 }
 
 SourceSelectorComponent.template = 'mailing_list_updater.SourceSelectorTemplate';
