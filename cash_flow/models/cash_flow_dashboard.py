@@ -1746,3 +1746,41 @@ class CashFlowDashboard(models.Model):
                 'search_default_group_by_account': 1,
             }
         }
+
+    # ADD THIS TO YOUR cash_flow_dashboard.py file temporarily
+    # Just add this method to test what data you have
+
+    @api.model  
+    def debug_currency_data(self):
+        """Debug method - check what currency data exists"""
+        
+        # 1. Check USD currency rates
+        usd_rates = self.env['res.currency.rate'].search([
+            ('currency_id.name', '=', 'USD')
+        ], limit=5, order='name desc')
+        
+        print("=== USD RATES ===")
+        for rate in usd_rates:
+            print(f"Date: {rate.name}, Rate: {rate.rate}, Inverse: {rate.inverse_company_rate}")
+        
+        # 2. Check move lines with USD currency
+        usd_moves = self.env['account.move.line'].search([
+            ('currency_id.name', '=', 'USD'),
+            ('move_id.state', '=', 'posted')
+        ], limit=5)
+        
+        print("=== USD MOVE LINES ===")
+        for move in usd_moves:
+            print(f"Date: {move.date}, Amount Currency: {move.amount_currency}, TRY: {move.debit - move.credit}")
+        
+        # 3. Check regular TRY move lines
+        try_moves = self.env['account.move.line'].search([
+            ('currency_id', '=', False),
+            ('move_id.state', '=', 'posted')
+        ], limit=5)
+        
+        print("=== TRY MOVE LINES ===")
+        for move in try_moves:
+            print(f"Date: {move.date}, TRY Amount: {move.debit - move.credit}")
+        
+        return "Debug complete - check server logs"
