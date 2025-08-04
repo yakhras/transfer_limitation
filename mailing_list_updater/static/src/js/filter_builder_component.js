@@ -1109,16 +1109,30 @@ class FilterBuilderComponent extends Component {
         console.log('Advanced rules:', filters.advanced_filters.rules);
         console.log('Selected models:', filters.selected_models);
         
+        // Prepare formatted domains for template display
+        const formattedDomains = {};
+        Object.keys(domains).forEach(modelName => {
+            formattedDomains[modelName] = {
+                raw: domains[modelName],
+                formatted: JSON.stringify(domains[modelName], null, 2), // Format here instead of template
+                count: domains[modelName].length
+            };
+        });
+        
         // Store results in state for display
         this.state.domainTestResults = {
             success: true,
             domains: domains,
+            formattedDomains: formattedDomains, // NEW - Pre-formatted for template
             preview: preview,
             filters: filters,
-            timestamp: new Date().toLocaleString()
+            timestamp: new Date().toLocaleString(),
+            totalConditions: Object.values(domains).reduce((sum, domain) => sum + domain.length, 0),
+            modelCount: Object.keys(domains).length
         };
         
         console.log('Test results stored in state');
+        console.log('Formatted domains:', formattedDomains);
         
         return this.state.domainTestResults;
     }
