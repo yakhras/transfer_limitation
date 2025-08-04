@@ -112,6 +112,9 @@ class FilterBuilderComponent extends Component {
             this.selectedSources = this.props.selectedSources;
             this.updateFieldsForSelectedSources();
         }
+        
+        // Setup event listeners for click outside (for user suggestions)
+        document.addEventListener('click', this.handleClickOutside.bind(this));
     }
     
     /**
@@ -382,8 +385,6 @@ class FilterBuilderComponent extends Component {
         console.log(`Combined ${combinedFields.length} fields from ${Object.keys(this.state.availableFieldsByModel).length} models`);
     }
 
-    // ... (keep all existing methods: loadDefaultUsers, onUserSearch, etc.)
-    
     /**
      * Load filter templates
      */
@@ -395,19 +396,349 @@ class FilterBuilderComponent extends Component {
      * Load default users (existing implementation)
      */
     async loadDefaultUsers() {
-        // Keep existing implementation
-        console.log('Loading default users...');
+        console.log('=== LOAD DEFAULT USERS ===');
+        
         try {
+            console.log('Attempting to load default users...');
+            
+            const domain = [['active', '=', true], ['share', '=', false]]; // Active internal users
+            let response = null;
+            
+            // Method 1: Try ORM service (Odoo 15.0 preferred)
+            if (this.orm) {
+                console.log('Trying ORM service for default users...');
+                try {
+                    response = await this.orm.searchRead(
+                        'res.users',
+                        domain,
+                        ['id', 'name', 'email'],
+                        { limit: 3 }
+                    );
+                    console.log('ORM service response for default users:', response);
+                } catch (ormError) {
+                    console.log('ORM service failed for default users:', ormError);
+                }
+            }
+            
+            // Method 2: Try RPC service
+            if (!response && this.rpc) {
+                console.log('Trying RPC service for default users...');
+                try {
+                    response = await this.rpc('/web/dataset/search_read', {
+                        model: 'res.users',
+                        domain: domain,
+                        fields: ['id', 'name', 'email'],
+                        limit: 3
+                    });
+                    
+                    if (response && response.records) {
+                        response = response.records;
+                    }
+                    console.log('RPC service response for default users:', response);
+                } catch (rpcError) {
+                    console.log('RPC service failed for default users:', rpcError);
+                }
+            }
+            
+            // Method 3: Use mock data fallback
+            if (!response) {
+                console.log('Using mock data for default users');
+                response = [
+                    { id: 1, name: 'John Smith', email: 'john.smith@company.com' },
+                    { id: 2, name: 'Sarah Johnson', email: 'sarah.johnson@company.com' },
+                    { id: 3, name: 'Mike Davis', email: 'mike.davis@company.com' }
+                ];
+            }
+            
+            console.log('Final default users response:', response);
+            
+            if (response && response.length) {
+                console.log('Loading', response.length, 'default users');
+                this.state.quickFilters.responsible_users = response;
+                console.log('Updated responsible_users state:', this.state.quickFilters.responsible_users);
+            } else {
+                console.log('No default users found or empty response');
+            }
+        } catch (error) {
+            console.error("=== DEFAULT USERS LOAD ERROR ===");
+            console.error("Error object:", error);
+            
+            // Set mock data on error
+            console.log('Setting mock default users due to error');
             this.state.quickFilters.responsible_users = [
                 { id: 1, name: 'John Smith', email: 'john.smith@company.com' },
-                { id: 2, name: 'Sarah Johnson', email: 'sarah.johnson@company.com' }
+                { id: 2, name: 'Sarah Johnson', email: 'sarah.johnson@company.com' },
+                { id: 3, name: 'Mike Davis', email: 'mike.davis@company.com' }
             ];
-        } catch (error) {
-            console.error('Error loading default users:', error);
         }
     }
     
-    // ... (keep all other existing methods)
+    /**
+     * Handle user search input
+     */
+    onUserSearch(query) {
+        console.log('=== USER SEARCH DEBUG ===');
+        console.log('Search query input:', query);
+        
+        this.state.userSearch.query = query;
+        
+        // Clear previous timeout
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+            console.log('Cleared previous search timeout');
+        }
+        
+        // Debounce search
+        this.searchTimeout = setTimeout(() => {
+            console.log('Executing debounced search for:', query);
+            this.searchUsers(query);
+        }, 300);
+        
+        console.log('Search timeout set for 300ms');
+    }
+    
+    /**
+     * Search users in res.users model
+     */
+    async searchUsers(query) {
+        console.log('=== SEARCH USERS METHOD ===');
+        console.log('Query:', query);
+        console.log('Query length:', query ? query.length : 0);
+        
+        if (!query || query.length < 2) {
+            console.log('Query too short, clearing results');
+            this.state.userSearch.results = [];
+            return;
+        }
+        
+        this.state.userSearch.loading = true;
+        console.log('Set loading to true');
+        
+        try {
+            const domain = [
+                ['active', '=', true],
+                ['share', '=', false], // Internal users only
+                '|',
+                ['name', 'ilike', query],
+                ['email', 'ilike', query]
+            ];
+            
+            console.log('Search domain:', JSON.stringify(domain, null, 2));
+            
+            let response = null;
+            
+            // Method 1: Try ORM service (Odoo 15.0 preferred)
+            if (this.orm) {
+                console.log('Trying ORM service...');
+                try {
+                    response = await this.orm.searchRead(
+                        'res.users',
+                        domain,
+                        ['id', 'name', 'email'],
+                        { limit: 10 }
+                    );
+                    console.log('ORM service response:', response);
+                } catch (ormError) {
+                    console.log('ORM service failed:', ormError);
+                }
+            }
+            
+            // Method 2: Try RPC service with correct format
+            if (!response && this.rpc) {
+                console.log('Trying RPC service...');
+                try {
+                    response = await this.rpc('/web/dataset/search_read', {
+                        model: 'res.users',
+                        domain: domain,
+                        fields: ['id', 'name', 'email'],
+                        limit: 10
+                    });
+                    console.log('RPC service response:', response);
+                    
+                    // Extract records if response has records property
+                    if (response && response.records) {
+                        response = response.records;
+                    }
+                } catch (rpcError) {
+                    console.log('RPC service failed:', rpcError);
+                }
+            }
+            
+            // Method 3: Mock data fallback for development
+            if (!response) {
+                console.log('All methods failed, using mock data for development');
+                response = this.getMockUsers(query);
+            }
+            
+            console.log('Final response:', response);
+            
+            if (response && response.length > 0) {
+                console.log('Sample user from response:', response[0]);
+            }
+            
+            // Filter out already selected users
+            const selectedIds = this.state.quickFilters.responsible_users.map(u => u.id);
+            console.log('Currently selected user IDs:', selectedIds);
+            
+            const filteredResults = response.filter(user => !selectedIds.includes(user.id));
+            console.log('Filtered results (excluding selected):', filteredResults);
+            
+            this.state.userSearch.results = filteredResults;
+            console.log('Updated search results state:', this.state.userSearch.results);
+            
+        } catch (error) {
+            console.error("=== USER SEARCH ERROR ===");
+            console.error("Error object:", error);
+            
+            // Fallback to mock data on error
+            console.log('Using mock data fallback due to error');
+            this.state.userSearch.results = this.getMockUsers(query);
+        } finally {
+            this.state.userSearch.loading = false;
+            console.log('Set loading to false');
+        }
+    }
+    
+    /**
+     * Mock users for development/fallback
+     */
+    getMockUsers(query) {
+        const mockUsers = [
+            { id: 1, name: 'John Smith', email: 'john.smith@company.com' },
+            { id: 2, name: 'Sarah Johnson', email: 'sarah.johnson@company.com' },
+            { id: 3, name: 'Mike Davis', email: 'mike.davis@company.com' },
+            { id: 4, name: 'Emily Brown', email: 'emily.brown@company.com' },
+            { id: 5, name: 'David Wilson', email: 'david.wilson@company.com' },
+            { id: 6, name: 'Lisa Anderson', email: 'lisa.anderson@company.com' },
+            { id: 7, name: 'Tom Miller', email: 'tom.miller@company.com' },
+            { id: 8, name: 'Jennifer Taylor', email: 'jennifer.taylor@company.com' }
+        ];
+        
+        // Filter mock users based on query
+        return mockUsers.filter(user => 
+            user.name.toLowerCase().includes(query.toLowerCase()) ||
+            user.email.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+    
+    /**
+     * Show/hide user suggestions
+     */
+    showUserSuggestions(show) {
+        console.log('=== SHOW USER SUGGESTIONS ===');
+        console.log('Show suggestions:', show);
+        console.log('Current query:', this.state.userSearch.query);
+        
+        this.state.userSearch.showSuggestions = show;
+        
+        if (show && this.state.userSearch.query) {
+            console.log('Triggering search because suggestions shown and query exists');
+            this.searchUsers(this.state.userSearch.query);
+        } else {
+            console.log('Not triggering search - show:', show, 'query:', this.state.userSearch.query);
+        }
+        
+        console.log('Updated showSuggestions state:', this.state.userSearch.showSuggestions);
+    }
+    
+    /**
+     * Select a user from search results
+     */
+    selectUser(user) {
+        console.log('=== SELECT USER ===');
+        console.log('Selected user:', user);
+        console.log('Current responsible users:', this.state.quickFilters.responsible_users);
+        
+        // Add user to selected list
+        this.state.quickFilters.responsible_users.push(user);
+        console.log('Updated responsible users:', this.state.quickFilters.responsible_users);
+        
+        // Clear search
+        this.state.userSearch.query = '';
+        this.state.userSearch.results = [];
+        this.state.userSearch.showSuggestions = false;
+        
+        console.log('Cleared search state');
+        
+        // Notify change
+        this.notifyFilterChange();
+        console.log('Notified filter change');
+    }
+    
+    /**
+     * Remove selected user
+     */
+    removeSelectedUser(userId) {
+        console.log('=== REMOVE USER ===');
+        console.log('Removing user ID:', userId);
+        console.log('Current users:', this.state.quickFilters.responsible_users);
+        
+        const index = this.state.quickFilters.responsible_users.findIndex(u => u.id === userId);
+        console.log('Found user at index:', index);
+        
+        if (index !== -1) {
+            this.state.quickFilters.responsible_users.splice(index, 1);
+            console.log('User removed, updated list:', this.state.quickFilters.responsible_users);
+            this.notifyFilterChange();
+        } else {
+            console.log('User not found in list');
+        }
+    }
+    
+    /**
+     * Handle click outside to close user suggestions
+     */
+    handleClickOutside(event) {
+        const userSearchContainer = event.target.closest('.position-relative');
+        if (!userSearchContainer) {
+            this.state.userSearch.showSuggestions = false;
+        }
+    }
+    
+    /**
+     * Handle quick filter changes
+     */
+    onQuickFilterChange(filterType, value) {
+        console.log('Quick filter change:', filterType, value);
+        this.state.quickFilters[filterType] = value;
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * Handle date range filter changes
+     */
+    onDateRangeChange(field, value) {
+        console.log('Date range change:', field, value);
+        this.state.quickFilters.date_range[field] = value;
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * Toggle date range filter
+     */
+    toggleDateRange() {
+        this.state.quickFilters.date_range.enabled = !this.state.quickFilters.date_range.enabled;
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * Change advanced filter logic (AND/OR)
+     */
+    changeFilterLogic(logic) {
+        this.state.advancedFilters.logic = logic;
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * OWL 1.0 Lifecycle - Will Unmount
+     * Cleanup event listeners
+     */
+    willUnmount() {
+        document.removeEventListener('click', this.handleClickOutside.bind(this));
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+    }
     
     /**
      * Handle new rule field selection - UPDATED for model-aware fields
@@ -494,20 +825,92 @@ class FilterBuilderComponent extends Component {
     }
     
     getOperatorsForFieldType(fieldType) {
-        // Keep existing implementation
         const operators = {
             'char': [
                 { value: 'ilike', label: 'Contains' },
                 { value: '=', label: 'Equals' },
-                { value: '!=', label: 'Not equals' }
+                { value: '!=', label: 'Not equals' },
+                { value: 'not ilike', label: 'Does not contain' },
+                { value: 'in', label: 'In list' },
+                { value: 'not in', label: 'Not in list' }
+            ],
+            'text': [
+                { value: 'ilike', label: 'Contains' },
+                { value: '=', label: 'Equals' },
+                { value: '!=', label: 'Not equals' },
+                { value: 'not ilike', label: 'Does not contain' }
             ],
             'integer': [
                 { value: '=', label: 'Equals' },
+                { value: '!=', label: 'Not equals' },
                 { value: '>', label: 'Greater than' },
-                { value: '<', label: 'Less than' }
+                { value: '<', label: 'Less than' },
+                { value: '>=', label: 'Greater or equal' },
+                { value: '<=', label: 'Less or equal' },
+                { value: 'in', label: 'In list' },
+                { value: 'not in', label: 'Not in list' }
+            ],
+            'float': [
+                { value: '=', label: 'Equals' },
+                { value: '!=', label: 'Not equals' },
+                { value: '>', label: 'Greater than' },
+                { value: '<', label: 'Less than' },
+                { value: '>=', label: 'Greater or equal' },
+                { value: '<=', label: 'Less or equal' }
+            ],
+            'monetary': [
+                { value: '=', label: 'Equals' },
+                { value: '!=', label: 'Not equals' },
+                { value: '>', label: 'Greater than' },
+                { value: '<', label: 'Less than' },
+                { value: '>=', label: 'Greater or equal' },
+                { value: '<=', label: 'Less or equal' }
+            ],
+            'date': [
+                { value: '=', label: 'On date' },
+                { value: '!=', label: 'Not on date' },
+                { value: '>', label: 'After' },
+                { value: '<', label: 'Before' },
+                { value: '>=', label: 'On or after' },
+                { value: '<=', label: 'On or before' }
+            ],
+            'datetime': [
+                { value: '=', label: 'At exact time' },
+                { value: '!=', label: 'Not at time' },
+                { value: '>', label: 'After' },
+                { value: '<', label: 'Before' },
+                { value: '>=', label: 'On or after' },
+                { value: '<=', label: 'On or before' }
+            ],
+            'boolean': [
+                { value: '=', label: 'Is' }
+            ],
+            'selection': [
+                { value: '=', label: 'Equals' },
+                { value: '!=', label: 'Not equals' },
+                { value: 'in', label: 'In list' },
+                { value: 'not in', label: 'Not in list' }
+            ],
+            'many2one': [
+                { value: '=', label: 'Equals' },
+                { value: '!=', label: 'Not equals' },
+                { value: 'ilike', label: 'Name contains' },
+                { value: 'not ilike', label: 'Name does not contain' },
+                { value: 'in', label: 'In list' },
+                { value: 'not in', label: 'Not in list' }
+            ],
+            'many2many': [
+                { value: 'in', label: 'Contains any' },
+                { value: 'not in', label: 'Does not contain' },
+                { value: '=', label: 'Exact match' },
+                { value: '!=', label: 'Not exact match' }
+            ],
+            'one2many': [
+                { value: 'in', label: 'Contains' },
+                { value: 'not in', label: 'Does not contain' }
             ]
-            // ... add other types
         };
+        
         return operators[fieldType] || operators['char'];
     }
     
@@ -568,7 +971,36 @@ class FilterBuilderComponent extends Component {
     }
     
     validateFilters() {
-        return { isValid: true, errors: [] }; // Simplified for now
+        const errors = [];
+        
+        // Validate date range
+        if (this.state.quickFilters.date_range.enabled) {
+            if (!this.state.quickFilters.date_range.from || !this.state.quickFilters.date_range.to) {
+                errors.push("Date range requires both start and end dates");
+            }
+        }
+        
+        // Validate advanced rules
+        if (this.state.advancedFilters.enabled) {
+            this.state.advancedFilters.rules.forEach((rule, index) => {
+                if (!rule.value && rule.field_type !== 'boolean') {
+                    errors.push(`Rule ${index + 1}: Value is required`);
+                }
+            });
+        }
+        
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
+    }
+    
+    /**
+     * Get field display name
+     */
+    getFieldDisplayName(fieldName) {
+        const field = this.state.availableFields.find(f => f.name === fieldName);
+        return field?.string || fieldName;
     }
     
     clearAllFilters() {
