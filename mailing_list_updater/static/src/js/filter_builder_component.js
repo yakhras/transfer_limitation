@@ -797,72 +797,108 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * NEW - Generate actual Odoo domains for each model
+     * NEW - Generate actual Odoo domains for each model (WITH ERROR HANDLING)
      */
     generateOdooDomainsPerModel() {
         console.log('=== GENERATE ODOO DOMAINS ===');
         
-        const domainsByModel = {};
-        
-        // Initialize domains for each selected model
-        this.state.selectedModels.forEach(modelName => {
-            domainsByModel[modelName] = [];
-        });
-        
-        console.log('Initialized domains for models:', Object.keys(domainsByModel));
-        
-        // Add quick filters (common to all models)
-        this.addQuickFilterDomains(domainsByModel);
-        
-        // Add advanced filter rules (model-specific)
-        this.addAdvancedFilterDomains(domainsByModel);
-        
-        console.log('Final generated domains:', domainsByModel);
-        return domainsByModel;
+        try {
+            const domainsByModel = {};
+            
+            // Ensure we have selected models
+            if (!this.state.selectedModels || this.state.selectedModels.length === 0) {
+                console.log('No selected models, returning empty domains');
+                return domainsByModel;
+            }
+            
+            // Initialize domains for each selected model
+            this.state.selectedModels.forEach(modelName => {
+                if (modelName) {
+                    domainsByModel[modelName] = [];
+                }
+            });
+            
+            console.log('Initialized domains for models:', Object.keys(domainsByModel));
+            
+            // Add quick filters (common to all models)
+            this.addQuickFilterDomains(domainsByModel);
+            
+            // Add advanced filter rules (model-specific)
+            this.addAdvancedFilterDomains(domainsByModel);
+            
+            console.log('Final generated domains:', domainsByModel);
+            return domainsByModel;
+            
+        } catch (error) {
+            console.error('Error generating domains:', error);
+            return {}; // Return empty object on error
+        }
     }
     
     /**
-     * NEW - Add quick filter domains to all models
+     * NEW - Add quick filter domains to all models (WITH ERROR HANDLING)
      */
     addQuickFilterDomains(domainsByModel) {
         console.log('=== ADD QUICK FILTER DOMAINS ===');
         
-        // Date range filter (applies to all models)
-        if (this.state.quickFilters.date_range.enabled && 
-            this.state.quickFilters.date_range.from && 
-            this.state.quickFilters.date_range.to) {
+        try {
+            if (!domainsByModel || typeof domainsByModel !== 'object') {
+                console.warn('Invalid domainsByModel parameter');
+                return;
+            }
             
-            const dateField = this.state.quickFilters.date_range.field || 'create_date';
-            const fromDate = this.state.quickFilters.date_range.from;
-            const toDate = this.state.quickFilters.date_range.to;
+            const modelNames = Object.keys(domainsByModel);
+            if (modelNames.length === 0) {
+                console.log('No models to add quick filters to');
+                return;
+            }
             
-            Object.keys(domainsByModel).forEach(modelName => {
-                domainsByModel[modelName].push([dateField, '>=', fromDate]);
-                domainsByModel[modelName].push([dateField, '<=', toDate]);
-            });
+            // Date range filter (applies to all models)
+            if (this.state.quickFilters?.date_range?.enabled && 
+                this.state.quickFilters.date_range.from && 
+                this.state.quickFilters.date_range.to) {
+                
+                const dateField = this.state.quickFilters.date_range.field || 'create_date';
+                const fromDate = this.state.quickFilters.date_range.from;
+                const toDate = this.state.quickFilters.date_range.to;
+                
+                modelNames.forEach(modelName => {
+                    if (domainsByModel[modelName]) {
+                        domainsByModel[modelName].push([dateField, '>=', fromDate]);
+                        domainsByModel[modelName].push([dateField, '<=', toDate]);
+                    }
+                });
+                
+                console.log(`Added date range filter: ${dateField} >= ${fromDate} AND <= ${toDate}`);
+            }
             
-            console.log(`Added date range filter: ${dateField} >= ${fromDate} AND <= ${toDate}`);
-        }
-        
-        // Active only filter (applies to all models)
-        if (this.state.quickFilters.active_only) {
-            Object.keys(domainsByModel).forEach(modelName => {
-                domainsByModel[modelName].push(['active', '=', true]);
-            });
-            console.log('Added active_only filter to all models');
-        }
-        
-        // Responsible users filter (model-specific field mapping)
-        if (this.state.quickFilters.responsible_users.length > 0) {
-            const userIds = this.state.quickFilters.responsible_users.map(u => u.id);
+            // Active only filter (applies to all models)
+            if (this.state.quickFilters?.active_only) {
+                modelNames.forEach(modelName => {
+                    if (domainsByModel[modelName]) {
+                        domainsByModel[modelName].push(['active', '=', true]);
+                    }
+                });
+                console.log('Added active_only filter to all models');
+            }
             
-            Object.keys(domainsByModel).forEach(modelName => {
-                const userField = this.getUserFieldForModel(modelName);
-                if (userField) {
-                    domainsByModel[modelName].push([userField, 'in', userIds]);
-                    console.log(`Added user filter for ${modelName}: ${userField} in [${userIds.join(', ')}]`);
+            // Responsible users filter (model-specific field mapping)
+            if (this.state.quickFilters?.responsible_users?.length > 0) {
+                const userIds = this.state.quickFilters.responsible_users.map(u => u.id).filter(id => id);
+                
+                if (userIds.length > 0) {
+                    modelNames.forEach(modelName => {
+                        const userField = this.getUserFieldForModel(modelName);
+                        if (userField && domainsByModel[modelName]) {
+                            domainsByModel[modelName].push([userField, 'in', userIds]);
+                            console.log(`Added user filter for ${modelName}: ${userField} in [${userIds.join(', ')}]`);
+                        }
+                    });
                 }
-            });
+            }
+            
+        } catch (error) {
+            console.error('Error adding quick filter domains:', error);
         }
     }
     
@@ -880,63 +916,87 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * NEW - Add advanced filter rule domains per model
+     * NEW - Add advanced filter rule domains per model (WITH ERROR HANDLING)
      */
     addAdvancedFilterDomains(domainsByModel) {
         console.log('=== ADD ADVANCED FILTER DOMAINS ===');
-        console.log('Advanced rules:', this.state.advancedFilters.rules);
         
-        if (!this.state.advancedFilters.enabled || this.state.advancedFilters.rules.length === 0) {
-            console.log('No advanced filters to process');
-            return;
-        }
-        
-        // Group rules by model
-        const rulesByModel = {};
-        this.state.advancedFilters.rules.forEach(rule => {
-            const modelName = rule.model || this.extractModelFromField(rule.field);
-            const originalField = rule.original_field || this.extractOriginalFieldName(rule.field);
-            
-            if (!rulesByModel[modelName]) {
-                rulesByModel[modelName] = [];
+        try {
+            if (!domainsByModel || typeof domainsByModel !== 'object') {
+                console.warn('Invalid domainsByModel parameter');
+                return;
             }
             
-            // Convert rule to Odoo domain tuple
-            const domainTuple = this.convertRuleToDomainTuple(rule, originalField);
-            if (domainTuple) {
-                rulesByModel[modelName].push(domainTuple);
+            if (!this.state.advancedFilters?.enabled || !this.state.advancedFilters?.rules?.length) {
+                console.log('No advanced filters to process');
+                return;
             }
-        });
-        
-        console.log('Rules grouped by model:', rulesByModel);
-        
-        // Add rules to each model's domain
-        Object.keys(rulesByModel).forEach(modelName => {
-            if (domainsByModel[modelName]) {
-                const modelRules = rulesByModel[modelName];
-                
-                if (modelRules.length === 1) {
-                    // Single rule - add directly
-                    domainsByModel[modelName].push(modelRules[0]);
-                } else if (modelRules.length > 1) {
-                    // Multiple rules - combine with logic operator
-                    if (this.state.advancedFilters.logic === 'OR') {
-                        // OR logic: ['|', rule1, rule2]
-                        domainsByModel[modelName].push('|');
-                        modelRules.forEach(rule => {
-                            domainsByModel[modelName].push(rule);
-                        });
-                    } else {
-                        // AND logic (default) - add each rule separately
-                        modelRules.forEach(rule => {
-                            domainsByModel[modelName].push(rule);
-                        });
+            
+            console.log('Advanced rules:', this.state.advancedFilters.rules);
+            
+            // Group rules by model
+            const rulesByModel = {};
+            this.state.advancedFilters.rules.forEach(rule => {
+                try {
+                    const modelName = rule.model || this.extractModelFromField(rule.field);
+                    const originalField = rule.original_field || this.extractOriginalFieldName(rule.field);
+                    
+                    if (!modelName || !originalField) {
+                        console.warn('Invalid rule - missing model or field:', rule);
+                        return;
                     }
+                    
+                    if (!rulesByModel[modelName]) {
+                        rulesByModel[modelName] = [];
+                    }
+                    
+                    // Convert rule to Odoo domain tuple
+                    const domainTuple = this.convertRuleToDomainTuple(rule, originalField);
+                    if (domainTuple) {
+                        rulesByModel[modelName].push(domainTuple);
+                    }
+                } catch (ruleError) {
+                    console.error('Error processing rule:', rule, ruleError);
                 }
-                
-                console.log(`Added ${modelRules.length} advanced rules to ${modelName}`);
-            }
-        });
+            });
+            
+            console.log('Rules grouped by model:', rulesByModel);
+            
+            // Add rules to each model's domain
+            Object.keys(rulesByModel).forEach(modelName => {
+                try {
+                    if (domainsByModel[modelName]) {
+                        const modelRules = rulesByModel[modelName];
+                        
+                        if (modelRules.length === 1) {
+                            // Single rule - add directly
+                            domainsByModel[modelName].push(modelRules[0]);
+                        } else if (modelRules.length > 1) {
+                            // Multiple rules - combine with logic operator
+                            if (this.state.advancedFilters.logic === 'OR') {
+                                // OR logic: ['|', rule1, rule2]
+                                domainsByModel[modelName].push('|');
+                                modelRules.forEach(rule => {
+                                    domainsByModel[modelName].push(rule);
+                                });
+                            } else {
+                                // AND logic (default) - add each rule separately
+                                modelRules.forEach(rule => {
+                                    domainsByModel[modelName].push(rule);
+                                });
+                            }
+                        }
+                        
+                        console.log(`Added ${modelRules.length} advanced rules to ${modelName}`);
+                    }
+                } catch (modelError) {
+                    console.error(`Error adding rules for model ${modelName}:`, modelError);
+                }
+            });
+            
+        } catch (error) {
+            console.error('Error adding advanced filter domains:', error);
+        }
     }
     
     /**
@@ -1035,99 +1095,149 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * NEW - Format domain as human-readable text
+     * NEW - Format domain as human-readable text (WITH ERROR HANDLING)
      */
     formatDomainAsReadable(domain) {
-        if (!domain || domain.length === 0) {
-            return 'No filters applied';
-        }
-        
-        const conditions = [];
-        
-        domain.forEach(condition => {
-            if (Array.isArray(condition) && condition.length === 3) {
-                const [field, operator, value] = condition;
-                const readableOperator = this.getReadableOperator(operator);
-                const readableValue = this.getReadableValue(value);
-                conditions.push(`${field} ${readableOperator} ${readableValue}`);
+        try {
+            if (!domain || !Array.isArray(domain) || domain.length === 0) {
+                return 'No filters applied';
             }
-        });
-        
-        return conditions.join(' AND ');
+            
+            const conditions = [];
+            
+            domain.forEach(condition => {
+                try {
+                    if (Array.isArray(condition) && condition.length === 3) {
+                        const [field, operator, value] = condition;
+                        const readableOperator = this.getReadableOperator(operator);
+                        const readableValue = this.getReadableValue(value);
+                        conditions.push(`${field} ${readableOperator} ${readableValue}`);
+                    }
+                } catch (conditionError) {
+                    console.warn('Error processing condition:', condition, conditionError);
+                }
+            });
+            
+            return conditions.length > 0 ? conditions.join(' AND ') : 'No valid conditions';
+            
+        } catch (error) {
+            console.error('Error formatting domain as readable:', error);
+            return 'Error formatting conditions';
+        }
     }
     
     /**
-     * NEW - Get readable operator text
+     * NEW - Get readable operator text (WITH ERROR HANDLING)
      */
     getReadableOperator(operator) {
-        const operatorMap = {
-            '=': 'equals',
-            '!=': 'not equals', 
-            'ilike': 'contains',
-            'not ilike': 'does not contain',
-            '>': 'greater than',
-            '<': 'less than',
-            '>=': 'greater or equal',
-            '<=': 'less or equal',
-            'in': 'in',
-            'not in': 'not in'
-        };
-        
-        return operatorMap[operator] || operator;
+        try {
+            const operatorMap = {
+                '=': 'equals',
+                '!=': 'not equals', 
+                'ilike': 'contains',
+                'not ilike': 'does not contain',
+                '>': 'greater than',
+                '<': 'less than',
+                '>=': 'greater or equal',
+                '<=': 'less or equal',
+                'in': 'in',
+                'not in': 'not in'
+            };
+            
+            return operatorMap[operator] || operator || 'unknown operator';
+        } catch (error) {
+            console.warn('Error getting readable operator:', error);
+            return 'unknown operator';
+        }
     }
     
     /**
-     * NEW - Get readable value representation
+     * NEW - Get readable value representation (WITH ERROR HANDLING)
      */
     getReadableValue(value) {
-        if (Array.isArray(value)) {
-            return `[${value.join(', ')}]`;
+        try {
+            if (value === null || value === undefined) {
+                return 'null';
+            }
+            if (Array.isArray(value)) {
+                return `[${value.join(', ')}]`;
+            }
+            if (typeof value === 'string') {
+                return `"${value}"`;
+            }
+            return String(value);
+        } catch (error) {
+            console.warn('Error getting readable value:', error);
+            return 'unknown value';
         }
-        if (typeof value === 'string') {
-            return `"${value}"`;
-        }
-        return String(value);
     }
     
     /**
-     * NEW - Test domain generation and show results in UI (SIMPLIFIED)
+     * NEW - Test domain generation and show results in UI (SIMPLIFIED + ERROR HANDLING)
      */
     testDomainGeneration() {
         console.log('=== DOMAIN GENERATION TEST ===');
         
-        const filters = this.getCurrentFilters();
-        console.log('Current filters:', filters);
-        
-        const domains = filters.generated_domains;
-        console.log('Generated domains by model:', domains);
-        
-        // Create simple array of results for template
-        const results = [];
-        
-        // Convert domains to simple displayable format
-        Object.keys(domains).forEach(modelName => {
-            const sourceName = this.selectedSources.find(s => s.model_name === modelName)?.name || modelName;
-            const domain = domains[modelName];
+        try {
+            const filters = this.getCurrentFilters();
+            console.log('Current filters:', filters);
             
-            results.push({
-                modelName: modelName,
-                sourceName: sourceName, 
-                domainString: JSON.stringify(domain, null, 2),
-                conditionCount: domain.length,
-                readable: this.formatDomainAsReadable(domain)
+            if (!filters) {
+                throw new Error('No filters available');
+            }
+            
+            const domains = filters.generated_domains;
+            console.log('Generated domains by model:', domains);
+            
+            if (!domains || typeof domains !== 'object') {
+                throw new Error('Invalid domains generated');
+            }
+            
+            // Create simple array of results for template
+            const results = [];
+            
+            // Safely convert domains to simple displayable format
+            const domainKeys = Object.keys(domains);
+            console.log('Domain keys:', domainKeys);
+            
+            domainKeys.forEach(modelName => {
+                const sourceName = this.selectedSources?.find(s => s.model_name === modelName)?.name || modelName;
+                const domain = domains[modelName] || [];
+                
+                results.push({
+                    modelName: modelName,
+                    sourceName: sourceName, 
+                    domainString: JSON.stringify(domain, null, 2),
+                    conditionCount: domain.length || 0,
+                    readable: this.formatDomainAsReadable(domain) || 'No conditions'
+                });
             });
-        });
-        
-        // Store simple results in state
-        this.state.domainTestResults = {
-            success: true,
-            results: results, // Simple array instead of complex object
-            totalModels: results.length,
-            totalConditions: results.reduce((sum, r) => sum + r.conditionCount, 0),
-            timestamp: new Date().toLocaleString()
-        };
-        
-        console.log('Simple test results:', this.state.domainTestResults);
+            
+            // Store simple results in state
+            this.state.domainTestResults = {
+                success: true,
+                results: results, // Simple array instead of complex object
+                totalModels: results.length,
+                totalConditions: results.reduce((sum, r) => sum + (r.conditionCount || 0), 0),
+                timestamp: new Date().toLocaleString(),
+                error: null
+            };
+            
+            console.log('Simple test results:', this.state.domainTestResults);
+            
+        } catch (error) {
+            console.error('Domain generation test failed:', error);
+            
+            // Store error state
+            this.state.domainTestResults = {
+                success: false,
+                results: [],
+                totalModels: 0,
+                totalConditions: 0,
+                timestamp: new Date().toLocaleString(),
+                error: error.message || 'Unknown error occurred'
+            };
+        }
         
         return this.state.domainTestResults;
     }
