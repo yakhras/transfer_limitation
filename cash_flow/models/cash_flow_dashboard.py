@@ -1887,3 +1887,33 @@ class CashFlowDashboard(models.Model):
             debug_info.append(f"All TRY lines total: ₺{try_total} ({len(try_lines)} lines)")
         
         return "\n".join(debug_info)
+
+
+    @api.depends('company_id', 'account_ids')  # Add account_ids dependency
+    def _compute_debug_currency_info(self):
+        """Enhanced debug info"""
+        for record in self:
+            debug_info = []
+            
+            # Your existing debug code...
+            # (keep all the existing code)
+            
+            # ADD THIS AT THE END:
+            debug_info.append("\n" + "="*50)
+            debug_info.append("BALANCE CALCULATION DEBUG")
+            debug_info.append("="*50)
+            
+            if record.account_ids:
+                # Test with current period settings
+                balance_debug = record.debug_balance_calculation(
+                    record.account_ids.ids,
+                    None,  # No date filter for now
+                    None,  
+                    record.company_id.id,
+                    'USD'
+                )
+                debug_info.append(balance_debug)
+            else:
+                debug_info.append("No accounts configured for this record")
+            
+            record.debug_currency_info = "\n".join(debug_info)
