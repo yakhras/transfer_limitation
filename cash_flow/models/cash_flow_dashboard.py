@@ -207,7 +207,7 @@ class CashFlowDashboard(models.Model):
                             move_line.date, record.company_id.id
                         )
                         if rate_record and rate_value:
-                            usd_amount = move_line.amount_currency * rate_value
+                            usd_amount = move_line.amount_currency / rate_value
                             latest_rate = rate_value
                             latest_rate_date = rate_date
                         else:
@@ -793,7 +793,7 @@ class CashFlowDashboard(models.Model):
                         move_line.date, company_id
                     )
                     if rate_record and rate_value:
-                        usd_amount = move_line.amount_currency * rate_value
+                        usd_amount = move_line.amount_currency / rate_value
                     else:
                         # Fallback: use TRY amount as-is if no rate found
                         usd_amount = try_amount
@@ -1839,7 +1839,7 @@ class CashFlowDashboard(models.Model):
                     # TRY currency to USD
                     rate_record, rate_value, rate_date = self._get_usd_rate_for_date(line.date, company_id)
                     if rate_record and rate_value:
-                        usd_value = line.amount_currency * rate_value
+                        usd_value = line.amount_currency / rate_value
                         rate_info = f"Rate: {rate_value} (from {rate_date})"
                         debug_info.append(f"USD Rate: {rate_info}")
                         debug_info.append(f"TRY amount_currency: {line.amount_currency}")
