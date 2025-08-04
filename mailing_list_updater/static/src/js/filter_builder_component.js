@@ -1090,7 +1090,7 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * NEW - Test domain generation and show results in UI
+     * NEW - Test domain generation and show results in UI (SIMPLIFIED)
      */
     testDomainGeneration() {
         console.log('=== DOMAIN GENERATION TEST ===');
@@ -1101,38 +1101,33 @@ class FilterBuilderComponent extends Component {
         const domains = filters.generated_domains;
         console.log('Generated domains by model:', domains);
         
-        const preview = this.getDomainPreview();
-        console.log('Human-readable preview:', preview);
+        // Create simple array of results for template
+        const results = [];
         
-        // Test individual components
-        console.log('Quick filters:', filters.quick_filters);
-        console.log('Advanced rules:', filters.advanced_filters.rules);
-        console.log('Selected models:', filters.selected_models);
-        
-        // Prepare formatted domains for template display
-        const formattedDomains = {};
+        // Convert domains to simple displayable format
         Object.keys(domains).forEach(modelName => {
-            formattedDomains[modelName] = {
-                raw: domains[modelName],
-                formatted: JSON.stringify(domains[modelName], null, 2), // Format here instead of template
-                count: domains[modelName].length
-            };
+            const sourceName = this.selectedSources.find(s => s.model_name === modelName)?.name || modelName;
+            const domain = domains[modelName];
+            
+            results.push({
+                modelName: modelName,
+                sourceName: sourceName, 
+                domainString: JSON.stringify(domain, null, 2),
+                conditionCount: domain.length,
+                readable: this.formatDomainAsReadable(domain)
+            });
         });
         
-        // Store results in state for display
+        // Store simple results in state
         this.state.domainTestResults = {
             success: true,
-            domains: domains,
-            formattedDomains: formattedDomains, // NEW - Pre-formatted for template
-            preview: preview,
-            filters: filters,
-            timestamp: new Date().toLocaleString(),
-            totalConditions: Object.values(domains).reduce((sum, domain) => sum + domain.length, 0),
-            modelCount: Object.keys(domains).length
+            results: results, // Simple array instead of complex object
+            totalModels: results.length,
+            totalConditions: results.reduce((sum, r) => sum + r.conditionCount, 0),
+            timestamp: new Date().toLocaleString()
         };
         
-        console.log('Test results stored in state');
-        console.log('Formatted domains:', formattedDomains);
+        console.log('Simple test results:', this.state.domainTestResults);
         
         return this.state.domainTestResults;
     }
