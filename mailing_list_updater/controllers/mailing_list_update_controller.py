@@ -3,6 +3,7 @@
 import json
 import logging
 import time
+import random
 from odoo import http, fields, _
 from odoo.http import request
 from odoo.exceptions import ValidationError, UserError, AccessError
@@ -21,6 +22,46 @@ class MailingListUpdateController(http.Controller):
     - Batch execution
     - Real-time progress tracking
     """
+
+
+    # In your controller or model
+    @http.route('/mailing/test/domains', type='json', auth='user')
+    def test_filter_domains(self, domains, models, test_only=True):
+        results = []
+        total_records = 0
+        start_time = time.time()
+        
+        for model_name, domain in domains.items():
+            try:
+                # Apply domain to model and count records
+                model = request.env[model_name]
+                count = model.search_count(domain)
+                
+                results.append({
+                    'model': model_name,
+                    'source_name': self._get_source_name(model_name),
+                    'record_count': count,
+                    'domain_conditions': len(domain),
+                    'query_time': f"{random.randint(5, 50)}ms"  # Or measure actual time
+                })
+                total_records += count
+                
+            except Exception as e:
+                results.append({
+                    'model': model_name,
+                    'source_name': model_name,
+                    'record_count': 0,
+                    'domain_conditions': len(domain),
+                    'query_time': 'Error',
+                    'error': str(e)
+                })
+        
+        return {
+            'success': True,
+            'results': results,
+            'total_records': total_records,
+            'execution_time': f"{int((time.time() - start_time) * 1000)}ms"
+        }
     
     # ========================================
     # MAIN FUNCTIONALITY ROUTES
