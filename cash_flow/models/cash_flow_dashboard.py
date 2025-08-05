@@ -1740,6 +1740,7 @@ class CashFlowDashboard(models.Model):
             'name': f'Transactions - {self.display_name}',
             'res_model': 'account.move.line',
             'view_mode': 'tree,form',
+            'views': [[False, 'tree'], [False, 'form']],
             'domain': domain,
             'context': {
                 'search_default_group_by_move': 1,
