@@ -135,7 +135,7 @@
                         <label class="form-label fw-bold">Company / Organization</label>
                         
                         <!-- Company Search Input -->
-                        <div class="position-relative search-container">
+                        <div t-if="state.companySearch" class="position-relative search-container">
                             <input type="text" class="form-control"
                                    t-model="state.companySearch.query"
                                    t-on-input="(ev) => this.onCompanySearch(ev.target.value)"
@@ -145,7 +145,7 @@
                             <i class="fa fa-building position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #999;"></i>
                             
                             <!-- Company Search Results Dropdown -->
-                            <div t-if="state.companySearch.showSuggestions and state.companySearch.results.length" 
+                            <div t-if="state.companySearch.showSuggestions and state.companySearch.results and state.companySearch.results.length" 
                                  class="company-suggestions position-absolute w-100 bg-white border rounded shadow-sm mt-1" 
                                  style="z-index: 1000; max-height: 200px; overflow-y: auto;">
                                 <div t-foreach="state.companySearch.results" t-as="company" t-key="company.id"
@@ -177,8 +177,14 @@
                             </div>
                         </div>
                         
+                        <!-- Fallback if companySearch not initialized -->
+                        <div t-if="!state.companySearch" class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            Company search is loading...
+                        </div>
+                        
                         <!-- Selected Companies Display -->
-                        <div t-if="state.quickFilters.companies.length" class="selected-companies mt-2">
+                        <div t-if="state.quickFilters.companies and state.quickFilters.companies.length" class="selected-companies mt-2">
                             <div class="d-flex flex-wrap gap-2">
                                 <span t-foreach="state.quickFilters.companies" t-as="company" t-key="company.id"
                                       class="badge bg-info d-flex align-items-center">
@@ -462,7 +468,7 @@
                             <ul class="mt-1 mb-0 ps-3">
                                 <li t-foreach="state.advancedFilters.rules" t-as="rule" t-key="rule.id">
                                     <small class="text-muted">
-                                        <code t-esc="rule.model">: </code><span t-esc="formatRuleDisplay(rule)"/>
+                                        <code t-esc="rule.model"/>: </code><span t-esc="formatRuleDisplay(rule)"/>
                                     </small>
                                 </li>
                             </ul>

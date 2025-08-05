@@ -79,13 +79,22 @@ class FilterBuilderComponent extends Component {
         this.companySearchTimeout = null;
     }
     
-    /**
-     * OWL 1.0 Lifecycle - Will Start
-     */
     async willStart() {
         this.state.isLoading = true;
         
         try {
+            // Ensure search states are initialized before async operations
+            if (!this.state.companySearch) {
+                this.state.companySearch = {
+                    query: '', results: [], showSuggestions: false, loading: false
+                };
+            }
+            if (!this.state.userSearch) {
+                this.state.userSearch = {
+                    query: '', results: [], showSuggestions: false, loading: false
+                };
+            }
+            
             // Load fields based on initially selected sources
             await this.updateFieldsForSelectedSources();
             
@@ -102,12 +111,33 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * FIX: Add mounted lifecycle to handle initial props
+     * FIX: Add mounted lifecycle to handle initial props and ensure state is ready
      */
     mounted() {
         console.log('=== FILTER BUILDER MOUNTED ===');
         console.log('Props selectedSources on mount:', this.props.selectedSources);
         console.log('State selectedSources on mount:', this.selectedSources);
+        console.log('Company search state:', this.state.companySearch);
+        console.log('User search state:', this.state.userSearch);
+        
+        // Ensure search states are properly initialized
+        if (!this.state.companySearch) {
+            this.state.companySearch = {
+                query: '',
+                results: [],
+                showSuggestions: false,
+                loading: false
+            };
+        }
+        
+        if (!this.state.userSearch) {
+            this.state.userSearch = {
+                query: '',
+                results: [],
+                showSuggestions: false,
+                loading: false
+            };
+        }
         
         // If we have initial sources from props, update fields
         if (this.props.selectedSources && this.props.selectedSources.length > 0) {
@@ -116,7 +146,7 @@ class FilterBuilderComponent extends Component {
             this.updateFieldsForSelectedSources();
         }
         
-        // Setup event listeners for click outside (for user suggestions)
+        // Setup event listeners for click outside (for user/company suggestions)
         document.addEventListener('click', this.handleClickOutside.bind(this));
     }
     
