@@ -826,33 +826,21 @@ export class CashFlowDashboard extends Component {
         this.state.error = null
     }
 
-    async viewAccountDetails(accountId) {
-        const dateRange = this.getDateRange()
-        
-        try {
-            // Call the Python method with proper context
-            const action = await this.orm.call(
-                'cash.flow.dashboard',
-                'action_view_account_moves',
-                [[accountId]], // Pass as list of IDs
-                {
-                    context: {
-                        date_from: dateRange.date_from,
-                        date_to: dateRange.date_to,
-                        period_type: this.state.period
-                    }
-                }
-            )
-            
-            this.actionService.doAction(action)
-            
-        } catch (error) {
-            console.error('Error opening account moves:', error)
-            this.notification.add("Failed to open transactions", {
-                type: "danger"
-            })
-        }
+    viewAccountDetails(accountId) {
+        const action = {
+            type: 'ir.actions.act_window',
+            name: 'Account Transactions',
+            res_model: 'account.move.line',
+            view_mode: 'tree',
+            target: 'current',
+            domain: [['account_id', 'in', this.props.accountData.account_ids || []]],
+            context: {
+                search_default_posted: 1,
+            },
+        };
+        this.env.services.action.doAction(action);
     }
+
 
     getPeriodLabel() {
         const option = this.periodOptions.find(opt => opt.value === this.state.period)

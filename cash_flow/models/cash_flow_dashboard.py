@@ -735,7 +735,9 @@ class CashFlowDashboard(models.Model):
                         'debug_currencies': normalized_currencies,
                         'debug_currency_count': len(normalized_currencies) if normalized_currencies else 0,
                         'debug_chart_type': type(chart_data).__name__,
-                        'debug_chart_keys': list(chart_data.keys()) if isinstance(chart_data, dict) else 'not_dict'
+                        'debug_chart_keys': list(chart_data.keys()) if isinstance(chart_data, dict) else 'not_dict',
+                        'account_ids': config.account_ids.ids,
+
                     }
                     
                     dashboard_data.append(account_data)
@@ -1740,7 +1742,6 @@ class CashFlowDashboard(models.Model):
             'name': f'Transactions - {self.display_name}',
             'res_model': 'account.move.line',
             'view_mode': 'tree,form',
-            'views': [[False, 'tree'], [False, 'form']],
             'domain': domain,
             'context': {
                 'search_default_group_by_move': 1,
