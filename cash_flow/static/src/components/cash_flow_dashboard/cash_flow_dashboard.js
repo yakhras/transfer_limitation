@@ -830,18 +830,47 @@ export class CashFlowDashboard extends Component {
         const dateRange = this.getDateRange()
         
         try {
-            const action = await this.orm.call(
+            // Get the dashboard record to get account_ids
+            const dashboardRecord = await this.orm.read(
                 'cash.flow.dashboard',
-                'action_view_account_moves',
                 [accountId],
-                {
-                    date_from: dateRange.date_from,
-                    date_to: dateRange.date_to,
-                    period_type: this.state.period
-                }
+                ['account_ids', 'display_name', 'company_id']
             )
             
-            this.actionService.doAction(action)
+            if (!dashboardRecord || !dashboardRecord[0]) {
+                throw new Error('Dashboard record not found')
+            }
+            
+            const record = dashboardRecord[0]
+            
+            // Build domain for account move lines
+            let domain = [
+                ['account_id', 'in', record.account_ids],
+                ['company_id', '=', record.company_id[0]],
+                ['move_id.state', '=', 'posted']
+            ]
+            
+            // Add date filters
+            if (dateRange.date_from) {
+                domain.push(['date', '>=', dateRange.date_from])
+            }
+            if (dateRange.date_to) {
+                domain.push(['date', '<=', dateRange.date_to])
+            }
+            
+            // Open account move lines directly
+            this.actionService.doAction({
+                type: 'ir.actions.act_window',
+                name: `Transactions - ${record.display_name}`,
+                res_model: 'account.move.line',
+                view_mode: 'tree,form',
+                domain: domain,
+                context: {
+                    search_default_group_by_move: 1,
+                    search_default_group_by_account: 1,
+                }
+            })
+            
         } catch (error) {
             console.error('Error opening account moves:', error)
             this.notification.add("Failed to open transactions", {
