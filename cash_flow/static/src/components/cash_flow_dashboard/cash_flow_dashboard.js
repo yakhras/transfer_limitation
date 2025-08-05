@@ -839,7 +839,14 @@ export class CashFlowDashboard extends Component {
             views: [[false, 'tree']],
             target: 'current',
         };
-        this.env.services.action.doAction(action);
+        this.env.services.action.doAction('account.action_move_line_select', {
+            additionalContext: {
+                search_default_posted: 1,
+                default_account_id: account.account_ids?.[0] || false,
+            },
+            additionalDomain: [['account_id', 'in', account.account_ids || []]],
+        });
+
     }
 
 
