@@ -826,29 +826,23 @@ export class CashFlowDashboard extends Component {
         this.state.error = null
     }
 
-    viewAccountDetails(account) {
-        const action = {
-            type: 'ir.actions.act_window',
-            name: 'Account Transactions',
-            res_model: 'account.move.line',
-            views: [[false, 'tree']],
-            view_mode: 'tree',
-            target: 'current',
-            domain: [['account_id', 'in', account.account_ids || []]],
+    viewAccountDetails(accountId) {
+        const dateRange = this.getDateRange()
+        
+        this.actionService.doAction({
+            type: "ir.actions.act_window",
+            name: "Cash Flow Details",
+            res_model: "cash.flow.dashboard",
+            res_id: accountId,
+            views: [[false, "tree"]],
+            target: "current",
             context: {
-                search_default_posted: 1,
-            },
-        };
-
-        this.env.services.action.doAction(action);
+                date_from: dateRange.date_from,
+                date_to: dateRange.date_to,
+                period_type: this.state.period
+            }
+        })
     }
-
-
-
-
-
-
-
 
     getPeriodLabel() {
         const option = this.periodOptions.find(opt => opt.value === this.state.period)
