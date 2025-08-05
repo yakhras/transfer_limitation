@@ -1762,6 +1762,94 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
+     * NEW - Test res.company model connection
+     */
+    async testCompanyConnection() {
+        console.log('=== TEST COMPANY CONNECTION ===');
+        
+        try {
+            console.log('🔍 Testing direct connection to res.company model...');
+            
+            let testResults = {
+                orm_test: null,
+                rpc_test: null,
+                environment_test: null,
+                final_result: null
+            };
+            
+            // Test 1: ORM Service
+            if (this.orm) {
+                console.log('🧪 Testing ORM service...');
+                try {
+                    const ormResult = await this.orm.searchRead(
+                        'res.company',
+                        [],
+                        ['id', 'name', 'display_name'],
+                        { limit: 5 }
+                    );
+                    testResults.orm_test = { success: true, count: ormResult.length, data: ormResult };
+                    console.log('✅ ORM Test SUCCESS:', ormResult);
+                } catch (ormError) {
+                    testResults.orm_test = { success: false, error: ormError.message };
+                    console.log('❌ ORM Test FAILED:', ormError);
+                }
+            }
+            
+            // Test 2: RPC Service
+            if (this.rpc) {
+                console.log('🧪 Testing RPC service...');
+                try {
+                    const rpcResult = await this.rpc('/web/dataset/search_read', {
+                        model: 'res.company',
+                        domain: [],
+                        fields: ['id', 'name', 'display_name'],
+                        limit: 5
+                    });
+                    
+                    const records = rpcResult.records || rpcResult;
+                    testResults.rpc_test = { success: true, count: records.length, data: records };
+                    console.log('✅ RPC Test SUCCESS:', records);
+                } catch (rpcError) {
+                    testResults.rpc_test = { success: false, error: rpcError.message };
+                    console.log('❌ RPC Test FAILED:', rpcError);
+                }
+            }
+            
+            // Test 3: Environment Company
+            console.log('🧪 Testing environment company...');
+            const envCompany = this.env.services?.company?.currentCompany;
+            if (envCompany) {
+                testResults.environment_test = { success: true, data: envCompany };
+                console.log('✅ Environment Test SUCCESS:', envCompany);
+            } else {
+                testResults.environment_test = { success: false, error: 'No company in environment' };
+                console.log('❌ Environment Test FAILED: No company found');
+            }
+            
+            // Show results
+            console.log('📊 COMPLETE TEST RESULTS:', testResults);
+            
+            // Show alert with results
+            const successfulMethods = [];
+            if (testResults.orm_test?.success) successfulMethods.push(`ORM (${testResults.orm_test.count} companies)`);
+            if (testResults.rpc_test?.success) successfulMethods.push(`RPC (${testResults.rpc_test.count} companies)`);
+            if (testResults.environment_test?.success) successfulMethods.push('Environment');
+            
+            if (successfulMethods.length > 0) {
+                alert(`✅ res.company CONNECTION SUCCESS!\n\nWorking methods: ${successfulMethods.join(', ')}\n\nCheck console for detailed results.`);
+            } else {
+                alert(`❌ res.company CONNECTION FAILED!\n\nNo working methods found. Check console for error details.\n\nYou may need to check your Odoo permissions or model access.`);
+            }
+            
+            return testResults;
+            
+        } catch (error) {
+            console.error('❌ COMPANY CONNECTION TEST ERROR:', error);
+            alert(`❌ TEST FAILED: ${error.message}\n\nCheck console for details.`);
+        }
+    }
+    
+    /**
      * NEW - Clear backend test results
      */
     clearBackendTestResults() {

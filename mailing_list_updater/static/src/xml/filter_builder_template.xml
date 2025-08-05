@@ -490,7 +490,13 @@
                         <i class="fa fa-code"></i> Test Domain Generation
                     </button>
                     
-                    <!-- NEW: Backend Test Button -->
+                    <!-- NEW: Test Company Connection Button -->
+                    <button class="btn btn-outline-warning btn-sm me-2"
+                            t-on-click="() => this.testCompanyConnection()">
+                        <i class="fa fa-plug"></i> Test Company Connection
+                    </button>
+                    
+                    <!-- Backend Test Button -->
                     <button class="btn btn-primary btn-sm"
                             t-on-click="() => this.testDomainsWithBackend()"
                             t-att-disabled="state.selectedModels.length === 0 or state.backendTesting">
