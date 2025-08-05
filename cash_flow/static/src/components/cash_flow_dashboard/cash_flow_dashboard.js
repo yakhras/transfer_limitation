@@ -847,6 +847,7 @@ export class CashFlowDashboard extends Component {
 
 
 
+
     getPeriodLabel() {
         const option = this.periodOptions.find(opt => opt.value === this.state.period)
         if (this.state.period === 'custom' && this.state.customDateFrom && this.state.customDateTo) {
