@@ -26,39 +26,54 @@ class MailingListUpdateController(http.Controller):
 
     @http.route('/mailing/test/domains', type='json', auth='user')
     def test_filter_domains(self, domains, models, test_only=True):
-        """Test filter domains and return actual record counts"""
+        """Test filter domains and return actual record counts with company context"""
         results = []
         total_records = 0
         start_time = time.time()
+        
+        # Get current company from user context
+        current_company = request.env.company
+        company_id = current_company.id
+        
+        _logger.info(f"Testing domains for company: {current_company.name} (ID: {company_id})")
         
         for model_name, domain in domains.items():
             try:
                 # Apply domain to model and count records
                 model = request.env[model_name]
                 
+                # ✅ ADD COMPANY FILTER TO DOMAIN
+                company_domain = self._add_company_filter(domain, model_name, company_id)
+                
+                _logger.info(f"Testing {model_name} with domain: {company_domain}")
+                
                 # Measure actual query time
                 query_start = time.time()
-                count = model.search_count(domain)  # THIS gives you real count
+                count = model.search_count(company_domain)  # Use company-filtered domain
                 query_end = time.time()
                 query_time = int((query_end - query_start) * 1000)
                 
                 results.append({
                     'model': model_name,
                     'source_name': self._get_source_name(model_name),
-                    'record_count': count,  # Real count from database
-                    'domain_conditions': len(domain),
-                    'query_time': f"{query_time}ms"
+                    'record_count': count,
+                    'domain_conditions': len(company_domain),  # Updated count
+                    'query_time': f"{query_time}ms",
+                    'company_filtered': True,
+                    'company_name': current_company.name
                 })
                 total_records += count
                 
             except Exception as e:
+                _logger.error(f"Error testing {model_name}: {str(e)}")
                 results.append({
                     'model': model_name,
                     'source_name': model_name,
                     'record_count': 0,
                     'domain_conditions': len(domain),
                     'query_time': 'Error',
-                    'error': str(e)
+                    'error': str(e),
+                    'company_filtered': False
                 })
         
         execution_time = int((time.time() - start_time) * 1000)
@@ -67,17 +82,62 @@ class MailingListUpdateController(http.Controller):
             'success': True,
             'results': results,
             'total_records': total_records,
-            'execution_time': f"{execution_time}ms"
+            'execution_time': f"{execution_time}ms",
+            'company_context': {
+                'id': company_id,
+                'name': current_company.name
+            },
+            'message': f'Tested {len(results)} models for company: {current_company.name}'
         }
+    
+    def _add_company_filter(self, domain, model_name, company_id):
+        """Add company filter to domain based on model type"""
+        
+        # Models that have company_id field
+        company_models = {
+            'res.partner': 'company_id',
+            'crm.lead': 'company_id', 
+            'crm.opportunity': 'company_id',
+            'sale.order': 'company_id',
+            'purchase.order': 'company_id',
+            'account.move': 'company_id',
+            'project.project': 'company_id',
+            'hr.employee': 'company_id'
+        }
+        
+        # Check if model has company field
+        company_field = company_models.get(model_name)
+        
+        if company_field:
+            # Create new domain with company filter
+            company_domain = domain.copy() if domain else []
+            
+            # Check if company filter already exists
+            has_company_filter = any(
+                isinstance(condition, list) and 
+                len(condition) == 3 and 
+                condition[0] == company_field 
+                for condition in company_domain
+            )
+            
+            # Add company filter if not already present
+            if not has_company_filter:
+                company_domain.append([company_field, '=', company_id])
+                _logger.info(f"Added company filter to {model_name}: {company_field} = {company_id}")
+            
+            return company_domain
+        else:
+            _logger.warning(f"Model {model_name} doesn't have company field, using original domain")
+            return domain
     
     def _get_source_name(self, model_name):
         """Get display name for model"""
         source_names = {
             'res.partner': 'Contacts',
-            'crm.lead': 'CRM Leads'
+            'crm.lead': 'CRM Leads',
+            'crm.opportunity': 'Opportunities'
         }
         return source_names.get(model_name, model_name)
-
     
     # ========================================
     # MAIN FUNCTIONALITY ROUTES

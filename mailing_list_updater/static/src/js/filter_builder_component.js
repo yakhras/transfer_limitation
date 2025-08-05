@@ -836,7 +836,7 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * NEW - Add quick filter domains to all models (WITH ERROR HANDLING)
+     * NEW - Add quick filter domains to all models (WITH ERROR HANDLING + COMPANY FILTER)
      */
     addQuickFilterDomains(domainsByModel) {
         console.log('=== ADD QUICK FILTER DOMAINS ===');
@@ -851,6 +851,22 @@ class FilterBuilderComponent extends Component {
             if (modelNames.length === 0) {
                 console.log('No models to add quick filters to');
                 return;
+            }
+            
+            // Get current company context
+            const currentCompany = this.env.services?.company?.currentCompany;
+            console.log('Current company context:', currentCompany);
+            
+            // Company filter (applies to models with company_id field)
+            if (currentCompany && currentCompany.id) {
+                const companyModels = ['res.partner', 'crm.lead', 'crm.opportunity', 'sale.order'];
+                
+                modelNames.forEach(modelName => {
+                    if (companyModels.includes(modelName) && domainsByModel[modelName]) {
+                        domainsByModel[modelName].push(['company_id', '=', currentCompany.id]);
+                        console.log(`Added company filter for ${modelName}: company_id = ${currentCompany.id} (${currentCompany.name})`);
+                    }
+                });
             }
             
             // Date range filter (applies to all models)
@@ -1357,13 +1373,19 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * NEW - Mock backend response for development
+     * NEW - Mock backend response for development (WITH COMPANY CONTEXT)
      */
     getMockBackendResponse(domains) {
         console.log('=== GENERATING MOCK BACKEND RESPONSE ===');
         
         const results = [];
         let totalRecords = 0;
+        
+        // Get current company context for mock
+        const currentCompany = this.env.services?.company?.currentCompany || {
+            id: 1,
+            name: 'Mock Company'
+        };
         
         Object.keys(domains).forEach(modelName => {
             const domain = domains[modelName];
@@ -1382,7 +1404,9 @@ class FilterBuilderComponent extends Component {
                 domain: domain,
                 record_count: mockCount,
                 domain_conditions: filterCount,
-                query_time: Math.floor(Math.random() * 50) + 5 + 'ms' // Mock 5-55ms
+                query_time: Math.floor(Math.random() * 50) + 5 + 'ms', // Mock 5-55ms
+                company_filtered: true,
+                company_name: currentCompany.name
             });
             
             totalRecords += mockCount;
@@ -1393,7 +1417,11 @@ class FilterBuilderComponent extends Component {
             results: results,
             total_records: totalRecords,
             execution_time: Math.floor(Math.random() * 200) + 50 + 'ms', // Mock 50-250ms
-            message: 'Mock backend test completed successfully'
+            company_context: {
+                id: currentCompany.id,
+                name: currentCompany.name
+            },
+            message: `Mock backend test completed for company: ${currentCompany.name}`
         };
     }
     
