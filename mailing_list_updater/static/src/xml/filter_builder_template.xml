@@ -468,7 +468,7 @@
                             <ul class="mt-1 mb-0 ps-3">
                                 <li t-foreach="state.advancedFilters.rules" t-as="rule" t-key="rule.id">
                                     <small class="text-muted">
-                                        <code t-esc="rule.model"/>: </code><span t-esc="formatRuleDisplay(rule)"/>
+                                        <code t-esc="rule.model">: </code><span t-esc="formatRuleDisplay(rule)"/>
                                     </small>
                                 </li>
                             </ul>
