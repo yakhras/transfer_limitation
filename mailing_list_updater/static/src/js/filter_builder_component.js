@@ -754,7 +754,7 @@ class FilterBuilderComponent extends Component {
                     response = await this.orm.searchRead(
                         'res.company',
                         domain,
-                        ['id', 'name', 'email'],
+                        ['id', 'name',],
                         { limit: 5 }
                     );
                     console.log('ORM service response for default companies:', response);
@@ -770,7 +770,7 @@ class FilterBuilderComponent extends Component {
                     response = await this.rpc('/web/dataset/search_read', {
                         model: 'res.company',
                         domain: domain,
-                        fields: ['id', 'name', 'email'],
+                        fields: ['id', 'name',],
                         limit: 5
                     });
                     
@@ -792,7 +792,7 @@ class FilterBuilderComponent extends Component {
                     response = [currentCompany];
                 } else {
                     response = [
-                        { id: 1, name: 'Main Company', email: 'info@company.com' }
+                        { id: 1, name: 'Main Company',  }
                     ];
                 }
             }
@@ -813,7 +813,7 @@ class FilterBuilderComponent extends Component {
             // Set current company or mock data on error
             const currentCompany = this.env.services?.company?.currentCompany;
             this.state.quickFilters.companies = currentCompany ? [currentCompany] : [
-                { id: 1, name: 'Main Company', email: 'info@company.com' }
+                { id: 1, name: 'Main Company', }
             ];
         }
     }
