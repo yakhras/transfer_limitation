@@ -832,6 +832,7 @@ export class CashFlowDashboard extends Component {
             name: 'Account Transactions',
             res_model: 'account.move.line',
             view_mode: 'tree',
+            views: [[false, 'tree']],
             target: 'current',
             domain: [['account_id', 'in', account.account_ids || []]],
             context: {
@@ -840,6 +841,7 @@ export class CashFlowDashboard extends Component {
         };
         this.env.services.action.doAction(action);
     }
+
 
 
 
