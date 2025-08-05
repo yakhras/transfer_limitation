@@ -30,11 +30,20 @@ class FilterBuilderComponent extends Component {
                 responsible_users: [],
                 tags: [],
                 category_ids: [],
-                country_ids: []
+                country_ids: [],
+                companies: [], // NEW - Track selected companies
             },
             
             // User search functionality
             userSearch: {
+                query: '',
+                results: [],
+                showSuggestions: false,
+                loading: false
+            },
+
+            // User search functionality
+            companySearch: {
                 query: '',
                 results: [],
                 showSuggestions: false,
