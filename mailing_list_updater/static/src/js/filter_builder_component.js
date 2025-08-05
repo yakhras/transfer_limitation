@@ -1850,6 +1850,66 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
+     * NEW - Debug company search functionality
+     */
+    async debugCompanySearch() {
+        console.log('=== COMPANY SEARCH DEBUG MODE ===');
+        
+        const query = this.state.companySearch.query || 'test';
+        console.log('🐛 Debug search for query:', query);
+        
+        try {
+            // Test 1: Simple name search
+            console.log('🧪 TEST 1: Simple name search');
+            if (this.orm) {
+                try {
+                    const test1 = await this.orm.searchRead(
+                        'res.company',
+                        [['name', 'ilike', query]],
+                        ['id', 'name'],
+                        { limit: 5 }
+                    );
+                    console.log('✅ TEST 1 SUCCESS:', test1);
+                } catch (e) {
+                    console.log('❌ TEST 1 FAILED:', e.message);
+                }
+            }
+            
+            // Test 2: Get all companies first
+            console.log('🧪 TEST 2: Get all companies');
+            if (this.orm) {
+                try {
+                    const test2 = await this.orm.searchRead(
+                        'res.company',
+                        [],
+                        ['id', 'name', 'display_name'],
+                        { limit: 10 }
+                    );
+                    console.log('✅ TEST 2 SUCCESS - All companies:', test2);
+                    
+                    // Show alert with company names
+                    const companyNames = test2.map(c => c.name).join(', ');
+                    alert(`Found ${test2.length} companies: ${companyNames}\n\nTry searching for one of these names.`);
+                    
+                } catch (e) {
+                    console.log('❌ TEST 2 FAILED:', e.message);
+                }
+            }
+            
+            // Test 3: Check current search state
+            console.log('🧪 TEST 3: Current search state');
+            console.log('Query:', this.state.companySearch.query);
+            console.log('Results:', this.state.companySearch.results);
+            console.log('Loading:', this.state.companySearch.loading);
+            console.log('Show suggestions:', this.state.companySearch.showSuggestions);
+            
+        } catch (error) {
+            console.error('❌ DEBUG ERROR:', error);
+            alert(`Debug failed: ${error.message}`);
+        }
+    }
+    
+    /**
      * NEW - Clear backend test results
      */
     clearBackendTestResults() {
