@@ -858,12 +858,8 @@ class FilterBuilderComponent extends Component {
         this.state.companySearch.loading = true;
         
         try {
-            const domain = [
-                ['active', '=', true],
-                '|',
-                ['name', 'ilike', query],
-                ['email', 'ilike', query]
-            ];
+            const domain = [['active', '=', true], ['name', 'ilike', query]];
+
             
             console.log('Company search domain:', JSON.stringify(domain, null, 2));
             
@@ -875,7 +871,7 @@ class FilterBuilderComponent extends Component {
                     response = await this.orm.searchRead(
                         'res.company',
                         domain,
-                        ['id', 'name', 'email'],
+                        ['id', 'name'],
                         { limit: 10 }
                     );
                     console.log('ORM service response:', response);
@@ -890,7 +886,7 @@ class FilterBuilderComponent extends Component {
                     response = await this.rpc('/web/dataset/search_read', {
                         model: 'res.company',
                         domain: domain,
-                        fields: ['id', 'name', 'email'],
+                        fields: ['id', 'name'],
                         limit: 10
                     });
                     
