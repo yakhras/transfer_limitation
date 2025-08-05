@@ -831,16 +831,18 @@ export class CashFlowDashboard extends Component {
             type: 'ir.actions.act_window',
             name: 'Account Transactions',
             res_model: 'account.move.line',
+            views: [[false, 'tree']],
+            view_mode: 'tree',
             target: 'current',
             domain: [['account_id', 'in', account.account_ids || []]],
-            view_mode: 'tree',
-            views: [[false, 'tree']],
             context: {
                 search_default_posted: 1,
             },
         };
+
         this.env.services.action.doAction(action);
     }
+
 
 
 
