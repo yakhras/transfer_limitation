@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="cash_flow.CashFlowDashboard" owl="1">
-        <div class="vh-100 overflow-auto bg-muted">
+        <!-- UPDATED: Added cash-flow-dashboard class for SCSS scoping -->
+        <div class="cash-flow-dashboard vh-100 overflow-auto bg-muted">
             <div class="row m-3">
                 <div class="col-12">
                     <!-- Header with Date Filtering -->
@@ -39,7 +40,7 @@
                                     <!-- Date Filter Controls -->
                                     <div class="d-flex align-items-center gap-2 flex-wrap">
                                         <span class="text-muted small">Period:</span>
-                                        <select class="form-select form-select-sm" 
+                                        <select class="form-select form-select-sm cash-flow-period-selector" 
                                                 style="width: auto; min-width: 150px;"
                                                 t-model="state.period" 
                                                 t-on-change="onPeriodChange">
@@ -49,7 +50,7 @@
                                         </select>
                                         
                                         <!-- Refresh Button -->
-                                        <button class="btn btn-outline-primary btn-sm" 
+                                        <button class="btn btn-outline-primary btn-sm cash-flow-refresh-btn" 
                                                 t-on-click="refreshData" 
                                                 t-att-disabled="state.loading">
                                             <i t-attf-class="fa fa-refresh #{state.loading ? 'fa-spin' : ''}"></i>
@@ -63,14 +64,14 @@
                                     <div class="col-md-3">
                                         <label class="form-label small text-muted">From Date</label>
                                         <input type="date" 
-                                               class="form-control form-control-sm" 
+                                               class="form-control form-control-sm cash-flow-date-input" 
                                                t-model="state.customDateFrom"
                                                t-on-change="onCustomDateChange"/>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="form-label small text-muted">To Date</label>
                                         <input type="date" 
-                                               class="form-control form-control-sm" 
+                                               class="form-control form-control-sm cash-flow-date-input" 
                                                t-model="state.customDateTo"
                                                t-on-change="onCustomDateChange"/>
                                     </div>

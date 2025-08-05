@@ -1,283 +1,386 @@
-/* Cash Flow Dashboard Styles for OWL 1.x */
+/* Cash Flow Dashboard Styles - Module Scoped */
 
-/* Skeleton Loading Animation */
-.cash-flow-skeleton {
+// Wrap all styles under the cash flow dashboard scope
+.cash-flow-dashboard {
+  
+  /* Skeleton Loading Animation */
+  .cash-flow-skeleton {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
     animation: cash-flow-skeleton-loading 1.5s infinite;
     border-radius: 4px;
     margin-bottom: 10px;
-}
 
-.cash-flow-skeleton-title {
-    height: 24px;
-    width: 80%;
-    margin: 0 auto;
-}
+    &.cash-flow-skeleton-title {
+      height: 24px;
+      width: 80%;
+      margin: 0 auto;
+    }
 
-.cash-flow-skeleton-subtitle {
-    height: 16px;
-    width: 60%;
-    margin: 0 auto;
-}
+    &.cash-flow-skeleton-subtitle {
+      height: 16px;
+      width: 60%;
+      margin: 0 auto;
+    }
 
-.cash-flow-skeleton-balance {
-    height: 32px;
-    width: 70%;
-    margin: 0 auto;
-}
+    &.cash-flow-skeleton-balance {
+      height: 32px;
+      width: 70%;
+      margin: 0 auto;
+    }
 
-.cash-flow-skeleton-balance-label {
-    height: 14px;
-    width: 50%;
-    margin: 0 auto;
-}
+    &.cash-flow-skeleton-balance-label {
+      height: 14px;
+      width: 50%;
+      margin: 0 auto;
+    }
 
-.cash-flow-skeleton-chart {
-    height: 120px;
-    width: 100%;
-    background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
-    background-size: 200% 100%;
-    animation: cash-flow-skeleton-loading 1.5s infinite;
-    border-radius: 8px;
-}
+    &.cash-flow-skeleton-chart {
+      height: 120px;
+      width: 100%;
+      background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+      background-size: 200% 100%;
+      animation: cash-flow-skeleton-loading 1.5s infinite;
+      border-radius: 8px;
+    }
+  }
 
-@keyframes cash-flow-skeleton-loading {
+  @keyframes cash-flow-skeleton-loading {
     0% { 
-        background-position: 200% 0; 
+      background-position: 200% 0; 
     }
     100% { 
-        background-position: -200% 0; 
+      background-position: -200% 0; 
     }
-}
+  }
 
-/* Enhanced Card Hover Effects */
-.cash-flow-hover-card {
+  /* Enhanced Card Hover Effects - Only for cash flow cards */
+  .cash-flow-hover-card {
     transition: all 0.3s ease;
     
     &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
     }
-}
+  }
 
-/* Custom Period Selector Styling */
-.cash-flow-period-selector {
+  /* Custom Period Selector Styling */
+  .cash-flow-period-selector {
     min-width: 180px;
     border: 1px solid #dee2e6;
     border-radius: 0.375rem;
     
     &:focus {
-        border-color: #86b7fe;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
-}
+  }
 
-/* Custom Date Picker Styling */
-.cash-flow-date-input {
+  /* Custom Date Picker Styling */
+  .cash-flow-date-input {
     width: 150px;
     border: 1px solid #dee2e6;
     border-radius: 0.375rem;
     padding: 0.375rem 0.75rem;
     
     &:focus {
-        border-color: #86b7fe;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      border-color: #86b7fe;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
-}
+  }
 
-/* Refresh Button Styling */
-.cash-flow-refresh-btn {
+  /* Refresh Button Styling */
+  .cash-flow-refresh-btn {
     &:disabled {
-        opacity: 0.6;
+      opacity: 0.6;
     }
     
+    .fa-refresh.fa-spin,
     .fa-spinner {
-        animation: spin 1s linear infinite;
+      animation: cash-flow-spin 1s linear infinite;
     }
-}
+  }
 
-@keyframes spin {
+  @keyframes cash-flow-spin {
     0% { 
-        transform: rotate(0deg); 
+      transform: rotate(0deg); 
     }
     100% { 
-        transform: rotate(360deg); 
+      transform: rotate(360deg); 
     }
-}
+  }
 
-/* Period Badge Styling */
-.badge {
+  /* Currency Selection Styles */
+  .currency-selection-container {
+    .currency-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .currency-option {
+      // Solid background for maximum visibility
+      background: rgba(255, 255, 255, 0.8) !important;
+      border: 2px solid rgba(255, 255, 255, 0.9) !important;
+      color: #333 !important; // Dark text on light background
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+      user-select: none;
+      white-space: nowrap;
+      font-weight: 500;
+      
+      // Always visible shadow
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+
+      &:hover {
+        background: white !important;
+        border-color: white !important;
+        color: #667eea !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+        font-weight: 600;
+      }
+
+      &.selected {
+        background: #667eea !important;
+        color: white !important;
+        border-color: #667eea !important;
+        font-weight: 600;
+        box-shadow: 
+          0 0 15px rgba(102, 126, 234, 0.5),
+          0 2px 8px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      .currency-check {
+        font-size: 0.7rem;
+        color: #4CAF50;
+      }
+    }
+  }
+
+  /* Period Badge Styling - Scoped to dashboard */
+  .badge {
     font-size: 0.75em;
     
-    &.bg-light {
-        color: #6c757d !important;
-        background-color: #f8f9fa !important;
+    &.bg-info {
+      color: white !important;
+      background-color: #0dcaf0 !important;
     }
-}
+  }
 
-/* Gap utility for older browsers */
-.gap-3 > * + * {
-    margin-left: 1rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .cash-flow-period-selector {
-        min-width: 100% !important;
-    }
-    
-    .cash-flow-date-input {
-        width: 100% !important;
-    }
-    
-    .d-flex.gap-3 {
-        flex-direction: column;
-        
-        > * {
-            margin-left: 0 !important;
-            margin-top: 1rem;
-            
-            &:first-child {
-                margin-top: 0;
-            }
-        }
-    }
-    
-    .cash-flow-hover-card {
-        &:hover {
-            transform: none; // Disable hover effects on mobile
-        }
-    }
-}
-
-/* Balance Chart Container */
-.balance-chart-container {
+  /* Balance Chart Container */
+  .balance-chart-container,
+  .chart-container {
     position: relative;
     
     canvas {
-        border-radius: 0.375rem;
+      border-radius: 0.375rem;
     }
-}
+  }
 
-/* Loading States */
-.alert-dismissible .btn-close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 2;
-    padding: 1.25rem 1rem;
-}
-
-/* Custom alert styling */
-.alert {
-    .fa {
-        margin-right: 0.5rem;
-    }
-}
-
-/* Card enhancements */
-.card {
+  /* Dashboard specific card enhancements */
+  .card {
     &.border-success {
-        border-color: rgba(25, 135, 84, 0.3) !important;
+      border-color: rgba(25, 135, 84, 0.3) !important;
     }
     
     &.border-danger {
-        border-color: rgba(220, 53, 69, 0.3) !important;
+      border-color: rgba(220, 53, 69, 0.3) !important;
     }
     
     &.border-info {
-        border-color: rgba(13, 202, 240, 0.3) !important;
+      border-color: rgba(13, 202, 240, 0.3) !important;
     }
-}
 
-/* Text color utilities */
-.text-success {
+    // Hover effects only for dashboard cards
+    &.cash-flow-hover-card {
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+      }
+    }
+  }
+
+  /* Text color utilities - scoped */
+  .text-success {
     color: #198754 !important;
-}
+  }
 
-.text-danger {
+  .text-danger {
     color: #dc3545 !important;
-}
+  }
 
-.text-info {
+  .text-info {
     color: #0dcaf0 !important;
-}
+  }
 
-/* Button group spacing */
-.btn + .btn {
+  /* Dashboard alerts */
+  .alert {
+    .fa {
+      margin-right: 0.5rem;
+    }
+
+    &.alert-dismissible .btn-close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 2;
+      padding: 1.25rem 1rem;
+    }
+  }
+
+  /* Dashboard button spacing */
+  .btn + .btn {
     margin-left: 0.5rem;
-}
+  }
 
-/* Ensure proper spacing in flex containers */
-.d-flex.align-items-center > * + * {
+  /* Dashboard flex container spacing */
+  .d-flex.align-items-center > * + * {
     margin-left: 0.75rem;
-}
+  }
 
-/* Custom cursor for clickable cards */
-.cursor-pointer {
-    cursor: pointer;
-}
+  /* Gap utility for older browsers - scoped */
+  .gap-2 > * + * {
+    margin-left: 0.5rem;
+  }
 
-/* Smooth transitions for all interactive elements */
-.btn, .form-control, .form-select, .card {
+  .gap-3 > * + * {
+    margin-left: 1rem;
+  }
+
+  /* Smooth transitions for dashboard elements */
+  .btn, 
+  .form-control, 
+  .form-select, 
+  .card,
+  .currency-option {
     transition: all 0.15s ease-in-out;
-}
+  }
 
-/* Focus styles for accessibility */
-.btn:focus,
-.form-control:focus,
-.form-select:focus {
+  /* Focus styles for accessibility - dashboard scoped */
+  .btn:focus,
+  .form-control:focus,
+  .form-select:focus {
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+
+  /* Custom cursor for clickable elements */
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  /* Dashboard specific responsive adjustments */
+  @media (max-width: 768px) {
+    .cash-flow-period-selector {
+      min-width: 100% !important;
+    }
+    
+    .cash-flow-date-input {
+      width: 100% !important;
+    }
+
+    .currency-selection-container {
+      .currency-group {
+        justify-content: center;
+        gap: 0.25rem;
+      }
+
+      .currency-option {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+      }
+    }
+    
+    .d-flex.gap-3 {
+      flex-direction: column;
+      
+      > * {
+        margin-left: 0 !important;
+        margin-top: 1rem;
+        
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+    }
+    
+    .cash-flow-hover-card {
+      &:hover {
+        transform: none; // Disable hover effects on mobile
+      }
+    }
+  }
+
+  /* Loading spinner animation - scoped */
+  .spinner-border {
+    animation: cash-flow-spinner-border 0.75s linear infinite;
+  }
+
+  @keyframes cash-flow-spinner-border {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Dashboard header styling */
+  .dashboard-content {
+    .card-header {
+      background-color: rgba(248, 249, 250, 0.5);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+
+    .card-body {
+      .chart-container {
+        margin: 0.5rem 0;
+      }
+    }
+
+    .card-footer {
+      background-color: rgba(248, 249, 250, 0.3);
+      border-top: 1px solid rgba(0, 0, 0, 0.125);
+      font-size: 0.875rem;
+    }
+  }
+
+  /* Summary cards specific styling */
+  .card.bg-primary,
+  .card.bg-success,
+  .card.bg-danger {
+    .card-body {
+      padding: 1rem;
+      
+      h4 {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+      }
+
+      small {
+        font-size: 0.8rem;
+        opacity: 0.9;
+      }
+    }
+  }
 }
 
-// Currency Selection Styles - SCSS Version
+/* IMPORTANT: Add this class to your template root element */
+/*
+Update your template to include the scoping class:
 
-// HIGH CONTRAST VERSION - Always Visible
-.currency-option {
-  // Solid background for maximum visibility
-  background: rgba(255, 255, 255, 0.8) !important;
-  border: 2px solid rgba(255, 255, 255, 0.9) !important;
-  color: #333 !important; // Dark text on light background
-  padding: 0.25rem 0.75rem;
-  border-radius: 15px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  transition: all 0.3s ease;
-  font-size: 0.8rem;
-  user-select: none;
-  white-space: nowrap;
-  font-weight: 500;
-  
-  // Always visible shadow
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
-
-  &:hover {
-    background: white !important;
-    border-color: white !important;
-    color: #667eea !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-    font-weight: 600;
-  }
-
-  &.selected {
-    background: #667eea !important;
-    color: white !important;
-    border-color: #667eea !important;
-    font-weight: 600;
-    box-shadow: 
-      0 0 15px rgba(102, 126, 234, 0.5),
-      0 2px 8px rgba(0, 0, 0, 0.3) !important;
-  }
-
-  .currency-check {
-    font-size: 0.7rem;
-    color: #4CAF50;
-  }
-}
+<div class="cash-flow-dashboard vh-100 overflow-auto bg-muted">
+  <!-- Your existing template content -->
+</div>
+*/
