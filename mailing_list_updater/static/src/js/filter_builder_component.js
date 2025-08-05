@@ -146,8 +146,25 @@ class FilterBuilderComponent extends Component {
             this.updateFieldsForSelectedSources();
         }
         
-        // Setup event listeners for click outside (for user/company suggestions)
-        document.addEventListener('click', this.handleClickOutside.bind(this));
+        // Setup event listeners for click outside - SIMPLIFIED APPROACH
+        try {
+            this.boundClickHandler = (event) => {
+                const searchContainer = event.target.closest('.search-container');
+                if (!searchContainer) {
+                    if (this.state.userSearch) {
+                        this.state.userSearch.showSuggestions = false;
+                    }
+                    if (this.state.companySearch) {
+                        this.state.companySearch.showSuggestions = false;
+                    }
+                }
+            };
+            
+            document.addEventListener('click', this.boundClickHandler);
+            console.log('Click handler bound successfully');
+        } catch (error) {
+            console.error('Error binding click handler:', error);
+        }
     }
     
     /**
@@ -960,11 +977,17 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * Remove selected company
+     * Remove selected company (WITH SAFETY CHECKS)
      */
     removeSelectedCompany(companyId) {
         console.log('=== REMOVE COMPANY ===');
         console.log('Removing company ID:', companyId);
+        
+        // Ensure companies array exists
+        if (!this.state.quickFilters.companies) {
+            this.state.quickFilters.companies = [];
+            return;
+        }
         
         const index = this.state.quickFilters.companies.findIndex(c => c.id === companyId);
         
@@ -972,6 +995,30 @@ class FilterBuilderComponent extends Component {
             this.state.quickFilters.companies.splice(index, 1);
             console.log('Company removed, updated list:', this.state.quickFilters.companies);
             this.notifyFilterChange();
+        }
+    }
+    
+    /**
+     * Handle click outside to close user and company suggestions
+     */
+    handleClickOutside(event) {
+        console.log('=== HANDLE CLICK OUTSIDE ===');
+        
+        try {
+            const searchContainer = event.target.closest('.search-container');
+            if (!searchContainer) {
+                console.log('Clicked outside search containers, closing suggestions');
+                
+                if (this.state.userSearch) {
+                    this.state.userSearch.showSuggestions = false;
+                }
+                
+                if (this.state.companySearch) {
+                    this.state.companySearch.showSuggestions = false;
+                }
+            }
+        } catch (error) {
+            console.error('Error in handleClickOutside:', error);
         }
     }
     
