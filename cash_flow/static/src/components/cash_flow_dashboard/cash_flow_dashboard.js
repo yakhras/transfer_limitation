@@ -834,7 +834,7 @@ export class CashFlowDashboard extends Component {
             name: "Cash Flow Details",
             res_model: "cash.flow.dashboard",
             res_id: accountId,
-            views: [[false, "tree"]],
+            views: [[false, "form"]],
             target: "current",
             context: {
                 date_from: dateRange.date_from,
