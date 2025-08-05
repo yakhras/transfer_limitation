@@ -826,20 +826,21 @@ export class CashFlowDashboard extends Component {
         this.state.error = null
     }
 
-    viewAccountDetails(accountId) {
+    viewAccountDetails(account) {
         const action = {
             type: 'ir.actions.act_window',
             name: 'Account Transactions',
             res_model: 'account.move.line',
             view_mode: 'tree',
             target: 'current',
-            domain: [['account_id', 'in', this.props.accountData.account_ids || []]],
+            domain: [['account_id', 'in', account.account_ids || []]],
             context: {
                 search_default_posted: 1,
             },
         };
         this.env.services.action.doAction(action);
     }
+
 
 
     getPeriodLabel() {
