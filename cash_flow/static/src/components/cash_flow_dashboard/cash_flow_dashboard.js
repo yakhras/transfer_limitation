@@ -830,47 +830,21 @@ export class CashFlowDashboard extends Component {
         const dateRange = this.getDateRange()
         
         try {
-            // Get the dashboard record to get account_ids
-            const dashboardRecord = await this.orm.read(
+            // Call the Python method with proper context
+            const action = await this.orm.call(
                 'cash.flow.dashboard',
-                [accountId],
-                ['account_ids', 'display_name', 'company_id']
+                'action_view_account_moves',
+                [[accountId]], // Pass as list of IDs
+                {
+                    context: {
+                        date_from: dateRange.date_from,
+                        date_to: dateRange.date_to,
+                        period_type: this.state.period
+                    }
+                }
             )
             
-            if (!dashboardRecord || !dashboardRecord[0]) {
-                throw new Error('Dashboard record not found')
-            }
-            
-            const record = dashboardRecord[0]
-            
-            // Build domain for account move lines
-            let domain = [
-                ['account_id', 'in', record.account_ids],
-                ['company_id', '=', record.company_id[0]],
-                ['move_id.state', '=', 'posted']
-            ]
-            
-            // Add date filters
-            if (dateRange.date_from) {
-                domain.push(['date', '>=', dateRange.date_from])
-            }
-            if (dateRange.date_to) {
-                domain.push(['date', '<=', dateRange.date_to])
-            }
-            
-            // Open account move lines directly
-            this.actionService.doAction({
-                type: 'ir.actions.act_window',
-                name: `Transactions - ${record.display_name}`,
-                res_model: 'account.move.line',
-                view_mode: 'tree,form',
-                views: [[false, 'tree'], [false, 'form']],
-                domain: domain,
-                context: {
-                    search_default_group_by_move: 1,
-                    search_default_group_by_account: 1,
-                }
-            })
+            this.actionService.doAction(action)
             
         } catch (error) {
             console.error('Error opening account moves:', error)
@@ -879,7 +853,7 @@ export class CashFlowDashboard extends Component {
             })
         }
     }
-    
+
     getPeriodLabel() {
         const option = this.periodOptions.find(opt => opt.value === this.state.period)
         if (this.state.period === 'custom' && this.state.customDateFrom && this.state.customDateTo) {
