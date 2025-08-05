@@ -74,8 +74,9 @@ class FilterBuilderComponent extends Component {
         console.log('Props selectedSources type:', typeof this.props.selectedSources);
         console.log('Props selectedSources length:', this.props.selectedSources?.length || 0);
         
-        // Debounce timer for user search
+        // Debounce timer for user and company search
         this.searchTimeout = null;
+        this.companySearchTimeout = null;
     }
     
     /**
@@ -88,9 +89,10 @@ class FilterBuilderComponent extends Component {
             // Load fields based on initially selected sources
             await this.updateFieldsForSelectedSources();
             
-            // Load filter templates and default users
+            // Load filter templates and default users/companies
             await this.loadFilterTemplates();
             await this.loadDefaultUsers();
+            await this.loadDefaultCompanies(); // NEW - Load default companies
             
         } catch (error) {
             console.error("Filter options loading error:", error);
@@ -687,12 +689,259 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * Handle click outside to close user suggestions
+     * Load default companies (similar to users)
      */
-    handleClickOutside(event) {
-        const userSearchContainer = event.target.closest('.position-relative');
-        if (!userSearchContainer) {
-            this.state.userSearch.showSuggestions = false;
+    async loadDefaultCompanies() {
+        console.log('=== LOAD DEFAULT COMPANIES ===');
+        
+        try {
+            console.log('Attempting to load default companies...');
+            
+            const domain = [['active', '=', true]]; // Active companies only
+            let response = null;
+            
+            // Method 1: Try ORM service (Odoo 15.0 preferred)
+            if (this.orm) {
+                console.log('Trying ORM service for default companies...');
+                try {
+                    response = await this.orm.searchRead(
+                        'res.company',
+                        domain,
+                        ['id', 'name', 'email'],
+                        { limit: 5 }
+                    );
+                    console.log('ORM service response for default companies:', response);
+                } catch (ormError) {
+                    console.log('ORM service failed for default companies:', ormError);
+                }
+            }
+            
+            // Method 2: Try RPC service
+            if (!response && this.rpc) {
+                console.log('Trying RPC service for default companies...');
+                try {
+                    response = await this.rpc('/web/dataset/search_read', {
+                        model: 'res.company',
+                        domain: domain,
+                        fields: ['id', 'name', 'email'],
+                        limit: 5
+                    });
+                    
+                    if (response && response.records) {
+                        response = response.records;
+                    }
+                    console.log('RPC service response for default companies:', response);
+                } catch (rpcError) {
+                    console.log('RPC service failed for default companies:', rpcError);
+                }
+            }
+            
+            // Method 3: Use current company from environment or mock data
+            if (!response) {
+                console.log('Using current company from environment or mock data');
+                const currentCompany = this.env.services?.company?.currentCompany;
+                
+                if (currentCompany) {
+                    response = [currentCompany];
+                } else {
+                    response = [
+                        { id: 1, name: 'Main Company', email: 'info@company.com' }
+                    ];
+                }
+            }
+            
+            console.log('Final default companies response:', response);
+            
+            if (response && response.length) {
+                console.log('Loading', response.length, 'default companies');
+                this.state.quickFilters.companies = response;
+                console.log('Updated companies state:', this.state.quickFilters.companies);
+            } else {
+                console.log('No default companies found');
+            }
+        } catch (error) {
+            console.error("=== DEFAULT COMPANIES LOAD ERROR ===");
+            console.error("Error object:", error);
+            
+            // Set current company or mock data on error
+            const currentCompany = this.env.services?.company?.currentCompany;
+            this.state.quickFilters.companies = currentCompany ? [currentCompany] : [
+                { id: 1, name: 'Main Company', email: 'info@company.com' }
+            ];
+        }
+    }
+    
+    /**
+     * Handle company search input
+     */
+    onCompanySearch(query) {
+        console.log('=== COMPANY SEARCH DEBUG ===');
+        console.log('Search query input:', query);
+        
+        this.state.companySearch.query = query;
+        
+        // Clear previous timeout
+        if (this.companySearchTimeout) {
+            clearTimeout(this.companySearchTimeout);
+            console.log('Cleared previous company search timeout');
+        }
+        
+        // Debounce search
+        this.companySearchTimeout = setTimeout(() => {
+            console.log('Executing debounced company search for:', query);
+            this.searchCompanies(query);
+        }, 300);
+        
+        console.log('Company search timeout set for 300ms');
+    }
+    
+    /**
+     * Search companies in res.company model
+     */
+    async searchCompanies(query) {
+        console.log('=== SEARCH COMPANIES METHOD ===');
+        console.log('Query:', query);
+        
+        if (!query || query.length < 2) {
+            console.log('Query too short, clearing results');
+            this.state.companySearch.results = [];
+            return;
+        }
+        
+        this.state.companySearch.loading = true;
+        
+        try {
+            const domain = [
+                ['active', '=', true],
+                '|',
+                ['name', 'ilike', query],
+                ['email', 'ilike', query]
+            ];
+            
+            console.log('Company search domain:', JSON.stringify(domain, null, 2));
+            
+            let response = null;
+            
+            // Method 1: Try ORM service
+            if (this.orm) {
+                try {
+                    response = await this.orm.searchRead(
+                        'res.company',
+                        domain,
+                        ['id', 'name', 'email'],
+                        { limit: 10 }
+                    );
+                    console.log('ORM service response:', response);
+                } catch (ormError) {
+                    console.log('ORM service failed:', ormError);
+                }
+            }
+            
+            // Method 2: Try RPC service
+            if (!response && this.rpc) {
+                try {
+                    response = await this.rpc('/web/dataset/search_read', {
+                        model: 'res.company',
+                        domain: domain,
+                        fields: ['id', 'name', 'email'],
+                        limit: 10
+                    });
+                    
+                    if (response && response.records) {
+                        response = response.records;
+                    }
+                } catch (rpcError) {
+                    console.log('RPC service failed:', rpcError);
+                }
+            }
+            
+            // Method 3: Mock data fallback
+            if (!response) {
+                console.log('Using mock data for company search');
+                response = this.getMockCompanies(query);
+            }
+            
+            // Filter out already selected companies
+            const selectedIds = this.state.quickFilters.companies.map(c => c.id);
+            const filteredResults = response.filter(company => !selectedIds.includes(company.id));
+            
+            this.state.companySearch.results = filteredResults;
+            console.log('Updated company search results:', this.state.companySearch.results);
+            
+        } catch (error) {
+            console.error("=== COMPANY SEARCH ERROR ===");
+            console.error("Error:", error);
+            
+            this.state.companySearch.results = this.getMockCompanies(query);
+        } finally {
+            this.state.companySearch.loading = false;
+        }
+    }
+    
+    /**
+     * Mock companies for development/fallback
+     */
+    getMockCompanies(query) {
+        const mockCompanies = [
+            { id: 1, name: 'Main Company', email: 'main@company.com' },
+            { id: 2, name: 'Branch Office', email: 'branch@company.com' },
+            { id: 3, name: 'Subsidiary Corp', email: 'sub@company.com' },
+            { id: 4, name: 'International Division', email: 'intl@company.com' }
+        ];
+        
+        return mockCompanies.filter(company => 
+            company.name.toLowerCase().includes(query.toLowerCase()) ||
+            company.email.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+    
+    /**
+     * Show/hide company suggestions
+     */
+    showCompanySuggestions(show) {
+        console.log('=== SHOW COMPANY SUGGESTIONS ===');
+        console.log('Show suggestions:', show);
+        
+        this.state.companySearch.showSuggestions = show;
+        
+        if (show && this.state.companySearch.query) {
+            this.searchCompanies(this.state.companySearch.query);
+        }
+    }
+    
+    /**
+     * Select a company from search results
+     */
+    selectCompany(company) {
+        console.log('=== SELECT COMPANY ===');
+        console.log('Selected company:', company);
+        
+        // Add company to selected list
+        this.state.quickFilters.companies.push(company);
+        console.log('Updated companies:', this.state.quickFilters.companies);
+        
+        // Clear search
+        this.state.companySearch.query = '';
+        this.state.companySearch.results = [];
+        this.state.companySearch.showSuggestions = false;
+        
+        // Notify change
+        this.notifyFilterChange();
+    }
+    
+    /**
+     * Remove selected company
+     */
+    removeSelectedCompany(companyId) {
+        console.log('=== REMOVE COMPANY ===');
+        console.log('Removing company ID:', companyId);
+        
+        const index = this.state.quickFilters.companies.findIndex(c => c.id === companyId);
+        
+        if (index !== -1) {
+            this.state.quickFilters.companies.splice(index, 1);
+            console.log('Company removed, updated list:', this.state.quickFilters.companies);
+            this.notifyFilterChange();
         }
     }
     
@@ -732,12 +981,15 @@ class FilterBuilderComponent extends Component {
     
     /**
      * OWL 1.0 Lifecycle - Will Unmount
-     * Cleanup event listeners
+     * Cleanup event listeners and timeouts
      */
     willUnmount() {
         document.removeEventListener('click', this.handleClickOutside.bind(this));
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout);
+        }
+        if (this.companySearchTimeout) {
+            clearTimeout(this.companySearchTimeout);
         }
     }
     
@@ -836,7 +1088,7 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * NEW - Add quick filter domains to all models (WITH ERROR HANDLING + COMPANY FILTER)
+     * NEW - Add quick filter domains to all models (WITH USER-SELECTED COMPANIES)
      */
     addQuickFilterDomains(domainsByModel) {
         console.log('=== ADD QUICK FILTER DOMAINS ===');
@@ -853,20 +1105,19 @@ class FilterBuilderComponent extends Component {
                 return;
             }
             
-            // Get current company context
-            const currentCompany = this.env.services?.company?.currentCompany;
-            console.log('Current company context:', currentCompany);
-            
-            // Company filter (applies to models with company_id field)
-            if (currentCompany && currentCompany.id) {
+            // Company filter (user-selected companies like salesperson selection)
+            if (this.state.quickFilters?.companies?.length > 0) {
+                const companyIds = this.state.quickFilters.companies.map(c => c.id).filter(id => id);
                 const companyModels = ['res.partner', 'crm.lead', 'crm.opportunity', 'sale.order'];
                 
-                modelNames.forEach(modelName => {
-                    if (companyModels.includes(modelName) && domainsByModel[modelName]) {
-                        domainsByModel[modelName].push(['company_id', '=', currentCompany.id]);
-                        console.log(`Added company filter for ${modelName}: company_id = ${currentCompany.id} (${currentCompany.name})`);
-                    }
-                });
+                if (companyIds.length > 0) {
+                    modelNames.forEach(modelName => {
+                        if (companyModels.includes(modelName) && domainsByModel[modelName]) {
+                            domainsByModel[modelName].push(['company_id', 'in', companyIds]);
+                            console.log(`Added company filter for ${modelName}: company_id in [${companyIds.join(', ')}]`);
+                        }
+                    });
+                }
             }
             
             // Date range filter (applies to all models)

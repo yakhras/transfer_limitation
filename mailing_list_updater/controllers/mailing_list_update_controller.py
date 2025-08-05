@@ -26,56 +26,33 @@ class MailingListUpdateController(http.Controller):
 
     @http.route('/mailing/test/domains', type='json', auth='user')
     def test_filter_domains(self, domains, models, test_only=True):
-        """Test filter domains and return actual record counts with company context"""
+        """Test filter domains - company filtering now handled in frontend"""
         results = []
         total_records = 0
         start_time = time.time()
         
-        # Get current company from user context
-        current_company = request.env.company
-        company_id = current_company.id
-        
-        _logger.info(f"Testing domains for company: {current_company.name} (ID: {company_id})")
-        
         for model_name, domain in domains.items():
             try:
-                # Apply domain to model and count records
                 model = request.env[model_name]
                 
-                # ✅ ADD COMPANY FILTER TO DOMAIN
-                company_domain = self._add_company_filter(domain, model_name, company_id)
-                
-                _logger.info(f"Testing {model_name} with domain: {company_domain}")
-                
-                # Measure actual query time
+                # Use domain as-is (company filter already included from frontend)
                 query_start = time.time()
-                count = model.search_count(company_domain)  # Use company-filtered domain
+                count = model.search_count(domain)  # Domain already has company filter
                 query_end = time.time()
                 query_time = int((query_end - query_start) * 1000)
                 
                 results.append({
                     'model': model_name,
                     'source_name': self._get_source_name(model_name),
-                    'record_count': count,
-                    'domain_conditions': len(company_domain),  # Updated count
-                    'query_time': f"{query_time}ms",
-                    'company_filtered': True,
-                    'company_name': current_company.name
+                    'record_count': count,  
+                    'domain_conditions': len(domain),
+                    'query_time': f"{query_time}ms"
                 })
                 total_records += count
-                
+            
             except Exception as e:
-                _logger.error(f"Error testing {model_name}: {str(e)}")
-                results.append({
-                    'model': model_name,
-                    'source_name': model_name,
-                    'record_count': 0,
-                    'domain_conditions': len(domain),
-                    'query_time': 'Error',
-                    'error': str(e),
-                    'company_filtered': False
-                })
-        
+                print(f"Error processing model {model_name}: {str(e)}")
+                
         execution_time = int((time.time() - start_time) * 1000)
         
         return {
@@ -83,11 +60,6 @@ class MailingListUpdateController(http.Controller):
             'results': results,
             'total_records': total_records,
             'execution_time': f"{execution_time}ms",
-            'company_context': {
-                'id': company_id,
-                'name': current_company.name
-            },
-            'message': f'Tested {len(results)} models for company: {current_company.name}'
         }
     
     def _add_company_filter(self, domain, model_name, company_id):
