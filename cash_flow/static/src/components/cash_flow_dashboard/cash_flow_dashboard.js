@@ -864,6 +864,7 @@ export class CashFlowDashboard extends Component {
                 name: `Transactions - ${record.display_name}`,
                 res_model: 'account.move.line',
                 view_mode: 'tree,form',
+                views: [[false, 'tree'], [false, 'form']],
                 domain: domain,
                 context: {
                     search_default_group_by_move: 1,
@@ -878,7 +879,7 @@ export class CashFlowDashboard extends Component {
             })
         }
     }
-
+    
     getPeriodLabel() {
         const option = this.periodOptions.find(opt => opt.value === this.state.period)
         if (this.state.period === 'custom' && this.state.customDateFrom && this.state.customDateTo) {
