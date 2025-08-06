@@ -105,13 +105,7 @@ class FilterBuilderComponent extends Component {
                 };
             }
 
-            // Add to props definition
-            FilterBuilderComponent.props = {
-                selectedSources: { validate: (value) => Array.isArray(value) },
-                filterCriteria: { validate: (value) => typeof value === 'object', optional: true },
-            };
-
-            // In setup() or willStart(), restore from props
+            // Restore from props (KEEP THIS)
             if (this.props.filterCriteria && Object.keys(this.props.filterCriteria).length > 0) {
                 this.state.quickFilters = this.props.filterCriteria.quick_filters || this.state.quickFilters;
                 this.state.advancedFilters = this.props.filterCriteria.advanced_filters || this.state.advancedFilters;
@@ -123,7 +117,7 @@ class FilterBuilderComponent extends Component {
             // Load filter templates and default users/companies
             await this.loadFilterTemplates();
             await this.loadDefaultUsers();
-            await this.loadDefaultCompanies(); // NEW - Load default companies
+            await this.loadDefaultCompanies();
             
         } catch (error) {
             console.error("Filter options loading error:", error);
@@ -2178,6 +2172,7 @@ class FilterBuilderComponent extends Component {
 FilterBuilderComponent.template = 'mailing_list_updater.FilterBuilderTemplate';
 FilterBuilderComponent.props = {
     selectedSources: { validate: (value) => Array.isArray(value) },
+    filterCriteria: { validate: (value) => typeof value === 'object', optional: true },
 };
 
 export { FilterBuilderComponent };
