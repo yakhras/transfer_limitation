@@ -132,20 +132,40 @@
                     
                     <!-- Company / Organization -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Company / Organization</label>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label class="form-label fw-bold">Company / Organization</label>
+                            <!-- Debug Buttons (DEV ONLY) -->
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-secondary btn-sm"
+                                        t-on-click="() => this.testCompanyConnection()"
+                                        title="Test company model connection">
+                                    <i class="fa fa-flask"></i> Test Connection
+                                </button>
+                                <button type="button" class="btn btn-outline-info btn-sm"
+                                        t-on-click="() => this.forceCompanySearch()"
+                                        title="Force trigger company search">
+                                    <i class="fa fa-search"></i> Force Search
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm"
+                                        t-on-click="() => this.diagnosticCompanySearch()"
+                                        title="Run complete diagnostics">
+                                    <i class="fa fa-stethoscope"></i> Diagnostics
+                                </button>
+                            </div>
+                        </div>
                         
                         <!-- Company Search Input -->
-                        <div t-if="state.companySearch" class="position-relative search-container">
+                        <div class="position-relative search-container">
                             <input type="text" class="form-control"
                                    t-model="state.companySearch.query"
                                    t-on-input="(ev) => this.onCompanySearch(ev.target.value)"
                                    t-on-focus="() => this.showCompanySuggestions(true)"
-                                   placeholder="Search companies..."
+                                   placeholder="Search companies/organizations..."
                                    autocomplete="off"/>
-                            <i class="fa fa-building position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #999;"></i>
+                            <i class="fa fa-search position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #999;"></i>
                             
-                            <!-- Company Search Results Dropdown -->
-                            <div t-if="state.companySearch.showSuggestions and state.companySearch.results and state.companySearch.results.length" 
+                            <!-- Search Results Dropdown -->
+                            <div t-if="state.companySearch.showSuggestions and state.companySearch.results.length" 
                                  class="company-suggestions position-absolute w-100 bg-white border rounded shadow-sm mt-1" 
                                  style="z-index: 1000; max-height: 200px; overflow-y: auto;">
                                 <div t-foreach="state.companySearch.results" t-as="company" t-key="company.id"
@@ -156,20 +176,30 @@
                                         <i class="fa fa-building me-2 text-muted"></i>
                                         <div>
                                             <div class="fw-medium" t-esc="company.name"></div>
-                                            <small class="text-muted" t-esc="company.email || 'No email'"></small>
+                                            <small class="text-muted" t-if="company.display_name and company.display_name !== company.name" 
+                                                   t-esc="company.display_name"></small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Company Loading Indicator -->
+                            <!-- Loading Indicator -->
                             <div t-if="state.companySearch.loading" 
                                  class="position-absolute w-100 bg-white border rounded shadow-sm mt-1 p-3 text-center"
                                  style="z-index: 1000;">
                                 <i class="fa fa-spinner fa-spin me-2"></i>Searching companies...
                             </div>
                             
-                            <!-- No Company Results Message -->
+                            <!-- Debug Info -->
+                            <div t-if="state.companySearch.showSuggestions and state.companySearch.query" 
+                                 class="position-absolute w-100 bg-light border rounded shadow-sm mt-1 p-2 text-center text-muted small"
+                                 style="z-index: 999; font-size: 0.8em;">
+                                Query: "<span t-esc="state.companySearch.query"/>" | 
+                                Results: <span t-esc="state.companySearch.results.length"/> | 
+                                Show: <span t-esc="state.companySearch.showSuggestions"/>
+                            </div>
+                            
+                            <!-- No Results Message -->
                             <div t-if="state.companySearch.showSuggestions and state.companySearch.query and !state.companySearch.results.length and !state.companySearch.loading" 
                                  class="position-absolute w-100 bg-white border rounded shadow-sm mt-1 p-3 text-center text-muted"
                                  style="z-index: 1000;">
@@ -177,17 +207,11 @@
                             </div>
                         </div>
                         
-                        <!-- Fallback if companySearch not initialized -->
-                        <div t-if="!state.companySearch" class="alert alert-warning">
-                            <i class="fa fa-exclamation-triangle"></i>
-                            Company search is loading...
-                        </div>
-                        
                         <!-- Selected Companies Display -->
                         <div t-if="state.quickFilters.companies and state.quickFilters.companies.length" class="selected-companies mt-2">
                             <div class="d-flex flex-wrap gap-2">
                                 <span t-foreach="state.quickFilters.companies" t-as="company" t-key="company.id"
-                                      class="badge bg-info d-flex align-items-center">
+                                      class="badge bg-success d-flex align-items-center">
                                     <i class="fa fa-building me-1"></i>
                                     <span t-esc="company.name"></span>
                                     <button type="button" class="btn-close btn-close-white ms-2" 
@@ -199,7 +223,6 @@
                         
                         <small class="form-text text-muted">Search and select multiple companies</small>
                     </div>
-                </div>
                 
                 <!-- Advanced Filters Section -->
                 <div class="advanced-filters-section mb-4">

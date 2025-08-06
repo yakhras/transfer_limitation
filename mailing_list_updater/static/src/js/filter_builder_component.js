@@ -857,76 +857,131 @@ class FilterBuilderComponent extends Component {
     async searchCompanies(query) {
         console.log('=== SEARCH COMPANIES METHOD ===');
         console.log('Query:', query);
+        console.log('Query length:', query ? query.length : 0);
         
         if (!query || query.length < 2) {
             console.log('Query too short, clearing results');
             this.state.companySearch.results = [];
+            this.state.companySearch.showSuggestions = false;
             return;
         }
         
         this.state.companySearch.loading = true;
+        console.log('Set loading to true');
         
         try {
             const domain = [['active', '=', true], ['name', 'ilike', query]];
-
-            
             console.log('Company search domain:', JSON.stringify(domain, null, 2));
             
             let response = null;
+            let searchMethod = 'none';
             
             // Method 1: Try ORM service
             if (this.orm) {
+                console.log('🧪 Trying ORM service for company search...');
                 try {
                     response = await this.orm.searchRead(
                         'res.company',
                         domain,
-                        ['id', 'name'],
+                        ['id', 'name', 'display_name'],
                         { limit: 10 }
                     );
-                    console.log('ORM service response:', response);
+                    searchMethod = 'orm';
+                    console.log('✅ ORM service response:', response);
+                    console.log('ORM response type:', typeof response);
+                    console.log('ORM response length:', response ? response.length : 0);
+                    
+                    if (response && response.length > 0) {
+                        console.log('First company from ORM:', response[0]);
+                    }
                 } catch (ormError) {
-                    console.log('ORM service failed:', ormError);
+                    console.log('❌ ORM service failed:', ormError);
                 }
             }
             
             // Method 2: Try RPC service
             if (!response && this.rpc) {
+                console.log('🧪 Trying RPC service for company search...');
                 try {
-                    response = await this.rpc('/web/dataset/search_read', {
+                    const rpcResponse = await this.rpc('/web/dataset/search_read', {
                         model: 'res.company',
                         domain: domain,
-                        fields: ['id', 'name'],
+                        fields: ['id', 'name', 'display_name'],
                         limit: 10
                     });
                     
-                    if (response && response.records) {
-                        response = response.records;
+                    console.log('Raw RPC response:', rpcResponse);
+                    
+                    if (rpcResponse && rpcResponse.records) {
+                        response = rpcResponse.records;
+                        searchMethod = 'rpc';
+                        console.log('✅ RPC service response (from records):', response);
+                    } else if (Array.isArray(rpcResponse)) {
+                        response = rpcResponse;
+                        searchMethod = 'rpc';
+                        console.log('✅ RPC service response (direct array):', response);
+                    }
+                    
+                    if (response && response.length > 0) {
+                        console.log('First company from RPC:', response[0]);
                     }
                 } catch (rpcError) {
-                    console.log('RPC service failed:', rpcError);
+                    console.log('❌ RPC service failed:', rpcError);
                 }
             }
             
-            // Method 3: Mock data fallback
+            // Method 3: Enhanced mock data fallback that includes Turkish companies
             if (!response) {
-                console.log('Using mock data for company search');
-                response = this.getMockCompanies(query);
+                console.log('🧪 Using enhanced mock data for company search');
+                response = this.getEnhancedMockCompanies(query);
+                searchMethod = 'mock';
             }
             
-            // Filter out already selected companies
-            const selectedIds = this.state.quickFilters.companies.map(c => c.id);
-            const filteredResults = response.filter(company => !selectedIds.includes(company.id));
+            console.log(`Search completed using ${searchMethod} method`);
+            console.log('Raw response before filtering:', response);
+            console.log('Raw response length:', response ? response.length : 0);
             
+            // Ensure response is an array
+            if (!Array.isArray(response)) {
+                console.warn('Response is not an array:', typeof response);
+                response = [];
+            }
+            
+            // Get currently selected company IDs
+            const selectedIds = (this.state.quickFilters.companies || []).map(c => c.id).filter(id => id != null);
+            console.log('Currently selected company IDs:', selectedIds);
+            
+            // Filter out already selected companies
+            const filteredResults = response.filter(company => {
+                const isSelected = selectedIds.includes(company.id);
+                console.log(`Company ${company.name} (ID: ${company.id}) - Selected: ${isSelected}`);
+                return !isSelected;
+            });
+            
+            console.log('Results after filtering selected:', filteredResults);
+            console.log('Final filtered results length:', filteredResults.length);
+            
+            // Update state
             this.state.companySearch.results = filteredResults;
-            console.log('Updated company search results:', this.state.companySearch.results);
+            this.state.companySearch.showSuggestions = true;
+            
+            console.log('✅ Updated company search state:');
+            console.log('- Results:', this.state.companySearch.results);
+            console.log('- Results length:', this.state.companySearch.results.length);
+            console.log('- Show suggestions:', this.state.companySearch.showSuggestions);
+            console.log('- Loading:', this.state.companySearch.loading);
             
         } catch (error) {
             console.error("=== COMPANY SEARCH ERROR ===");
             console.error("Error:", error);
             
-            this.state.companySearch.results = this.getMockCompanies(query);
+            // Fallback to enhanced mock data
+            this.state.companySearch.results = this.getEnhancedMockCompanies(query);
+            this.state.companySearch.showSuggestions = true;
         } finally {
             this.state.companySearch.loading = false;
+            console.log('Set loading to false');
+            console.log('Final state - Results count:', this.state.companySearch.results.length);
         }
     }
     
