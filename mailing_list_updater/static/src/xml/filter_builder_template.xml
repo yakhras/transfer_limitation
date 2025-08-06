@@ -440,7 +440,7 @@
                             <small class="text-muted">
                                 <i class="fa fa-users me-1"></i>
                                 Responsible Users: 
-                                <span t-foreach="state.quickFilters.responsible_users" t-as="user" t-key="user.id">
+                                <span t-foreach="state.quickFilters.responsible_users" t-as="user" t-key="user?.id || user?.name || 'user-unknown'">
                                     <strong t-esc="user.name"/><t t-if="!user_last">, </t>
                                 </span>
                             </small>
@@ -449,7 +449,7 @@
                             <small class="text-muted">
                                 <i class="fa fa-building me-1"></i>
                                 Companies: 
-                                <span t-foreach="state.quickFilters.companies" t-as="company" t-key="company.id">
+                                <span t-foreach="state.quickFilters.companies" t-as="company" t-key="company?.id || company?.name || 'company-unknown'">
                                     <strong t-esc="company.name"/><t t-if="!company_last">, </t>
                                 </span>
                             </small>

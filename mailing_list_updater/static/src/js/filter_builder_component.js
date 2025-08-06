@@ -91,98 +91,64 @@ class FilterBuilderComponent extends Component {
     
     async willStart() {
         this.state.isLoading = true;
-        
+
         try {
             // Ensure search states are initialized before async operations
-            if (!this.state.companySearch) {
-                this.state.companySearch = {
-                    query: '', results: [], showSuggestions: false, loading: false
-                };
-            }
-            if (!this.state.userSearch) {
-                this.state.userSearch = {
-                    query: '', results: [], showSuggestions: false, loading: false
-                };
-            }
+            this.state.companySearch = this.state.companySearch || {
+                query: '', results: [], showSuggestions: false, loading: false
+            };
+            this.state.userSearch = this.state.userSearch || {
+                query: '', results: [], showSuggestions: false, loading: false
+            };
 
-            // Restore from props (KEEP THIS)
+            // Restore from props if available
             if (this.props.filterCriteria && Object.keys(this.props.filterCriteria).length > 0) {
                 this.state.quickFilters = this.props.filterCriteria.quick_filters || this.state.quickFilters;
                 this.state.advancedFilters = this.props.filterCriteria.advanced_filters || this.state.advancedFilters;
             }
-            
-            // Load fields based on initially selected sources
+
+            // Load fields and default data
             await this.updateFieldsForSelectedSources();
-            
-            // Load filter templates and default users/companies
             await this.loadFilterTemplates();
             await this.loadDefaultUsers();
             await this.loadDefaultCompanies();
-            
+
+            // ✅ Notify parent after loading completes
+            this.notifyFilterChange();
+
         } catch (error) {
             console.error("Filter options loading error:", error);
         } finally {
             this.state.isLoading = false;
         }
     }
-    
-    /**
-     * FIX: Add mounted lifecycle to handle initial props and ensure state is ready
-     */
+
     mounted() {
         console.log('=== FILTER BUILDER MOUNTED ===');
         console.log('Props selectedSources on mount:', this.props.selectedSources);
-        console.log('State selectedSources on mount:', this.selectedSources);
-        console.log('Company search state:', this.state.companySearch);
-        console.log('User search state:', this.state.userSearch);
-        
-        // Ensure search states are properly initialized
-        if (!this.state.companySearch) {
-            this.state.companySearch = {
-                query: '',
-                results: [],
-                showSuggestions: false,
-                loading: false
-            };
-        }
-        
-        if (!this.state.userSearch) {
-            this.state.userSearch = {
-                query: '',
-                results: [],
-                showSuggestions: false,
-                loading: false
-            };
-        }
-        
-        // If we have initial sources from props, update fields
+
+        // Update fields if selectedSources were passed
         if (this.props.selectedSources && this.props.selectedSources.length > 0) {
-            console.log('Processing initial selectedSources from props');
             this.selectedSources = this.props.selectedSources;
             this.updateFieldsForSelectedSources();
         }
-        
-        // Setup event listeners for click outside - SIMPLIFIED APPROACH
+
+        // Setup event listener to hide suggestion dropdowns
         try {
             this.boundClickHandler = (event) => {
                 const searchContainer = event.target.closest('.search-container');
                 if (!searchContainer) {
-                    if (this.state.userSearch) {
-                        this.state.userSearch.showSuggestions = false;
-                    }
-                    if (this.state.companySearch) {
-                        this.state.companySearch.showSuggestions = false;
-                    }
+                    this.state.userSearch.showSuggestions = false;
+                    this.state.companySearch.showSuggestions = false;
                 }
             };
-            
             document.addEventListener('click', this.boundClickHandler);
             console.log('Click handler bound successfully');
         } catch (error) {
             console.error('Error binding click handler:', error);
         }
-        this.notifyFilterChange();
     }
+
     
     /**
      * Updated willUpdateProps - calls non-blocking method
