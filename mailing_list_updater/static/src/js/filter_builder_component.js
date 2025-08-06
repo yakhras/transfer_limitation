@@ -930,10 +930,10 @@ class FilterBuilderComponent extends Component {
                 }
             }
             
-            // Method 3: Enhanced mock data fallback that includes Turkish companies
+            // Method 3: Mock data fallback
             if (!response) {
-                console.log('🧪 Using enhanced mock data for company search');
-                response = this.getEnhancedMockCompanies(query);
+                console.log('🧪 Using mock data for company search');
+                response = this.getMockCompanies(query);
                 searchMethod = 'mock';
             }
             
@@ -975,8 +975,8 @@ class FilterBuilderComponent extends Component {
             console.error("=== COMPANY SEARCH ERROR ===");
             console.error("Error:", error);
             
-            // Fallback to enhanced mock data
-            this.state.companySearch.results = this.getEnhancedMockCompanies(query);
+            // Fallback to mock data
+            this.state.companySearch.results = this.getMockCompanies(query);
             this.state.companySearch.showSuggestions = true;
         } finally {
             this.state.companySearch.loading = false;
