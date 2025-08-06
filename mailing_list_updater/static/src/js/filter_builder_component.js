@@ -862,7 +862,6 @@ class FilterBuilderComponent extends Component {
         if (!query || query.length < 2) {
             console.log('Query too short, clearing results');
             this.state.companySearch.results = [];
-            this.state.companySearch.showSuggestions = false;
             return;
         }
         
@@ -870,118 +869,83 @@ class FilterBuilderComponent extends Component {
         console.log('Set loading to true');
         
         try {
-            const domain = [['active', '=', true], ['name', 'ilike', query]];
-            console.log('Company search domain:', JSON.stringify(domain, null, 2));
+            const domain = [
+                ['name', 'ilike', query]
+            ];
+            
+            console.log('Search domain:', JSON.stringify(domain, null, 2));
             
             let response = null;
-            let searchMethod = 'none';
             
-            // Method 1: Try ORM service
+            // Method 1: Try ORM service (Odoo 15.0 preferred)
             if (this.orm) {
-                console.log('🧪 Trying ORM service for company search...');
+                console.log('Trying ORM service...');
                 try {
                     response = await this.orm.searchRead(
                         'res.company',
                         domain,
-                        ['id', 'name', 'display_name'],
+                        ['id', 'name'],
                         { limit: 10 }
                     );
-                    searchMethod = 'orm';
-                    console.log('✅ ORM service response:', response);
-                    console.log('ORM response type:', typeof response);
-                    console.log('ORM response length:', response ? response.length : 0);
-                    
-                    if (response && response.length > 0) {
-                        console.log('First company from ORM:', response[0]);
-                    }
+                    console.log('ORM service response:', response);
                 } catch (ormError) {
-                    console.log('❌ ORM service failed:', ormError);
+                    console.log('ORM service failed:', ormError);
                 }
             }
             
-            // Method 2: Try RPC service
+            // Method 2: Try RPC service with correct format
             if (!response && this.rpc) {
-                console.log('🧪 Trying RPC service for company search...');
+                console.log('Trying RPC service...');
                 try {
-                    const rpcResponse = await this.rpc('/web/dataset/search_read', {
+                    response = await this.rpc('/web/dataset/search_read', {
                         model: 'res.company',
                         domain: domain,
-                        fields: ['id', 'name', 'display_name'],
+                        fields: ['id', 'name'],
                         limit: 10
                     });
+                    console.log('RPC service response:', response);
                     
-                    console.log('Raw RPC response:', rpcResponse);
-                    
-                    if (rpcResponse && rpcResponse.records) {
-                        response = rpcResponse.records;
-                        searchMethod = 'rpc';
-                        console.log('✅ RPC service response (from records):', response);
-                    } else if (Array.isArray(rpcResponse)) {
-                        response = rpcResponse;
-                        searchMethod = 'rpc';
-                        console.log('✅ RPC service response (direct array):', response);
-                    }
-                    
-                    if (response && response.length > 0) {
-                        console.log('First company from RPC:', response[0]);
+                    // Extract records if response has records property
+                    if (response && response.records) {
+                        response = response.records;
                     }
                 } catch (rpcError) {
-                    console.log('❌ RPC service failed:', rpcError);
+                    console.log('RPC service failed:', rpcError);
                 }
             }
             
-            // Method 3: Mock data fallback
+            // Method 3: Mock data fallback for development
             if (!response) {
-                console.log('🧪 Using mock data for company search');
+                console.log('All methods failed, using mock data for development');
                 response = this.getMockCompanies(query);
-                searchMethod = 'mock';
             }
             
-            console.log(`Search completed using ${searchMethod} method`);
-            console.log('Raw response before filtering:', response);
-            console.log('Raw response length:', response ? response.length : 0);
+            console.log('Final response:', response);
             
-            // Ensure response is an array
-            if (!Array.isArray(response)) {
-                console.warn('Response is not an array:', typeof response);
-                response = [];
+            if (response && response.length > 0) {
+                console.log('Sample company from response:', response[0]);
             }
-            
-            // Get currently selected company IDs
-            const selectedIds = (this.state.quickFilters.companies || []).map(c => c.id).filter(id => id != null);
-            console.log('Currently selected company IDs:', selectedIds);
             
             // Filter out already selected companies
-            const filteredResults = response.filter(company => {
-                const isSelected = selectedIds.includes(company.id);
-                console.log(`Company ${company.name} (ID: ${company.id}) - Selected: ${isSelected}`);
-                return !isSelected;
-            });
+            const selectedIds = this.state.quickFilters.companies.map(c => c.id);
+            console.log('Currently selected company IDs:', selectedIds);
             
-            console.log('Results after filtering selected:', filteredResults);
-            console.log('Final filtered results length:', filteredResults.length);
+            const filteredResults = response.filter(company => !selectedIds.includes(company.id));
+            console.log('Filtered results (excluding selected):', filteredResults);
             
-            // Update state
             this.state.companySearch.results = filteredResults;
-            this.state.companySearch.showSuggestions = true;
-            
-            console.log('✅ Updated company search state:');
-            console.log('- Results:', this.state.companySearch.results);
-            console.log('- Results length:', this.state.companySearch.results.length);
-            console.log('- Show suggestions:', this.state.companySearch.showSuggestions);
-            console.log('- Loading:', this.state.companySearch.loading);
+            console.log('Updated search results state:', this.state.companySearch.results);
             
         } catch (error) {
             console.error("=== COMPANY SEARCH ERROR ===");
-            console.error("Error:", error);
+            console.error("Error object:", error);
             
-            // Fallback to mock data
+            // Fallback to mock data on error
+            console.log('Using mock data fallback due to error');
             this.state.companySearch.results = this.getMockCompanies(query);
-            this.state.companySearch.showSuggestions = true;
         } finally {
             this.state.companySearch.loading = false;
             console.log('Set loading to false');
-            console.log('Final state - Results count:', this.state.companySearch.results.length);
         }
     }
     
