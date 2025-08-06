@@ -160,7 +160,7 @@ class FilterBuilderComponent extends Component {
         // Handle selectedSources changes (non-blocking)
         if (nextProps.selectedSources !== this.selectedSources) {
             this.selectedSources = nextProps.selectedSources || [];
-            this.updateFieldsForSelectedSources(); // Now non-blocking
+            //this.updateFieldsForSelectedSources(); // Now non-blocking
         }
         
         // Handle filterCriteria changes
