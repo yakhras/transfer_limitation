@@ -184,24 +184,35 @@ class FilterBuilderComponent extends Component {
     }
     
     /**
-     * NEW - React to prop changes (when sources are selected/deselected)
+     * Updated willUpdateProps - calls non-blocking method
      */
     willUpdateProps(nextProps) {
         console.log('=== PROPS UPDATE ===');
-        console.log('Current selectedSources:', this.selectedSources);
-        console.log('New selectedSources:', nextProps.selectedSources);
         
+        // Handle selectedSources changes (non-blocking)
         if (nextProps.selectedSources !== this.selectedSources) {
             this.selectedSources = nextProps.selectedSources || [];
-            // Update fields when sources change
-            this.updateFieldsForSelectedSources();
+            this.updateFieldsForSelectedSources(); // Now non-blocking
+        }
+        
+        // Handle filterCriteria changes
+        if (nextProps.filterCriteria !== this.props.filterCriteria) {
+            if (nextProps.filterCriteria && nextProps.filterCriteria.quick_filters) {
+                this.state.quickFilters = { 
+                    ...this.state.quickFilters, 
+                    ...nextProps.filterCriteria.quick_filters 
+                };
+            }
+            if (nextProps.filterCriteria && nextProps.filterCriteria.advanced_filters) {
+                this.state.advancedFilters = { 
+                    ...this.state.advancedFilters, 
+                    ...nextProps.filterCriteria.advanced_filters 
+                };
+            }
         }
     }
     
-    /**
-     * NEW - Update available fields based on selected sources
-     */
-    async updateFieldsForSelectedSources() {
+    updateFieldsForSelectedSources() {
         console.log('=== UPDATE FIELDS FOR SOURCES ===');
         console.log('Selected sources:', this.selectedSources);
         
@@ -218,18 +229,29 @@ class FilterBuilderComponent extends Component {
         console.log('Model names to load:', modelNames);
         
         this.state.selectedModels = modelNames;
-        this.state.isLoading = true;
         
+        // Use separate loading state to avoid conflicts
+        this.state.fieldsLoading = true;
+        
+        // Non-blocking async execution
+        this.loadFieldsAsync(modelNames);
+    }
+
+    /**
+     * Async field loading (separate method to avoid blocking willUpdateProps)
+     */
+    async loadFieldsAsync(modelNames) {
         try {
-            // Load fields for each selected model
-            const fieldsByModel = {};
+            // Load fields for each selected model (parallel loading for better performance)
+            const fieldPromises = modelNames.map(modelName => this.loadFieldsForModel(modelName));
+            const fieldsResults = await Promise.all(fieldPromises);
             
-            for (const modelName of modelNames) {
-                console.log(`Loading fields for model: ${modelName}`);
-                const fields = await this.loadFieldsForModel(modelName);
-                fieldsByModel[modelName] = fields;
-                console.log(`Loaded ${fields.length} fields for ${modelName}`);
-            }
+            // Build fieldsByModel object
+            const fieldsByModel = {};
+            modelNames.forEach((modelName, index) => {
+                fieldsByModel[modelName] = fieldsResults[index];
+                console.log(`Loaded ${fieldsResults[index].length} fields for ${modelName}`);
+            });
             
             this.state.availableFieldsByModel = fieldsByModel;
             
@@ -245,7 +267,7 @@ class FilterBuilderComponent extends Component {
             this.state.availableFieldsByModel = {};
             this.state.availableFields = [];
         } finally {
-            this.state.isLoading = false;
+            this.state.fieldsLoading = false;
         }
     }
     
