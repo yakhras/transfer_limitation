@@ -79,6 +79,7 @@ class FilterBuilderComponent extends Component {
         
         // Store selected sources from props
         this.selectedSources = this.props.selectedSources || [];
+        
         console.log('Initial selectedSources from props:', this.selectedSources);
         console.log('Props selectedSources type:', typeof this.props.selectedSources);
         console.log('Props selectedSources length:', this.props.selectedSources?.length || 0);
@@ -102,6 +103,18 @@ class FilterBuilderComponent extends Component {
                 this.state.userSearch = {
                     query: '', results: [], showSuggestions: false, loading: false
                 };
+            }
+
+            // Add to props definition
+            FilterBuilderComponent.props = {
+                selectedSources: { validate: (value) => Array.isArray(value) },
+                filterCriteria: { validate: (value) => typeof value === 'object', optional: true },
+            };
+
+            // In setup() or willStart(), restore from props
+            if (this.props.filterCriteria && Object.keys(this.props.filterCriteria).length > 0) {
+                this.state.quickFilters = this.props.filterCriteria.quick_filters || this.state.quickFilters;
+                this.state.advancedFilters = this.props.filterCriteria.advanced_filters || this.state.advancedFilters;
             }
             
             // Load fields based on initially selected sources
