@@ -159,13 +159,34 @@ class FilterBuilderComponent extends Component {
             this.selectedSources = nextProps.selectedSources || [];
             console.log('Updated selectedSources from props:', this.selectedSources);
             
-            // Only load fields when sources actually change
+            // Update fields only when sources actually change
             this.updateFieldsForSelectedSources();
         }
         
-        // Handle filterCriteria restoration 
+        // Handle filterCriteria changes
         if (nextProps.filterCriteria !== this.props.filterCriteria) {
-            // ... existing filter restoration code
+            if (nextProps.filterCriteria && nextProps.filterCriteria.quick_filters) {
+                const quickFilters = { ...this.state.quickFilters, ...nextProps.filterCriteria.quick_filters };
+                
+                // Convert user IDs back to objects (KEY FIX!)
+                if (quickFilters.responsible_users && Array.isArray(quickFilters.responsible_users)) {
+                    if (quickFilters.responsible_users.length > 0 && typeof quickFilters.responsible_users[0] === 'number') {
+                        // Convert IDs to objects using mock users
+                        const allUsers = this.getMockUsers('');
+                        quickFilters.responsible_users = allUsers.filter(user => 
+                            quickFilters.responsible_users.includes(user.id)
+                        );
+                    }
+                }
+                
+                this.state.quickFilters = quickFilters;
+            }
+            if (nextProps.filterCriteria && nextProps.filterCriteria.advanced_filters) {
+                this.state.advancedFilters = { 
+                    ...this.state.advancedFilters, 
+                    ...nextProps.filterCriteria.advanced_filters 
+                };
+            }
         }
     }
     
