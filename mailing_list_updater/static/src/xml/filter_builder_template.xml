@@ -132,27 +132,7 @@
                     
                     <!-- Company / Organization -->
                     <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <label class="form-label fw-bold">Company / Organization</label>
-                            <!-- Debug Buttons (DEV ONLY) -->
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-outline-secondary btn-sm"
-                                        t-on-click="() => this.testCompanyConnection()"
-                                        title="Test company model connection">
-                                    <i class="fa fa-flask"></i> Test Connection
-                                </button>
-                                <button type="button" class="btn btn-outline-info btn-sm"
-                                        t-on-click="() => this.forceCompanySearch()"
-                                        title="Force trigger company search">
-                                    <i class="fa fa-search"></i> Force Search
-                                </button>
-                                <button type="button" class="btn btn-outline-warning btn-sm"
-                                        t-on-click="() => this.diagnosticCompanySearch()"
-                                        title="Run complete diagnostics">
-                                    <i class="fa fa-stethoscope"></i> Diagnostics
-                                </button>
-                            </div>
-                        </div>
+                        <label class="form-label fw-bold">Company / Organization</label>
                         
                         <!-- Company Search Input -->
                         <div class="position-relative search-container">
@@ -188,15 +168,6 @@
                                  class="position-absolute w-100 bg-white border rounded shadow-sm mt-1 p-3 text-center"
                                  style="z-index: 1000;">
                                 <i class="fa fa-spinner fa-spin me-2"></i>Searching companies...
-                            </div>
-                            
-                            <!-- Debug Info -->
-                            <div t-if="state.companySearch.showSuggestions and state.companySearch.query" 
-                                 class="position-absolute w-100 bg-light border rounded shadow-sm mt-1 p-2 text-center text-muted small"
-                                 style="z-index: 999; font-size: 0.8em;">
-                                Query: "<span t-esc="state.companySearch.query"/>" | 
-                                Results: <span t-esc="state.companySearch.results.length"/> | 
-                                Show: <span t-esc="state.companySearch.showSuggestions"/>
                             </div>
                             
                             <!-- No Results Message -->
