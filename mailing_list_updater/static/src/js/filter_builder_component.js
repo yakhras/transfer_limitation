@@ -150,17 +150,21 @@ class FilterBuilderComponent extends Component {
     }
 
     
-    /**
-     * Fixed willUpdateProps for FilterBuilderComponent
-     * Replace your existing willUpdateProps method with this one
-     */
     willUpdateProps(nextProps) {
         console.log('=== PROPS UPDATE ===');
         
-        // Handle selectedSources changes (non-blocking)
-        if (nextProps.selectedSources !== this.selectedSources) {
+        // Handle selectedSources changes - compare by model names, not reference
+        const currentModels = (this.selectedSources || []).map(s => s.model_name).sort().join(',');
+        const newModels = (nextProps.selectedSources || []).map(s => s.model_name).sort().join(',');
+        
+        if (currentModels !== newModels) {
+            console.log('Sources actually changed, updating fields');
             this.selectedSources = nextProps.selectedSources || [];
-            //this.updateFieldsForSelectedSources(); // Now non-blocking
+            this.updateFieldsForSelectedSources();
+        } else {
+            console.log('Sources are same, skipping field update');
+            // Just update the reference without triggering field reload
+            this.selectedSources = nextProps.selectedSources || [];
         }
         
         // Handle filterCriteria changes
