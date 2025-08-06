@@ -68,7 +68,7 @@
                     
                     <!-- Salesperson / Responsible -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Salesperson / Responsible</label>
+                        <label class="form-label fw-bold">Salesperson</label>
                         
                         <!-- User Search Input -->
                         <div class="position-relative search-container">
@@ -132,7 +132,7 @@
                     
                     <!-- Company / Organization -->
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Company / Organization</label>
+                        <label class="form-label fw-bold">Company</label>
                         
                         <!-- Company Search Input -->
                         <div class="position-relative search-container">
@@ -156,8 +156,7 @@
                                         <i class="fa fa-building me-2 text-muted"></i>
                                         <div>
                                             <div class="fw-medium" t-esc="company.name"></div>
-                                            <small class="text-muted" t-if="company.display_name and company.display_name !== company.name" 
-                                                   t-esc="company.display_name"></small>
+                                            <small class="text-muted" t-esc="company.name"></small>
                                         </div>
                                     </div>
                                 </div>
@@ -179,7 +178,7 @@
                         </div>
                         
                         <!-- Selected Companies Display -->
-                        <div t-if="state.quickFilters.companies and state.quickFilters.companies.length" class="selected-companies mt-2">
+                        <div t-if="state.quickFilters.companies.length" class="selected-companies mt-2">
                             <div class="d-flex flex-wrap gap-2">
                                 <span t-foreach="state.quickFilters.companies" t-as="company" t-key="company.id"
                                       class="badge bg-success d-flex align-items-center">
