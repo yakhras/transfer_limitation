@@ -181,6 +181,7 @@ class FilterBuilderComponent extends Component {
         } catch (error) {
             console.error('Error binding click handler:', error);
         }
+        this.notifyFilterChange();
     }
     
     /**

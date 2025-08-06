@@ -411,25 +411,24 @@ class MailingListUpdaterMain extends Component {
      * Handle source selection changes from SourceSelector
      */
     onSourcesChanged(event) {
-        console.log('=== MAIN: onSourcesChanged ===');
-        console.log('Event detail:', event.detail);
-        console.log('Selected sources data:', event.detail.selectedSourcesData);
-        console.log('Selected sources names:', event.detail.selectedSources);
-        
-        // Store the full source data objects (not just names)
-        this.state.selectedSources = event.detail.selectedSourcesData || [];
-        
-        console.log('Updated main state selectedSources:', this.state.selectedSources);
-        
-        // Reset filters when sources change
-        this.state.filterCriteria = {};
-        this.state.previewData = null;
-        
-        // If we're past source selection step, stay there until filters are rebuilt
+        const newSources = event.detail.selectedSourcesData || [];
+
+        // Only reset filters if selected sources truly changed
+        const currentModels = this.state.selectedSources.map(s => s.model_name).sort().join(',');
+        const newModels = newSources.map(s => s.model_name).sort().join(',');
+
+        if (currentModels !== newModels) {
+            this.state.selectedSources = newSources;
+            this.state.filterCriteria = {};  // Reset only if sources changed
+            this.state.previewData = null;
+        }
+
+        // Move to filter step if needed
         if (this.state.currentStep !== 'source_selection') {
             this.state.currentStep = 'filter_building';
         }
     }
+
 
 
     
