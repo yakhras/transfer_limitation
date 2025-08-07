@@ -166,7 +166,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         return
     
     def _write_group_header(self, row, column, label, group, group_depth=0):
-        label_text = '%s%s (%s)' % ('    ' * group_depth, label, group.count)
+        label_text = '%s%s (%s)' % ('' * group_depth, label, group.count)
 
         # Write the label in the first column
         self.write(row, column, label_text, self.header_bold_style)
