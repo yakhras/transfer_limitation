@@ -174,7 +174,7 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         # Apply the same style to all other columns in that row
         total_columns = len(self.fields)
         for col in range(1, total_columns):
-            self.write(row, col, 'Hello', self.header_bold_style)
+            self.write(row, col, '', self.header_bold_style)
 
         return row + 1, 0
 
@@ -185,16 +185,32 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         self.write(row, column, _("Total"), self.header_bold_style)
         column += 1
 
+        # Fields that need custom calculation instead of sum
+        calculated_fields = {
+            'balance': lambda: aggregates.get('debit', 0) - aggregates.get('credit', 0),
+            'balance_amount': lambda: aggregates.get('debit_amount', 0) - aggregates.get('credit_amount', 0),
+            'cumulated_balance': lambda: aggregates.get('debit', 0) - aggregates.get('credit', 0),
+            'cumulated_balance_amount_currency': lambda: aggregates.get('debit_amount', 0) - aggregates.get('credit_amount', 0)
+        }
+
         for field in self.fields[1:]:
-            aggregated_value = aggregates.get(field['name'])
+            field_name = field['name']
+            
+            # Check if field needs custom calculation
+            if field_name in calculated_fields:
+                aggregated_value = calculated_fields[field_name]()
+            else:
+                aggregated_value = aggregates.get(field_name)
+            
+            # Apply formatting based on field type
             if field.get('type') == 'monetary':
                 self.header_bold_style.set_num_format(self.monetary_format)
             elif field.get('type') == 'float':
                 self.header_bold_style.set_num_format(self.float_format)
             else:
                 aggregated_value = str(aggregated_value if aggregated_value is not None else '')
+                
             self.write(row, column, aggregated_value, self.header_bold_style)
             column += 1
 
         return row + 2, 0
-
