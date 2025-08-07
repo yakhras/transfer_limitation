@@ -186,9 +186,15 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         for field_name in fields[1:]:
             # Check if this field should have totals or be blank
             if field_name in numeric_fields:
-                # Check if field needs custom calculation (debit - credit)
-                if field_name in balance_fields:
-                    total_value = totals.get('debit', 0) - abs(totals.get('credit', 0))
+                # Simple field name based calculation
+                if 'debit' in field_name:
+                    total_value = totals.get('debit', 0)
+                elif 'credit' in field_name:
+                    total_value = totals.get('credit', 0)
+                elif 'balance' in field_name:
+                    total_debit = totals.get('debit', 0)
+                    total_credit = totals.get('credit', 0)
+                    total_value = total_debit - total_credit
                 else:
                     total_value = totals.get(field_name, 0)
                 
