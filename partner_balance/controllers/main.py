@@ -175,7 +175,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                     if field_index < len(row_data):
                         cell_value = row_data[field_index]
                         # Convert to float if it's a numeric value
-                        if isinstance(cell_value, (int, float)) and (field_name not in calculated_fields):
+                        if isinstance(cell_value, (int, float)) and (field_name != 'Cumulated Balance'):
                             total_value += cell_value
                             self.write(274, 0, str(field_name), self.header_bold_style)
                         elif isinstance(cell_value, str) and cell_value.replace('.', '').replace('-', '').isdigit():
