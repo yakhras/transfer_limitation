@@ -181,8 +181,13 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             
             # Simple formatting without field type checking
             # Apply monetary format to known monetary fields
-            if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'amount_currency']:
+            if field_name.get('type') == 'monetary':
                 self.header_bold_style.set_num_format(self.monetary_format)
+            elif field_name.get('type') == 'float':
+                self.header_bold_style.set_num_format(self.float_format)
+
+            # if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'amount_currency']:
+            #     self.header_bold_style.set_num_format(self.monetary_format)
             else:
                 total_value = str(total_value if total_value is not None else '')
                 
