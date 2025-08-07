@@ -159,7 +159,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                         break
             if is_numeric:
                 numeric_fields.append(field_name)
-        self.write(274, 0, str(numeric_fields), self.header_bold_style)
+        
         
         # Calculate totals for detected numeric fields
         for field_index, field_name in enumerate(fields[1:], 1):
@@ -180,6 +180,8 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                                 pass
                 
                 totals[field_name] = total_value
+
+        self.write(274, 0, str(totals), self.header_bold_style)
 
         # Fields that need custom calculation instead of sum
         calculated_fields = {
