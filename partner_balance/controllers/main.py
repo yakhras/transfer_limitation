@@ -146,8 +146,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         # Calculate totals manually from rows data
         totals = {}
         
-        for field_index, field in enumerate(fields[1:], 1):  # Skip first field (usually ID or label)
-            field_name = field['name']
+        for field_index, field_name in enumerate(fields[1:], 1):  # Skip first field (usually ID or label)
             total_value = 0
             
             # Sum values from all rows for this field
@@ -173,20 +172,17 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             'cumulated_balance_amount_currency': lambda: totals.get('debit_amount', 0) - abs(totals.get('credit_amount', 0))
         }
 
-        for field in fields[1:]:
-            field_name = field['name']
-            
+        for field_name in fields[1:]:
             # Check if field needs custom calculation
             if field_name in calculated_fields:
                 total_value = calculated_fields[field_name]()
             else:
                 total_value = totals.get(field_name, 0)
             
-            # Apply formatting based on field type
-            if field.get('type') == 'monetary':
+            # Simple formatting without field type checking
+            # Apply monetary format to known monetary fields
+            if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'amount_currency']:
                 self.header_bold_style.set_num_format(self.monetary_format)
-            elif field.get('type') == 'float':
-                self.header_bold_style.set_num_format(self.float_format)
             else:
                 total_value = str(total_value if total_value is not None else '')
                 
@@ -194,7 +190,6 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             column += 1
 
         return row + 2, 0
-
 
 class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
