@@ -150,8 +150,8 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         numeric_fields = []
         for field_index, field_name in enumerate(fields[1:], 1):
             is_numeric = False
-            # Check first few rows to see if field contains numeric data
-            for row_data in rows_data:
+            # Check ALL rows to see if field contains numeric data
+            for row_data in rows_data:  # Check all rows instead of just first 20
                 if field_index < len(row_data):
                     cell_value = row_data[field_index]
                     if isinstance(cell_value, (int, float)) and cell_value != 0:
@@ -181,19 +181,14 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 totals[field_name] = total_value
 
         # Fields that need custom calculation instead of sum
-        calculated_fields = {
-            'balance': lambda: totals.get('debit', 0) - abs(totals.get('credit', 0)),
-            'balance_amount': lambda: totals.get('debit_amount', 0) - abs(totals.get('credit_amount', 0)),
-            'cumulated_balance': lambda: totals.get('debit', 0) - abs(totals.get('credit', 0)),
-            'cumulated_balance_amount_currency': lambda: totals.get('debit_amount', 0) - abs(totals.get('credit_amount', 0))
-        }
+        balance_fields = ['balance', 'balance_amount', 'cumulated_balance', 'cumulated_balance_amount_currency']
 
         for field_name in fields[1:]:
             # Check if this field should have totals or be blank
             if field_name in numeric_fields:
-                # Check if field needs custom calculation
-                if field_name in calculated_fields:
-                    total_value = calculated_fields[field_name]()
+                # Check if field needs custom calculation (debit - credit)
+                if field_name in balance_fields:
+                    total_value = totals.get('debit', 0) - abs(totals.get('credit', 0))
                 else:
                     total_value = totals.get(field_name, 0)
                 
