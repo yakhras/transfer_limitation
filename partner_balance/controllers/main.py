@@ -169,7 +169,6 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 # Sum values from all rows for this field
                 for row_data in rows_data:
                     if field_index < len(row_data):
-                        self.write(274, 0, str(field_index), self.header_bold_style)
                         cell_value = row_data[field_index]
                         # Convert to float if it's a numeric value
                         if isinstance(cell_value, (int, float)):
@@ -177,6 +176,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                         elif isinstance(cell_value, str) and cell_value.replace('.', '').replace('-', '').isdigit():
                             try:
                                 total_value += float(cell_value)
+                                self.write(274, 0, str(total_value), self.header_bold_style)
                             except (ValueError, TypeError):
                                 pass
                 
