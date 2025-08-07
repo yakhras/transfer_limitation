@@ -159,7 +159,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                         break
             if is_numeric:
                 numeric_fields.append(field_name)
-                
+
         # Fields that need custom calculation instead of sum
         calculated_fields = {
             'cumulated_balance': lambda: totals.get('debit', 0) - abs(totals.get('credit', 0)),
@@ -177,7 +177,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                         # Convert to float if it's a numeric value
                         if isinstance(cell_value, (int, float)) and field_name not in calculated_fields:
                             total_value += cell_value
-                            self.write(274, 0, str(total_value), self.header_bold_style)
+                            
                         elif isinstance(cell_value, str) and cell_value.replace('.', '').replace('-', '').isdigit():
                             try:
                                 total_value += float(cell_value)
@@ -185,6 +185,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                                 pass
                         else:
                             total_value = calculated_fields[field_name]()
+                            self.write(274, 0, str(total_value), self.header_bold_style)
                 
                 totals[field_name] = total_value
 
