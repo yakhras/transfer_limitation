@@ -30,7 +30,7 @@
             <field name="name">account.move.line.custom.tree</field>
             <field name="model">account.move.line</field>
             <field name="arch" type="xml">
-                <tree string="Journal Items (Custom)" create="false" js_class="partner_balance">
+                <tree string="Journal Items (Custom)" create="false">
                     <field name="date"/>
                     <field name="move_id" string="Journal Entry"/>
                     <field name="name" string="Label"/>
@@ -51,7 +51,7 @@
             <field name="name">account.move.line.report.currency.tree</field>
             <field name="model">account.move.line.report</field>
             <field name="arch" type="xml">
-                <tree string="Currency-based Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance">
+                <tree string="Currency-based Partner Ledger" create="false" delete="false" edit="false">
                     <field name="date"/>
                     <field name="move_id"/>
                     <field name="name"/>
