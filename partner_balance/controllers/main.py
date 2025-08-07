@@ -137,100 +137,86 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             self.write(5, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
 
-
+    
     def _write_totals_from_rows(self, row, rows_data, fields):
-        column = 0
-        self.write(row, column, _("Total"), self.header_bold_style)
-        column += 1
-
-        # Store calculated totals for reuse (in case balance comes before debit/credit)
-        calculated_totals = {}
-
-        def calculate_field_total(field_name, field_index):
-            """Calculate total for a specific field"""
-            if field_name in calculated_totals:
-                return calculated_totals[field_name]
-                
-            total_value = 0
-            # Sum values from all rows for this field
+        # Calculate totals first
+        total_debit = 0
+        total_credit = 0
+        
+        # Find debit and credit column positions
+        debit_column_index = None
+        credit_column_index = None
+        
+        for field_index, field_name in enumerate(fields):
+            if 'debit' in field_name.lower():
+                debit_column_index = field_index
+            elif 'credit' in field_name.lower():
+                credit_column_index = field_index
+        
+        # Calculate debit total
+        if debit_column_index is not None:
             for row_data in rows_data:
-                if field_index < len(row_data):
-                    cell_value = row_data[field_index]
+                if debit_column_index < len(row_data):
+                    cell_value = row_data[debit_column_index]
                     if isinstance(cell_value, (int, float)):
-                        total_value += cell_value
-                    elif isinstance(cell_value, str) and cell_value.replace('.', '').replace('-', '').isdigit():
+                        total_debit += cell_value
+                    elif isinstance(cell_value, str):
                         try:
-                            total_value += float(cell_value)
+                            total_debit += float(cell_value)
                         except (ValueError, TypeError):
                             pass
-            
-            calculated_totals[field_name] = total_value
-            return total_value
-
-        # Process each field column by column
-        for field_index, field_name in enumerate(fields[1:], 1):
-            total_value = 0
-            
-            # Check if field contains numeric data
-            is_numeric = False
+        
+        # Calculate credit total
+        if credit_column_index is not None:
             for row_data in rows_data:
-                if field_index < len(row_data):
-                    cell_value = row_data[field_index]
-                    if isinstance(cell_value, (int, float)) and cell_value != 0:
-                        is_numeric = True
-                        break
-            
-            if is_numeric:
-                # Calculate based on field type
-                if 'debit' in field_name:
-                    total_value = calculate_field_total(field_name, field_index)
-                    
-                elif 'credit' in field_name:
-                    total_value = calculate_field_total(field_name, field_index)
-                    
-                elif 'balance' in field_name:
-                    # Calculate balance as debit - credit
-                    # For regular balance: debit - credit
-                    debit_total = calculated_totals.get('debit', calculate_field_total('debit', fields.index('debit') if 'debit' in fields else 0))
-                    credit_total = calculated_totals.get('credit', calculate_field_total('credit', fields.index('credit') if 'credit' in fields else 0))
-                    
-                    total_value = debit_total - abs(credit_total)
-                    
-                else:
-                    # For other numeric fields, calculate normally
-                    total_value = calculate_field_total(field_name, field_index)
-                
-                # Round numeric values to 2 decimal places
-                total_value = round(total_value, 2)
-                
-                # Apply formatting
-                if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'cumulated_balance']:
-                    monetary_style = self.workbook.add_format({
-                        'bold': True,
-                        'bg_color': '#4F81BD',
-                        'font_color': 'white',
-                        'border': 1,
-                        'align': 'center',
-                        'num_format': self.monetary_format
-                    })
-                    self.write(row, column, total_value, monetary_style)
-                else:
-                    float_style = self.workbook.add_format({
-                        'bold': True,
-                        'bg_color': '#4F81BD', 
-                        'font_color': 'white',
-                        'border': 1,
-                        'align': 'center',
-                        'num_format': self.float_format
-                    })
-                    self.write(row, column, total_value, float_style)
+                if credit_column_index < len(row_data):
+                    cell_value = row_data[credit_column_index]
+                    if isinstance(cell_value, (int, float)):
+                        total_credit += cell_value
+                    elif isinstance(cell_value, str):
+                        try:
+                            total_credit += float(cell_value)
+                        except (ValueError, TypeError):
+                            pass
+        
+        # Calculate balance
+        total_balance = total_debit - abs(total_credit)
+        
+        # Round values
+        total_debit = round(total_debit, 2)
+        total_credit = round(total_credit, 2)
+        total_balance = round(total_balance, 2)
+        
+        # Create monetary style
+        monetary_style = self.workbook.add_format({
+            'bold': True,
+            'bg_color': '#4F81BD',
+            'font_color': 'white',
+            'border': 1,
+            'align': 'center',
+            'num_format': self.monetary_format
+        })
+        
+        # Write static totals row
+        for column in range(len(fields)):
+            if column == 0:
+                # Column 0: "Total" label
+                self.write(row, column, _("Total"), self.header_bold_style)
+            elif column == 3:
+                # Column 3: Total debit
+                self.write(row, column, total_debit, monetary_style)
+            elif column == 4:
+                # Column 4: Total credit
+                self.write(row, column, total_credit, monetary_style)
+            elif column == 5:
+                # Column 5: Total balance (debit - credit)
+                self.write(row, column, total_balance, monetary_style)
             else:
-                # For non-numeric fields, set to blank
+                # All other columns: empty
                 self.write(row, column, '', self.header_bold_style)
-                
-            column += 1
 
         return row + 2, 0
+
 
 class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
