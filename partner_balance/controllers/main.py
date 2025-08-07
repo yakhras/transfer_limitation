@@ -168,26 +168,25 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         
         # Calculate totals for detected numeric fields
         for field_index, field_name in enumerate(fields[1:], 1):
-            if field_name in numeric_fields:
-                if field_name not in calculated_fields:
-                    total_value = 0
-                    # Sum values from all rows for this field
-                    for row_data in rows_data:
-                        if field_index < len(row_data):
-                            cell_value = row_data[field_index]
-                            if isinstance(cell_value, (int, float)):
-                                total_value += cell_value
-                            elif isinstance(cell_value, str) and cell_value.replace('.', '').replace('-', '').isdigit():
-                                try:
-                                    total_value += float(cell_value)
-                                except (ValueError, TypeError):
-                                    pass
-                    totals[field_name] = total_value
+            if field_name in numeric_fields and field_name not in calculated_fields:
+                total_value = 0
+                # Sum values from all rows for this field
+                for row_data in rows_data:
+                    if field_index < len(row_data):
+                        cell_value = row_data[field_index]
+                        if isinstance(cell_value, (int, float)):
+                            total_value += cell_value
+                        elif isinstance(cell_value, str) and cell_value.replace('.', '').replace('-', '').isdigit():
+                            try:
+                                total_value += float(cell_value)
+                            except (ValueError, TypeError):
+                                pass
+                totals[field_name] = total_value
 
-        # AFTER all regular fields are calculated, calculate the custom fields
-        for field_name, calculation in calculated_fields.items():
+        # STEP 2: Now calculate the custom fields using the completed regular totals
+        for field_name in calculated_fields:
             if field_name in numeric_fields:
-                totals[field_name] = calculation()
+                totals[field_name] = calculated_fields[field_name]()
 
 
         
