@@ -151,7 +151,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         for field_index, field_name in enumerate(fields[1:], 1):
             is_numeric = False
             # Check ALL rows to see if field contains numeric data
-            for row_data in rows_data:  # Check all rows instead of just first 20
+            for row_data in rows_data:
                 if field_index < len(row_data):
                     cell_value = row_data[field_index]
                     if isinstance(cell_value, (int, float)) and cell_value != 0:
@@ -160,20 +160,18 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             if is_numeric:
                 numeric_fields.append(field_name)
 
-        # Fields that need custom calculation instead of sum
-        calculated_fields = {
-            'cumulated_balance': lambda: totals.get('debit', 0) - abs(totals.get('credit', 0)),
-            'amount_currency': lambda: 0,
-        }
+        # PHASE 1: Calculate only debit and credit totals from actual data
+        base_fields = ['debit', 'credit', 'debit_amount', 'credit_amount']
         
-        # Calculate totals for detected numeric fields
         for field_index, field_name in enumerate(fields[1:], 1):
-            if field_name in numeric_fields and field_name not in calculated_fields:
+            if field_name in base_fields and field_name in numeric_fields:
                 total_value = 0
+                
                 # Sum values from all rows for this field
                 for row_data in rows_data:
                     if field_index < len(row_data):
                         cell_value = row_data[field_index]
+                        # Convert to float if it's a numeric value
                         if isinstance(cell_value, (int, float)):
                             total_value += cell_value
                         elif isinstance(cell_value, str) and cell_value.replace('.', '').replace('-', '').isdigit():
@@ -181,18 +179,19 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                                 total_value += float(cell_value)
                             except (ValueError, TypeError):
                                 pass
+                
                 totals[field_name] = total_value
 
-        # STEP 2: Now calculate the custom fields using the completed regular totals
-        for field_name in calculated_fields:
-            if field_name in numeric_fields:
-                totals[field_name] = calculated_fields[field_name]()
+        # PHASE 2: Calculate all other fields from debit/credit
+        calculated_fields = {
+            'balance': lambda: totals.get('debit', 0) - abs(totals.get('credit', 0)),
+            'cumulated_balance': lambda: totals.get('debit', 0) - abs(totals.get('credit', 0)),
+            'balance_amount': lambda: totals.get('debit_amount', 0) - abs(totals.get('credit_amount', 0)),
+            'cumulated_balance_amount_currency': lambda: totals.get('debit_amount', 0) - abs(totals.get('credit_amount', 0)),
+            'amount_currency': lambda: 0,
+        }
 
-
-        
-
-        
-
+        # Write the totals
         for field_name in fields[1:]:
             # Check if this field should have totals or be blank
             if field_name in numeric_fields:
@@ -206,7 +205,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 total_value = round(total_value, 2)
                 
                 # Apply monetary formatting for monetary fields
-                if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount']:
+                if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'cumulated_balance']:
                     # Create new format with monetary formatting
                     monetary_style = self.workbook.add_format({
                         'bold': True,
