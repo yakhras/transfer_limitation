@@ -174,11 +174,10 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
         # Apply the same style to all other columns in that row
         total_columns = len(self.fields)
         for col in range(1, total_columns):
-            self.write(row, col, '', self.header_bold_style)
+            self.write(row, col, 'Hello', self.header_bold_style)
 
         return row + 1, 0
 
-    
 
     def _write_group_totals(self, row, group):
         column = 0  # skip the first column (reserved for group label or index)
