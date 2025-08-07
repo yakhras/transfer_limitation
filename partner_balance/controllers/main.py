@@ -187,10 +187,10 @@ class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
         # Fields that need custom calculation instead of sum
         calculated_fields = {
-            'balance': lambda: aggregates.get('debit', 0) - aggregates.get('credit', 0),
-            'balance_amount': lambda: aggregates.get('debit_amount', 0) - aggregates.get('credit_amount', 0),
-            'cumulated_balance': lambda: aggregates.get('debit', 0) - aggregates.get('credit', 0),
-            'cumulated_balance_amount_currency': lambda: aggregates.get('debit_amount', 0) - aggregates.get('credit_amount', 0)
+            'balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
+            'balance_amount': lambda: aggregates.get('debit_amount', 0) - abs(aggregates.get('credit_amount', 0)),
+            'cumulated_balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
+            'cumulated_balance_amount_currency': lambda: aggregates.get('debit_amount', 0) - abs(aggregates.get('credit_amount', 0))
         }
 
         for field in self.fields[1:]:
