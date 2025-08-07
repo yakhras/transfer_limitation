@@ -151,7 +151,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         for field_index, field_name in enumerate(fields[1:], 1):
             is_numeric = False
             # Check first few rows to see if field contains numeric data
-            for row_data in rows_data[:20]:  # Check first 10 rows
+            for row_data in rows_data:
                 if field_index < len(row_data):
                     cell_value = row_data[field_index]
                     if isinstance(cell_value, (int, float)) and cell_value != 0:
