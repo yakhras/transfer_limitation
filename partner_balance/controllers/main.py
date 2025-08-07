@@ -169,14 +169,12 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         # Calculate totals for detected numeric fields
         for field_index, field_name in enumerate(fields[1:], 1):
             if field_name in numeric_fields:
-                total_value = 0
-                
-                # Sum values from all rows for this field
-                for row_data in rows_data:
-                    if field_index < len(row_data):
-                        cell_value = row_data[field_index]
-                        # Convert to float if it's a numeric value
-                        if field_name not in calculated_fields:
+                if field_name not in calculated_fields:
+                    total_value = 0
+                    # Sum values from all rows for this field
+                    for row_data in rows_data:
+                        if field_index < len(row_data):
+                            cell_value = row_data[field_index]
                             if isinstance(cell_value, (int, float)):
                                 total_value += cell_value
                             elif isinstance(cell_value, str) and cell_value.replace('.', '').replace('-', '').isdigit():
@@ -184,12 +182,12 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                                     total_value += float(cell_value)
                                 except (ValueError, TypeError):
                                     pass
-                        else:
-                            # If field is in calculated fields, use custom calculation
-                            total_value = calculated_fields[field_name]()
-                            self.write(274, 0, str(total_value), self.header_bold_style)
-                
-                totals[field_name] = total_value
+                    totals[field_name] = total_value
+
+        # AFTER all regular fields are calculated, calculate the custom fields
+        for field_name, calculation in calculated_fields.items():
+            if field_name in numeric_fields:
+                totals[field_name] = calculation()
 
 
         
