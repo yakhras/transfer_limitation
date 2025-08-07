@@ -179,12 +179,17 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             else:
                 total_value = totals.get(field_name, 0)
             
-            # Simple formatting without field type checking
-            # Apply monetary format to known monetary fields
+            # Apply formatting and rounding
             if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'amount_currency']:
+                # Round monetary values to 2 decimal places
+                total_value = round(total_value, 2)
                 self.header_bold_style.set_num_format(self.monetary_format)
+            elif field_name in ['cumulated_balance', 'cumulated_balance_amount_currency']:
+                # Round other numeric values
+                total_value = round(total_value, 2)
             else:
-                total_value = str(total_value if total_value is not None else '')
+                # For non-numeric fields, set to blank
+                total_value = ' '
                 
             self.write(row, column, total_value, self.header_bold_style)
             column += 1
