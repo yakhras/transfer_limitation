@@ -183,15 +183,22 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'amount_currency']:
                 # Round monetary values to 2 decimal places
                 total_value = round(total_value, 2)
-                self.header_bold_style.set_num_format(self.monetary_format)
+                # Create a copy of header_bold_style with monetary format
+                monetary_style = self.workbook.add_format(self.header_bold_style.__dict__)
+                monetary_style.set_num_format(self.monetary_format)
+                self.write(row, column, total_value, monetary_style)
             elif field_name in ['cumulated_balance', 'cumulated_balance_amount_currency']:
                 # Round other numeric values
                 total_value = round(total_value, 2)
+                # Create a copy with float format
+                float_style = self.workbook.add_format(self.header_bold_style.__dict__)
+                float_style.set_num_format(self.float_format)
+                self.write(row, column, total_value, float_style)
             else:
                 # For non-numeric fields, set to blank
                 total_value = ' '
+                self.write(row, column, total_value, self.header_bold_style)
                 
-            self.write(row, column, total_value, self.header_bold_style)
             column += 1
 
         return row + 2, 0
