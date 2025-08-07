@@ -33,7 +33,7 @@ class AccountMoveLineReport(models.Model):
     company_id = fields.Many2one('res.company', string='Company', readonly=True)
     company_currency_id = fields.Many2one('res.currency', string='Company Currency', readonly=True)
 
-    debit_amount = fields.Monetary(string='Debit Amount', compute='_compute_debit_amount', currency_field='currency_id', store=False)
+    debit_amount = fields.Monetary(string='Debit Amount', compute='_compute_debit_amount', currency_field='currency_id')
     credit_amount = fields.Monetary(string='Credit Amount', compute='_compute_credit_amount', currency_field='currency_id', store=False)
     balance_amount = fields.Monetary(string='Balance Amount', compute='_compute_balance_amount', currency_field='currency_id', store=False)
 
