@@ -26,7 +26,7 @@
             </field>
         </record> -->
 
-        <record id="view_account_move_line_custom_tree" model="ir.ui.view">
+        <!-- <record id="view_account_move_line_custom_tree" model="ir.ui.view">
             <field name="name">account.move.line.custom.tree</field>
             <field name="model">account.move.line</field>
             <field name="arch" type="xml">
@@ -43,7 +43,7 @@
                     <field name="cumulated_balance" />
                 </tree>
             </field>
-        </record>
+        </record> -->
 
 
     <!-- Tree View for Account Move Line Report -->
