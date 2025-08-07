@@ -202,13 +202,26 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 
                 # Apply monetary formatting for monetary fields
                 if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'amount_currency']:
-                    monetary_style = self.workbook.add_format(self.header_bold_style.__dict__)
-                    monetary_style.set_num_format(self.monetary_format)
+                    # Create new format with monetary formatting
+                    monetary_style = self.workbook.add_format({
+                        'bold': True,
+                        'bg_color': '#4F81BD',
+                        'font_color': 'white',
+                        'border': 1,
+                        'align': 'center',
+                        'num_format': self.monetary_format
+                    })
                     self.write(row, column, total_value, monetary_style)
                 else:
-                    # Other numeric fields
-                    float_style = self.workbook.add_format(self.header_bold_style.__dict__)
-                    float_style.set_num_format(self.float_format)
+                    # Other numeric fields with float formatting
+                    float_style = self.workbook.add_format({
+                        'bold': True,
+                        'bg_color': '#4F81BD', 
+                        'font_color': 'white',
+                        'border': 1,
+                        'align': 'center',
+                        'num_format': self.float_format
+                    })
                     self.write(row, column, total_value, float_style)
             else:
                 # For non-numeric fields (name, entry, currency, etc.), set to blank
