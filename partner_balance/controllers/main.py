@@ -83,7 +83,7 @@ class ExcelExport(BaseExcelExport):
     def from_data(self, fields, rows, params=None):
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             # Write model name in the first row if provided
-            data = xlsx_writer.header_metadata(params)
+            data = self.header_metadata(params)
             for row_index, header_info in enumerate(data):
                 xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
             
