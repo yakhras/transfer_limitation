@@ -186,7 +186,7 @@ class ResPartner(models.Model):
             'view_id' : self.env.ref("partner_balance.view_account_move_line_report_currency_tree").id,
             'domain': [('partner_id', '=', self.id)],
             'context': {
-                'group_by': 'currency_id',
+                # 'group_by': 'currency_id',
                 'default_partner_id': self.id,
                 'search_default_group_by_account': 1,
                 'partner_name': self.name,
