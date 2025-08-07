@@ -146,13 +146,6 @@ class AccountMoveLineReport(models.Model):
             grouped[key] += rec.amount_currency or 0.0
             rec.cumulated_balance_amount_currency = grouped[key]
 
-    # @api.model
-    # def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
-    #     res = super().read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
-    #     for group in res:
-    #         if 'balance' in fields and 'debit' in fields and 'credit' in fields:
-    #             group['balance'] = group.get('debit', 0) - group.get('credit', 0)
-    #     return res
 
 
 class ResPartner(models.Model):
