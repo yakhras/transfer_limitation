@@ -177,7 +177,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             if field_name in calculated_fields:
                 total_value = calculated_fields[field_name]()
             else:
-                total_value = totals.get(field_name, 0)
+                total_value = totals.get(field_name, '')
             
             # Simple formatting without field type checking
             # Apply monetary format to known monetary fields
