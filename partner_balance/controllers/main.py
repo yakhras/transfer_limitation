@@ -169,6 +169,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 # Sum values from all rows for this field
                 for row_data in rows_data:
                     if field_index < len(row_data):
+                        self.write(274, 0, str(field_index), self.header_bold_style)
                         cell_value = row_data[field_index]
                         # Convert to float if it's a numeric value
                         if isinstance(cell_value, (int, float)):
@@ -181,7 +182,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 
                 totals[field_name] = total_value
 
-        self.write(274, 0, str(totals), self.header_bold_style)
+        
 
         # Fields that need custom calculation instead of sum
         calculated_fields = {
