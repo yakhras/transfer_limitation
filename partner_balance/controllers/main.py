@@ -198,7 +198,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 total_value = round(total_value, 2)
                 
                 # Apply monetary formatting for monetary fields
-                if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 'amount_currency']:
+                if field_name in ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount']:
                     # Create new format with monetary formatting
                     monetary_style = self.workbook.add_format({
                         'bold': True,
