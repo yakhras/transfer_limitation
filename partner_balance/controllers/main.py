@@ -191,8 +191,8 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 # Check if field needs custom calculation
                 if field_name in calculated_fields:
                     total_value = calculated_fields[field_name]()
-                else:
-                    total_value = totals.get(field_name, 0)
+                # else:
+                #     total_value = totals.get(field_name, 0)
                 
                 # Round numeric values to 2 decimal places
                 total_value = round(total_value, 2)
