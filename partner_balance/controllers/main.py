@@ -146,12 +146,22 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         # Calculate totals manually from rows data
         totals = {}
         
-        # Define which fields should be calculated vs left blank
-        numeric_fields = ['debit', 'credit', 'balance', 'debit_amount', 'credit_amount', 'balance_amount', 
-                        'amount_currency', 'cumulated_balance', 'cumulated_balance_amount_currency']
+        # Automatically detect numeric fields by checking if any row has numeric data
+        numeric_fields = []
+        for field_index, field_name in enumerate(fields[1:], 1):
+            is_numeric = False
+            # Check first few rows to see if field contains numeric data
+            for row_data in rows_data[:10]:  # Check first 10 rows
+                if field_index < len(row_data):
+                    cell_value = row_data[field_index]
+                    if isinstance(cell_value, (int, float)) and cell_value != 0:
+                        is_numeric = True
+                        break
+            if is_numeric:
+                numeric_fields.append(field_name)
         
-        for field_index, field_name in enumerate(fields[1:], 1):  # Skip first field (usually ID or label)
-            # Only calculate totals for numeric fields
+        # Calculate totals for detected numeric fields
+        for field_index, field_name in enumerate(fields[1:], 1):
             if field_name in numeric_fields:
                 total_value = 0
                 
@@ -166,7 +176,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                             try:
                                 total_value += float(cell_value)
                             except (ValueError, TypeError):
-                                pass  # Skip non-numeric values
+                                pass
                 
                 totals[field_name] = total_value
 
