@@ -96,7 +96,7 @@ class ExcelExport(BaseExcelExport):
 
             # Add totals row after all data
             total_row = len(rows) + 6 + 1  # +1 for spacing
-            xlsx_writer._write_totals_from_rows(total_row, rows)
+            xlsx_writer._write_totals_from_rows(total_row, rows, fields)
 
         return xlsx_writer.value
         
@@ -138,7 +138,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         self.worksheet.set_column(0, i, 30) # around 220 pixels
 
 
-    def _write_totals_from_rows(self, row, rows_data):
+    def _write_totals_from_rows(self, row, rows_data, fields):
         column = 0
         self.write(row, column, _("Total"), self.header_bold_style)
         column += 1
@@ -146,7 +146,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         # Calculate totals manually from rows data
         totals = {}
         
-        for field_index, field in enumerate(self.fields[1:], 1):  # Skip first field (usually ID or label)
+        for field_index, field in enumerate(fields[1:], 1):  # Skip first field (usually ID or label)
             field_name = field['name']
             total_value = 0
             
@@ -173,7 +173,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             'cumulated_balance_amount_currency': lambda: totals.get('debit_amount', 0) - abs(totals.get('credit_amount', 0))
         }
 
-        for field in self.fields[1:]:
+        for field in fields[1:]:
             field_name = field['name']
             
             # Check if field needs custom calculation
