@@ -183,9 +183,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                                 total_value += float(cell_value)
                             except (ValueError, TypeError):
                                 pass
-                        else:
-                            total_value = calculated_fields[field_name]()
-                            self.write(274, 0, str(total_value), self.header_bold_style)
+                            # self.write(274, 0, str(total_value), self.header_bold_style)
                 
                 totals[field_name] = total_value
 
