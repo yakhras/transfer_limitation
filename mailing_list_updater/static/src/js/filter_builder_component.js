@@ -90,6 +90,7 @@ class FilterBuilderComponent extends Component {
     }
     
     async willStart() {
+        console.log('=== FILTER BUILDER WILL START ===');
         this.state.isLoading = true;
 
         try {
