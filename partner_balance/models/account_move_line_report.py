@@ -50,7 +50,7 @@ class AccountMoveLineReport(models.Model):
             if rec.currency_id and rec.currency_id.name == 'TRY':
                 rec.credit_amount = rec.credit
             elif rec.amount_currency and rec.amount_currency < 0:
-                rec.credit_amount = rec.amount_currency  # Convert to positive
+                rec.credit_amount = abs(rec.amount_currency)  # Convert to positive
             else:
                 rec.credit_amount = 0.0
 
