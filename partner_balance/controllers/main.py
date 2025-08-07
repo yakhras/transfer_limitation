@@ -182,10 +182,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
 
         # Fields that need custom calculation instead of sum
         calculated_fields = {
-            'balance': lambda: totals.get('debit', 0) - abs(totals.get('credit', 0)),
-            'balance_amount': lambda: totals.get('debit_amount', 0) - abs(totals.get('credit_amount', 0)),
             'cumulated_balance': lambda: totals.get('debit', 0) - abs(totals.get('credit', 0)),
-            'cumulated_balance_amount_currency': lambda: totals.get('debit_amount', 0) - abs(totals.get('credit_amount', 0))
         }
 
         for field_name in fields[1:]:
