@@ -46,7 +46,7 @@ Technical Features:
         'security/ir.model.access.csv',
         
         # Data
-        'data/registry_default_data.xml',
+        # 'data/registry_default_data.xml',
         'data/menu_items.xml',
         
         # Views
