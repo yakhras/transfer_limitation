@@ -87,11 +87,7 @@ class TargetSelectorComponent extends Component {
 
     async onTargetListSelect(targetList) {
         this.state.selectedTargetList = targetList;
-
-        const contacts = await this.fetchMailingListContacts(targetList.mailing_list_id);
-        this.state.selectedTargetList.contacts = contacts;
-        console.log('Fetched contacts:', contacts.length);
-
+        
         // ✅ Replace search results with only the selected list
         this.state.availableTargetLists = [targetList];
 
@@ -101,35 +97,7 @@ class TargetSelectorComponent extends Component {
         this.notifyParentOfSelection();
     }
 
-    async fetchMailingListContacts(mailingListId) {
-        try {
-            console.log('Fetching contacts through mailing.list:', mailingListId);
-            
-            // Get mailing list with contact relationship
-            const mailingList = await this.env.services.orm.read(
-                'mailing.list',
-                [mailingListId],
-                ['name', 'contact_ids']
-            );
-            
-            console.log('Mailing list:', mailingList[0]);
-            
-            if (mailingList[0] && mailingList[0].contact_ids && mailingList[0].contact_ids.length > 0) {
-                // Get contact details using the contact_ids
-                const contacts = await this.env.services.orm.read(
-                    'mailing.contact',
-                    mailingList[0].contact_ids.slice(0, 50), // First 50 contacts
-                    ['name', 'email']
-                );
-                return contacts;
-            }
-            
-            return [];
-        } catch (error) {
-            console.error('Failed to fetch contacts via mailing.list:', error);
-            return [];
-        }
-    }
+
 
 
     onTargetSearchInput(event) {
