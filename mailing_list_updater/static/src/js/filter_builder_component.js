@@ -108,7 +108,7 @@ class FilterBuilderComponent extends Component {
             }
 
             // Load fields and default data
-            // await this.updateFieldsForSelectedSources();
+            await this.updateFieldsForSelectedSources();
             // await this.loadFilterTemplates();
             // await this.loadDefaultUsers();
             // await this.loadDefaultCompanies();
