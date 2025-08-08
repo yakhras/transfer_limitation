@@ -146,42 +146,42 @@ class FilterBuilderComponent extends Component {
     }
 
     
-    willUpdateProps(nextProps) {
-        console.log('=== FILTER BUILDER PROPS UPDATE ===');
+    // willUpdateProps(nextProps) {
+    //     console.log('=== FILTER BUILDER PROPS UPDATE ===');
         
-        if (nextProps.selectedSources !== this.props.selectedSources) {
-            this.selectedSources = nextProps.selectedSources || [];
+    //     if (nextProps.selectedSources !== this.props.selectedSources) {
+    //         this.selectedSources = nextProps.selectedSources || [];
             
-            // Update fields only when sources actually change
-            this.updateFieldsForSelectedSources();
-        }
+    //         // Update fields only when sources actually change
+    //         this.updateFieldsForSelectedSources();
+    //     }
         
-        // Handle filterCriteria changes
-        if (nextProps.filterCriteria !== this.props.filterCriteria) {
-            if (nextProps.filterCriteria && nextProps.filterCriteria.quick_filters) {
-                const quickFilters = { ...this.state.quickFilters, ...nextProps.filterCriteria.quick_filters };
+    //     // Handle filterCriteria changes
+    //     if (nextProps.filterCriteria !== this.props.filterCriteria) {
+    //         if (nextProps.filterCriteria && nextProps.filterCriteria.quick_filters) {
+    //             const quickFilters = { ...this.state.quickFilters, ...nextProps.filterCriteria.quick_filters };
                 
-                // Convert user IDs back to objects (KEY FIX!)
-                if (quickFilters.responsible_users && Array.isArray(quickFilters.responsible_users)) {
-                    if (quickFilters.responsible_users.length > 0 && typeof quickFilters.responsible_users[0] === 'number') {
-                        // Convert IDs to objects using mock users
-                        const allUsers = this.getMockUsers('');
-                        quickFilters.responsible_users = allUsers.filter(user => 
-                            quickFilters.responsible_users.includes(user.id)
-                        );
-                    }
-                }
+    //             // Convert user IDs back to objects (KEY FIX!)
+    //             if (quickFilters.responsible_users && Array.isArray(quickFilters.responsible_users)) {
+    //                 if (quickFilters.responsible_users.length > 0 && typeof quickFilters.responsible_users[0] === 'number') {
+    //                     // Convert IDs to objects using mock users
+    //                     const allUsers = this.getMockUsers('');
+    //                     quickFilters.responsible_users = allUsers.filter(user => 
+    //                         quickFilters.responsible_users.includes(user.id)
+    //                     );
+    //                 }
+    //             }
                 
-                this.state.quickFilters = quickFilters;
-            }
-            if (nextProps.filterCriteria && nextProps.filterCriteria.advanced_filters) {
-                this.state.advancedFilters = { 
-                    ...this.state.advancedFilters, 
-                    ...nextProps.filterCriteria.advanced_filters 
-                };
-            }
-        }
-    }
+    //             this.state.quickFilters = quickFilters;
+    //         }
+    //         if (nextProps.filterCriteria && nextProps.filterCriteria.advanced_filters) {
+    //             this.state.advancedFilters = { 
+    //                 ...this.state.advancedFilters, 
+    //                 ...nextProps.filterCriteria.advanced_filters 
+    //             };
+    //         }
+    //     }
+    // }
     
     updateFieldsForSelectedSources() {
         console.log('=== UPDATE FIELDS FOR SOURCES ===');
