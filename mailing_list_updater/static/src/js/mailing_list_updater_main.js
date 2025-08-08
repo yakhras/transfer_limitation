@@ -389,7 +389,7 @@ class MailingListUpdaterMain extends Component {
         const selectedList = this.mailingLists.find(list => list.id === mailingListId);
         this.state.selectedMailingList = selectedList;
         selectedList.contacts = [];
-        await this.loadMailingListContacts(mailingListId);
+        this.loadMailingListContacts(mailingListId);
         
         // Reset downstream selections when mailing list changes
         this.state.selectedSources = [];
