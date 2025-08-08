@@ -169,15 +169,15 @@ class FilterBuilderComponent extends Component {
                 const quickFilters = { ...this.state.quickFilters, ...nextProps.filterCriteria.quick_filters };
                 
                 // Convert user IDs back to objects (KEY FIX!)
-                if (quickFilters.responsible_users && Array.isArray(quickFilters.responsible_users)) {
-                    if (quickFilters.responsible_users.length > 0 && typeof quickFilters.responsible_users[0] === 'number') {
-                        // Convert IDs to objects using mock users
-                        const allUsers = this.getMockUsers('');
-                        quickFilters.responsible_users = allUsers.filter(user => 
-                            quickFilters.responsible_users.includes(user.id)
-                        );
-                    }
-                }
+                // if (quickFilters.responsible_users && Array.isArray(quickFilters.responsible_users)) {
+                //     if (quickFilters.responsible_users.length > 0 && typeof quickFilters.responsible_users[0] === 'number') {
+                //         // Convert IDs to objects using mock users
+                //         const allUsers = this.getMockUsers('');
+                //         quickFilters.responsible_users = allUsers.filter(user => 
+                //             quickFilters.responsible_users.includes(user.id)
+                //         );
+                //     }
+                // }
                 
                 this.state.quickFilters = quickFilters;
             }
