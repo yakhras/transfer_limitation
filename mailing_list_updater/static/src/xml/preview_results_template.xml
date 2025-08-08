@@ -2,6 +2,7 @@
 <templates xml:space="preserve">
     <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
         <div class="preview-results">
+            
 
             <!-- Vertical Tab Navigation -->
             <div class="tab-nav">
