@@ -107,7 +107,7 @@ class TargetSelectorComponent extends Component {
             
             const contacts = await this.env.services.orm.searchRead(
                 'mailing.contact',
-                [["list_ids.id","=",mailingListId]],
+                [["list_ids.id","=",8]],
                 ['name', 'email'],
                 { limit: 50, order: 'name' }
             );
