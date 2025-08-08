@@ -60,11 +60,11 @@ class TargetSelectorComponent extends Component {
             response.forEach(list => {
                 console.log(`List: ${list.name} | ID: ${list.id} | Contact Count: ${list.contact_count}`);
             });
-            
+
             //Test fetching contacts
             const contacts = await this.env.services.orm.searchRead(
                 'mailing.contact',
-                [['id', '=', 8]],
+                [['list_ids.id', '=', 8]],
                 ['id', 'name', 'email'], // Only fetch id, name, and contact_count
                 { limit: 20, context: {} }
             );
