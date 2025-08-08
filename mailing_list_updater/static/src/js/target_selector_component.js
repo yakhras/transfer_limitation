@@ -35,8 +35,55 @@ class TargetSelectorComponent extends Component {
     // TARGET MAILING LIST METHODS (NEW)
     // ========================================
 
+    // async loadTargetMailingLists() {
+    //     // Don't load if search is empty
+    //     if (!this.state.targetSearchTerm || this.state.targetSearchTerm.length < 2) {
+    //         this.state.availableTargetLists = [];
+    //         this.state.targetListsLoading = false;
+    //         return;
+    //     }
+
+    //     this.state.targetListsLoading = true;
+    //     console.log('Searching for:', this.state.targetSearchTerm);
+        
+    //     try {
+    //         // Simple search - just get basic fields without contact counts for now
+    //         const response = await this.env.services.orm.searchRead(
+    //             'mailing.list',
+    //             [['name', 'ilike', this.state.targetSearchTerm]],
+    //             ['id', 'name', 'contact_count', 'contact_ids'], // Only fetch id, name, and contact_count
+    //             { limit: 20, context: {} }
+    //         );
+
+    //         console.log('Search successful:', response.length, 'results');
+    //         // Log each list with its contact count
+    //         response.forEach(list => {
+    //             console.log(`List: ${list.name} | ID: ${list.id} | Contact Count: ${list.contact_count}`);
+    //         });
+
+    //         this.state.availableTargetLists = response.map(list => ({
+    //             mailing_list_id: list.id,
+    //             name: list.name,
+    //             contacts: list.contact_ids || [], 
+    //             contact_count: list.contact_count, // Skip contact count for now
+    //             estimated_count: 0,
+    //             description: `Mailing list: ${list.name}`,
+    //             available: true,
+    //             recommended: false // Skip recommendation logic for now
+    //         }));
+
+    //         console.log('Lists loaded:', this.state.availableTargetLists);
+
+    //     } catch (error) {
+    //         console.error('Search failed:', error.message, error);
+    //         this.state.availableTargetLists = [];
+    //     } finally {
+    //         this.state.targetListsLoading = false;
+    //     }
+    // }
+
     async loadTargetMailingLists() {
-        // Don't load if search is empty
+        // Don't load if search is empty or too short
         if (!this.state.targetSearchTerm || this.state.targetSearchTerm.length < 2) {
             this.state.availableTargetLists = [];
             this.state.targetListsLoading = false;
@@ -45,32 +92,47 @@ class TargetSelectorComponent extends Component {
 
         this.state.targetListsLoading = true;
         console.log('Searching for:', this.state.targetSearchTerm);
-        
+
         try {
-            // Simple search - just get basic fields without contact counts for now
-            const response = await this.env.services.orm.searchRead(
+            // First: fetch mailing lists with contact_ids (only IDs)
+            const lists = await this.env.services.orm.searchRead(
                 'mailing.list',
                 [['name', 'ilike', this.state.targetSearchTerm]],
-                ['id', 'name', 'contact_count', 'contact_ids'], // Only fetch id, name, and contact_count
+                ['id', 'name', 'contact_count', 'contact_ids'],
                 { limit: 20, context: {} }
             );
 
-            console.log('Search successful:', response.length, 'results');
-            // Log each list with its contact count
-            response.forEach(list => {
-                console.log(`List: ${list.name} | ID: ${list.id} | Contact Count: ${list.contact_count}`);
-            });
+            console.log('Search successful:', lists.length, 'results');
 
-            this.state.availableTargetLists = response.map(list => ({
-                mailing_list_id: list.id,
-                name: list.name,
-                contacts: list.contact_ids || [], 
-                contact_count: list.contact_count, // Skip contact count for now
-                estimated_count: 0,
-                description: `Mailing list: ${list.name}`,
-                available: true,
-                recommended: false // Skip recommendation logic for now
-            }));
+            // Prepare full contact loading for each list
+            const mailingListsWithContacts = await Promise.all(
+                lists.map(async (list) => {
+                    let contacts = [];
+
+                    if (list.contact_ids.length > 0) {
+                        contacts = await this.env.services.orm.searchRead(
+                            'mailing.contact',
+                            [['id', 'in', list.contact_ids]],
+                            ['id', 'name', 'email']
+                        );
+                    }
+
+                    console.log(`List: ${list.name} | ID: ${list.id} | Contacts Loaded: ${contacts.length}`);
+
+                    return {
+                        mailing_list_id: list.id,
+                        name: list.name,
+                        contact_count: list.contact_count,
+                        contacts: contacts,
+                        estimated_count: 0,
+                        description: `Mailing list: ${list.name}`,
+                        available: true,
+                        recommended: false
+                    };
+                })
+            );
+
+            this.state.availableTargetLists = mailingListsWithContacts;
 
             console.log('Lists loaded:', this.state.availableTargetLists);
 
@@ -81,6 +143,7 @@ class TargetSelectorComponent extends Component {
             this.state.targetListsLoading = false;
         }
     }
+
 
 
     onTargetListSelect(targetList) {
