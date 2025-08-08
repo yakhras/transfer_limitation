@@ -21,7 +21,7 @@
             <div class="tab-content active">
 
                 <div class="mailing-list-info">
-                    <h3 t-if="selectedMailingList" t-esc="selectedMailingList.name"></h3>
+                    <h3 t-if="selectedMailingList" t-esc="selectedMailingList.id"></h3>
                     <div class="stats" t-if="selectedMailingList">
                         Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
                     </div>
