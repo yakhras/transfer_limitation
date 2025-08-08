@@ -476,6 +476,7 @@
                             t-on-click="() => this.clearAllFilters()">
                         <i class="fa fa-times"></i> Clear All
                     </button>
+                </div>
                     
         
                 
