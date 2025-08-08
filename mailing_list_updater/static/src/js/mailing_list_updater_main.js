@@ -401,29 +401,29 @@ class MailingListUpdaterMain extends Component {
     }
 
     async loadMailingListContacts(mailingListId, offset = 0, limit = 20) {
-    try {
-        const contacts = await this.rpc({
-            model: "mailing.contact",
-            method: "search_read", 
-            args: [[["list_ids", "in", [mailingListId]]]],
-            kwargs: { 
-                fields: ["name", "email"],
-                offset: offset,
-                limit: limit,
-                order: "name"
+        try {
+            const contacts = await this.rpc({
+                model: "mailing.contact",
+                method: "search_read", 
+                args: [[["list_ids", "in", [mailingListId]]]],
+                kwargs: { 
+                    fields: ["name", "email"],
+                    offset: offset,
+                    limit: limit,
+                    order: "name"
+                }
+            });
+            
+            // Add contacts directly to selectedMailingList
+            if (offset === 0) {
+                this.state.selectedMailingList.contacts = contacts;
+            } else {
+                this.state.selectedMailingList.contacts.push(...contacts);
             }
-        });
-        
-        // Add contacts directly to selectedMailingList
-        if (offset === 0) {
-            this.state.selectedMailingList.contacts = contacts;
-        } else {
-            this.state.selectedMailingList.contacts.push(...contacts);
+        } catch (error) {
+            console.error("Failed to load contacts:", error);
         }
-    } catch (error) {
-        console.error("Failed to load contacts:", error);
     }
-}
     
 
     // Add new method
