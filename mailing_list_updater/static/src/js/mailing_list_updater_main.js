@@ -390,6 +390,7 @@ class MailingListUpdaterMain extends Component {
         this.state.selectedMailingList = selectedList;
         selectedList.contacts = [];
         this.loadMailingListContacts(mailingListId);
+        console.log('contacts', selectedList.contacts);
         
         // Reset downstream selections when mailing list changes
         this.state.selectedSources = [];
