@@ -51,7 +51,7 @@ class TargetSelectorComponent extends Component {
             const response = await this.env.services.orm.searchRead(
                 'mailing.list',
                 [['name', 'ilike', this.state.targetSearchTerm]],
-                ['id', 'name', 'contact_count'], // Only fetch id, name, and contact_count
+                ['id', 'name', 'contact_count', 'display_name'], // Only fetch id, name, and contact_count
                 { limit: 20, context: {} }
             );
 
@@ -63,6 +63,7 @@ class TargetSelectorComponent extends Component {
 
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
+                display_name: list.display_name,
                 name: list.name,
                 contact_count: list.contact_count, // Skip contact count for now
                 estimated_count: 0,
@@ -87,7 +88,7 @@ class TargetSelectorComponent extends Component {
 
     async onTargetListSelect(targetList) {
         this.state.selectedTargetList = targetList;
-        
+
         // ✅ Replace search results with only the selected list
         this.state.availableTargetLists = [targetList];
 
