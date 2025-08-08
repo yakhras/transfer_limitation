@@ -92,35 +92,35 @@ class FilterBuilderComponent extends Component {
     async willStart() {
         this.state.isLoading = true;
 
-        try {
-            // Ensure search states are initialized before async operations
-            this.state.companySearch = this.state.companySearch || {
-                query: '', results: [], showSuggestions: false, loading: false
-            };
-            this.state.userSearch = this.state.userSearch || {
-                query: '', results: [], showSuggestions: false, loading: false
-            };
+        // try {
+        //     // Ensure search states are initialized before async operations
+        //     this.state.companySearch = this.state.companySearch || {
+        //         query: '', results: [], showSuggestions: false, loading: false
+        //     };
+        //     this.state.userSearch = this.state.userSearch || {
+        //         query: '', results: [], showSuggestions: false, loading: false
+        //     };
 
-            // Restore from props if available
-            if (this.props.filterCriteria && Object.keys(this.props.filterCriteria).length > 0) {
-                this.state.quickFilters = this.props.filterCriteria.quick_filters || this.state.quickFilters;
-                this.state.advancedFilters = this.props.filterCriteria.advanced_filters || this.state.advancedFilters;
-            }
+        //     // Restore from props if available
+        //     if (this.props.filterCriteria && Object.keys(this.props.filterCriteria).length > 0) {
+        //         this.state.quickFilters = this.props.filterCriteria.quick_filters || this.state.quickFilters;
+        //         this.state.advancedFilters = this.props.filterCriteria.advanced_filters || this.state.advancedFilters;
+        //     }
 
-            // Load fields and default data
-            await this.updateFieldsForSelectedSources();
-            await this.loadFilterTemplates();
-            await this.loadDefaultUsers();
-            await this.loadDefaultCompanies();
+        //     // Load fields and default data
+        //     await this.updateFieldsForSelectedSources();
+        //     await this.loadFilterTemplates();
+        //     await this.loadDefaultUsers();
+        //     await this.loadDefaultCompanies();
 
-            // ✅ Notify parent after loading completes
-            this.notifyFilterChange();
+        //     // ✅ Notify parent after loading completes
+        //     this.notifyFilterChange();
 
-        } catch (error) {
-            console.error("Filter options loading error:", error);
-        } finally {
-            this.state.isLoading = false;
-        }
+        // } catch (error) {
+        //     console.error("Filter options loading error:", error);
+        // } finally {
+        //     this.state.isLoading = false;
+        // }
     }
 
     mounted() {
