@@ -102,10 +102,10 @@ class FilterBuilderComponent extends Component {
             };
 
             // Restore from props if available
-            // if (this.props.filterCriteria && Object.keys(this.props.filterCriteria).length > 0) {
-            //     this.state.quickFilters = this.props.filterCriteria.quick_filters || this.state.quickFilters;
-            //     this.state.advancedFilters = this.props.filterCriteria.advanced_filters || this.state.advancedFilters;
-            // }
+            if (this.props.filterCriteria && Object.keys(this.props.filterCriteria).length > 0) {
+                this.state.quickFilters = this.props.filterCriteria.quick_filters || this.state.quickFilters;
+                this.state.advancedFilters = this.props.filterCriteria.advanced_filters || this.state.advancedFilters;
+            }
 
             // Load fields and default data
             // await this.updateFieldsForSelectedSources();
