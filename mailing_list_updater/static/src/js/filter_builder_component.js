@@ -114,7 +114,7 @@ class FilterBuilderComponent extends Component {
             // await this.loadDefaultCompanies();
 
             // ✅ Notify parent after loading completes
-            // this.notifyFilterChange();
+            this.notifyFilterChange();
 
         } catch (error) {
             console.error("Filter options loading error:", error);
