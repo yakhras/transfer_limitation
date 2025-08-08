@@ -85,7 +85,7 @@ class TargetSelectorComponent extends Component {
 
 
 
-    onTargetListSelect(targetList) {
+    async onTargetListSelect(targetList) {
         this.state.selectedTargetList = targetList;
 
         const contacts = await this.fetchMailingListContacts(targetList.mailing_list_id);
