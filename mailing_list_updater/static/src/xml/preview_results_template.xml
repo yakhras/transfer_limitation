@@ -19,10 +19,6 @@
 
             <!-- Tab 1: Target Mailing List -->
             <div class="tab-content active">
-                <div class="content-header">
-                    <h2>Target Mailing List</h2>
-                    <p class="subtitle">Current contacts in the selected mailing list</p>
-                </div>
 
                 <div class="mailing-list-info">
                     <h3>Newsletter Subscribers</h3>
