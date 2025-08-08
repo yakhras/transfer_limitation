@@ -60,10 +60,23 @@ class TargetSelectorComponent extends Component {
             response.forEach(list => {
                 console.log(`List: ${list.name} | ID: ${list.id} | Contact Count: ${list.contact_count}`);
             });
+            
+            //Test fetching contacts
+            const contacts = await this.env.services.orm.searchRead(
+                'mailing.contact',
+                [['id', '=', 8]],
+                ['id', 'name', 'email'], // Only fetch id, name, and contact_count
+                { limit: 20, context: {} }
+            );
+
+            console.log('Search successful:', contacts.length, 'results');
+            // Log each list with its contact count
+            contacts.forEach(contact => {
+                console.log(`List: ${contact.name} | ID: ${contact.id} | Contact Count: ${contact.email}`);
+            });
 
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
-                display_name: list.contact_ids.map(contact => ({email:contact.email})), // Join emails for display
                 name: list.name,
                 contact_count: list.contact_count, // Skip contact count for now
                 estimated_count: 0,
