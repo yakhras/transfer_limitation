@@ -42,7 +42,7 @@ class FilterBuilderComponent extends Component {
                 loading: false
             },
 
-            // User search functionality
+            // company search functionality
             companySearch: {
                 query: '',
                 results: [],
