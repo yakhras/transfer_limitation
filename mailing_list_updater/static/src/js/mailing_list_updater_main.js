@@ -385,28 +385,29 @@ class MailingListUpdaterMain extends Component {
     /**
      * Handle mailing list selection
      */
-    onMailingListSelected(mailingListId) {
+    async onMailingListSelected(mailingListId) {
         const selectedList = this.mailingLists.find(list => list.id === mailingListId);
         this.state.selectedMailingList = selectedList;
         selectedList.contacts = [];
-        this.loadMailingListContacts(mailingListId);
-        console.log('contacts', selectedList.contacts);
-        
-        // Reset downstream selections when mailing list changes
+
+        await this.loadMailingListContacts(mailingListId);  // ⏳ Wait for contacts
+        console.log('contacts', selectedList.contacts);      // ✅ Now it's filled
+
+        // Clear other state
         this.state.selectedSources = [];
         this.state.filterCriteria = {};
         this.state.previewData = null;
-        
-        // Update page title
+
         this.updatePageTitle();
     }
+
 
     async loadMailingListContacts(mailingListId, offset = 0, limit = 20) {
         try {
             const contacts = await this.rpc({
                 model: "mailing.contact",
                 method: "search_read", 
-                args: [[["subscription_list_ids", "in", [mailingListId]]]],
+                args: [[["list_ids", "in", [mailingListId]]]],
                 kwargs: { 
                     fields: ["name", "email"],
                     offset: offset,
