@@ -51,7 +51,7 @@ class TargetSelectorComponent extends Component {
             const response = await this.env.services.orm.searchRead(
                 'mailing.list',
                 [['name', 'ilike', this.state.targetSearchTerm]],
-                ['id', 'name', 'contact_count'], // Only fetch id, name, and contact_count
+                ['id', 'name', 'contact_count', 'contact_ids'], // Only fetch id, name, and contact_count
                 { limit: 20, context: {} }
             );
 
