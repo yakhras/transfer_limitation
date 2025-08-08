@@ -103,25 +103,25 @@ class TargetSelectorComponent extends Component {
 
     async fetchMailingListContacts(mailingListId) {
         try {
-            // Check if we can access the mailing list itself
-            const mailingList = await this.env.services.orm.read(
-                'mailing.list',
-                [mailingListId],
-                ['name', 'contact_ids']
+            console.log('Searching for contacts in list:', mailingListId);
+            
+            // Test 1: Get all contacts first
+            // const allContacts = await this.env.services.orm.searchRead(
+            //     'mailing.contact',
+            //     [],
+            //     ['name', 'email', 'list_ids'],
+            //     { limit: 10 }
+            // );
+            console.log('All contacts sample:', allContacts);
+            
+            // Test 2: Try different domain syntax
+            const contacts = await this.env.services.orm.searchRead(
+                'mailing.contact',
+                [['list_ids.id', '=', mailingListId]], // Try = instead of in
+                ['name', 'email'],
+                { limit: 50, order: 'name' }
             );
-            console.log('Mailing list data:', mailingList);
-            
-            // Try getting contacts through the mailing list relationship
-            if (mailingList[0] && mailingList[0].contact_ids) {
-                const contacts = await this.env.services.orm.read(
-                    'mailing.contact',
-                    mailingList[0].contact_ids,
-                    ['name', 'email']
-                );
-                return contacts;
-            }
-            
-            return [];
+            return contacts;
         } catch (error) {
             console.error('Failed to fetch contacts:', error);
             return [];
