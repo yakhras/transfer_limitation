@@ -39,9 +39,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr t-foreach="selectedMailingList.contacts || []" 
-                                t-as="contact" 
-                                t-key="contact.id">
+                            <tr t-foreach="selectedMailingList.contacts" t-as="contact" t-key="contact.id">
                                 <td t-esc="contact.name"></td>
                                 <td><a t-att-href="'mailto:' + contact.email" class="email" t-esc="contact.email"></a></td>
                             </tr>
