@@ -477,87 +477,8 @@
                         <i class="fa fa-times"></i> Clear All
                     </button>
                     
-                    <!-- Domain Generation Test Button -->
-                    <button class="btn btn-outline-info btn-sm me-2"
-                            t-on-click="() => this.testDomainGeneration()"
-                            t-att-disabled="state.selectedModels.length === 0">
-                        <i class="fa fa-code"></i> Test Domain Generation
-                    </button>
-                    
-                    <!-- NEW: Test Company Connection Button -->
-                    <button class="btn btn-outline-warning btn-sm me-2"
-                            t-on-click="() => this.testCompanyConnection()">
-                        <i class="fa fa-plug"></i> Test Company Connection
-                    </button>
-                    
-                    <!-- Backend Test Button -->
-                    <button class="btn btn-primary btn-sm"
-                            t-on-click="() => this.testDomainsWithBackend()"
-                            t-att-disabled="state.selectedModels.length === 0 or state.backendTesting">
-                        <i t-att-class="state.backendTesting ? 'fa fa-spinner fa-spin' : 'fa fa-database'"></i>
-                        <span t-if="state.backendTesting">Testing Backend...</span>
-                        <span t-if="!state.backendTesting">Test with Backend</span>
-                    </button>
-                </div>
+        
                 
-                <!-- NEW: Domain Test Results -->
-                <div t-if="state.domainTestResults" class="domain-test-results mt-4 p-3 border rounded">
-                    <h6><i class="fa fa-code text-info"></i> Generated Odoo Domains (for backend)</h6>
-                    
-                    <div t-foreach="Object.keys(state.domainTestResults.domains)" t-as="modelName" t-key="modelName" 
-                         class="model-domain mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0">
-                                <code t-esc="modelName"/>
-                                <small class="text-muted ms-2">
-                                    (<span t-esc="selectedSources.find(s => s.model_name === modelName)?.name || 'Unknown'"/>)
-                                </small>
-                            </h6>
-                            <span class="badge bg-secondary">
-                                <span t-esc="state.domainTestResults.domains[modelName].length || 0"/> conditions
-                            </span>
-                        </div>
-                        
-                        <!-- Actual Domain (for developers) -->
-                        <div class="domain-code mb-2">
-                            <label class="form-label small fw-bold">Odoo Domain:</label>
-                            <pre class="bg-light p-2 rounded small"><code t-esc="JSON.stringify(state.domainTestResults.domains[modelName], null, 2)"/></pre>
-                        </div>
-                        
-                        <!-- Human Readable (for users) -->
-                        <div class="domain-readable">
-                            <label class="form-label small fw-bold">Human Readable:</label>
-                            <div class="text-muted small">
-                                <span t-esc="state.domainTestResults.preview[selectedSources.find(s => s.model_name === modelName)?.name || modelName]?.readable || 'No conditions'"/>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Test Summary -->
-                    <div class="test-summary mt-3 pt-3 border-top">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <small class="text-muted">
-                                    <strong>Models:</strong> <span t-esc="Object.keys(state.domainTestResults.domains).length"/>
-                                </small>
-                            </div>
-                            <div class="col-md-6">
-                                <small class="text-muted">
-                                    <strong>Total Conditions:</strong> 
-                                    <span t-esc="Object.values(state.domainTestResults.domains).reduce((sum, domain) => sum + domain.length, 0)"/>
-                                </small>
-                            </div>
-                        </div>
-                        
-                        <!-- Close Test Results -->
-                        <div class="mt-2">
-                            <button class="btn btn-outline-secondary btn-sm"
-                                    t-on-click="() => this.clearDomainTestResults()">
-                                <i class="fa fa-times"></i> Close Test Results
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </t>
