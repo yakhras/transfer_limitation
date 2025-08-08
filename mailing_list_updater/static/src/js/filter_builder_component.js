@@ -111,7 +111,7 @@ class FilterBuilderComponent extends Component {
             // await this.updateFieldsForSelectedSources();
             // await this.loadFilterTemplates();
             // await this.loadDefaultUsers();
-            // await this.loadDefaultCompanies();
+            await this.loadDefaultCompanies();
 
             // ✅ Notify parent after loading completes
             this.notifyFilterChange();
@@ -167,18 +167,6 @@ class FilterBuilderComponent extends Component {
         if (nextProps.filterCriteria !== this.props.filterCriteria) {
             if (nextProps.filterCriteria && nextProps.filterCriteria.quick_filters) {
                 const quickFilters = { ...this.state.quickFilters, ...nextProps.filterCriteria.quick_filters };
-                
-                // Convert user IDs back to objects (KEY FIX!)
-                // if (quickFilters.responsible_users && Array.isArray(quickFilters.responsible_users)) {
-                //     if (quickFilters.responsible_users.length > 0 && typeof quickFilters.responsible_users[0] === 'number') {
-                //         // Convert IDs to objects using mock users
-                //         const allUsers = this.getMockUsers('');
-                //         quickFilters.responsible_users = allUsers.filter(user => 
-                //             quickFilters.responsible_users.includes(user.id)
-                //         );
-                //     }
-                // }
-                
                 this.state.quickFilters = quickFilters;
             }
             if (nextProps.filterCriteria && nextProps.filterCriteria.advanced_filters) {
