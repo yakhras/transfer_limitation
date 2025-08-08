@@ -1872,16 +1872,6 @@ class FilterBuilderComponent extends Component {
         return field?.string || fieldName;
     }
     
-    // clearAllFilters() {
-    //     this.state.quickFilters = {
-    //         active_only: true,
-    //         date_range: { enabled: true, from: '2025-01-01', to: '2025-12-31', field: 'create_date' },
-    //         responsible_users: [], tags: [], category_ids: [], country_ids: []
-    //     };
-    //     this.state.advancedFilters = { enabled: false, logic: 'AND', rules: [] };
-    //     this.state.showAdvanced = false;
-    //     this.notifyFilterChange();
-    // }
 
 
     clearAllFilters() {
