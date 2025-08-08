@@ -39,40 +39,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>John Smith</td>
-                                <td><a href="mailto:john.smith@company.com" class="email">john.smith@company.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Sarah Johnson</td>
-                                <td><a href="mailto:sarah@techstartup.io" class="email">sarah@techstartup.io</a></td>
-                            </tr>
-                            <tr>
-                                <td>Mike Davis</td>
-                                <td><a href="mailto:mike.davis@consulting.com" class="email">mike.davis@consulting.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Lisa Wilson</td>
-                                <td><a href="mailto:lisa.wilson@marketing.net" class="email">lisa.wilson@marketing.net</a></td>
-                            </tr>
-                            <tr>
-                                <td>Robert Taylor</td>
-                                <td><a href="mailto:robert.taylor@solutions.com" class="email">robert.taylor@solutions.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Jennifer Lee</td>
-                                <td><a href="mailto:jennifer.lee@business.org" class="email">jennifer.lee@business.org</a></td>
-                            </tr>
-                            <tr>
-                                <td>David Chen</td>
-                                <td><a href="mailto:david.chen@enterprise.com" class="email">david.chen@enterprise.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Amanda Miller</td>
-                                <td><a href="mailto:amanda.miller@startup.io" class="email">amanda.miller@startup.io</a></td>
+                            <tr t-foreach="selectedMailingList.contacts || []" 
+                                t-as="contact" 
+                                t-key="contact.id">
+                                <td t-esc="contact.name"></td>
+                                <td><a t-att-href="'mailto:' + contact.email" class="email" t-esc="contact.email"></a></td>
                             </tr>
                         </tbody>
-                    </table>
                     
                     <div class="show-more-section">
                         <div class="showing-info">

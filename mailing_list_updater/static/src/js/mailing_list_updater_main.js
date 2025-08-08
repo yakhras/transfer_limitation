@@ -388,6 +388,8 @@ class MailingListUpdaterMain extends Component {
     onMailingListSelected(mailingListId) {
         const selectedList = this.mailingLists.find(list => list.id === mailingListId);
         this.state.selectedMailingList = selectedList;
+        selectedList.contacts = [];
+        await this.loadMailingListContacts(mailingListId);
         
         // Reset downstream selections when mailing list changes
         this.state.selectedSources = [];
@@ -397,6 +399,31 @@ class MailingListUpdaterMain extends Component {
         // Update page title
         this.updatePageTitle();
     }
+
+    async loadMailingListContacts(mailingListId, offset = 0, limit = 20) {
+    try {
+        const contacts = await this.rpc({
+            model: "mailing.contact",
+            method: "search_read", 
+            args: [[["list_ids", "in", [mailingListId]]]],
+            kwargs: { 
+                fields: ["name", "email"],
+                offset: offset,
+                limit: limit,
+                order: "name"
+            }
+        });
+        
+        // Add contacts directly to selectedMailingList
+        if (offset === 0) {
+            this.state.selectedMailingList.contacts = contacts;
+        } else {
+            this.state.selectedMailingList.contacts.push(...contacts);
+        }
+    } catch (error) {
+        console.error("Failed to load contacts:", error);
+    }
+}
     
 
     // Add new method
