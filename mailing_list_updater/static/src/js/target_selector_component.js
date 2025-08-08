@@ -61,6 +61,20 @@ class TargetSelectorComponent extends Component {
                 console.log(`List: ${list.name} | ID: ${list.id} | Contact Count: ${list.contact_count}`);
             });
 
+            
+
+            this.state.availableTargetLists = response.map(list => ({
+                mailing_list_id: list.id,
+                name: list.name,
+                contact_count: list.contact_count, // Skip contact count for now
+                estimated_count: 0,
+                description: `Mailing list: ${list.name}`,
+                available: true,
+                recommended: false // Skip recommendation logic for now
+            }));
+
+            console.log('Lists loaded:', this.state.availableTargetLists);
+
             //Test fetching contacts
             const contacts = await this.env.services.orm.searchRead(
                 'mailing.contact',
@@ -74,18 +88,6 @@ class TargetSelectorComponent extends Component {
             contacts.forEach(contact => {
                 console.log(`List: ${contact.name} | ID: ${contact.id} | Contact Count: ${contact.email}`);
             });
-
-            this.state.availableTargetLists = response.map(list => ({
-                mailing_list_id: list.id,
-                name: list.name,
-                contact_count: list.contact_count, // Skip contact count for now
-                estimated_count: 0,
-                description: `Mailing list: ${list.name}`,
-                available: true,
-                recommended: false // Skip recommendation logic for now
-            }));
-
-            console.log('Lists loaded:', this.state.availableTargetLists);
 
         } catch (error) {
             console.error('Search failed:', error.message, error);
