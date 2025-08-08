@@ -405,7 +405,7 @@ class MailingListUpdaterMain extends Component {
             const contacts = await this.rpc({
                 model: "mailing.contact",
                 method: "search_read", 
-                args: [[["list_ids", "in", [mailingListId]]]],
+                args: [[["subscription_list_ids", "in", [mailingListId]]]],
                 kwargs: { 
                     fields: ["name", "email"],
                     offset: offset,
