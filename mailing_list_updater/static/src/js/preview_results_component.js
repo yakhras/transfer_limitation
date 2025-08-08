@@ -8,6 +8,7 @@ const { Component, useState } = owl;
 class PreviewResultsComponent extends Component {
     
     setup() {
+        console.log('PreviewResultsComponent setup');
         // Basic props from parent
         this.selectedMailingList = this.props.selectedMailingList;
         this.selectedSources = this.props.selectedSources || [];
