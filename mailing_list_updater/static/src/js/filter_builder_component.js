@@ -10,6 +10,7 @@ class FilterBuilderComponent extends Component {
     
     setup() {
         console.log('=== FILTER BUILDER SETUP ===');
+        console.log('Received selectedSources prop:', this.props.selectedSources);
         
         // Services (OWL 1.0 style for Odoo 15.0)
         this.orm = this.env.services.orm;
@@ -18,7 +19,6 @@ class FilterBuilderComponent extends Component {
         // Component state
         this.state = useState({
             // Quick filters (common for all sources)
-            filterCriteria: this.props.filterCriteria || {},
             quickFilters: {
                 active_only: true,
                 date_range: {
@@ -80,6 +80,9 @@ class FilterBuilderComponent extends Component {
         // Store selected sources from props
         this.selectedSources = this.props.selectedSources || [];
         
+        console.log('Initial selectedSources from props:', this.selectedSources);
+        console.log('Props selectedSources type:', typeof this.props.selectedSources);
+        console.log('Props selectedSources length:', this.props.selectedSources?.length || 0);
         
         // Debounce timer for user and company search
         this.searchTimeout = null;
@@ -87,7 +90,6 @@ class FilterBuilderComponent extends Component {
     }
     
     async willStart() {
-        console.log('=== FILTER BUILDER WILL START ===');
         this.state.isLoading = true;
 
         try {
@@ -123,6 +125,7 @@ class FilterBuilderComponent extends Component {
 
     mounted() {
         console.log('=== FILTER BUILDER MOUNTED ===');
+        console.log('Props selectedSources on mount:', this.props.selectedSources);
 
         // Update fields if selectedSources were passed
         if (this.props.selectedSources && this.props.selectedSources.length > 0) {
@@ -140,53 +143,59 @@ class FilterBuilderComponent extends Component {
                 }
             };
             document.addEventListener('click', this.boundClickHandler);
+            console.log('Click handler bound successfully');
         } catch (error) {
             console.error('Error binding click handler:', error);
         }
     }
 
     
-    // willUpdateProps(nextProps) {
-    //     console.log('=== FILTER BUILDER PROPS UPDATE ===');
+    /**
+     * Fixed willUpdateProps for FilterBuilderComponent
+     * Replace your existing willUpdateProps method with this one
+     */
+    willUpdateProps(nextProps) {
+        console.log('=== PROPS UPDATE ===');
         
-    //     if (nextProps.selectedSources !== this.props.selectedSources) {
-    //         this.selectedSources = nextProps.selectedSources || [];
-            
-    //         // Update fields only when sources actually change
-    //         this.updateFieldsForSelectedSources();
-    //     }
+        // Handle selectedSources changes (non-blocking)
+        if (nextProps.selectedSources !== this.selectedSources) {
+            this.selectedSources = nextProps.selectedSources || [];
+            this.updateFieldsForSelectedSources(); // Now non-blocking
+        }
         
-    //     // Handle filterCriteria changes
-    //     if (nextProps.filterCriteria !== this.props.filterCriteria) {
-    //         if (nextProps.filterCriteria && nextProps.filterCriteria.quick_filters) {
-    //             const quickFilters = { ...this.state.quickFilters, ...nextProps.filterCriteria.quick_filters };
+        // Handle filterCriteria changes
+        if (nextProps.filterCriteria !== this.props.filterCriteria) {
+            if (nextProps.filterCriteria && nextProps.filterCriteria.quick_filters) {
+                const quickFilters = { ...this.state.quickFilters, ...nextProps.filterCriteria.quick_filters };
                 
-    //             // Convert user IDs back to objects (KEY FIX!)
-    //             if (quickFilters.responsible_users && Array.isArray(quickFilters.responsible_users)) {
-    //                 if (quickFilters.responsible_users.length > 0 && typeof quickFilters.responsible_users[0] === 'number') {
-    //                     // Convert IDs to objects using mock users
-    //                     const allUsers = this.getMockUsers('');
-    //                     quickFilters.responsible_users = allUsers.filter(user => 
-    //                         quickFilters.responsible_users.includes(user.id)
-    //                     );
-    //                 }
-    //             }
+                // Convert user IDs back to objects (KEY FIX!)
+                if (quickFilters.responsible_users && Array.isArray(quickFilters.responsible_users)) {
+                    if (quickFilters.responsible_users.length > 0 && typeof quickFilters.responsible_users[0] === 'number') {
+                        // Convert IDs to objects using mock users
+                        const allUsers = this.getMockUsers('');
+                        quickFilters.responsible_users = allUsers.filter(user => 
+                            quickFilters.responsible_users.includes(user.id)
+                        );
+                    }
+                }
                 
-    //             this.state.quickFilters = quickFilters;
-    //         }
-    //         if (nextProps.filterCriteria && nextProps.filterCriteria.advanced_filters) {
-    //             this.state.advancedFilters = { 
-    //                 ...this.state.advancedFilters, 
-    //                 ...nextProps.filterCriteria.advanced_filters 
-    //             };
-    //         }
-    //     }
-    // }
+                this.state.quickFilters = quickFilters;
+            }
+            if (nextProps.filterCriteria && nextProps.filterCriteria.advanced_filters) {
+                this.state.advancedFilters = { 
+                    ...this.state.advancedFilters, 
+                    ...nextProps.filterCriteria.advanced_filters 
+                };
+            }
+        }
+    }
     
     updateFieldsForSelectedSources() {
         console.log('=== UPDATE FIELDS FOR SOURCES ===');
+        console.log('Selected sources:', this.selectedSources);
         
         if (!this.selectedSources || this.selectedSources.length === 0) {
+            console.log('No sources selected, clearing fields');
             this.state.availableFieldsByModel = {};
             this.state.availableFields = [];
             this.state.selectedModels = [];
@@ -195,6 +204,7 @@ class FilterBuilderComponent extends Component {
         
         // Extract model names from selected sources
         const modelNames = this.selectedSources.map(source => source.model_name);
+        console.log('Model names to load:', modelNames);
         
         this.state.selectedModels = modelNames;
         
@@ -218,6 +228,7 @@ class FilterBuilderComponent extends Component {
             const fieldsByModel = {};
             modelNames.forEach((modelName, index) => {
                 fieldsByModel[modelName] = fieldsResults[index];
+                console.log(`Loaded ${fieldsResults[index].length} fields for ${modelName}`);
             });
             
             this.state.availableFieldsByModel = fieldsByModel;
@@ -225,6 +236,8 @@ class FilterBuilderComponent extends Component {
             // Combine all fields with model prefix for the dropdown
             this.combineFieldsWithModelPrefix();
             
+            console.log('Final availableFieldsByModel:', this.state.availableFieldsByModel);
+            console.log('Final combined fields count:', this.state.availableFields.length);
             
         } catch (error) {
             console.error('Error loading fields for sources:', error);
@@ -251,6 +264,7 @@ class FilterBuilderComponent extends Component {
                     response = await this.orm.call(modelName, 'fields_get', [], {
                         attributes: ['string', 'type', 'required', 'readonly', 'selection']
                     });
+                    console.log(`ORM fields_get response for ${modelName}:`, response);
                 } catch (ormError) {
                     console.log(`ORM fields_get failed for ${modelName}:`, ormError);
                 }
@@ -267,6 +281,7 @@ class FilterBuilderComponent extends Component {
                             attributes: ['string', 'type', 'required', 'readonly', 'selection']
                         }
                     });
+                    console.log(`RPC fields_get response for ${modelName}:`, response);
                 } catch (rpcError) {
                     console.log(`RPC fields_get failed for ${modelName}:`, rpcError);
                 }
@@ -274,6 +289,7 @@ class FilterBuilderComponent extends Component {
             
             // Method 3: Use mock fields if API fails
             if (!response) {
+                console.log(`Using mock fields for ${modelName}`);
                 response = this.getMockFieldsForModel(modelName);
             }
             
@@ -432,6 +448,7 @@ class FilterBuilderComponent extends Component {
         combinedFields.sort((a, b) => a.string.localeCompare(b.string));
         
         this.state.availableFields = combinedFields;
+        console.log(`Combined ${combinedFields.length} fields from ${Object.keys(this.state.availableFieldsByModel).length} models`);
     }
 
     /**
@@ -448,12 +465,14 @@ class FilterBuilderComponent extends Component {
         console.log('=== LOAD DEFAULT USERS ===');
         
         try {
+            console.log('Attempting to load default users...');
             
             const domain = [['active', '=', true], ['share', '=', false]]; // Active internal users
             let response = null;
             
             // Method 1: Try ORM service (Odoo 15.0 preferred)
             if (this.orm) {
+                console.log('Trying ORM service for default users...');
                 try {
                     response = await this.orm.searchRead(
                         'res.users',
@@ -461,6 +480,7 @@ class FilterBuilderComponent extends Component {
                         ['id', 'name', 'email'],
                         { limit: 3 }
                     );
+                    console.log('ORM service response for default users:', response);
                 } catch (ormError) {
                     console.log('ORM service failed for default users:', ormError);
                 }
@@ -468,6 +488,7 @@ class FilterBuilderComponent extends Component {
             
             // Method 2: Try RPC service
             if (!response && this.rpc) {
+                console.log('Trying RPC service for default users...');
                 try {
                     response = await this.rpc('/web/dataset/search_read', {
                         model: 'res.users',
@@ -479,6 +500,7 @@ class FilterBuilderComponent extends Component {
                     if (response && response.records) {
                         response = response.records;
                     }
+                    console.log('RPC service response for default users:', response);
                 } catch (rpcError) {
                     console.log('RPC service failed for default users:', rpcError);
                 }
@@ -486,6 +508,7 @@ class FilterBuilderComponent extends Component {
             
             // Method 3: Use mock data fallback
             if (!response) {
+                console.log('Using mock data for default users');
                 response = [
                     { id: 1, name: 'John Smith', email: 'john.smith@company.com' },
                     { id: 2, name: 'Sarah Johnson', email: 'sarah.johnson@company.com' },
@@ -493,9 +516,12 @@ class FilterBuilderComponent extends Component {
                 ];
             }
             
+            console.log('Final default users response:', response);
             
             if (response && response.length) {
+                console.log('Loading', response.length, 'default users');
                 this.state.quickFilters.responsible_users = response;
+                console.log('Updated responsible_users state:', this.state.quickFilters.responsible_users);
             } else {
                 console.log('No default users found or empty response');
             }
@@ -504,6 +530,7 @@ class FilterBuilderComponent extends Component {
             console.error("Error object:", error);
             
             // Set mock data on error
+            console.log('Setting mock default users due to error');
             this.state.quickFilters.responsible_users = [
                 { id: 1, name: 'John Smith', email: 'john.smith@company.com' },
                 { id: 2, name: 'Sarah Johnson', email: 'sarah.johnson@company.com' },
@@ -517,32 +544,41 @@ class FilterBuilderComponent extends Component {
      */
     onUserSearch(query) {
         console.log('=== USER SEARCH DEBUG ===');
+        console.log('Search query input:', query);
         
         this.state.userSearch.query = query;
         
         // Clear previous timeout
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout);
+            console.log('Cleared previous search timeout');
         }
         
         // Debounce search
         this.searchTimeout = setTimeout(() => {
+            console.log('Executing debounced search for:', query);
             this.searchUsers(query);
         }, 300);
         
+        console.log('Search timeout set for 300ms');
     }
     
     /**
      * Search users in res.users model
      */
     async searchUsers(query) {
+        console.log('=== SEARCH USERS METHOD ===');
+        console.log('Query:', query);
+        console.log('Query length:', query ? query.length : 0);
         
         if (!query || query.length < 2) {
+            console.log('Query too short, clearing results');
             this.state.userSearch.results = [];
             return;
         }
         
         this.state.userSearch.loading = true;
+        console.log('Set loading to true');
         
         try {
             const domain = [
@@ -553,11 +589,13 @@ class FilterBuilderComponent extends Component {
                 ['email', 'ilike', query]
             ];
             
+            console.log('Search domain:', JSON.stringify(domain, null, 2));
             
             let response = null;
             
             // Method 1: Try ORM service (Odoo 15.0 preferred)
             if (this.orm) {
+                console.log('Trying ORM service...');
                 try {
                     response = await this.orm.searchRead(
                         'res.users',
@@ -565,6 +603,7 @@ class FilterBuilderComponent extends Component {
                         ['id', 'name', 'email'],
                         { limit: 10 }
                     );
+                    console.log('ORM service response:', response);
                 } catch (ormError) {
                     console.log('ORM service failed:', ormError);
                 }
@@ -572,6 +611,7 @@ class FilterBuilderComponent extends Component {
             
             // Method 2: Try RPC service with correct format
             if (!response && this.rpc) {
+                console.log('Trying RPC service...');
                 try {
                     response = await this.rpc('/web/dataset/search_read', {
                         model: 'res.users',
@@ -579,6 +619,7 @@ class FilterBuilderComponent extends Component {
                         fields: ['id', 'name', 'email'],
                         limit: 10
                     });
+                    console.log('RPC service response:', response);
                     
                     // Extract records if response has records property
                     if (response && response.records) {
@@ -591,9 +632,11 @@ class FilterBuilderComponent extends Component {
             
             // Method 3: Mock data fallback for development
             if (!response) {
+                console.log('All methods failed, using mock data for development');
                 response = this.getMockUsers(query);
             }
             
+            console.log('Final response:', response);
             
             if (response && response.length > 0) {
                 console.log('Sample user from response:', response[0]);
@@ -601,19 +644,24 @@ class FilterBuilderComponent extends Component {
             
             // Filter out already selected users
             const selectedIds = this.state.quickFilters.responsible_users.map(u => u.id);
+            console.log('Currently selected user IDs:', selectedIds);
             
             const filteredResults = response.filter(user => !selectedIds.includes(user.id));
+            console.log('Filtered results (excluding selected):', filteredResults);
             
             this.state.userSearch.results = filteredResults;
+            console.log('Updated search results state:', this.state.userSearch.results);
             
         } catch (error) {
             console.error("=== USER SEARCH ERROR ===");
             console.error("Error object:", error);
             
             // Fallback to mock data on error
+            console.log('Using mock data fallback due to error');
             this.state.userSearch.results = this.getMockUsers(query);
         } finally {
             this.state.userSearch.loading = false;
+            console.log('Set loading to false');
         }
     }
     
@@ -643,44 +691,60 @@ class FilterBuilderComponent extends Component {
      * Show/hide user suggestions
      */
     showUserSuggestions(show) {
+        console.log('=== SHOW USER SUGGESTIONS ===');
+        console.log('Show suggestions:', show);
+        console.log('Current query:', this.state.userSearch.query);
         
         this.state.userSearch.showSuggestions = show;
         
         if (show && this.state.userSearch.query) {
+            console.log('Triggering search because suggestions shown and query exists');
             this.searchUsers(this.state.userSearch.query);
         } else {
             console.log('Not triggering search - show:', show, 'query:', this.state.userSearch.query);
         }
         
+        console.log('Updated showSuggestions state:', this.state.userSearch.showSuggestions);
     }
     
     /**
      * Select a user from search results
      */
     selectUser(user) {
+        console.log('=== SELECT USER ===');
+        console.log('Selected user:', user);
+        console.log('Current responsible users:', this.state.quickFilters.responsible_users);
         
         // Add user to selected list
         this.state.quickFilters.responsible_users.push(user);
+        console.log('Updated responsible users:', this.state.quickFilters.responsible_users);
         
         // Clear search
         this.state.userSearch.query = '';
         this.state.userSearch.results = [];
         this.state.userSearch.showSuggestions = false;
         
+        console.log('Cleared search state');
         
         // Notify change
         this.notifyFilterChange();
+        console.log('Notified filter change');
     }
     
     /**
      * Remove selected user
      */
     removeSelectedUser(userId) {
+        console.log('=== REMOVE USER ===');
+        console.log('Removing user ID:', userId);
+        console.log('Current users:', this.state.quickFilters.responsible_users);
         
         const index = this.state.quickFilters.responsible_users.findIndex(u => u.id === userId);
+        console.log('Found user at index:', index);
         
         if (index !== -1) {
             this.state.quickFilters.responsible_users.splice(index, 1);
+            console.log('User removed, updated list:', this.state.quickFilters.responsible_users);
             this.notifyFilterChange();
         } else {
             console.log('User not found in list');
@@ -691,14 +755,17 @@ class FilterBuilderComponent extends Component {
      * Load default companies (similar to users)
      */
     async loadDefaultCompanies() {
+        console.log('=== LOAD DEFAULT COMPANIES ===');
         
         try {
+            console.log('Attempting to load default companies...');
             
             const domain = [['active', '=', true]]; // Active companies only
             let response = null;
             
             // Method 1: Try ORM service (Odoo 15.0 preferred)
             if (this.orm) {
+                console.log('Trying ORM service for default companies...');
                 try {
                     response = await this.orm.searchRead(
                         'res.company',
@@ -706,6 +773,7 @@ class FilterBuilderComponent extends Component {
                         ['id', 'name',],
                         { limit: 5 }
                     );
+                    console.log('ORM service response for default companies:', response);
                 } catch (ormError) {
                     console.log('ORM service failed for default companies:', ormError);
                 }
@@ -713,6 +781,7 @@ class FilterBuilderComponent extends Component {
             
             // Method 2: Try RPC service
             if (!response && this.rpc) {
+                console.log('Trying RPC service for default companies...');
                 try {
                     response = await this.rpc('/web/dataset/search_read', {
                         model: 'res.company',
@@ -724,6 +793,7 @@ class FilterBuilderComponent extends Component {
                     if (response && response.records) {
                         response = response.records;
                     }
+                    console.log('RPC service response for default companies:', response);
                 } catch (rpcError) {
                     console.log('RPC service failed for default companies:', rpcError);
                 }
@@ -731,6 +801,7 @@ class FilterBuilderComponent extends Component {
             
             // Method 3: Use current company from environment or mock data
             if (!response) {
+                console.log('Using current company from environment or mock data');
                 const currentCompany = this.env.services?.company?.currentCompany;
                 
                 if (currentCompany) {
@@ -742,13 +813,17 @@ class FilterBuilderComponent extends Component {
                 }
             }
             
+            console.log('Final default companies response:', response);
             
             if (response && response.length) {
+                console.log('Loading', response.length, 'default companies');
                 this.state.quickFilters.companies = response;
+                console.log('Updated companies state:', this.state.quickFilters.companies);
             } else {
                 console.log('No default companies found');
             }
         } catch (error) {
+            console.error("=== DEFAULT COMPANIES LOAD ERROR ===");
             console.error("Error object:", error);
             
             // Set current company or mock data on error
@@ -763,43 +838,55 @@ class FilterBuilderComponent extends Component {
      * Handle company search input
      */
     onCompanySearch(query) {
+        console.log('=== COMPANY SEARCH DEBUG ===');
+        console.log('Search query input:', query);
         
         this.state.companySearch.query = query;
         
         // Clear previous timeout
         if (this.companySearchTimeout) {
             clearTimeout(this.companySearchTimeout);
+            console.log('Cleared previous company search timeout');
         }
         
         // Debounce search
         this.companySearchTimeout = setTimeout(() => {
+            console.log('Executing debounced company search for:', query);
             this.searchCompanies(query);
         }, 300);
         
+        console.log('Company search timeout set for 300ms');
     }
     
     /**
      * Search companies in res.company model
      */
     async searchCompanies(query) {
+        console.log('=== SEARCH COMPANIES METHOD ===');
+        console.log('Query:', query);
+        console.log('Query length:', query ? query.length : 0);
         
         if (!query || query.length < 2) {
+            console.log('Query too short, clearing results');
             this.state.companySearch.results = [];
             return;
         }
         
         this.state.companySearch.loading = true;
+        console.log('Set loading to true');
         
         try {
             const domain = [
                 ['name', 'ilike', query]
             ];
             
+            console.log('Search domain:', JSON.stringify(domain, null, 2));
             
             let response = null;
             
             // Method 1: Try ORM service (Odoo 15.0 preferred)
             if (this.orm) {
+                console.log('Trying ORM service...');
                 try {
                     response = await this.orm.searchRead(
                         'res.company',
@@ -807,6 +894,7 @@ class FilterBuilderComponent extends Component {
                         ['id', 'name'],
                         { limit: 10 }
                     );
+                    console.log('ORM service response:', response);
                 } catch (ormError) {
                     console.log('ORM service failed:', ormError);
                 }
@@ -814,6 +902,7 @@ class FilterBuilderComponent extends Component {
             
             // Method 2: Try RPC service with correct format
             if (!response && this.rpc) {
+                console.log('Trying RPC service...');
                 try {
                     response = await this.rpc('/web/dataset/search_read', {
                         model: 'res.company',
@@ -821,6 +910,7 @@ class FilterBuilderComponent extends Component {
                         fields: ['id', 'name'],
                         limit: 10
                     });
+                    console.log('RPC service response:', response);
                     
                     // Extract records if response has records property
                     if (response && response.records) {
@@ -833,9 +923,11 @@ class FilterBuilderComponent extends Component {
             
             // Method 3: Mock data fallback for development
             if (!response) {
+                console.log('All methods failed, using mock data for development');
                 response = this.getMockCompanies(query);
             }
             
+            console.log('Final response:', response);
             
             if (response && response.length > 0) {
                 console.log('Sample company from response:', response[0]);
@@ -843,18 +935,24 @@ class FilterBuilderComponent extends Component {
             
             // Filter out already selected companies
             const selectedIds = this.state.quickFilters.companies.map(c => c.id);
+            console.log('Currently selected company IDs:', selectedIds);
             
             const filteredResults = response.filter(company => !selectedIds.includes(company.id));
+            console.log('Filtered results (excluding selected):', filteredResults);
             
             this.state.companySearch.results = filteredResults;
+            console.log('Updated search results state:', this.state.companySearch.results);
             
         } catch (error) {
+            console.error("=== COMPANY SEARCH ERROR ===");
             console.error("Error object:", error);
             
             // Fallback to mock data on error
+            console.log('Using mock data fallback due to error');
             this.state.companySearch.results = this.getMockCompanies(query);
         } finally {
             this.state.companySearch.loading = false;
+            console.log('Set loading to false');
         }
     }
     
@@ -879,6 +977,8 @@ class FilterBuilderComponent extends Component {
      * Show/hide company suggestions
      */
     showCompanySuggestions(show) {
+        console.log('=== SHOW COMPANY SUGGESTIONS ===');
+        console.log('Show suggestions:', show);
         
         this.state.companySearch.showSuggestions = show;
         
@@ -891,9 +991,12 @@ class FilterBuilderComponent extends Component {
      * Select a company from search results
      */
     selectCompany(company) {
+        console.log('=== SELECT COMPANY ===');
+        console.log('Selected company:', company);
         
         // Add company to selected list
         this.state.quickFilters.companies.push(company);
+        console.log('Updated companies:', this.state.quickFilters.companies);
         
         // Clear search
         this.state.companySearch.query = '';
@@ -908,6 +1011,8 @@ class FilterBuilderComponent extends Component {
      * Remove selected company (WITH SAFETY CHECKS)
      */
     removeSelectedCompany(companyId) {
+        console.log('=== REMOVE COMPANY ===');
+        console.log('Removing company ID:', companyId);
         
         // Ensure companies array exists
         if (!this.state.quickFilters.companies) {
@@ -919,6 +1024,7 @@ class FilterBuilderComponent extends Component {
         
         if (index !== -1) {
             this.state.quickFilters.companies.splice(index, 1);
+            console.log('Company removed, updated list:', this.state.quickFilters.companies);
             this.notifyFilterChange();
         }
     }
@@ -927,10 +1033,12 @@ class FilterBuilderComponent extends Component {
      * Handle click outside to close user and company suggestions
      */
     handleClickOutside(event) {
+        console.log('=== HANDLE CLICK OUTSIDE ===');
         
         try {
             const searchContainer = event.target.closest('.search-container');
             if (!searchContainer) {
+                console.log('Clicked outside search containers, closing suggestions');
                 
                 if (this.state.userSearch) {
                     this.state.userSearch.showSuggestions = false;
@@ -949,6 +1057,7 @@ class FilterBuilderComponent extends Component {
      * Handle quick filter changes
      */
     onQuickFilterChange(filterType, value) {
+        console.log('Quick filter change:', filterType, value);
         this.state.quickFilters[filterType] = value;
         this.notifyFilterChange();
     }
@@ -957,6 +1066,7 @@ class FilterBuilderComponent extends Component {
      * Handle date range filter changes
      */
     onDateRangeChange(field, value) {
+        console.log('Date range change:', field, value);
         this.state.quickFilters.date_range[field] = value;
         this.notifyFilterChange();
     }
@@ -995,8 +1105,11 @@ class FilterBuilderComponent extends Component {
      * Handle new rule field selection - UPDATED for model-aware fields
      */
     onRuleFieldChange(fieldName) {
+        console.log('=== RULE FIELD CHANGE ===');
+        console.log('Selected field name:', fieldName);
         
         const field = this.state.availableFields.find(f => f.name === fieldName);
+        console.log('Found field definition:', field);
         
         this.state.newRule.field = fieldName;
         this.state.newRule.field_type = field?.type || '';
@@ -1004,6 +1117,7 @@ class FilterBuilderComponent extends Component {
         this.state.newRule.operator = this.getDefaultOperator(field?.type);
         this.state.newRule.value = '';
         
+        console.log('Updated new rule state:', this.state.newRule);
     }
     
     // ... (keep all other existing methods like getDefaultOperator, etc.)
@@ -1046,12 +1160,14 @@ class FilterBuilderComponent extends Component {
      * NEW - Generate actual Odoo domains for each model (WITH ERROR HANDLING)
      */
     generateOdooDomainsPerModel() {
+        console.log('=== GENERATE ODOO DOMAINS ===');
         
         try {
             const domainsByModel = {};
             
             // Ensure we have selected models
             if (!this.state.selectedModels || this.state.selectedModels.length === 0) {
+                console.log('No selected models, returning empty domains');
                 return domainsByModel;
             }
             
@@ -1062,6 +1178,7 @@ class FilterBuilderComponent extends Component {
                 }
             });
             
+            console.log('Initialized domains for models:', Object.keys(domainsByModel));
             
             // Add quick filters (common to all models)
             this.addQuickFilterDomains(domainsByModel);
@@ -1069,6 +1186,7 @@ class FilterBuilderComponent extends Component {
             // Add advanced filter rules (model-specific)
             this.addAdvancedFilterDomains(domainsByModel);
             
+            console.log('Final generated domains:', domainsByModel);
             return domainsByModel;
             
         } catch (error) {
@@ -1081,14 +1199,17 @@ class FilterBuilderComponent extends Component {
      * NEW - Add quick filter domains to all models (WITH USER-SELECTED COMPANIES)
      */
     addQuickFilterDomains(domainsByModel) {
+        console.log('=== ADD QUICK FILTER DOMAINS ===');
         
         try {
             if (!domainsByModel || typeof domainsByModel !== 'object') {
+                console.warn('Invalid domainsByModel parameter');
                 return;
             }
             
             const modelNames = Object.keys(domainsByModel);
             if (modelNames.length === 0) {
+                console.log('No models to add quick filters to');
                 return;
             }
             
@@ -1123,6 +1244,7 @@ class FilterBuilderComponent extends Component {
                     }
                 });
                 
+                console.log(`Added date range filter: ${dateField} >= ${fromDate} AND <= ${toDate}`);
             }
             
             // Active only filter (applies to all models)
@@ -1132,6 +1254,7 @@ class FilterBuilderComponent extends Component {
                         domainsByModel[modelName].push(['active', '=', true]);
                     }
                 });
+                console.log('Added active_only filter to all models');
             }
             
             // Responsible users filter (model-specific field mapping)
@@ -1171,16 +1294,20 @@ class FilterBuilderComponent extends Component {
      * NEW - Add advanced filter rule domains per model (WITH ERROR HANDLING)
      */
     addAdvancedFilterDomains(domainsByModel) {
+        console.log('=== ADD ADVANCED FILTER DOMAINS ===');
         
         try {
             if (!domainsByModel || typeof domainsByModel !== 'object') {
+                console.warn('Invalid domainsByModel parameter');
                 return;
             }
             
             if (!this.state.advancedFilters?.enabled || !this.state.advancedFilters?.rules?.length) {
+                console.log('No advanced filters to process');
                 return;
             }
             
+            console.log('Advanced rules:', this.state.advancedFilters.rules);
             
             // Group rules by model
             const rulesByModel = {};
@@ -1208,6 +1335,7 @@ class FilterBuilderComponent extends Component {
                 }
             });
             
+            console.log('Rules grouped by model:', rulesByModel);
             
             // Add rules to each model's domain
             Object.keys(rulesByModel).forEach(modelName => {
@@ -1234,6 +1362,7 @@ class FilterBuilderComponent extends Component {
                             }
                         }
                         
+                        console.log(`Added ${modelRules.length} advanced rules to ${modelName}`);
                     }
                 } catch (modelError) {
                     console.error(`Error adding rules for model ${modelName}:`, modelError);
@@ -1249,6 +1378,9 @@ class FilterBuilderComponent extends Component {
      * NEW - Convert a filter rule to Odoo domain tuple
      */
     convertRuleToDomainTuple(rule, fieldName) {
+        console.log('=== CONVERT RULE TO DOMAIN ===');
+        console.log('Rule:', rule);
+        console.log('Field name:', fieldName);
         
         try {
             let value = rule.value;
@@ -1262,6 +1394,7 @@ class FilterBuilderComponent extends Component {
                 case 'integer':
                     value = parseInt(value, 10);
                     if (isNaN(value)) {
+                        console.warn('Invalid integer value:', rule.value);
                         return null;
                     }
                     break;
@@ -1270,6 +1403,7 @@ class FilterBuilderComponent extends Component {
                 case 'monetary':
                     value = parseFloat(value);
                     if (isNaN(value)) {
+                        console.warn('Invalid float value:', rule.value);
                         return null;
                     }
                     break;
@@ -1306,6 +1440,7 @@ class FilterBuilderComponent extends Component {
             }
             
             const domainTuple = [fieldName, rule.operator, value];
+            console.log('Generated domain tuple:', domainTuple);
             
             return domainTuple;
             
@@ -1416,15 +1551,18 @@ class FilterBuilderComponent extends Component {
      * NEW - Test domain generation and show results in UI (SIMPLIFIED + ERROR HANDLING)
      */
     testDomainGeneration() {
+        console.log('=== DOMAIN GENERATION TEST ===');
         
         try {
             const filters = this.getCurrentFilters();
+            console.log('Current filters:', filters);
             
             if (!filters) {
                 throw new Error('No filters available');
             }
             
             const domains = filters.generated_domains;
+            console.log('Generated domains by model:', domains);
             
             if (!domains || typeof domains !== 'object') {
                 throw new Error('Invalid domains generated');
@@ -1435,6 +1573,7 @@ class FilterBuilderComponent extends Component {
             
             // Safely convert domains to simple displayable format
             const domainKeys = Object.keys(domains);
+            console.log('Domain keys:', domainKeys);
             
             domainKeys.forEach(modelName => {
                 const sourceName = this.selectedSources?.find(s => s.model_name === modelName)?.name || modelName;
@@ -1467,6 +1606,7 @@ class FilterBuilderComponent extends Component {
                 }, {}) // ✅ YOUR FIX - fallback preview if needed in XML
             };
             
+            console.log('Simple test results:', this.state.domainTestResults);
             
         } catch (error) {
             console.error('Domain generation test failed:', error);
@@ -1489,6 +1629,7 @@ class FilterBuilderComponent extends Component {
      * NEW - Test domains with backend and get record counts
      */
     async testDomainsWithBackend() {
+        console.log('=== TEST DOMAINS WITH BACKEND ===');
         
         this.state.backendTestResults = null;
         this.state.backendTesting = true;
@@ -1498,6 +1639,7 @@ class FilterBuilderComponent extends Component {
             const filters = this.getCurrentFilters();
             const domains = filters.generated_domains;
             
+            console.log('Sending domains to backend:', domains);
             
             if (!domains || Object.keys(domains).length === 0) {
                 throw new Error('No domains to test. Please apply some filters first.');
@@ -1510,6 +1652,7 @@ class FilterBuilderComponent extends Component {
                 test_only: true // Flag to indicate this is just a count test
             };
             
+            console.log('Backend request data:', requestData);
             
             // Method 1: Try ORM service call
             let response = null;
@@ -1518,6 +1661,7 @@ class FilterBuilderComponent extends Component {
                 try {
                     // Try calling a custom method on a model
                     response = await this.orm.call('mailing.list', 'test_filter_domains', [], requestData);
+                    console.log('ORM service response:', response);
                 } catch (ormError) {
                     console.log('ORM service failed, trying RPC:', ormError);
                 }
@@ -1527,6 +1671,7 @@ class FilterBuilderComponent extends Component {
             if (!response && this.rpc) {
                 try {
                     response = await this.rpc('/mailing/test/domains', requestData);
+                    console.log('RPC endpoint response:', response);
                 } catch (rpcError) {
                     console.log('RPC endpoint failed:', rpcError);
                 }
@@ -1539,6 +1684,7 @@ class FilterBuilderComponent extends Component {
                         route: '/mailing/test/domains',
                         params: requestData
                     });
+                    console.log('Alternative RPC response:', response);
                 } catch (altError) {
                     console.log('Alternative RPC failed:', altError);
                 }
@@ -1546,9 +1692,11 @@ class FilterBuilderComponent extends Component {
             
             // Method 4: Mock response for development/testing
             if (!response) {
+                console.log('All backend methods failed, using mock response');
                 response = this.getMockBackendResponse(domains);
             }
             
+            console.log('Final backend response:', response);
             
             // Process response
             if (response && response.success) {
@@ -1579,6 +1727,7 @@ class FilterBuilderComponent extends Component {
             this.state.backendTesting = false;
         }
         
+        console.log('Backend test results:', this.state.backendTestResults);
         return this.state.backendTestResults;
     }
     
@@ -1586,6 +1735,7 @@ class FilterBuilderComponent extends Component {
      * NEW - Mock backend response for development (WITH COMPANY CONTEXT)
      */
     getMockBackendResponse(domains) {
+        console.log('=== GENERATING MOCK BACKEND RESPONSE ===');
         
         const results = [];
         let totalRecords = 0;
@@ -1638,6 +1788,7 @@ class FilterBuilderComponent extends Component {
      * NEW - Clear domain test results
      */
     clearDomainTestResults() {
+        console.log('Clearing domain test results');
         this.state.domainTestResults = null;
     }
     
@@ -1645,8 +1796,10 @@ class FilterBuilderComponent extends Component {
      * NEW - Test res.company model connection
      */
     async testCompanyConnection() {
+        console.log('=== TEST COMPANY CONNECTION ===');
         
         try {
+            console.log('🔍 Testing direct connection to res.company model...');
             
             let testResults = {
                 orm_test: null,
@@ -1657,6 +1810,7 @@ class FilterBuilderComponent extends Component {
             
             // Test 1: ORM Service
             if (this.orm) {
+                console.log('🧪 Testing ORM service...');
                 try {
                     const ormResult = await this.orm.searchRead(
                         'res.company',
@@ -1665,13 +1819,16 @@ class FilterBuilderComponent extends Component {
                         { limit: 5 }
                     );
                     testResults.orm_test = { success: true, count: ormResult.length, data: ormResult };
+                    console.log('✅ ORM Test SUCCESS:', ormResult);
                 } catch (ormError) {
                     testResults.orm_test = { success: false, error: ormError.message };
+                    console.log('❌ ORM Test FAILED:', ormError);
                 }
             }
             
             // Test 2: RPC Service
             if (this.rpc) {
+                console.log('🧪 Testing RPC service...');
                 try {
                     const rpcResult = await this.rpc('/web/dataset/search_read', {
                         model: 'res.company',
@@ -1682,20 +1839,26 @@ class FilterBuilderComponent extends Component {
                     
                     const records = rpcResult.records || rpcResult;
                     testResults.rpc_test = { success: true, count: records.length, data: records };
+                    console.log('✅ RPC Test SUCCESS:', records);
                 } catch (rpcError) {
                     testResults.rpc_test = { success: false, error: rpcError.message };
+                    console.log('❌ RPC Test FAILED:', rpcError);
                 }
             }
             
             // Test 3: Environment Company
+            console.log('🧪 Testing environment company...');
             const envCompany = this.env.services?.company?.currentCompany;
             if (envCompany) {
                 testResults.environment_test = { success: true, data: envCompany };
+                console.log('✅ Environment Test SUCCESS:', envCompany);
             } else {
                 testResults.environment_test = { success: false, error: 'No company in environment' };
+                console.log('❌ Environment Test FAILED: No company found');
             }
             
             // Show results
+            console.log('📊 COMPLETE TEST RESULTS:', testResults);
             
             // Show alert with results
             const successfulMethods = [];
@@ -1712,6 +1875,7 @@ class FilterBuilderComponent extends Component {
             return testResults;
             
         } catch (error) {
+            console.error('❌ COMPANY CONNECTION TEST ERROR:', error);
             alert(`❌ TEST FAILED: ${error.message}\n\nCheck console for details.`);
         }
     }
@@ -1720,11 +1884,14 @@ class FilterBuilderComponent extends Component {
      * NEW - Debug company search functionality
      */
     async debugCompanySearch() {
+        console.log('=== COMPANY SEARCH DEBUG MODE ===');
         
         const query = this.state.companySearch.query || 'test';
+        console.log('🐛 Debug search for query:', query);
         
         try {
             // Test 1: Simple name search
+            console.log('🧪 TEST 1: Simple name search');
             if (this.orm) {
                 try {
                     const test1 = await this.orm.searchRead(
@@ -1733,12 +1900,14 @@ class FilterBuilderComponent extends Component {
                         ['id', 'name'],
                         { limit: 5 }
                     );
+                    console.log('✅ TEST 1 SUCCESS:', test1);
                 } catch (e) {
                     console.log('❌ TEST 1 FAILED:', e.message);
                 }
             }
             
             // Test 2: Get all companies first
+            console.log('🧪 TEST 2: Get all companies');
             if (this.orm) {
                 try {
                     const test2 = await this.orm.searchRead(
@@ -1747,6 +1916,7 @@ class FilterBuilderComponent extends Component {
                         ['id', 'name', 'display_name'],
                         { limit: 10 }
                     );
+                    console.log('✅ TEST 2 SUCCESS - All companies:', test2);
                     
                     // Show alert with company names
                     const companyNames = test2.map(c => c.name).join(', ');
@@ -1758,8 +1928,14 @@ class FilterBuilderComponent extends Component {
             }
             
             // Test 3: Check current search state
+            console.log('🧪 TEST 3: Current search state');
+            console.log('Query:', this.state.companySearch.query);
+            console.log('Results:', this.state.companySearch.results);
+            console.log('Loading:', this.state.companySearch.loading);
+            console.log('Show suggestions:', this.state.companySearch.showSuggestions);
             
         } catch (error) {
+            console.error('❌ DEBUG ERROR:', error);
             alert(`Debug failed: ${error.message}`);
         }
     }
@@ -1768,6 +1944,7 @@ class FilterBuilderComponent extends Component {
      * NEW - Clear backend test results
      */
     clearBackendTestResults() {
+        console.log('Clearing backend test results');
         this.state.backendTestResults = null;
     }
     
