@@ -63,7 +63,7 @@ class TargetSelectorComponent extends Component {
 
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
-                display_name: list.contact_ids.email,
+                display_name: list.contact_ids.map(contact => ({email:contact.email})), // Join emails for display
                 name: list.name,
                 contact_count: list.contact_count, // Skip contact count for now
                 estimated_count: 0,
