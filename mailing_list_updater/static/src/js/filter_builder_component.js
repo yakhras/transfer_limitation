@@ -97,9 +97,9 @@ class FilterBuilderComponent extends Component {
             this.state.companySearch = this.state.companySearch || {
                 query: '', results: [], showSuggestions: false, loading: false
             };
-            // this.state.userSearch = this.state.userSearch || {
-            //     query: '', results: [], showSuggestions: false, loading: false
-            // };
+            this.state.userSearch = this.state.userSearch || {
+                query: '', results: [], showSuggestions: false, loading: false
+            };
 
             // Restore from props if available
             // if (this.props.filterCriteria && Object.keys(this.props.filterCriteria).length > 0) {
