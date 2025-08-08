@@ -112,7 +112,7 @@ class TargetSelectorComponent extends Component {
             //     ['name', 'email', 'list_ids'],
             //     { limit: 10 }
             // );
-            console.log('All contacts sample:', allContacts);
+            // console.log('All contacts sample:', allContacts);
             
             // Test 2: Try different domain syntax
             const contacts = await this.env.services.orm.searchRead(
@@ -121,6 +121,7 @@ class TargetSelectorComponent extends Component {
                 ['name', 'email'],
                 { limit: 50, order: 'name' }
             );
+            console.log('Contacts fetched:', contacts.length, 'for list ID:', mailingListId);
             return contacts;
         } catch (error) {
             console.error('Failed to fetch contacts:', error);
