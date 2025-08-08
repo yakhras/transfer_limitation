@@ -103,9 +103,21 @@ class TargetSelectorComponent extends Component {
 
     async fetchMailingListContacts(mailingListId) {
         try {
+            console.log('Searching for contacts in list:', mailingListId);
+            
+            // Test 1: Get all contacts first
+            const allContacts = await this.env.services.orm.searchRead(
+                'mailing.contact',
+                [],
+                ['name', 'email', 'list_ids'],
+                { limit: 10 }
+            );
+            console.log('All contacts sample:', allContacts);
+            
+            // Test 2: Try different domain syntax
             const contacts = await this.env.services.orm.searchRead(
                 'mailing.contact',
-                [['list_ids', 'in', [mailingListId]]],
+                [['list_ids', '=', mailingListId]], // Try = instead of in
                 ['name', 'email'],
                 { limit: 50, order: 'name' }
             );
