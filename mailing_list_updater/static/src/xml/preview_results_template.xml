@@ -46,6 +46,7 @@
                                 <td><a t-att-href="'mailto:' + contact.email" class="email" t-esc="contact.email"></a></td>
                             </tr>
                         </tbody>
+                    </table>
                     
                     <div class="show-more-section">
                         <div class="showing-info">
