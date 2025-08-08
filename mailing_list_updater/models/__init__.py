@@ -5,7 +5,7 @@ from . import mailing_list_update_batch
 from . import mailing_contact_tracking
 from . import mailing_filter_template
 from . import mailing_operation_audit
-# from . import mailing_contact
+from . import mailing_contact
 from . import deduplication_engine
 from . import batch_processor
 from . import mailing_list_extension

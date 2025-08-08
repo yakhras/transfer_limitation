@@ -44,7 +44,7 @@
         </record>
 
         <!-- Registry Configuration Action (Traditional view for admin) -->
-        <!-- <record id="action_source_registry" model="ir.actions.act_window">
+        <record id="action_source_registry" model="ir.actions.act_window">
             <field name="name">Contact Source Registry</field>
             <field name="res_model">mailing.source.registry</field>
             <field name="view_mode">tree,form</field>
@@ -60,10 +60,10 @@
                     for each source.
                 </p>
             </field>
-        </record> -->
+        </record>
 
         <!-- Filter Templates Action (Traditional view) -->
-        <!-- <record id="action_filter_templates" model="ir.actions.act_window">
+        <record id="action_filter_templates" model="ir.actions.act_window">
             <field name="name">Filter Templates</field>
             <field name="res_model">mailing.filter.template</field>
             <field name="view_mode">tree,form</field>
@@ -78,10 +78,10 @@
                     Templates can be private or shared with other users.
                 </p>
             </field>
-        </record> -->
+        </record>
 
         <!-- Audit Trail Action (Traditional view) -->
-        <!-- <record id="action_audit_trail" model="ir.actions.act_window">
+        <record id="action_audit_trail" model="ir.actions.act_window">
             <field name="name">Audit Trail</field>
             <field name="res_model">mailing.operation.audit</field>
             <field name="view_mode">tree,form</field>
@@ -96,10 +96,10 @@
                     operations for compliance and troubleshooting purposes.
                 </p>
             </field>
-        </record> -->
+        </record>
 
         <!-- Contact Tracking Action (Traditional view) -->
-        <!-- <record id="action_contact_tracking" model="ir.actions.act_window">
+        <record id="action_contact_tracking" model="ir.actions.act_window">
             <field name="name">Contact Tracking</field>
             <field name="res_model">mailing.contact.tracking</field>
             <field name="view_mode">tree,form</field>
@@ -115,7 +115,7 @@
                     capabilities.
                 </p>
             </field>
-        </record> -->
+        </record>
 
         <!-- Main Menu Items -->
         
@@ -210,7 +210,7 @@
         <!-- Scheduled Actions -->
         
         <!-- Performance Monitoring Action -->
-       <!-- <record id="ir_cron_performance_monitoring" model="ir.cron">
+       <record id="ir_cron_performance_monitoring" model="ir.cron">
             <field name="name">Mailing List Updater: Performance Monitoring</field>
             <field name="model_id" ref="model_mailing_operation_audit"/>
             <field name="state">code</field>
@@ -247,11 +247,11 @@ if recent_batches:
             <field name="numbercall">-1</field>
             <field name="active" eval="True"/>
             <field name="user_id" ref="base.user_root"/>
-        </record> -->
+        </record>
 
 
         <!-- Registry Health Check Action -->
-        <!-- <record id="ir_cron_registry_health_check" model="ir.cron">
+        <record id="ir_cron_registry_health_check" model="ir.cron">
             <field name="name">Mailing List Updater: Registry Health Check</field>
             <field name="model_id" ref="model_mailing_source_registry"/>
             <field name="state">code</field>
@@ -290,7 +290,7 @@ env['mailing.operation.audit'].create({
             <field name="numbercall">-1</field>
             <field name="active" eval="True"/>
             <field name="user_id" ref="base.user_root"/>
-        </record> -->
+        </record>
 
     </data>
 </odoo>
