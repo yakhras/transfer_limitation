@@ -111,7 +111,7 @@ class FilterBuilderComponent extends Component {
             // await this.updateFieldsForSelectedSources();
             // await this.loadFilterTemplates();
             // await this.loadDefaultUsers();
-            await this.loadDefaultCompanies();
+            // await this.loadDefaultCompanies();
 
             // ✅ Notify parent after loading completes
             this.notifyFilterChange();
