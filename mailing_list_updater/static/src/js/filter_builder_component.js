@@ -1141,7 +1141,7 @@ class FilterBuilderComponent extends Component {
         return {
             quick_filters: {
                 ...this.state.quickFilters,
-                responsible_users: this.state.quickFilters.responsible_users.map(u => u.id)
+                // responsible_users: this.state.quickFilters.responsible_users.map(u => u.id)
             },
             advanced_filters: {
                 ...this.state.advancedFilters,
