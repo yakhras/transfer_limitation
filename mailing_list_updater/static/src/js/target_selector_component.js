@@ -61,8 +61,6 @@ class TargetSelectorComponent extends Component {
                 console.log(`List: ${list.name} | ID: ${list.id} | Contact Count: ${list.contact_count}`);
             });
 
-            
-
             this.state.availableTargetLists = response.map(list => ({
                 mailing_list_id: list.id,
                 name: list.name,
@@ -75,20 +73,7 @@ class TargetSelectorComponent extends Component {
 
             console.log('Lists loaded:', this.state.availableTargetLists);
 
-            //Test fetching contacts
-            const contacts = await this.env.services.orm.searchRead(
-                'mailing.contact',
-                [['list_ids.id', '=', 8]],
-                ['id', 'name', 'email'], // Only fetch id, name, and contact_count
-                { limit: 20, context: {} }
-            );
-
-            console.log('Search successful:', contacts.length, 'results');
-            // Log each list with its contact count
-            contacts.forEach(contact => {
-                console.log(`List: ${contact.name} | ID: ${contact.id} | Contact Count: ${contact.email}`);
-            });
-
+            
         } catch (error) {
             console.error('Search failed:', error.message, error);
             this.state.availableTargetLists = [];
