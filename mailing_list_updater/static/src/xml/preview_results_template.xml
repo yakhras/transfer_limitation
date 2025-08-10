@@ -22,11 +22,11 @@
             <!-- Tab 2: Contact Source -->
             <div class="tab-content active">
                 <div class="mailing-list-info">
-                    <h3 t-if="selectedSources.model_name == 'res.partner'" t-esc="selectedSources.name"></h3>
-                    <h3 t-if="!selectedSources">No Contact Selected</h3>
-                    <div class="stats-row" t-if="selectedSources">
+                    <h3 t-if="selectedMailingList" t-esc="selectedMailingList.name"></h3>
+                    <h3 t-if="!selectedMailingList">No Mailing List Selected</h3>
+                    <div class="stats-row" t-if="selectedMailingList">
                         <div class="stats">
-                            Total Contacts: <t t-esc="selectedMailingList.model.name || 0"/>
+                            Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
                         </div>
                         <button class="preview-btn" t-on-click="onPreviewClick">
                             <i class="fa fa-plus-circle"></i>
