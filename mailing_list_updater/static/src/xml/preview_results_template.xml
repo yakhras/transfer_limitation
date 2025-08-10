@@ -2,64 +2,80 @@
 <templates xml:space="preserve">
     <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
         <div class="preview-results">
-            <!-- Tab 1: Target Mailing List -->
-            <div class="tab-content active">
-                <div class="mailing-list-info">
-                    <h3 t-if="selectedMailingList" t-esc="selectedMailingList.name"></h3>
-                    <h3 t-if="!selectedMailingList">No Mailing List Selected</h3>
-                    <div class="stats-row" t-if="selectedMailingList">
-                        <div class="stats">
-                            Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
+            
+            <div class="tabs-container">
+                
+                <!-- Tab 1: Target Mailing List (Always Visible) -->
+                <div class="tab-content active">
+                    <div class="target-header">
+                        <i class="fa fa-envelope"></i> Target Mailing List
+                    </div>
+                    <div class="mailing-list-info">
+                        <div>
+                            <h3 t-if="selectedMailingList" t-esc="selectedMailingList.name"></h3>
+                            <h3 t-if="!selectedMailingList">No Mailing List Selected</h3>
                         </div>
-                        <button class="preview-btn" t-on-click="onPreviewClick">
-                            <i class="fa fa-plus-circle"></i>
-                            Preview
-                        </button>
+                        <div class="stats-row" t-if="selectedMailingList">
+                            <div class="stats">
+                                Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
+                            </div>
+                            <button class="preview-btn" t-on-click="onPreviewClick">
+                                <i class="fa fa-plus-circle"></i>
+                                Preview
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Tab 2: Contact Source (Visible if res.partner in selectedSources) -->
+                <t t-foreach="selectedSources" t-as="source" t-key="source.model_name">
+                    <div t-if="source.model_name === 'res.partner'" class="tab-content active">
+                        <div class="source-header">
+                            <i class="fa fa-users"></i> Contact Source
+                        </div>
+                        <div class="mailing-list-info">
+                            <div>
+                                <h3 t-esc="source.name"></h3>
+                                <p style="color: #6c757d; font-size: 12px; margin: 4px 0;">res.partner</p>
+                            </div>
+                            <div class="stats-row">
+                                <div class="stats">
+                                    Estimated: <t t-esc="source.estimated_count || 0"/>
+                                </div>
+                                <button class="preview-btn" t-on-click="onPreviewClick">
+                                    <i class="fa fa-search"></i>
+                                    View
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Tab 3: CRM Source (Visible if crm.lead in selectedSources) -->
+                <t t-foreach="selectedSources" t-as="source" t-key="source.model_name + '_crm'">
+                    <div t-if="source.model_name === 'crm.lead'" class="tab-content active">
+                        <div class="crm-header">
+                            <i class="fa fa-rocket"></i> CRM Source
+                        </div>
+                        <div class="mailing-list-info">
+                            <div>
+                                <h3 t-esc="source.name"></h3>
+                                <p style="color: #6c757d; font-size: 12px; margin: 4px 0;">crm.lead</p>
+                            </div>
+                            <div class="stats-row">
+                                <div class="stats">
+                                    Estimated: <t t-esc="source.estimated_count || 0"/>
+                                </div>
+                                <button class="preview-btn" t-on-click="onPreviewClick">
+                                    <i class="fa fa-search"></i>
+                                    View
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                
             </div>
-
-            <!-- Tab 2: Contact Source -->
-            <t t-foreach="selectedSources" t-as="source" t-key="source.model_name">
-                <div t-if="source.model_name === 'res.partner'" class="tab-content active">
-                    <div class="source-header">
-                        <i class="fa fa-users"></i> Contact Source
-                    </div>
-                    <div class="mailing-list-info">
-                        <h3 t-esc="source.name"></h3>
-                        <div class="stats-row">
-                            <div class="stats">
-                                Estimated Count: <t t-esc="source.estimated_count || 0"/>
-                            </div>
-                            <button class="preview-btn" t-on-click="onPreviewClick">
-                                <i class="fa fa-plus-circle"></i>
-                                Preview
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </t>
-
-            <!-- Tab 3: CRM Source -->
-            <t t-foreach="selectedSources" t-as="source" t-key="source.model_name + '_crm'">
-                <div t-if="source.model_name === 'crm.lead'" class="tab-content active">
-                    <div class="crm-header">
-                        <i class="fa fa-rocket"></i> CRM Source
-                    </div>
-                    <div class="mailing-list-info">
-                        <h3 t-esc="source.name"></h3>
-                        <div class="stats-row">
-                            <div class="stats">
-                                Estimated Count: <t t-esc="source.estimated_count || 0"/>
-                            </div>
-                            <button class="preview-btn" t-on-click="onPreviewClick">
-                                <i class="fa fa-plus-circle"></i>
-                                Preview
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </t>
             
         </div>
     </t>
