@@ -35,7 +35,7 @@ class PreviewResultsComponent extends Component {
     }
     onViewClick() {
         console.log('View button clicked!');
-        console.log('Selected sources:', this.filterCriteria);
+        console.log('Filter Criteria:', this.filterCriteria);
     }
 }
 
