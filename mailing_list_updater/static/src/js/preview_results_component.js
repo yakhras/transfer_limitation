@@ -16,9 +16,21 @@ class PreviewResultsComponent extends Component {
     }
     onPreviewClick() {
         console.log('Preview button clicked!');
-        console.log('Selected mailing list:', this.selectedMailingList);
-        console.log('Selected sources:', this.selectedSources);
-        console.log('Filter criteria:', this.filterCriteria);
+        
+        if (this.selectedMailingList) {
+            // Get the mailing list ID (either id or mailing_list_id)
+            const mailingListId = this.selectedMailingList.id || this.selectedMailingList.mailing_list_id;
+            
+            // Construct the URL with dynamic ID
+            const url = `https://test.menagate.com.tr/web#id=${mailingListId}&menu_id=421&action=546&model=mailing.list&view_type=form`;
+            
+            console.log('Opening mailing list form:', url);
+            
+            // Open in new tab
+            window.open(url, '_blank');
+        } else {
+            console.log('No mailing list selected');
+        }
     }
 }
 
