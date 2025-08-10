@@ -14,6 +14,12 @@ class PreviewResultsComponent extends Component {
         this.selectedSources = this.props.selectedSources || [];
         this.filterCriteria = this.props.filterCriteria || {};
     }
+    onPreviewClick() {
+        console.log('Preview button clicked!');
+        console.log('Selected mailing list:', this.selectedMailingList);
+        console.log('Selected sources:', this.selectedSources);
+        console.log('Filter criteria:', this.filterCriteria);
+    }
 }
 
 PreviewResultsComponent.template = 'mailing_list_updater.PreviewResultsTemplate';
