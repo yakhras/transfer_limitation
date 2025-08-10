@@ -16,6 +16,7 @@ class PreviewResultsComponent extends Component {
     }
     onPreviewClick() {
         console.log('Preview button clicked!');
+        console.log('Selected sources:', this.selectedSources);
         
         if (this.selectedMailingList) {
             // Get the mailing list ID (either id or mailing_list_id)
