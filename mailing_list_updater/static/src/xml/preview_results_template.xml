@@ -25,6 +25,10 @@
                     <div class="stats" t-if="selectedMailingList">
                         Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
                     </div>
+                    <button class="show-more-btn">
+                            <i class="fa fa-plus-circle"></i>
+                            Preview
+                        </button>
                 </div>
 
                 <div class="data-table">
