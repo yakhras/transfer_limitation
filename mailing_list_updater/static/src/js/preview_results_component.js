@@ -33,6 +33,10 @@ class PreviewResultsComponent extends Component {
             console.log('No mailing list selected');
         }
     }
+    onViewClick() {
+        console.log('View button clicked!');
+        console.log('Selected sources:', this.filterCriteria);
+    }
 }
 
 PreviewResultsComponent.template = 'mailing_list_updater.PreviewResultsTemplate';

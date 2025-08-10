@@ -42,7 +42,7 @@
                                 <div class="stats">
                                     Estimated: <t t-esc="source.estimated_count || 0"/>
                                 </div>
-                                <button class="preview-btn" t-on-click="onPreviewClick">
+                                <button class="preview-btn" t-on-click="onViewClick">
                                     <i class="fa fa-search"></i>
                                     View
                                 </button>
