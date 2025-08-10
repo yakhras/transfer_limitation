@@ -2,24 +2,8 @@
 <templates xml:space="preserve">
     <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
         <div class="preview-results">
-            
-
-            <!-- Vertical Tab Navigation -->
-            <!-- <div class="tab-nav">
-                <button class="tab-button active">
-                    Target Mailing List
-                </button>
-                <button class="tab-button">
-                    Contact
-                </button>
-                <button class="tab-button">
-                    CRM
-                </button>
-            </div> -->
-
             <!-- Tab 1: Target Mailing List -->
             <div class="tab-content active">
-
                 <div class="mailing-list-info">
                     <h3 t-if="selectedMailingList" t-esc="selectedMailingList.name"></h3>
                     <h3 t-if="!selectedMailingList">No Mailing List Selected</h3>
@@ -33,208 +17,45 @@
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <div class="data-table">
-                    <div class="record-count">
-                        Target mailing list contents (will receive new contacts)
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-if="selectedMailingList and selectedMailingList.contacts">
-                                <tr t-foreach="selectedMailingList.contacts" t-as="contact" t-key="contact.id">
-                                    <td t-esc="contact.name"></td>
-                                    <td><a t-att-href="'mailto:' + contact.email" class="email" t-esc="contact.email"></a></td>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
-                    
-                    <div class="show-more-section">
-                        <div class="showing-info">
-                            Showing 8 of 245 contacts
+            <!-- Tab 2: Contact Source -->
+            <div class="tab-content active">
+                <div class="mailing-list-info">
+                    <h3 t-if="selectedMailingList" t-esc="selectedMailingList.name"></h3>
+                    <h3 t-if="!selectedMailingList">No Mailing List Selected</h3>
+                    <div class="stats-row" t-if="selectedMailingList">
+                        <div class="stats">
+                            Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
                         </div>
-                        <button class="show-more-btn">
+                        <button class="preview-btn" t-on-click="onPreviewClick">
                             <i class="fa fa-plus-circle"></i>
-                            Load More Contacts
+                            Preview
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab 2: Contact Results -->
-            <div class="tab-content">
-                <div class="content-header">
-                    <h2>Contact Results</h2>
-                    <p class="subtitle">Filtered contacts from res.partner model</p>
-                </div>
-
-                <div class="filters-applied">
-                    <h4>Applied Filters:</h4>
-                    <div class="filter-tags">
-                        <span class="filter-tag">Country: United States</span>
-                        <span class="filter-tag">Created Date: > 2024-01-01</span>
-                        <span class="filter-tag">Email: is not empty</span>
-                        <span class="filter-tag">Customer: is True</span>
-                    </div>
-                </div>
-
-                <div class="data-table">
-                    <div class="record-count">
-                        Found 1,245 contacts matching filters • Will add 1,115 new contacts
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Emma Wilson</td>
-                                <td><a href="mailto:emma.wilson@newcorp.com" class="email">emma.wilson@newcorp.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Daniel Garcia</td>
-                                <td><a href="mailto:daniel.garcia@techfirm.com" class="email">daniel.garcia@techfirm.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Maria Rodriguez</td>
-                                <td><a href="mailto:maria@innovation.net" class="email">maria@innovation.net</a></td>
-                            </tr>
-                            <tr>
-                                <td>James Brown</td>
-                                <td><a href="mailto:james.brown@solutions.net" class="email">james.brown@solutions.net</a></td>
-                            </tr>
-                            <tr>
-                                <td>Ashley Thompson</td>
-                                <td><a href="mailto:ashley.thompson@digital.com" class="email">ashley.thompson@digital.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Kevin Wong</td>
-                                <td><a href="mailto:kevin.wong@business.net" class="email">kevin.wong@business.net</a></td>
-                            </tr>
-                            <tr>
-                                <td>Rachel Adams</td>
-                                <td><a href="mailto:rachel.adams@consulting.pro" class="email">rachel.adams@consulting.pro</a></td>
-                            </tr>
-                            <tr>
-                                <td>Chris Martinez</td>
-                                <td><a href="mailto:chris.martinez@startup.co" class="email">chris.martinez@startup.co</a></td>
-                            </tr>
-                            <tr>
-                                <td>Nicole Clark</td>
-                                <td><a href="mailto:nicole.clark@agency.com" class="email">nicole.clark@agency.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Brandon Lewis</td>
-                                <td><a href="mailto:brandon.lewis@firm.org" class="email">brandon.lewis@firm.org</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <div class="show-more-section">
-                        <div class="showing-info">
-                            Showing 10 of 1,245 records
+            <!-- Tab 3: CRM Source -->
+            <div class="tab-content active">
+                <div class="mailing-list-info">
+                    <h3 t-if="selectedMailingList" t-esc="selectedMailingList.name"></h3>
+                    <h3 t-if="!selectedMailingList">No Mailing List Selected</h3>
+                    <div class="stats-row" t-if="selectedMailingList">
+                        <div class="stats">
+                            Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
                         </div>
-                        <button class="show-more-btn">
-                            <i class="fa fa-users"></i>
-                            Load More Contacts
+                        <button class="preview-btn" t-on-click="onPreviewClick">
+                            <i class="fa fa-plus-circle"></i>
+                            Preview
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab 3: CRM Results -->
-            <div class="tab-content">
-                <div class="content-header">
-                    <h2>CRM Results</h2>
-                    <p class="subtitle">Filtered leads from crm.lead model</p>
-                </div>
+            
 
-                <div class="filters-applied">
-                    <h4>Applied Filters:</h4>
-                    <div class="filter-tags">
-                        <span class="filter-tag">Stage: Qualified</span>
-                        <span class="filter-tag">Probability: > 50%</span>
-                        <span class="filter-tag">Email: is not empty</span>
-                        <span class="filter-tag">Created Date: > 2024-01-01</span>
-                        <span class="filter-tag">Active: True</span>
-                    </div>
-                </div>
-
-                <div class="data-table">
-                    <div class="record-count">
-                        Found 387 leads matching filters • Will add 342 new contacts
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Michael Johnson</td>
-                                <td><a href="mailto:michael.johnson@enterprise.com" class="email">michael.johnson@enterprise.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Jennifer Kim</td>
-                                <td><a href="mailto:jennifer.kim@startup.io" class="email">jennifer.kim@startup.io</a></td>
-                            </tr>
-                            <tr>
-                                <td>Thomas Anderson</td>
-                                <td><a href="mailto:thomas@consulting.pro" class="email">thomas@consulting.pro</a></td>
-                            </tr>
-                            <tr>
-                                <td>Sophia Davis</td>
-                                <td><a href="mailto:sophia.davis@innovation.tech" class="email">sophia.davis@innovation.tech</a></td>
-                            </tr>
-                            <tr>
-                                <td>Alex Turner</td>
-                                <td><a href="mailto:alex.turner@business.co" class="email">alex.turner@business.co</a></td>
-                            </tr>
-                            <tr>
-                                <td>Melissa White</td>
-                                <td><a href="mailto:melissa.white@solutions.net" class="email">melissa.white@solutions.net</a></td>
-                            </tr>
-                            <tr>
-                                <td>Ryan Parker</td>
-                                <td><a href="mailto:ryan.parker@digital.com" class="email">ryan.parker@digital.com</a></td>
-                            </tr>
-                            <tr>
-                                <td>Olivia Green</td>
-                                <td><a href="mailto:olivia.green@marketing.org" class="email">olivia.green@marketing.org</a></td>
-                            </tr>
-                            <tr>
-                                <td>Nathan Scott</td>
-                                <td><a href="mailto:nathan.scott@agency.net" class="email">nathan.scott@agency.net</a></td>
-                            </tr>
-                            <tr>
-                                <td>Hannah Moore</td>
-                                <td><a href="mailto:hannah.moore@firm.com" class="email">hannah.moore@firm.com</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <div class="show-more-section">
-                        <div class="showing-info">
-                            Showing 10 of 387 records
-                        </div>
-                        <button class="show-more-btn">
-                            <i class="fa fa-rocket"></i>
-                            Load More Leads
-                        </button>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </t>
 </templates>
