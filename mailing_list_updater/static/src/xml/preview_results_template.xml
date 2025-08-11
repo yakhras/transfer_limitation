@@ -28,7 +28,7 @@
                             <div class="stats">
                                 Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
                             </div>
-                            <button class="preview-btn" t-on-click="onViewClick">
+                            <button class="preview-btn" t-on-click="onPreviewClick">
                                 <i class="fa fa-plus-circle"></i>
                                 Preview
                             </button>
@@ -51,7 +51,7 @@
                                 <div class="stats">
                                     Estimated: <t t-esc="source.estimated_count || 0"/>
                                 </div>
-                                <button class="preview-btn" t-on-click="onPreviewClick">
+                                <button class="preview-btn" t-on-click="onViewClick">
                                     <i class="fa fa-search"></i>
                                     View
                                 </button>
