@@ -112,7 +112,7 @@
                                     <t t-foreach="filterCriteria.quick_filters.responsible_users" t-as="user" t-key="user.id">
                                         <span class="responsible-user">
                                             <t t-esc="user.name"/>
-                                        </span>
+                                        </span>, 
                                     </t>
                                 </span>
                                 <span t-if="filterCriteria.quick_filters.active_only" class="filter-tag">
