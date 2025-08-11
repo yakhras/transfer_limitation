@@ -51,7 +51,7 @@
                                 <div class="stats">
                                     Estimated: <t t-esc="source.estimated_count || 0"/>
                                 </div>
-                                <button class="preview-btn" t-on-click="onViewClick">
+                                <button class="preview-btn" t-on-click="onPreviewClick">
                                     <i class="fa fa-search"></i>
                                     View
                                 </button>
@@ -59,14 +59,20 @@
                         </div>
                         
                         <!-- Filter Tags -->
-                        <div class="filters-applied" t-if="filterCriteria">
+                        <div class="filters-applied" t-if="filterCriteria and filterCriteria.quick_filters">
                             <h4>Applied Filters:</h4>
                             <div class="filter-tags">
-                                <span t-if="filterCriteria.date_range" class="filter-tag">
-                                    Date Range: <t t-esc="filterCriteria.date_range.from"/> to <t t-esc="filterCriteria.date_range.to"/>
+                                <span t-if="filterCriteria.quick_filters.date_range" class="filter-tag">
+                                    Date Range: <t t-esc="filterCriteria.quick_filters.date_range.from"/> to <t t-esc="filterCriteria.quick_filters.date_range.to"/>
                                 </span>
-                                <span t-if="filterCriteria.responsible_users" class="filter-tag">
+                                <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
                                     Responsible Users: Selected
+                                </span>
+                                <span t-if="filterCriteria.quick_filters.active_only" class="filter-tag">
+                                    Active Only: Yes
+                                </span>
+                                <span t-if="filterCriteria.quick_filters.country_ids" class="filter-tag">
+                                    Country Filter: Applied
                                 </span>
                             </div>
                         </div>
@@ -96,14 +102,20 @@
                         </div>
                         
                         <!-- Filter Tags -->
-                        <div class="filters-applied" t-if="filterCriteria">
+                        <div class="filters-applied" t-if="filterCriteria and filterCriteria.quick_filters">
                             <h4>Applied Filters:</h4>
                             <div class="filter-tags">
-                                <span t-if="filterCriteria.date_range" class="filter-tag">
-                                    Date Range: <t t-esc="filterCriteria.date_range.from"/> to <t t-esc="filterCriteria.date_range.to"/>
+                                <span t-if="filterCriteria.quick_filters.date_range" class="filter-tag">
+                                    Date Range: <t t-esc="filterCriteria.quick_filters.date_range.from"/> to <t t-esc="filterCriteria.quick_filters.date_range.to"/>
                                 </span>
-                                <span t-if="filterCriteria.responsible_users" class="filter-tag">
+                                <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
                                     Responsible Users: Selected
+                                </span>
+                                <span t-if="filterCriteria.quick_filters.active_only" class="filter-tag">
+                                    Active Only: Yes
+                                </span>
+                                <span t-if="filterCriteria.quick_filters.country_ids" class="filter-tag">
+                                    Country Filter: Applied
                                 </span>
                             </div>
                         </div>
