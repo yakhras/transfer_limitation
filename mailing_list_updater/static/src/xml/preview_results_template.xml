@@ -40,7 +40,9 @@
                 <t t-foreach="selectedSources" t-as="source" t-key="source.model_name">
                     <div t-if="source.model_name === 'res.partner'" class="tab-content active">
                         <div class="source-header stats-row">
-                            <i class="fa fa-users"></i> Contact Source
+                            <div class="header-left">
+                                <i class="fa fa-users"></i> Contact Source
+                            </div>
                             <button class="preview-btn" t-on-click="onPreviewClick">
                                 <i class="fa fa-search"></i>
                                 View
