@@ -109,7 +109,7 @@
                                     Date Range: <t t-esc="filterCriteria.quick_filters.date_range.from"/> to <t t-esc="filterCriteria.quick_filters.date_range.to"/>
                                 </span>
                                 <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
-                                    <t t-esc="filterCriteria.quick_filters.responsible_users.name"/>
+                                    <t t-esc="filterCriteria.quick_filters.responsible_users[0].name"/>
                                 </span>
                                 <span t-if="filterCriteria.quick_filters.active_only" class="filter-tag">
                                     Active Only: Yes
