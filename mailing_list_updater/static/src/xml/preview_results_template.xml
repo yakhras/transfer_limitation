@@ -43,7 +43,7 @@
                             <div class="header-left">
                                 <i class="fa fa-users"></i> Contact Source
                             </div>
-                            <button class="preview-btn" t-on-click="onPreviewClick">
+                            <button class="preview-btn" t-on-click="onViewClick">
                                 <i class="fa fa-search"></i>
                                 View
                             </button>
@@ -81,7 +81,7 @@
                             <div class="header-left">
                                 <i class="fa fa-rocket"></i> CRM Source
                             </div>
-                            <button class="preview-btn" t-on-click="onPreviewClick">
+                            <button class="preview-btn" t-on-click="onViewClick">
                                 <i class="fa fa-search"></i>
                                 View
                             </button>
