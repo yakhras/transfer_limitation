@@ -1269,7 +1269,7 @@ class FilterBuilderComponent extends Component {
      */
     getUserFieldForModel(modelName) {
         const userFieldMapping = {
-            'res.partner': 'user_id',     // Salesperson field
+            'res.partner': 'users_ids',     // Salesperson field
             'crm.lead': 'user_id',        // Salesperson field
             'crm.opportunity': 'user_id'  // Future support
         };
