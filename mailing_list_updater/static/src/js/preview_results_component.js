@@ -37,12 +37,24 @@ class PreviewResultsComponent extends Component {
 
     onViewClick(modelName) {
         console.log('Opening tree view for:', modelName);
+
+        const domain = this.getModelDomain(modelName);
+        console.log('Domain for model:', domain);
     
         this.env.services.action.doAction({
             res_model: modelName,
             type: 'ir.actions.act_window',
             views: [[false, "list"]],
+            domain: domain,
         });
+    }
+
+    getModelDomain(modelName) {
+        // Extract domain from filterCriteria.generated_domains
+        if (this.filterCriteria?.generated_domains?.[modelName]) {
+            return this.filterCriteria.generated_domains[modelName];
+        }
+        return [];
     }
     
 }
