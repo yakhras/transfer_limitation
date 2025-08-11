@@ -86,10 +86,8 @@
                             <i class="fa fa-rocket"></i> CRM Source
                         </div>
                         <div class="mailing-list-info">
-                            <div>
-                                <h3 t-esc="source.name"></h3>
-                            </div>
                             <div class="stats-row">
+                                <h3 t-esc="source.name"></h3>
                                 <button class="preview-btn" t-on-click="onPreviewClick">
                                     <i class="fa fa-search"></i>
                                     View
