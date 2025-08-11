@@ -698,13 +698,13 @@
 
 .preview-results .filters-applied {
     padding: 12px 16px;
-    background: #fff3cd;
-    border-top: 1px solid #ffeaa7;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
 }
 
 .preview-results .filters-applied h4 {
     margin: 0 0 8px 0;
-    color: #856404;
+    color: #495057;
     font-size: 13px;
     font-weight: 600;
 }
@@ -716,13 +716,37 @@
 }
 
 .preview-results .filter-tag {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     color: white;
     padding: 4px 10px;
     border-radius: 15px;
     font-size: 11px;
     font-weight: 500;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Contact Source - Green theme buttons */
+.preview-results .source-header .preview-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.preview-results .source-header .preview-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* CRM Header - Purple theme buttons */
+.preview-results .crm-header .preview-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.preview-results .crm-header .preview-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
 }
 
 .preview-results .target-header {
