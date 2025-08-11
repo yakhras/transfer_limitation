@@ -46,15 +46,6 @@
                                 View
                             </button>
                         </div>
-                        <div class="mailing-list-info">
-                            <div class="stats-row">
-                                <h3 t-esc="source.name"></h3>
-                                <button class="preview-btn" t-on-click="onPreviewClick">
-                                    <i class="fa fa-search"></i>
-                                    View
-                                </button>
-                            </div>
-                        </div>
                         
                         <!-- Filter Tags -->
                         <div class="filters-applied" t-if="filterCriteria and filterCriteria.quick_filters">
