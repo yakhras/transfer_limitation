@@ -66,16 +66,12 @@
                                 </span>
                                 <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
                                     <t t-foreach="filterCriteria.quick_filters.responsible_users" t-as="user" t-key="user.id">
-                                        <span class="filter-tag">
-                                            <t t-esc="user.name"/>
-                                        </span>, 
+                                        <t t-esc="user.name"/>, 
                                     </t>
                                 </span>
                                 <span t-if="filterCriteria.advanced_filters.rules" class="filter-tag">
                                     <t t-foreach="filterCriteria.advanced_filters.rules" t-as="rule">
-                                        <span class="responsible-user">
-                                            <t t-esc="rule.value"/>
-                                        </span>, 
+                                        <t t-esc="rule.value"/> 
                                     </t>
                                 </span>
                             </div>
@@ -113,16 +109,12 @@
                                 </span>
                                 <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
                                     <t t-foreach="filterCriteria.quick_filters.responsible_users" t-as="user" t-key="user.id">
-                                        <span class="responsible-user">
-                                            <t t-esc="user.name"/>
-                                        </span>, 
+                                        <t t-esc="user.name"/>, 
                                     </t>
                                 </span>
                                 <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
                                     <t t-foreach="filterCriteria.quick_filters.responsible_users" t-as="rule" >
-                                        <span class="filter-tag">
-                                            <t t-esc="rule.value"/>
-                                        </span>, 
+                                        <t t-esc="rule.value"/>
                                     </t>
                                 </span>
                             </div>
