@@ -114,11 +114,13 @@
                                         </span>
                                     </t>
                                 </t>
-                                <span t-if="filterCriteria.advanced_filters.rules" class="filter-tag">
-                                    <t t-foreach="filterCriteria.advanced_filters.rules" t-as="rule" >
-                                        <t t-esc="rule.value"/>
+                                <t t-foreach="filterCriteria.advanced_filters.rules" t-as="rule" >
+                                    <t t-if="filterCriteria.advanced_filters.rules">
+                                        <span class="filter-tag">
+                                            <t t-esc="rule.value"/>
+                                        </span>
                                     </t>
-                                </span>
+                                </t>
                             </div>
                         </div>
                     </div>
