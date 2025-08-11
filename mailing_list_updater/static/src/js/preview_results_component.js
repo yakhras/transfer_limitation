@@ -35,34 +35,16 @@ class PreviewResultsComponent extends Component {
         }
     }
 
-    getModelDomain(modelName) {
-        // From your data: filterCriteria.generated_domains.res.partner
-        if (this.filterCriteria?.generated_domains?.[modelName]) {
-            return this.filterCriteria.generated_domains[modelName];
-        }
-        return [];
-    }
-
     onViewClick(modelName) {
-        console.log('View button clicked for model:', modelName);
-        
-        // Get domain for the specific model
-        const domain = this.getModelDomain(modelName);
-        console.log('Domain for', modelName, ':', domain);
-        
-        // Create action to open tree view with domain
+        console.log('Opening tree view for:', modelName);
+    
         const action = {
             type: 'ir.actions.act_window',
             res_model: modelName,
-            view_mode: 'tree,form',
-            views: [[false, 'tree'], [false, 'form']],
-            domain: domain,
-            context: {},
-            target: 'current',  // Opens in same window
-            name: `Filtered ${modelName} Records`
+            view_mode: 'tree',  // Only tree view
+            target: 'current'
         };
         
-        // Execute the action
         this.env.services.action.doAction(action);
     }
     
