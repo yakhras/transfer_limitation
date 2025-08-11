@@ -41,7 +41,7 @@ class PreviewResultsComponent extends Component {
         this.env.services.action.doAction({
             res_model: modelName,
             type: 'ir.actions.act_window',
-            view_mode: 'list'
+            views: [[false, "list"]],
         });
     }
     
