@@ -39,8 +39,12 @@
                 <!-- Tab 2: Contact Source (Visible if res.partner in selectedSources) -->
                 <t t-foreach="selectedSources" t-as="source" t-key="source.model_name">
                     <div t-if="source.model_name === 'res.partner'" class="tab-content active">
-                        <div class="source-header">
+                        <div class="source-header stats-row">
                             <i class="fa fa-users"></i> Contact Source
+                            <button class="preview-btn" t-on-click="onPreviewClick">
+                                <i class="fa fa-search"></i>
+                                View
+                            </button>
                         </div>
                         <div class="mailing-list-info">
                             <div class="stats-row">
