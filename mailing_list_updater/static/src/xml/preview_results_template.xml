@@ -57,6 +57,14 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="filters-applied" t-if="filterCriteria and Object.keys(filterCriteria).length > 0">
+                            <h4>Applied Filters:</h4>
+                            <div class="filter-tags">
+                                <t t-foreach="Object.entries(filterCriteria)" t-as="filter" t-key="filter[0]">
+                                    <span class="filter-tag" t-esc="filter[0] + ': ' + filter[1]"></span>
+                                </t>
+                            </div>
+                        </div>
                     </div>
                 </t>
 
