@@ -45,12 +45,8 @@
                         <div class="mailing-list-info">
                             <div>
                                 <h3 t-esc="source.name"></h3>
-                                <p style="color: #6c757d; font-size: 12px; margin: 4px 0;">res.partner</p>
                             </div>
                             <div class="stats-row">
-                                <div class="stats">
-                                    Estimated: <t t-esc="source.estimated_count || 0"/>
-                                </div>
                                 <button class="preview-btn" t-on-click="onViewClick">
                                     <i class="fa fa-search"></i>
                                     View
@@ -92,12 +88,8 @@
                         <div class="mailing-list-info">
                             <div>
                                 <h3 t-esc="source.name"></h3>
-                                <p style="color: #6c757d; font-size: 12px; margin: 4px 0;">crm.lead</p>
                             </div>
                             <div class="stats-row">
-                                <div class="stats">
-                                    Estimated: <t t-esc="source.estimated_count || 0"/>
-                                </div>
                                 <button class="preview-btn" t-on-click="onPreviewClick">
                                     <i class="fa fa-search"></i>
                                     View
