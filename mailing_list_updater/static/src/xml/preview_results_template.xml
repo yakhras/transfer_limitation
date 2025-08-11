@@ -77,17 +77,14 @@
                 <!-- Tab 3: CRM Source (Visible if crm.lead in selectedSources) -->
                 <t t-foreach="selectedSources" t-as="source" t-key="source.model_name + '_crm'">
                     <div t-if="source.model_name === 'crm.lead'" class="tab-content active">
-                        <div class="crm-header">
-                            <i class="fa fa-rocket"></i> CRM Source
-                        </div>
-                        <div class="mailing-list-info">
-                            <div class="stats-row">
-                                <h3 t-esc="source.name"></h3>
-                                <button class="preview-btn" t-on-click="onPreviewClick">
-                                    <i class="fa fa-search"></i>
-                                    View
-                                </button>
+                        <div class="source-header stats-row">
+                            <div class="header-left">
+                                <i class="fa fa-users"></i> CRM Source
                             </div>
+                            <button class="preview-btn" t-on-click="onPreviewClick">
+                                <i class="fa fa-search"></i>
+                                View
+                            </button>
                         </div>
                         
                         <!-- Filter Tags -->
