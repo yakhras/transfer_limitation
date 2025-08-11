@@ -112,8 +112,8 @@
                                         <t t-esc="user.name"/>, 
                                     </t>
                                 </span>
-                                <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
-                                    <t t-foreach="filterCriteria.quick_filters.responsible_users" t-as="rule" >
+                                <span t-if="filterCriteria.advanced_filters.rules" class="filter-tag">
+                                    <t t-foreach="filterCriteria.advanced_filters.rules" t-as="rule" >
                                         <t t-esc="rule.value"/>
                                     </t>
                                 </span>
