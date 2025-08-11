@@ -71,10 +71,6 @@
                                         </span>, 
                                     </t>
                                 </span>
-                                <span t-if="filterCriteria.quick_filters.active_only" class="filter-tag">
-                                </span>
-                                <span t-if="filterCriteria.quick_filters.country_ids" class="filter-tag">
-                                </span>
                             </div>
                         </div>
                     </div>
@@ -114,10 +110,6 @@
                                             <t t-esc="user.name"/>
                                         </span>, 
                                     </t>
-                                </span>
-                                <span t-if="filterCriteria.quick_filters.active_only" class="filter-tag">
-                                </span>
-                                <span t-if="filterCriteria.quick_filters.country_ids" class="filter-tag">
                                 </span>
                             </div>
                         </div>
