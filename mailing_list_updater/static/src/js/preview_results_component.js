@@ -33,11 +33,42 @@ class PreviewResultsComponent extends Component {
             console.log('No mailing list selected');
         }
     }
-    onViewClick() {
+    onViewClick(modelName) {
         console.log('View button clicked!');
         console.log('Filter Criteria:', this.filterCriteria);
+        console.log('Selected model:', modelName);
+        // Get domain for specific model
+        const domain = this.getModelDomain(modelName);
+        console.log('Domain for model:', domain);
+        
+        // Open filtered tree view
+        this.openModelTreeView(modelName, domain);
     }
+    getModelDomain(modelName) {
+        // From your data: filterCriteria.generated_domains.res.partner
+        if (this.filterCriteria?.generated_domains?.[modelName]) {
+            return this.filterCriteria.generated_domains[modelName];
+        }
+        return [];
+    }
+
+    openModelTreeView(modelName, domain) {
+        const action = {
+            type: 'ir.actions.act_window',
+            res_model: modelName,
+            view_mode: 'tree,form',
+            views: [[false, 'tree'], [false, 'form']],
+            domain: domain,
+            context: {},
+            target: 'new',  // Opens in new window
+            name: `Filtered ${modelName} Records`
+        };
+        
+        this.env.services.action.doAction(action);
+    }
+    
 }
+
 
 PreviewResultsComponent.template = 'mailing_list_updater.PreviewResultsTemplate';
 
