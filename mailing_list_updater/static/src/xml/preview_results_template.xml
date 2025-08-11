@@ -107,11 +107,11 @@
                                 <span t-if="filterCriteria.quick_filters.date_range" class="filter-tag">
                                     <t t-esc="filterCriteria.quick_filters.date_range.from"/> to <t t-esc="filterCriteria.quick_filters.date_range.to"/>
                                 </span>
-                                <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
-                                    <t t-foreach="filterCriteria.quick_filters.responsible_users" t-as="user" t-key="user.id">
-                                        <t t-esc="user.name"/>, 
-                                    </t>
-                                </span>
+                                <t t-foreach="filterCriteria.quick_filters.responsible_users" t-as="user" t-key="user.id">
+                                    <span t-if="filterCriteria.quick_filters.responsible_users" class="filter-tag">
+                                        <t t-esc="user.name"/>
+                                    </span>
+                                </t>
                                 <span t-if="filterCriteria.advanced_filters.rules" class="filter-tag">
                                     <t t-foreach="filterCriteria.advanced_filters.rules" t-as="rule" >
                                         <t t-esc="rule.value"/>
