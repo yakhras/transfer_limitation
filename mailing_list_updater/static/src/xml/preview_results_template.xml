@@ -51,18 +51,23 @@
                                 <div class="stats">
                                     Estimated: <t t-esc="source.estimated_count || 0"/>
                                 </div>
-                                <button class="preview-btn" t-on-click="onViewClick">
+                                <button class="preview-btn" t-on-click="onPreviewClick">
                                     <i class="fa fa-search"></i>
                                     View
                                 </button>
                             </div>
                         </div>
-                        <div class="filters-applied" t-if="filterCriteria and Object.keys(filterCriteria).length > 0">
+                        
+                        <!-- Filter Tags -->
+                        <div class="filters-applied" t-if="filterCriteria">
                             <h4>Applied Filters:</h4>
                             <div class="filter-tags">
-                                <t t-foreach="Object.entries(filterCriteria)" t-as="filter" t-key="filter[0]">
-                                    <span class="filter-tag" t-esc="filter[0] + ': ' + filter[1]"></span>
-                                </t>
+                                <span t-if="filterCriteria.date_range" class="filter-tag">
+                                    Date Range: <t t-esc="filterCriteria.date_range.from"/> to <t t-esc="filterCriteria.date_range.to"/>
+                                </span>
+                                <span t-if="filterCriteria.responsible_users" class="filter-tag">
+                                    Responsible Users: Selected
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -87,6 +92,19 @@
                                     <i class="fa fa-search"></i>
                                     View
                                 </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Filter Tags -->
+                        <div class="filters-applied" t-if="filterCriteria">
+                            <h4>Applied Filters:</h4>
+                            <div class="filter-tags">
+                                <span t-if="filterCriteria.date_range" class="filter-tag">
+                                    Date Range: <t t-esc="filterCriteria.date_range.from"/> to <t t-esc="filterCriteria.date_range.to"/>
+                                </span>
+                                <span t-if="filterCriteria.responsible_users" class="filter-tag">
+                                    Responsible Users: Selected
+                                </span>
                             </div>
                         </div>
                     </div>
