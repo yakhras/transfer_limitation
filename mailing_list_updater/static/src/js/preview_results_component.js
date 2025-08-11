@@ -14,6 +14,7 @@ class PreviewResultsComponent extends Component {
         this.selectedSources = this.props.selectedSources || [];
         this.filterCriteria = this.props.filterCriteria || {};
     }
+
     onPreviewClick() {
         console.log('Preview button clicked!');
         console.log('Selected sources:', this.selectedSources);
@@ -33,17 +34,7 @@ class PreviewResultsComponent extends Component {
             console.log('No mailing list selected');
         }
     }
-    onViewClick(modelName) {
-        console.log('View button clicked!');
-        console.log('Filter Criteria:', this.filterCriteria);
-        console.log('Selected model:', modelName);
-        // Get domain for specific model
-        const domain = this.getModelDomain(modelName);
-        console.log('Domain for model:', domain);
-        
-        // Open filtered tree view
-        this.openModelTreeView(modelName, domain);
-    }
+
     getModelDomain(modelName) {
         // From your data: filterCriteria.generated_domains.res.partner
         if (this.filterCriteria?.generated_domains?.[modelName]) {
@@ -52,7 +43,14 @@ class PreviewResultsComponent extends Component {
         return [];
     }
 
-    openModelTreeView(modelName, domain) {
+    onViewClick(modelName) {
+        console.log('View button clicked for model:', modelName);
+        
+        // Get domain for the specific model
+        const domain = this.getModelDomain(modelName);
+        console.log('Domain for', modelName, ':', domain);
+        
+        // Create action to open tree view with domain
         const action = {
             type: 'ir.actions.act_window',
             res_model: modelName,
@@ -60,10 +58,11 @@ class PreviewResultsComponent extends Component {
             views: [[false, 'tree'], [false, 'form']],
             domain: domain,
             context: {},
-            target: 'new',  // Opens in new window
+            target: 'current',  // Opens in same window
             name: `Filtered ${modelName} Records`
         };
         
+        // Execute the action
         this.env.services.action.doAction(action);
     }
     
