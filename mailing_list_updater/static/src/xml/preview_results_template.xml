@@ -3,23 +3,32 @@
     <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
         <div class="preview-results">
             
-            <div class="tabs-container">
+            <!-- Show message when no mailing list selected -->
+            <div t-if="!selectedMailingList" class="no-preview-message">
+                <div class="empty-state">
+                    <i class="fa fa-info-circle"></i>
+                    <h3>Nothing to preview right now</h3>
+                    <p>Please select a target mailing list first to see the preview</p>
+                </div>
+            </div>
+            
+            <!-- Show tabs only when mailing list is selected -->
+            <div t-if="selectedMailingList" class="tabs-container">
                 
-                <!-- Tab 1: Target Mailing List (Always Visible) -->
+                <!-- Tab 1: Target Mailing List -->
                 <div class="tab-content active">
                     <div class="target-header">
                         <i class="fa fa-envelope"></i> Target Mailing List
                     </div>
                     <div class="mailing-list-info">
                         <div>
-                            <h3 t-if="selectedMailingList" t-esc="selectedMailingList.name"></h3>
-                            <h3 t-if="!selectedMailingList">No Mailing List Selected</h3>
+                            <h3 t-esc="selectedMailingList.name"></h3>
                         </div>
-                        <div class="stats-row" t-if="selectedMailingList">
+                        <div class="stats-row">
                             <div class="stats">
                                 Total Contacts: <t t-esc="selectedMailingList.contact_count || 0"/>
                             </div>
-                            <button class="preview-btn" t-on-click="onPreviewClick">
+                            <button class="preview-btn" t-on-click="onViewClick">
                                 <i class="fa fa-plus-circle"></i>
                                 Preview
                             </button>
@@ -42,7 +51,7 @@
                                 <div class="stats">
                                     Estimated: <t t-esc="source.estimated_count || 0"/>
                                 </div>
-                                <button class="preview-btn" t-on-click="onViewClick">
+                                <button class="preview-btn" t-on-click="onPreviewClick">
                                     <i class="fa fa-search"></i>
                                     View
                                 </button>
