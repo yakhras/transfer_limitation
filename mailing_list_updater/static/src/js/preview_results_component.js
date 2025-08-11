@@ -38,14 +38,11 @@ class PreviewResultsComponent extends Component {
     onViewClick(modelName) {
         console.log('Opening tree view for:', modelName);
     
-        const action = {
-            type: 'ir.actions.act_window',
+        this.env.services.action.doAction({
             res_model: modelName,
-            view_mode: 'tree',  // Only tree view
-            target: 'current'
-        };
-        
-        this.env.services.action.doAction(action);
+            type: 'ir.actions.act_window',
+            view_mode: 'list'
+        });
     }
     
 }
