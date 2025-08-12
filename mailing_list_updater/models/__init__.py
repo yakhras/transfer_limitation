@@ -9,3 +9,4 @@ from . import mailing_contact
 from . import deduplication_engine
 from . import batch_processor
 from . import mailing_list_extension
+from . import res_partner
