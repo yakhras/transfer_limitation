@@ -26,4 +26,4 @@ class ResPartner(models.Model):
         partners_with_email = self.search(email_domain)
         
         # Return tree view action
-        self.mobile = partners_with_email
+        self.mobile = len(partners_with_email)
