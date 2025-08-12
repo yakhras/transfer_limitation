@@ -1,6 +1,9 @@
 /** @odoo-module **/
 
+
+import { useService } from "@web/core/utils/hooks";
 const { Component, useState } = owl;
+
 
 /**
  * Preview Results Component for OWL 1.0 - Minimal version
@@ -13,6 +16,7 @@ class PreviewResultsComponent extends Component {
         this.selectedMailingList = this.props.selectedMailingList;
         this.selectedSources = this.props.selectedSources || [];
         this.filterCriteria = this.props.filterCriteria || {};
+        this.rpc = useService("rpc");
     }
 
     onPreviewClick() {
@@ -46,10 +50,10 @@ class PreviewResultsComponent extends Component {
             const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
             console.log(`Record count for ${modelName} with domain:`, recordCount);
 
-            const action = this._rpc({
+            const action = this.rpc({
                 model: 'res.partner',
                 method: 'get_contacts_with_email',
-                args: [domain],  // With rpc, you can pass args directly
+                args: [domain],
             });
 
             // Open tree view
