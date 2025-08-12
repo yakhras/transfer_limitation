@@ -26,17 +26,4 @@ class ResPartner(models.Model):
         partners_with_email = self.search(email_domain)
         
         # Return tree view action
-        return {
-            'name': _('Contacts with Email'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'res.partner',
-            'view_mode': 'tree,form',
-            'views': [(False, 'tree'), (False, 'form')],
-            'domain': [('id', 'in', partners_with_email.ids)],
-            'context': {
-                'search_default_filter_email': 1,
-                'create': False,  # Optional: disable create button
-            },
-            'target': 'new',
-            'help': _(f'Found {len(partners_with_email)} contacts with email addresses')
-        }
+        self.mobile = partners_with_email
