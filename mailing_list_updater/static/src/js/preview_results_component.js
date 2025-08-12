@@ -35,44 +35,31 @@ class PreviewResultsComponent extends Component {
         }
     }
 
-    async onViewClick(modelName) {
+    onViewClick(modelName) {
         console.log('Opening tree view for:', modelName);
 
         const domain = this.getModelDomain(modelName);
         console.log('Domain for model:', domain);
 
         try {
-            // Option 1: Use your custom method (if modelName is 'res.partner')
-            if (modelName === 'res.partner') {
-                const action = await this.env.services.orm.call(
-                    'res.partner', 
-                    'get_contacts_with_email', 
-                    [domain]
-                );
-                this.env.services.action.doAction(action);
-            } else {
-                // Option 2: Direct action for other models
-                const recordCount = await this.env.services.orm.call(
-                    modelName, 
-                    'search_count', 
-                    [domain]
-                );
-                console.log(`Record count for ${modelName}:`, recordCount);
+            // Fetch record count
+            const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
+            console.log(`Record count for ${modelName} with domain:`, recordCount);
 
-                this.env.services.action.doAction({
-                    name: `${modelName} Records (${recordCount})`,
-                    res_model: modelName,
-                    type: 'ir.actions.act_window',
-                    views: [[false, "list"], [false, "form"]],
-                    domain: domain,
-                    target: 'new',
-                    context: this.env.services.user.context,
-                });
-            }
+            const action = this.env.services.orm.call('res.partner', 'get_contacts_with_email', [domain])
+
+            // Open tree view
+            this.env.services.action.doAction({
+                res_model: modelName,
+                type: 'ir.actions.act_window',
+                views: [[false, "list"]],
+                domain: domain,
+                target: 'new'
+            });
 
         } catch (error) {
-            console.error('Error opening view:', error);
-            // Fallback action
+            console.error('Error fetching record count:', error);
+            // Still open the view even if count fails
             this.env.services.action.doAction({
                 res_model: modelName,
                 type: 'ir.actions.act_window',
