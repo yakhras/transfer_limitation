@@ -39,7 +39,7 @@ class PreviewResultsComponent extends Component {
         }
     }
 
-    onViewClick(modelName) {
+    async onViewClick(modelName) {
         console.log('Opening tree view for:', modelName);
 
         const domain = this.getModelDomain(modelName);
@@ -50,7 +50,7 @@ class PreviewResultsComponent extends Component {
             const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
             console.log(`Record count for ${modelName} with domain:`, recordCount);
 
-            const action = this.rpc({
+            const action = await this.rpc({
                 model: 'res.partner',
                 method: 'get_contacts_with_email',
                 args: [domain],
