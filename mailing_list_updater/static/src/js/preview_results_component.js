@@ -43,7 +43,7 @@ class PreviewResultsComponent extends Component {
 
         try {
             // Fetch record count
-            const recordCount = await this.env.services.orm.searchCount(
+            const recordCount = await this.env.services.orm.search_count(
                 modelName,
                 domain
             );
