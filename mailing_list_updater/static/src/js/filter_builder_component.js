@@ -1830,12 +1830,12 @@ class FilterBuilderComponent extends Component {
     
     notifyFilterChange() {
         const filters = this.getCurrentFilters();
-        const validation = this.validateFilters();
+        // const validation = this.validateFilters();
         
         this.trigger('filters-changed', {
             filters: filters,
-            isValid: validation.isValid,
-            errors: validation.errors
+            // isValid: validation.isValid,
+            // errors: validation.errors
         });
     }
     
