@@ -35,19 +35,40 @@ class PreviewResultsComponent extends Component {
         }
     }
 
-    onViewClick(modelName) {
+    async onViewClick(modelName) {
         console.log('Opening tree view for:', modelName);
 
         const domain = this.getModelDomain(modelName);
         console.log('Domain for model:', domain);
-    
-        this.env.services.action.doAction({
-            res_model: modelName,
-            type: 'ir.actions.act_window',
-            views: [[false, "list"]],
-            domain: domain,
-            target: 'new'
-        });
+
+        try {
+            // Fetch record count
+            const recordCount = await this.env.services.orm.searchCount(
+                modelName,
+                domain
+            );
+            console.log(`Record count for ${modelName} with domain:`, recordCount);
+
+            // Open tree view
+            this.env.services.action.doAction({
+                res_model: modelName,
+                type: 'ir.actions.act_window',
+                views: [[false, "list"]],
+                domain: domain,
+                target: 'new'
+            });
+
+        } catch (error) {
+            console.error('Error fetching record count:', error);
+            // Still open the view even if count fails
+            this.env.services.action.doAction({
+                res_model: modelName,
+                type: 'ir.actions.act_window',
+                views: [[false, "list"]],
+                domain: domain,
+                target: 'new'
+            });
+        }
     }
 
     getModelDomain(modelName) {
