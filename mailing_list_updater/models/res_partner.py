@@ -37,6 +37,6 @@ class ResPartner(models.Model):
                 'search_default_filter_email': 1,
                 'create': False,  # Optional: disable create button
             },
-            'target': 'current',
+            'target': 'new',
             'help': _(f'Found {len(partners_with_email)} contacts with email addresses')
         }
