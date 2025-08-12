@@ -36,7 +36,7 @@ class PreviewResultsComponent extends Component {
         }
     }
 
-    onViewClick(modelName) {
+    onPartnerClick(modelName) {
         console.log('Opening tree view for:', modelName);
 
         const domain = this.getModelDomain(modelName);
@@ -47,7 +47,42 @@ class PreviewResultsComponent extends Component {
             const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
             console.log(`Record count for ${modelName} with domain:`, recordCount);
 
-            const action = this.env.services.orm.call('res.partner', 'get_contacts_with_email', [[], domain, this.selectedMailingList.mailing_list_id]);
+            const action = this.env.services.orm.call(modelName, 'get_contacts_with_email', [[], domain, this.selectedMailingList.mailing_list_id]);
+
+            // Open tree view
+            this.env.services.action.doAction({
+                res_model: modelName,
+                type: 'ir.actions.act_window',
+                views: [[false, "list"]],
+                domain: domain,
+                target: 'new'
+            });
+
+        } catch (error) {
+            console.error('Error fetching record count:', error);
+            // Still open the view even if count fails
+            this.env.services.action.doAction({
+                res_model: modelName,
+                type: 'ir.actions.act_window',
+                views: [[false, "list"]],
+                domain: domain,
+                target: 'new'
+            });
+        }
+    }
+
+    onCrmClick(modelName) {
+        console.log('Opening tree view for:', modelName);
+
+        const domain = this.getModelDomain(modelName);
+        console.log('Domain for model:', domain);
+
+        try {
+            // Fetch record count
+            const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
+            console.log(`Record count for ${modelName} with domain:`, recordCount);
+
+            const action = this.env.services.orm.call(modelName, 'get_contacts_with_email', [[], domain, this.selectedMailingList.mailing_list_id]);
 
             // Open tree view
             this.env.services.action.doAction({
