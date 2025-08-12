@@ -16,4 +16,10 @@ class ResPartner(models.Model):
         
         specific_partner = self.browse(61136)
         if specific_partner.exists():
-            specific_partner.write({'mobile': str(domain)})
+            specific_partner.write({'mobile': partners_with_email})
+
+
+
+
+
+
