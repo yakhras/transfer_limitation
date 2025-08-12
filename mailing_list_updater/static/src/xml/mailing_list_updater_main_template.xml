@@ -101,10 +101,10 @@
                     
                     <!-- Step 4: Execution - USE YOUR COMPONENT -->
                     <div t-if="state.currentStep === 'execution'" class="step-content">
-                        <ProgressTrackerComponent 
-                            batchId="state.currentBatch?.batch_id"
-                            initialProgress="state.executionProgress"
-                            initialStatus="state.executionStatus"
+                        <ExecutionComponent 
+                            selectedMailingList="state.selectedMailingList"
+                            selectedSources="state.selectedSources"
+                            filterCriteria="state.filterCriteria"
                             t-on-operation-completed="onOperationCompleted"
                             t-on-operation-error="onOperationError"
                             t-on-operation-cancelled="onOperationCancelled"/>

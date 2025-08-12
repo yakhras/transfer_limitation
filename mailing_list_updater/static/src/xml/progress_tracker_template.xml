@@ -3,7 +3,7 @@
 
     
     
-    <t t-name="mailing_list_updater.ProgressTrackerTemplate" owl="1">
+    <t t-name="mailing_list_updater.ExecutionStepTemplate" owl="1">
         <div class="progress-tracker">
             <div class="content-header">
                 <h2>
