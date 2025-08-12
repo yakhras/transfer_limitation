@@ -11,6 +11,7 @@ class PreviewResultsComponent extends Component {
         console.log('PreviewResultsComponent setup');
         // Basic props from parent
         this.selectedMailingList = this.props.selectedMailingList;
+        console.log('Selected mailing list:', this.selectedMailingList);
         this.selectedSources = this.props.selectedSources || [];
         this.filterCriteria = this.props.filterCriteria || {};
     }
