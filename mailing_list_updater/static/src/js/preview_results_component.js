@@ -46,7 +46,7 @@ class PreviewResultsComponent extends Component {
             const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
             console.log(`Record count for ${modelName} with domain:`, recordCount);
 
-            const action = this.rpc({
+            const action = this._rpc({
                 model: 'res.partner',
                 method: 'get_contacts_with_email',
                 args: [domain],  // With rpc, you can pass args directly
