@@ -83,12 +83,12 @@
         </record>
 
         <!-- Contact Tracking: Company-scoped access -->
-        <record id="mailing_contact_tracking_company_rule" model="ir.rule">
+        <!-- <record id="mailing_contact_tracking_company_rule" model="ir.rule">
             <field name="name">Contact Tracking: Company Access</field>
             <field name="model_id" ref="model_mailing_contact_tracking"/>
             <field name="domain_force">[('company_id', '=', company_id)]</field>
             <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
-        </record>
+        </record> -->
 
         <!-- Filter Templates: Users can access their own + public templates in their company -->
         <record id="mailing_filter_template_user_rule" model="ir.rule">
@@ -139,12 +139,12 @@
         </record>
 
         <!-- Extended Mailing Contact: Inherit existing access rules but add company scope -->
-        <record id="mailing_contact_extended_rule" model="ir.rule">
+        <!-- <record id="mailing_contact_extended_rule" model="ir.rule">
             <field name="name">Mailing Contact Extended: Company Scope</field>
             <field name="model_id" ref="mass_mailing.model_mailing_contact"/>
             <field name="domain_force">[('company_id', 'in', [company_id, False])]</field>
             <field name="groups" eval="[(4, ref('group_mailing_list_updater_user'))]"/>
-        </record>
+        </record> -->
 
         <!-- Server Actions for Batch Operations (for UI buttons) -->
         <record id="action_batch_rollback" model="ir.actions.server">
