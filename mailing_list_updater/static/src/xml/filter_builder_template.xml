@@ -320,7 +320,7 @@
                                     </select>
                                     <small t-if="state.newRule.field" class="form-text text-muted">
                                         Model: <code t-esc="state.newRule.model"/> | 
-                                        Field: <code t-esc="state.newRule.field"/> | 
+                                        Field: <code t-esc="extractOriginalFieldName(state.newRule.field"/> | 
                                         Type: <strong t-esc="state.newRule.field_type"/>
                                     </small>
                                 </div>

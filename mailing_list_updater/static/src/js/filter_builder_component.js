@@ -1678,7 +1678,7 @@ class FilterBuilderComponent extends Component {
      */
     extractOriginalFieldName(fieldName) {
         if (fieldName.includes('.')) {
-            return fieldName.split('.').slice(1).join('.');
+            return fieldName.split('.').slice(2).join('.');
         }
         return fieldName;
     }
