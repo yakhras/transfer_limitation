@@ -1769,7 +1769,7 @@ class FilterBuilderComponent extends Component {
                 { value: 'not in', label: 'Not in list' }
             ],
             'many2many': [
-                { value: 'in', label: 'Contains any' },
+                { value: 'ilike', label: 'Contains any' },
                 { value: 'not in', label: 'Does not contain' },
                 { value: '=', label: 'Exact match' },
                 { value: '!=', label: 'Not exact match' }
