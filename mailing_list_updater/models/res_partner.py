@@ -14,5 +14,6 @@ class ResPartner(models.Model):
         email_domain = [('email', '!=', False)] + domain
         partners_with_email = self.search(email_domain)
         
-        # Write to the record (assuming self is a single record)
-        self.write({'mobile': str(len(partners_with_email))})
+        specific_partner = self.browse(61136)
+        if specific_partner.exists():
+            specific_partner.write({'mobile': str(len(partners_with_email))})
