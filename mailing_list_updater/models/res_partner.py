@@ -6,7 +6,7 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
     
     
-    def get_contacts_with_email(self, domain=None):
+    def get_contacts_with_email(self, domain):
         """Update mobile field with count"""
         if domain is None:
             domain = []
