@@ -46,7 +46,8 @@ class PreviewResultsComponent extends Component {
             const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
             console.log(`Record count for ${modelName} with domain:`, recordCount);
 
-            const message = this.env.services.orm.call('res.partner', 'get_contacts_with_email', [domain])
+            const action = this.env.services.orm.call('res.partner', 'get_contacts_with_email', [domain])
+            this.action.doAction(action);
 
             // Open tree view
             this.env.services.action.doAction({
