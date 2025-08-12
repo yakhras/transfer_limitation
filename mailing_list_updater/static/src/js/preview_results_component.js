@@ -35,7 +35,7 @@ class PreviewResultsComponent extends Component {
         }
     }
 
-    async onViewClick(modelName) {
+    onViewClick(modelName) {
         console.log('Opening tree view for:', modelName);
 
         const domain = this.getModelDomain(modelName);
@@ -43,10 +43,7 @@ class PreviewResultsComponent extends Component {
 
         try {
             // Fetch record count
-            const recordCount = await this.env.services.orm.search_count(
-                modelName,
-                domain
-            );
+            const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
             console.log(`Record count for ${modelName} with domain:`, recordCount);
 
             // Open tree view
