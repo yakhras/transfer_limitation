@@ -111,10 +111,10 @@
                     </div>
                     
                     <!-- Step 5: Batch Management - USE YOUR COMPONENT -->
-                    <div t-if="state.currentStep === 'batch_management'" class="step-content">
+                    <!-- <div t-if="state.currentStep === 'batch_management'" class="step-content">
                         <BatchManagerComponent 
                             mailingListId="state.selectedMailingList?.id"/>
-                    </div>
+                    </div> -->
                 </div>
                 
                 <!-- Dialog Footer -->
