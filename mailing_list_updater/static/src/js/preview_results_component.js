@@ -46,6 +46,7 @@ class PreviewResultsComponent extends Component {
             type: 'ir.actions.act_window',
             views: [[false, "list"]],
             domain: domain,
+            target: 'new'
         });
     }
 
