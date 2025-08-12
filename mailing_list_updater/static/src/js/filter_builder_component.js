@@ -1770,13 +1770,13 @@ class FilterBuilderComponent extends Component {
             ],
             'many2many': [
                 { value: 'ilike', label: 'Contains any' },
-                { value: 'not in', label: 'Does not contain' },
+                { value: 'not ilike', label: 'Does not contain' },
                 { value: '=', label: 'Exact match' },
                 { value: '!=', label: 'Not exact match' }
             ],
             'one2many': [
-                { value: 'in', label: 'Contains' },
-                { value: 'not in', label: 'Does not contain' }
+                { value: 'ilike', label: 'Contains' },
+                { value: 'not ilike', label: 'Does not contain' }
             ]
         };
         
