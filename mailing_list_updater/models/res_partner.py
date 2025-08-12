@@ -36,7 +36,6 @@ class ResPartner(models.Model):
                             'name': partner.name,
                             'email': partner.email,
                             'list_ids': [(4, mailing_list_id)],  # Link to mailing list
-                            'partner_id': partner.id,
                         })
 
 
