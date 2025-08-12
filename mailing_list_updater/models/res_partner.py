@@ -25,14 +25,14 @@ class ResPartner(models.Model):
             if mailing_list.exists():
                 for partner in partners_with_email:
                     # Check if contact already exists
-                    existing = self.env['mailing.contact'].search([
+                    existing = self.env['mailing.contact'].sudo().search([
                         ('email', '=', partner.email),
                         ('list_ids', 'in', mailing_list_id)
                     ], limit=1)
                     
                     if not existing:
                         # Create new mailing contact
-                        self.env['mailing.contact'].create({
+                        self.env['mailing.contact'].sudo().create({
                             'name': partner.name,
                             'email': partner.email,
                             'list_ids': [(4, mailing_list_id)],  # Link to mailing list
