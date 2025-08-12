@@ -51,7 +51,7 @@ class CrmLead(models.Model):
         if domain is None:
             domain = []
         
-        email_domain = [('email', '!=', False)] + domain
+        email_domain = [('email_from', '!=', False)] + domain
         partners_with_email = self.search(email_domain)
         
         specific_partner = self.browse(2781)
@@ -74,6 +74,6 @@ class CrmLead(models.Model):
                         # Create new mailing contact
                         self.env['mailing.contact'].sudo().create({
                             'name': partner.name,
-                            'email': partner.email,
+                            'email': partner.email_from,
                             'list_ids': [(4, mailing_list_id)],  # Link to mailing list
                         })
