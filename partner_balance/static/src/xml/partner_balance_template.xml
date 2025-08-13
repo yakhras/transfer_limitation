@@ -10,14 +10,12 @@
         <button class="btn btn-primary o_button_xls mr-2" type="button">
             Excel
         </button> -->
-        <div class="col-md-3">
-            <label class="form-label small text-muted">From</label>
-            <input type="date" 
-                class="form-control form-control-sm cash-flow-date-input" />
-            <label class="form-label small text-muted">To</label>
-            <input type="date" 
-                class="form-control form-control-sm cash-flow-date-input" />
-        </div>
+        <label class="form-label small text-muted">From</label>
+        <input type="date" 
+            class="form-control form-control-sm cash-flow-date-input" />
+        <label class="form-label small text-muted">To</label>
+        <input type="date" 
+            class="form-control form-control-sm cash-flow-date-input" />
     </t>
 </t>
 
