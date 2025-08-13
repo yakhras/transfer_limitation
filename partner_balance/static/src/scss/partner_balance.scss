@@ -1,0 +1,16 @@
+.partner-balance {
+    .form-control,
+
+    .cash-flow-date-input {
+        width: 150px;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        
+        &:focus {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+  }
+}
