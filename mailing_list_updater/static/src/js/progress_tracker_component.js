@@ -13,9 +13,9 @@ class ExecutionComponent extends Component {
         this.filterCriteria = this.props.filterCriteria || {};
     }
 
-    // Best approach: Single call to handle all sources at once
-
-    onExecuteClick() {
+    // Frontend fix to properly handle the return value
+    // version 0: async onExecuteClick
+    async onExecuteClick() {
         console.log("Execute button clicked!");
         
         const selectedSources = this.props.selectedSources || [];
@@ -33,27 +33,86 @@ class ExecutionComponent extends Component {
                 domain: this.getModelDomain(modelName)
             };
         });
-        console.log('Sources data:', sourcesData);
         
         try {
-            // Single call to handle all sources
-            const result = this.env.services.orm.call(
-                'mailing.list',
-                'add_contacts_from_sources',
-                [[], this.selectedMailingList.mailing_list_id, sourcesData]
-            );
+            // Use rpc service instead of orm.call for better return handling
+            const result = await this.env.services.rpc({
+                model: 'mailing.list',
+                method: 'add_contacts_from_sources',
+                args: [this.props.selectedMailingList.id, sourcesData],
+            });
             
-            if (result.success) {
+            console.log('Result from backend:', result);
+            
+            if (result && result.success) {
                 console.log(`Successfully added ${result.added} contacts out of ${result.total_found} found`);
-                // Update UI to show success
-            } else {
+                console.log(`Skipped ${result.skipped} duplicates`);
+                
+                if (result.errors) {
+                    console.warn('Some errors occurred:', result.errors);
+                }
+                
+                // Show success notification
+                this.env.services.notification.add(
+                    `Added ${result.added} contacts (${result.skipped} duplicates skipped)`, 
+                    { type: 'success' }
+                );
+            } else if (result && result.error) {
                 console.error('Error:', result.error);
+                this.env.services.notification.add(
+                    result.error, 
+                    { type: 'danger' }
+                );
             }
         } catch (error) {
             console.error('Failed to add contacts:', error);
+            this.env.services.notification.add(
+                'Failed to add contacts', 
+                { type: 'danger' }
+            );
         }
     }
+    // Version 1: Single call to handle all sources
+    // onExecuteClick() {
+    //     console.log("Execute button clicked!");
+        
+    //     const selectedSources = this.props.selectedSources || [];
+        
+    //     if (selectedSources.length === 0) {
+    //         console.log("No sources selected");
+    //         return;
+    //     }
+        
+    //     // Prepare sources data
+    //     const sourcesData = selectedSources.map(source => {
+    //         const modelName = source.model_name || source;
+    //         return {
+    //             model: modelName,
+    //             domain: this.getModelDomain(modelName)
+    //         };
+    //     });
+    //     console.log('Sources data:', sourcesData);
+        
+    //     try {
+    //         // Single call to handle all sources
+    //         const result = this.env.services.orm.call(
+    //             'mailing.list',
+    //             'add_contacts_from_sources',
+    //             [[], this.selectedMailingList.mailing_list_id, sourcesData]
+    //         );
+            
+    //         if (result.success) {
+    //             console.log(`Successfully added ${result.added} contacts out of ${result.total_found} found`);
+    //             // Update UI to show success
+    //         } else {
+    //             console.error('Error:', result.error);
+    //         }
+    //     } catch (error) {
+    //         console.error('Failed to add contacts:', error);
+    //     }
+    // }
 
+    // Version 2: Individual model handling
     // onExecuteClick() {
     //     console.log("Execute button clicked!");
         

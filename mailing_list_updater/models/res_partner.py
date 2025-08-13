@@ -81,10 +81,6 @@ class CrmLead(models.Model):
 
 
 
-
-
-# Even better solution: Create a single method that handles all sources at once
-
 class MailingList(models.Model):
     _inherit = 'mailing.list'
 
