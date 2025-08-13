@@ -1,77 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- <templates xml:space="preserve">
-
-    
-    
-    <t t-name="mailing_list_updater.ExecutionStepTemplate" owl="1">
-        <div class="progress-tracker">
-            <div class="content-header">
-                <h2>
-                    <i class="fa fa-spinner fa-spin"></i>
-                    Processing...
-                </h2>
-                <p>Your mailing list is being updated</p>
-            </div>
-            
-            <div class="progress-content">
-                <div class="mlu-alert mlu-alert-info">
-                    <i class="fa fa-info-circle"></i>
-                    Progress Tracker component will be loaded here
-                </div>
-            </div>
-        </div>
-    </t>
-    
-    
-
-</templates>
-
-
-<?xml version="1.0" encoding="utf-8"?> -->
 <templates xml:space="preserve">
     <t t-name="mailing_list_updater.ExecutionStepTemplate" owl="1">
         <div class="execution-step-container">
-            <!-- Count Display -->
-            <div class="execution-count">1,457</div>
-            <div class="execution-label">contacts to add</div>
-
-            <!-- Circle Button -->
-            <button class="circle-btn">
-                <svg class="progress-ring" width="186" height="186">
-                    <circle
-                        stroke="#ffffff"
-                        stroke-width="6"
-                        fill="transparent"
-                        r="90"
-                        cx="93"
-                        cy="93"
-                        stroke-dasharray="565.48"
-                        stroke-dashoffset="282.74"
-                    />
-                </svg>
-                <i class="fa fa-play circle-icon"></i>
-                <span class="circle-text">Execute</span>
-                <span class="percentage" style="display:none;">50%</span>
-                <i class="fa fa-check circle-icon-success" style="display:none;"></i>
-            </button>
-
-            <!-- Info Text -->
-            <div class="execution-info">
-                Click to update Newsletter Subscribers
-            </div>
-
-            <!-- Actions -->
-            <div class="execution-actions">
-                
-                <div class="success-actions" style="display:none;">
-                    <button class="btn btn-sm btn-outline-secondary">
-                        <i class="fa fa-history"></i> View History
-                    </button>
-                    <button class="btn btn-sm btn-primary">
-                        <i class="fa fa-check"></i> Done
+            
+            <!-- Empty State: No mailing list or sources selected -->
+            <t t-if="!selectedMailingList or !selectedSources or selectedSources.length === 0">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fa fa-inbox"></i>
+                    </div>
+                    <div class="empty-title">Nothing to Execute</div>
+                    <div class="empty-message">
+                        <t t-if="!selectedMailingList">
+                            Please select a target mailing list first
+                        </t>
+                        <t t-elif="!selectedSources or selectedSources.length === 0">
+                            Please select at least one source
+                        </t>
+                    </div>
+                    <button class="btn btn-primary mt-3" t-on-click="goBack">
+                        <i class="fa fa-arrow-left"></i> Go Back
                     </button>
                 </div>
-            </div>
+            </t>
+            
+            <!-- Normal Execution View -->
+            <t t-else="">
+                <!-- Count Display -->
+                <div class="execution-count">1,457</div>
+                <div class="execution-label">contacts to add</div>
+
+                <!-- Circle Button -->
+                <button class="circle-btn">
+                    <svg class="progress-ring" width="186" height="186">
+                        <circle
+                            stroke="#ffffff"
+                            stroke-width="6"
+                            fill="transparent"
+                            r="90"
+                            cx="93"
+                            cy="93"
+                            stroke-dasharray="565.48"
+                            stroke-dashoffset="282.74"
+                        />
+                    </svg>
+                    <i class="fa fa-play circle-icon"></i>
+                    <span class="circle-text">Execute</span>
+                    <span class="percentage" style="display:none;">50%</span>
+                    <i class="fa fa-check circle-icon-success" style="display:none;"></i>
+                </button>
+
+                <!-- Info Text -->
+                <div class="execution-info">
+                    Click to update Newsletter Subscribers
+                </div>
+
+                <!-- Actions -->
+                <div class="execution-actions">
+                    <a href="#" class="back-link">
+                        <i class="fa fa-arrow-left"></i> Back to preview
+                    </a>
+                    
+                    <div class="success-actions" style="display:none;">
+                        <button class="btn btn-sm btn-outline-secondary">
+                            <i class="fa fa-history"></i> View History
+                        </button>
+                        <button class="btn btn-sm btn-primary">
+                            <i class="fa fa-check"></i> Done
+                        </button>
+                    </div>
+                </div>
+            </t>
         </div>
     </t>
 </templates>

@@ -906,6 +906,34 @@
     justify-content: center;
 }
 
+/* Empty State */
+.empty-state {
+    padding: 60px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    color: #dee2e6;
+    margin-bottom: 20px;
+}
+
+.empty-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 12px;
+}
+
+.empty-message {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 24px;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
 /* Animation */
 @keyframes pulse {
     0%, 100% { 
