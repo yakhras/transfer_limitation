@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, api, _
+import re
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
