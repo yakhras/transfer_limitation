@@ -776,3 +776,142 @@
     align-items: center;
     gap: 8px;
 }
+
+
+/* Execution Step Style */
+
+.execution-step-container {
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.execution-count {
+    font-size: 48px;
+    font-weight: 300;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.execution-label {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin-bottom: 48px;
+}
+
+/* Circle Button */
+.circle-btn {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: none;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 20px rgba(0,123,255,0.3);
+    transition: all 0.3s ease;
+}
+
+.circle-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 6px 30px rgba(0,123,255,0.4);
+}
+
+.circle-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.circle-btn.processing {
+    background: #6c757d;
+    cursor: not-allowed;
+    animation: pulse 2s infinite;
+}
+
+.circle-btn.success {
+    background: #28a745;
+    box-shadow: 0 4px 20px rgba(40,167,69,0.3);
+    cursor: default;
+}
+
+.circle-btn.error {
+    background: #dc3545;
+    box-shadow: 0 4px 20px rgba(220,53,69,0.3);
+}
+
+.circle-icon {
+    font-size: 32px;
+}
+
+.circle-icon-success {
+    font-size: 48px;
+}
+
+.circle-text {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.percentage {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Progress Ring */
+.progress-ring {
+    position: absolute;
+    top: -3px;
+    left: -3px;
+}
+
+.progress-ring circle {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dashoffset 0.35s;
+}
+
+/* Info and Actions */
+.execution-info {
+    margin-top: 24px;
+    font-size: 13px;
+    color: #6c757d;
+    min-height: 20px;
+}
+
+.execution-actions {
+    margin-top: 32px;
+}
+
+.back-link {
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #007bff;
+}
+
+.success-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* Animation */
+@keyframes pulse {
+    0%, 100% { 
+        box-shadow: 0 4px 20px rgba(108,117,125,0.3); 
+    }
+    50% { 
+        box-shadow: 0 4px 30px rgba(108,117,125,0.5); 
+    }
+}
