@@ -12,6 +12,10 @@ class ExecutionComponent extends Component {
         this.filterCriteria = this.props.filterCriteria || {};
     }
 
+    onExecuteClick() {
+        console.log('Execute button clicked');
+    }
+
     onPartnerClick(modelName) {
         console.log('Opening tree view for:', modelName);
 

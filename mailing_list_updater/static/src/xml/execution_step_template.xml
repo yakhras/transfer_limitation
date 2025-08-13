@@ -28,7 +28,7 @@
                 <div class="execution-label">contacts to add</div>
 
                 <!-- Circle Button -->
-                <button class="circle-btn">
+                <button class="circle-btn" t-on-click="onExecuteClick">
                     <svg class="progress-ring" width="186" height="186">
                         <circle
                             stroke="#ffffff"
