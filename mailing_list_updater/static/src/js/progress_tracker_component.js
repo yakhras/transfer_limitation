@@ -12,9 +12,10 @@ class ExecutionComponent extends Component {
         this.filterCriteria = this.props.filterCriteria || {};
     }
 
-    async onExecuteClick() {
+    onExecuteClick() {
         console.log("Execute button clicked!");
         
+        // Get selected source models from props
         const selectedSources = this.props.selectedSources || [];
         
         if (selectedSources.length === 0) {
@@ -22,78 +23,51 @@ class ExecutionComponent extends Component {
             return;
         }
         
-        let totalAdded = 0;
-        let totalSkipped = 0;
-        
-        // Process sources sequentially to avoid race conditions
-        for (const source of selectedSources) {
+        // Process each selected source
+        selectedSources.forEach(source => {
             const modelName = source.model_name || source;
             console.log(`Processing source: ${modelName}`);
             
-            try {
-                let result;
-                switch(modelName) {
-                    case 'res.partner':
-                        result = await this.onPartnerClick(modelName);
-                        break;
-                    case 'crm.lead':
-                        result = await this.onCrmClick(modelName);
-                        break;
-                    default:
-                        console.log(`No handler for model: ${modelName}`);
-                        continue;
-                }
-                
-                // Handle the result
-                if (result && result.success) {
-                    totalAdded += result.added;
-                    totalSkipped += result.skipped;
-                    console.log(`${modelName}: Added ${result.added}, Skipped ${result.skipped} (duplicates)`);
-                }
-            } catch (error) {
-                console.error(`Error processing ${modelName}:`, error);
+            // Call appropriate function based on model type
+            switch(modelName) {
+                case 'res.partner':
+                    this.onPartnerClick(modelName);
+                    break;
+                case 'crm.lead':
+                    this.onCrmClick(modelName);
+                    break;
+                default:
+                    console.log(`No handler for model: ${modelName}`);
             }
-        }
-        
-        console.log(`Execution complete! Total added: ${totalAdded}, Total skipped: ${totalSkipped}`);
-        
-        // Show success message
-        this.env.services.notification.add(
-            `Successfully added ${totalAdded} contacts to the mailing list`, 
-            { type: 'success' }
-        );
+        });
     }
 
-    async onPartnerClick(modelName) {
-        console.log('Processing partners:', modelName);
-        
+    onPartnerClick(modelName) {
+        console.log('Opening tree view for:', modelName);
+
         const domain = this.getModelDomain(modelName);
         console.log('Domain for model:', domain);
-        
-        const result = await this.env.services.orm.call(
+
+        const action = this.env.services.orm.call(
             modelName, 
             'get_contacts_with_email', 
-            [[], domain, this.props.selectedMailingList.id]
+            [[], domain, this.selectedMailingList.mailing_list_id]
         );
         
-        console.log('Partners processed:', result);
-        return result;
     }
 
-    async onCrmClick(modelName) {
-        console.log('Processing CRM leads:', modelName);
-        
+    onCrmClick(modelName) {
+        console.log('Opening tree view for:', modelName);
+
         const domain = this.getModelDomain(modelName);
         console.log('Domain for model:', domain);
-        
-        const result = await this.env.services.orm.call(
+
+        const action = this.env.services.orm.call(
             modelName, 
             'get_contacts_with_email', 
-            [[], domain, this.props.selectedMailingList.id]
+            [[], domain, this.selectedMailingList.mailing_list_id]
         );
         
-        console.log('CRM leads processed:', result);
-        return result;
     }
 
     getModelDomain(modelName) {
