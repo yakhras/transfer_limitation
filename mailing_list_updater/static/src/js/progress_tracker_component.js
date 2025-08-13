@@ -22,28 +22,46 @@ class ExecutionComponent extends Component {
             return;
         }
         
+        let totalAdded = 0;
+        let totalSkipped = 0;
+        
         // Process sources sequentially to avoid race conditions
         for (const source of selectedSources) {
             const modelName = source.model_name || source;
             console.log(`Processing source: ${modelName}`);
             
             try {
+                let result;
                 switch(modelName) {
                     case 'res.partner':
-                        await this.onPartnerClick(modelName);
+                        result = await this.onPartnerClick(modelName);
                         break;
                     case 'crm.lead':
-                        await this.onCrmClick(modelName);
+                        result = await this.onCrmClick(modelName);
                         break;
                     default:
                         console.log(`No handler for model: ${modelName}`);
+                        continue;
+                }
+                
+                // Handle the result
+                if (result && result.success) {
+                    totalAdded += result.added;
+                    totalSkipped += result.skipped;
+                    console.log(`${modelName}: Added ${result.added}, Skipped ${result.skipped} (duplicates)`);
                 }
             } catch (error) {
                 console.error(`Error processing ${modelName}:`, error);
             }
         }
         
-        console.log("All sources processed");
+        console.log(`Execution complete! Total added: ${totalAdded}, Total skipped: ${totalSkipped}`);
+        
+        // Show success message
+        this.env.services.notification.add(
+            `Successfully added ${totalAdded} contacts to the mailing list`, 
+            { type: 'success' }
+        );
     }
 
     async onPartnerClick(modelName) {
@@ -52,7 +70,6 @@ class ExecutionComponent extends Component {
         const domain = this.getModelDomain(modelName);
         console.log('Domain for model:', domain);
         
-        // Use await to ensure completion before moving to next source
         const result = await this.env.services.orm.call(
             modelName, 
             'get_contacts_with_email', 
@@ -69,7 +86,6 @@ class ExecutionComponent extends Component {
         const domain = this.getModelDomain(modelName);
         console.log('Domain for model:', domain);
         
-        // Use await to ensure completion before moving to next source
         const result = await this.env.services.orm.call(
             modelName, 
             'get_contacts_with_email', 
