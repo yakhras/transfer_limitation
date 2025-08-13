@@ -86,18 +86,46 @@ class CrmLead(models.Model):
 
 class MailingList(models.Model):
     _inherit = 'mailing.list'
+
+
+
+    def split_and_clean_emails(self, email_string):
+        """
+        Split multiple emails and clean them
+        Handles: comma, semicolon, space, newline separators
+        """
+        if not email_string:
+            return []
+        
+        # Convert to string if not already
+        email_string = str(email_string).strip()
+        
+        # Split by common separators: comma, semicolon, space, newline
+        # Also handles cases with or without spaces after separators
+        emails = re.split(r'[,;\s\n]+', email_string)
+        
+        # Clean and validate each email
+        valid_emails = []
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        
+        for email in emails:
+            email = email.strip().lower()
+            if email and re.match(email_pattern, email):
+                valid_emails.append(email)
+        
+        return valid_emails
     
- 
+
+
     def add_contacts_from_sources(self, mailing_list_id, sources_data):
         """
-        Add contacts from multiple sources, automatically handling duplicates
-        sources_data: [{'model': 'res.partner', 'domain': [...]}, ...]
+        Add contacts from multiple sources, handling multiple emails per field
         """
         mailing_list = self.browse(mailing_list_id)
         if not mailing_list.exists():
             return {'error': 'Mailing list not found'}
         
-        # Collect all emails first to check for duplicates across sources
+        # Collect all contacts
         all_contacts = []
         
         for source in sources_data:
@@ -108,44 +136,127 @@ class MailingList(models.Model):
                 email_domain = [('email', '!=', False)] + domain
                 records = self.env[model_name].search(email_domain)
                 for record in records:
-                    all_contacts.append({
-                        'name': record.name,
-                        'email': record.email,
-                    })
+                    # Handle multiple emails in one field
+                    emails = self.split_and_clean_emails(record.email)
+                    for email in emails:
+                        all_contacts.append({
+                            'name': record.name,
+                            'email': email,
+                            'source': 'Partner'
+                        })
                     
             elif model_name == 'crm.lead':
                 email_domain = [('email_from', '!=', False)] + domain
                 records = self.env[model_name].search(email_domain)
                 for record in records:
-                    all_contacts.append({
-                        'name': record.name,
-                        'email': record.email_from,
-                    })
+                    # Handle multiple emails in one field
+                    emails = self.split_and_clean_emails(record.email_from)
+                    for email in emails:
+                        all_contacts.append({
+                            'name': record.name or email.split('@')[0],  # Use email prefix if no name
+                            'email': email,
+                            'source': 'Lead'
+                        })
         
         # Remove duplicates by email
         unique_contacts = {}
         for contact in all_contacts:
             if contact['email']:
-                unique_contacts[contact['email'].lower()] = contact
+                # Store first occurrence (or you could merge names)
+                if contact['email'] not in unique_contacts:
+                    unique_contacts[contact['email'].lower()] = contact
         
         # Check existing and add new contacts
         added_count = 0
+        skipped_count = 0
+        errors = []
+        
         for email, contact_data in unique_contacts.items():
-            existing = self.env['mailing.contact'].sudo().search([
-                ('email', '=', contact_data['email']),
-                ('list_ids', '=', mailing_list_id)
-            ], limit=1)
-            
-            if not existing:
-                self.env['mailing.contact'].sudo().create({
-                    'name': contact_data['name'],
-                    'email': contact_data['email'],
-                    'list_ids': [(4, mailing_list_id)],
-                })
-                added_count += 1
+            try:
+                existing = self.env['mailing.contact'].sudo().search([
+                    ('email', '=', contact_data['email']),
+                    ('list_ids', '=', mailing_list_id)
+                ], limit=1)
+                
+                if not existing:
+                    self.env['mailing.contact'].sudo().create({
+                        'name': contact_data['name'],
+                        'email': contact_data['email'],
+                        'list_ids': [(4, mailing_list_id)],
+                    })
+                    added_count += 1
+                else:
+                    skipped_count += 1
+            except Exception as e:
+                errors.append(f"Error with {email}: {str(e)}")
         
         return {
             'success': True,
             'added': added_count,
-            'total_found': len(unique_contacts)
+            'skipped': skipped_count,
+            'total_found': len(unique_contacts),
+            'errors': errors if errors else None
         }
+    
+ 
+    # def add_contacts_from_sources(self, mailing_list_id, sources_data):
+    #     """
+    #     Add contacts from multiple sources, automatically handling duplicates
+    #     sources_data: [{'model': 'res.partner', 'domain': [...]}, ...]
+    #     """
+    #     mailing_list = self.browse(mailing_list_id)
+    #     if not mailing_list.exists():
+    #         return {'error': 'Mailing list not found'}
+        
+    #     # Collect all emails first to check for duplicates across sources
+    #     all_contacts = []
+        
+    #     for source in sources_data:
+    #         model_name = source.get('model')
+    #         domain = source.get('domain', [])
+            
+    #         if model_name == 'res.partner':
+    #             email_domain = [('email', '!=', False)] + domain
+    #             records = self.env[model_name].search(email_domain)
+    #             for record in records:
+    #                 all_contacts.append({
+    #                     'name': record.name,
+    #                     'email': record.email,
+    #                 })
+                    
+    #         elif model_name == 'crm.lead':
+    #             email_domain = [('email_from', '!=', False)] + domain
+    #             records = self.env[model_name].search(email_domain)
+    #             for record in records:
+    #                 all_contacts.append({
+    #                     'name': record.name,
+    #                     'email': record.email_from,
+    #                 })
+        
+    #     # Remove duplicates by email
+    #     unique_contacts = {}
+    #     for contact in all_contacts:
+    #         if contact['email']:
+    #             unique_contacts[contact['email'].lower()] = contact
+        
+    #     # Check existing and add new contacts
+    #     added_count = 0
+    #     for email, contact_data in unique_contacts.items():
+    #         existing = self.env['mailing.contact'].sudo().search([
+    #             ('email', '=', contact_data['email']),
+    #             ('list_ids', '=', mailing_list_id)
+    #         ], limit=1)
+            
+    #         if not existing:
+    #             self.env['mailing.contact'].sudo().create({
+    #                 'name': contact_data['name'],
+    #                 'email': contact_data['email'],
+    #                 'list_ids': [(4, mailing_list_id)],
+    #             })
+    #             added_count += 1
+        
+    #     return {
+    #         'success': True,
+    #         'added': added_count,
+    #         'total_found': len(unique_contacts)
+    #     }
