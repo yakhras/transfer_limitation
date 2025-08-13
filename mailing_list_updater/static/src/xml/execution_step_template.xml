@@ -54,9 +54,6 @@
 
                 <!-- Actions -->
                 <div class="execution-actions">
-                    <a href="#" class="back-link">
-                        <i class="fa fa-arrow-left"></i> Back to preview
-                    </a>
                     
                     <div class="success-actions" style="display:none;">
                         <button class="btn btn-sm btn-outline-secondary">
