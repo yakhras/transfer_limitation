@@ -58,6 +58,7 @@ var ExportPdfButtonListController = ListController.extend({
      * @override
      */
     start: function () {
+        console.log('ExportPdfButtonListController started');
         var self = this;
         return this._super.apply(this, arguments).then(function () {
             self._initializeDatePickers();
@@ -69,6 +70,7 @@ var ExportPdfButtonListController = ListController.extend({
      * @private
      */
     _initializeDatePickers: function () {
+        console.log('Initializing date pickers');
         var self = this;
         
         // Initialize From Date Picker
