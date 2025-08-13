@@ -11,7 +11,7 @@
             Excel
         </button> -->
         <div class="partner-balance-date-filters d-flex align-items-center">
-            <label class="partner-balance-label">From</label>
+            <label class="partner-balance-label">From:</label>
             <div class="partner-balance-datepicker">
                 <input type="text" 
                     class="partner-balance-date-input" 
@@ -19,7 +19,7 @@
                     data-field-name="date_from"
                     autocomplete="off" />
             </div>
-            <label class="partner-balance-label">To</label>
+            <label class="partner-balance-label">To:</label>
             <div class="partner-balance-datepicker">
                 <input type="text" 
                     class="partner-balance-date-input" 
