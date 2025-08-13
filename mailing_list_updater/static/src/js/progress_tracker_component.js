@@ -39,7 +39,7 @@ class ExecutionComponent extends Component {
             const result = await this.env.services.rpc({
                 model: 'mailing.list',
                 method: 'add_contacts_from_sources',
-                args: [this.props.selectedMailingList.id, sourcesData],
+                args: [[], this.props.selectedMailingList, sourcesData],
             });
             
             console.log('Result from backend:', result);
