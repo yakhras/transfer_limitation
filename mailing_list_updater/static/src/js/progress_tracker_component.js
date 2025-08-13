@@ -9,6 +9,7 @@ class ExecutionComponent extends Component {
         // Basic props from parent
         this.selectedMailingList = this.props.selectedMailingList;
         this.selectedSources = this.props.selectedSources || [];
+        console.log('selectedsources:', this.selectedSources);
         this.filterCriteria = this.props.filterCriteria || {};
     }
 
