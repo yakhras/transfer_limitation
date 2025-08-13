@@ -15,7 +15,7 @@ class ExecutionComponent extends Component {
 
     // Best approach: Single call to handle all sources at once
 
-    async onExecuteClick() {
+    onExecuteClick() {
         console.log("Execute button clicked!");
         
         const selectedSources = this.props.selectedSources || [];
@@ -36,7 +36,7 @@ class ExecutionComponent extends Component {
         
         try {
             // Single call to handle all sources
-            const result = await this.env.services.orm.call(
+            const result = this.env.services.orm.call(
                 'mailing.list',
                 'add_contacts_from_sources',
                 [this.props.selectedMailingList.id, sourcesData]
