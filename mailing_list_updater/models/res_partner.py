@@ -27,7 +27,7 @@ class ResPartner(models.Model):
                     # Check if contact already exists
                     existing = self.env['mailing.contact'].sudo().search([
                         ('email', '=', partner.email),
-                        ('list_ids', 'in', mailing_list_id)
+                        ('list_ids', '=', mailing_list_id)
                     ], limit=1)
                     
                     if not existing:
@@ -67,7 +67,7 @@ class CrmLead(models.Model):
                     # Check if contact already exists
                     existing = self.env['mailing.contact'].sudo().search([
                         ('email', '=', partner.email_from),
-                        ('list_ids', 'in', mailing_list_id)
+                        ('list_ids', '=', mailing_list_id)
                     ], limit=1)
                     
                     if not existing:

@@ -12,10 +12,9 @@ class ExecutionComponent extends Component {
         this.filterCriteria = this.props.filterCriteria || {};
     }
 
-    onExecuteClick() {
+    async onExecuteClick() {
         console.log("Execute button clicked!");
         
-        // Get selected source models from props
         const selectedSources = this.props.selectedSources || [];
         
         if (selectedSources.length === 0) {
@@ -23,51 +22,62 @@ class ExecutionComponent extends Component {
             return;
         }
         
-        // Process each selected source
-        selectedSources.forEach(source => {
+        // Process sources sequentially to avoid race conditions
+        for (const source of selectedSources) {
             const modelName = source.model_name || source;
             console.log(`Processing source: ${modelName}`);
             
-            // Call appropriate function based on model type
-            switch(modelName) {
-                case 'res.partner':
-                    this.onPartnerClick(modelName);
-                    break;
-                case 'crm.lead':
-                    this.onCrmClick(modelName);
-                    break;
-                default:
-                    console.log(`No handler for model: ${modelName}`);
+            try {
+                switch(modelName) {
+                    case 'res.partner':
+                        await this.onPartnerClick(modelName);
+                        break;
+                    case 'crm.lead':
+                        await this.onCrmClick(modelName);
+                        break;
+                    default:
+                        console.log(`No handler for model: ${modelName}`);
+                }
+            } catch (error) {
+                console.error(`Error processing ${modelName}:`, error);
             }
-        });
+        }
+        
+        console.log("All sources processed");
     }
 
-    onPartnerClick(modelName) {
-        console.log('Opening tree view for:', modelName);
-
+    async onPartnerClick(modelName) {
+        console.log('Processing partners:', modelName);
+        
         const domain = this.getModelDomain(modelName);
         console.log('Domain for model:', domain);
-
-        const action = this.env.services.orm.call(
+        
+        // Use await to ensure completion before moving to next source
+        const result = await this.env.services.orm.call(
             modelName, 
             'get_contacts_with_email', 
-            [[], domain, this.selectedMailingList.mailing_list_id]
+            [[], domain, this.props.selectedMailingList.id]
         );
         
+        console.log('Partners processed:', result);
+        return result;
     }
 
-    onCrmClick(modelName) {
-        console.log('Opening tree view for:', modelName);
-
+    async onCrmClick(modelName) {
+        console.log('Processing CRM leads:', modelName);
+        
         const domain = this.getModelDomain(modelName);
         console.log('Domain for model:', domain);
-
-        const action = this.env.services.orm.call(
+        
+        // Use await to ensure completion before moving to next source
+        const result = await this.env.services.orm.call(
             modelName, 
             'get_contacts_with_email', 
-            [[], domain, this.selectedMailingList.mailing_list_id]
+            [[], domain, this.props.selectedMailingList.id]
         );
         
+        console.log('CRM leads processed:', result);
+        return result;
     }
 
     getModelDomain(modelName) {
