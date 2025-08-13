@@ -36,7 +36,7 @@
 
     'assets': {
         'web.assets_backend': [
-            'partner_balance/static/src/scss/partner_balance.scss',
+            # 'partner_balance/static/src/scss/partner_balance.scss',
             'partner_balance/static/src/js/export_pdf_button.js',
         ],
 
