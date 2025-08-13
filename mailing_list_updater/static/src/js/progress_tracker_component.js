@@ -13,7 +13,33 @@ class ExecutionComponent extends Component {
     }
 
     onExecuteClick() {
-        console.log('Execute button clicked');
+        console.log("Execute button clicked!");
+        
+        // Get selected source models from props
+        const selectedSources = this.props.selectedSources || [];
+        
+        if (selectedSources.length === 0) {
+            console.log("No sources selected");
+            return;
+        }
+        
+        // Process each selected source
+        selectedSources.forEach(source => {
+            const modelName = source.model_name || source;
+            console.log(`Processing source: ${modelName}`);
+            
+            // Call appropriate function based on model type
+            switch(modelName) {
+                case 'res.partner':
+                    this.onPartnerClick(modelName);
+                    break;
+                case 'crm.lead':
+                    this.onCrmClick(modelName);
+                    break;
+                default:
+                    console.log(`No handler for model: ${modelName}`);
+            }
+        });
     }
 
     onPartnerClick(modelName) {
