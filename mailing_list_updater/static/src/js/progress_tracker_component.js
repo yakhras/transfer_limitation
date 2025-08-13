@@ -33,6 +33,7 @@ class ExecutionComponent extends Component {
                 domain: this.getModelDomain(modelName)
             };
         });
+        console.log('Sources data:', sourcesData);
         
         try {
             // Single call to handle all sources
