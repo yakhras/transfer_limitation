@@ -55,11 +55,11 @@
                             <i class="fa fa-play"></i>
                             <span>Execute</span>
                         </div>
-                        <!-- <div t-att-class="state.currentStep === 'batch_management' ? 'step-pill active' : 'step-pill'"
+                        <div t-att-class="state.currentStep === 'batch_management' ? 'step-pill active' : 'step-pill'"
                              t-on-click="() => this.goToStep('batch_management')">
                             <i class="fa fa-history"></i>
                             <span>History</span>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
                 
