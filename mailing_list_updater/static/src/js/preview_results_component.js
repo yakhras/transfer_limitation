@@ -47,8 +47,6 @@ class PreviewResultsComponent extends Component {
             const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
             console.log(`Record count for ${modelName} with domain:`, recordCount);
 
-            const action = this.env.services.orm.call(modelName, 'get_contacts_with_email', [[], domain, this.selectedMailingList.mailing_list_id]);
-
             // Open tree view
             this.env.services.action.doAction({
                 res_model: modelName,
@@ -81,8 +79,6 @@ class PreviewResultsComponent extends Component {
             // Fetch record count
             const recordCount = this.env.services.orm.call(modelName, 'search_count', [domain]);
             console.log(`Record count for ${modelName} with domain:`, recordCount);
-
-            const action = this.env.services.orm.call(modelName, 'get_contacts_with_email', [[], domain, this.selectedMailingList.mailing_list_id]);
 
             // Open tree view
             this.env.services.action.doAction({
