@@ -51,7 +51,7 @@
             <field name="name">account.move.line.report.currency.tree</field>
             <field name="model">account.move.line.report</field>
             <field name="arch" type="xml">
-                <tree string="Currency-based Partner Ledger" create="false" delete="false" edit="false">
+                <tree string="Currency-based Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance">
                     <field name="date"/>
                     <field name="move_id"/>
                     <field name="name"/>
@@ -68,7 +68,7 @@
             <field name="name">account.move.line.report.tree</field>
             <field name="model">account.move.line.report</field>
             <field name="arch" type="xml">
-                <tree string="Partner Ledger" create="false" delete="false" edit="false">
+                <tree string="Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance">
                     <field name="date"/>
                     <field name="move_id"/>
                     <field name="name"/>
