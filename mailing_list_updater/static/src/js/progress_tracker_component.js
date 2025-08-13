@@ -39,7 +39,7 @@ class ExecutionComponent extends Component {
             const result = this.env.services.orm.call(
                 'mailing.list',
                 'add_contacts_from_sources',
-                [[], this.props.selectedMailingList.id, sourcesData]
+                [[], this.selectedMailingList.mailing_list_id, sourcesData]
             );
             
             if (result.success) {
