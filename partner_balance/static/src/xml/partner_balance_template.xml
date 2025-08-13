@@ -10,7 +10,12 @@
         <button class="btn btn-primary o_button_xls mr-2" type="button">
             Excel
         </button>
-        <DatePicker> Date </DatePicker>
+        <label class="form-label small text-muted">From Date</label>
+        <input type="date" 
+            class="form-control form-control-sm cash-flow-date-input" />
+        <label class="form-label small text-muted">To Date</label>
+        <input type="date" 
+            class="form-control form-control-sm cash-flow-date-input" />
     </t>
 </t>
 
