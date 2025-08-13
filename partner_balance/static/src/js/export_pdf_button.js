@@ -1,7 +1,7 @@
 odoo.define('partner_balance.listpdf', function (require) {
     "use strict";
 
-var DataExport = require('web.DataExport') ;
+var DataExport = require('web.DataExport');
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
 var viewRegistry = require('web.view_registry');
@@ -52,64 +52,12 @@ var ExportPdfButtonListController = ListController.extend({
     buttons_template: 'PartnerBalance.Buttons',
     events: _.extend({}, ListController.prototype.events, {
         'click .o_button_pdf': '_onExport',
+        'focus .partner-balance-date-input': '_onDateInputFocus',
     }),
 
-    /**
-     * @override
-     */
-    start: function () {
-        console.log('ExportPdfButtonListController started');
-        var self = this;
-        return this._super.apply(this, arguments).then(function () {
-            self._initializeDatePickers();
-        });
-    },
-
-    /**
-     * Initialize date picker widgets
-     * @private
-     */
-    _initializeDatePickers: function () {
-        console.log('Initializing date pickers');
-        var self = this;
-        
-        // Initialize From Date Picker
-        var fromDateInput = this.$('.partner-balance-date-input[data-field-name="date_from"]');
-        if (fromDateInput.length) {
-            var fromDatePicker = new DatePicker(this, {
-                pickTime: false,
-            });
-            fromDatePicker.appendTo(fromDateInput.parent()).then(function () {
-                fromDateInput.hide();
-                self.fromDatePicker = fromDatePicker;
-            });
-        }
-
-        // Initialize To Date Picker
-        var toDateInput = this.$('.partner-balance-date-input[data-field-name="date_to"]');
-        if (toDateInput.length) {
-            var toDatePicker = new DatePicker(this, {
-                pickTime: false,
-            });
-            toDatePicker.appendTo(toDateInput.parent()).then(function () {
-                toDateInput.hide();
-                self.toDatePicker = toDatePicker;
-            });
-        }
-    },
-
-    /**
-     * Get selected date range
-     * @private
-     */
-    _getSelectedDateRange: function () {
-        var fromDate = this.fromDatePicker ? this.fromDatePicker.getValue() : false;
-        var toDate = this.toDatePicker ? this.toDatePicker.getValue() : false;
-        
-        return {
-            date_from: fromDate ? fieldUtils.format.date(fromDate) : false,
-            date_to: toDate ? fieldUtils.format.date(toDate) : false,
-        };
+    _onDateInputFocus: function(ev) {
+        var $input = $(ev.currentTarget);
+        $input.attr('type', 'date');
     },
 
     _onExport: function(){
@@ -119,19 +67,21 @@ var ExportPdfButtonListController = ListController.extend({
         const order = this.model.get('order');
         const viewId = this.viewId;
         const actionData = JSON.parse(sessionStorage.getItem('current_action'));
-        const dateRange = this._getSelectedDateRange();
+        
+        // Get date values
+        const dateFrom = this.$('.partner-balance-date-input[data-field-name="date_from"]').val();
+        const dateTo = this.$('.partner-balance-date-input[data-field-name="date_to"]').val();
         
         console.log('domain', actionData.domain);
-        console.log('context', sessionStorage);
-        console.log('Selected date range:', dateRange);
+        console.log('Selected dates:', { dateFrom, dateTo });
         
         this._rpc({
             model: 'account.move.line.report',
             method: 'export_to_excel',
             args: [[]],
             kwargs: {
-                date_from: dateRange.date_from,
-                date_to: dateRange.date_to,
+                date_from: dateFrom,
+                date_to: dateTo,
             }
         }).then(function (action) {
             if (action && action.type === 'ir.actions.act_url') {
@@ -163,4 +113,3 @@ var BalanceListView = ListView.extend({
 viewRegistry.add('partner_balance', BalanceListView);
 return DataExportExtended;
 });
-
