@@ -1,16 +1,42 @@
-.partner-balance {
-    .form-control,
+.partner-balance-date-filters {
+    margin-left: 15px;
+    gap: 10px;
+    background: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
 
-    .cash-flow-date-input {
-        width: 150px;
-        border: 1px solid #dee2e6;
-        border-radius: 0.375rem;
-        padding: 0.375rem 0.75rem;
-        
-        &:focus {
-        border-color: #86b7fe;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-  }
+.partner-balance-label {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    margin: 0;
+    min-width: 35px;
+}
+
+.partner-balance-datepicker {
+    position: relative;
+}
+
+.partner-balance-date-input {
+    width: 120px;
+    height: 32px;
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.partner-balance-date-input:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.partner-balance-date-input::placeholder {
+    color: #9ca3af;
+    font-size: 12px;
 }
