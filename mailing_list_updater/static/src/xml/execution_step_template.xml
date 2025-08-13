@@ -18,9 +18,6 @@
                             Please select at least one source
                         </t>
                     </div>
-                    <button class="btn btn-primary mt-3" t-on-click="goBack">
-                        <i class="fa fa-arrow-left"></i> Go Back
-                    </button>
                 </div>
             </t>
             
