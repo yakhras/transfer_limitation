@@ -108,6 +108,7 @@ var ExportPdfButtonListController = ListController.extend({
             
             // Update both locations
             this.model.loadParams.domain = domain;
+            this.model.loadParams.context = context;
             if (this.initialState.domain) {
                 this.initialState.domain = domain;
             }
