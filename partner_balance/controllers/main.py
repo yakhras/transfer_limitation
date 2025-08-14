@@ -74,8 +74,8 @@ class ExcelExport(BaseExcelExport):
                 company_name = partner_record.company_id.name
         header_data = [
             _("Report: %s") % action_name if action_name else ""
-            f"Partner: {partner_name}" if partner_name else "",
-            f"Company: {company_name}" if company_name else "",
+            f"Partner: {partner_name}" if partner_name else "Hello",
+            f"Company: {company_name}" if company_name else "Mena Gate",
             f"Export Date: {datetime.now().strftime('%Y-%m-%d')}"
         ]
         return [item for item in header_data if item]
