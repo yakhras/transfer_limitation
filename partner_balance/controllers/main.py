@@ -154,10 +154,11 @@ class ExcelExport(BaseExcelExport):
             }
         
         # Calculate opening balance
-        Model = request.env['account.move.line']
+        Model = request.env['account.move.line.report']
         opening_domain = [
             ('partner_id', '=', partner_id),
-            ('date', '<', date_from)
+            ('date', '<', date_from),
+            ('move_id.journal_id.code', '!=', 'KRFRK')
         ]
         
         opening_records = Model.search(opening_domain)
