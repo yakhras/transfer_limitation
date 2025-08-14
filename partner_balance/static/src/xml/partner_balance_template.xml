@@ -28,6 +28,18 @@
                     autocomplete="off" />
             </div>
         </div>
+
+        <label class="form-label small text-muted">From Date</label>
+        <input type="date" 
+            class="form-control form-control-sm cash-flow-date-input" 
+            t-model="state.customDateFrom"
+            t-on-change="onCustomDateChange"/>
+
+        <label class="form-label small text-muted">To Date</label>
+            <input type="date" 
+                class="form-control form-control-sm cash-flow-date-input" 
+                t-model="state.customDateTo"
+                t-on-change="onCustomDateChange"/>
     </t>
 </t>
 
