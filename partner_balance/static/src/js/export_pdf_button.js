@@ -88,6 +88,9 @@ var ExportPdfButtonListController = ListController.extend({
     _updateViewWithDates: function(dateFrom, dateTo) {
         try {
             console.log('Current domain before update:', this.model.get('domain'));
+            console.log('this.model:', this.model);
+            console.log('this.initialState:', this.initialState);
+            console.log('this.getParent().action:', this.getParent().action);
             
             // Remove existing date filters
             let domain = this.model.get('domain').filter(filter => 
