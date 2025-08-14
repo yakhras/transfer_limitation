@@ -58,6 +58,24 @@ var ExportPdfButtonListController = ListController.extend({
         const fieldName = $(ev.currentTarget).data('field-name');
         const value = $(ev.currentTarget).val();
         console.log(`${fieldName}:`, value);
+        
+        // Validate date range
+        const dateFrom = this.$('.partner-balance-date-input[data-field-name="date_from"]').val();
+        const dateTo = this.$('.partner-balance-date-input[data-field-name="date_to"]').val();
+        
+        if (dateFrom && dateTo) {
+            if (new Date(dateTo) <= new Date(dateFrom)) {
+                // Clear the invalid date and show warning
+                $(ev.currentTarget).val('');
+                console.warn('Date To must be greater than Date From');
+                
+                // Optional: Show user-friendly message
+                this.displayNotification({
+                    message: 'End date must be after start date',
+                    type: 'warning'
+                });
+            }
+        }
     },
 
     _onExport: function(){
