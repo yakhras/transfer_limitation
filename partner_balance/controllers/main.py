@@ -77,10 +77,9 @@ class ExcelExport(BaseExcelExport):
         header_data = [
             _("Report: %s") % action_name if action_name else "",
             f"Partner: {partner_name}" if partner_name else "",
-            # f"Company: {company_name}" if company_name else "",
-            # f"Export Date: {datetime.now().strftime('%Y-%m-%d')}",
+            f"Company: {company_name}" if company_name else "",
+            f"Export Date: {datetime.now().strftime('%Y-%m-%d')}",
             f"Date Range: {date_from or 'Beginning'} - {date_to or datetime.now().strftime('%Y-%m-%d')}",
-            # f"Date To: {date_to}" if date_to else f"Date To: {datetime.now().strftime('%Y-%m-%d')}",
         ]
         return [item for item in header_data if item]
     
@@ -96,10 +95,10 @@ class ExcelExport(BaseExcelExport):
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
                         cell_value = pycompat.to_text(cell_value)
-                    xlsx_writer.write_cell(row_index + 6, cell_index, cell_value)
+                    xlsx_writer.write_cell(row_index + 7, cell_index, cell_value)
 
             # Add totals row after all data
-            total_row = len(rows) + 6 + 1  # +1 for spacing
+            total_row = len(rows) + 7 + 1  # +1 for spacing
             xlsx_writer._write_totals_from_rows(total_row, rows, fields)
 
         return xlsx_writer.value
@@ -109,7 +108,7 @@ class ExcelExport(BaseExcelExport):
             data = self.header_metadata(params)
             for row_index, header_info in enumerate(data):
                 xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
-            x, y = 4, 0
+            x, y = 5, 0
             for group_name, group in groups.children.items():
                 x, y = xlsx_writer.write_group(x, y, group_name, group)
 
@@ -138,7 +137,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
     
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
-            self.write(5, i, fieldname, self.header_style)
+            self.write(6, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
 
     
