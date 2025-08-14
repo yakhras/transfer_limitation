@@ -87,17 +87,15 @@ var ExportPdfButtonListController = ListController.extend({
 
     _updateViewWithDates: function(dateFrom, dateTo) {
         try {
-            console.log('this.mode', this.model);
             // Get domain from correct location
             let domain = this.model.loadParams.domain || this.initialState.domain || [];
+            let context = this.model.loadParams.context || {};
             
             // Remove existing date filters
             domain = domain.filter(filter => 
                 !Array.isArray(filter) || (filter[0] !== 'date' && filter[0] !== 'date_from' && filter[0] !== 'date_to')
             );
             
-            let context = this.model.loadParams.context || {};
-
             // Add new date filters
             if (dateFrom) {
                 domain.push(['date', '>=', dateFrom]);
@@ -119,6 +117,7 @@ var ExportPdfButtonListController = ListController.extend({
         } catch (error) {
             console.error('Error updating view with dates:', error);
         }
+        console.log('context', this.model.loadParams.context);
     },
 
     _onExport: function(){
