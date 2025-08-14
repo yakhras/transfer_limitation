@@ -128,16 +128,16 @@ class ExcelExport(BaseExcelExport):
 
         return xlsx_writer.value
         
-    def from_group_data(self, fields, groups, params=None):
-        with GroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
-            data = self.header_metadata(params)
-            for row_index, header_info in enumerate(data):
-                xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
-            x, y = 5, 0
-            for group_name, group in groups.children.items():
-                x, y = xlsx_writer.write_group(x, y, group_name, group)
+    # def from_group_data(self, fields, groups, params=None):
+    #     with GroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
+    #         data = self.header_metadata(params)
+    #         for row_index, header_info in enumerate(data):
+    #             xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
+    #         x, y = 5, 0
+    #         for group_name, group in groups.children.items():
+    #             x, y = xlsx_writer.write_group(x, y, group_name, group)
 
-        return xlsx_writer.value
+    #     return xlsx_writer.value
     
 
     def calculate_opening_balance(self, params):
@@ -194,6 +194,63 @@ class ExcelExport(BaseExcelExport):
             opening_data['balance_currency'] # Amount Currency
         ]
     
+
+    def from_group_data(self, fields, groups, params=None):
+        with GroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
+            # Write headers
+            data = self.header_metadata(params)
+            for row_index, header_info in enumerate(data):
+                xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
+            
+            # Get opening balance
+            opening_data = self.calculate_opening_balance(params)
+            
+            # Write opening balance row if exists
+            if opening_data['balance'] != 0.0:
+                opening_row = self.create_opening_balance_row(opening_data)
+                for cell_index, cell_value in enumerate(opening_row):
+                    xlsx_writer.write(5, cell_index, cell_value, xlsx_writer.base_style)
+                groups_start_row = 6  # Groups start after opening balance
+            else:
+                groups_start_row = 5  # Groups start normally
+                opening_data['balance'] = 0.0  # Ensure balance is 0
+            
+            # Write groups with updated starting position
+            x, y = groups_start_row, 0
+            
+            # Update group data to include opening balance in running calculations
+            if opening_data['balance'] != 0.0:
+                self._update_group_balances(groups, opening_data['balance'])
+            
+            for group_name, group in groups.children.items():
+                x, y = xlsx_writer.write_group(x, y, group_name, group)
+
+        return xlsx_writer.value
+
+    def _update_group_balances(self, groups, opening_balance):
+        """Update cumulated balances in group data to start from opening balance"""
+        running_balance = opening_balance
+        
+        def update_group_recursive(group_node):
+            nonlocal running_balance
+            
+            # Update data records in this group
+            for record in group_node.data:
+                debit = float(record[3]) if len(record) > 3 and record[3] else 0.0
+                credit = float(record[4]) if len(record) > 4 and record[4] else 0.0
+                running_balance += debit - credit
+                
+                # Update cumulated balance column (assuming index 5)
+                if len(record) > 5:
+                    record[5] = running_balance
+            
+            # Update child groups recursively
+            for child_group in group_node.children.values():
+                update_group_recursive(child_group)
+        
+        # Start updating from root groups
+        for group in groups.children.values():
+            update_group_recursive(group)
 
 class ExportXlsxWriter(BaseExportXlsxWriter):
     # def __init__(self, field_names, row_count=0):
