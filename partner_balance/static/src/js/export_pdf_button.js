@@ -1,14 +1,13 @@
 odoo.define('partner_balance.listpdf', function (require) {
     "use strict";
 
-var DataExport = require('web.DataExport');
+var DataExport = require('web.DataExport') ;
+
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
 var viewRegistry = require('web.view_registry');
 var framework = require('web.framework');
 var pyUtils = require('web.py_utils');
-var DatePicker = require('web.DatePicker');
-var fieldUtils = require('web.field_utils');
 
 var DataExportExtended = DataExport.extend({
     /**
@@ -52,14 +51,7 @@ var ExportPdfButtonListController = ListController.extend({
     buttons_template: 'PartnerBalance.Buttons',
     events: _.extend({}, ListController.prototype.events, {
         'click .o_button_pdf': '_onExport',
-        'focus .partner-balance-date-input': '_onDateInputFocus',
     }),
-
-    _onDateInputFocus: function(ev) {
-        var $input = $(ev.currentTarget);
-        $input.attr('type', 'date');
-    },
-
     _onExport: function(){
         console.log('Hi Yaser')
         const domain = this.get('domain');
@@ -67,29 +59,18 @@ var ExportPdfButtonListController = ListController.extend({
         const order = this.model.get('order');
         const viewId = this.viewId;
         const actionData = JSON.parse(sessionStorage.getItem('current_action'));
-        
-        // Get date values
-        const dateFrom = this.$('.partner-balance-date-input[data-field-name="date_from"]').val();
-        const dateTo = this.$('.partner-balance-date-input[data-field-name="date_to"]').val();
-        
         console.log('domain', actionData.domain);
-        console.log('Selected dates:', { dateFrom, dateTo });
-        
+        console.log('context', sessionStorage);
         this._rpc({
             model: 'account.move.line.report',
             method: 'export_to_excel',
             args: [[]],
-            kwargs: {
-                date_from: dateFrom,
-                date_to: dateTo,
-            }
         }).then(function (action) {
             if (action && action.type === 'ir.actions.act_url') {
                 window.location.href = action.url;
             }
         });
     },
-
     /**
      * @returns {DataExportExtended} the export dialog widget
      * @private
@@ -104,12 +85,15 @@ var ExportPdfButtonListController = ListController.extend({
     },
 });
 
+
 var BalanceListView = ListView.extend({
     config: _.extend({}, ListView.prototype.config, {
         Controller: ExportPdfButtonListController,
     }),
 });
 
+
 viewRegistry.add('partner_balance', BalanceListView);
 return DataExportExtended;
 });
+
