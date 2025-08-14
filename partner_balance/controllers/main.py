@@ -73,7 +73,7 @@ class ExcelExport(BaseExcelExport):
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
         header_data = [
-            _("Report: %s") % action_name if action_name else ""
+            _("Report: %s") % action_name if action_name else "",
             f"Partner: {partner_name}" if partner_name else "Hello",
             f"Company: {company_name}" if company_name else "Mena Gate",
             f"Export Date: {datetime.now().strftime('%Y-%m-%d')}"
