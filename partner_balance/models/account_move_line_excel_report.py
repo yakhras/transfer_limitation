@@ -12,7 +12,7 @@ class AccountMoveLineReport(models.Model):
     _name = 'account.move.line.report'
     _description = 'Account Move Line Report'
     _auto = False
-    _order = 'date DESC'
+    _order = 'date DESC, move_id DESC'
 
     date = fields.Date(string='Date', readonly=True)
     move_id = fields.Many2one('account.move', string='Journal Entry', readonly=True)
