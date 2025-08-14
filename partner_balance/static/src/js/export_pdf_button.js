@@ -57,7 +57,6 @@ var ExportPdfButtonListController = ListController.extend({
     _onDateChange: function(ev) {
         const fieldName = $(ev.currentTarget).data('field-name');
         const value = $(ev.currentTarget).val();
-        console.log(`${fieldName}:`, value);
         
         // Get both date values
         const dateFrom = this.$('.partner-balance-date-input[data-field-name="date_from"]').val();
@@ -67,7 +66,6 @@ var ExportPdfButtonListController = ListController.extend({
         if (dateFrom && dateTo) {
             if (new Date(dateTo) <= new Date(dateFrom)) {
                 $(ev.currentTarget).val('');
-                console.warn('Date To must be greater than Date From');
                 this.displayNotification({
                     message: 'End date must be after start date',
                     type: 'warning'
@@ -76,11 +74,9 @@ var ExportPdfButtonListController = ListController.extend({
             }
             
             // Both dates valid - apply filter
-            console.log('Applying date filter:', { dateFrom, dateTo });
             this._updateViewWithDates(dateFrom, dateTo);
         } else if (dateFrom || dateTo) {
             // Only one date selected - apply partial filter
-            console.log('Applying partial date filter');
             this._updateViewWithDates(dateFrom, dateTo);
         }
     },
@@ -89,7 +85,6 @@ var ExportPdfButtonListController = ListController.extend({
         try {
             // Get domain from correct location
             let domain = this.model.loadParams.domain || this.initialState.domain || [];
-            console.log('Current domain before update:', domain);
             
             // Remove existing date filters
             domain = domain.filter(filter => 
@@ -104,8 +99,6 @@ var ExportPdfButtonListController = ListController.extend({
                 domain.push(['date', '<=', dateTo]);
             }
             
-            console.log('New domain:', domain);
-            
             // Update both locations
             this.model.loadParams.domain = domain;
             if (this.initialState.domain) {
@@ -113,7 +106,6 @@ var ExportPdfButtonListController = ListController.extend({
             }
             
             this.update({domain: domain});
-            console.log('View reloaded with new date filters');
             
         } catch (error) {
             console.error('Error updating view with dates:', error);
