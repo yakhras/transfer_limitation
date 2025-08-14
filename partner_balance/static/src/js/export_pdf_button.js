@@ -92,12 +92,16 @@ var ExportPdfButtonListController = ListController.extend({
                 !Array.isArray(filter) || (filter[0] !== 'date' && filter[0] !== 'date_from' && filter[0] !== 'date_to')
             );
             
+            let context = this.model.loadParams.context || {};
+
             // Add new date filters
             if (dateFrom) {
                 domain.push(['date', '>=', dateFrom]);
+                context.date_from = dateFrom;
             }
             if (dateTo) {
                 domain.push(['date', '<=', dateTo]);
+                context.date_to = dateTo;
             }
             
             // Update both locations
