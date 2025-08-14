@@ -91,17 +91,40 @@ class ExcelExport(BaseExcelExport):
             data = self.header_metadata(params)
             for row_index, header_info in enumerate(data):
                 xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
+
+            # Get opening balance
+            opening_data = self.calculate_opening_balance(params)
             
-            # Write data rows
+            # Write opening balance row if exists
+            if opening_data['balance'] != 0.0:
+                opening_row = self.create_opening_balance_row(opening_data)
+                for cell_index, cell_value in enumerate(opening_row):
+                    xlsx_writer.write_cell(7, cell_index, cell_value)
+                period_start_row = 8  # Period data starts at row 8
+            else:
+                period_start_row = 7  # Period data starts at row 7
+                opening_data['balance'] = 0.0  # Ensure balance is 0 if no opening balance
+            
+            # Write period data rows with updated running balance
+            running_balance = opening_data['balance']  # Start from opening balance
             for row_index, row in enumerate(rows):
+                # Update running balance for this row
+                debit = float(row[3]) if row[3] else 0.0
+                credit = float(row[4]) if row[4] else 0.0
+                running_balance += debit - credit
+                
+                # Update the cumulated balance column (assuming it's column 5)
+                row = list(row)  # Convert to list to modify
+                row[5] = running_balance  # Update cumulated balance
+                
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
                         cell_value = pycompat.to_text(cell_value)
-                    xlsx_writer.write_cell(row_index + 7, cell_index, cell_value)
+                    xlsx_writer.write_cell(period_start_row + row_index, cell_index, cell_value)
 
             # Add totals row after all data
-            total_row = len(rows) + 7 + 1  # +1 for spacing
-            xlsx_writer._write_totals_from_rows(total_row, rows, fields)
+            totals_row = period_start_row + len(rows) + 1  # +1 for spacing
+            xlsx_writer._write_totals_from_rows(totals_row, rows, fields)
 
         return xlsx_writer.value
         
@@ -115,6 +138,56 @@ class ExcelExport(BaseExcelExport):
                 x, y = xlsx_writer.write_group(x, y, group_name, group)
 
         return xlsx_writer.value
+    
+
+    def calculate_opening_balance(self, params):
+        """Calculate opening balance before date_from for the given partner"""
+        date_from = params.get('date_from')
+        partner_id = params.get('default_partner_id')
+        
+        if not date_from or not partner_id:
+            return {
+                'balance': 0.0,
+                'balance_currency': 0.0,
+                'currency': 'USD',
+                'date': None
+            }
+        
+        # Calculate opening balance
+        Model = request.env['account.move.line']
+        opening_domain = [
+            ('partner_id', '=', partner_id),
+            ('date', '<', date_from)
+        ]
+        
+        opening_records = Model.search(opening_domain)
+        balance = sum(opening_records.mapped('debit')) - sum(opening_records.mapped('credit'))
+        
+        # Calculate currency amounts if needed
+        balance_currency = sum(opening_records.mapped('amount_currency'))
+        currency = opening_records[0].currency_id.name if opening_records else 'USD'
+        
+        opening_date = (datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        
+        return {
+            'balance': balance,
+            'balance_currency': balance_currency,
+            'currency': currency,
+            'date': opening_date
+        }
+
+    def create_opening_balance_row(self, opening_data):
+        """Create opening balance row data"""
+        return [
+            opening_data['date'],           # Date
+            '',                            # Journal Entry  
+            'Opening Balance',             # Label
+            '',                           # Debit
+            '',                           # Credit  
+            opening_data['balance'],       # Cumulated Balance
+            opening_data['currency'],      # Currency
+            opening_data['balance_currency'] # Amount Currency
+        ]
     
 
 class ExportXlsxWriter(BaseExportXlsxWriter):
