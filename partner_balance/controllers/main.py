@@ -70,10 +70,12 @@ class ExcelExport(BaseExcelExport):
         date_from = params.get('date_from')
         date_to = params.get('date_to')
         active_id = params.get('active_id')
+
         if active_id:
             partner_record = request.env['res.partner'].sudo().browse(active_id)
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
+                
         header_data = [
             _("Report: %s") % action_name if action_name else "",
             f"Partner: {partner_name}" if partner_name else "",
