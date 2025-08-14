@@ -162,15 +162,19 @@ class ExcelExport(BaseExcelExport):
         ]
         
         opening_records = Model.search(opening_domain)
+        debit = sum(opening_records.mapped('debit'))
+        credit = sum(opening_records.mapped('credit'))
         balance = sum(opening_records.mapped('debit')) - sum(opening_records.mapped('credit'))
         
         # Calculate currency amounts if needed
         balance_currency = sum(opening_records.mapped('amount_currency'))
-        currency = opening_records[0].currency_id.name if opening_records else 'USD'
+        currency = opening_records[0].currency_id.name if opening_records else 'TRY'
         
         opening_date = (datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
         
         return {
+            'debit': debit,
+            'credit': credit,
             'balance': balance,
             'balance_currency': balance_currency,
             'currency': currency,
@@ -183,8 +187,8 @@ class ExcelExport(BaseExcelExport):
             opening_data['date'],           # Date
             '',                            # Journal Entry  
             'Opening Balance',             # Label
-            '',                           # Debit
-            '',                           # Credit  
+            opening_data['debit'],         # Debit
+            opening_data['credit'],        # Credit  
             opening_data['balance'],       # Cumulated Balance
             opening_data['currency'],      # Currency
             opening_data['balance_currency'] # Amount Currency
