@@ -67,6 +67,8 @@ class ExcelExport(BaseExcelExport):
         partner_name = params.get('partner_name', '')
         action_name = params.get('action_name', '')
         company_name = ''
+        date_from = params.get('date_from')
+        date_to = params.get('date_to')
         active_id = params.get('active_id')
         if active_id:
             partner_record = request.env['res.partner'].sudo().browse(active_id)
@@ -75,8 +77,10 @@ class ExcelExport(BaseExcelExport):
         header_data = [
             _("Report: %s") % action_name if action_name else "",
             f"Partner: {partner_name}" if partner_name else "",
-            f"Company: {company_name}" if company_name else "",
-            f"Export Date: {datetime.now().strftime('%Y-%m-%d')}"
+            # f"Company: {company_name}" if company_name else "",
+            # f"Export Date: {datetime.now().strftime('%Y-%m-%d')}",
+            f"Date From: {date_from}" if date_from else "All",
+            f"Date To: {date_to}" if date_to else "",
         ]
         return [item for item in header_data if item]
     
