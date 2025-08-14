@@ -2,7 +2,7 @@
 
 import json
 import operator
-from datetime import datetime
+from datetime import datetime, timedelta
 import io
 from odoo.tools.misc import xlsxwriter
 from odoo.exceptions import UserError
