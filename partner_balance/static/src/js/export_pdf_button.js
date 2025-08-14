@@ -51,7 +51,15 @@ var ExportPdfButtonListController = ListController.extend({
     buttons_template: 'PartnerBalance.Buttons',
     events: _.extend({}, ListController.prototype.events, {
         'click .o_button_pdf': '_onExport',
+        'change .partner-balance-date-input': '_onDateChange',
     }),
+
+    _onDateChange: function(ev) {
+        const fieldName = $(ev.currentTarget).data('field-name');
+        const value = $(ev.currentTarget).val();
+        console.log(`${fieldName}:`, value);
+    },
+
     _onExport: function(){
         console.log('Hi Yaser')
         const domain = this.get('domain');
