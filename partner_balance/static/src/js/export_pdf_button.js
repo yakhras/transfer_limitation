@@ -59,22 +59,59 @@ var ExportPdfButtonListController = ListController.extend({
         const value = $(ev.currentTarget).val();
         console.log(`${fieldName}:`, value);
         
-        // Validate date range
+        // Get both date values
         const dateFrom = this.$('.partner-balance-date-input[data-field-name="date_from"]').val();
         const dateTo = this.$('.partner-balance-date-input[data-field-name="date_to"]').val();
         
+        // Validate date range
         if (dateFrom && dateTo) {
             if (new Date(dateTo) <= new Date(dateFrom)) {
-                // Clear the invalid date and show warning
                 $(ev.currentTarget).val('');
                 console.warn('Date To must be greater than Date From');
-                
-                // Optional: Show user-friendly message
                 this.displayNotification({
                     message: 'End date must be after start date',
                     type: 'warning'
                 });
+                return;
             }
+            
+            // Both dates valid - apply filter
+            console.log('Applying date filter:', { dateFrom, dateTo });
+            this._updateViewWithDates(dateFrom, dateTo);
+        } else if (dateFrom || dateTo) {
+            // Only one date selected - apply partial filter
+            console.log('Applying partial date filter');
+            this._updateViewWithDates(dateFrom, dateTo);
+        }
+    },
+
+    _updateViewWithDates: function(dateFrom, dateTo) {
+        try {
+            console.log('Current domain before update:', this.model.get('domain'));
+            
+            // Remove existing date filters
+            let domain = this.model.get('domain').filter(filter => 
+                !Array.isArray(filter) || (filter[0] !== 'date' && filter[0] !== 'date_from' && filter[0] !== 'date_to')
+            );
+            
+            // Add new date filters
+            if (dateFrom) {
+                domain.push(['date', '>=', dateFrom]);
+            }
+            if (dateTo) {
+                domain.push(['date', '<=', dateTo]);
+            }
+            
+            console.log('New domain:', domain);
+            
+            // Update model and reload
+            this.model.set('domain', domain);
+            this.reload();
+            
+            console.log('View reloaded with new date filters');
+            
+        } catch (error) {
+            console.error('Error updating view with dates:', error);
         }
     },
 
