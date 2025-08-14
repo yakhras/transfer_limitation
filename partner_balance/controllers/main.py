@@ -80,7 +80,7 @@ class ExcelExport(BaseExcelExport):
             # f"Company: {company_name}" if company_name else "",
             # f"Export Date: {datetime.now().strftime('%Y-%m-%d')}",
             f"Date From: {date_from}" if date_from else "All",
-            f"Date To: {date_to}" if date_to else datetime.now().strftime('%Y-%m-%d'),
+            f"Date To: {date_to}" if date_to else f"Date To: {datetime.now().strftime('%Y-%m-%d')}",
         ]
         return [item for item in header_data if item]
     
