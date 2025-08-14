@@ -79,6 +79,10 @@ var ExportPdfButtonListController = ListController.extend({
             // Only one date selected - apply partial filter
             this._updateViewWithDates(dateFrom, dateTo);
         }
+        // If no dates selected, reset the filter
+        else {
+            this._updateViewWithDates(null, null);
+        }
     },
 
     _updateViewWithDates: function(dateFrom, dateTo) {
