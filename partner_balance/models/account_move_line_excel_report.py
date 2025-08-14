@@ -122,18 +122,18 @@ class AccountMoveLineReport(models.Model):
         grouped = {}
 
         # Sort records to simulate SQL "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
-        sorted_records = sorted(
-            self,
-            key=lambda r: (
-                r.partner_id.id or 0,
-                r.currency_id.id or 0,
-                r.date or '',
-                r.move_id.id or 0,
-                r.id
-            )
-        )
+        # sorted_records = sorted(
+        #     self,
+        #     key=lambda r: (
+        #         r.partner_id.id or 0,
+        #         r.currency_id.id or 0,
+        #         r.date or '',
+        #         r.move_id.id or 0,
+        #         r.id
+        #     )
+        # )
 
-        for rec in sorted_records:
+        for rec in self:
             # Skip TRY currency records
             if rec.currency_id and rec.currency_id.name == 'TRY':
                 rec.cumulated_balance_amount_currency = 0
