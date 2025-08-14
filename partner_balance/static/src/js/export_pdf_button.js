@@ -112,7 +112,7 @@ var ExportPdfButtonListController = ListController.extend({
                 this.initialState.domain = domain;
             }
             
-            this.reload();
+            this.update({domain: domain});
             console.log('View reloaded with new date filters');
             
         } catch (error) {
