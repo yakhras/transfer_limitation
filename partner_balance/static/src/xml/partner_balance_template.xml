@@ -4,20 +4,18 @@
 
 <t t-extend="ListView.buttons" t-name="PartnerBalance.Buttons">
     <t t-jquery="button.o_list_export_xlsx" t-operation="after">
-        <!-- <button class="btn btn-primary o_button_pdf mr-2" type="button">
-            PDF
-        </button>
-        <button class="btn btn-primary o_button_xls mr-2" type="button">
-            Excel
-        </button> -->
         <!-- Export Buttons with Icons -->
-        <button class="btn btn-secondary o_button_pdf" type="button">
-            <i class="fa fa-file-pdf-o"></i>
-        </button>
-        <button class="btn btn-secondary o_button_excel" type="button">  
-            <i class="fa fa-file-excel-o"></i>
-        </button>
-        <div class="partner-balance-date-filters d-flex align-items-center">
+        <div class="btn-group mr-2" role="group">
+            <button class="btn btn-secondary o_button_pdf" type="button" title="Export to PDF">
+                <i class="fa fa-file-pdf-o"></i>
+            </button>
+            <button class="btn btn-secondary o_button_excel" type="button" title="Export to Excel">
+                <i class="fa fa-file-excel-o"></i>
+            </button>
+        </div>
+        
+        <!-- Date Filter Controls -->
+        <div class="partner-balance-date-filters">
             <label class="partner-balance-label">From:</label>
             <div class="partner-balance-datepicker">
                 <input type="date" 

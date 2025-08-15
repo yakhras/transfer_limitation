@@ -1,42 +1,129 @@
-.partner-balance-date-filters {
-    margin-left: 15px;
-    gap: 10px;
-    background: #f8f9fa;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
+// Scoped styles for partner_balance module
+.o_list_view.partner_balance {
+    
+    .partner-balance-date-filters {
+        display: flex;
+        align-items: center;
+        margin-left: 12px;
+        gap: 8px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .partner-balance-label {
+        font-size: 13px;
+        color: #495057;
+        font-weight: 600;
+        margin: 0;
+        min-width: 40px;
+        text-align: right;
+    }
+
+    .partner-balance-datepicker {
+        position: relative;
+        
+        &::before {
+            content: '\f073';
+            font-family: FontAwesome;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+            z-index: 2;
+        }
+    }
+
+    .partner-balance-date-input {
+        width: 140px;
+        height: 34px;
+        padding: 6px 30px 6px 10px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 13px;
+        background: #ffffff;
+        transition: all 0.2s ease-in-out;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        
+        &:focus {
+            border-color: #007bff;
+            outline: 0;
+            box-shadow: 
+                inset 0 1px 2px rgba(0,0,0,0.05),
+                0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+            background: #fff;
+        }
+        
+        &:hover {
+            border-color: #adb5bd;
+        }
+
+        &::placeholder {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+    }
+
+    // Export buttons styling
+    .btn-group {
+        .o_button_pdf,
+        .o_button_excel {
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease-in-out;
+            
+            i {
+                margin-right: 6px;
+                font-size: 14px;
+            }
+            
+            &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+        
+        .o_button_pdf {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border-color: #dc3545;
+            color: white;
+            
+            &:hover {
+                background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+                border-color: #bd2130;
+            }
+        }
+        
+        .o_button_excel {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-color: #28a745;
+            color: white;
+            
+            &:hover {
+                background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+                border-color: #1e7e34;
+            }
+        }
+    }
 }
 
-.partner-balance-label {
-    font-size: 12px;
-    color: #6c757d;
-    font-weight: 500;
-    margin: 0;
-    min-width: 35px;
-}
-
-.partner-balance-datepicker {
-    position: relative;
-}
-
-.partner-balance-date-input {
-    width: 120px;
-    height: 32px;
-    padding: 4px 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    font-size: 13px;
-    background: white;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.partner-balance-date-input:focus {
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.partner-balance-date-input::placeholder {
-    color: #9ca3af;
-    font-size: 12px;
+// Additional responsive adjustments
+@media (max-width: 768px) {
+    .o_list_view.partner_balance {
+        .partner-balance-date-filters {
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .partner-balance-date-input {
+            width: 120px;
+        }
+    }
 }
