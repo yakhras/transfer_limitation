@@ -148,7 +148,7 @@ class ExcelExport(BaseExcelExport):
         if not partner_id:
             return 'Beginning'
         
-        result = request.env['account.move.line.report'].sudo().read_group(
+        result = request.env['account.move.line'].sudo().read_group(
             domain=[('partner_id', '=', partner_id)],
             fields=['date:min'],
             groupby=[]
