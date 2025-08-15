@@ -96,10 +96,16 @@ class ExcelExport(BaseExcelExport):
 
             # Get opening balance
             opening_data = self.calculate_opening_balance(params)
+
+            opening_debit = 0
+            opening_credit = 0
             
             # Write opening balance row if exists
             if opening_data['balance'] != 0.0:
                 opening_row = self.create_opening_balance_row(opening_data)
+                opening_debit = opening_row[3] if opening_row[3] else 0  # Debit column
+                opening_credit = opening_row[4] if opening_row[4] else 0
+
                 for cell_index, cell_value in enumerate(opening_row):
                     xlsx_writer.write_cell(7, cell_index, cell_value)
                 period_start_row = 8  # Period data starts at row 8
@@ -126,7 +132,8 @@ class ExcelExport(BaseExcelExport):
 
             # Add totals row after all data
             totals_row = period_start_row + len(rows) + 1  # +1 for spacing
-            xlsx_writer._write_totals_from_rows(totals_row, rows, fields)
+            xlsx_writer._write_totals_from_rows(totals_row, rows, fields, opening_debit, opening_credit)
+
 
         return xlsx_writer.value
         
@@ -297,8 +304,88 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
         self.worksheet.set_column(0, i, 30) # around 220 pixels
 
     
-    def _write_totals_from_rows(self, row, rows_data, fields):
-        # Calculate totals first
+    # def _write_totals_from_rows(self, row, rows_data, fields):
+    #     # Calculate totals first
+    #     total_debit = 0
+    #     total_credit = 0
+        
+    #     # Find debit and credit column positions
+    #     debit_column_index = None
+    #     credit_column_index = None
+        
+    #     for field_index, field_name in enumerate(fields):
+    #         if 'debit' in field_name.lower():
+    #             debit_column_index = field_index
+    #         elif 'credit' in field_name.lower():
+    #             credit_column_index = field_index
+        
+    #     # Calculate debit total
+    #     if debit_column_index is not None:
+    #         for row_data in rows_data:
+    #             if debit_column_index < len(row_data):
+    #                 cell_value = row_data[debit_column_index]
+    #                 if isinstance(cell_value, (int, float)):
+    #                     total_debit += cell_value
+    #                 elif isinstance(cell_value, str):
+    #                     try:
+    #                         total_debit += float(cell_value)
+    #                     except (ValueError, TypeError):
+    #                         pass
+        
+    #     # Calculate credit total
+    #     if credit_column_index is not None:
+    #         for row_data in rows_data:
+    #             if credit_column_index < len(row_data):
+    #                 cell_value = row_data[credit_column_index]
+    #                 if isinstance(cell_value, (int, float)):
+    #                     total_credit += cell_value
+    #                 elif isinstance(cell_value, str):
+    #                     try:
+    #                         total_credit += float(cell_value)
+    #                     except (ValueError, TypeError):
+    #                         pass
+        
+    #     # Calculate balance
+    #     total_balance = total_debit - abs(total_credit)
+        
+    #     # Round values
+    #     total_debit = round(total_debit, 2)
+    #     total_credit = round(total_credit, 2)
+    #     total_balance = round(total_balance, 2)
+        
+    #     # Create monetary style
+    #     monetary_style = self.workbook.add_format({
+    #         'bold': True,
+    #         'bg_color': '#4F81BD',
+    #         'font_color': 'white',
+    #         'border': 1,
+    #         'align': 'center',
+    #         'num_format': self.monetary_format
+    #     })
+        
+    #     # Write static totals row
+    #     for column in range(len(fields)):
+    #         if column == 0:
+    #             # Column 0: "Total" label
+    #             self.write(row, column, _("Total"), self.header_bold_style)
+    #         elif column == 3:
+    #             # Column 3: Total debit
+    #             self.write(row, column, total_debit, monetary_style)
+    #         elif column == 4:
+    #             # Column 4: Total credit
+    #             self.write(row, column, total_credit, monetary_style)
+    #         elif column == 5:
+    #             # Column 5: Total balance (debit - credit)
+    #             self.write(row, column, total_balance, monetary_style)
+    #         else:
+    #             # All other columns: empty
+    #             self.write(row, column, '', self.header_bold_style)
+
+    #     return row + 2, 0
+
+
+    def _write_totals_from_rows(self, row, rows_data, fields, opening_debit=0, opening_credit=0):
+        # Calculate totals from period transactions
         total_debit = 0
         total_credit = 0
         
@@ -312,7 +399,7 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
             elif 'credit' in field_name.lower():
                 credit_column_index = field_index
         
-        # Calculate debit total
+        # Calculate period totals
         if debit_column_index is not None:
             for row_data in rows_data:
                 if debit_column_index < len(row_data):
@@ -325,7 +412,6 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                         except (ValueError, TypeError):
                             pass
         
-        # Calculate credit total
         if credit_column_index is not None:
             for row_data in rows_data:
                 if credit_column_index < len(row_data):
@@ -338,14 +424,18 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                         except (ValueError, TypeError):
                             pass
         
-        # Calculate balance
-        total_balance = total_debit - abs(total_credit)
+        # ADD opening balance to period totals
+        total_debit += opening_debit
+        total_credit += opening_credit
+        
+        # Calculate final balance
+        total_balance = total_debit - total_credit
         
         # Round values
         total_debit = round(total_debit, 2)
         total_credit = round(total_credit, 2)
         total_balance = round(total_balance, 2)
-        
+
         # Create monetary style
         monetary_style = self.workbook.add_format({
             'bold': True,
@@ -375,7 +465,8 @@ class ExportXlsxWriter(BaseExportXlsxWriter):
                 self.write(row, column, '', self.header_bold_style)
 
         return row + 2, 0
-
+    
+    # Rest of the method stays the same...
 
 class GroupExportXlsxWriter(BaseGroupExportXlsxWriter):
 
