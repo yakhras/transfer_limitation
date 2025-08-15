@@ -154,10 +154,10 @@ class ExcelExport(BaseExcelExport):
             groupby=[]
         )
         
-        if result and result[0].get('date:min'):
-            return result[0]['date:min'].strftime('%Y-%m-%d')
+        if result and result[0].get('date'):
+            return result[0]['date'].strftime('%Y-%m-%d')
         
-        return result
+        return result[0]
 
     def calculate_opening_balance(self, params):
         """Calculate opening balance before date_from for the given partner"""
