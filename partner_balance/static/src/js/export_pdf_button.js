@@ -50,7 +50,8 @@ var DataExportExtended = DataExport.extend({
 var ExportPdfButtonListController = ListController.extend({
     buttons_template: 'PartnerBalance.Buttons',
     events: _.extend({}, ListController.prototype.events, {
-        'click .o_button_pdf': '_onExport',
+        'click .o_button_pdf': '_onPdf',
+        'click .o_button_export': '_onExcel',
         'change .partner-balance-date-input': '_onDateChange',
     }),
 
@@ -152,6 +153,14 @@ var ExportPdfButtonListController = ListController.extend({
         const domain = this.isDomainSelected && state.getDomain();
         return new DataExportExtended(this, state, defaultExportFields, groupedBy,
             domain, this.getSelectedIds());
+    },
+
+    _onPdf: function () {
+        console.log('Exporting to PDF');
+    },
+
+    _onExcel: function () {
+        console.log('Exporting to Excel');
     },
 });
 
