@@ -12,10 +12,10 @@
         </button> -->
         <!-- Export Buttons with Icons -->
         <button class="btn btn-secondary o_button_pdf" type="button">
-            <i class="fa fa-file-pdf-o"></i> PDF
+            <i class="fa fa-file-pdf-o"></i>
         </button>
         <button class="btn btn-secondary o_button_excel" type="button">  
-            <i class="fa fa-file-excel-o"></i> Excel
+            <i class="fa fa-file-excel-o"></i>
         </button>
         <div class="partner-balance-date-filters d-flex align-items-center">
             <label class="partner-balance-label">From:</label>
