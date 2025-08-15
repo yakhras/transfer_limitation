@@ -1,8 +1,8 @@
 odoo.define('partner_balance.listpdf', function (require) {
     "use strict";
 
-var DataExport = require('web.DataExport') ;
 
+var DataExport = require('web.DataExport') ;
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
 var viewRegistry = require('web.view_registry');
@@ -161,7 +161,24 @@ var ExportPdfButtonListController = ListController.extend({
 
     _onExcel: function () {
         console.log('Exporting to Excel');
+        return this._rpc({
+            model: 'ir.exports',
+            method: 'search_read',
+            args: [[], ['id']],
+            limit: 1,
+        }).then(() => this._getExportDialogWidget().export())
     },
+
+    _getExportDialogWidget() {
+        let state = this.model.get(this.handle);
+        let defaultExportFields = this.renderer.columns.filter(field => field.tag === 'field' && state.fields[field.attrs.name].exportable !== false).map(field => field.attrs.name);
+        let groupedBy = this.renderer.state.groupedBy;
+        const domain = this.isDomainSelected && state.getDomain();
+        return new DataExportExtended(this, state, defaultExportFields, groupedBy,
+            domain, this.getSelectedIds());
+    },
+
+    
 });
 
 
