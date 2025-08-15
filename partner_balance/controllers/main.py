@@ -157,7 +157,7 @@ class ExcelExport(BaseExcelExport):
         if result and result[0].get('date:min'):
             return result[0]['date:min'].strftime('%Y-%m-%d')
         
-        return 'Beginning'
+        return result
 
     def calculate_opening_balance(self, params):
         """Calculate opening balance before date_from for the given partner"""
