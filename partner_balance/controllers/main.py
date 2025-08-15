@@ -80,7 +80,7 @@ class ExcelExport(BaseExcelExport):
 
         header_data = [
             _("Report: %s") % action_name if action_name else "",
-            f"Partner: {partner_id}" if partner_name else "",
+            f"Partner: {partner_name}" if partner_name else "",
             f"Company: {company_name}" if company_name else "",
             f"Export Date: {datetime.now().strftime('%Y-%m-%d')}",
             f"Date Range: {date_from or oldest_date} - {date_to or datetime.now().strftime('%Y-%m-%d')}",
@@ -155,9 +155,9 @@ class ExcelExport(BaseExcelExport):
         )
         
         if result and result[0].get('date'):
-            return result[0]['date'].strftime('%Y-%m-%d')
+            return result[0]['date']
         
-        return result[0]
+        return 'Beginning'
 
     def calculate_opening_balance(self, params):
         """Calculate opening balance before date_from for the given partner"""
