@@ -83,7 +83,7 @@ class ExcelExport(BaseExcelExport):
             f"Partner: {partner_name}" if partner_name else "",
             f"Company: {company_name}" if company_name else "",
             f"Export Date: {datetime.now().strftime('%Y-%m-%d')}",
-            f"Date Range: {date_from or oldest_date} - {date_to or datetime.now().strftime('%Y-%m-%d')}",
+            f"Date Range: {date_from or oldest_date} To {date_to or datetime.now().strftime('%Y-%m-%d')}",
         ]
         return [item for item in header_data if item]
     
