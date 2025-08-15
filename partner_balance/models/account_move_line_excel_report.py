@@ -18,8 +18,8 @@ class AccountMoveLineReport(models.Model):
     name = fields.Char(string='Label', readonly=True)
     amount_currency = fields.Monetary(string='Amount Currency', readonly=True)
     currency_id = fields.Many2one('res.currency', string='Currency', readonly=True)
-    debit = fields.Monetary(string='Debit', readonly=True)
-    credit = fields.Monetary(string='Credit', readonly=True)
+    debit = fields.Monetary(string='Debit', readonly=True, currency_field='company_currency_id')
+    credit = fields.Monetary(string='Credit', readonly=True, currency_field='company_currency_id')
     balance = fields.Monetary(string='Balance', readonly=True)
 
     # Computed instead of SQL
