@@ -76,12 +76,14 @@ class ExcelExport(BaseExcelExport):
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
 
+        oldest_date = self.get_oldest_date_for_partner(partner_id)
+
         header_data = [
             _("Report: %s") % action_name if action_name else "",
             f"Partner: {partner_name}" if partner_name else "",
             f"Company: {company_name}" if company_name else "",
             f"Export Date: {datetime.now().strftime('%Y-%m-%d')}",
-            f"Date Range: {date_from or 'Beginning'} - {date_to or datetime.now().strftime('%Y-%m-%d')}",
+            f"Date Range: {date_from or oldest_date} - {date_to or datetime.now().strftime('%Y-%m-%d')}",
         ]
         return [item for item in header_data if item]
     
@@ -138,7 +140,24 @@ class ExcelExport(BaseExcelExport):
     #             x, y = xlsx_writer.write_group(x, y, group_name, group)
 
     #     return xlsx_writer.value
-    
+
+
+
+    def get_oldest_date_for_partner(self, partner_id):
+        """Get the oldest transaction date for a specific partner"""
+        if not partner_id:
+            return 'Beginning'
+        
+        result = request.env['account.move.line.report'].sudo().read_group(
+            domain=[('partner_id', '=', partner_id)],
+            fields=['date:min'],
+            groupby=[]
+        )
+        
+        if result and result[0].get('date:min'):
+            return result[0]['date:min'].strftime('%Y-%m-%d')
+        
+        return 'Beginning'
 
     def calculate_opening_balance(self, params):
         """Calculate opening balance before date_from for the given partner"""
