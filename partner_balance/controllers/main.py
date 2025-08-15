@@ -80,7 +80,7 @@ class ExcelExport(BaseExcelExport):
 
         header_data = [
             _("Report: %s") % action_name if action_name else "",
-            f"Partner: {partner_name}" if partner_name else "",
+            f"Partner: {partner_id}" if partner_name else "",
             f"Company: {company_name}" if company_name else "",
             f"Export Date: {datetime.now().strftime('%Y-%m-%d')}",
             f"Date Range: {date_from or oldest_date} - {date_to or datetime.now().strftime('%Y-%m-%d')}",
