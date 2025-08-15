@@ -77,6 +77,8 @@
                     <field name="cumulated_balance"/>
                     <field name="company_currency_id"/>
                     <field name="amount_currency"/>
+                    <field name="currency_id"/>
+
                 </tree>
             </field>
         </record>
