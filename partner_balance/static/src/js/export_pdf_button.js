@@ -60,8 +60,8 @@ var ExportPdfButtonListController = ListController.extend({
         const value = $(ev.currentTarget).val();
         
         // Get both date values
-        const dateFrom = this.$('.partner-balance-date-input[data-field-name="date_from"]').val();
-        const dateTo = this.$('.partner-balance-date-input[data-field-name="date_to"]').val();
+        const dateFrom = this.$('.date-input[data-field-name="date_from"]').val();
+        const dateTo = this.$('.date-input[data-field-name="date_to"]').val();
         
         // Validate date range
         if (dateFrom && dateTo) {
