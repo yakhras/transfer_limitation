@@ -52,7 +52,7 @@ var ExportPdfButtonListController = ListController.extend({
     events: _.extend({}, ListController.prototype.events, {
         'click .o_button_pdf': '_onPdf',
         'click .o_button_excel': '_onExcel',
-        'change .partner-balance-date-input': '_onDateChange',
+        'change .date-input': '_onDateChange',
     }),
 
     _onDateChange: function(ev) {
