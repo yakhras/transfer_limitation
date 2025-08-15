@@ -1,101 +1,41 @@
 // Scoped styles for partner_balance module
-.o_list_view.partner_balance {
+.partner_balance {
     
-    .partner-balance-date-filters {
-        display: inline-flex;
+    .export-btn-group .btn {
+        padding: 6px 14px;
+        font-size: 14px;
+        display: flex;
         align-items: center;
-        margin-left: 15px;
-        gap: 12px;
-        background: #fff;
-        padding: 8px 16px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
+        gap: 6px;
+        border-radius: 6px;
+    }
+
+    .partner-balance-date-filters {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
     }
 
     .partner-balance-label {
-        font-size: 12px;
-        color: #666;
-        font-weight: 500;
-        margin: 0;
+        font-weight: 600;
+        margin-right: 4px;
         white-space: nowrap;
     }
 
-    .partner-balance-datepicker {
-        display: flex;
-        align-items: center;
-    }
-
     .partner-balance-date-input {
-        width: 130px;
-        height: 30px;
-        padding: 4px 8px;
+        width: 160px;
+        padding: 6px 8px;
+        border-radius: 6px;
         border: 1px solid #ccc;
-        border-radius: 3px;
-        font-size: 12px;
-        background: #fff;
-        
-        &:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 0 1px rgba(0,123,255,0.25);
-        }
+        font-size: 14px;
     }
 
-    // Export buttons styling
-    .btn-group {
-        .o_button_pdf,
-        .o_button_excel {
-            font-size: 13px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.2s ease-in-out;
-            
-            i {
-                margin-right: 6px;
-                font-size: 14px;
-            }
-            
-            &:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-        }
-        
-        .o_button_pdf {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            border-color: #dc3545;
-            color: white;
-            
-            &:hover {
-                background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
-                border-color: #bd2130;
-            }
-        }
-        
-        .o_button_excel {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border-color: #28a745;
-            color: white;
-            
-            &:hover {
-                background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
-                border-color: #1e7e34;
-            }
-        }
+    .partner-balance-date-input:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
     }
-}
 
-// Additional responsive adjustments
-@media (max-width: 768px) {
-    .o_list_view.partner_balance {
-        .partner-balance-date-filters {
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        
-        .partner-balance-date-input {
-            width: 120px;
-        }
-    }
 }

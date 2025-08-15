@@ -5,34 +5,32 @@
 <t t-extend="ListView.buttons" t-name="PartnerBalance.Buttons">
     <t t-jquery="button.o_list_export_xlsx" t-operation="after">
         <!-- Export Buttons with Icons -->
-        <div class="btn-group mr-2" role="group">
-            <button class="btn btn-secondary o_button_pdf" type="button" title="Export to PDF">
+        <div class="btn-group export-btn-group" role="group">
+            <button class="btn btn-outline-danger o_button_pdf" type="button" title="Export to PDF">
                 <i class="fa fa-file-pdf-o"></i>
             </button>
-            <button class="btn btn-secondary o_button_excel" type="button" title="Export to Excel">
+            <button class="btn btn-outline-success o_button_excel" type="button" title="Export to Excel">
                 <i class="fa fa-file-excel-o"></i>
             </button>
         </div>
-        
+
         <!-- Date Filter Controls -->
         <div class="partner-balance-date-filters">
             <label class="partner-balance-label">From:</label>
-            <div class="partner-balance-datepicker">
-                <input type="date" 
-                    class="partner-balance-date-input" 
-                    placeholder="mm/dd/yyyy"
-                    data-field-name="date_from"
-                    autocomplete="off" />
-            </div>
+            <input type="date" 
+                class="form-control partner-balance-date-input" 
+                placeholder="mm/dd/yyyy"
+                data-field-name="date_from"
+                autocomplete="off" />
+            
             <label class="partner-balance-label">To:</label>
-            <div class="partner-balance-datepicker">
-                <input type="date" 
-                    class="partner-balance-date-input" 
-                    placeholder="mm/dd/yyyy"
-                    data-field-name="date_to"
-                    autocomplete="off" />
-            </div>
+            <input type="date" 
+                class="form-control partner-balance-date-input" 
+                placeholder="mm/dd/yyyy"
+                data-field-name="date_to"
+                autocomplete="off" />
         </div>
+
     </t>
 </t>
 
