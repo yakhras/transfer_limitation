@@ -1,95 +1,60 @@
-// Scoped styles for partner_balance module
-
-
-/* Layout */
-.toolbar{
-display:flex;
-align-items:center;
-gap:16px;
-flex-wrap:wrap;
+/* Keep everything inline and tidy */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
-/* Export buttons */
-.btn-group-tight .btn{
-border-radius:10px;
-padding:0;
-width:40px;             /* uniform icon-only buttons */
-height:36px;
-display:inline-flex;
-align-items:center;
-justify-content:center;
-border:1px solid #d7d9dd;
-background:#fff;
-transition:box-shadow .15s, transform .05s, border-color .15s, background-color .15s;
+/* Buttons */
+.export-btn-group .btn-icon {
+  padding: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
 
-.btn-group-tight .btn + .btn{
-margin-left:8px;        /* avoid the tall merged-border look */
+.export-btn-group .btn-pdf i {
+  color: #d9534f;
 }
 
-/* Icons */
-.btn-icon i{ font-size:15px; line-height:1; }
-
-/* PDF / Excel accents (subtle, not full-fill) */
-.btn-pdf i{ color:#d9534f; }
-.btn-xlsx i{ color:#28a745; }
-
-.btn-group-tight .btn:hover{
-border-color:#c3c7ce;
-box-shadow:0 2px 8px rgba(34,48,73,0.08);
-}
-.btn-group-tight .btn:active{ transform:translateY(1px); }
-
-/* Date range */
-.date-range{
-display:flex;
-align-items:center;
-gap:10px;
-flex-wrap:wrap;
+.export-btn-group .btn-xlsx i {
+  color: #28a745;
 }
 
-.range-label{
-font-weight:600;
-color:#2f3a4a;
-margin-right:2px;
+.export-btn-group .btn-icon:hover {
+  background-color: #f7f7f7;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
-/* Input group (works with Bootstrap 3/4/5-ish) */
-.input-group.date-input{
-display:inline-flex;
-align-items:center;
-border:1px solid #d7d9dd;
-border-radius:8px;
-overflow:hidden;
-background:#fff;
-height:36px;
+/* Date inputs */
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.input-group.date-input .form-control{
-border:0;
-height:34px;
-padding:6px 10px;
-font-size:14px;
-min-width:170px;
-box-shadow:none !important;
+.date-range label {
+  font-weight: 600;
+  margin-right: 4px;
 }
 
-.input-group.date-input .input-group-addon{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-padding:0 10px;
-border:0;
-background:transparent;
-color:#7b8494;
+.date-input {
+  height: 36px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
 }
 
-.input-group.date-input:focus-within{
-border-color:#0d6efd; /* primary */
-box-shadow:0 0 0 3px rgba(13,110,253,0.15);
-}
-
-/* Small screens */
-@media (max-width:576px){
-.input-group.date-input .form-control{ min-width:140px; }
+.date-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 3px rgba(0,123,255,0.4);
 }

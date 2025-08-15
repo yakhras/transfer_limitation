@@ -6,31 +6,26 @@
     <t t-jquery="button.o_list_export_xlsx" t-operation="after">
         <!-- Export Buttons with Icons -->
         <div class="toolbar">
-            <div class="btn-group btn-group-tight" role="group" aria-label="Exports">
+            <!-- Export Buttons -->
+            <div class="btn-group export-btn-group" role="group">
                 <button class="btn btn-icon btn-pdf o_button_pdf" type="button" title="Export to PDF">
-                <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                <i class="fa fa-file-pdf-o"></i>
                 </button>
                 <button class="btn btn-icon btn-xlsx o_button_excel" type="button" title="Export to Excel">
-                <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                <i class="fa fa-file-excel-o"></i>
                 </button>
             </div>
 
+            <!-- Date Filters -->
             <div class="date-range">
-                <label class="range-label">From:</label>
-                <div class="input-group date-input">
-                <input type="date" class="form-control" placeholder="mm/dd/yyyy" data-field-name="date_from" autocomplete="off" />
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                </div>
+                <label>From:</label>
+                <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_from" autocomplete="off" />
 
-                <label class="range-label">To:</label>
-                <div class="input-group date-input">
-                <input type="date" class="form-control" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
-                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                </div>
-            </div>
+                <label>To:</label>
+                <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
             </div>
 
-
+        </div>
     </t>
 </t>
 
