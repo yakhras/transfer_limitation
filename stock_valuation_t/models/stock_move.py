@@ -56,7 +56,7 @@ class StockMove(models.Model):
                 rounding = product.uom_id.rounding
                 location_id = move.location_dest_id.id
                 product_id = product.id
-                qty_available = product.with_context(location_dest_id = location_id).sudo().with_company(company).quantity_svl + tmpl_dict[product.id]
+                qty_available = product.sudo().with_company(company).quantity_svl + tmpl_dict[product.id]
                 qty_done = sum(
                     line.product_uom_id._compute_quantity(line.qty_done, product.uom_id)
                     for line in move._get_in_move_lines()
