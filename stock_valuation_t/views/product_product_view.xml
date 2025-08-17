@@ -126,9 +126,201 @@
             <field name="active">True</field>
         </record> -->
 
+
+        <!-- Displays both current costs and history -->
+        <!-- ========================================== -->
+        
+        <record id="view_product_location_cost_unified_tree" model="ir.ui.view">
+            <field name="name">product.location.cost.unified.tree</field>
+            <field name="model">product.location.cost</field>
+            <field name="arch" type="xml">
+                <tree string="Product Location Costs &amp; History" 
+                    decoration-bf="not parent_id" 
+                    decoration-muted="parent_id">
+                    <field name="product_id" options="{'no_create': True}"/>
+                    <field name="location_id" options="{'no_create': True}"/>
+                    <field name="cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="last_updated" widget="datetime"/>
+                    <field name="last_updated_by" widget="many2one_avatar_user"/>
+                    <!-- Expandable history rows -->
+                    <field name="history_ids" invisible="1"/>
+                </tree>
+            </field>
+        </record>
     
 
-    
+        <!-- ========================================== -->
+        <!-- UNIFIED FORM VIEW -->
+        <!-- Shows current cost with embedded history -->
+        <!-- ========================================== -->
+        
+        <record id="view_product_location_cost_unified_form" model="ir.ui.view">
+            <field name="name">product.location.cost.unified.form</field>
+            <field name="model">product.location.cost</field>
+            <field name="arch" type="xml">
+                <form string="Product Location Cost">
+                    <sheet>
+
+                        <div class="oe_title">
+                            <h1>
+                                <field name="product_id" options="{'no_create': True, 'no_edit': True}"/>
+                            </h1>
+                            <h2>
+                                <field name="location_id" options="{'no_create': True, 'no_edit': True}"/>
+                            </h2>
+                        </div>
+                        
+                        <!-- Cost Information -->
+                        <group>
+                            <group string="Current Cost">
+                                <field name="cost" widget="monetary" options="{'currency_field': 'currency_id'}" 
+                                    class="oe_inline oe_bold"/>
+                                <field name="last_updated" readonly="1"/>
+                                <field name="last_updated_by" readonly="1" widget="many2one_avatar_user"/>
+                            </group>
+                        </group>
+
+                        <!-- Historical Data in Notebook -->
+                        <notebook>
+                            <!-- Recent Changes Tab -->
+                            <page string="Recent Changes" name="recent_history">
+                                <field name="history_ids" readonly="1" 
+                                    domain="[('change_date', '>=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]">
+                                    <tree decoration-success="cost_difference &gt; 0" 
+                                        decoration-danger="cost_difference &lt; 0"
+                                        default_order="change_date desc">
+                                        <field name="change_date" widget="datetime"/>
+                                        <field name="changed_by" widget="many2one_avatar_user"/>
+                                        <field name="old_cost" widget="monetary"/>
+                                        <field name="new_cost" widget="monetary"/>
+                                        <field name="cost_difference" widget="monetary" decoration-bf="1"/>
+                                        <field name="cost_change_percent" widget="percentage"/>
+                                        <field name="change_reason"/>
+                                    </tree>
+                                </field>
+                            </page>
+
+                            <!-- All History Tab -->
+                            <page string="Complete History" name="all_history">
+                                <field name="history_ids" readonly="1">
+                                    <tree decoration-success="cost_difference &gt; 0" 
+                                        decoration-danger="cost_difference &lt; 0"
+                                        default_order="change_date desc" 
+                                        limit="100">
+                                        <field name="change_date" widget="datetime"/>
+                                        <field name="changed_by" widget="many2one_avatar_user"/>
+                                        <field name="old_cost" widget="monetary" optional="show"/>
+                                        <field name="new_cost" widget="monetary"/>
+                                        <field name="cost_difference" widget="monetary" decoration-bf="1"/>
+                                        <field name="cost_change_percent" widget="percentage" optional="hide"/>
+                                        <field name="change_reason"/>
+                                    </tree>
+                                    <form string="Cost Change Detail" create="false" edit="false">
+                                        <group>
+                                            <group string="Change Information">
+                                                <field name="change_date"/>
+                                                <field name="changed_by"/>
+                                                <field name="change_reason"/>
+                                            </group>
+                                            <group string="Cost Details">
+                                                <field name="old_cost" widget="monetary"/>
+                                                <field name="new_cost" widget="monetary"/>
+                                                <field name="cost_difference" widget="monetary" class="oe_bold"/>
+                                                <field name="cost_change_percent" widget="percentage" class="oe_bold"/>
+                                            </group>
+                                        </group>
+                                        <group string="Context">
+                                            <field name="product_id" readonly="1"/>
+                                            <field name="location_id" readonly="1"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+
+                            
+
+                            <!-- Product Details Tab -->
+                            <page string="Product &amp; Location Info" name="details">
+                                <group>
+                                    <group string="Product Information">
+                                        <field name="product_id" readonly="1" force_save="1" nolabel="1">
+                                            <form>
+                                                <group>
+                                                    <field name="default_code"/>
+                                                    <field name="name"/>
+                                                    <field name="categ_id"/>
+                                                    <field name="uom_id"/>
+                                                    <field name="list_price"/>
+                                                    <field name="standard_price"/>
+                                                    <field name="cost_method"/>
+                                                </group>
+                                            </form>
+                                        </field>
+                                    </group>
+                                    <group string="Location Information">
+                                        <field name="location_id" readonly="1" force_save="1" nolabel="1">
+                                            <form>
+                                                <group>
+                                                    <field name="complete_name"/>
+                                                    <field name="usage"/>
+                                                    <field name="company_id"/>
+                                                    <field name="active"/>
+                                                </group>
+                                            </form>
+                                        </field>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    
+                    
+                </form>
+            </field>
+        </record>
+
+        <!-- ========================================== -->
+        <!-- ACTIONS -->
+        <!-- ========================================== -->
+        
+        <record id="action_product_location_cost_unified" model="ir.actions.act_window">
+            <field name="name">Product Location Costs</field>
+            <field name="res_model">product.location.cost</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_product_location_cost_unified_tree"/>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first product location cost!
+                </p>
+                <p>
+                    Track costs for products at specific locations and monitor their changes over time.
+                </p>
+            </field>
+        </record>
+
+        <!-- Action for History Only -->
+        <record id="action_product_location_cost_history_all" model="ir.actions.act_window">
+            <field name="name">Cost History</field>
+            <field name="res_model">product.location.cost.history</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+
+              
+        <menuitem id="menu_product_location_cost_main" 
+                name="Location Costs" 
+                parent="stock.menu_stock_root"
+                action="action_product_location_cost_unified" 
+                sequence="30"/>
+                
+        <menuitem id="menu_product_location_cost_history" 
+                name="Cost History" 
+                parent="stock.menu_stock_root"
+                action="action_product_location_cost_history_all" 
+                sequence="20"/>
 
 
         
