@@ -326,5 +326,55 @@ class ProductLocationCost(models.Model):
     product_id = fields.Many2one('product.product', string='Product', required=True, ondelete='cascade')
     location_id = fields.Many2one('stock.location', string='Location', required=True)
     cost = fields.Float('Cost', digits='Product Price')
+    
+    # History tracking
+    history_ids = fields.One2many('product.location.cost.history', 'cost_id', string='Cost History')
+    last_updated = fields.Datetime('Last Updated', default=fields.Datetime.now)
+    last_updated_by = fields.Many2one('res.users', string='Last Updated By', default=lambda self: self.env.user)
+
+    def write(self, vals):
+        # Create history record before updating
+        if 'cost' in vals:
+            for record in self:
+                if record.cost != vals['cost']:
+                    self.env['product.location.cost.history'].create({
+                        'cost_id': record.id,
+                        'old_cost': record.cost,
+                        'new_cost': vals['cost'],
+                        'changed_by': self.env.user.id,
+                        'change_date': fields.Datetime.now(),
+                        'change_reason': vals.get('change_reason', 'Manual Update')
+                    })
+            vals['last_updated'] = fields.Datetime.now()
+            vals['last_updated_by'] = self.env.user.id
+        return super().write(vals)
+
+
+class ProductLocationCostHistory(models.Model):
+    _name = 'product.location.cost.history'
+    _description = 'Product Location Cost History'
+    _order = 'change_date desc'
+
+    cost_id = fields.Many2one('product.location.cost', string='Cost Record', required=True, ondelete='cascade')
+    product_id = fields.Many2one(related='cost_id.product_id', string='Product', store=True)
+    location_id = fields.Many2one(related='cost_id.location_id', string='Location', store=True)
+    
+    old_cost = fields.Float('Previous Cost', digits='Product Price')
+    new_cost = fields.Float('New Cost', digits='Product Price')
+    cost_difference = fields.Float('Cost Difference', compute='_compute_cost_difference', store=True)
+    cost_change_percent = fields.Float('Change %', compute='_compute_cost_difference', store=True)
+    
+    change_date = fields.Datetime('Change Date', required=True, default=fields.Datetime.now)
+    changed_by = fields.Many2one('res.users', string='Changed By', required=True)
+    change_reason = fields.Char('Reason', size=255)
+    
+    @api.depends('old_cost', 'new_cost')
+    def _compute_cost_difference(self):
+        for record in self:
+            record.cost_difference = record.new_cost - record.old_cost
+            if record.old_cost:
+                record.cost_change_percent = ((record.new_cost - record.old_cost) / record.old_cost) * 100
+            else:
+                record.cost_change_percent = 0.0
 
 
