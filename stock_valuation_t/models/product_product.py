@@ -180,7 +180,7 @@ class ProductProduct(models.Model):
                 product = self.browse(group['product_id'][0])
                 product.value_svl = self.env.company.currency_id.round(group['value'])
                 product.quantity_svl = group['quantity']
-                product.result = group['quantity']
+                product.result = str(domain)
                 products |= product
             remaining = (self - products)
             remaining.value_svl = 0
