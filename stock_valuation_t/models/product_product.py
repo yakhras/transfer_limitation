@@ -343,7 +343,7 @@ class ProductLocationCost(models.Model):
                         'new_cost': vals['cost'],
                         'changed_by': self.env.user.id,
                         'change_date': fields.Datetime.now(),
-                        'change_reason': self.env.context
+                        'change_reason': self.env.context.get('active_model', 'active_id'),
                     })
             vals['last_updated'] = fields.Datetime.now()
             vals['last_updated_by'] = self.env.user.id
