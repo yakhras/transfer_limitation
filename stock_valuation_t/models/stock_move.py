@@ -54,16 +54,15 @@ class StockMove(models.Model):
 
             if cost_method == 'average':
                 rounding = product.uom_id.rounding
-                qty_available = product.sudo().with_company(company).quantity_svl + tmpl_dict[product.id]
+                location_id = move.location_dest_id.id
+                product_id = product.id
+                qty_available = product.with_context(location_dest_id = location_id).sudo().with_company(company).quantity_svl + tmpl_dict[product.id]
                 qty_done = sum(
                     line.product_uom_id._compute_quantity(line.qty_done, product.uom_id)
                     for line in move._get_in_move_lines()
                 )
                 qty = forced_qty or qty_done
                 price_unit = move._get_price_unit()
-
-                location_id = move.location_dest_id.id
-                product_id = product.id
 
                 location_cost = self.env['product.location.cost'].search([
                     ('product_id', '=', product_id),
