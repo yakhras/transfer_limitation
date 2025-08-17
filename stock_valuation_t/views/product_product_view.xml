@@ -297,15 +297,6 @@
             </field>
         </record>
 
-        <!-- Action for History Only -->
-        <record id="action_product_location_cost_history_all" model="ir.actions.act_window">
-            <field name="name">Cost History</field>
-            <field name="res_model">product.location.cost.history</field>
-            <field name="view_mode">tree,form</field>
-            <field name="domain">[]</field>
-            <field name="context">{}</field>
-        </record>
-
         <menuitem id="menu_product_location_cost_main" 
                 name="Location Costs" 
                 parent="stock.menu_warehouse_report"
