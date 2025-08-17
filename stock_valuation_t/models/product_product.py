@@ -157,7 +157,7 @@ class ProductProduct(models.Model):
 
 
     @api.depends('stock_valuation_layer_ids')
-    @api.depends_context('to_date', 'company')
+    @api.depends_context('to_date', 'company', 'location_dest_id')
     def _compute_value_svl(self):
         """Compute `value_svl` and `quantity_svl`."""
         company_id = self.env.company.id
