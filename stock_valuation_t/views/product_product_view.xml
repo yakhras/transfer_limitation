@@ -306,20 +306,12 @@
             <field name="context">{}</field>
         </record>
 
-
-              
         <menuitem id="menu_product_location_cost_main" 
                 name="Location Costs" 
                 parent="stock.menu_stock_root"
                 action="action_product_location_cost_unified" 
                 sequence="30"/>
                 
-        <menuitem id="menu_product_location_cost_history" 
-                name="Cost History" 
-                parent="stock.menu_stock_root"
-                action="action_product_location_cost_history_all" 
-                sequence="20"/>
-
 
         
     </data>
