@@ -134,9 +134,7 @@
             <field name="name">product.location.cost.unified.tree</field>
             <field name="model">product.location.cost</field>
             <field name="arch" type="xml">
-                <tree string="Product Location Costs &amp; History" 
-                    decoration-bf="not parent_id" 
-                    decoration-muted="parent_id">
+                <tree string="Product Location Costs &amp; History">
                     <field name="product_id" options="{'no_create': True}"/>
                     <field name="location_id" options="{'no_create': True}"/>
                     <field name="cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
