@@ -76,6 +76,7 @@ class StockMove(models.Model):
                     new_price = price_unit
                 else:
                     existing_price = std_price_update.get((company.id, product_id)) or cost_value
+                    move.result = qty_available
                     new_price = ((existing_price * qty_available) + (price_unit * qty)) / (qty_available + qty)
 
                 tmpl_dict[product_id] += qty_done
