@@ -343,7 +343,7 @@ class ProductLocationCost(models.Model):
                         'new_cost': vals['cost'],
                         'changed_by': self.env.user.id,
                         'change_date': fields.Datetime.now(),
-                        'change_reason': self.env.context.get('active_model', 'active_id'),
+                        'change_reason': self.env.context,
                     })
             vals['last_updated'] = fields.Datetime.now()
             vals['last_updated_by'] = self.env.user.id
@@ -366,7 +366,7 @@ class ProductLocationCostHistory(models.Model):
     
     change_date = fields.Datetime('Change Date', required=True, default=fields.Datetime.now)
     changed_by = fields.Many2one('res.users', string='Changed By', required=True)
-    change_reason = fields.Char('Reason', size=255)
+    change_reason = fields.Char('Reason')
     
     @api.depends('old_cost', 'new_cost')
     def _compute_cost_difference(self):
