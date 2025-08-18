@@ -160,12 +160,13 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             (f"Date Range: {date_from or 'Beginning'} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", 'header'),
         ]
 
-        for style_type in other_headers:
+        for header_text, style_type in other_headers:
+            if header_text:
                 if style_type == 'metadata':
                     style = xlsx_writer.metadata_style
                 else:
                     style = xlsx_writer.header_style
-                xlsx_writer.write(row, 0, style)
+                xlsx_writer.write(row, 0, header_text, style)
                 row += 1
         
         return row
