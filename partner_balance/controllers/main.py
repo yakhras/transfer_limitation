@@ -166,18 +166,6 @@ class ExcelExport(BaseExcelExport):
 
         return xlsx_writer.value
         
-    # def from_group_data(self, fields, groups, params=None):
-    #     with GroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
-    #         data = self.header_metadata(params)
-    #         for row_index, header_info in enumerate(data):
-    #             xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
-    #         x, y = 5, 0
-    #         for group_name, group in groups.children.items():
-    #             x, y = xlsx_writer.write_group(x, y, group_name, group)
-
-    #     return xlsx_writer.value
-
-
 
     def get_oldest_date_for_partner(self, partner_id):
         """Get the oldest transaction date for a specific partner"""
