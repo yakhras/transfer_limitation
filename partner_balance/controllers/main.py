@@ -4,6 +4,8 @@ import json
 import operator
 from datetime import datetime, timedelta
 import io
+from odoo import http
+from odoo.http import content_disposition, serialize_exception
 from odoo.tools.misc import xlsxwriter
 from odoo.exceptions import UserError
 
@@ -17,6 +19,11 @@ from odoo.addons.web.controllers.main import ExportXlsxWriter as BaseExportXlsxW
 from odoo.addons.web.controllers.main import GroupExportXlsxWriter as BaseGroupExportXlsxWriter
     
 class ExcelExport(BaseExcelExport):
+
+    @http.route('/web/balance_export/xlsx', type='http', auth="user")
+    @serialize_exception
+    def index(self, data):
+        return self.base(data)
 
     def base(self, data):
         params = json.loads(data)

@@ -31,7 +31,7 @@ var DataExportExtended = DataExport.extend({
         console.log('exportedFields', exportedFields);
         framework.blockUI();
         this.getSession().get_file({
-            url: '/web/export/' + exportFormat,
+            url: '/web/balance_export/' + exportFormat,
             data: {
                 data: JSON.stringify({
                     model: this.record.model,
