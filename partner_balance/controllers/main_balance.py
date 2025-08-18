@@ -187,6 +187,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
             row_index = self.header_metadata(params, xlsx_writer)
 
+
             # Get opening balance
             opening_data = self.calculate_opening_balance(params)
 
@@ -221,7 +222,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
                         cell_value = pycompat.to_text(cell_value)
-                    xlsx_writer.write_cell(period_start_row + row_index, cell_index, cell_value)
+                    xlsx_writer.write_cell(period_start_row + row_index + 1, cell_index, cell_value)
 
             # Add totals row after all data
             totals_row = period_start_row + len(rows) + 1  # +1 for spacing
