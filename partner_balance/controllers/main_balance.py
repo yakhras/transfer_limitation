@@ -397,7 +397,7 @@ class BalanceExportXlsxWriter:
 
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
-            self.write(6, i, fieldname, self.header_style)
+            self.write(7, i, fieldname, self.header_style)
         self.worksheet.set_column(0, i, 30) # around 220 pixels
 
     def close(self):
