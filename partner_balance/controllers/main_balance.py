@@ -147,9 +147,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         
         # Other metadata with regular style
         partner_name = params.get('partner_name', '')
-        partner = f"Partner: {partner_name}" if partner_name else ""
-        xlsx_writer.worksheet.merge_range(row, 0, row, 3, partner, xlsx_writer.summary_metric_style)
-        row += 1
+        if partner_name:
+            xlsx_writer.write(row, 0, "Partner:", xlsx_writer.summary_metric_style)
+            xlsx_writer.worksheet.merge_range(row, 1, row, 5, partner_name, xlsx_writer.base_style)
+            row += 1
 
         date_from = params.get('date_from')
         date_to = params.get('date_to')
