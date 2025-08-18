@@ -321,6 +321,7 @@ class BalanceExportXlsxWriter:
         self.float_format = '#,##0.00'
         decimal_places = [res['decimal_places'] for res in request.env['res.currency'].search_read([], ['decimal_places'])]
         self.monetary_format = f'#,##0.{max(decimal_places or [2]) * "0"}'
+        self.company_header_style = self.workbook.add_format({'bold': True,'font_size': 16,'align': 'center','valign': 'vcenter','bg_color': '#1e3a8a','font_color': 'white','border': 1,'border_color': '#3b82f6'})
 
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
