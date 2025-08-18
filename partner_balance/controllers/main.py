@@ -45,7 +45,15 @@ class ExcelExport(BaseExcelExport):
     @http.route('/web/balance_export/xlsx', type='http', auth="user")
     @serialize_exception
     def index(self, data):
-        return self.base(data)
+        params = json.loads(data)
+        model = params.get('model')
+        
+        # Only handle your specific model
+        if model == 'account.move.line.report':
+            return self.base(data)
+        else:
+            # Redirect to standard export for other models
+            return super().index(data)
 
     def base(self, data):
         params = json.loads(data)
