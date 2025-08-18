@@ -101,36 +101,71 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                      ('Content-Type', self.content_type)],
         )
     
-    def header_metadata(self, params):
-        partner_name = params.get('partner_name', '')
-        action_name = params.get('action_name', '')
-        company_name = ''
-        date_from = params.get('date_from')
-        date_to = params.get('date_to')
-        partner_id = params.get('default_partner_id')
+    # def header_metadata(self, params):
+    #     partner_name = params.get('partner_name', '')
+    #     action_name = params.get('action_name', '')
+    #     company_name = ''
+    #     date_from = params.get('date_from')
+    #     date_to = params.get('date_to')
+    #     partner_id = params.get('default_partner_id')
 
+    #     if partner_id:
+    #         partner_record = request.env['res.partner'].sudo().browse(partner_id)
+    #         if partner_record.exists() and partner_record.company_id:
+    #             company_name = partner_record.company_id.name
+
+    #     oldest_date = self.get_oldest_date_for_partner(partner_id)
+
+    #     header_data = [
+    #         _("Report: %s") % action_name if action_name else "",
+    #         f"Partner: {partner_name}" if partner_name else "",
+    #         f"Company: {company_name}" if company_name else "",
+    #         f"Export Date: {datetime.datetime.now().strftime('%Y-%m-%d')}",
+    #         f"Date Range: {date_from or oldest_date} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}",
+    #     ]
+    #     return [item for item in header_data if item]
+    
+    
+    def header_metadata(self, params, xlsx_writer):
+        """Write headers with styling and return next available row"""
+        row = 0
+        
+        # Company name with special style
+        partner_id = params.get('default_partner_id')
         if partner_id:
             partner_record = request.env['res.partner'].sudo().browse(partner_id)
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
-
-        oldest_date = self.get_oldest_date_for_partner(partner_id)
-
-        header_data = [
-            _("Report: %s") % action_name if action_name else "",
+                xlsx_writer.write(row, 0, f"🏢 {company_name}", xlsx_writer.company_header_style)
+                row += 1
+        
+        # Other metadata with regular style
+        partner_name = params.get('partner_name', '')
+        action_name = params.get('action_name', '')
+        date_from = params.get('date_from')
+        date_to = params.get('date_to')
+        
+        headers = [
+            f"Report: {action_name}" if action_name else "",
             f"Partner: {partner_name}" if partner_name else "",
-            f"Company: {company_name}" if company_name else "",
             f"Export Date: {datetime.datetime.now().strftime('%Y-%m-%d')}",
-            f"Date Range: {date_from or oldest_date} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}",
+            f"Date Range: {date_from or 'Beginning'} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}",
         ]
-        return [item for item in header_data if item]
-    
+        
+        for header in [h for h in headers if h]:
+            xlsx_writer.write(row, 0, header, xlsx_writer.header_style)
+            row += 1
+        
+        return row
+
     def from_data(self, fields, rows, params=None):
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             # Write model name in the first row if provided
-            data = self.header_metadata(params)
-            for row_index, header_info in enumerate(data):
-                xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
+            # data = self.header_metadata(params)
+            # for row_index, header_info in enumerate(data):
+            #     xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
+
+            row_index = self.header_metadata(params, xlsx_writer)
 
             # Get opening balance
             opening_data = self.calculate_opening_balance(params)
