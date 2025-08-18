@@ -159,7 +159,7 @@ var ExportPdfButtonListController = ListController.extend({
      * @returns {DataExportExtended} the export dialog widget
      * @private
      */
-    _getExportDialogWidget() {
+    _getBalanceExportDialogWidget() {
         let state = this.model.get(this.handle);
         let defaultExportFields = this.renderer.columns.filter(field => field.tag === 'field' && state.fields[field.attrs.name].exportable !== false).map(field => field.attrs.name);
         let groupedBy = this.renderer.state.groupedBy;
@@ -179,17 +179,9 @@ var ExportPdfButtonListController = ListController.extend({
             method: 'search_read',
             args: [[], ['id']],
             limit: 1,
-        }).then(() => this._getExportDialogWidget().balanceExport())
+        }).then(() => this._getBalanceExportDialogWidget().balanceExport())
     },
 
-    _getExportDialogWidget() {
-        let state = this.model.get(this.handle);
-        let defaultExportFields = this.renderer.columns.filter(field => field.tag === 'field' && state.fields[field.attrs.name].exportable !== false).map(field => field.attrs.name);
-        let groupedBy = this.renderer.state.groupedBy;
-        const domain = this.isDomainSelected && state.getDomain();
-        return new DataExportExtended(this, state, defaultExportFields, groupedBy,
-            domain, this.getSelectedIds());
-    },
 
     
 });
