@@ -201,8 +201,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 opening_credit = opening_row[4] if opening_row[4] else 0
 
                 for cell_index, cell_value in enumerate(opening_row):
-                    xlsx_writer.write_cell(8, cell_index, cell_value)
-                period_start_row = 10  # Period data starts at row 8
+                    xlsx_writer.write_cell(7, cell_index, cell_value)
+                period_start_row = 8  # Period data starts at row 8
             else:
                 period_start_row = 9  # Period data starts at row 7
                 opening_data['balance'] = 0.0  # Ensure balance is 0 if no opening balance
@@ -222,7 +222,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
                         cell_value = pycompat.to_text(cell_value)
-                    xlsx_writer.write_cell(period_start_row + row_index + 1, cell_index, cell_value)
+                    xlsx_writer.write_cell(period_start_row + row_index, cell_index, cell_value)
 
             # Add totals row after all data
             totals_row = period_start_row + len(rows) + 1  # +1 for spacing
