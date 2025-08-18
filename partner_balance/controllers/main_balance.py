@@ -143,7 +143,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         action_name = params.get('action_name', '')
         report_title = f"📊 {action_name}" if action_name else "📊 STATEMENT OF ACCOUNT - DETAILED ANALYSIS"
         xlsx_writer.worksheet.merge_range(row, 0, row, 3, report_title, xlsx_writer.report_title_style)
-        row += 2
+        row += 1
 
         xlsx_writer.worksheet.merge_range(row, 0, row, 5, "📈 EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
         row += 1
