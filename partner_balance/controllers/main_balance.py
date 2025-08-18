@@ -243,7 +243,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             opening_data['credit'],        # Credit  
             opening_data['balance'],       # Cumulated Balance
             opening_data['currency'],      # Currency
-            opening_data['balance_currency'] # Amount Currency
+            # opening_data['balance_currency'] # Amount Currency
         ]
     
 
