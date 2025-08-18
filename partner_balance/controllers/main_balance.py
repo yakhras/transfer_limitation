@@ -155,20 +155,14 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         date_from = params.get('date_from')
         date_to = params.get('date_to')
         
-        other_headers = [
-            
-            (f"Export Date: {datetime.datetime.now().strftime('%Y-%m-%d')}", 'metadata'),
-            (f"Date Range: {date_from or 'Beginning'} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", 'header'),
-        ]
-
-        for header_text, style_type in other_headers:
-            if header_text:
-                if style_type == 'metadata':
-                    style = xlsx_writer.metadata_style
-                else:
-                    style = xlsx_writer.header_style
-                xlsx_writer.write(row, 0, header_text, style)
-                row += 1
+        # Report Period row - multiple labels and values
+        xlsx_writer.write(row, 0, "Report Period:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 1, f"{date_from or 'Beginning'} to {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", xlsx_writer.base_style)
+        xlsx_writer.write(row, 2, "Generated:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 3, datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), xlsx_writer.base_style)
+        xlsx_writer.write(row, 4, "Days:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 5, "14 days", xlsx_writer.base_style)
+        row += 1
         
         return row
 
