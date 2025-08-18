@@ -219,7 +219,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         balance = sum(opening_records.mapped('debit')) - sum(opening_records.mapped('credit'))
         
         # Calculate currency amounts if needed
-        balance_currency = sum(opening_records.mapped('amount_currency'))
+        # balance_currency = sum(opening_records.mapped('amount_currency'))
         currency = opening_records[0].currency_id.name if opening_records else 'TRY'
         
         opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
@@ -228,7 +228,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             'debit': debit,
             'credit': credit,
             'balance': balance,
-            'balance_currency': balance_currency,
+            # 'balance_currency': balance_currency,
             'currency': currency,
             'date': opening_date
         }
