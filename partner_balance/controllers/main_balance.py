@@ -120,8 +120,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             _("Report: %s") % action_name if action_name else "",
             f"Partner: {partner_name}" if partner_name else "",
             f"Company: {company_name}" if company_name else "",
-            f"Export Date: {date.now().strftime('%Y-%m-%d')}",
-            f"Date Range: {date_from or oldest_date} To {date_to or date.now().strftime('%Y-%m-%d')}",
+            f"Export Date: {datetime.datetime.now().strftime('%Y-%m-%d')}",
+            f"Date Range: {date_from or oldest_date} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}",
         ]
         return [item for item in header_data if item]
     
