@@ -20,16 +20,7 @@ var DataExportExtended = DataExport.extend({
      * @private
      */
     _exportData(exportedFields, exportFormat, idsToExport) {
-        var isPartnerBalanceModule = this.record.model === 'account.move.line.report';
-        if (isPartnerBalanceModule && exportFormat === 'xlsx') {
-            // Use YOUR custom endpoint
-            return this._customExportData(exportedFields, exportFormat, idsToExport);
-        } else {
-            // Use STANDARD export for everything else
-            return this._super.apply(this, arguments);
-        }
-    },
-    _customExportData(exportedFields, exportFormat, idsToExport) {
+
         if (_.isEmpty(exportedFields)) {
             Dialog.alert(this, _t("Please select fields to export..."));
             return;
