@@ -8,6 +8,9 @@ var ListView = require('web.ListView');
 var viewRegistry = require('web.view_registry');
 var framework = require('web.framework');
 var pyUtils = require('web.py_utils');
+var core = require('web.core');
+var _t = core._t;
+
 
 var DataExportExtended = DataExport.extend({
     /**
