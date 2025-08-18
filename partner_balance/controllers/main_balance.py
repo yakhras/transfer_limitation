@@ -136,7 +136,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             partner_record = request.env['res.partner'].sudo().browse(partner_id)
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
-                xlsx_writer.write(row, 0, f"🏢 {company_name}", xlsx_writer.company_header_style)
+                xlsx_writer.worksheet.merge_range(row, 0, row, 3, f"🏢 {company_name}", xlsx_writer.company_header_style)
                 row += 1
         
         # Report title with special style
