@@ -200,7 +200,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 opening_credit = opening_row[4] if opening_row[4] else 0
 
                 for cell_index, cell_value in enumerate(opening_row):
-                    xlsx_writer.write_cell(9, cell_index, cell_value)
+                    xlsx_writer.write_cell(8, cell_index, cell_value)
                 period_start_row = 10  # Period data starts at row 8
             else:
                 period_start_row = 9  # Period data starts at row 7
