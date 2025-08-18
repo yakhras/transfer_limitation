@@ -143,6 +143,9 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         action_name = params.get('action_name', '')
         report_title = f"📊 {action_name}" if action_name else "📊 STATEMENT OF ACCOUNT - DETAILED ANALYSIS"
         xlsx_writer.worksheet.merge_range(row, 0, row, 3, report_title, xlsx_writer.report_title_style)
+        row += 2
+
+        xlsx_writer.worksheet.merge_range(row, 0, row, 5, "📈 EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
         row += 1
         
         # Other metadata with regular style
@@ -368,6 +371,7 @@ class BalanceExportXlsxWriter:
         self.report_title_style = self.workbook.add_format({'bold': True,'font_size': 14,'align': 'center','valign': 'vcenter','bg_color': '#f1f5f9','font_color': '#1e40af',    'border': 1,'border_color': '#e2e8f0'})
         self.summary_metric_style = self.workbook.add_format({'bold': True,'bg_color': '#ecfdf5','border': 1})
         self.metadata_style = self.workbook.add_format({'bg_color': '#f8f9fa','border': 1})
+        self.section_header_style = self.workbook.add_format({'bold': True,'align': 'center','valign': 'vcenter','bg_color': '#374151','font_color': 'white','border': 1})
         
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
