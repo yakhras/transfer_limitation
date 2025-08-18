@@ -151,14 +151,16 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         date_to = params.get('date_to')
         
         other_headers = [
-            f"Partner: {partner_name}" if partner_name else "",
-            f"Export Date: {datetime.datetime.now().strftime('%Y-%m-%d')}",
-            f"Date Range: {date_from or 'Beginning'} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}",
+            (f"Partner: {partner_name}" if partner_name else "", 'summary_metric'),
+            (f"Export Date: {datetime.datetime.now().strftime('%Y-%m-%d')}", 'header'),
+            (f"Date Range: {date_from or 'Beginning'} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", 'header'),
         ]
-        
-        for header in [h for h in other_headers if h]:
-            xlsx_writer.write(row, 0, header, xlsx_writer.header_style)
-            row += 1
+
+        for header_text, style_type in other_headers:
+            if header_text:
+                style = xlsx_writer.summary_metric_style if style_type == 'summary_metric' else xlsx_writer.header_style
+                xlsx_writer.write(row, 0, header_text, style)
+                row += 1
         
         return row
 
@@ -362,7 +364,9 @@ class BalanceExportXlsxWriter:
         self.monetary_format = f'#,##0.{max(decimal_places or [2]) * "0"}'
         self.company_header_style = self.workbook.add_format({'bold': True,'font_size': 16,'align': 'center','valign': 'vcenter','bg_color': '#1e3a8a','font_color': 'white','border': 1,'border_color': '#3b82f6'})
         self.report_title_style = self.workbook.add_format({'bold': True,'font_size': 14,'align': 'center','valign': 'vcenter','bg_color': '#f1f5f9','font_color': '#1e40af',    'border': 1,'border_color': '#e2e8f0'})
-
+        self.summary_metric_style = self.workbook.add_format({'bold': True,'bg_color': '#ecfdf5','border': 1})
+        
+        
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
 
