@@ -222,7 +222,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         balance_currency = sum(opening_records.mapped('amount_currency'))
         currency = opening_records[0].currency_id.name if opening_records else 'TRY'
         
-        opening_date = (datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
         
         return {
             'debit': debit,
