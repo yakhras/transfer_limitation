@@ -147,24 +147,25 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         
         # Other metadata with regular style
         partner_name = params.get('partner_name', '')
+        partner = (f"Partner: {partner_name}" if partner_name else "", 'summary_metric'),
+        xlsx_writer.worksheet.merge_range(row, 0, row, 3, partner, xlsx_writer.summary_metric_style)
+        row += 1
+        
         date_from = params.get('date_from')
         date_to = params.get('date_to')
         
         other_headers = [
-            (f"Partner: {partner_name}" if partner_name else "", 'summary_metric'),
+            
             (f"Export Date: {datetime.datetime.now().strftime('%Y-%m-%d')}", 'metadata'),
             (f"Date Range: {date_from or 'Beginning'} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", 'header'),
         ]
 
-        for header_text, style_type in other_headers:
-            if header_text:
-                if style_type == 'summary_metric':
-                    style = xlsx_writer.summary_metric_style
-                elif style_type == 'metadata':
+        for style_type in other_headers:
+                if style_type == 'metadata':
                     style = xlsx_writer.metadata_style
                 else:
                     style = xlsx_writer.header_style
-                xlsx_writer.write(row, 0, header_text, style)
+                xlsx_writer.write(row, 0, style)
                 row += 1
         
         return row
