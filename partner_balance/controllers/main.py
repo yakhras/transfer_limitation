@@ -3,11 +3,14 @@
 import json
 import operator
 from datetime import datetime, timedelta
+import functools
+import logging
 import io
 from odoo import http
-from odoo.http import content_disposition, serialize_exception
+from odoo.http import content_disposition, dispatch_rpc, request, serialize_exception as _serialize_exception
 from odoo.tools.misc import xlsxwriter
 from odoo.exceptions import UserError
+_logger = logging.getLogger(__name__)
 
 
 
@@ -17,6 +20,24 @@ from odoo.tools.translate import _
 from odoo.addons.web.controllers.main import ExcelExport as BaseExcelExport, GroupsTreeNode, ExportXlsxWriter, GroupExportXlsxWriter
 from odoo.addons.web.controllers.main import ExportXlsxWriter as BaseExportXlsxWriter
 from odoo.addons.web.controllers.main import GroupExportXlsxWriter as BaseGroupExportXlsxWriter
+
+
+
+def serialize_exception(f):
+    @functools.wraps(f)
+    def wrap(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception as e:
+            _logger.exception("An exception occurred during an http request")
+            se = _serialize_exception(e)
+            error = {
+                'code': 200,
+                'message': "Odoo Server Error",
+                'data': se
+            }
+            return werkzeug.exceptions.InternalServerError(json.dumps(error))
+    return wrap
     
 class ExcelExport(BaseExcelExport):
 
