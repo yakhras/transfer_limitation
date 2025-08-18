@@ -142,7 +142,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         # Report title with special style
         action_name = params.get('action_name', '')
         report_title = f"📊 {action_name}" if action_name else "📊 STATEMENT OF ACCOUNT - DETAILED ANALYSIS"
-        xlsx_writer.worksheet.merge_range(row, 3, report_title, f"🏢 {action_name}", xlsx_writer.report_title_style)
+        xlsx_writer.worksheet.merge_range(row, 0, row, 3, report_title, xlsx_writer.report_title_style)
         row += 1
         
         # Other metadata with regular style
