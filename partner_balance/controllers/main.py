@@ -5,6 +5,7 @@ import operator
 from datetime import datetime, timedelta
 import functools
 import logging
+import werkzeug
 import io
 from odoo import http
 from odoo.http import content_disposition, dispatch_rpc, request, serialize_exception as _serialize_exception
