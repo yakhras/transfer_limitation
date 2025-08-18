@@ -13,13 +13,23 @@ var _t = core._t;
 
 
 var DataExportExtended = DataExport.extend({
+    
+    balanceExport() {
+        let exportedFields = this.defaultExportFields.map(field => ({
+            name: field,
+            label: this.record.fields[field].string,
+            store: this.record.fields[field].store,
+            type: this.record.fields[field].type,
+        }));
+        this._balanceExportData(exportedFields, 'xlsx', false);
+    },
     /**
      * Submit the user data and export the file
      * Extended to add console logging of data
      *
      * @private
      */
-    _exportData(exportedFields, exportFormat, idsToExport) {
+    _balanceExportData(exportedFields, exportFormat, idsToExport) {
 
         if (_.isEmpty(exportedFields)) {
             Dialog.alert(this, _t("Please select fields to export..."));
@@ -169,7 +179,7 @@ var ExportPdfButtonListController = ListController.extend({
             method: 'search_read',
             args: [[], ['id']],
             limit: 1,
-        }).then(() => this._getExportDialogWidget().export())
+        }).then(() => this._getExportDialogWidget().balanceExport())
     },
 
     _getExportDialogWidget() {
