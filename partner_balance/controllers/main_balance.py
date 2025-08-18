@@ -136,23 +136,27 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             partner_record = request.env['res.partner'].sudo().browse(partner_id)
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
-                xlsx_writer.write(row, 3, f"🏢 {company_name}", xlsx_writer.company_header_style)
+                xlsx_writer.write(row, 0, f"🏢 {company_name}", xlsx_writer.company_header_style)
                 row += 1
+        
+        # Report title with special style
+        action_name = params.get('action_name', '')
+        report_title = f"📊 {action_name}" if action_name else "📊 STATEMENT OF ACCOUNT - DETAILED ANALYSIS"
+        xlsx_writer.write(row, 0, report_title, xlsx_writer.report_title_style)
+        row += 1
         
         # Other metadata with regular style
         partner_name = params.get('partner_name', '')
-        action_name = params.get('action_name', '')
         date_from = params.get('date_from')
         date_to = params.get('date_to')
         
-        headers = [
-            f"Report: {action_name}" if action_name else "",
+        other_headers = [
             f"Partner: {partner_name}" if partner_name else "",
             f"Export Date: {datetime.datetime.now().strftime('%Y-%m-%d')}",
             f"Date Range: {date_from or 'Beginning'} To {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}",
         ]
         
-        for header in [h for h in headers if h]:
+        for header in [h for h in other_headers if h]:
             xlsx_writer.write(row, 0, header, xlsx_writer.header_style)
             row += 1
         
@@ -357,6 +361,7 @@ class BalanceExportXlsxWriter:
         decimal_places = [res['decimal_places'] for res in request.env['res.currency'].search_read([], ['decimal_places'])]
         self.monetary_format = f'#,##0.{max(decimal_places or [2]) * "0"}'
         self.company_header_style = self.workbook.add_format({'bold': True,'font_size': 16,'align': 'center','valign': 'vcenter','bg_color': '#1e3a8a','font_color': 'white','border': 1,'border_color': '#3b82f6'})
+        self.report_title_style = self.workbook.add_format({'bold': True,'font_size': 14,'align': 'center','valign': 'vcenter','bg_color': '#f1f5f9','font_color': '#1e40af',    'border': 1,'border_color': '#e2e8f0'})
 
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
