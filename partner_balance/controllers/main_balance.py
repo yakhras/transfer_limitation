@@ -174,7 +174,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         xlsx_writer.write(row, 3, "-2,257,012.59 USD", xlsx_writer.negative_value_style)
         xlsx_writer.write(row, 4, "Closing Balance:", xlsx_writer.summary_metric_style)
         xlsx_writer.write(row, 5, "242,987.41 USD", xlsx_writer.summary_value_style)
-        row += 2
+        row += 1
         
         return row
 
@@ -200,7 +200,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 opening_credit = opening_row[4] if opening_row[4] else 0
 
                 for cell_index, cell_value in enumerate(opening_row):
-                    xlsx_writer.write_cell(9, cell_index, cell_value)
+                    xlsx_writer.write_cell(7, cell_index, cell_value)
                 period_start_row = 8  # Period data starts at row 8
             else:
                 period_start_row = 7  # Period data starts at row 7
