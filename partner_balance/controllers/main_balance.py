@@ -2,7 +2,8 @@
 
 import json
 import operator
-from datetime import datetime, timedelta
+import datetime
+from datetime import timedelta
 import functools
 import logging
 import werkzeug
