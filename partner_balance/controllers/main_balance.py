@@ -596,7 +596,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
     def write_group_header(self, row):
         for i, fieldname in enumerate(self.field_names):
-            self.write(row, i, fieldname, self.header_style)
+            self.write(row, i, fieldname, self.transaction_header_style)
         self.worksheet.set_column(0, i, 9)  # Column width
         return row + 1  # Return next row to continue from
     
