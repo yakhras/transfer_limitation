@@ -201,7 +201,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 opening_credit = opening_row[4] if opening_row[4] else 0
 
                 for cell_index, cell_value in enumerate(opening_row):
-                    xlsx_writer.write_cell(9, cell_index, cell_value)
+                    xlsx_writer.write_cell_with_style(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
+                    # xlsx_writer.write_cell(9, cell_index, cell_value)
                 period_start_row = 10  # Period data starts at row 8
             else:
                 period_start_row = 11  # Period data starts at row 7
@@ -385,7 +386,7 @@ class BalanceExportXlsxWriter:
         self.summary_value_style = self.workbook.add_format({'bold': True,'align': 'right','font_color': '#059669','bg_color': '#f0fdf4','border': 1})
         self.negative_value_style = self.workbook.add_format({'bold': True,'align': 'right','font_color': '#dc2626','border': 1})
         self.transaction_header_style = self.workbook.add_format({'text_wrap': True,'bold': True,'align': 'left','valign': 'vcenter','bg_color': '#475569','font_color': 'white','border': 1,'font_size': 11})
-
+        self.opening_balance_style = self.workbook.add_format({'bold': True,'italic': True,'bg_color': '#dbeafe','border': 1})
 
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
@@ -396,6 +397,9 @@ class BalanceExportXlsxWriter:
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.close()
+
+    def write_cell_with_style(self, row, column, cell_value, style):
+        self.write(row, column, cell_value, style)
 
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
