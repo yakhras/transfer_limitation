@@ -136,23 +136,23 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             partner_record = request.env['res.partner'].sudo().browse(partner_id)
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
-                xlsx_writer.worksheet.merge_range(row, 0, row, 6, f"🏢 {company_name}", xlsx_writer.company_header_style)
+                xlsx_writer.worksheet.merge_range(row, 0, row, 8, f"🏢 {company_name}", xlsx_writer.company_header_style)
                 row += 1
         
         # Report title with special style
         action_name = params.get('action_name', '')
         report_title = f"📊 {action_name}" if action_name else "📊 STATEMENT OF ACCOUNT - DETAILED ANALYSIS"
-        xlsx_writer.worksheet.merge_range(row, 0, row, 6, report_title, xlsx_writer.report_title_style)
+        xlsx_writer.worksheet.merge_range(row, 0, row, 8, report_title, xlsx_writer.report_title_style)
         row += 2
 
-        xlsx_writer.worksheet.merge_range(row, 0, row, 6, "📈 EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
+        xlsx_writer.worksheet.merge_range(row, 0, row, 8, "📈 EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
         row += 1
         
         # Other metadata with regular style
         partner_name = params.get('partner_name', '')
         if partner_name:
             xlsx_writer.write(row, 0, "Partner:", xlsx_writer.summary_metric_style)
-            xlsx_writer.worksheet.merge_range(row, 1, row, 6, partner_name, xlsx_writer.base_style)
+            xlsx_writer.worksheet.merge_range(row, 1, row, 8, partner_name, xlsx_writer.base_style)
             row += 1
 
         date_from = params.get('date_from')
@@ -161,19 +161,19 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         # Report Period row - multiple labels and values
         xlsx_writer.write(row, 0, "Report Period:", xlsx_writer.summary_metric_style)
         xlsx_writer.write(row, 1, f"{date_from or 'Beginning'} to {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", xlsx_writer.base_style)
-        xlsx_writer.write(row, 2, "Generated:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 3, datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), xlsx_writer.base_style)
-        xlsx_writer.write(row, 4, "Days:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 5, "14 days", xlsx_writer.base_style)
+        xlsx_writer.write(row, 4, "Generated:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 5, datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), xlsx_writer.base_style)
+        xlsx_writer.write(row, 7, "Days:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 8, "14 days", xlsx_writer.base_style)
         row += 1
 
         # Financial summary row
         xlsx_writer.write(row, 0, "Opening Balance:", xlsx_writer.summary_metric_style)
         xlsx_writer.write(row, 1, "2,500,000.00 USD", xlsx_writer.summary_value_style)
-        xlsx_writer.write(row, 2, "Period Movement:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 3, "-2,257,012.59 USD", xlsx_writer.negative_value_style)
-        xlsx_writer.write(row, 4, "Closing Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 5, "242,987.41 USD", xlsx_writer.summary_value_style)
+        xlsx_writer.write(row, 3, "Period Movement:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 4, "-2,257,012.59 USD", xlsx_writer.negative_value_style)
+        xlsx_writer.write(row, 6, "Closing Balance:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 7, "242,987.41 USD", xlsx_writer.summary_value_style)
         row += 1
         
         return row
