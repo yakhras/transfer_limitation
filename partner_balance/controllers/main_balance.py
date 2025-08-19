@@ -384,7 +384,9 @@ class BalanceExportXlsxWriter:
         self.section_header_style = self.workbook.add_format({'bold': True,'align': 'center','valign': 'vcenter','bg_color': '#374151','font_color': 'white','border': 1})
         self.summary_value_style = self.workbook.add_format({'bold': True,'align': 'right','font_color': '#059669','bg_color': '#f0fdf4','border': 1})
         self.negative_value_style = self.workbook.add_format({'bold': True,'align': 'right','font_color': '#dc2626','border': 1})
-        
+        self.transaction_header_style = self.workbook.add_format({'text_wrap': True,'bold': True,'align': 'left','valign': 'vcenter','bg_color': '#475569','font_color': 'white','border': 1,'font_size': 11})
+
+
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
 
@@ -397,7 +399,7 @@ class BalanceExportXlsxWriter:
 
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
-            self.write(8, i, fieldname, self.header_style)
+            self.write(8, i, fieldname, self.transaction_header_style)
         self.worksheet.set_column(0, i, 9) # around 220 pixels
 
     def close(self):
