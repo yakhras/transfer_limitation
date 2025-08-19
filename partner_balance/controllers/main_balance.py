@@ -307,9 +307,11 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
     def from_group_data(self, fields, groups, params=None):
         with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
             # Write headers
-            data = self.header_metadata(params)
-            for row_index, header_info in enumerate(data):
-                xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
+            # data = self.header_metadata(params)
+            # for row_index, header_info in enumerate(data):
+            #     xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
+
+            row_index = self.header_metadata(params, xlsx_writer)
             
             # Get opening balance
             opening_data = self.calculate_opening_balance(params)
