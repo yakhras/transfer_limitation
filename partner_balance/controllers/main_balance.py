@@ -380,7 +380,7 @@ class BalanceExportXlsxWriter:
         self.monetary_format = f'#,##0.{max(decimal_places or [2]) * "0"}'
         self.company_header_style = self.workbook.add_format({'bold': True,'font_size': 12,'align': 'center','valign': 'vcenter','bg_color': '#1e3a8a','font_color': 'white','border': 1,'border_color': '#3b82f6'})
         self.report_title_style = self.workbook.add_format({'bold': True,'font_size': 12,'align': 'center','valign': 'vcenter','bg_color': '#f1f5f9','font_color': '#1e40af',    'border': 1,'border_color': '#e2e8f0'})
-        self.summary_metric_style = self.workbook.add_format({'align': 'center','valign': 'vcenter','text_wrap': True, 'font_size': 10,'bold': True,'bg_color': '#ecfdf5','border': 1})
+        self.summary_metric_style = self.workbook.add_format({'align': 'left','valign': 'vcenter','text_wrap': True, 'font_size': 10,'bold': True,'bg_color': '#ecfdf5','border': 1})
         self.metadata_style = self.workbook.add_format({'bg_color': '#f8f9fa','border': 1})
         self.section_header_style = self.workbook.add_format({'bold': True,'align': 'center','valign': 'vcenter','bg_color': '#374151','font_color': 'white','border': 1})
         self.summary_value_style = self.workbook.add_format({'bold': True,'align': 'right','font_color': '#059669','bg_color': '#f0fdf4','border': 1})
