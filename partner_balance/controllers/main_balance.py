@@ -136,23 +136,23 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             partner_record = request.env['res.partner'].sudo().browse(partner_id)
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
-                xlsx_writer.worksheet.merge_range(row, 0, row, 3, f"🏢 {company_name}", xlsx_writer.company_header_style)
+                xlsx_writer.worksheet.merge_range(row, 0, row, 6, f"🏢 {company_name}", xlsx_writer.company_header_style)
                 row += 1
         
         # Report title with special style
         action_name = params.get('action_name', '')
         report_title = f"📊 {action_name}" if action_name else "📊 STATEMENT OF ACCOUNT - DETAILED ANALYSIS"
-        xlsx_writer.worksheet.merge_range(row, 0, row, 3, report_title, xlsx_writer.report_title_style)
-        row += 1
+        xlsx_writer.worksheet.merge_range(row, 0, row, 6, report_title, xlsx_writer.report_title_style)
+        row += 2
 
-        xlsx_writer.worksheet.merge_range(row, 0, row, 5, "📈 EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
+        xlsx_writer.worksheet.merge_range(row, 0, row, 6, "📈 EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
         row += 1
         
         # Other metadata with regular style
         partner_name = params.get('partner_name', '')
         if partner_name:
             xlsx_writer.write(row, 0, "Partner:", xlsx_writer.summary_metric_style)
-            xlsx_writer.worksheet.merge_range(row, 1, row, 5, partner_name, xlsx_writer.base_style)
+            xlsx_writer.worksheet.merge_range(row, 1, row, 6, partner_name, xlsx_writer.base_style)
             row += 1
 
         date_from = params.get('date_from')
@@ -201,10 +201,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 opening_credit = opening_row[4] if opening_row[4] else 0
 
                 for cell_index, cell_value in enumerate(opening_row):
-                    xlsx_writer.write_cell(8, cell_index, cell_value)
-                period_start_row = 9  # Period data starts at row 8
+                    xlsx_writer.write_cell(9, cell_index, cell_value)
+                period_start_row = 10  # Period data starts at row 8
             else:
-                period_start_row = 10  # Period data starts at row 7
+                period_start_row = 11  # Period data starts at row 7
                 opening_data['balance'] = 0.0  # Ensure balance is 0 if no opening balance
             
             # Write period data rows with updated running balance
@@ -367,7 +367,7 @@ class BalanceExportXlsxWriter:
         self.field_names = field_names
         self.output = io.BytesIO()
         self.workbook = xlsxwriter.Workbook(self.output, {'in_memory': True})
-        self.base_style = self.workbook.add_format({'text_wrap': True})
+        self.base_style = self.workbook.add_format({'text_wrap': True,'font_size': 8,'align': 'left','valign': 'vcenter','border': 1})
         self.header_style = self.workbook.add_format({'bold': True})
         self.header_bold_style = self.workbook.add_format({'text_wrap': True, 'bold': True, 'bg_color': '#e9ecef'})
         self.date_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd'})
@@ -377,8 +377,8 @@ class BalanceExportXlsxWriter:
         self.float_format = '#,##0.00'
         decimal_places = [res['decimal_places'] for res in request.env['res.currency'].search_read([], ['decimal_places'])]
         self.monetary_format = f'#,##0.{max(decimal_places or [2]) * "0"}'
-        self.company_header_style = self.workbook.add_format({'bold': True,'font_size': 16,'align': 'center','valign': 'vcenter','bg_color': '#1e3a8a','font_color': 'white','border': 1,'border_color': '#3b82f6'})
-        self.report_title_style = self.workbook.add_format({'bold': True,'font_size': 14,'align': 'center','valign': 'vcenter','bg_color': '#f1f5f9','font_color': '#1e40af',    'border': 1,'border_color': '#e2e8f0'})
+        self.company_header_style = self.workbook.add_format({'bold': True,'font_size': 12,'align': 'center','valign': 'vcenter','bg_color': '#1e3a8a','font_color': 'white','border': 1,'border_color': '#3b82f6'})
+        self.report_title_style = self.workbook.add_format({'bold': True,'font_size': 12,'align': 'center','valign': 'vcenter','bg_color': '#f1f5f9','font_color': '#1e40af',    'border': 1,'border_color': '#e2e8f0'})
         self.summary_metric_style = self.workbook.add_format({'bold': True,'bg_color': '#ecfdf5','border': 1})
         self.metadata_style = self.workbook.add_format({'bg_color': '#f8f9fa','border': 1})
         self.section_header_style = self.workbook.add_format({'bold': True,'align': 'center','valign': 'vcenter','bg_color': '#374151','font_color': 'white','border': 1})
@@ -397,8 +397,8 @@ class BalanceExportXlsxWriter:
 
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
-            self.write(7, i, fieldname, self.header_style)
-        self.worksheet.set_column(0, i, 10) # around 220 pixels
+            self.write(8, i, fieldname, self.header_style)
+        self.worksheet.set_column(0, i, 9) # around 220 pixels
 
     def close(self):
         self.workbook.close()
