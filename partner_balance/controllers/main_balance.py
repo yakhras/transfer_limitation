@@ -386,7 +386,7 @@ class BalanceExportXlsxWriter:
         self.summary_value_style = self.workbook.add_format({'bold': True,'align': 'right','font_color': '#059669','bg_color': '#f0fdf4','border': 1})
         self.negative_value_style = self.workbook.add_format({'bold': True,'align': 'right','font_color': '#dc2626','border': 1})
         self.transaction_header_style = self.workbook.add_format({'text_wrap': True,'bold': True,'align': 'left','valign': 'vcenter','bg_color': '#475569','font_color': 'white','border': 1,'font_size': 11})
-        self.opening_balance_style = self.workbook.add_format({'bold': True,'italic': True,'bg_color': '#dbeafe','border': 1})
+        self.opening_balance_style = self.workbook.add_format({'text_wrap': True,'bold': True,'italic': True,'bg_color': '#dbeafe','border': 1, 'font_size': 8})
 
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
