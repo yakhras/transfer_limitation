@@ -9,6 +9,7 @@
                 <tree string="Debug Analysis" create="false" edit="false">
                     <field name="date"/>
                     <field name="account_code"/>
+                    <field name= "account_name"/>
                     <field name="move_name"/>
                     <field name= "partner_name"/>
                     <field name="debit"/>
