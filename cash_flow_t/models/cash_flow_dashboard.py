@@ -1935,7 +1935,8 @@ class CashFlowDashboard(models.Model):
             'res_model': 'cash.flow.debug.line',
             'view_mode': 'tree,form',
             'domain': [('dashboard_id', '=', self.id)],
-            'context': {'default_dashboard_id': self.id},
+            'context': {'default_dashboard_id': self.id,
+                        'search_default_group_by_partner': 1,},
             'target': 'current',
         }
 
