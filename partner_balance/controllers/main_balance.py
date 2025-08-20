@@ -336,9 +336,9 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
                 for cell_index, cell_value in enumerate(opening_row):
                     xlsx_writer.write(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
-                groups_start_row = 6  # Groups start after opening balance
+                groups_start_row = 9  # Groups start after opening balance
             else:
-                groups_start_row = 5  # Groups start normally
+                groups_start_row = 8  # Groups start normally
                 opening_data['balance'] = 0.0  # Ensure balance is 0
             
             # Write groups with updated starting position
