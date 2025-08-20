@@ -23,7 +23,7 @@ class CashFlowDebugLine(models.TransientModel):
     account_name = fields.Char('Account Name')
     account_id = fields.Many2one('account.account', string='Account')
     move_name = fields.Char('Journal Entry')
-    
+    partner_name = fields.Char('Partner')
     # Currency information
     currency_name = fields.Char('Currency', required=True)  # "USD", "TRY", "Company Currency (TRY)"
     currency_id = fields.Many2one('res.currency', string='Currency Record')
