@@ -152,7 +152,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         partner_name = params.get('partner_name', '')
         if partner_name:
             xlsx_writer.write(row, 0, "Partner:", xlsx_writer.partner_name_style)
-            xlsx_writer.worksheet.merge_range(row, 1, row, 8, partner_name, xlsx_writer.base_style)
+            xlsx_writer.worksheet.merge_range(row, 1, row, 8, partner_name, xlsx_writer.partner_name_style)
             row += 1
 
         date_from = params.get('date_from')
