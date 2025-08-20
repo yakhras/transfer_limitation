@@ -1919,3 +1919,18 @@ class CashFlowDashboard(models.Model):
                 debug_info.append("No accounts configured for this record")
             
             record.debug_currency_info = "\n".join(debug_info)
+
+
+
+    def action_view_debug_analysis(self):
+        """Open debug analysis in tree view"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Debug Analysis - {self.display_name}',
+            'res_model': 'cash.flow.debug.line',
+            'view_mode': 'tree,form',
+            'domain': [('dashboard_id', '=', self.id)],
+            'context': {'default_dashboard_id': self.id},
+            'target': 'current',
+        }

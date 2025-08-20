@@ -33,6 +33,7 @@
         'security/ir.model.access.csv',
         'security/ir_model_access_data.xml',
         'views/cash_flow_dashboard_views.xml',
+        'views/cash_flow_debug_line_view.xml',
         'views/cash_flow_config_views.xml',
         'views/cash_flow_menuitem.xml',
         'views/cash_flow_owl_actions.xml',  # New OWL client action

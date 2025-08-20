@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_cash_flow_debug_line_tree" model="ir.ui.view">
+            <field name="name">cash.flow.debug.line.tree</field>
+            <field name="model">cash.flow.debug.line</field>
+            <field name="arch" type="xml">
+                <tree string="Debug Analysis" create="false" edit="false">
+                    <field name="line_number"/>
+                    <field name="date"/>
+                    <field name="account_code"/>
+                    <field name="currency_name"/>
+                    <field name="amount_currency_display"/>
+                    <field name="try_amount"/>
+                    <field name="usd_rate_display"/>
+                    <field name="usd_value"/>
+                    <field name="conversion_method"/>
+                </tree>
+            </field>
+        </record>
+
+    </data>
+</odoo>

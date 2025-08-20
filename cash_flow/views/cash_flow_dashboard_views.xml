@@ -123,6 +123,7 @@
                 <form string="Cash Flow Account Group" create="false" edit="false" delete="false">
                     <header>
                         <button name="action_view_account_moves" type="object" string="View All Transactions" class="btn-primary"/>
+                        <button name="action_view_debug_analysis" string="Debug Analysis" type="object" class="oe_highlight"/>
                         <button name="action_view_dashboard_tree" type="object" string="View Dashboard Tree" class="btn-secondary"/>
                         <button name="refresh_dashboard_from_config" type="object" string="Refresh Data" class="btn-secondary"/>
                     </header>

@@ -3,3 +3,4 @@
 
 from . import cash_flow_dashboard
 from . import cash_flow_config
+from . import cash_flow_debug_line
