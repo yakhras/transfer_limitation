@@ -1972,7 +1972,7 @@ class CashFlowDashboard(models.Model):
             domain.append(('date', '<=', date_to))
         
         # Get move lines (same as debug method)
-        move_lines = self.env['account.move.line'].search(domain, limit=50)  # Increase limit for tree view
+        move_lines = self.env['account.move.line'].search(domain)  # Increase limit for tree view
         
         # Create debug records for each move line
         for i, line in enumerate(move_lines, 1):
