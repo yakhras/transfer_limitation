@@ -1956,8 +1956,8 @@ class CashFlowDashboard(models.Model):
         account_ids = self.account_ids.ids
         company_id = self.company_id.id
         target_currency = 'USD'
-        date_from = None  # Can add context filtering later
-        date_to = None
+        date_from = self.env.context.get('date_from')  # Can add context filtering later
+        date_to = self.env.context.get('date_to')
         
         # Build same domain as debug method
         domain = [
