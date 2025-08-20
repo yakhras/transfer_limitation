@@ -151,7 +151,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         # Other metadata with regular style
         partner_name = params.get('partner_name', '')
         if partner_name:
-            xlsx_writer.write(row, 0, "Partner:", xlsx_writer.summary_metric_style)
+            xlsx_writer.write(row, 0, "Partner:", xlsx_writer.partner_name_style)
             xlsx_writer.worksheet.merge_range(row, 1, row, 8, partner_name, xlsx_writer.base_style)
             row += 1
 
@@ -161,21 +161,28 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         oldest_date = self.get_oldest_date_for_partner(partner_id)
         
         # Report Period row - multiple labels and values
+        period = f"{date_from or oldest_date} to {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}"
         xlsx_writer.write(row, 0, "Report Period:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 1, f"{date_from or oldest_date} to {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", xlsx_writer.base_style)
+        xlsx_writer.worksheet.merge_range(row, 1, row, 2, period, xlsx_writer.base_style)
+        
+        export_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         xlsx_writer.write(row, 4, "Generated:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 5, datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), xlsx_writer.base_style)
+        xlsx_writer.worksheet.merge_range(row, 5, row, 6, export_date, xlsx_writer.base_style)
+
         xlsx_writer.write(row, 7, "Days:", xlsx_writer.summary_metric_style)
         xlsx_writer.write(row, 8, "14 days", xlsx_writer.base_style)
         row += 1
 
         # Financial summary row
         xlsx_writer.write(row, 0, "Opening Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 1, "2,500,000.00 USD", xlsx_writer.summary_value_style)
+        xlsx_writer.worksheet.merge_range(row, 1, row, 2, "2,500,000.00 USD", xlsx_writer.base_style)
+        # xlsx_writer.write(row, 1, "2,500,000.00 USD", xlsx_writer.summary_value_style)
         xlsx_writer.write(row, 3, "Period Movement:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 4, "-2,257,012.59 USD", xlsx_writer.negative_value_style)
+        xlsx_writer.worksheet.merge_range(row, 4, row, 5, "-2,257,012.59 USD", xlsx_writer.base_style)
+        # xlsx_writer.write(row, 4, "-2,257,012.59 USD", xlsx_writer.negative_value_style)
         xlsx_writer.write(row, 6, "Closing Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 7, "242,987.41 USD", xlsx_writer.summary_value_style)
+        xlsx_writer.worksheet.merge_range(row, 7, row, 8, "242,987.41 USD", xlsx_writer.base_style)
+        # xlsx_writer.write(row, 7, "242,987.41 USD", xlsx_writer.summary_value_style)
         row += 1
         
         return row
@@ -381,8 +388,8 @@ class BalanceExportXlsxWriter:
         self.base_style = self.workbook.add_format({'text_wrap': True,'font_size': 8,'align': 'left','valign': 'vcenter','border': 1})
         self.header_style = self.workbook.add_format({'bold': True})
         self.header_bold_style = self.workbook.add_format({'text_wrap': True, 'bold': True, 'bg_color': '#e9ecef'})
-        self.date_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd'})
-        self.datetime_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd hh:mm:ss'})
+        self.date_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd', 'font_size': 8,'align': 'left','valign': 'vcenter','border': 1})
+        self.datetime_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd hh:mm:ss', 'font_size': 8,'align': 'left','valign': 'vcenter','border': 1})
         self.worksheet = self.workbook.add_worksheet()
         self.value = False
         self.float_format = '#,##0.00'
@@ -397,6 +404,8 @@ class BalanceExportXlsxWriter:
         self.negative_value_style = self.workbook.add_format({'bold': True,'align': 'right','font_color': '#dc2626','border': 1})
         self.transaction_header_style = self.workbook.add_format({'text_wrap': True,'bold': True,'align': 'left','valign': 'vcenter','bg_color': '#475569','font_color': 'white','border': 1,'font_size': 11})
         self.opening_balance_style = self.workbook.add_format({'text_wrap': True,'bold': True,'bg_color': '#dbeafe','border': 1, 'font_size': 8})
+        self.partner_name_style = self.workbook.add_format({'align': 'left','valign': 'vcenter', 'text_wrap': True,'bold': True,'bg_color': '#f3f4f6','border': 1, 'font_size': 11})
+
 
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
