@@ -40,11 +40,11 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'cash_flow/static/src/components/**/*.scss',
-            'cash_flow/static/src/components/**/*.js',
+            'cash_flow_t/static/src/components/**/*.scss',
+            'cash_flow_t/static/src/components/**/*.js',
         ],
         'web.assets_qweb': [
-            'cash_flow/static/src/components/**/*.xml',
+            'cash_flow_t/static/src/components/**/*.xml',
         ],
     },
     'demo': [],

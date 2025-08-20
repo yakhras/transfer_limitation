@@ -883,7 +883,7 @@ export class CashFlowDashboard extends Component {
     }
 }
 
-CashFlowDashboard.template = "cash_flow.CashFlowDashboard"
+CashFlowDashboard.template = "cash_flow_t.CashFlowDashboard"
 CashFlowDashboard.components = { BalanceChart }
 
-registry.category("actions").add("cash_flow.dashboard", CashFlowDashboard)
+registry.category("actions").add("cash_flow_t.dashboard", CashFlowDashboard)

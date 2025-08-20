@@ -4,7 +4,7 @@
         <!-- Client Action for OWL Cash Flow Dashboard -->
         <record id="action_cash_flow_owl_dashboard" model="ir.actions.client">
             <field name="name">Cash Flow Dashboard</field>
-            <field name="tag">cash_flow.dashboard</field>
+            <field name="tag">cash_flow_t.dashboard</field>
             <field name="target">current</field>
         </record>
         

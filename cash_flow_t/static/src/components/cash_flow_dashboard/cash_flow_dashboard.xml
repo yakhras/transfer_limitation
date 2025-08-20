@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    <t t-name="cash_flow.CashFlowDashboard" owl="1">
+    <t t-name="cash_flow_t.CashFlowDashboard" owl="1">
         <!-- UPDATED: Added cash-flow-dashboard class for SCSS scoping -->
         <div class="cash-flow-dashboard vh-100 overflow-auto bg-muted">
             <div class="row m-3">
