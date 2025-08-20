@@ -10,6 +10,7 @@
                     <field name="line_number"/>
                     <field name="date"/>
                     <field name="account_code"/>
+                    <field name="move_name"/>
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="currency_name"/>

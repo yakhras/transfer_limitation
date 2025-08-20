@@ -2042,6 +2042,7 @@ class CashFlowDashboard(models.Model):
                 'date': line.date,
                 'account_code': line.account_id.code,
                 'account_name': line.account_id.name,
+                'move_name': line.move_id,
                 'account_id': line.account_id.id,
                 'currency_name': currency_name,
                 'currency_id': currency_id,
