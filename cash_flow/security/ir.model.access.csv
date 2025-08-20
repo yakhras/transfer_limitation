@@ -4,3 +4,4 @@ access_cash_flow_dashboard_manager,cash.flow.dashboard.manager,model_cash_flow_d
 access_cash_flow_config_user,cash.flow.config.user,model_cash_flow_config,base.group_user,1,0,0,0
 access_cash_flow_config_manager,cash.flow.config.manager,model_cash_flow_config,account.group_account_manager,1,1,1,1
 access_cash_flow_config_system,cash.flow.config.system,model_cash_flow_config,base.group_system,1,1,1,1
+access_cash_flow_debug_line,cash.flow.config.system,model_cash_flow_debug_line,base.group_system,1,1,1,1
