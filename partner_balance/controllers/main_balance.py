@@ -157,10 +157,12 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
         date_from = params.get('date_from')
         date_to = params.get('date_to')
+
+        oldest_date = self.get_oldest_date_for_partner(partner_id)
         
         # Report Period row - multiple labels and values
         xlsx_writer.write(row, 0, "Report Period:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 1, f"{date_from or 'Beginning'} to {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", xlsx_writer.base_style)
+        xlsx_writer.write(row, 1, f"{date_from or oldest_date} to {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}", xlsx_writer.base_style)
         xlsx_writer.write(row, 4, "Generated:", xlsx_writer.summary_metric_style)
         xlsx_writer.write(row, 5, datetime.datetime.now().strftime('%Y-%m-%d %H:%M'), xlsx_writer.base_style)
         xlsx_writer.write(row, 7, "Days:", xlsx_writer.summary_metric_style)
@@ -315,12 +317,18 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Get opening balance
             opening_data = self.calculate_opening_balance(params)
+
+            opening_debit = 0
+            opening_credit = 0
             
             # Write opening balance row if exists
             if opening_data['balance'] != 0.0:
                 opening_row = self.create_opening_balance_row(opening_data)
+                opening_debit = opening_row[3] if opening_row[3] else 0  # Debit column
+                opening_credit = opening_row[4] if opening_row[4] else 0
+
                 for cell_index, cell_value in enumerate(opening_row):
-                    xlsx_writer.write(5, cell_index, cell_value, xlsx_writer.base_style)
+                    xlsx_writer.write(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
                 groups_start_row = 6  # Groups start after opening balance
             else:
                 groups_start_row = 5  # Groups start normally
@@ -580,6 +588,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             row, column = self.write_group(row, column, child_group_name, child_group, group_depth + 1)
 
         row = self.write_group_header(row)
+        
 
         for record in group.data:
             row, column = self._write_row(row, column, record)
