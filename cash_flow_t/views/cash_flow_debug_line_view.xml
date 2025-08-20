@@ -7,7 +7,6 @@
             <field name="model">cash.flow.debug.line</field>
             <field name="arch" type="xml">
                 <tree string="Debug Analysis" create="false" edit="false">
-                    <field name="line_number"/>
                     <field name="date"/>
                     <field name="account_code"/>
                     <field name="move_name"/>
@@ -19,7 +18,6 @@
                     <field name="try_amount"/>
                     <field name="usd_rate_display"/>
                     <field name="usd_value"/>
-                    <field name="conversion_method"/>
                 </tree>
             </field>
         </record>
