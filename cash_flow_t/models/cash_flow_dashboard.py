@@ -1925,6 +1925,10 @@ class CashFlowDashboard(models.Model):
     def action_view_debug_analysis(self):
         """Open debug analysis in tree view"""
         self.ensure_one()
+        
+        # Populate debug data
+        self._populate_debug_analysis()
+        
         return {
             'type': 'ir.actions.act_window',
             'name': f'Debug Analysis - {self.display_name}',
@@ -1934,3 +1938,124 @@ class CashFlowDashboard(models.Model):
             'context': {'default_dashboard_id': self.id},
             'target': 'current',
         }
+
+
+    def _populate_debug_analysis(self):
+        """Populate debug analysis transient records"""
+        self.ensure_one()
+        
+        # Clear existing debug records for this dashboard
+        self.env['cash.flow.debug.line'].search([
+            ('dashboard_id', '=', self.id)
+        ]).unlink()
+        
+        if not self.account_ids:
+            return
+        
+        # Use same parameters as debug_balance_calculation
+        account_ids = self.account_ids.ids
+        company_id = self.company_id.id
+        target_currency = 'USD'
+        date_from = None  # Can add context filtering later
+        date_to = None
+        
+        # Build same domain as debug method
+        domain = [
+            ('account_id', 'in', account_ids),
+            ('company_id', '=', company_id),
+            ('move_id.state', '=', 'posted')
+        ]
+        
+        if date_from:
+            domain.append(('date', '>=', date_from))
+        if date_to:
+            domain.append(('date', '<=', date_to))
+        
+        # Get move lines (same as debug method)
+        move_lines = self.env['account.move.line'].search(domain, limit=50)  # Increase limit for tree view
+        
+        # Create debug records for each move line
+        for i, line in enumerate(move_lines, 1):
+            # Currency info
+            if line.currency_id:
+                currency_name = line.currency_id.name
+                currency_id = line.currency_id.id
+                amount_currency = line.amount_currency
+            else:
+                currency_name = "Company Currency (TRY)"
+                currency_id = self.company_id.currency_id.id
+                amount_currency = 0.0
+            
+            # TRY amount
+            try_amount = line.debit - line.credit
+            
+            # USD conversion logic (same as debug method)
+            usd_value = 0.0
+            usd_rate = 0.0
+            usd_rate_date = False
+            usd_rate_record_id = False
+            conversion_method = 'fallback_no_rate'
+            rate_info = "N/A"
+            
+            if target_currency == 'USD':
+                if line.currency_id and line.currency_id.name == 'USD':
+                    # Already USD
+                    usd_value = line.amount_currency
+                    conversion_method = 'already_usd'
+                    rate_info = "Already USD - no conversion"
+                    
+                elif line.currency_id and line.currency_id.name == 'TRY':
+                    # TRY currency to USD
+                    rate_record, rate_value, rate_date = self._get_usd_rate_for_date(line.date, company_id)
+                    if rate_record and rate_value:
+                        usd_value = line.amount_currency / rate_value
+                        usd_rate = rate_value
+                        usd_rate_date = rate_date
+                        usd_rate_record_id = rate_record.id
+                        conversion_method = 'try_currency_to_usd'
+                        rate_info = f"Rate: {rate_value} (from {rate_date})"
+                    else:
+                        usd_value = try_amount
+                        conversion_method = 'fallback_no_rate'
+                        rate_info = "No rate found - using TRY amount"
+                        
+                else:
+                    # Company currency (TRY) to USD
+                    rate_record, rate_value, rate_date = self._get_usd_rate_for_date(line.date, company_id)
+                    if rate_record and rate_value:
+                        usd_value = try_amount * rate_value
+                        usd_rate = rate_value
+                        usd_rate_date = rate_date
+                        usd_rate_record_id = rate_record.id
+                        conversion_method = 'company_currency_to_usd'
+                        rate_info = f"Rate: {rate_value} (from {rate_date})"
+                    else:
+                        usd_value = try_amount
+                        conversion_method = 'fallback_no_rate'
+                        rate_info = "No rate found - using TRY amount"
+            
+            # Create debug record
+            self.env['cash.flow.debug.line'].create({
+                'dashboard_id': self.id,
+                'line_number': i,
+                'move_line_id': line.id,
+                'date': line.date,
+                'account_code': line.account_id.code,
+                'account_name': line.account_id.name,
+                'account_id': line.account_id.id,
+                'currency_name': currency_name,
+                'currency_id': currency_id,
+                'debit': line.debit,
+                'credit': line.credit,
+                'amount_currency': amount_currency,
+                'try_amount': try_amount,
+                'usd_rate': usd_rate,
+                'usd_rate_date': usd_rate_date,
+                'usd_rate_record_id': usd_rate_record_id,
+                'usd_value': usd_value,
+                'conversion_method': conversion_method,
+                'rate_info': rate_info,
+                'debug_date_from': date_from,
+                'debug_date_to': date_to,
+                'debug_target_currency': target_currency,
+            })
