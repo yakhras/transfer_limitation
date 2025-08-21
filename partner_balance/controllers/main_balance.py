@@ -592,9 +592,13 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             opening_data = opening_balances[currency]
             opening_row = self._create_opening_balance_row(opening_data)
             
-            for cell_index, cell_value in enumerate(opening_row):
-                if cell_index < len(self.field_names):
-                    self.write(row, cell_index, cell_value, self.opening_balance_style)
+            for cell_index in range(len(self.field_names)):  # Loop through ALL columns
+                if cell_index < len(opening_row):
+                    cell_value = opening_row[cell_index]
+                else:
+                    cell_value = ''  # Empty for remaining columns
+                    
+                self.write(row, cell_index, cell_value, self.opening_balance_style)
             row += 1
 
         # Write child groups
