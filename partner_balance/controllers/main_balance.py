@@ -373,7 +373,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 opening_balances[group_name] = opening_data
             
             # Update group balances with respective opening balances
-            self._update_group_balances_with_opening(groups, opening_balances)
+            self._update_group_balances_per_currency(groups, opening_balances)
             
             # Write groups with opening balances
             for group_name, group in groups.children.items():
