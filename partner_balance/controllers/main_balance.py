@@ -336,29 +336,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         ]
     
 
-    # def from_group_data(self, fields, groups, params=None):
-    #     with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
-    #         row_index = self.header_metadata(params, xlsx_writer)
-            
-    #         # Start groups from row 9
-    #         groups_start_row = 9
-    #         x, y = groups_start_row, 0
-            
-    #         # Calculate opening balances per currency group
-    #         opening_balances = {}
-    #         for group_name in groups.children.keys():
-    #             currency = group_name[1] if isinstance(group_name, tuple) else group_name
-    #             opening_data = self.calculate_opening_balance(params, currency_filter=currency)
-    #             opening_balances[currency] = opening_data
-            
-    #         # Update group balances with respective opening balances
-    #         self._update_group_balances_per_currency(groups, opening_balances)
-            
-    #         # Write groups with opening balances
-    #         for group_name, group in groups.children.items():
-    #             x, y = xlsx_writer.write_group(x, y, group_name, group, opening_balances)
-
-    #     return xlsx_writer.value
 
     def from_group_data(self, fields, groups, params=None):
         with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
@@ -384,7 +361,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                     filter_value = group_name[1] if isinstance(group_name, tuple) else group_name
                 elif groupby_field == 'account_id':
                     # Account grouping - filter by account
-                    filter_field = 'account_id'
+                    filter_field = 'account_id.id'
                     filter_value = group_name[0] if isinstance(group_name, tuple) else group_name
                 else:
                     # Other grouping - no filtering (total opening balance)
