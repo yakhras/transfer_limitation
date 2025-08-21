@@ -530,6 +530,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             'balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
             'balance_amount': lambda: aggregates.get('debit_amount', 0) - abs(aggregates.get('credit_amount', 0)),
             'cumulated_balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
+            'amount_currency': lambda: '',
         }
 
         for field in self.fields[1:]:
