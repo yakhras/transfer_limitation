@@ -226,7 +226,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         
         return 'Beginning'
 
-    def calculate_opening_balance(self, params):
+    def calculate_opening_balance(self, params, currency_filter=None):
         """Calculate opening balance before date_from for the given partner"""
         date_from = params.get('date_from')
         partner_id = params.get('default_partner_id')
@@ -235,7 +235,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             return {
                 'balance': 0.0,
                 'balance_currency': 0.0,
-                'currency': 'USD',
+                'currency': currency_filter or 'USD',
                 'date': None
             }
         
@@ -247,14 +247,17 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             ('move_id.journal_id.code', '!=', 'KRFRK')
         ]
         
+        # Add currency filter if provided
+        if currency_filter:
+            opening_domain.append(('currency_id.name', '=', currency_filter))
+        
         opening_records = Model.search(opening_domain)
         debit = sum(opening_records.mapped('debit'))
         credit = sum(opening_records.mapped('credit'))
         balance = sum(opening_records.mapped('debit')) - sum(opening_records.mapped('credit'))
         
         # Calculate currency amounts if needed
-        # balance_currency = sum(opening_records.mapped('amount_currency'))
-        currency = opening_records[0].currency_id.name if opening_records else 'TRY'
+        currency = currency_filter or (opening_records[0].currency_id.name if opening_records else 'TRY')
         
         opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
         
@@ -262,7 +265,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             'debit': debit,
             'credit': credit,
             'balance': balance,
-            # 'balance_currency': balance_currency,
             'currency': currency,
             'date': opening_date
         }
@@ -283,50 +285,34 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
     def from_group_data(self, fields, groups, params=None):
         with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
-            # Write headers
-            # data = self.header_metadata(params)
-            # for row_index, header_info in enumerate(data):
-            #     xlsx_writer.write(row_index, 0, header_info, xlsx_writer.header_style)
-
             row_index = self.header_metadata(params, xlsx_writer)
             
-            # Get opening balance
-            opening_data = self.calculate_opening_balance(params)
-
-            opening_debit = 0
-            opening_credit = 0
-            
-            # Write opening balance row if exists
-            if opening_data['balance'] != 0.0:
-                opening_row = self.create_opening_balance_row(opening_data)
-                opening_debit = opening_row[3] if opening_row[3] else 0  # Debit column
-                opening_credit = opening_row[4] if opening_row[4] else 0
-
-                for cell_index, cell_value in enumerate(opening_row):
-                    xlsx_writer.write(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
-                groups_start_row = 9  # Groups start after opening balance
-            else:
-                groups_start_row = 8  # Groups start normally
-                opening_data['balance'] = 0.0  # Ensure balance is 0
-            
-            # Write groups with updated starting position
+            # Start groups from row 9
+            groups_start_row = 9
             x, y = groups_start_row, 0
             
-            # Update group data to include opening balance in running calculations
-            if opening_data['balance'] != 0.0:
-                self._update_group_balances(groups, opening_data['balance'])
+            # Calculate opening balances per currency group
+            opening_balances = {}
+            for group_name in groups.children.keys():
+                currency = group_name[1] if isinstance(group_name, tuple) else group_name
+                opening_data = self.calculate_opening_balance(params, currency_filter=currency)
+                opening_balances[currency] = opening_data
             
+            # Update group balances with respective opening balances
+            self._update_group_balances_per_currency(groups, opening_balances)
+            
+            # Write groups with opening balances
             for group_name, group in groups.children.items():
-                x, y = xlsx_writer.write_group(x, y, group_name, group)
+                x, y = xlsx_writer.write_group(x, y, group_name, group, opening_balances)
 
         return xlsx_writer.value
 
-    def _update_group_balances(self, groups, opening_balance):
-        """Update cumulated balances in group data to start from opening balance"""
-        running_balance = opening_balance
+    def _update_group_balances_per_currency(self, groups, opening_balances):
+        """Update cumulated balances in group data with per-currency opening balances"""
         
-        def update_group_recursive(group_node):
-            nonlocal running_balance
+        def update_group_recursive(group_node, currency_key):
+            opening_balance = opening_balances.get(currency_key, {}).get('balance', 0.0)
+            running_balance = opening_balance
             
             # Update data records in this group
             for record in group_node.data:
@@ -340,11 +326,12 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Update child groups recursively
             for child_group in group_node.children.values():
-                update_group_recursive(child_group)
+                update_group_recursive(child_group, currency_key)
         
         # Start updating from root groups
-        for group in groups.children.values():
-            update_group_recursive(group)
+        for group_name, group in groups.children.items():
+            currency = group_name[1] if isinstance(group_name, tuple) else group_name
+            update_group_recursive(group, currency)
 
 
 class BalanceExportXlsxWriter:
@@ -555,22 +542,38 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
         return row + 2, 0
 
-    def write_group(self, row, column, group_name, group, group_depth=0):
-        group_name = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
+    def write_group(self, row, column, group_name, group, opening_balances, group_depth=0):
+        group_name_display = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
+        currency = group_name[1] if isinstance(group_name, tuple) else group_name
+        
         if group._groupby_type[group_depth] != 'boolean':
-            group_name = group_name or _("Undefined")
+            group_name_display = group_name_display or _("Undefined")
 
-        row, column = self._write_group_header(row, column, group_name, group, group_depth)
+        # Write group header
+        row, column = self._write_group_header(row, column, group_name_display, group, group_depth)
 
+        # Write opening balance for this currency group
+        if currency in opening_balances and opening_balances[currency]['balance'] != 0.0:
+            opening_data = opening_balances[currency]
+            opening_row = self._create_opening_balance_row(opening_data)
+            
+            for cell_index, cell_value in enumerate(opening_row):
+                if cell_index < len(self.field_names):
+                    self.write(row, cell_index, cell_value, self.opening_balance_style)
+            row += 1
+
+        # Write child groups
         for child_group_name, child_group in group.children.items():
-            row, column = self.write_group(row, column, child_group_name, child_group, group_depth + 1)
+            row, column = self.write_group(row, column, child_group_name, child_group, opening_balances, group_depth + 1)
 
+        # Write transaction header
         row = self.write_group_header(row)
         
-
+        # Write group data
         for record in group.data:
             row, column = self._write_row(row, column, record)
         
+        # Write group totals
         row, column = self._write_group_totals(row, group)
 
         return row, column
@@ -602,6 +605,18 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
     
     def write_header(self):
         return
+    
+    def _create_opening_balance_row(self, opening_data):
+        """Create opening balance row data using existing logic"""
+        return [
+            opening_data['date'],           # Date
+            '',                            # Journal Entry  
+            'Opening Balance',             # Label
+            opening_data['debit'],         # Debit
+            opening_data['credit'],        # Credit  
+            opening_data['balance'],       # Cumulated Balance
+            opening_data['currency'],      # Currency
+        ]
 
 
     
