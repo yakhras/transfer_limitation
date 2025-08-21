@@ -390,6 +390,10 @@ class BalanceExportXlsxWriter:
             self.value = self.output.getvalue()
 
     def write(self, row, column, cell_value, style=None):
+        # Handle None values
+        if cell_value is None:
+            cell_value = ''
+        
         self.worksheet.write(row, column, cell_value, style)
 
     def write_cell(self, row, column, cell_value):
