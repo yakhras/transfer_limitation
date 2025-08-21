@@ -226,52 +226,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         return 'Beginning'
 
 
-    # def calculate_opening_balance(self, params, currency_filter=None):
-    #     """Calculate opening balance before date_from for the given partner"""
-    #     date_from = params.get('date_from')
-    #     partner_id = params.get('default_partner_id')
-        
-    #     if not date_from or not partner_id:
-    #         return {
-    #             'debit': 0.0,
-    #             'credit': 0.0,
-    #             'balance': 0.0,
-    #             'balance_currency': 0.0,
-    #             'currency': currency_filter or 'USD',
-    #             'date': ''
-    #         }
-        
-    #     # Calculate opening balance
-    #     Model = request.env['account.move.line.report']
-    #     opening_domain = [
-    #         ('partner_id', '=', partner_id),
-    #         ('date', '<', date_from),
-    #         ('move_id.journal_id.code', '!=', 'KRFRK')
-    #     ]
-        
-    #     # Add currency filter if provided
-    #     if currency_filter:
-    #         opening_domain.append(('currency_id.name', '=', currency_filter))
-        
-    #     opening_records = Model.search(opening_domain)
-    #     debit = sum(opening_records.mapped('debit'))
-    #     credit = sum(opening_records.mapped('credit'))
-    #     balance = sum(opening_records.mapped('debit')) - sum(opening_records.mapped('credit'))
-        
-    #     # Calculate currency amounts if needed
-    #     currency = currency_filter or (opening_records[0].currency_id.name if opening_records else 'TRY')
-        
-    #     opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
-        
-    #     return {
-    #         'debit': debit,
-    #         'credit': credit,
-    #         'balance': balance,
-    #         'currency': currency,
-    #         'date': opening_date
-    #     }
-
-
     def calculate_opening_balance(self, params, filter_field=None, filter_value=None):
         """Calculate opening balance before date_from for the given partner"""
         date_from = params.get('date_from')
