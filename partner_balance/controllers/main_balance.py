@@ -226,7 +226,52 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         
         return 'Beginning'
 
-    def calculate_opening_balance(self, params, currency_filter=None):
+    # def calculate_opening_balance(self, params, currency_filter=None):
+    #     """Calculate opening balance before date_from for the given partner"""
+    #     date_from = params.get('date_from')
+    #     partner_id = params.get('default_partner_id')
+        
+    #     if not date_from or not partner_id:
+    #         return {
+    #             'debit': 0.0,
+    #             'credit': 0.0,
+    #             'balance': 0.0,
+    #             'balance_currency': 0.0,
+    #             'currency': currency_filter or 'USD',
+    #             'date': ''
+    #         }
+        
+    #     # Calculate opening balance
+    #     Model = request.env['account.move.line.report']
+    #     opening_domain = [
+    #         ('partner_id', '=', partner_id),
+    #         ('date', '<', date_from),
+    #         ('move_id.journal_id.code', '!=', 'KRFRK')
+    #     ]
+        
+    #     # Add currency filter if provided
+    #     if currency_filter:
+    #         opening_domain.append(('currency_id.name', '=', currency_filter))
+        
+    #     opening_records = Model.search(opening_domain)
+    #     debit = sum(opening_records.mapped('debit'))
+    #     credit = sum(opening_records.mapped('credit'))
+    #     balance = sum(opening_records.mapped('debit')) - sum(opening_records.mapped('credit'))
+        
+    #     # Calculate currency amounts if needed
+    #     currency = currency_filter or (opening_records[0].currency_id.name if opening_records else 'TRY')
+        
+    #     opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        
+    #     return {
+    #         'debit': debit,
+    #         'credit': credit,
+    #         'balance': balance,
+    #         'currency': currency,
+    #         'date': opening_date
+    #     }
+
+    def calculate_opening_balance(self, params, filter_field=None, filter_value=None):
         """Calculate opening balance before date_from for the given partner"""
         date_from = params.get('date_from')
         partner_id = params.get('default_partner_id')
@@ -237,7 +282,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 'credit': 0.0,
                 'balance': 0.0,
                 'balance_currency': 0.0,
-                'currency': currency_filter or 'USD',
+                'currency': filter_value if filter_field == 'currency_id.name' else 'USD',
                 'date': ''
             }
         
@@ -249,17 +294,21 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             ('move_id.journal_id.code', '!=', 'KRFRK')
         ]
         
-        # Add currency filter if provided
-        if currency_filter:
-            opening_domain.append(('currency_id.name', '=', currency_filter))
+        # Add specific field filter if provided
+        if filter_field and filter_value:
+            opening_domain.append((filter_field, '=', filter_value))
         
         opening_records = Model.search(opening_domain)
         debit = sum(opening_records.mapped('debit'))
         credit = sum(opening_records.mapped('credit'))
         balance = sum(opening_records.mapped('debit')) - sum(opening_records.mapped('credit'))
         
-        # Calculate currency amounts if needed
-        currency = currency_filter or (opening_records[0].currency_id.name if opening_records else 'TRY')
+        # Determine currency for display
+        currency = 'TRY'  # Default
+        if filter_field == 'currency_id.name':
+            currency = filter_value
+        elif opening_records:
+            currency = opening_records[0].currency_id.name or 'TRY'
         
         opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
         
@@ -285,6 +334,30 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         ]
     
 
+    # def from_group_data(self, fields, groups, params=None):
+    #     with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
+    #         row_index = self.header_metadata(params, xlsx_writer)
+            
+    #         # Start groups from row 9
+    #         groups_start_row = 9
+    #         x, y = groups_start_row, 0
+            
+    #         # Calculate opening balances per currency group
+    #         opening_balances = {}
+    #         for group_name in groups.children.keys():
+    #             currency = group_name[1] if isinstance(group_name, tuple) else group_name
+    #             opening_data = self.calculate_opening_balance(params, currency_filter=currency)
+    #             opening_balances[currency] = opening_data
+            
+    #         # Update group balances with respective opening balances
+    #         self._update_group_balances_per_currency(groups, opening_balances)
+            
+    #         # Write groups with opening balances
+    #         for group_name, group in groups.children.items():
+    #             x, y = xlsx_writer.write_group(x, y, group_name, group, opening_balances)
+
+    #     return xlsx_writer.value
+
     def from_group_data(self, fields, groups, params=None):
         with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
             row_index = self.header_metadata(params, xlsx_writer)
@@ -293,19 +366,39 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             groups_start_row = 9
             x, y = groups_start_row, 0
             
-            # Calculate opening balances per currency group
+            # Smart detection of grouping field
+            groupby = params.get('groupby', [])
+            groupby_field = groupby[0].split(':')[0] if groupby else ''
+            
+            # Determine filter approach based on grouping field
             opening_balances = {}
             for group_name in groups.children.keys():
-                currency = group_name[1] if isinstance(group_name, tuple) else group_name
-                opening_data = self.calculate_opening_balance(params, currency_filter=currency)
-                opening_balances[currency] = opening_data
+                filter_field = None
+                filter_value = None
+                
+                if groupby_field == 'currency_id':
+                    # Currency grouping - filter by currency
+                    filter_field = 'currency_id.name'
+                    filter_value = group_name[1] if isinstance(group_name, tuple) else group_name
+                elif groupby_field == 'account_id':
+                    # Account grouping - filter by account
+                    filter_field = 'account_id'
+                    filter_value = group_name[0] if isinstance(group_name, tuple) else group_name
+                else:
+                    # Other grouping - no filtering (total opening balance)
+                    filter_field = None
+                    filter_value = None
+                
+                opening_data = self.calculate_opening_balance(params, filter_field, filter_value)
+                # Use group_name as key for consistency
+                opening_balances[group_name] = opening_data
             
             # Update group balances with respective opening balances
-            self._update_group_balances_per_currency(groups, opening_balances)
+            self._update_group_balances_with_opening(groups, opening_balances)
             
             # Write groups with opening balances
             for group_name, group in groups.children.items():
-                x, y = xlsx_writer.write_group(x, y, group_name, group, opening_balances)
+                x, y = xlsx_writer.write_group_with_opening(x, y, group_name, group, opening_balances)
 
         return xlsx_writer.value
 
