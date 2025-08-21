@@ -3,25 +3,20 @@
 import json
 import operator
 import datetime
-from datetime import timedelta, date
 import functools
 import logging
 import werkzeug
 import io
+from datetime import timedelta, date
 from odoo import http
 from odoo.http import content_disposition, dispatch_rpc, request, serialize_exception as _serialize_exception
-from odoo.tools.misc import xlsxwriter
-from odoo.exceptions import UserError
-_logger = logging.getLogger(__name__)
-
-
-
-from odoo.http import content_disposition, request
 from odoo.tools import osutil, pycompat
+from odoo.tools.misc import xlsxwriter
 from odoo.tools.translate import _
-from odoo.addons.web.controllers.main import ExportFormat as BaseExportFormat
-from odoo.addons.web.controllers.main import GroupsTreeNode as BaseGroupsTreeNode
-
+from odoo.exceptions import UserError
+from odoo.addons.web.controllers.main import ExportFormat as BaseExportFormat, GroupsTreeNode as BaseGroupsTreeNode
+# from odoo.addons.web.controllers.main import GroupsTreeNode as BaseGroupsTreeNode
+_logger = logging.getLogger(__name__)
 
 
 
@@ -41,6 +36,7 @@ def serialize_exception(f):
             return werkzeug.exceptions.InternalServerError(json.dumps(error))
     return wrap
 
+
 class BalanceExcelExport(BaseExportFormat, http.Controller):
 
     @http.route('/web/balance_export/xlsx', type='http', auth="user")
@@ -48,13 +44,16 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
     def index(self, data):
         return self.base(data)
 
+
     @property
     def content_type(self):
         return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
+
     @property
     def extension(self):
         return '.xlsx'
+
 
     def base(self, data):
         params = json.loads(data)
@@ -160,6 +159,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         
         return row
 
+
     def from_data(self, fields, rows, params=None):
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
 
@@ -226,6 +226,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         
         return 'Beginning'
 
+
     # def calculate_opening_balance(self, params, currency_filter=None):
     #     """Calculate opening balance before date_from for the given partner"""
     #     date_from = params.get('date_from')
@@ -270,6 +271,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
     #         'currency': currency,
     #         'date': opening_date
     #     }
+
 
     def calculate_opening_balance(self, params, filter_field=None, filter_value=None):
         """Calculate opening balance before date_from for the given partner"""
@@ -320,6 +322,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             'date': opening_date
         }
 
+
     def create_opening_balance_row(self, opening_data):
         """Create opening balance row data"""
         return [
@@ -334,7 +337,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             '',
             '',
         ]
-    
 
 
     def from_group_data(self, fields, groups, params=None):
@@ -380,7 +382,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 x, y = xlsx_writer.write_group_with_opening(x, y, group_name, group, opening_balances)
 
         return xlsx_writer.value
-    
+
+
     def _update_group_balances_with_opening(self, groups, opening_balances):
         """Update cumulated balances in group data with respective opening balances"""
         
@@ -406,7 +409,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         for group_name, group in groups.children.items():
             update_group_recursive(group, group_name)
 
-    
 
     def _update_group_balances_per_currency(self, groups, opening_balances):
         """Update cumulated balances in group data with per-currency opening balances"""
@@ -468,28 +470,31 @@ class BalanceExportXlsxWriter:
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
 
+
     def __enter__(self):
         self.write_header()
         return self
 
+
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.close()
 
+
     def write_cell_with_style(self, row, column, cell_value, style):
         self.write(row, column, cell_value, style)
-
-
-        
+  
 
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
             self.write(8, i, fieldname, self.transaction_header_style)
         self.worksheet.set_column(0, i, 9) # around 220 pixels
 
+
     def close(self):
         self.workbook.close()
         with self.output:
             self.value = self.output.getvalue()
+
 
     @staticmethod
     def _safe_cell_value(val):
@@ -679,6 +684,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
         return row + 2, 0
     
+
     def write_group_with_opening(self, row, column, group_name, group, opening_balances, group_depth=0):
         group_name_display = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
         
@@ -751,11 +757,13 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
         return row, column
 
+
     def _write_row(self, row, column, data):
         for value in data:
             self.write_cell(row, column, value)
             column += 1
         return row + 1, 0
+
 
     def write_group_header(self, row):
         for i, fieldname in enumerate(self.field_names):
@@ -763,6 +771,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         self.worksheet.set_column(0, i, 9)  # Column width
         return row + 1  # Return next row to continue from
     
+
     def _write_group_header(self, row, column, label, group, group_depth=0):
         label_text = '%s%s (%s)' % ('' * group_depth, label, group.count)
 
@@ -776,9 +785,11 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
         return row + 1, 0
     
+
     def write_header(self):
         return
     
+
     def _create_opening_balance_row(self, opening_data):
         """Create opening balance row data using existing logic"""
         return [
@@ -792,16 +803,4 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             '',
             '',
         ]
-    
-
-
-    
-    
-    
-    
-    
-    
-    
-
-
     
