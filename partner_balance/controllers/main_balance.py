@@ -389,38 +389,38 @@ class BalanceExportXlsxWriter:
         with self.output:
             self.value = self.output.getvalue()
 
-        @staticmethod
-        def _safe_cell_value(val):
-            # Keep "native" excel types untouched
-            if val is None:
-                return ""                          # avoid TypeError in sharedStrings
-            if isinstance(val, (int, float, bool)):
-                return val
-            if isinstance(val, (datetime.datetime, datetime.date)):
-                return val
-            if isinstance(val, (bytes, bytearray)):
-                try:
-                    return val.decode("utf-8")
-                except Exception:
-                    return val.decode("latin-1", "ignore")
+    @staticmethod
+    def _safe_cell_value(val):
+        # Keep "native" excel types untouched
+        if val is None:
+            return ""                          # avoid TypeError in sharedStrings
+        if isinstance(val, (int, float, bool)):
+            return val
+        if isinstance(val, (datetime.datetime, datetime.date)):
+            return val
+        if isinstance(val, (bytes, bytearray)):
+            try:
+                return val.decode("utf-8")
+            except Exception:
+                return val.decode("latin-1", "ignore")
 
-            # Odoo relations sometimes come as (id, name)
-            if isinstance(val, tuple) and len(val) == 2 and isinstance(val[0], int):
-                return "" if val[1] is None else str(val[1])
+        # Odoo relations sometimes come as (id, name)
+        if isinstance(val, tuple) and len(val) == 2 and isinstance(val[0], int):
+            return "" if val[1] is None else str(val[1])
 
-            # Structures: make them readable instead of crashing xlsxwriter
-            if isinstance(val, (dict, list, set, tuple)):
-                try:
-                    return json.dumps(val, ensure_ascii=False, default=str)
-                except Exception:
-                    return str(val)
+        # Structures: make them readable instead of crashing xlsxwriter
+        if isinstance(val, (dict, list, set, tuple)):
+            try:
+                return json.dumps(val, ensure_ascii=False, default=str)
+            except Exception:
+                return str(val)
 
-            return str(val)
+        return str(val)
 
 
-        def write(self, row, column, cell_value, style=None):
-            cell_value = self._safe_cell_value(cell_value)
-            self.worksheet.write(row, column, cell_value, style)
+    def write(self, row, column, cell_value, style=None):
+        cell_value = self._safe_cell_value(cell_value)
+        self.worksheet.write(row, column, cell_value, style)
 
 
     def write_cell(self, row, column, cell_value):
