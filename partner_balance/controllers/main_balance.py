@@ -592,7 +592,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             opening_data = opening_balances[currency]
             opening_row = self._create_opening_balance_row(opening_data)
             
-            for cell_index in range(len(self.field_names)):  # Loop through ALL columns
+            for cell_index in range(len(self.fields)):  # Loop through ALL columns
                 if cell_index < len(opening_row):
                     cell_value = opening_row[cell_index]
                 else:
