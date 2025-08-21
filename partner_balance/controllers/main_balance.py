@@ -427,40 +427,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         for group_name, group in groups.children.items():
             update_group_recursive(group, group_name)
 
-    def write_group_with_opening(self, row, column, group_name, group, opening_balances, group_depth=0):
-        group_name_display = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
-        
-        if group._groupby_type[group_depth] != 'boolean':
-            group_name_display = group_name_display or _("Undefined")
-
-        # Write group header
-        row, column = self._write_group_header(row, column, group_name_display, group, group_depth)
-
-        # Write opening balance for this group
-        if group_name in opening_balances and opening_balances[group_name]['balance'] != 0.0:
-            opening_data = opening_balances[group_name]
-            opening_row = self._create_opening_balance_row(opening_data)
-            
-            for cell_index, cell_value in enumerate(opening_row):
-                if cell_index < len(self.field_names):
-                    self.write(row, cell_index, cell_value, self.opening_balance_style)
-            row += 1
-
-        # Write child groups
-        for child_group_name, child_group in group.children.items():
-            row, column = self.write_group_with_opening(row, column, child_group_name, child_group, opening_balances, group_depth + 1)
-
-        # Write transaction header
-        row = self.write_group_header(row)
-        
-        # Write group data
-        for record in group.data:
-            row, column = self._write_row(row, column, record)
-        
-        # Write group totals
-        row, column = self._write_group_totals(row, group)
-
-        return row, column
+    
 
     def _update_group_balances_per_currency(self, groups, opening_balances):
         """Update cumulated balances in group data with per-currency opening balances"""
@@ -732,6 +699,42 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             column += 1
 
         return row + 2, 0
+    
+    def write_group_with_opening(self, row, column, group_name, group, opening_balances, group_depth=0):
+        group_name_display = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
+        
+        if group._groupby_type[group_depth] != 'boolean':
+            group_name_display = group_name_display or _("Undefined")
+
+        # Write group header
+        row, column = self._write_group_header(row, column, group_name_display, group, group_depth)
+
+        # Write opening balance for this group
+        if group_name in opening_balances and opening_balances[group_name]['balance'] != 0.0:
+            opening_data = opening_balances[group_name]
+            opening_row = self._create_opening_balance_row(opening_data)
+            
+            for cell_index, cell_value in enumerate(opening_row):
+                if cell_index < len(self.field_names):
+                    self.write(row, cell_index, cell_value, self.opening_balance_style)
+            row += 1
+
+        # Write child groups
+        for child_group_name, child_group in group.children.items():
+            row, column = self.write_group_with_opening(row, column, child_group_name, child_group, opening_balances, group_depth + 1)
+
+        # Write transaction header
+        row = self.write_group_header(row)
+        
+        # Write group data
+        for record in group.data:
+            row, column = self._write_row(row, column, record)
+        
+        # Write group totals
+        row, column = self._write_group_totals(row, group)
+
+        return row, column
+    
 
     def write_group(self, row, column, group_name, group, opening_balances, group_depth=0):
         group_name_display = group_name[1] if isinstance(group_name, tuple) and len(group_name) > 1 else group_name
