@@ -179,14 +179,13 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
                 for cell_index, cell_value in enumerate(opening_row):
                     xlsx_writer.write_cell_with_style(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
-                    # xlsx_writer.write_cell(9, cell_index, cell_value)
-                period_start_row = 10  # Period data starts at row 8
+                period_start_row = 10  
             else:
-                period_start_row = 9  # Period data starts at row 7
-                opening_data['balance'] = 0.0  # Ensure balance is 0 if no opening balance
+                period_start_row = 9  
+                opening_data['balance'] = 0.0  
             
             # Write period data rows with updated running balance
-            running_balance = opening_data['balance']  # Start from opening balance
+            running_balance = opening_data['balance']  
             for row_index, row in enumerate(rows):
                 # Update running balance for this row
                 debit = float(row[3]) if row[3] else 0.0
@@ -194,8 +193,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 running_balance += debit - credit
                 
                 # Update the cumulated balance column (assuming it's column 5)
-                row = list(row)  # Convert to list to modify
-                row[5] = running_balance  # Update cumulated balance
+                row = list(row)  
+                row[5] = running_balance  
                 
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
@@ -203,7 +202,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                     xlsx_writer.write_cell(period_start_row + row_index, cell_index, cell_value)
 
             # Add totals row after all data
-            totals_row = period_start_row + len(rows) + 1  # +1 for spacing
+            totals_row = period_start_row + len(rows) + 1  
             xlsx_writer._write_totals_from_rows(totals_row, rows, fields, opening_debit, opening_credit)
 
 
@@ -335,30 +334,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             '',
         ]
     
-
-    # def from_group_data(self, fields, groups, params=None):
-    #     with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
-    #         row_index = self.header_metadata(params, xlsx_writer)
-            
-    #         # Start groups from row 9
-    #         groups_start_row = 9
-    #         x, y = groups_start_row, 0
-            
-    #         # Calculate opening balances per currency group
-    #         opening_balances = {}
-    #         for group_name in groups.children.keys():
-    #             currency = group_name[1] if isinstance(group_name, tuple) else group_name
-    #             opening_data = self.calculate_opening_balance(params, currency_filter=currency)
-    #             opening_balances[currency] = opening_data
-            
-    #         # Update group balances with respective opening balances
-    #         self._update_group_balances_per_currency(groups, opening_balances)
-            
-    #         # Write groups with opening balances
-    #         for group_name, group in groups.children.items():
-    #             x, y = xlsx_writer.write_group(x, y, group_name, group, opening_balances)
-
-    #     return xlsx_writer.value
 
     def from_group_data(self, fields, groups, params=None):
         with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
@@ -502,8 +477,6 @@ class BalanceExportXlsxWriter:
         self.write(row, column, cell_value, style)
 
 
-        
-
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
             self.write(8, i, fieldname, self.transaction_header_style)
@@ -518,7 +491,7 @@ class BalanceExportXlsxWriter:
     def _safe_cell_value(val):
         # Keep "native" excel types untouched
         if val is None:
-            return ""                          # avoid TypeError in sharedStrings
+            return ""                        
         if isinstance(val, (int, float, bool)):
             return val
         if isinstance(val, (datetime.datetime, datetime.date)):
