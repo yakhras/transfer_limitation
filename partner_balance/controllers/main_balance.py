@@ -178,7 +178,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 opening_credit = opening_row[4] if opening_row[4] else 0
 
                 for cell_index, cell_value in enumerate(opening_row):
-                    xlsx_writer.write_cell_with_style(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
+                    xlsx_writer.write_cell_with_style(9, cell_index, fields, cell_value, xlsx_writer.opening_balance_style)
                     # xlsx_writer.write_cell(9, cell_index, cell_value)
                 period_start_row = 10  # Period data starts at row 8
             else:
@@ -376,8 +376,23 @@ class BalanceExportXlsxWriter:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.close()
 
-    def write_cell_with_style(self, row, column, cell_value, style):
+    # def write_cell_with_style(self, row, column, cell_value, style):
+    #     self.write(row, column, cell_value, style)
+
+    def write_cell_with_style(self, row, column, fields, cell_value, style, *, finish_row=False, total_cols=None):
         self.write(row, column, cell_value, style)
+        if finish_row:
+            if total_cols is None:
+                if hasattr(self, "field_names"):
+                    total_cols = len(self.field_names)
+                elif hasattr(self, "columns"):
+                    total_cols = len(self.columns)
+                else:
+                    total_cols = len(fields)  # when passed explicitly above
+            for col in range(column + 1, total_cols):
+                self.worksheet.write_blank(row, col, None, style)
+
+        
 
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
