@@ -173,7 +173,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Write opening balance row if exists
             if opening_data['balance'] != 0.0:
-                opening_row = self._create_opening_balance_row(opening_data)
+                opening_row = self.create_opening_balance_row(opening_data)
                 opening_debit = opening_row[3] if opening_row[3] else 0  # Debit column
                 opening_credit = opening_row[4] if opening_row[4] else 0
 
@@ -271,18 +271,18 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             'date': opening_date
         }
 
-    # def create_opening_balance_row(self, opening_data):
-    #     """Create opening balance row data"""
-    #     return [
-    #         opening_data['date'],           # Date
-    #         '',                            # Journal Entry  
-    #         'Opening Balance',             # Label
-    #         opening_data['debit'],         # Debit
-    #         opening_data['credit'],        # Credit  
-    #         opening_data['balance'],       # Cumulated Balance
-    #         opening_data['currency'],      # Currency
-    #         # opening_data['balance_currency'] # Amount Currency
-    #     ]
+    def create_opening_balance_row(self, opening_data):
+        """Create opening balance row data"""
+        return [
+            opening_data['date'],           # Date
+            '',                            # Journal Entry  
+            'Opening Balance',             # Label
+            opening_data['debit'],         # Debit
+            opening_data['credit'],        # Credit  
+            opening_data['balance'],       # Cumulated Balance
+            opening_data['currency'],      # Currency
+            # opening_data['balance_currency'] # Amount Currency
+        ]
     
 
     def from_group_data(self, fields, groups, params=None):
