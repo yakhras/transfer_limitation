@@ -461,7 +461,7 @@ class BalanceExportXlsxWriter:
         self.transaction_header_style = self.workbook.add_format({'text_wrap': True,'bold': True,'align': 'left','valign': 'vcenter','bg_color': '#475569','font_color': 'white','border': 1,'font_size': 10})
         self.opening_balance_style = self.workbook.add_format({'align': 'left','valign': 'vcenter','text_wrap': True,'bold': True,'bg_color': '#dbeafe','border': 1, 'font_size': 8})
         self.partner_name_style = self.workbook.add_format({'align': 'left','valign': 'vcenter', 'text_wrap': True,'bold': True,'bg_color': '#f3f4f6','border': 1, 'font_size': 11})
-
+        self.monetary_style = self.workbook.add_format({ 'bold': True, 'bg_color': '#4F81BD', 'font_size': 8, 'font_color': 'white', 'border': 1, 'align': 'center', 'num_format': self.monetary_format })
 
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
@@ -601,15 +601,7 @@ class BalanceExportXlsxWriter:
         total_balance = round(total_balance, 2)
 
         # Create monetary style
-        monetary_style = self.workbook.add_format({
-            'bold': True,
-            'bg_color': '#4F81BD',
-            'font_size': 8,
-            'font_color': 'white',
-            'border': 1,
-            'align': 'center',
-            'num_format': self.monetary_format
-        })
+       
         
         # Write static totals row
         for column in range(len(fields)):
@@ -618,13 +610,13 @@ class BalanceExportXlsxWriter:
                 self.write(row, column, _("Total"), self.header_bold_style)
             elif column == 3:
                 # Column 3: Total debit
-                self.write(row, column, total_debit, monetary_style)
+                self.write(row, column, total_debit, self.monetary_style)
             elif column == 4:
                 # Column 4: Total credit
-                self.write(row, column, total_credit, monetary_style)
+                self.write(row, column, total_credit, self.monetary_style)
             elif column == 5:
                 # Column 5: Total balance (debit - credit)
-                self.write(row, column, total_balance, monetary_style)
+                self.write(row, column, total_balance, self.monetary_style)
             else:
                 # All other columns: empty
                 self.write(row, column, '', self.header_bold_style)
@@ -642,7 +634,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
     def _write_group_totals(self, row, group):
         column = 0  # skip the first column (reserved for group label or index)
         aggregates = group.aggregated_values
-        self.write(row, column, _("Total"), self.header_bold_style)
+        self.write(row, column, _("Total"), self.monetary_format)
         column += 1
 
         # Fields that need custom calculation instead of sum
@@ -664,13 +656,13 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             
             # Apply formatting based on field type
             if field.get('type') == 'monetary':
-                self.header_bold_style.set_num_format(self.monetary_format)
+                self.monetary_style.set_num_format(self.monetary_format)
             elif field.get('type') == 'float':
-                self.header_bold_style.set_num_format(self.float_format)
+                self.monetary_style.set_num_format(self.float_format)
             else:
                 aggregated_value = str(aggregated_value if aggregated_value is not None else '')
                 
-            self.write(row, column, aggregated_value, self.header_bold_style)
+            self.write(row, column, aggregated_value, self.monetary_style)
             column += 1
 
         return row + 2, 0
