@@ -286,7 +286,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
     
 
     def from_group_data(self, fields, groups, params=None):
-        with BalanceGroupExportXlsxWriter(fields, groups) as xlsx_writer:
+        with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
             row_index = self.header_metadata(params, xlsx_writer)
             
             # Start groups from row 9
