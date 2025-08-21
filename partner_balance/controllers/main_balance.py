@@ -7,15 +7,14 @@ import functools
 import logging
 import werkzeug
 import io
-from datetime import timedelta, date
+from datetime import timedelta
 from odoo import http
-from odoo.http import content_disposition, dispatch_rpc, request, serialize_exception as _serialize_exception
+from odoo.http import content_disposition, request, serialize_exception as _serialize_exception
 from odoo.tools import osutil, pycompat
 from odoo.tools.misc import xlsxwriter
 from odoo.tools.translate import _
 from odoo.exceptions import UserError
 from odoo.addons.web.controllers.main import ExportFormat as BaseExportFormat, GroupsTreeNode as BaseGroupsTreeNode
-# from odoo.addons.web.controllers.main import GroupsTreeNode as BaseGroupsTreeNode
 _logger = logging.getLogger(__name__)
 
 
