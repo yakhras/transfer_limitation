@@ -308,8 +308,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Determine filter approach based on grouping field
             opening_balances = {}
-            for group_name in groups.children.keys():
-                xlsx_writer.write(31, 0, group_name, xlsx_writer.partner_name_style)
+            for group_id in groups.children.keys():
+                xlsx_writer.write(31, 0, group_id, xlsx_writer.partner_name_style)
                 filter_field = None
                 filter_value = None
                 
