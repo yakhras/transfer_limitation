@@ -847,6 +847,8 @@ export class CashFlowDashboard extends Component {
     viewAccountDetails(accountId) {
         const dateRange = this.getDateRange()
         console.log(accountId)
+        const domain = [["account_id.code","in",[accountId]]]
+        console.log(domain)
         
         this.actionService.doAction({
             type: "ir.actions.act_window",
@@ -854,6 +856,7 @@ export class CashFlowDashboard extends Component {
             res_model: "account.move.line",
             domain: [["account_id.code","in",[accountId]]],
             views: [[false, "list"],[false, "form"]],
+            view_mode: "list",
             target: "current",
             context: {
                 date_from: dateRange.date_from,
