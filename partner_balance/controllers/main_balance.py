@@ -581,9 +581,9 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
     def _write_group_totals(self, row, group, balance=None):
         column = 0  # skip the first column (reserved for group label or index)
-        self.write(31, 0, balance, self.partner_name_style)
 
         aggregates = group.aggregated_values
+        self.write(31, 0, aggregates, self.partner_name_style)
         self.write(row, column, _("Total"), self.header_bold_style)
         column += 1
 
