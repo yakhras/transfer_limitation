@@ -302,7 +302,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Smart detection of grouping field
             groupby = params.get('groupby', [])
-            xlsx_writer.write(30, 0, params, xlsx_writer.partner_name_style)
             groupby_field = groupby[0].split(':')[0] if groupby else ''
             
             # Determine filter approach based on grouping field
