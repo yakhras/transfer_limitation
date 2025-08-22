@@ -847,7 +847,7 @@ export class CashFlowDashboard extends Component {
     viewAccountDetails(accountId) {
         const dateRange = this.getDateRange()
         console.log(accountId)
-        const account_codes = accountId.split(',')
+        const account_codes = accountId.split(', ')
         const domain = [["account_id.code","in", account_codes]]
         console.log(domain)
         
