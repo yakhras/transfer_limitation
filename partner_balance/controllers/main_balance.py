@@ -396,7 +396,7 @@ class BalanceExportXlsxWriter:
         self.transaction_header_style = self.workbook.add_format({'text_wrap': True,'bold': True,'align': 'left','valign': 'vcenter','bg_color': '#475569','font_color': 'white','border': 1,'font_size': 10})
         self.opening_balance_style = self.workbook.add_format({'align': 'left','valign': 'vcenter','text_wrap': True,'bold': True,'bg_color': '#dbeafe','border': 1, 'font_size': 8})
         self.partner_name_style = self.workbook.add_format({'align': 'left','valign': 'vcenter', 'text_wrap': True,'bold': True,'bg_color': '#f3f4f6','border': 1, 'font_size': 11})
-
+        self.monetary_style = self.workbook.add_format({ 'bold': True, 'bg_color': '#4F81BD', 'font_size': 8, 'font_color': 'white', 'border': 1, 'align': 'center', 'num_format': self.monetary_format})
 
         if row_count > self.worksheet.xls_rowmax:
             raise UserError(_('There are too many rows (%s rows, limit: %s) to export as Excel 2007-2013 (.xlsx) format. Consider splitting the export.') % (row_count, self.worksheet.xls_rowmax))
@@ -615,7 +615,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             else:
                 aggregated_value = str(aggregated_value if aggregated_value is not None else '')
                 
-            self.write(row, column, aggregated_value, self.header_bold_style)
+            self.write(row, column, aggregated_value, self.monetary_style)
             column += 1
 
         return row + 2, 0
