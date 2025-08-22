@@ -579,7 +579,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         self.fields = fields
 
 
-    def _write_group_totals(self, row, group):
+    def _write_group_totals(self, row, group, balance=None):
         column = 0  # skip the first column (reserved for group label or index)
         aggregates = group.aggregated_values
         self.write(row, column, _("Total"), self.header_bold_style)
@@ -633,7 +633,6 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         if group_name in opening_balances and opening_balances[group_name]['balance'] != 0.0:
             opening_data = opening_balances[group_name]
             opening_row = self._create_opening_balance_row(opening_data)
-            self.write(31, 0, opening_data, self.partner_name_style)
             
             for cell_index, cell_value in enumerate(opening_row):
                 if cell_index < len(self.field_names):
@@ -651,7 +650,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             row, column = self._write_row(row, column, record)
         
         # Write group totals
-        row, column = self._write_group_totals(row, group)
+        row, column = self._write_group_totals(row, group, opening_balances)
 
         return row, column
 
