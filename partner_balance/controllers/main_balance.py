@@ -228,8 +228,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
     def calculate_opening_balance(self, params, filter_field=None, filter_value=None):
         """Calculate opening balance before date_from for the given partner"""
-        date_from = params.get('date_from')
-        partner_id = params.get('default_partner_id')
+
+        ctx = params.get('context', {})
+        date_from = ctx.get('date_from')
+        partner_id = ctx.get('default_partner_id')
         
         if not date_from or not partner_id:
             return {
