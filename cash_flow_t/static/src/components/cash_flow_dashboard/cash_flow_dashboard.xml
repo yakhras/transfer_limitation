@@ -201,7 +201,7 @@
                         <div t-if="state.accounts.length > 0" class="row">
                             <div t-foreach="state.accounts" t-as="account" t-key="account.id" class="col-lg-6 col-12 mb-3">
                                 <div class="card h-100 shadow-sm cursor-pointer cash-flow-hover-card"
-                                     t-on-click="() => viewAccountDetails(account.id)"
+                                     t-on-click="() => viewAccountDetails(account.account_codes)"
                                      t-attf-class="border-#{account.balance_color === 'green' ? 'success' : (account.balance_color === 'red' ? 'danger' : 'info')}">
 
                                     <div class="card-header">
