@@ -336,7 +336,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Write groups with opening balances
             for group_name, group in groups.children.items():
-                xlsx_writer.write(31, 0, group_name, xlsx_writer.partner_name_style)
+                xlsx_writer.write(31, 0, group, xlsx_writer.partner_name_style)
                 x, y = xlsx_writer.write_group_with_opening(x, y, group_name, group, opening_balances)
 
         return xlsx_writer.value
