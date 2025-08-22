@@ -330,7 +330,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 # Use group_name as key for consistency
                 opening_balances[group_name] = opening_data
             
-            xlsx_writer.write(31, 0, opening_balances, xlsx_writer.partner_name_style)
+            # xlsx_writer.write(31, 0, opening_balances, xlsx_writer.partner_name_style)
             # Update group balances with respective opening balances
             self._update_group_balances_per_currency(groups, opening_balances)
             
@@ -581,6 +581,8 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
     def _write_group_totals(self, row, group, balance=None):
         column = 0  # skip the first column (reserved for group label or index)
+        self.write(31, 0, balance, self.partner_name_style)
+
         aggregates = group.aggregated_values
         self.write(row, column, _("Total"), self.header_bold_style)
         column += 1
