@@ -652,6 +652,8 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         # Write group header
         row, column = self._write_group_header(row, column, group_name_display, group, group_depth)
 
+        row = self.write_group_header(row)
+
         # Write opening balance for this group
         if group_name in opening_balances and opening_balances[group_name]['balance'] != 0.0:
             opening_data = opening_balances[group_name]
@@ -667,7 +669,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             row, column = self.write_group_with_opening(row, column, child_group_name, child_group, opening_balances, group_depth + 1)
 
         # Write transaction header
-        row = self.write_group_header(row)
+        # row = self.write_group_header(row)
         
         # Write group data
         for record in group.data:
