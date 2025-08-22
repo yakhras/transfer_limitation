@@ -853,7 +853,7 @@ export class CashFlowDashboard extends Component {
             name: "Cash Flow Details",
             res_model: "account.move.line",
             domain: [["account_id.code","in",[accountId]]],
-            views: [["list", "form"]],
+            views: [[false, "list"],[false, "form"]],
             target: "current",
             context: {
                 date_from: dateRange.date_from,
