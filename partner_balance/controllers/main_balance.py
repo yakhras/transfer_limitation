@@ -302,7 +302,9 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Smart detection of grouping field
             groupby = params.get('groupby', [])
+            xlsx_writer.write(30, 0, groupby, xlsx_writer.partner_name_style)
             groupby_field = groupby[0].split(':')[0] if groupby else ''
+            xlsx_writer.write(31, 0, groupby_field, xlsx_writer.partner_name_style)
             
             # Determine filter approach based on grouping field
             opening_balances = {}
@@ -313,7 +315,9 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 if groupby_field == 'currency_id':
                     # Currency grouping - filter by currency
                     filter_field = 'currency_id.name'
+                    xlsx_writer.write(32, 0, filter_field, xlsx_writer.partner_name_style)
                     filter_value = group_name[1] if isinstance(group_name, tuple) else group_name
+                    xlsx_writer.write(33, 0, filter_value, xlsx_writer.partner_name_style)
                 elif groupby_field == 'account_id':
                     # Account grouping - filter by account
                     filter_field = 'account_id.id'
