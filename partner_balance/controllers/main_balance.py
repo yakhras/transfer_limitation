@@ -655,7 +655,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             row, column = self._write_row(row, column, record)
         
         # Write group totals
-        row, column = self._write_group_totals(row, group, opening_balances)
+        row, column = self._write_group_totals(row, group, opening_row)
 
         return row, column
 
