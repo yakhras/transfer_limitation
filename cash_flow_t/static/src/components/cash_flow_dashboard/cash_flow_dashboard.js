@@ -843,24 +843,24 @@ export class CashFlowDashboard extends Component {
     //         }
     //     })
     // }
-
+// [["account_id.code","in",["120001","120002"]]]
     viewAccountDetails(accountId) {
         const dateRange = this.getDateRange()
         console.log(accountId)
         
-        // this.actionService.doAction({
-        //     type: "ir.actions.act_window",
-        //     name: "Cash Flow Details",
-        //     res_model: "cash.flow.dashboard",
-        //     res_id: accountId,
-        //     views: [[false, "form"]],
-        //     target: "current",
-        //     context: {
-        //         date_from: dateRange.date_from,
-        //         date_to: dateRange.date_to,
-        //         period_type: this.state.period
-        //     }
-        // })
+        this.actionService.doAction({
+            type: "ir.actions.act_window",
+            name: "Cash Flow Details",
+            res_model: "account.move.line",
+            domain: [["account_id.code","in",[accountId]]],
+            views: [["tree", "form"]],
+            target: "current",
+            context: {
+                date_from: dateRange.date_from,
+                date_to: dateRange.date_to,
+                period_type: this.state.period
+            }
+        })
     }
 
     getPeriodLabel() {
