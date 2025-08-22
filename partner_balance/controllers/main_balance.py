@@ -239,7 +239,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 'credit': 0.0,
                 'balance': 0.0,
                 'balance_currency': 0.0,
-                'currency': filter_value if filter_field == 'currency_id.name' else 'USD',
+                'currency': filter_value if filter_field == 'currency_id.name' else 'TRY',
                 'date': ''
             }
         
