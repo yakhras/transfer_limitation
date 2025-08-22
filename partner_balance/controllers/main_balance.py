@@ -539,17 +539,6 @@ class BalanceExportXlsxWriter:
         total_debit = round(total_debit, 2)
         total_credit = round(total_credit, 2)
         total_balance = round(total_balance, 2)
-
-        # Create monetary style
-        # monetary_style = self.workbook.add_format({
-        #     'bold': True,
-        #     'bg_color': '#4F81BD',
-        #     'font_size': 8,
-        #     'font_color': 'white',
-        #     'border': 1,
-        #     'align': 'center',
-        #     'num_format': self.monetary_format
-        # })
         
         # Write static totals row
         for column in range(len(fields)):
