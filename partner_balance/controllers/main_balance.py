@@ -103,7 +103,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
     def header_metadata(self, params, xlsx_writer):
         """Write headers with styling and return next available row"""
         row = 0
-        
         # Company name with special style
         partner_id = params.get('default_partner_id')
         if partner_id:
@@ -295,8 +294,9 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
 
     def from_group_data(self, fields, groups, params=None):
+        ctx = params.get('context', {})
         with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
-            row_index = self.header_metadata(params, xlsx_writer)
+            row_index = self.header_metadata(ctx, xlsx_writer)
             
             # Start groups from row 9
             groups_start_row = 9
@@ -541,15 +541,15 @@ class BalanceExportXlsxWriter:
         total_balance = round(total_balance, 2)
 
         # Create monetary style
-        monetary_style = self.workbook.add_format({
-            'bold': True,
-            'bg_color': '#4F81BD',
-            'font_size': 8,
-            'font_color': 'white',
-            'border': 1,
-            'align': 'center',
-            'num_format': self.monetary_format
-        })
+        # monetary_style = self.workbook.add_format({
+        #     'bold': True,
+        #     'bg_color': '#4F81BD',
+        #     'font_size': 8,
+        #     'font_color': 'white',
+        #     'border': 1,
+        #     'align': 'center',
+        #     'num_format': self.monetary_format
+        # })
         
         # Write static totals row
         for column in range(len(fields)):
@@ -558,13 +558,13 @@ class BalanceExportXlsxWriter:
                 self.write(row, column, _("Total"), self.header_bold_style)
             elif column == 3:
                 # Column 3: Total debit
-                self.write(row, column, total_debit, monetary_style)
+                self.write(row, column, total_debit, self.monetary_style)
             elif column == 4:
                 # Column 4: Total credit
-                self.write(row, column, total_credit, monetary_style)
+                self.write(row, column, total_credit, self.monetary_style)
             elif column == 5:
                 # Column 5: Total balance (debit - credit)
-                self.write(row, column, total_balance, monetary_style)
+                self.write(row, column, total_balance, self.monetary_style)
             else:
                 # All other columns: empty
                 self.write(row, column, '', self.header_bold_style)
