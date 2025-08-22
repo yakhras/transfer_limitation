@@ -302,14 +302,16 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Smart detection of grouping field
             groupby = params.get('groupby', [])
-            # xlsx_writer.write(30, 0, groups.children.keys(), xlsx_writer.partner_name_style)
+            xlsx_writer.write(30, 0, groups.children.keys(), xlsx_writer.partner_name_style)
             groupby_field = groupby[0].split(':')[0] if groupby else ''
             
-            
-            # Determine filter approach based on grouping field
-            opening_balances = {}
             for group_id in groups.children.keys():
                 xlsx_writer.write(31, 0, group_id, xlsx_writer.partner_name_style)
+
+            # Determine filter approach based on grouping field
+            opening_balances = {}
+            for group_name in groups.children.keys():
+                # xlsx_writer.write(31, 0, group_name, xlsx_writer.partner_name_style)
                 filter_field = None
                 filter_value = None
                 
