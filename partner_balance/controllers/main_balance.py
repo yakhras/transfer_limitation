@@ -316,9 +316,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 if groupby_field == 'currency_id':
                     # Currency grouping - filter by currency
                     filter_field = 'currency_id.name'
-                    xlsx_writer.write(32, 0, filter_field, xlsx_writer.partner_name_style)
                     filter_value = group_name[1] if isinstance(group_name, tuple) else group_name
-                    xlsx_writer.write(33, 0, filter_value, xlsx_writer.partner_name_style)
                 elif groupby_field == 'account_id':
                     # Account grouping - filter by account
                     filter_field = 'account_id.id'
@@ -635,6 +633,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         if group_name in opening_balances and opening_balances[group_name]['balance'] != 0.0:
             opening_data = opening_balances[group_name]
             opening_row = self._create_opening_balance_row(opening_data)
+            self.write(31, 0, opening_data, self.partner_name_style)
             
             for cell_index, cell_value in enumerate(opening_row):
                 if cell_index < len(self.field_names):
