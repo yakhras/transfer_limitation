@@ -103,6 +103,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
     def header_metadata(self, params, xlsx_writer):
         """Write headers with styling and return next available row"""
         row = 0
+        xlsx_writer.write(0, 31, params, xlsx_writer.header_style)
         # Company name with special style
         partner_id = params.get('default_partner_id')
         if partner_id:
