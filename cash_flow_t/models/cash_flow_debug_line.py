@@ -32,7 +32,7 @@ class CashFlowDebugLine(models.TransientModel):
     debit = fields.Monetary('Debit', currency_field='company_currency_id')
     credit = fields.Monetary('Credit', currency_field='company_currency_id')
     amount_currency = fields.Monetary('Amount Currency', currency_field='currency_id')
-    try_amount = fields.Monetary('TRY Amount (debit-credit)', currency_field='company_currency_id')
+    try_amount = fields.Monetary('TRY Amount', currency_field='company_currency_id')
     
     # USD conversion data
     usd_rate = fields.Float('USD Rate', digits=(16, 6))
@@ -88,7 +88,7 @@ class CashFlowDebugLine(models.TransientModel):
             if record.conversion_method == 'already_usd':
                 record.usd_rate_display = "Already USD - no conversion"
             elif record.usd_rate and record.usd_rate_date:
-                record.usd_rate_display = f"Rate: {record.usd_rate:.6f} (from {record.usd_rate_date})"
+                record.usd_rate_display = f"{record.usd_rate:.4f})"
             elif record.conversion_method == 'fallback_no_rate':
                 record.usd_rate_display = "No rate found - using TRY amount"
             else:

@@ -14,7 +14,7 @@
                     <field name= "partner_name"/>
                     <field name="debit"/>
                     <field name="credit"/>
-                    <field name="currency_name"/>
+                    <!-- <field name="currency_name"/> -->
                     <field name="amount_currency_display"/>
                     <field name="try_amount"/>
                     <field name="usd_rate_display"/>
