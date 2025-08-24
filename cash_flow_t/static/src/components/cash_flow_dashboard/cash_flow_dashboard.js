@@ -878,6 +878,13 @@ export class CashFlowDashboard extends Component {
     viewAccountDetails(accountId) {
         const dateRange = this.getDateRange()
         const account_codes = accountId.split(', ')
+        let view_id = false
+        if (this.state.selectedCurrencies.includes('USD')) {
+            view_id = this.env.services.action.getViewId('partner_balance', 'view_account_move_line_report_usd_tree')
+        }
+        if (this.state.selectedCurrencies.includes('TRY')) {
+            view_id = this.env.services.action.getViewId('partner_balance', 'view_account_move_line_report_tree')
+        }
         const domain = [
             ["account_id.code","in", account_codes],
             ["company_id", "=", this.env.services.company.currentCompany.id],
@@ -893,7 +900,7 @@ export class CashFlowDashboard extends Component {
             name: "Cash Flow Details",
             res_model: "account.move.line.report",
             domain: domain,
-            views: [[8267, "list"],[false, "form"]],
+            views: [[view_id, "list"],[false, "form"]],
             view_mode: "list",
             target: "current",
             context: {
