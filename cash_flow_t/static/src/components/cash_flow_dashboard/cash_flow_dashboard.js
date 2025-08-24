@@ -880,10 +880,10 @@ export class CashFlowDashboard extends Component {
         const account_codes = accountId.split(', ')
         let view_id = false
         if (this.state.selectedCurrencies.includes('USD')) {
-            view_id = this.env.services.action.getViewId('partner_balance', 'view_account_move_line_report_usd_tree')
+            view_id = 8267
         }
         if (this.state.selectedCurrencies.includes('TRY')) {
-            view_id = this.env.services.action.getViewId('partner_balance', 'view_account_move_line_report_tree')
+            view_id = 8265
         }
         const domain = [
             ["account_id.code","in", account_codes],
