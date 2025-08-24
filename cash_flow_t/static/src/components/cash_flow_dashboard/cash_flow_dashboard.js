@@ -826,24 +826,6 @@ export class CashFlowDashboard extends Component {
         this.state.error = null
     }
 
-    // viewAccountDetails(accountId) {
-    //     const dateRange = this.getDateRange()
-        
-    //     this.actionService.doAction({
-    //         type: "ir.actions.act_window",
-    //         name: "Cash Flow Details",
-    //         res_model: "cash.flow.dashboard",
-    //         res_id: accountId,
-    //         views: [[false, "form"]],
-    //         target: "current",
-    //         context: {
-    //             date_from: dateRange.date_from,
-    //             date_to: dateRange.date_to,
-    //             period_type: this.state.period
-    //         }
-    //     })
-    // }
-// [["account_id.code","in",["120001","120002"]]]
     viewAccountDetails(accountId) {
         const dateRange = this.getDateRange()
         const account_codes = accountId.split(', ')
@@ -852,8 +834,6 @@ export class CashFlowDashboard extends Component {
             ["move_id.state", "=", "posted"],
             ["company_id", "=", this.env.services.company.currentCompany.id]
         ]
-        console.log(domain)
-        
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "Cash Flow Details",
