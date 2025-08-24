@@ -865,7 +865,8 @@ export class CashFlowDashboard extends Component {
             context: {
                 date_from: dateRange.date_from,
                 date_to: dateRange.date_to,
-                period_type: this.state.period
+                period_type: this.state.period,
+                search_default_group_by_partner: 1
             }
         })
     }
