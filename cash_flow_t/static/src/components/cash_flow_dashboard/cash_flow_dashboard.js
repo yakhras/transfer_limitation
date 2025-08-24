@@ -826,23 +826,23 @@ export class CashFlowDashboard extends Component {
         this.state.error = null
     }
 
-    viewAccountDetails(accountId) {
-        const dateRange = this.getDateRange()
+    // viewAccountDetails(accountId) {
+    //     const dateRange = this.getDateRange()
         
-        this.actionService.doAction({
-            type: "ir.actions.act_window",
-            name: "Cash Flow Details",
-            res_model: "cash.flow.dashboard",
-            res_id: accountId,
-            views: [[false, "form"]],
-            target: "current",
-            context: {
-                date_from: dateRange.date_from,
-                date_to: dateRange.date_to,
-                period_type: this.state.period
-            }
-        })
-    }
+    //     this.actionService.doAction({
+    //         type: "ir.actions.act_window",
+    //         name: "Cash Flow Details",
+    //         res_model: "cash.flow.dashboard",
+    //         res_id: accountId,
+    //         views: [[false, "form"]],
+    //         target: "current",
+    //         context: {
+    //             date_from: dateRange.date_from,
+    //             date_to: dateRange.date_to,
+    //             period_type: this.state.period
+    //         }
+    //     })
+    // }
 
     // viewAccountDetails(accountId) {
     //     const dateRange = this.getDateRange()
@@ -874,6 +874,36 @@ export class CashFlowDashboard extends Component {
     //         }
     //     })
     // }
+
+    viewAccountDetails(accountId) {
+        const dateRange = this.getDateRange()
+        const account_codes = accountId.split(', ')
+        const domain = [
+            ["account_id.code","in", account_codes],
+            ["company_id", "=", this.env.services.company.currentCompany.id],
+        ]
+        if (dateRange.date_from) {
+            domain.push(["date", ">=", dateRange.date_from])
+        }
+        if (dateRange.date_to) {
+            domain.push(["date", "<=", dateRange.date_to])
+        }
+        this.actionService.doAction({
+            type: "ir.actions.act_window",
+            name: "Cash Flow Details",
+            res_model: "account.move.line.report",
+            domain: domain,
+            views: [[false, "list"],[false, "form"]],
+            view_mode: "list",
+            target: "current",
+            context: {
+                date_from: dateRange.date_from,
+                date_to: dateRange.date_to,
+                period_type: this.state.period,
+                search_default_group_by_partner: 1
+            }
+        })
+    }
 
     getPeriodLabel() {
         const option = this.periodOptions.find(opt => opt.value === this.state.period)
