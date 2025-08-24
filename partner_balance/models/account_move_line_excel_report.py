@@ -57,8 +57,10 @@ class AccountMoveLineReport(models.Model):
                     rec.usd_value = float_round(rec.amount_currency / rate.inverse_company_rate, precision_digits=2)
                 else:
                     rec.usd_value = 0.0
+                    rec.usd_rate_display = ""
             else:
                 rec.usd_value = 0.0
+                rec.usd_rate_display = ""
 
     @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
     def _compute_balance_amount(self):
