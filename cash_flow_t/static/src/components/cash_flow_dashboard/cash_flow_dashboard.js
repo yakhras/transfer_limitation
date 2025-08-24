@@ -850,7 +850,7 @@ export class CashFlowDashboard extends Component {
         const domain = [
             ["account_id.code","in", account_codes],
             ["move_id.state", "=", "posted"],
-            ["company_id", "=", this.env.company.id]
+            ["company_id", "=", this.env.services.company.currentCompany.id]
         ]
         console.log(domain)
         
