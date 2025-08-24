@@ -64,6 +64,7 @@ class AccountMoveLineReport(models.Model):
                 rec.usd_value = 0.0
                 rec.usd_rate_display = "N/A"
 
+
     @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
     def _compute_balance_amount(self):
         for rec in self:
@@ -71,6 +72,7 @@ class AccountMoveLineReport(models.Model):
                 rec.balance_amount = rec.cumulated_balance
             else:
                 rec.balance_amount = rec.cumulated_balance_amount_currency
+
 
     @api.depends('credit', 'amount_currency', 'currency_id')
     def _compute_credit_amount(self):
@@ -82,6 +84,7 @@ class AccountMoveLineReport(models.Model):
             else:
                 rec.credit_amount = 0.0
 
+
     @api.depends('debit', 'amount_currency', 'currency_id')
     def _compute_debit_amount(self):
         for rec in self:
@@ -91,6 +94,7 @@ class AccountMoveLineReport(models.Model):
                 rec.debit_amount = rec.amount_currency
             else:
                 rec.debit_amount = 0.0
+
 
     def init(self):
         """Initialize the report view"""
@@ -123,6 +127,7 @@ class AccountMoveLineReport(models.Model):
             )
         """)
 
+
     @api.depends('partner_id', 'date', 'move_id', 'balance')
     def _compute_cumulated_balance(self):
         """
@@ -136,6 +141,7 @@ class AccountMoveLineReport(models.Model):
                 grouped[key] = 0.0
             grouped[key] += rec.balance
             rec.cumulated_balance = grouped[key]
+
 
     @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_currency')
     def _compute_cumulated_amount_currency(self):

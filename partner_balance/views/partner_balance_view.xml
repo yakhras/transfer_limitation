@@ -87,6 +87,25 @@
         </record>
 
 
+        <!-- Tree View for Account Move Line Report -->
+        <record id="view_account_move_line_report_usd_tree" model="ir.ui.view">
+            <field name="name">account.move.line.report.usd.tree</field>
+            <field name="model">account.move.line.report</field>
+            <field name="arch" type="xml">
+                <tree string="Partner Ledger" create="false" delete="false" edit="false">
+                    <field name="date"/>
+                    <field name="move_id"/>
+                    <field name="name"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="usd_rate_display"/>
+                    <field name="usd_value"/>
+                    <field name="cumulated_usd_value"/>
+                </tree>
+            </field>
+        </record>
+
+
         <!-- Tree View -->
         <!-- <record id="view_partner_balance_tree" model="ir.ui.view">
             <field name="name">partner.balance.tree</field>
