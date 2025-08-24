@@ -832,7 +832,9 @@ export class CashFlowDashboard extends Component {
         const domain = [
             ["account_id.code","in", account_codes],
             ["move_id.state", "=", "posted"],
-            ["company_id", "=", this.env.services.company.currentCompany.id]
+            ["company_id", "=", this.env.services.company.currentCompany.id],
+            ["date", ">=", dateRange.date_from],
+            ["date", "<=", dateRange.date_to]
         ]
         this.actionService.doAction({
             type: "ir.actions.act_window",
