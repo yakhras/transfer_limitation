@@ -843,7 +843,7 @@ export class CashFlowDashboard extends Component {
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "Cash Flow Details",
-            res_model: "account.move.line.report",
+            res_model: "account.move.line",
             domain: domain,
             views: [[false, "list"],[false, "form"]],
             view_mode: "list",
