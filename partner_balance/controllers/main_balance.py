@@ -569,7 +569,6 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
 
     def _write_group_totals(self, row, group, balance=None):
-        column = 0  # skip the first column (reserved for group label or index)
 
         aggregates = group.aggregated_values
         self.write(31, 0, balance[3], self.partner_name_style)
@@ -579,7 +578,9 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         # Fields that need custom calculation instead of sum
         calculated_fields = {
             'debit': lambda: aggregates.get('debit', 0) + balance[3],
+            'debit_amount': lambda: aggregates.get('debit_amount', 0) + balance[3],
             'credit': lambda: aggregates.get('credit', 0) + balance[4],
+            'credit_amount': lambda: aggregates.get('credit_amount', 0) + balance[4],
             'balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
             'balance_amount': lambda: aggregates.get('debit_amount', 0) - abs(aggregates.get('credit_amount', 0)),
             'cumulated_balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
