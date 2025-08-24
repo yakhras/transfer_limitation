@@ -49,7 +49,7 @@ class AccountMoveLineReport(models.Model):
             elif rec.currency_id and rec.currency_id.name == 'TRY' :
                 rate = self.env['res.currency.rate'].search([
                     ('currency_id.name', '=', 'USD'),
-                    ('company_id', '=', rec.company_id),
+                    ('company_id', '=', rec.company_id.id),
                     ('name', '<', rec.date)
                 ], order='name desc', limit=1)
                 if rate and rate.inverse_company_rate:
