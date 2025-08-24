@@ -846,11 +846,11 @@ export class CashFlowDashboard extends Component {
 // [["account_id.code","in",["120001","120002"]]]
     viewAccountDetails(accountId) {
         const dateRange = this.getDateRange()
-        console.log(this.orm)
         const account_codes = accountId.split(', ')
         const domain = [
             ["account_id.code","in", account_codes],
             ["move_id.state", "=", "posted"],
+            ["company_id", "=", this.env.company.id]
         ]
         console.log(domain)
         
