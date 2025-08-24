@@ -833,13 +833,17 @@ export class CashFlowDashboard extends Component {
             ["account_id.code","in", account_codes],
             ["move_id.state", "=", "posted"],
             ["company_id", "=", this.env.services.company.currentCompany.id],
-            ["date", ">=", dateRange.date_from],
-            ["date", "<=", dateRange.date_to]
         ]
+        if (dateRange.date_from) {
+            domain.push(["date", ">=", dateRange.date_from])
+        }
+        if (dateRange.date_to) {
+            domain.push(["date", "<=", dateRange.date_to])
+        }
         this.actionService.doAction({
             type: "ir.actions.act_window",
             name: "Cash Flow Details",
-            res_model: "account.move.line",
+            res_model: "account.move.line.report",
             domain: domain,
             views: [[false, "list"],[false, "form"]],
             view_mode: "list",
