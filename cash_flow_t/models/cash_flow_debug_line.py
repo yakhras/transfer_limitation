@@ -86,9 +86,9 @@ class CashFlowDebugLine(models.TransientModel):
             
             # Rate display
             if record.conversion_method == 'already_usd':
-                record.usd_rate_display = "Already USD - no conversion"
+                record.usd_rate_display = ""
             elif record.usd_rate and record.usd_rate_date:
-                record.usd_rate_display = f"{record.usd_rate:.4f})"
+                record.usd_rate_display = f"{record.usd_rate:.4f}"
             elif record.conversion_method == 'fallback_no_rate':
                 record.usd_rate_display = "No rate found - using TRY amount"
             else:
