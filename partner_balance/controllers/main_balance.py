@@ -572,7 +572,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         column = 0  # skip the first column (reserved for group label or index)
 
         aggregates = group.aggregated_values
-        self.write(31, 0, aggregates, self.partner_name_style)
+        self.write(31, 0, balance, self.partner_name_style)
         self.write(row, column, _("Total"), self.header_bold_style)
         column += 1
 
