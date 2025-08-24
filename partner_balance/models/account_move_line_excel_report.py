@@ -37,6 +37,28 @@ class AccountMoveLineReport(models.Model):
     balance_amount = fields.Monetary(string='Balance Amount', compute='_compute_balance_amount', currency_field='currency_id', store=False)
 
 
+    usd_rate_display = fields.Char('Rate Display', compute='_compute_usd_value')
+    usd_value = fields.Monetary('USD Value', compute='_compute_usd_value', currency_field='currency_id')
+
+
+    def _compute_usd_value(self):
+        usd_currency = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
+        for rec in self:
+            if rec.currency_id == usd_currency:
+                rec.usd_value = rec.amount_currency
+            elif rec.currency_id and rec.currency_id.name == 'TRY' :
+                rate = self.env['res.currency.rate'].search([
+                    ('currency_id.name', '=', 'USD'),
+                    ('company_id', '=', rec.company_id),
+                    ('name', '<', rec.date)
+                ], order='name desc', limit=1)
+                if rate and rate.inverse_company_rate:
+                    rec.usd_rate_display = f"{rate.inverse_company_rate:.4f}"
+                    rec.usd_value = float_round(rec.amount_currency / rate.inverse_company_rate, precision_digits=2)
+                else:
+                    rec.usd_value = 0.0
+            else:
+                rec.usd_value = 0.0
 
     @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
     def _compute_balance_amount(self):

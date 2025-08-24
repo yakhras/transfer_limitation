@@ -78,6 +78,8 @@
                     <field name="company_currency_id"/>
                     <field name="amount_currency"/>
                     <field name="currency_id"/>
+                    <field name="usd_rate_display"/>
+                    <field name="usd_value"/>
 
                 </tree>
             </field>
