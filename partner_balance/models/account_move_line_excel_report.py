@@ -46,7 +46,8 @@ class AccountMoveLineReport(models.Model):
         for rec in self:
             if rec.currency_id == usd_currency:
                 rec.usd_value = rec.amount_currency
-            elif rec.currency_id and rec.currency_id.name == 'TRY' :
+                rec.usd_rate_display = "1.0000"
+            elif rec.currency_id and rec.currency_id.name == 'TRY':
                 rate = self.env['res.currency.rate'].search([
                     ('currency_id.name', '=', 'USD'),
                     ('company_id', '=', rec.company_id.id),
@@ -57,10 +58,10 @@ class AccountMoveLineReport(models.Model):
                     rec.usd_value = float_round(rec.amount_currency / rate.inverse_company_rate, precision_digits=2)
                 else:
                     rec.usd_value = 0.0
-                    rec.usd_rate_display = ""
+                    rec.usd_rate_display = "0.0000"
             else:
                 rec.usd_value = 0.0
-                rec.usd_rate_display = ""
+                rec.usd_rate_display = "N/A"
 
     @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
     def _compute_balance_amount(self):
