@@ -622,7 +622,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
         # Write transaction header
         row = self.write_group_header(row)
-
+        opening_row = None
         # Write opening balance for this currency group
         if group_name in opening_balances and opening_balances[group_name]['balance'] != 0.0:
             opening_data = opening_balances[group_name]
