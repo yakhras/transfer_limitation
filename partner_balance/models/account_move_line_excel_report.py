@@ -39,6 +39,7 @@ class AccountMoveLineReport(models.Model):
 
     usd_rate_display = fields.Char('Rate Display', compute='_compute_usd_value')
     usd_value = fields.Monetary('USD Value', compute='_compute_usd_value', currency_field='currency_id')
+    cumulated_usd_value = fields.Monetary('Cumulated USD Value', compute='_compute_cumulated_usd_value', currency_field='currency_id')
 
 
     def _compute_usd_value(self):
@@ -169,6 +170,41 @@ class AccountMoveLineReport(models.Model):
 
             grouped[key] += rec.amount_currency or 0.0
             rec.cumulated_balance_amount_currency = grouped[key]
+
+
+    @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'usd_value')
+    def _compute_cumulated_usd_value(self):
+        """
+        Compute the cumulative amount in currency for non-TRY entries, grouped by partner and currency,
+        sorted by date, move_id, and id — no context required.
+        """
+        # Prepare a dictionary to track running totals for each (partner_id, currency_id)
+        grouped = {}
+
+        # Sort records to simulate SQL "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
+        sorted_records = sorted(
+            self,
+            key=lambda r: (
+                r.partner_id.id or 0,
+                r.currency_id.id or 0,
+                r.date or '',
+                r.move_id.id or 0,
+                r.id
+            )
+        )
+
+        for rec in sorted_records:
+            # Skip TRY currency records
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.cumulated_usd_value = 0
+                continue
+
+            key = (rec.partner_id.id, rec.currency_id.id)
+            if key not in grouped:
+                grouped[key] = 0.0
+
+            grouped[key] += rec.usd_value or 0.0
+            rec.cumulated_usd_value = grouped[key]
 
 
 

@@ -80,6 +80,7 @@
                     <field name="currency_id"/>
                     <field name="usd_rate_display"/>
                     <field name="usd_value"/>
+                    <field name="cumulated_usd_value"/>
 
                 </tree>
             </field>
