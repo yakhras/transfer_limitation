@@ -89,7 +89,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
             export_data = records.export_data(field_names).get('datas',[])
             # response_data = self.from_data(columns_headers, export_data)
-            response_data = self.from_data(columns_headers, export_data, header_data)
+            response_data = self.from_data(columns_headers, export_data, params)
 
         # TODO: call `clean_filename` directly in `content_disposition`?
         return request.make_response(response_data,
@@ -160,9 +160,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
 
     def from_data(self, fields, rows, params=None):
+        ctx = params.get('context', {})
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
 
-            row_index = self.header_metadata(params, xlsx_writer)
+            row_index = self.header_metadata(ctx, xlsx_writer)
 
             # Get opening balance
             opening_data = self.calculate_opening_balance(params)
