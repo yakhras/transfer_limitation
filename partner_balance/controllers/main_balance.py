@@ -148,7 +148,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         row += 1
 
 
-        period_movement = running_balance - (summary_data['balance'] if summary_data['balance'] else 0.0)
+        period_movement = running_balance['closing_balance'] - (summary_data['balance'] if summary_data['balance'] else 0.0)
 
         # Financial summary row
         xlsx_writer.write(row, 0, "Opening Balance:", xlsx_writer.summary_metric_style)
