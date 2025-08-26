@@ -278,39 +278,38 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         return xlsx_writer.value
     
 
-    def process_reference_and_note(self, reference, note):
+    def process_reference_and_note(self, reference_value, note_value):
         """
-        Process reference column to move parentheses content to note column
-        Returns: (cleaned_reference, updated_note)
+        Extract parentheses content from reference and merge with note
+        Returns: (clean_reference, updated_note)
         """
-        import re
         
-        # Extract content from parentheses
-        parentheses_match = re.search(r'\((.*?)\)', reference or '')
+        if not reference_value or '(' not in reference_value:
+            return reference_value, note_value
         
-        if not parentheses_match:
-            return reference, note  # No parentheses found
+        # 1. Extract main reference and parentheses content
+        parts = reference_value.split('(', 1)
+        clean_reference = parts[0].strip()
         
-        parentheses_content = parentheses_match.group(1).strip()
+        if len(parts) < 2 or ')' not in parts[1]:
+            return reference_value, note_value
         
-        # Remove parentheses from reference
-        cleaned_reference = re.sub(r'\s*\(.*?\)', '', reference).strip()
+        parentheses_content = parts[1].split(')', 1)[0].strip()
         
-        # Case 3: Content is false/empty - dismiss
-        if not parentheses_content or parentheses_content.lower() in ['false', 'null', '']:
-            return cleaned_reference, note
+        # 2. Handle different cases
+        if not parentheses_content:  # Case 3: Empty/false content
+            return clean_reference, note_value
         
-        # Case 1: Same content in note - dismiss 
-        if note and parentheses_content in note:
-            return cleaned_reference, note
+        if note_value and parentheses_content in note_value:  # Case 1: Already exists
+            return clean_reference, note_value
         
         # Case 2: Different content - add it
-        if note and note.strip():
-            updated_note = f"{note} {parentheses_content}"
+        if note_value:
+            updated_note = f"{note_value} - {parentheses_content}"
         else:
             updated_note = parentheses_content
-            
-        return cleaned_reference, updated_note
+        
+        return clean_reference, updated_note
             
 
     def get_oldest_date_for_partner(self, partner_id):
