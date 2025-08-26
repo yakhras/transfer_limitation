@@ -162,16 +162,82 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         return row
 
 
+    # def from_data(self, fields, rows, params=None):
+    #     ctx = params.get('context', {})
+    #     with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
+
+    #         # Get opening balance
+    #         opening_data = self.calculate_opening_balance(params)
+    #         running_balance = self.calculate_period_summary(params, rows).get('closing_balance', 0.0)
+
+    #         row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
+
+    #         opening_debit = 0
+    #         opening_credit = 0
+            
+    #         # Write opening balance row if exists
+    #         if opening_data['balance'] != 0.0:
+    #             opening_row = self.create_opening_balance_row(opening_data)
+    #             opening_debit = opening_row[3] if opening_row[3] else 0  # Debit column
+    #             opening_credit = opening_row[4] if opening_row[4] else 0
+
+    #             for cell_index, cell_value in enumerate(opening_row):
+    #                 xlsx_writer.write_cell_with_style(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
+    #                 # xlsx_writer.write_cell(31, cell_index, params)
+    #             period_start_row = 10  # Period data starts at row 8
+    #         else:
+    #             period_start_row = 9  # Period data starts at row 7
+    #             opening_data['balance'] = 0.0  # Ensure balance is 0 if no opening balance
+            
+    #         # Write period data rows with updated running balance
+    #         running_balance = opening_data['balance']  # Start from opening balance
+    #         for row_index, row in enumerate(rows):
+    #             # Update running balance for this row
+    #             debit = float(row[3]) if row[3] else 0.0
+    #             credit = float(row[4]) if row[4] else 0.0
+    #             running_balance += debit - credit
+                
+    #             # Update the cumulated balance column (assuming it's column 5)
+    #             row = list(row)  # Convert to list to modify
+    #             row[5] = running_balance  # Update cumulated balance
+                
+    #             for cell_index, cell_value in enumerate(row):
+    #                 if isinstance(cell_value, (list, tuple)):
+    #                     cell_value = pycompat.to_text(cell_value)
+    #                 xlsx_writer.write_cell(period_start_row + row_index, cell_index, cell_value)
+
+    #         # Add totals row after all data
+    #         totals_row = period_start_row + len(rows) + 1  # +1 for spacing
+    #         xlsx_writer._write_totals_from_rows(totals_row, rows, fields, opening_debit, opening_credit)
+
+
+    #     return xlsx_writer.value
+
     def from_data(self, fields, rows, params=None):
         ctx = params.get('context', {})
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
 
-            # Get opening balance
+            # STEP 1: Process reference/note columns FIRST
+            processed_rows = []
+            for row in rows:
+                row_list = list(row)
+                if len(row_list) >= 3:  # Has reference and note columns
+                    cleaned_ref, updated_note = self.process_reference_and_note(
+                        row_list[1],  # Reference column (index 1)
+                        row_list[2]   # Note column (index 2)  
+                    )
+                    row_list[1] = cleaned_ref
+                    row_list[2] = updated_note
+                processed_rows.append(row_list)
+
+            # STEP 2: Calculate dynamic values using processed data
             opening_data = self.calculate_opening_balance(params)
-            running_balance = self.calculate_period_summary(params, rows).get('closing_balance', 0.0)
+            summary_data = self.calculate_period_summary(params, processed_rows)
 
-            row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
+            # STEP 3: Write header with dynamic values
+            row_index = self.header_metadata(ctx, xlsx_writer, opening_data, summary_data)
 
+            # STEP 4: Handle opening balance
             opening_debit = 0
             opening_credit = 0
             
@@ -183,15 +249,14 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
                 for cell_index, cell_value in enumerate(opening_row):
                     xlsx_writer.write_cell_with_style(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
-                    # xlsx_writer.write_cell(31, cell_index, params)
-                period_start_row = 10  # Period data starts at row 8
+                period_start_row = 10  # Period data starts at row 10
             else:
-                period_start_row = 9  # Period data starts at row 7
+                period_start_row = 9  # Period data starts at row 9
                 opening_data['balance'] = 0.0  # Ensure balance is 0 if no opening balance
             
-            # Write period data rows with updated running balance
+            # STEP 5: Write processed period data rows with updated running balance
             running_balance = opening_data['balance']  # Start from opening balance
-            for row_index, row in enumerate(rows):
+            for row_index, row in enumerate(processed_rows):  # Use processed_rows
                 # Update running balance for this row
                 debit = float(row[3]) if row[3] else 0.0
                 credit = float(row[4]) if row[4] else 0.0
@@ -206,13 +271,47 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                         cell_value = pycompat.to_text(cell_value)
                     xlsx_writer.write_cell(period_start_row + row_index, cell_index, cell_value)
 
-            # Add totals row after all data
-            totals_row = period_start_row + len(rows) + 1  # +1 for spacing
-            xlsx_writer._write_totals_from_rows(totals_row, rows, fields, opening_debit, opening_credit)
-
+            # STEP 6: Add totals row after all data
+            totals_row = period_start_row + len(processed_rows) + 1  # +1 for spacing
+            xlsx_writer._write_totals_from_rows(totals_row, processed_rows, fields, opening_debit, opening_credit)
 
         return xlsx_writer.value
+    
+
+    def process_reference_and_note(self, reference, note):
+        """
+        Process reference column to move parentheses content to note column
+        Returns: (cleaned_reference, updated_note)
+        """
+        import re
         
+        # Extract content from parentheses
+        parentheses_match = re.search(r'\((.*?)\)', reference or '')
+        
+        if not parentheses_match:
+            return reference, note  # No parentheses found
+        
+        parentheses_content = parentheses_match.group(1).strip()
+        
+        # Remove parentheses from reference
+        cleaned_reference = re.sub(r'\s*\(.*?\)', '', reference).strip()
+        
+        # Case 3: Content is false/empty - dismiss
+        if not parentheses_content or parentheses_content.lower() in ['false', 'null', '']:
+            return cleaned_reference, note
+        
+        # Case 1: Same content in note - dismiss 
+        if note and parentheses_content in note:
+            return cleaned_reference, note
+        
+        # Case 2: Different content - add it
+        if note and note.strip():
+            updated_note = f"{note} {parentheses_content}"
+        else:
+            updated_note = parentheses_content
+            
+        return cleaned_reference, updated_note
+            
 
     def get_oldest_date_for_partner(self, partner_id):
         """Get the oldest transaction date for a specific partner"""
