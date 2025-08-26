@@ -164,7 +164,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
 
             # Get opening balance
-            opening_data = self.calculate_opening_balance(params).get('balance', 0.0)
+            opening_data = self.calculate_opening_balance(params)
             running_balance = self.calculate_period_summary(params, rows).get('closing_balance', 0.0)
 
             row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
