@@ -156,7 +156,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         xlsx_writer.write(row, 3, "Period Movement", xlsx_writer.summary_metric_style)
         xlsx_writer.worksheet.merge_range(row, 4, row, 5, period_movement, xlsx_writer.negative_value_style if period_movement < 0 else xlsx_writer.summary_value_style)
         xlsx_writer.write(row, 6, "Closing Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 7, row, 8, running_balance, xlsx_writer.summary_value_style if running_balance >= 0 else xlsx_writer.negative_value_style)
+        xlsx_writer.worksheet.merge_range(row, 7, row, 8, running_balance['closing_balance'], xlsx_writer.summary_value_style if running_balance['closing_balance'] >= 0 else xlsx_writer.negative_value_style)
         row += 1
         
         return row
