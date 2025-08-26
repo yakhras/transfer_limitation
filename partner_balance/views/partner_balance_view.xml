@@ -58,7 +58,7 @@
                     <field name="debit_amount"/>
                     <field name="credit_amount"/>
                     <field name="balance_amount"/>
-                    <field name="currency_id" invisible="1"/>
+                    <field name="currency_id"/>
                 </tree>
             </field>
         </record>
@@ -77,7 +77,7 @@
                     <field name="cumulated_balance"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="amount_currency"/>
-                    <field name="currency_id" string="Original Currency"/>
+                    <field name="currency_id"/>
 
                 </tree>
             </field>
