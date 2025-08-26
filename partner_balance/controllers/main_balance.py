@@ -149,7 +149,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
         # Financial summary row
         xlsx_writer.write(row, 0, "Opening Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 1, row, 2, summary_data['balance'], xlsx_writer.summary_value_style)
+        xlsx_writer.worksheet.merge_range(row, 1, row, 2, summary_data['balance'], xlsx_writer.summary_value_style.set_num_format(self.float_format))
         xlsx_writer.write(row, 3, "Period Movement", xlsx_writer.summary_metric_style)
         xlsx_writer.worksheet.merge_range(row, 4, row, 5, "-2,257,012.59 USD", xlsx_writer.negative_value_style)
         xlsx_writer.write(row, 6, "Closing Balance:", xlsx_writer.summary_metric_style)
