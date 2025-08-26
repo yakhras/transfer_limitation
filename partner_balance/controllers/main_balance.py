@@ -100,7 +100,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         )
     
     
-    def header_metadata(self, params, xlsx_writer):
+    def header_metadata(self, params, xlsx_writer, summary_data=None):
         """Write headers with styling and return next available row"""
         row = 0
         # xlsx_writer.write(31, 0, params, xlsx_writer.header_style)
@@ -149,7 +149,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
         # Financial summary row
         xlsx_writer.write(row, 0, "Opening Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 1, row, 2, "2,500,000.00 USD", xlsx_writer.summary_value_style)
+        xlsx_writer.worksheet.merge_range(row, 1, row, 2, summary_data['balance'], xlsx_writer.summary_value_style)
         xlsx_writer.write(row, 3, "Period Movement", xlsx_writer.summary_metric_style)
         xlsx_writer.worksheet.merge_range(row, 4, row, 5, "-2,257,012.59 USD", xlsx_writer.negative_value_style)
         xlsx_writer.write(row, 6, "Closing Balance:", xlsx_writer.summary_metric_style)
@@ -163,10 +163,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         ctx = params.get('context', {})
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
 
-            row_index = self.header_metadata(ctx, xlsx_writer)
-
             # Get opening balance
             opening_data = self.calculate_opening_balance(params)
+
+            row_index = self.header_metadata(ctx, xlsx_writer, opening_data)
 
             opening_debit = 0
             opening_credit = 0
