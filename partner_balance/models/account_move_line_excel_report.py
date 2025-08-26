@@ -17,7 +17,7 @@ class AccountMoveLineReport(models.Model):
     move_id = fields.Many2one('account.move', string='Journal Entry', readonly=True)
     name = fields.Char(string='Label', readonly=True)
     amount_currency = fields.Monetary(string='Amount Currency', readonly=True)
-    currency_id = fields.Many2one('res.currency', string='Currency', readonly=True)
+    currency_id = fields.Many2one('res.currency', string='Original Currency', readonly=True)
     debit = fields.Monetary(string='Debit', readonly=True, currency_field='company_currency_id')
     credit = fields.Monetary(string='Credit', readonly=True, currency_field='company_currency_id')
     balance = fields.Monetary(string='Balance', readonly=True)
