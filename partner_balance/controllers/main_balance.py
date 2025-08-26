@@ -100,7 +100,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         )
     
     
-    def header_metadata(self, params, xlsx_writer, summary_data=None):
+    def header_metadata(self, params, xlsx_writer, summary_data=None, running_balance=None):
         """Write headers with styling and return next available row"""
         row = 0
         # xlsx_writer.write(31, 0, params, xlsx_writer.header_style)
@@ -149,11 +149,11 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
         # Financial summary row
         xlsx_writer.write(row, 0, "Opening Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 1, row, 2, summary_data['balance'], xlsx_writer.summary_value_style.set_num_format(xlsx_writer.float_format))
+        xlsx_writer.worksheet.merge_range(row, 1, row, 2, summary_data['balance'], xlsx_writer.summary_value_style)
         xlsx_writer.write(row, 3, "Period Movement", xlsx_writer.summary_metric_style)
         xlsx_writer.worksheet.merge_range(row, 4, row, 5, "-2,257,012.59 USD", xlsx_writer.negative_value_style)
         xlsx_writer.write(row, 6, "Closing Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 7, row, 8, "242,987.41 USD", xlsx_writer.summary_value_style)
+        xlsx_writer.worksheet.merge_range(row, 7, row, 8, running_balance, xlsx_writer.summary_value_style)
         row += 1
         
         return row
@@ -164,9 +164,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
 
             # Get opening balance
-            opening_data = self.calculate_opening_balance(params)
+            opening_data = self.calculate_opening_balance(params).get('balance', 0.0)
+            running_balance = self.calculate_period_summary(params, rows).get('closing_balance', 0.0)
 
-            row_index = self.header_metadata(ctx, xlsx_writer, opening_data)
+            row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
 
             opening_debit = 0
             opening_credit = 0
@@ -276,6 +277,29 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             'balance': balance,
             'currency': currency,
             'date': opening_date
+        }
+
+
+    def calculate_period_summary(self, params, rows):
+        opening_data = self.calculate_opening_balance(params)
+        
+        # Calculate running balance through all rows
+        running_balance = opening_data['balance']
+        total_debit = 0.0
+        total_credit = 0.0
+        
+        for row in rows:
+            debit = float(row[3]) if row[3] else 0.0
+            credit = float(row[4]) if row[4] else 0.0
+            running_balance += debit - credit
+            total_debit += debit
+            total_credit += credit
+        
+        return {
+            'opening_balance': opening_data['balance'],
+            'closing_balance': running_balance,  # Final running balance
+            'period_movement': total_debit - total_credit,
+            # ...
         }
 
 
