@@ -420,7 +420,7 @@ class BalanceExportXlsxWriter:
         self.metadata_style = self.workbook.add_format({'bg_color': '#f8f9fa','border': 1})
         self.section_header_style = self.workbook.add_format({'bold': True,'align': 'center','valign': 'vcenter','bg_color': '#374151','font_color': 'white','border': 1})
         self.summary_value_style = self.workbook.add_format({'bold': True,'align': 'center','valign': 'vcenter', 'font_color': '#059669','bg_color': '#f0fdf4','border': 1})
-        self.negative_value_style = self.workbook.add_format({'align': 'center','valign': 'vcenter', 'bold': True,'font_color': '#dc2626','border': 1})
+        self.negative_value_style = self.workbook.add_format({'align': 'center','valign': 'vcenter', 'bold': True,'font_color': '#dc2626','border': 1, 'num_format': '#,##0.00'})
         self.transaction_header_style = self.workbook.add_format({'text_wrap': True,'bold': True,'align': 'left','valign': 'vcenter','bg_color': '#475569','font_color': 'white','border': 1,'font_size': 10})
         self.opening_balance_style = self.workbook.add_format({'align': 'left','valign': 'vcenter','text_wrap': True,'bold': True,'bg_color': '#dbeafe','border': 1, 'font_size': 8})
         self.partner_name_style = self.workbook.add_format({'align': 'left','valign': 'vcenter', 'text_wrap': True,'bold': True,'bg_color': '#f3f4f6','border': 1, 'font_size': 11})
