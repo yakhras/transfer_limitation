@@ -385,7 +385,7 @@ class BalanceExportXlsxWriter:
         self.datetime_style = self.workbook.add_format({'text_wrap': True, 'num_format': 'yyyy-mm-dd hh:mm:ss', 'font_size': 8,'align': 'left','valign': 'vcenter','border': 1})
         self.worksheet = self.workbook.add_worksheet()
         self.value = False
-        self.float_format = '#,##0.00 "₺"'
+        self.float_format = '#,##0.00'
         decimal_places = [res['decimal_places'] for res in request.env['res.currency'].search_read([], ['decimal_places'])]
         self.monetary_format = f'#,##0.{max(decimal_places or [2]) * "0"}'
         self.company_header_style = self.workbook.add_format({'bold': True,'font_size': 12,'align': 'center','valign': 'vcenter','bg_color': '#1e3a8a','font_color': 'white','border': 1,'border_color': '#3b82f6'})
