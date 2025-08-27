@@ -284,7 +284,13 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         }
 
 
-    def calculate_period_summary(self, params, rows):
+    def calculate_period_summary(self, params, data):
+        """
+        Calculate period summary for both grouped and ungrouped data
+        Args:
+            params: Parameters dictionary
+            data: Either GroupsTreeNode (grouped) or list (ungrouped data)
+        """
         opening_data = self.calculate_opening_balance(params)
         
         # Calculate running balance through all rows
@@ -292,19 +298,46 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         total_debit = 0.0
         total_credit = 0.0
         
-        for row in rows:
-            debit = float(row[3]) if row[3] else 0.0
-            credit = float(row[4]) if row[4] else 0.0
+        # Detect data type and extract rows accordingly
+        if hasattr(data, 'children'):
+            # Case 1: Grouped data (GroupsTreeNode)
+            all_rows = self._extract_rows_from_groups(data)
+        else:
+            # Case 2: Ungrouped data (list of rows)
+            all_rows = data
+        
+        # Process all rows
+        for row in all_rows:
+            debit = float(row[3]) if len(row) > 3 and row[3] else 0.0
+            credit = float(row[4]) if len(row) > 4 and row[4] else 0.0
             running_balance += debit - credit
             total_debit += debit
             total_credit += credit
         
         return {
             'opening_balance': opening_data['balance'],
-            'closing_balance': running_balance,  # Final running balance
+            'closing_balance': running_balance,
             'period_movement': total_debit - total_credit,
-            # ...
+            'total_debit': total_debit,
+            'total_credit': total_credit,
         }
+
+    def _extract_rows_from_groups(self, groups_node):
+        """
+        Recursively extract all data rows from GroupsTreeNode structure
+        """
+        rows_data = []
+        
+        # Get data from current group
+        if hasattr(groups_node, 'data') and groups_node.data:
+            rows_data.extend(groups_node.data)
+        
+        # Get data from child groups recursively
+        if hasattr(groups_node, 'children'):
+            for child_group in groups_node.children.values():
+                rows_data.extend(self._extract_rows_from_groups(child_group))
+        
+        return rows_data
 
 
     def create_opening_balance_row(self, opening_data):
