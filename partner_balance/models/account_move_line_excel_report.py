@@ -113,7 +113,11 @@ class AccountMoveLineReport(models.Model):
                     */
                     CASE
                         WHEN b.payment_subtype = 'check' THEN
-                            COALESCE(chk.check_names, b.move_name)
+                            COALESCE((
+                                SELECT string_agg(DISTINCT ac.name, ' , ')
+                                FROM account_check ac
+                                WHERE ac.payment_id = ap.id
+                            ), b.move_name)
                         WHEN b.payment_subtype = 'bank' THEN
                             COALESCE(absl.ref, b.move_name)
                         ELSE
@@ -127,23 +131,6 @@ class AccountMoveLineReport(models.Model):
                 /* payment row (1:1 with move typically) */
                 LEFT JOIN account_payment ap
                   ON ap.move_id = b.move_id
-
-                /* Instead of the LATERAL join, use this in the SELECT clause */
-                CASE
-                    WHEN b.payment_subtype = 'check' THEN
-                        COALESCE((
-                            SELECT string_agg(DISTINCT ac.name, ' , ')
-                            FROM account_check ac
-                            WHERE ac.payment_id = ap.id
-                        ), b.move_name)
-                    WHEN b.payment_subtype = 'bank' THEN
-                        COALESCE(absl.ref, b.move_name)
-                    ELSE
-                        b.move_name
-                END AS reference,
-
-                /* Remove the LATERAL join completely */
-
 
                 /* bank statement ref */
                 LEFT JOIN account_bank_statement_line absl
