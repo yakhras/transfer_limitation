@@ -60,14 +60,14 @@ class AccountMoveLineReport(models.Model):
                     aml.move_id,
                     aml.name,
                     -- NEW: reference split
-                    trim(regexp_replace(am.ref, '\s*\([^)]*\)\s*', '', 'g')) AS reference_main,
-                    NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '') AS reference_in_paren,
+                    trim(regexp_replace(aml.move_id, '\s*\([^)]*\)\s*', '', 'g')) AS reference_main,
+                    NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '') AS reference_in_paren,
                     -- NEW: note with conditional append
                     CASE
-                    WHEN NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '') IS NULL THEN aml.name
-                    WHEN aml.name ILIKE '%' || NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '') || '%' THEN aml.name
-                    WHEN aml.name IS NULL OR aml.name = '' THEN NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '')
-                    ELSE aml.name || ' ' || NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '')
+                    WHEN NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '') IS NULL THEN aml.name
+                    WHEN aml.name ILIKE '%' || NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '') || '%' THEN aml.name
+                    WHEN aml.name IS NULL OR aml.name = '' THEN NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '')
+                    ELSE aml.name || ' ' || NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '')
                     END AS note_display,
                     aml.amount_currency,
                     aml.currency_id,
