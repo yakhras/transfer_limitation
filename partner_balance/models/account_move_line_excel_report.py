@@ -70,7 +70,7 @@ class AccountMoveLineReport(models.Model):
 
                         am.name                 AS move_name,
                         am.ref                  AS move_ref,
-                        am.bank_statement_line_id AS bank_stmt_line_id,
+                        am.statement_line_id AS bank_stmt_line_id,
                         aj.payment_subtype      AS payment_subtype   -- 👈 taken from journal
 
                     FROM account_move_line aml
