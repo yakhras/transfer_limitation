@@ -343,13 +343,14 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
     def create_opening_balance_row(self, opening_data):
         """Create opening balance row data"""
         return [
-            opening_data['date'],           # Date
-            '',                            # Journal Entry  
-            'Opening Balance',             # Label
-            opening_data['debit'],         # Debit
-            opening_data['credit'],        # Credit  
-            opening_data['balance'],       # Cumulated Balance
-            '',                            # Currency
+            opening_data['date'],           
+            '',                              
+            'Opening Balance',             
+            '',                            
+            opening_data['debit'],         
+            opening_data['credit'],          
+            opening_data['balance'],       
+            '',                            
             # opening_data['balance_currency'] # Amount Currency
             '',
         ]
