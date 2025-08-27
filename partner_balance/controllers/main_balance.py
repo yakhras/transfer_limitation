@@ -178,8 +178,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             # Write opening balance row if exists
             if opening_data['balance'] != 0.0:
                 opening_row = self.create_opening_balance_row(opening_data)
-                opening_debit = opening_row[3] if opening_row[3] else 0  # Debit column
-                opening_credit = opening_row[4] if opening_row[4] else 0
+                opening_debit = opening_row[4] if opening_row[4] else 0  # Debit column
+                opening_credit = opening_row[5] if opening_row[5] else 0
 
                 for cell_index, cell_value in enumerate(opening_row):
                     xlsx_writer.write_cell_with_style(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
@@ -193,8 +193,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             running_balance = opening_data['balance']  # Start from opening balance
             for row_index, row in enumerate(rows):
                 # Update running balance for this row
-                debit = float(row[3]) if row[3] else 0.0
-                credit = float(row[4]) if row[4] else 0.0
+                debit = float(row[4]) if row[4] else 0.0
+                credit = float(row[5]) if row[5] else 0.0
                 running_balance += debit - credit
                 
                 # Update the cumulated balance column (assuming it's column 5)
@@ -308,8 +308,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         
         # Process all rows
         for row in all_rows:
-            debit = float(row[3]) if len(row) > 3 and row[3] else 0.0
-            credit = float(row[4]) if len(row) > 4 and row[4] else 0.0
+            debit = float(row[4]) if len(row) > 4 and row[4] else 0.0
+            credit = float(row[5]) if len(row) > 5 and row[5] else 0.0
             running_balance += debit - credit
             total_debit += debit
             total_credit += credit
