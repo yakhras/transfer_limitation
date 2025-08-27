@@ -753,6 +753,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             opening_data.get('date', ''),           # Date
             '',                                     # Journal Entry  
             'Opening Balance',                      # Label
+            '',                                     # Reference
             opening_data.get('debit', 0.0),        # Debit
             opening_data.get('credit', 0.0),       # Credit  
             opening_data.get('balance', 0.0),      # Cumulated Balance
