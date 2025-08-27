@@ -642,10 +642,10 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
         # Fields that need custom calculation instead of sum
         calculated_fields = {
-            'debit': lambda: aggregates.get('debit', 0) + balance[3],
-            'debit_amount': lambda: aggregates.get('debit_amount', 0) + (balance[3] if balance else 0),
-            'credit': lambda: aggregates.get('credit', 0) + balance[4],
-            'credit_amount': lambda: aggregates.get('credit_amount', 0) + (balance[4] if balance else 0),
+            'debit': lambda: aggregates.get('debit', 0) + balance[4],
+            'debit_amount': lambda: aggregates.get('debit_amount', 0) + (balance[4] if balance else 0),
+            'credit': lambda: aggregates.get('credit', 0) + balance[5],
+            'credit_amount': lambda: aggregates.get('credit_amount', 0) + (balance[5] if balance else 0),
             'balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
             'balance_amount': lambda: aggregates.get('debit_amount', 0) - abs(aggregates.get('credit_amount', 0)),
             'cumulated_balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
