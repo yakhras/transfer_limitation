@@ -133,7 +133,7 @@ class AccountMoveLineReport(models.Model):
                 */
                 LEFT JOIN LATERAL (
                     SELECT string_agg(DISTINCT rtc.name, ' , ') AS check_names
-                    FROM account_received_third_check rtc       -- <1> assumed table
+                    FROM account.payment rtc       -- <1> assumed table
                     WHERE rtc.payment_id = ap.id                -- <2> assumed FK to payment
                 ) chk ON TRUE                                   -- <3> keep ON TRUE
 
