@@ -128,11 +128,11 @@ class AccountMoveLineReport(models.Model):
                 LEFT JOIN account_payment ap
                   ON ap.move_id = b.move_id
 
-                /*LEFT JOIN LATERAL (
+                LEFT JOIN LATERAL (
                     SELECT string_agg(DISTINCT chkline.name, ' , ') AS check_names
                     FROM account_check chkline
                     WHERE chkline.payment_id = ap.id
-                ) chk ON TRUE*/
+                ) chk ON TRUE
 
 
                 /* bank statement ref */
