@@ -52,83 +52,38 @@ class AccountMoveLineReport(models.Model):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute(f"""
             CREATE OR REPLACE VIEW {self._table} AS (
-                WITH base AS (
-                    SELECT
-                        aml.id                  AS id,
-                        aml.date                AS date,
-                        aml.move_id             AS move_id,
-                        aml.partner_id          AS partner_id,
-                        aml.account_id          AS account_id,
-                        aml.company_id          AS company_id,
-
-                        aml.debit               AS debit,
-                        aml.credit              AS credit,
-                        aml.balance             AS balance,
-                        aml.amount_currency     AS amount_currency,
-                        aml.currency_id         AS currency_id,
-                        rc.id                   AS company_currency_id,
-
-                        am.name                 AS move_name,
-                        am.ref                  AS move_ref,
-                        am.statement_line_id    AS bank_stmt_line_id,
-                        aj.payment_subtype      AS payment_subtype   -- 👈 taken from journal
-
-                    FROM account_move_line aml
-                    JOIN account_move am
-                    ON am.id = aml.move_id
-                    JOIN account_journal aj
-                    ON aj.id = am.journal_id
-                    JOIN account_account aa
-                    ON aa.id = aml.account_id
-                    JOIN account_account_type aat
-                    ON aat.id = aa.user_type_id
-                    JOIN res_company comp
-                    ON comp.id = aml.company_id
-                    JOIN res_currency rc
-                    ON rc.id = comp.currency_id
-                    WHERE am.state = 'posted'
-                    AND aat.type IN ('payable', 'receivable')
-                    AND aml.partner_id IS NOT NULL
-                )
-
                 SELECT
-                    b.id,
-                    b.date,
-                    b.move_id,
-                    b.partner_id,
-                    b.account_id,
-                    b.company_id,
+                    aml.id                AS id,
+                    aml.date              AS date,
+                    aml.move_id           AS move_id,
+                    aml.partner_id        AS partner_id,
+                    aml.account_id        AS account_id,
+                    aml.company_id        AS company_id,
 
-                    b.debit,
-                    b.credit,
-                    b.balance,
-                    b.amount_currency,
-                    b.currency_id,
-                    b.company_currency_id,
+                    aml.debit             AS debit,
+                    aml.credit            AS credit,
+                    aml.balance           AS balance,
+                    aml.amount_currency   AS amount_currency,
+                    aml.currency_id       AS currency_id,
+                    rc.id                 AS company_currency_id,
 
-                    /* ===== Reference logic =====
-                       - check  -> aggregated received_third_check_ids names
-                       - bank   -> account_bank_statement_line.ref
-                       - else   -> am.name
-                    */
-                    CASE
-                        WHEN b.payment_subtype = 'bank' THEN
-                            COALESCE(absl.ref, b.move_name)
-                        ELSE
-                            b.move_name
-                    END AS reference,
-
-                    /* Note = document reference from account.move */
-                    b.move_ref AS note
-
-                FROM base b
-                /* payment row (1:1 with move typically) */
-                LEFT JOIN account_payment ap
-                  ON ap.move_id = b.move_id
-
-                /* bank statement ref */
-                LEFT JOIN account_bank_statement_line absl
-                  ON absl.id = b.bank_stmt_line_id
+                    -- new assignments
+                    am.name               AS reference,   -- Journal Entry number/name
+                    am.ref                AS note        -- Document number / Reference
+                FROM account_move_line aml
+                JOIN account_move am
+                  ON am.id = aml.move_id
+                JOIN account_account aa
+                  ON aa.id = aml.account_id
+                JOIN account_account_type aat
+                  ON aat.id = aa.user_type_id
+                JOIN res_company comp
+                  ON comp.id = aml.company_id
+                JOIN res_currency rc
+                  ON rc.id = comp.currency_id
+                WHERE am.state = 'posted'
+                  AND aat.type IN ('payable','receivable')
+                  AND aml.partner_id IS NOT NULL
             )
         """)
 
