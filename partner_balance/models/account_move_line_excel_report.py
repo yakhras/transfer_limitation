@@ -68,25 +68,29 @@ class AccountMoveLineReport(models.Model):
                         aml.currency_id         AS currency_id,
                         rc.id                   AS company_currency_id,
 
-                        am.payment_subtype      AS payment_subtype,
                         am.name                 AS move_name,
                         am.ref                  AS move_ref,
-                        am.bank_statement_line_id AS bank_stmt_line_id
+                        am.bank_statement_line_id AS bank_stmt_line_id,
+                        aj.payment_subtype      AS payment_subtype   -- 👈 taken from journal
+
                     FROM account_move_line aml
                     JOIN account_move am
-                      ON am.id = aml.move_id
+                    ON am.id = aml.move_id
+                    JOIN account_journal aj
+                    ON aj.id = am.journal_id
                     JOIN account_account aa
-                      ON aa.id = aml.account_id
+                    ON aa.id = aml.account_id
                     JOIN account_account_type aat
-                      ON aat.id = aa.user_type_id
+                    ON aat.id = aa.user_type_id
                     JOIN res_company comp
-                      ON comp.id = aml.company_id
+                    ON comp.id = aml.company_id
                     JOIN res_currency rc
-                      ON rc.id = comp.currency_id
+                    ON rc.id = comp.currency_id
                     WHERE am.state = 'posted'
-                      AND aat.type IN ('payable', 'receivable')
-                      AND aml.partner_id IS NOT NULL
+                    AND aat.type IN ('payable', 'receivable')
+                    AND aml.partner_id IS NOT NULL
                 )
+
                 SELECT
                     b.id,
                     b.date,
