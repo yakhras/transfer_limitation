@@ -128,14 +128,11 @@ class AccountMoveLineReport(models.Model):
                 LEFT JOIN account_payment ap
                   ON ap.move_id = b.move_id
 
-                /* LATERAL: aggregate check names from received_third_check_ids
-                   >>> EDIT THESE 3 LINES IF YOUR TABLE/FK DIFFER:
-                */
                 LEFT JOIN LATERAL (
-                    SELECT string_agg(DISTINCT rtc.name, ' , ') AS check_names
-                    FROM account.payment rtc       -- <1> assumed table
-                    WHERE rtc.payment_id = ap.id                -- <2> assumed FK to payment
-                ) chk ON TRUE                                   -- <3> keep ON TRUE
+                    SELECT string_agg(DISTINCT chkline.name, ' , ') AS check_names
+                    FROM account_check chkline
+                    WHERE chkline.payment_id = ap.id
+                ) chk ON TRUE
 
                 /* bank statement ref */
                 LEFT JOIN account_bank_statement_line absl
