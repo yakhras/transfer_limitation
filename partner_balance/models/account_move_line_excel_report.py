@@ -128,11 +128,21 @@ class AccountMoveLineReport(models.Model):
                 LEFT JOIN account_payment ap
                   ON ap.move_id = b.move_id
 
-                LEFT JOIN LATERAL (
-                    SELECT chkline.name AS check_names
-                    FROM account_check chkline
-                    WHERE chkline.payment_id = ap.id
-                ) chk ON TRUE
+                /* Instead of the LATERAL join, use this in the SELECT clause */
+                CASE
+                    WHEN b.payment_subtype = 'check' THEN
+                        COALESCE((
+                            SELECT string_agg(DISTINCT ac.name, ' , ')
+                            FROM account_check ac
+                            WHERE ac.payment_id = ap.id
+                        ), b.move_name)
+                    WHEN b.payment_subtype = 'bank' THEN
+                        COALESCE(absl.ref, b.move_name)
+                    ELSE
+                        b.move_name
+                END AS reference,
+
+                /* Remove the LATERAL join completely */
 
 
                 /* bank statement ref */
