@@ -22,6 +22,13 @@ class AccountMoveLineReport(models.Model):
     credit = fields.Monetary(string='Credit', readonly=True, currency_field='company_currency_id')
     balance = fields.Monetary(string='Balance', readonly=True)
 
+    # in AccountMoveLineReport
+    reference_main = fields.Char(string='Reference')
+    reference_in_paren = fields.Char(string='Ref (Inside)')
+    note_display = fields.Char(string='Note (Augmented)')
+    bank_or_cheque_ref = fields.Char(string='Bank/Cheque Ref')
+
+
     # Computed instead of SQL
     cumulated_balance = fields.Monetary(string='Cumulated Balance', compute='_compute_cumulated_balance', store=False, currency_field='company_currency_id')
 
@@ -52,6 +59,16 @@ class AccountMoveLineReport(models.Model):
                     aml.date,
                     aml.move_id,
                     aml.name,
+                    -- NEW: reference split
+                    trim(regexp_replace(am.ref, '\s*\([^)]*\)\s*', '', 'g')) AS reference_main,
+                    NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '') AS reference_in_paren,
+                    -- NEW: note with conditional append
+                    CASE
+                    WHEN NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '') IS NULL THEN aml.name
+                    WHEN aml.name ILIKE '%' || NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '') || '%' THEN aml.name
+                    WHEN aml.name IS NULL OR aml.name = '' THEN NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '')
+                    ELSE aml.name || ' ' || NULLIF(regexp_replace(substring(am.ref from '\(([^)]*)\)'), '[()]', '', 'g'), '')
+                    END AS note_display,
                     aml.amount_currency,
                     aml.currency_id,
                     aml.debit,
