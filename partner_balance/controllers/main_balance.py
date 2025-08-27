@@ -415,8 +415,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Update data records in this group
             for record in group_node.data:
-                debit = float(record[3]) if len(record) > 3 and record[3] else 0.0
-                credit = float(record[4]) if len(record) > 4 and record[4] else 0.0
+                debit = float(record[4]) if len(record) > 4 and record[4] else 0.0
+                credit = float(record[5]) if len(record) > 5 and record[5] else 0.0
                 running_balance += debit - credit
                 
                 # Update cumulated balance column (assuming index 5)
