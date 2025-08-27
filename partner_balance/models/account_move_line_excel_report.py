@@ -42,60 +42,6 @@ class AccountMoveLineReport(models.Model):
     cumulated_usd_value = fields.Monetary('Cumulated USD Value', compute='_compute_cumulated_usd_value', currency_field='currency_id')
 
 
-    def _compute_usd_value(self):
-        usd_currency = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
-        for rec in self:
-            if rec.currency_id == usd_currency:
-                rec.usd_value = rec.amount_currency
-                rec.usd_rate_display = "1.0000"
-            elif rec.currency_id and rec.currency_id.name == 'TRY':
-                rate = self.env['res.currency.rate'].search([
-                    ('currency_id.name', '=', 'USD'),
-                    ('company_id', '=', rec.company_id.id),
-                    ('name', '<', rec.date)
-                ], order='name desc', limit=1)
-                if rate and rate.inverse_company_rate:
-                    rec.usd_rate_display = f"{rate.inverse_company_rate:.4f}"
-                    rec.usd_value = float_round(rec.amount_currency / rate.inverse_company_rate, precision_digits=2)
-                else:
-                    rec.usd_value = 0.0
-                    rec.usd_rate_display = "0.0000"
-            else:
-                rec.usd_value = 0.0
-                rec.usd_rate_display = "N/A"
-
-
-    @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
-    def _compute_balance_amount(self):
-        for rec in self:
-            if rec.currency_id and rec.currency_id.name == 'TRY':
-                rec.balance_amount = rec.cumulated_balance
-            else:
-                rec.balance_amount = rec.cumulated_balance_amount_currency
-
-
-    @api.depends('credit', 'amount_currency', 'currency_id')
-    def _compute_credit_amount(self):
-        for rec in self:
-            if rec.currency_id and rec.currency_id.name == 'TRY':
-                rec.credit_amount = rec.credit
-            elif rec.amount_currency and rec.amount_currency < 0:
-                rec.credit_amount = abs(rec.amount_currency)  # Convert to positive
-            else:
-                rec.credit_amount = 0.0
-
-
-    @api.depends('debit', 'amount_currency', 'currency_id')
-    def _compute_debit_amount(self):
-        for rec in self:
-            if rec.currency_id and rec.currency_id.name == 'TRY':
-                rec.debit_amount = rec.debit
-            elif rec.amount_currency and rec.amount_currency > 0:
-                rec.debit_amount = rec.amount_currency
-            else:
-                rec.debit_amount = 0.0
-
-
     def init(self):
         """Initialize the report view"""
         tools.drop_view_if_exists(self.env.cr, self._table)
@@ -126,6 +72,37 @@ class AccountMoveLineReport(models.Model):
                     AND aml.partner_id IS NOT NULL
             )
         """)
+
+
+    @api.depends('debit', 'amount_currency', 'currency_id')
+    def _compute_debit_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.debit_amount = rec.debit
+            elif rec.amount_currency and rec.amount_currency > 0:
+                rec.debit_amount = rec.amount_currency
+            else:
+                rec.debit_amount = 0.0
+
+
+    @api.depends('credit', 'amount_currency', 'currency_id')
+    def _compute_credit_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.credit_amount = rec.credit
+            elif rec.amount_currency and rec.amount_currency < 0:
+                rec.credit_amount = abs(rec.amount_currency)  # Convert to positive
+            else:
+                rec.credit_amount = 0.0
+
+
+    @api.depends('currency_id', 'cumulated_balance', 'cumulated_balance_amount_currency')
+    def _compute_balance_amount(self):
+        for rec in self:
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.balance_amount = rec.cumulated_balance
+            else:
+                rec.balance_amount = rec.cumulated_balance_amount_currency
 
 
     @api.depends('partner_id', 'date', 'move_id', 'balance')
@@ -176,6 +153,30 @@ class AccountMoveLineReport(models.Model):
 
             grouped[key] += rec.amount_currency or 0.0
             rec.cumulated_balance_amount_currency = grouped[key]
+
+
+    @api.depends('currency_id', 'amount_currency', 'date', 'company_id')
+    def _compute_usd_value(self):
+        usd_currency = self.env['res.currency'].search([('name', '=', 'USD')], limit=1)
+        for rec in self:
+            if rec.currency_id == usd_currency:
+                rec.usd_value = rec.amount_currency
+                rec.usd_rate_display = "1.0000"
+            elif rec.currency_id and rec.currency_id.name == 'TRY':
+                rate = self.env['res.currency.rate'].search([
+                    ('currency_id.name', '=', 'USD'),
+                    ('company_id', '=', rec.company_id.id),
+                    ('name', '<', rec.date)
+                ], order='name desc', limit=1)
+                if rate and rate.inverse_company_rate:
+                    rec.usd_rate_display = f"{rate.inverse_company_rate:.4f}"
+                    rec.usd_value = float_round(rec.amount_currency / rate.inverse_company_rate, precision_digits=2)
+                else:
+                    rec.usd_value = 0.0
+                    rec.usd_rate_display = "0.0000"
+            else:
+                rec.usd_value = 0.0
+                rec.usd_rate_display = "N/A"
 
 
     @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'usd_value')
