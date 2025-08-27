@@ -96,7 +96,7 @@ class AccountMoveLineReport(models.Model):
                 WITH check_aggregates AS (
                     SELECT 
                         ap.id as payment_id,
-                        string_agg(DISTINCT ac.number::text, ', ' ORDER BY ac.number) as check_numbers
+                        string_agg(DISTINCT ac.number::text, ', ') as check_numbers
                     FROM account_payment ap
                     JOIN account_check ac ON ac.payment_id = ap.id
                     GROUP BY ap.id
