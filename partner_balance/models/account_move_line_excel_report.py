@@ -154,12 +154,12 @@ class AccountMoveLineReport(models.Model):
                     
                     -- Transaction type classification
                     CASE 
-                        WHEN am.move_type = 'out_invoice' THEN 'Customer Invoice'
-                        WHEN am.move_type = 'in_invoice' THEN 'Vendor Bill'
-                        WHEN am.move_type = 'out_refund' THEN 'Customer Credit Note'
-                        WHEN am.move_type = 'in_refund' THEN 'Vendor Credit Note'
-                        WHEN aj.type = 'bank' THEN 'Bank Payment'
-                        WHEN aj.type = 'cash' THEN 'Cash Payment'
+                        WHEN am.move_type = 'out_invoice' THEN 'Invoice'
+                        WHEN am.move_type = 'in_invoice' THEN 'Bill'
+                        WHEN am.move_type = 'out_refund' THEN 'Credit Note'
+                        WHEN am.move_type = 'in_refund' THEN 'Credit Note'
+                        WHEN aj.payment_subtype = 'bank' THEN 'Bank Payment'
+                        WHEN aj.payment_subtype = 'check' THEN 'Check'
                         WHEN aj.type = 'purchase' THEN 'Purchase'
                         WHEN aj.type = 'sale' THEN 'Sale'
                         ELSE 'Journal Entry'
