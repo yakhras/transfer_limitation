@@ -360,7 +360,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
 
             running_balance = self.calculate_period_summary(params, groups)
-            opening_data = self.calculate_opening_balance(params, filter_field, filter_value)
+            opening_data = self.calculate_opening_balance(params)
             row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
             
             # Start groups from row 9
@@ -390,6 +390,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                     # Other grouping - no filtering (total opening balance)
                     filter_field = None
                     filter_value = None
+                opening_data = self.calculate_opening_balance(params, filter_field, filter_value)
                 # Use group_name as key for consistency
                 opening_balances[group_name] = opening_data
             
