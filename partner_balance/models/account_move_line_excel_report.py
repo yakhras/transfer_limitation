@@ -112,12 +112,6 @@ class AccountMoveLineReport(models.Model):
                        - else   -> am.name
                     */
                     CASE
-                        WHEN b.payment_subtype = 'check' THEN
-                            COALESCE((
-                                SELECT string_agg(DISTINCT ac.name, ' , ')
-                                FROM account_check ac
-                                WHERE ac.payment_id = ap.id
-                            ), b.move_name)
                         WHEN b.payment_subtype = 'bank' THEN
                             COALESCE(absl.ref, b.move_name)
                         ELSE
