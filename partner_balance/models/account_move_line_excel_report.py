@@ -22,11 +22,9 @@ class AccountMoveLineReport(models.Model):
     credit = fields.Monetary(string='Credit', readonly=True, currency_field='company_currency_id')
     balance = fields.Monetary(string='Balance', readonly=True)
 
-    # in AccountMoveLineReport
-    reference_main = fields.Char(string='Reference')
-    reference_in_paren = fields.Char(string='Ref (Inside)')
-    note_display = fields.Char(string='Note (Augmented)')
-    # bank_or_cheque_ref = fields.Char(string='Bank/Cheque Ref')
+    # Adjusted fields
+    reference = fields.Char(string="Reference", readonly=True)  # will hold am.name
+    note = fields.Char(string="Note", readonly=True)            # will hold am.ref
 
 
     # Computed instead of SQL
@@ -54,39 +52,38 @@ class AccountMoveLineReport(models.Model):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute(f"""
             CREATE OR REPLACE VIEW {self._table} AS (
-                SELECT 
-                    aml.id,
-                    aml.date,
-                    aml.move_id,
-                    aml.name,
-                    -- NEW: reference split
-                    trim(regexp_replace(aml.move_id, '\s*\([^)]*\)\s*', '', 'g')) AS reference_main,
-                    NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '') AS reference_in_paren,
-                    -- NEW: note with conditional append
-                    CASE
-                    WHEN NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '') IS NULL THEN aml.name
-                    WHEN aml.name ILIKE '%' || NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '') || '%' THEN aml.name
-                    WHEN aml.name IS NULL OR aml.name = '' THEN NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '')
-                    ELSE aml.name || ' ' || NULLIF(regexp_replace(substring(aml.move_id from '\(([^)]*)\)'), '[()]', '', 'g'), '')
-                    END AS note_display,
-                    aml.amount_currency,
-                    aml.currency_id,
-                    aml.debit,
-                    aml.credit,
-                    aml.balance,
-                    aml.partner_id,
-                    aml.account_id,
-                    aml.company_id,
-                    rc.id as company_currency_id
+                SELECT
+                    aml.id                AS id,
+                    aml.date              AS date,
+                    aml.move_id           AS move_id,
+                    aml.partner_id        AS partner_id,
+                    aml.account_id        AS account_id,
+                    aml.company_id        AS company_id,
+
+                    aml.debit             AS debit,
+                    aml.credit            AS credit,
+                    aml.balance           AS balance,
+                    aml.amount_currency   AS amount_currency,
+                    aml.currency_id       AS currency_id,
+                    rc.id                 AS company_currency_id,
+
+                    -- new assignments
+                    am.name               AS reference,   -- Journal Entry number/name
+                    am.ref                AS note        -- Document number / Reference
                 FROM account_move_line aml
-                INNER JOIN account_move am ON aml.move_id = am.id
-                INNER JOIN account_account aa ON aml.account_id = aa.id
-                INNER JOIN account_account_type aat ON aa.user_type_id = aat.id
-                INNER JOIN res_company comp ON aml.company_id = comp.id
-                INNER JOIN res_currency rc ON comp.currency_id = rc.id
+                JOIN account_move am
+                  ON am.id = aml.move_id
+                JOIN account_account aa
+                  ON aa.id = aml.account_id
+                JOIN account_account_type aat
+                  ON aat.id = aa.user_type_id
+                JOIN res_company comp
+                  ON comp.id = aml.company_id
+                JOIN res_currency rc
+                  ON rc.id = comp.currency_id
                 WHERE am.state = 'posted'
-                    AND aat.type IN ('payable', 'receivable')
-                    AND aml.partner_id IS NOT NULL
+                  AND aat.type IN ('payable','receivable')
+                  AND aml.partner_id IS NOT NULL
             )
         """)
 

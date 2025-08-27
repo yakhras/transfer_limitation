@@ -71,11 +71,9 @@
                 <tree string="Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance">
                     <field name="date"/>
                     <field name="move_id"/>
-                    <field name="name"/>
-                    <field name="reference_main"/>
-                    <field name="reference_in_paren"/>
-                    <field name="note_display"/>
-                    <!-- <field name="bank_or_cheque_ref"/> -->
+                    <!-- <field name="name"/> -->
+                    <field name="reference"/>
+                    <field name="note"/>
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="cumulated_balance"/>
