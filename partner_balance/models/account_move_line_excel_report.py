@@ -26,7 +26,7 @@ class AccountMoveLineReport(models.Model):
     reference_main = fields.Char(string='Reference')
     reference_in_paren = fields.Char(string='Ref (Inside)')
     note_display = fields.Char(string='Note (Augmented)')
-    bank_or_cheque_ref = fields.Char(string='Bank/Cheque Ref')
+    # bank_or_cheque_ref = fields.Char(string='Bank/Cheque Ref')
 
 
     # Computed instead of SQL
