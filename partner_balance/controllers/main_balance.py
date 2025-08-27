@@ -610,14 +610,14 @@ class BalanceExportXlsxWriter:
             if column == 0:
                 # Column 0: "Total" label
                 self.write(row, column, _("Total"), self.header_bold_style)
-            elif column == 3:
-                # Column 3: Total debit
-                self.write(row, column, total_debit, self.monetary_style)
             elif column == 4:
-                # Column 4: Total credit
-                self.write(row, column, total_credit, self.monetary_style)
+                # Column 4: Total debit
+                self.write(row, column, total_debit, self.monetary_style)
             elif column == 5:
-                # Column 5: Total balance (debit - credit)
+                # Column 5: Total credit
+                self.write(row, column, total_credit, self.monetary_style)
+            elif column == 6:
+                # Column 6: Total balance (debit - credit)
                 self.write(row, column, total_balance, self.monetary_style)
             else:
                 # All other columns: empty
