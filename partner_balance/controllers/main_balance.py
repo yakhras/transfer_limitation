@@ -757,8 +757,8 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             opening_data.get('debit', 0.0),        # Debit
             opening_data.get('credit', 0.0),       # Credit  
             opening_data.get('balance', 0.0),      # Cumulated Balance
-            opening_data.get('currency', ''),      # Currency
             '',
+            opening_data.get('currency', ''),      # Currency
             '',
         ]
     
