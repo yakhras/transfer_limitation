@@ -53,6 +53,7 @@
             <field name="arch" type="xml">
                 <tree string="Currency-based Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance">
                     <field name="date"/>
+                    <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
                     <field name="debit_amount"/>
@@ -92,6 +93,7 @@
             <field name="arch" type="xml">
                 <tree string="Partner Ledger" create="false" delete="false" edit="false">
                     <field name="date"/>
+                    <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
                     <field name="debit"/>
