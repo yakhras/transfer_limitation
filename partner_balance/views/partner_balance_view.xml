@@ -71,7 +71,7 @@
                 <tree string="Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance">
                     <field name="date"/>
                     <field name="move_id"/>
-                    <!-- <field name="name"/> -->
+                    <field name="name"/>
                     <field name="reference"/>
                     <field name="note"/>
                     <field name="debit"/>

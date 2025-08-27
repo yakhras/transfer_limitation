@@ -56,6 +56,7 @@ class AccountMoveLineReport(models.Model):
                     aml.id                AS id,
                     aml.date              AS date,
                     aml.move_id           AS move_id,
+                    aml.name              AS name,
                     aml.partner_id        AS partner_id,
                     aml.account_id        AS account_id,
                     aml.company_id        AS company_id,
