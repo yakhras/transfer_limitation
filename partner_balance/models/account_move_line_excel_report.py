@@ -69,7 +69,7 @@ class AccountMoveLineReport(models.Model):
 
                     -- new assignments
                     am.name               AS reference,   -- Journal Entry number/name
-                    am.ref                AS note        -- Document number / Reference
+                    am.document_number                AS note        -- Document number / Reference
                 FROM account_move_line aml
                 JOIN account_move am
                   ON am.id = aml.move_id
