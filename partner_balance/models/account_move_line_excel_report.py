@@ -25,6 +25,7 @@ class AccountMoveLineReport(models.Model):
     # Adjusted fields
     reference = fields.Char(string="Reference", readonly=True)  # will hold am.name
     note = fields.Char(string="Note", readonly=True)            # will hold am.ref
+    type = fields.Char(string='Type', readonly=True)
 
 
     # Computed instead of SQL
@@ -47,46 +48,6 @@ class AccountMoveLineReport(models.Model):
     cumulated_usd_value = fields.Monetary('Cumulated USD Value', compute='_compute_cumulated_usd_value', currency_field='currency_id')
 
 
-    # def init(self):
-    #     """Initialize the report view"""
-    #     tools.drop_view_if_exists(self.env.cr, self._table)
-    #     self.env.cr.execute(f"""
-    #         CREATE OR REPLACE VIEW {self._table} AS (
-    #             SELECT
-    #                 aml.id                AS id,
-    #                 aml.date              AS date,
-    #                 aml.move_id           AS move_id,
-    #                 aml.partner_id        AS partner_id,
-    #                 aml.account_id        AS account_id,
-    #                 aml.company_id        AS company_id,
-
-    #                 aml.debit             AS debit,
-    #                 aml.credit            AS credit,
-    #                 aml.balance           AS balance,
-    #                 aml.amount_currency   AS amount_currency,
-    #                 aml.currency_id       AS currency_id,
-    #                 rc.id                 AS company_currency_id,
-
-    #                 -- new assignments
-    #                 am.name               AS reference,   -- Journal Entry number/name
-    #                 am.document_number    AS note        -- Document number / Reference
-    #             FROM account_move_line aml
-    #             JOIN account_move am
-    #               ON am.id = aml.move_id
-    #             JOIN account_account aa
-    #               ON aa.id = aml.account_id
-    #             JOIN account_account_type aat
-    #               ON aat.id = aa.user_type_id
-    #             JOIN res_company comp
-    #               ON comp.id = aml.company_id
-    #             JOIN res_currency rc
-    #               ON rc.id = comp.currency_id
-    #             WHERE am.state = 'posted'
-    #               AND aat.type IN ('payable','receivable')
-    #               AND aml.partner_id IS NOT NULL
-    #         )
-    #     """)
-
 
     # def init(self):
     #     """Initialize the report view"""
@@ -96,7 +57,7 @@ class AccountMoveLineReport(models.Model):
     #             WITH check_aggregates AS (
     #                 SELECT 
     #                     ap.id as payment_id,
-    #                     string_agg(DISTINCT ac.number::text, ', ') as check_numbers
+    #                     string_agg(DISTINCT ac.number::text, ', ' ORDER BY ac.number::text) as check_numbers
     #                 FROM account_payment ap
     #                 JOIN account_check ac ON ac.payment_id = ap.id
     #                 GROUP BY ap.id
@@ -117,10 +78,12 @@ class AccountMoveLineReport(models.Model):
     #                 aml.currency_id       AS currency_id,
     #                 rc.id                 AS company_currency_id,
 
-    #                 -- Enhanced reference logic with check numbers
+    #                 -- Enhanced reference logic with check numbers and bank ref
     #                 CASE
     #                     WHEN aj.payment_subtype = 'check' AND ca.check_numbers IS NOT NULL THEN
     #                         ca.check_numbers  -- Show aggregated check numbers
+    #                     WHEN aj.payment_subtype = 'bank' AND aml.ref IS NOT NULL THEN
+    #                         aml.ref          -- Show bank reference from move line
     #                     ELSE
     #                         am.name          -- Default journal entry reference
     #                 END AS reference,
@@ -149,7 +112,6 @@ class AccountMoveLineReport(models.Model):
     #             AND aml.partner_id IS NOT NULL
     #         )
     #     """)
-
 
     def init(self):
         """Initialize the report view"""
@@ -189,6 +151,19 @@ class AccountMoveLineReport(models.Model):
                         ELSE
                             am.name          -- Default journal entry reference
                     END AS reference,
+                    
+                    -- Transaction type classification
+                    CASE 
+                        WHEN am.move_type = 'out_invoice' THEN 'Customer Invoice'
+                        WHEN am.move_type = 'in_invoice' THEN 'Vendor Bill'
+                        WHEN am.move_type = 'out_refund' THEN 'Customer Credit Note'
+                        WHEN am.move_type = 'in_refund' THEN 'Vendor Credit Note'
+                        WHEN aj.type = 'bank' THEN 'Bank Payment'
+                        WHEN aj.type = 'cash' THEN 'Cash Payment'
+                        WHEN aj.type = 'purchase' THEN 'Purchase'
+                        WHEN aj.type = 'sale' THEN 'Sale'
+                        ELSE 'Journal Entry'
+                    END AS type,
                     
                     am.document_number    AS note        -- Document number / Reference
                     
