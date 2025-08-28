@@ -717,13 +717,13 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
 
     def _write_row(self, row, column, data, balance=None):
-        self.write(34, 0, data, self.partner_name_style)
         for row_index, dat in enumerate(data):
             debit = float(data[4]) if data[4] else 0.0
             credit = float(data[5]) if data[5] else 0.0
             balance += debit - credit
-            data = list(data)  # Convert to list to modify
             data[6] = balance
+            data = list(data)  # Convert to list to modify
+            
             
         for value in data:
             self.write_cell(row, column, value)
