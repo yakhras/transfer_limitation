@@ -634,7 +634,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         self.fields = fields
 
 
-    def _write_group_totals(self, row, group, balance=None):
+    def _write_group_totals(self, row, group, balance=None,balance_value=None):
         column = 0
         aggregates = group.aggregated_values
         # self.write(31, 0, balance[3], self.partner_name_style)
@@ -647,9 +647,9 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             'debit_amount': lambda: aggregates.get('debit_amount', 0) + (balance[4] if balance else 0),
             'credit': lambda: aggregates.get('credit', 0) + balance[5],
             'credit_amount': lambda: aggregates.get('credit_amount', 0) + (balance[5] if balance else 0),
-            'balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
-            'balance_amount': lambda: aggregates.get('debit_amount', 0) - abs(aggregates.get('credit_amount', 0)),
-            'cumulated_balance': lambda: aggregates.get('debit', 0) - abs(aggregates.get('credit', 0)),
+            'balance': lambda: balance_value if balance_value is not None else (aggregates.get('debit', 0) - abs(aggregates.get('credit', 0))) + (balance[6] if balance else 0),
+            'balance_amount': lambda: balance_value if balance_value is not None else (aggregates.get('debit_amount', 0) - abs(aggregates.get('credit_amount', 0))) + (balance[6] if balance else 0),
+            'cumulated_balance': lambda: balance_value if balance_value is not None else (aggregates.get('debit', 0) - abs(aggregates.get('credit', 0))) + (balance[6] if balance else 0),
             'amount_currency': lambda: '',
             
         }
@@ -711,7 +711,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             row, column, balance_value = self._write_row(row, column, record, balance_value)
         
         # Write group totals
-        row, column = self._write_group_totals(row, group, opening_row)
+        row, column = self._write_group_totals(row, group, opening_row, balance_value)
 
         return row, column
 
