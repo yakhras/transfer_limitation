@@ -420,7 +420,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 running_balance += debit - credit
                 
                 # Update cumulated balance column (assuming index 5)
-                if len(record) > 5:
+                if len(record) > 6:
                     record[6] = running_balance
             
             # Update child groups recursively
