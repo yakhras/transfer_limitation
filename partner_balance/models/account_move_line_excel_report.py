@@ -281,7 +281,7 @@ class AccountMoveLineReport(models.Model):
             'debit': 0.00,
             'credit': 0.00,
             'cumulated_balance': 2500000.00,
-            'partner_id': self.env['res.partner'].search([54487], limit=1),
+            'partner_id': 54487,
             'company_id': self.env.company.id,
         })
         
