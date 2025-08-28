@@ -361,6 +361,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         with BalanceGroupExportXlsxWriter(fields, groups.count) as xlsx_writer:
 
             running_balance = self.calculate_period_summary(params, groups)
+            xlsx_writer.write(31, 0, running_balance, xlsx_writer.partner_name_style)
             opening_data = self.calculate_opening_balance(params)
             row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
             
