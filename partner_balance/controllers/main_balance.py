@@ -708,7 +708,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         
         # Write group data
         for record in group.data:
-            row, column = self._write_row(row, column, record, balance_value)
+            row, column, balance = self._write_row(row, column, record, balance_value)
         
         # Write group totals
         row, column = self._write_group_totals(row, group, opening_row)
@@ -728,7 +728,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         for value in data:
             self.write_cell(row, column, value)
             column += 1
-        return row + 1, 0
+        return row + 1, 0, balance
 
 
     def write_group_header(self, row):
