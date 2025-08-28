@@ -718,22 +718,17 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
     def _write_row(self, row, column, data, balance=None):
         for row_index, dat in enumerate(data):
-            self.write(32, 0, row_index, self.partner_name_style)
-            # Update running balance for this row
-            # debit = float(dat[4]) if dat[4] else 0.0
-            # credit = float(dat[5]) if dat[5] else 0.0
-            # balance += debit - credit
-            # dat = list(dat)  # Convert to list to modify
-            # dat[6] = balance
-            # for cell_index, cell_value in enumerate(dat):
-            #         if isinstance(cell_value, (list, tuple)):
-            #             cell_value = pycompat.to_text(cell_value)
-            #         self.write_cell(row, row_index, cell_index, cell_value)
-        for value in data:
-            self.write(33, 0, balance, self.partner_name_style)
-            self.write(34, 0, data, self.partner_name_style)
-            self.write_cell(row, column, value)
-            column += 1
+            debit = float(data[4]) if data[4] else 0.0
+            credit = float(data[5]) if data[5] else 0.0
+            balance += debit - credit
+            data = list(data)  # Convert to list to modify
+            data[6] = balance
+            
+            for value in data:
+                # self.write(33, 0, balance, self.partner_name_style)
+                # self.write(34, 0, data, self.partner_name_style)
+                self.write_cell(row, column, value)
+                column += 1
         return row + 1, 0
 
 
