@@ -206,8 +206,8 @@ class StockProductFlowReport(models.Model):
             CASE
                 WHEN sl.usage = 'supplier' AND sld.usage = 'internal' THEN 'Buy'
                 WHEN sl.usage = 'internal' AND sld.usage = 'customer' THEN 'Sell'
-                WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap Out'
-                WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap In'
+                WHEN sl.usage = 'internal' AND sld.usage = 'inventory' THEN 'Scrap & Adjustment Out'
+                WHEN sl.usage = 'inventory' AND sld.usage = 'internal' THEN 'Scrap & Adjustment In'
                 WHEN sl.usage = 'customer' AND sld.usage = 'internal' THEN 'Customer Return'
                 WHEN sl.usage = 'internal' AND sld.usage = 'supplier' THEN 'Vendor Return'
                 WHEN sl.usage = 'internal' AND sld.usage = 'internal' THEN 'Transfer'
