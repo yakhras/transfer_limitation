@@ -694,6 +694,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         if group_name in opening_balances and opening_balances[group_name]['balance'] != 0.0:
             opening_data = opening_balances[group_name]
             opening_row = self._create_opening_balance_row(opening_data)
+            self.write(32, 0, opening_row, self.partner_name_style)
             
             for cell_index, cell_value in enumerate(opening_row):
                 if cell_index < len(self.field_names):
