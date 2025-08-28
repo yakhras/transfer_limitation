@@ -199,7 +199,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 
                 # Update the cumulated balance column (assuming it's column 5)
                 row = list(row)  # Convert to list to modify
-                row[5] = running_balance  # Update cumulated balance
+                row[6] = running_balance  # Update cumulated balance
                 
                 for cell_index, cell_value in enumerate(row):
                     if isinstance(cell_value, (list, tuple)):
