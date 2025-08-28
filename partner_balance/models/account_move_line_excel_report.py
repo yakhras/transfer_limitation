@@ -266,7 +266,7 @@ class AccountMoveLineReport(models.Model):
             grouped[key] += rec.usd_value or 0.0
             rec.cumulated_usd_value = grouped[key]
 
-
+    @api.model
     def create_simple_static_record(self):
         """Create a simple record with static values"""
         
