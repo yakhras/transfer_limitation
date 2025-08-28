@@ -718,7 +718,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
 
     def _write_row(self, row, column, data, balance=None):
         for row_index, dat in enumerate(data):
-            self.write(32, 0, dat, self.partner_name_style)
+            self.write(32, 0, row_index, self.partner_name_style)
             # Update running balance for this row
             # debit = float(dat[4]) if dat[4] else 0.0
             # credit = float(dat[5]) if dat[5] else 0.0
