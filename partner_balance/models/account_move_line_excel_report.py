@@ -273,7 +273,7 @@ class AccountMoveLineReport(models.Model):
         # Method 1: Using create()
         static_record = self.create({
             'date': '2025-08-01',
-            'Type': 'Opening Balance',
+            'type': 'Opening Balance',
             'reference': 'OB-2025',
             'note': 'Opening Balance Note',
             'amount_currency': 2500000.00,
