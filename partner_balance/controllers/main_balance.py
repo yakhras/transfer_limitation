@@ -691,10 +691,10 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         row = self.write_group_header(row)
         opening_row = None
         # Write opening balance for this currency group
+        balance_value = opening_balances.get(group_name, {}).get('balance', 0.0)
         if group_name in opening_balances and opening_balances[group_name]['balance'] != 0.0:
             opening_data = opening_balances[group_name]
             opening_row = self._create_opening_balance_row(opening_data)
-            self.write(32, 0, opening_row, self.partner_name_style)
             
             for cell_index, cell_value in enumerate(opening_row):
                 if cell_index < len(self.field_names):
@@ -706,10 +706,9 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
             row, column = self.write_group(row, column, child_group_name, child_group, opening_balances, group_depth + 1)
 
         
-        
         # Write group data
         for record in group.data:
-            row, column = self._write_row(row, column, record)
+            row, column = self._write_row(row, column, record, balance_value)
         
         # Write group totals
         row, column = self._write_group_totals(row, group, opening_row)
@@ -717,8 +716,21 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         return row, column
 
 
-    def _write_row(self, row, column, data):
+    def _write_row(self, row, column, data, balance=None):
         for value in data:
+            self.write(33, 0, balance, self.partner_name_style)
+            self.write(34, 0, data, self.partner_name_style)
+            # debit = float(row[4]) if row[4] else 0.0
+            #     credit = float(row[5]) if row[5] else 0.0
+            #     running_balance += debit - credit
+                
+            #     # Update the cumulated balance column (assuming it's column 5)
+            #     row = list(row)  # Convert to list to modify
+            #     row[6] = running_balance  # Update cumulated balance
+                
+            #     for cell_index, cell_value in enumerate(row):
+            #         if isinstance(cell_value, (list, tuple)):
+            #             cell_value = pycompat.to_text(cell_value)
             self.write_cell(row, column, value)
             column += 1
         return row + 1, 0
