@@ -421,7 +421,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 
                 # Update cumulated balance column (assuming index 5)
                 if len(record) > 5:
-                    record[5] = running_balance
+                    record[6] = running_balance
             
             # Update child groups recursively
             for child_group in group_node.children.values():
