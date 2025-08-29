@@ -22,7 +22,19 @@ class AccountMove(models.Model):
                 'value': result
             }
         else:
-            return super(AccountMove, self).onchange_partner()
+            result = {
+                'einvoice_state': 'draft',
+                'spending_unit_vat': False,
+                'einvoice_profile': False,
+                'einvoice_postbox_id': False,
+                'invoice_delivery_type': False
+            }
+            self.update(result)
+            self._onchange_journal()
+            return {
+                'value': result
+            }
+            # return super(AccountMove, self).onchange_partner()
 
     @api.model
     def _get_default_delivery_type(self, partner_id=False, company_id=False, move_type=False):
