@@ -231,26 +231,22 @@ class AccountMoveLineReport(models.Model):
                 WHERE rp.id = 54487  -- Your specific partner ID
 
                 UNION ALL
-
-                -- Static Summary Record  
                 SELECT
-                    -2                    AS id,
-                    '2099-12-31'::date    AS date,
-                    NULL                  AS move_id,
-                    rp.id                 AS partner_id,
-                    NULL                  AS account_id,
-                    rc.id                 AS company_id,
-
-                    1359987.41            AS debit,
-                    3617000.00            AS credit,
-                    -2257012.59           AS balance,
-                    242987.41             AS amount_currency,
-                    curr.id               AS currency_id,
-                    rc.id                 AS company_currency_id,
-
-                    'PERIOD-SUMMARY'      AS reference,
-                    'Period Summary'      AS type,
-                    'Invoices: +$1.36M | Payments: -$3.62M' AS note
+                    -999 AS id,
+                    CURRENT_DATE AS date,
+                    NULL AS move_id,
+                    54487 AS partner_id,  -- Use partner ID = 1
+                    NULL AS account_id,
+                    1 AS company_id,
+                    0.00 AS debit,
+                    0.00 AS credit,
+                    0.00 AS balance,
+                    1000.00 AS amount_currency,
+                    1 AS currency_id,
+                    1 AS company_currency_id,
+                    'TEST' AS reference,
+                    'Test Record' AS type,
+                    'Testing' AS note
 
                 FROM res_partner rp
                 CROSS JOIN res_company comp
