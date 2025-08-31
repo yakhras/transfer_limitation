@@ -126,7 +126,9 @@ var ExportPdfButtonListController = ListController.extend({
             }
             if (dateTo) {
                 domain.push(['date', '<=', dateTo]);
+                console.log('dateTo', dateTo);
             }
+            
             
             // Apply the updated domain
             this.update({
