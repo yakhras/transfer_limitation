@@ -201,8 +201,7 @@ var ExportPdfButtonListController = ListController.extend({
     _onPdf: function () {
         console.log('Exporting to PDF');
         
-        // Get partner ID from context
-        var partner_id = this.env.context.get('default_partner_id');
+        var partner_id = this.model.loadParams.context.default_partner_id;
         if (!partner_id) {
             console.error('No partner ID found');
             return;
@@ -211,11 +210,9 @@ var ExportPdfButtonListController = ListController.extend({
         this._rpc({
             model: 'res.partner',
             method: 'action_view_move_line_report_currency',
-            args: [partner_id], // Single ID, not array of array
+            args: [partner_id],
         }).then(action => {
             this.do_action(action);
-        }).catch(error => {
-            console.error('RPC Error:', error);
         });
     },
 
