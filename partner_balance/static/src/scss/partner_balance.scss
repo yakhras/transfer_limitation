@@ -59,3 +59,50 @@
   border-color: #007bff;
   box-shadow: 0 0 3px rgba(0,123,255,0.4);
 }
+
+
+
+/* Summary section */
+.balance-summary-section {
+    margin-top: 10px;
+    padding: 8px;
+    background: #ecfdf5;
+    border-radius: 4px;
+    border: 1px solid #10b981;
+}
+
+.balance-summary-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+    color: #047857;
+}
+
+.summary-cell.muted {
+    color: #6b7280;
+    font-style: italic;
+}
+
+.summary-cell.amount {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+}
+
+.summary-cell.center {
+    text-align: center;
+}
+
+.summary-cell.negative {
+    color: #dc2626;
+}
+
+.summary-cell.final-balance {
+    color: #059669;
+    font-weight: bold;
+}
+
+.summary-note {
+    font-size: 11px;
+    color: #6b7280;
+}
