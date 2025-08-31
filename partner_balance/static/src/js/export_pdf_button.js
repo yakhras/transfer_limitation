@@ -76,10 +76,19 @@ var ExportPdfButtonListController = ListController.extend({
         const dateFrom = this.$('.date-input[data-field-name="date_from"]').val();
         const dateTo = this.$('.date-input[data-field-name="date_to"]').val();
         
+        // Show/hide summary section based on date values
+        const summarySection = this.$('.balance-summary-section');
+        if (dateFrom || dateTo) {
+            summarySection.show(); // Show summary if at least one date exists
+        } else {
+            summarySection.hide(); // Hide summary if no dates
+        }
+        
         // Validate date range
         if (dateFrom && dateTo) {
             if (new Date(dateTo) <= new Date(dateFrom)) {
                 $(ev.currentTarget).val('');
+                summarySection.hide(); // Hide on invalid date range
                 this.displayNotification({
                     message: 'End date must be after start date',
                     type: 'warning'
@@ -87,14 +96,17 @@ var ExportPdfButtonListController = ListController.extend({
                 return;
             }
             
-            // Both dates valid - apply filter
+            // Both dates valid - apply filter and show summary
+            summarySection.show();
             this._updateViewWithDates(dateFrom, dateTo);
         } else if (dateFrom || dateTo) {
-            // Only one date selected - apply partial filter
+            // Only one date selected - apply partial filter and show summary
+            summarySection.show();
             this._updateViewWithDates(dateFrom, dateTo);
         }
-        // If no dates selected, reset the filter
+        // If no dates selected, reset the filter and hide summary
         else {
+            summarySection.hide();
             this._updateViewWithDates(null, null);
         }
     },
