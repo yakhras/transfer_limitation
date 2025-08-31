@@ -87,6 +87,7 @@ var ExportPdfButtonListController = ListController.extend({
         summarySection.show();
 
         if (dateTo && new Date(dateTo) <= new Date(dateFrom)) {
+            await this._updateViewWithDates(dateFrom, dateTo);
             $(ev.currentTarget).val('');
             summarySection.hide();
             this.displayNotification({ message: 'End date must be after start date', type: 'warning' });
