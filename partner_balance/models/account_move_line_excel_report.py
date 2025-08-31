@@ -160,19 +160,6 @@ class AccountMoveLineReport(models.Model):
                 rec.balance_amount = rec.cumulated_balance_amount_currency
 
 
-    # @api.depends('partner_id', 'date', 'move_id', 'balance')
-    # def _compute_cumulated_balance(self):
-    #     """
-    #     Compute the cumulated balance dynamically for each partner based on date + move + id ordering.
-    #     This version does NOT depend on context.
-    #     """
-    #     grouped = {}
-    #     for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
-    #         key = rec.partner_id.id
-    #         if key not in grouped:
-    #             grouped[key] = 0.0
-    #         grouped[key] += rec.balance
-    #         rec.cumulated_balance = grouped[key]
 
     @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance')
     def _compute_cumulated_balance(self):
