@@ -149,9 +149,13 @@ var ExportPdfButtonListController = ListController.extend({
         console.log('Initial Balance:', initialBalance);
         
         // Update the template element
-        this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
+        this.$('.summary-cell.final-balance').text(this._formatCurrency(initialBalance));
         
     },
+
+    _formatCurrency(value) {
+        return '$' + Number(value || 0).toFixed(2);
+    }
 
     _onExport: function(){
         console.log('Hi Yaser')
