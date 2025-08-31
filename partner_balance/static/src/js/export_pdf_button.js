@@ -98,7 +98,7 @@ var ExportPdfButtonListController = ListController.extend({
             
             // Both dates valid - apply filter and show summary
             this._updateViewWithDates(dateFrom, dateTo);
-        } else if (dateFrom) {
+        } else if (dateFrom || dateTo) {
             // Only date from exists - apply partial filter and show summary
             this._updateViewWithDates(dateFrom, dateTo);
         }
