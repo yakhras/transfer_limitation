@@ -154,8 +154,12 @@ var ExportPdfButtonListController = ListController.extend({
     },
 
     _formatCurrency(value) {
-        return '$' + Number(value || 0).toFixed(2);
-    }
+        return '$' + Number(value || 0).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    },
+
 
     _onExport: function(){
         console.log('Hi Yaser')
