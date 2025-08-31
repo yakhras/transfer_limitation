@@ -196,9 +196,10 @@ var ExportPdfButtonListController = ListController.extend({
         if (records.length > 0) {
             // Get initial_balance from first record (all should have same value for same partner)
             var initialBalance = records[0].data.initial_balance;
+            console.log('Initial Balance:', initialBalance);
             
             // Update the template element
-            this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
+            // this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
         }
     },
 
