@@ -115,6 +115,7 @@ var ExportPdfButtonListController = ListController.extend({
 
     _updateViewWithDates: function(dateFrom, dateTo) {
         try {
+            console.log('param',this.model.get(this.handle))
             // Get domain from correct location
             let domain = this.model.loadParams.domain || this.initialState.domain || [];
             let context = this.model.loadParams.context || {};
@@ -142,7 +143,7 @@ var ExportPdfButtonListController = ListController.extend({
                 this.initialState.domain = domain;
             }
             
-            this.update({domain: domain, context: context});
+            this.update({domain: domain, context: context, reload: true});
             
             
         } catch (error) {
