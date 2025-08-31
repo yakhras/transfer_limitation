@@ -83,9 +83,8 @@ var ExportPdfButtonListController = ListController.extend({
             var self = this;
         
             // Update view first, then get computed values
-            this._updateViewWithDates(dateFrom, dateTo).then(function() {
-                self._updateSummaryFromModel();
-            });
+            this._updateViewWithDates(dateFrom, dateTo);
+            this._updateSummaryFromModel();
         } else {
             summarySection.hide(); // Hide summary if no date from
         }
@@ -159,14 +158,14 @@ var ExportPdfButtonListController = ListController.extend({
         console.log('State Data:', state);
         var records = state.data;
         
-        if (records.length > 0) {
-            // Get initial_balance from first record (all should have same value for same partner)
-            var initialBalance = records[0].data.initial_balance;
-            console.log('Initial Balance:', initialBalance);
+        // if (records.length > 0) {
+        //     // Get initial_balance from first record (all should have same value for same partner)
+        //     var initialBalance = records[0].data.initial_balance;
+        //     console.log('Initial Balance:', initialBalance);
             
-            // Update the template element
-            // this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
-        }
+        //     // Update the template element
+        //     // this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
+        // }
         // const accountsData = await this.orm.call(
         //         'cash.flow.dashboard',
         //         'get_filtered_dashboard_data',
