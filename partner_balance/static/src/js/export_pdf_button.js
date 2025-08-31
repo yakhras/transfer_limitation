@@ -76,12 +76,12 @@ var ExportPdfButtonListController = ListController.extend({
         const dateFrom = this.$('.date-input[data-field-name="date_from"]').val();
         const dateTo = this.$('.date-input[data-field-name="date_to"]').val();
         
-        // Show/hide summary section based on date values
+        // Show/hide summary section based on date from value only
         const summarySection = this.$('.balance-summary-section');
-        if (dateFrom || dateTo) {
-            summarySection.show(); // Show summary if at least one date exists
+        if (dateFrom) {
+            summarySection.show(); // Show summary only if date from exists
         } else {
-            summarySection.hide(); // Hide summary if no dates
+            summarySection.hide(); // Hide summary if no date from
         }
         
         // Validate date range
@@ -97,16 +97,13 @@ var ExportPdfButtonListController = ListController.extend({
             }
             
             // Both dates valid - apply filter and show summary
-            summarySection.show();
             this._updateViewWithDates(dateFrom, dateTo);
-        } else if (dateFrom || dateTo) {
-            // Only one date selected - apply partial filter and show summary
-            summarySection.show();
+        } else if (dateFrom) {
+            // Only date from exists - apply partial filter and show summary
             this._updateViewWithDates(dateFrom, dateTo);
         }
-        // If no dates selected, reset the filter and hide summary
+        // If no date from, reset the filter and hide summary
         else {
-            summarySection.hide();
             this._updateViewWithDates(null, null);
         }
     },
