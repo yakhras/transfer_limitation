@@ -273,11 +273,19 @@ class AccountMoveLineReport(models.Model):
     def _compute_initial_balance(self):
         """Compute the initial balance for each partner based on the context date_from"""
         date_from = self.env.context.get('date_from')
+        
+        # Initialize all records to 0.0 first
+        for rec in self:
+            rec.initial_balance = 0.0
+        
         if not date_from:
             return
 
         partners = self.mapped('partner_id')
-        initial_balances = {partner.id: 0.0 for partner in partners}
+        if not partners:
+            return
+            
+        initial_balances = {}
 
         # Aggregate balances before date_from
         self.env.cr.execute("""
@@ -285,7 +293,7 @@ class AccountMoveLineReport(models.Model):
             FROM account_move_line_report
             WHERE date < %s AND partner_id IN %s
             GROUP BY partner_id
-        """, (date_from, tuple(initial_balances.keys())))
+        """, (date_from, tuple(partners.ids)))
 
         for partner_id, total_balance in self.env.cr.fetchall():
             initial_balances[partner_id] = total_balance
@@ -293,7 +301,6 @@ class AccountMoveLineReport(models.Model):
         # Assign initial balances to records
         for rec in self:
             rec.initial_balance = initial_balances.get(rec.partner_id.id, 0.0)
-
 
 
 class ResPartner(models.Model):
