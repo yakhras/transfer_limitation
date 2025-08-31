@@ -65,6 +65,7 @@ var ExportPdfButtonListController = ListController.extend({
     events: _.extend({}, ListController.prototype.events, {
         'click .o_button_pdf': '_onPdf',
         'click .o_button_excel': '_onExcel',
+
         'change .date-input': '_onDateChange',
     }),
 
@@ -199,7 +200,18 @@ var ExportPdfButtonListController = ListController.extend({
 
     _onPdf: function () {
         console.log('Exporting to PDF');
+
+        // rpc.query to call the python method and get the action dict back
+        this._rpc({
+            model: 'res.partner',           // the model where your python method lives
+            method: 'action_view_move_line_report_currency',
+            args: [[this.recordData.id]],   // pass the partner’s id
+        }).then(action => {
+            // ask Odoo to execute that action
+            this.do_action(action);
+        });
     },
+
 
     _onExcel: function () {
         console.log('Exporting to Excel');
