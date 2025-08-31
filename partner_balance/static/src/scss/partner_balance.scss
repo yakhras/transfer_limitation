@@ -63,6 +63,11 @@
 
 
 /* Summary section */
+
+.balance-summary-section {
+    display: none; /* Initially hidden */
+}
+
 .balance-summary-section {
     margin-top: 10px;
     padding: 8px;
