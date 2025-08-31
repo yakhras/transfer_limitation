@@ -78,39 +78,39 @@ var ExportPdfButtonListController = ListController.extend({
         
         // Show/hide summary section based on date from value only
         const summarySection = this.$('.balance-summary-section');
+
+        // Enhanced version with consolidated logic
+        var self = this;
+
+        // Show/hide summary based on dateFrom only
         if (dateFrom) {
-            summarySection.show(); // Show summary only if date from exists
-            var self = this;
-        
-            // Update view first, then get computed values
-            this._updateViewWithDates(dateFrom, dateTo);
-            
+            summarySection.show();
         } else {
-            summarySection.hide(); // Hide summary if no date from
-        }
-        
-        // Validate date range
-        if (dateFrom && dateTo) {
-            if (new Date(dateTo) <= new Date(dateFrom)) {
-                $(ev.currentTarget).val('');
-                summarySection.hide(); // Hide on invalid date range
-                this.displayNotification({
-                    message: 'End date must be after start date',
-                    type: 'warning'
-                });
-                return;
-            }
-            
-            // Both dates valid - apply filter and show summary
-            this._updateViewWithDates(dateFrom, dateTo);
-        } else if (dateFrom || dateTo) {
-            // Only date from exists - apply partial filter and show summary
-            this._updateViewWithDates(dateFrom, dateTo);
-        }
-        // If no date from, reset the filter and hide summary
-        else {
+            summarySection.hide();
             this._updateViewWithDates(null, null);
+            return;
         }
+
+        // Validate date range if both dates exist
+        if (dateFrom && dateTo && new Date(dateTo) <= new Date(dateFrom)) {
+            $(ev.currentTarget).val('');
+            summarySection.hide();
+            this.displayNotification({
+                message: 'End date must be after start date',
+                type: 'warning'
+            });
+            return;
+        }
+
+        // Update view and sync computed fields
+        this._updateViewWithDates(dateFrom, dateTo).then(function() {
+            return self.model.reload();
+        }).then(function() {
+            self._updateSummaryFromModel();
+        }).catch(function(error) {
+            console.error('Error updating view:', error);
+            summarySection.hide();
+        });
     },
     
 
@@ -144,7 +144,6 @@ var ExportPdfButtonListController = ListController.extend({
             }
             
             this.update({domain: domain, context: context});
-            this.model.reload();
             this._updateSummaryFromModel();
             
         } catch (error) {
@@ -166,7 +165,7 @@ var ExportPdfButtonListController = ListController.extend({
             console.log('Initial Balance:', initialBalance);
             
             // Update the template element
-            this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
+            // this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
         }
         
     },
