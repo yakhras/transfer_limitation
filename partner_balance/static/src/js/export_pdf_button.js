@@ -68,7 +68,7 @@ var ExportPdfButtonListController = ListController.extend({
         'change .date-input': '_onDateChange',
     }),
 
-    _onDateChange: function(ev) {
+    _onDateChange: async function(ev) {
         const fieldName = $(ev.currentTarget).data('field-name');
         const value = $(ev.currentTarget).val();
         
