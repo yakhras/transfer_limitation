@@ -200,15 +200,22 @@ var ExportPdfButtonListController = ListController.extend({
 
     _onPdf: function () {
         console.log('Exporting to PDF');
-
-        // rpc.query to call the python method and get the action dict back
+        
+        // Get partner ID from context
+        var partner_id = this.env.context.get('default_partner_id');
+        if (!partner_id) {
+            console.error('No partner ID found');
+            return;
+        }
+        
         this._rpc({
-            model: 'res.partner',           // the model where your python method lives
+            model: 'res.partner',
             method: 'action_view_move_line_report_currency',
-            args: [[this.recordData.id]],   // pass the partner’s id
+            args: [partner_id], // Single ID, not array of array
         }).then(action => {
-            // ask Odoo to execute that action
             this.do_action(action);
+        }).catch(error => {
+            console.error('RPC Error:', error);
         });
     },
 
