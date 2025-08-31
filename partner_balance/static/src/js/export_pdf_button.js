@@ -110,15 +110,14 @@ var ExportPdfButtonListController = ListController.extend({
 
     _updateViewWithDates: function(dateFrom, dateTo) {
         try {
-            // Get current state
-            var state = this.model.get(this.handle);
-            var domain = state.domain.slice(); // Copy original domain
+            // Get domain from correct location
+            let domain = this.model.loadParams.domain || this.initialState.domain || [];
+            let context = this.model.loadParams.context || {};
             
             // Remove existing date filters
-            domain = domain.filter(function(filter) {
-                if (!Array.isArray(filter)) return true;
-                return filter[0] !== 'date';
-            });
+            domain = domain.filter(filter => 
+                !Array.isArray(filter) || (filter[0] !== 'date' && filter[0] !== 'date_from' && filter[0] !== 'date_to')
+            );
             
             // Add new date filters
             if (dateFrom) {
@@ -126,20 +125,24 @@ var ExportPdfButtonListController = ListController.extend({
             }
             if (dateTo) {
                 domain.push(['date', '<=', dateTo]);
-                console.log('dateTo', dateTo);
             }
             
+            context.date_from = dateFrom || null;  // Clear if empty
+            context.date_to = dateTo || null;    
             
-            // Apply the updated domain
-            this.update({
-                domain: domain,
-            }).then(function() {
-                console.log('View updated with domain:', domain);
-            });
+            // Update both locations
+            this.model.loadParams.domain = domain;
+            this.model.loadParams.context = context;
+            if (this.initialState.domain) {
+                this.initialState.domain = domain;
+            }
+            
+            this.update({domain: domain, context: context});
             
         } catch (error) {
             console.error('Error updating view with dates:', error);
         }
+        console.log('context', this.model.loadParams.context);
     },
 
     _onExport: function(){
