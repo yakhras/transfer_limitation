@@ -79,37 +79,23 @@ var ExportPdfButtonListController = ListController.extend({
         // Show/hide summary section based on date from value only
         const summarySection = this.$('.balance-summary-section');
 
-        if (dateFrom) {
-            this._updateViewWithDates(dateFrom, dateTo);
-            this._updateSummaryFromModel();
-            summarySection.show(); // Show summary only if date from exists
-            
-        } else {
-            summarySection.hide(); // Hide summary if no date from
+        if (!dateFrom) {
+            summarySection.hide();
+            await this._updateViewWithDates(null, null);
+            return;
         }
-        
-        // Validate date range
-        if (dateFrom && dateTo) {
-            if (new Date(dateTo) <= new Date(dateFrom)) {
-                $(ev.currentTarget).val('');
-                summarySection.hide(); // Hide on invalid date range
-                this.displayNotification({
-                    message: 'End date must be after start date',
-                    type: 'warning'
-                });
-                return;
-            }
-            
-            // Both dates valid - apply filter and show summary
-            this._updateViewWithDates(dateFrom, dateTo);
-        } else if (dateFrom || dateTo) {
-            // Only date from exists - apply partial filter and show summary
-            this._updateViewWithDates(dateFrom, dateTo);
+        summarySection.show();
+
+        if (dateTo && new Date(dateTo) <= new Date(dateFrom)) {
+            $(ev.currentTarget).val('');
+            summarySection.hide();
+            this.displayNotification({ message: 'End date must be after start date', type: 'warning' });
+            return;
         }
-        // If no date from, reset the filter and hide summary
-        else {
-            this._updateViewWithDates(null, null);
-        }
+
+        // await the update so the model actually contains initial_balance
+        await this._updateViewWithDates(dateFrom, dateTo);
+        await this._updateSummaryFromModel();
     },
     
 
@@ -142,7 +128,7 @@ var ExportPdfButtonListController = ListController.extend({
                 this.initialState.domain = domain;
             }
             
-            this.update({domain: domain, context: context});
+            return this.update({domain: domain, context: context});
             
             
         } catch (error) {
@@ -157,16 +143,13 @@ var ExportPdfButtonListController = ListController.extend({
         this.update({}, {reload: true});
         var state = this.model.get(this.handle);
         console.log('State Data:', state);
-        var records = state.data;
+        const records = (state && state.data) || [];
+        const initialBalance = records.length ? (records[0].data.initial_balance || 0) : 0;
         
-        if (records.length > 0) {
-            // Get initial_balance from first record (all should have same value for same partner)
-            var initialBalance = records[0].data.initial_balance;
-            console.log('Initial Balance:', initialBalance);
-            
-            // Update the template element
-            this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
-        }
+        console.log('Initial Balance:', initialBalance);
+        
+        // Update the template element
+        this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
         
     },
 
