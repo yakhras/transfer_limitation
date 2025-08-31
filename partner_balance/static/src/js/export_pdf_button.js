@@ -144,6 +144,7 @@ var ExportPdfButtonListController = ListController.extend({
             }
             
             this.update({domain: domain, context: context});
+            this.model.reload();
             this._updateSummaryFromModel();
             
         } catch (error) {
@@ -159,25 +160,15 @@ var ExportPdfButtonListController = ListController.extend({
         console.log('State Data:', state);
         var records = state.data;
         
-        // if (records.length > 0) {
-        //     // Get initial_balance from first record (all should have same value for same partner)
-        //     var initialBalance = records[0].data.initial_balance;
-        //     console.log('Initial Balance:', initialBalance);
+        if (records.length > 0) {
+            // Get initial_balance from first record (all should have same value for same partner)
+            var initialBalance = records[0].data.initial_balance;
+            console.log('Initial Balance:', initialBalance);
             
-        //     // Update the template element
-        //     // this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
-        // }
-        // const accountsData = await this.orm.call(
-        //         'cash.flow.dashboard',
-        //         'get_filtered_dashboard_data',
-        //         [],
-        //         {
-        //             period_type: this.state.period,
-        //             date_from: dateRange.date_from,
-        //             date_to: dateRange.date_to,
-        //             currencies: this.state.selectedCurrencies  // ADDED: Pass selected currencies
-        //         }
-        //     )
+            // Update the template element
+            this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
+        }
+        
     },
 
     _onExport: function(){
