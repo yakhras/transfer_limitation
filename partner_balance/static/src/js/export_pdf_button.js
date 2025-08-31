@@ -79,40 +79,38 @@ var ExportPdfButtonListController = ListController.extend({
         // Show/hide summary section based on date from value only
         const summarySection = this.$('.balance-summary-section');
 
-        // Enhanced version with consolidated logic
-        var self = this;
-
-        // Show/hide summary based on dateFrom only
         if (dateFrom) {
-            summarySection.show();
+            this._updateViewWithDates(dateFrom, dateTo);
+            this._updateSummaryFromModel();
+            summarySection.show(); // Show summary only if date from exists
+            
         } else {
-            summarySection.hide();
+            summarySection.hide(); // Hide summary if no date from
+        }
+        
+        // Validate date range
+        if (dateFrom && dateTo) {
+            if (new Date(dateTo) <= new Date(dateFrom)) {
+                $(ev.currentTarget).val('');
+                summarySection.hide(); // Hide on invalid date range
+                this.displayNotification({
+                    message: 'End date must be after start date',
+                    type: 'warning'
+                });
+                return;
+            }
+            
+            // Both dates valid - apply filter and show summary
+            this._updateViewWithDates(dateFrom, dateTo);
+        } else if (dateFrom || dateTo) {
+            // Only date from exists - apply partial filter and show summary
+            this._updateViewWithDates(dateFrom, dateTo);
+        }
+        // If no date from, reset the filter and hide summary
+        else {
             this._updateViewWithDates(null, null);
-            return;
         }
-
-        // Validate date range if both dates exist
-        if (dateFrom && dateTo && new Date(dateTo) <= new Date(dateFrom)) {
-            $(ev.currentTarget).val('');
-            summarySection.hide();
-            this.displayNotification({
-                message: 'End date must be after start date',
-                type: 'warning'
-            });
-            return;
-        }
-
-        // Update view and sync computed fields
-        this._updateViewWithDates(dateFrom, dateTo).then(function() {
-            setTimeout(function() {
-                self._updateSummaryFromModel();
-            }, 200);
-        }).catch(function(error) {
-            console.error('Error updating view:', error);
-            summarySection.hide();
-        });
     },
-
     
 
     _updateViewWithDates: function(dateFrom, dateTo) {
@@ -145,7 +143,7 @@ var ExportPdfButtonListController = ListController.extend({
             }
             
             this.update({domain: domain, context: context});
-            this._updateSummaryFromModel();
+            
             
         } catch (error) {
             console.error('Error updating view with dates:', error);
