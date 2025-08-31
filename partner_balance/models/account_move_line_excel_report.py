@@ -160,19 +160,40 @@ class AccountMoveLineReport(models.Model):
                 rec.balance_amount = rec.cumulated_balance_amount_currency
 
 
-    @api.depends('partner_id', 'date', 'move_id', 'balance')
+    # @api.depends('partner_id', 'date', 'move_id', 'balance')
+    # def _compute_cumulated_balance(self):
+    #     """
+    #     Compute the cumulated balance dynamically for each partner based on date + move + id ordering.
+    #     This version does NOT depend on context.
+    #     """
+    #     grouped = {}
+    #     for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
+    #         key = rec.partner_id.id
+    #         if key not in grouped:
+    #             grouped[key] = 0.0
+    #         grouped[key] += rec.balance
+    #         rec.cumulated_balance = grouped[key]
+
+    @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance')
     def _compute_cumulated_balance(self):
         """
-        Compute the cumulated balance dynamically for each partner based on date + move + id ordering.
-        This version does NOT depend on context.
+        Compute cumulated balance for each partner, starting with their initial_balance
+        (as computed from context date_from).
         """
+        # group lines by partner
         grouped = {}
-        for rec in sorted(self, key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)):
+        for rec in sorted(
+            self,
+            key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)
+        ):
             key = rec.partner_id.id
             if key not in grouped:
-                grouped[key] = 0.0
+                # seed with the partner's initial_balance
+                grouped[key] = rec.initial_balance or 0.0
+            # add current line balance
             grouped[key] += rec.balance
             rec.cumulated_balance = grouped[key]
+
 
 
     @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_currency')
