@@ -11,16 +11,16 @@
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_registered_user']" position="after">
                     
-                    <button name="action_view_move_line_report_currency"
+                    <!-- <button name="action_view_move_line_report_currency"
                     type="object"
                     string="View Currency Report"
                     class="btn-primary"
+                    attrs="{'invisible': [('is_company', '=', False)]}" /> -->
+                    <button name="action_view_move_line_report"
+                    type="object"
+                    string="View Report"
+                    class="btn-primary"
                     attrs="{'invisible': [('is_company', '=', False)]}" />
-                        <!-- <button name="action_view_move_line_report"
-                        type="object"
-                        string="View Report"
-                        class="btn-primary"
-                        attrs="{'invisible': [('is_company', '=', False)]}" /> -->
                 </xpath>
             </field>
         </record>
