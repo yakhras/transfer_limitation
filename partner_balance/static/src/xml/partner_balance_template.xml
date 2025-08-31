@@ -28,7 +28,6 @@
             <div class="balance-summary-section">
                 <div class="balance-summary-row">
                     <span class="summary-cell">Opening Balance:</span>
-                    <span class="summary-cell amount">$2,500,000.00</span>
                     <span class="summary-cell">Debit:</span>
                     <span class="summary-cell amount">$1,359,987.41</span>
                     <span class="summary-cell">Credit:</span>
