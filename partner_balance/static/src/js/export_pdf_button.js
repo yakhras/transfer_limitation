@@ -80,6 +80,12 @@ var ExportPdfButtonListController = ListController.extend({
         const summarySection = this.$('.balance-summary-section');
         if (dateFrom) {
             summarySection.show(); // Show summary only if date from exists
+            var self = this;
+        
+            // Update view first, then get computed values
+            this._updateViewWithDates(dateFrom, dateTo).then(function() {
+                self._updateSummaryFromModel();
+            });
         } else {
             summarySection.hide(); // Hide summary if no date from
         }
@@ -143,6 +149,19 @@ var ExportPdfButtonListController = ListController.extend({
             console.error('Error updating view with dates:', error);
         }
         console.log('context', this.model.loadParams.context);
+    },
+
+    _updateSummaryFromModel: function() {
+        var state = this.model.get(this.handle);
+        var records = state.data;
+        
+        if (records.length > 0) {
+            // Get initial_balance from first record (all should have same value for same partner)
+            var initialBalance = records[0].data.initial_balance;
+            
+            // Update the template element
+            this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
+        }
     },
 
     _onExport: function(){
