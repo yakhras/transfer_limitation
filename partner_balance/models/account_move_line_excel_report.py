@@ -287,12 +287,16 @@ class AccountMoveLineReport(models.Model):
             
         initial_balances = {}
 
-        # Aggregate balances before date_from
+        # Aggregate balances before date_from with journal filter
         self.env.cr.execute("""
-            SELECT partner_id, SUM(debit) - SUM(credit) as balance
-            FROM account_move_line_report
-            WHERE date < %s AND partner_id IN %s
-            GROUP BY partner_id
+            SELECT amlr.partner_id, SUM(amlr.debit) - SUM(amlr.credit) as balance
+            FROM account_move_line_report amlr
+            JOIN account_move am ON am.id = amlr.move_id
+            JOIN account_journal aj ON aj.id = am.journal_id
+            WHERE amlr.date < %s 
+            AND amlr.partner_id IN %s
+            AND aj.code != 'KRFRK'
+            GROUP BY amlr.partner_id
         """, (date_from, tuple(partners.ids)))
 
         for partner_id, total_balance in self.env.cr.fetchall():
@@ -301,7 +305,6 @@ class AccountMoveLineReport(models.Model):
         # Assign initial balances to records
         for rec in self:
             rec.initial_balance = initial_balances.get(rec.partner_id.id, 0.0)
-
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
