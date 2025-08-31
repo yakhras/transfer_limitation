@@ -113,43 +113,7 @@ var ExportPdfButtonListController = ListController.extend({
             this._updateViewWithDates(null, null);
         }
     },
-
-    // _updateViewWithDates: function(dateFrom, dateTo) {
-    //     try {
-    //         // Get domain from correct location
-    //         let domain = this.model.loadParams.domain || this.initialState.domain || [];
-    //         let context = this.model.loadParams.context || {};
-            
-    //         // Remove existing date filters
-    //         domain = domain.filter(filter => 
-    //             !Array.isArray(filter) || (filter[0] !== 'date' && filter[0] !== 'date_from' && filter[0] !== 'date_to')
-    //         );
-            
-    //         // Add new date filters
-    //         if (dateFrom) {
-    //             domain.push(['date', '>=', dateFrom]);
-    //         }
-    //         if (dateTo) {
-    //             domain.push(['date', '<=', dateTo]);
-    //         }
-            
-    //         context.date_from = dateFrom || null;  // Clear if empty
-    //         context.date_to = dateTo || null;    
-            
-    //         // Update both locations
-    //         this.model.loadParams.domain = domain;
-    //         this.model.loadParams.context = context;
-    //         if (this.initialState.domain) {
-    //             this.initialState.domain = domain;
-    //         }
-            
-    //         this.update({domain: domain, context: context});
-            
-    //     } catch (error) {
-    //         console.error('Error updating view with dates:', error);
-    //     }
-    //     console.log('context', this.model.loadParams.context);
-    // },
+    
 
     _updateViewWithDates: function(dateFrom, dateTo) {
         try {
@@ -170,7 +134,7 @@ var ExportPdfButtonListController = ListController.extend({
                 domain.push(['date', '<=', dateTo]);
             }
             
-            context.date_from = dateFrom || null;
+            context.date_from = dateFrom || null;  // Clear if empty
             context.date_to = dateTo || null;    
             
             // Update both locations
@@ -180,17 +144,19 @@ var ExportPdfButtonListController = ListController.extend({
                 this.initialState.domain = domain;
             }
             
-            return this.update({domain: domain, context: context}); // Add return here
+            this.update({domain: domain, context: context});
             
         } catch (error) {
             console.error('Error updating view with dates:', error);
-            return Promise.resolve(); // Return resolved promise on error
         }
         console.log('context', this.model.loadParams.context);
     },
 
+    
+
     _updateSummaryFromModel: function() {
         var state = this.model.get(this.handle);
+        console.log('State Data:', state);
         var records = state.data;
         
         if (records.length > 0) {
@@ -201,6 +167,17 @@ var ExportPdfButtonListController = ListController.extend({
             // Update the template element
             // this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
         }
+        // const accountsData = await this.orm.call(
+        //         'cash.flow.dashboard',
+        //         'get_filtered_dashboard_data',
+        //         [],
+        //         {
+        //             period_type: this.state.period,
+        //             date_from: dateRange.date_from,
+        //             date_to: dateRange.date_to,
+        //             currencies: this.state.selectedCurrencies  // ADDED: Pass selected currencies
+        //         }
+        //     )
     },
 
     _onExport: function(){
