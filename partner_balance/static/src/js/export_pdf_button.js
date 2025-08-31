@@ -104,14 +104,15 @@ var ExportPdfButtonListController = ListController.extend({
 
         // Update view and sync computed fields
         this._updateViewWithDates(dateFrom, dateTo).then(function() {
-            return self.model.reload();
-        }).then(function() {
-            self._updateSummaryFromModel();
+            setTimeout(function() {
+                self._updateSummaryFromModel();
+            }, 200);
         }).catch(function(error) {
             console.error('Error updating view:', error);
             summarySection.hide();
         });
     },
+
     
 
     _updateViewWithDates: function(dateFrom, dateTo) {
