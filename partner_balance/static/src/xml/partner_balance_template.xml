@@ -25,24 +25,19 @@
                 <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
             </div>
 
-            <tbody class="balance-summary-section">
-                <tr class="balance-summary-row">
-                    <td class="o_list_record_selector">
-                        <div class="o_list_record_check">
-                            <input type="checkbox" disabled="true"/>
-                        </div>
-                    </td>
-                    <td class="summary-cell muted">SUMMARY</td>
-                    <td class="summary-cell muted">--</td>
-                    <td class="summary-cell muted">Period Summary</td>
-                    <td class="summary-cell summary-note">Invoices: +$1.36M | Payments: -$3.62M</td>
-                    <td class="summary-cell amount">$1,359,987.41</td>
-                    <td class="summary-cell amount">$3,617,000.00</td>
-                    <td class="summary-cell amount final-balance">$242,987.41</td>
-                    <td class="summary-cell amount negative">-$2,257,012.59</td>
-                    <td class="summary-cell center">USD</td>
-                </tr>
-            </tbody>
+            <div class="balance-summary-section">
+                <div class="balance-summary-row">
+                    <span class="summary-cell muted">SUMMARY</span>
+                    <span class="summary-cell muted">--</span>
+                    <span class="summary-cell muted">Period Summary</span>
+                    <span class="summary-cell summary-note">Invoices: +$1.36M | Payments: -$3.62M</span>
+                    <span class="summary-cell amount">$1,359,987.41</span>
+                    <span class="summary-cell amount">$3,617,000.00</span>
+                    <span class="summary-cell amount final-balance">$242,987.41</span>
+                    <span class="summary-cell amount negative">-$2,257,012.59</span>
+                    <span class="summary-cell center">USD</span>
+                </div>
+            </div>
 
         </div>
     </t>
