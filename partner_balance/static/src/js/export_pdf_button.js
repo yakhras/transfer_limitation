@@ -142,7 +142,7 @@ var ExportPdfButtonListController = ListController.extend({
                 this.initialState.domain = domain;
             }
             
-            this.update({domain: domain, context: context, reload: true});
+            this.update({domain: domain, context: context});
             
             
         } catch (error) {
@@ -154,6 +154,7 @@ var ExportPdfButtonListController = ListController.extend({
     
 
     _updateSummaryFromModel: function() {
+        this.update({}, {reload: true});
         var state = this.model.get(this.handle);
         console.log('State Data:', state);
         var records = state.data;
