@@ -115,7 +115,6 @@ var ExportPdfButtonListController = ListController.extend({
 
     _updateViewWithDates: function(dateFrom, dateTo) {
         try {
-            console.log('param',this.model.get(this.handle))
             // Get domain from correct location
             let domain = this.model.loadParams.domain || this.initialState.domain || [];
             let context = this.model.loadParams.context || {};
@@ -165,7 +164,7 @@ var ExportPdfButtonListController = ListController.extend({
             console.log('Initial Balance:', initialBalance);
             
             // Update the template element
-            // this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
+            this.$('.summary-cell.final-balance').text('$' + initialBalance.toFixed(2));
         }
         
     },
