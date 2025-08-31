@@ -84,7 +84,7 @@ var ExportPdfButtonListController = ListController.extend({
         
             // Update view first, then get computed values
             this._updateViewWithDates(dateFrom, dateTo);
-            this._updateSummaryFromModel();
+            
         } else {
             summarySection.hide(); // Hide summary if no date from
         }
@@ -144,6 +144,7 @@ var ExportPdfButtonListController = ListController.extend({
             }
             
             this.update({domain: domain, context: context});
+            this._updateSummaryFromModel();
             
         } catch (error) {
             console.error('Error updating view with dates:', error);
