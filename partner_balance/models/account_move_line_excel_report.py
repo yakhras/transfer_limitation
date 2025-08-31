@@ -160,7 +160,6 @@ class AccountMoveLineReport(models.Model):
                 rec.balance_amount = rec.cumulated_balance_amount_currency
 
 
-
     @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance')
     def _compute_cumulated_balance(self):
         """
