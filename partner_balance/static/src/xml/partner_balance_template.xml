@@ -27,15 +27,14 @@
 
             <div class="balance-summary-section">
                 <div class="balance-summary-row">
-                    <span class="summary-cell muted">SUMMARY</span>
-                    <span class="summary-cell muted">--</span>
-                    <span class="summary-cell muted">Period Summary</span>
-                    <span class="summary-cell summary-note">Invoices: +$1.36M | Payments: -$3.62M</span>
+                    <span class="summary-cell">Opening Balance:</span>
+                    <span class="summary-cell amount">$2,500,000.00</span>
+                    <span class="summary-cell">Debit:</span>
                     <span class="summary-cell amount">$1,359,987.41</span>
+                    <span class="summary-cell">Credit:</span>
                     <span class="summary-cell amount">$3,617,000.00</span>
+                    <span class="summary-cell">Balance:</span>
                     <span class="summary-cell amount final-balance">$242,987.41</span>
-                    <span class="summary-cell amount negative">-$2,257,012.59</span>
-                    <span class="summary-cell center">USD</span>
                 </div>
             </div>
 
