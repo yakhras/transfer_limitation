@@ -187,7 +187,12 @@ var ExportPdfButtonListController = ListController.extend({
             var activeClass = index === 0 ? 'active' : '';
             tabsHtml += `<div class="currency-tab ${activeClass}" data-currency="${curr.name}">${curr.name}</div>`;
             contentHtml += `<div class="currency-content ${activeClass}" data-currency="${curr.name}">
-                <!-- Currency specific content -->
+                <div class="balance-summary-row">
+                    <span class="summary-cell">Opening Balance:</span>
+                    <span class="summary-cell amount">${curr.name} 0.00</span>
+                    <span class="summary-cell">Balance:</span>
+                    <span class="summary-cell amount">${curr.name} 0.00</span>
+                </div>
             </div>`;
         });
         
