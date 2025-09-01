@@ -69,12 +69,12 @@ var ExportPdfButtonListController = ListController.extend({
         'change .date-input': '_onDateChange',
     }),
 
-    start: function () {
-        var self = this;
-        return this._super.apply(this, arguments).then(function() {
-            self._setupSummaryDisplay();
-        });
-    },
+    // start: function () {
+    //     var self = this;
+    //     return this._super.apply(this, arguments).then(function() {
+    //         self._setupSummaryDisplay();
+    //     });
+    // },
 
     _setupSummaryDisplay: function() {
         var context = this.model.loadParams.context || {};
@@ -106,8 +106,6 @@ var ExportPdfButtonListController = ListController.extend({
         // Get both date values
         const dateFrom = this.$('.date-input[data-field-name="date_from"]').val();
         const dateTo = this.$('.date-input[data-field-name="date_to"]').val();
-        
-        // Show/hide summary section based on date from value only
         const summarySection = this.$('.balance-summary-section');
 
         if (!dateFrom) {
@@ -119,6 +117,7 @@ var ExportPdfButtonListController = ListController.extend({
             }
             return;
         }
+        // summarySection.show();
 
         if (dateTo && new Date(dateTo) <= new Date(dateFrom)) {
             $(ev.currentTarget).val('');
