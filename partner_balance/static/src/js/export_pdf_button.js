@@ -76,6 +76,13 @@ var ExportPdfButtonListController = ListController.extend({
         
         console.log('Selected currency:', currencyName);
         
+        // Update active tab visual state
+        this.$('.currency-tab').removeClass('active');
+        $clickedTab.addClass('active');
+        
+        // Update active content
+        // this.$('.currency-content').removeClass('active');
+        // this.$('.currency-content[data-currency="' + currencyName + '"]').addClass('active');
     },
 
     _setupSummaryDisplay: function() {
