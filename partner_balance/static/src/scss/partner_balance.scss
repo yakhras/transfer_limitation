@@ -354,6 +354,233 @@
 // }
 
 
+// /* Design System Variables */
+// :root {
+//   --border-radius: 6px;
+//   --border-color: #d1d5db;
+//   --bg-primary: white;
+//   --bg-secondary: #f8fafc;
+//   --bg-accent: #f0f9ff;
+//   --text-primary: #1f2937;
+//   --text-secondary: #6b7280;
+//   --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+//   --transition: all 0.2s ease;
+// }
+
+// /* Main Toolbar Container */
+// .toolbar {
+//   display: flex;
+//   align-items: center;
+//   gap: 16px;
+//   flex-wrap: nowrap;
+//   background: var(--bg-primary);
+//   padding: 8px 16px;
+//   border: 1px solid var(--border-color);
+//   border-radius: var(--border-radius);
+//   box-shadow: var(--shadow-sm);
+//   margin-bottom: 0;
+//   max-width: 100%;
+//   box-sizing: border-box;
+//   overflow: visible;
+// }
+
+// /* Export Buttons Group */
+// .export-btn-group {
+//   display: flex;
+//   gap: 4px;
+//   padding: 2px;
+//   background: var(--bg-secondary);
+//   border-radius: var(--border-radius);
+//   border: 1px solid var(--border-color);
+//   flex-shrink: 0;
+// }
+
+// .export-btn-group .btn-icon {
+//   width: 32px;
+//   height: 32px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   border-radius: calc(var(--border-radius) - 2px);
+//   background: var(--bg-primary);
+//   border: none;
+//   transition: var(--transition);
+//   cursor: pointer;
+//   flex-shrink: 0;
+// }
+
+// .export-btn-group .btn-pdf i {
+//   color: #dc2626;
+//   font-size: 14px;
+// }
+
+// .export-btn-group .btn-xlsx i {
+//   color: #059669;
+//   font-size: 14px;
+// }
+
+// .export-btn-group .btn-icon:hover {
+//   background: var(--bg-accent);
+//   transform: translateY(-1px);
+//   box-shadow: var(--shadow-sm);
+// }
+
+// /* Date Range Section */
+// .date-range {
+//   display: flex;
+//   align-items: center;
+//   gap: 8px;
+//   padding: 6px 12px;
+//   background: var(--bg-secondary);
+//   border: 1px solid var(--border-color);
+//   border-radius: var(--border-radius);
+//   flex-shrink: 0;
+//   white-space: nowrap;
+// }
+
+// .date-range label {
+//   font-weight: 600;
+//   font-size: 13px;
+//   color: var(--text-primary);
+//   margin: 0;
+//   flex-shrink: 0;
+// }
+
+// .date-input {
+//   height: 32px;
+//   width: 110px;
+//   padding: 4px 8px;
+//   border: 1px solid var(--border-color);
+//   border-radius: calc(var(--border-radius) - 2px);
+//   font-size: 13px;
+//   background: var(--bg-primary);
+//   transition: var(--transition);
+//   flex-shrink: 0;
+//   box-sizing: border-box;
+// }
+
+// .date-input:focus {
+//   outline: none;
+//   border-color: #3b82f6;
+//   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+// }
+
+// .date-input::placeholder {
+//   color: var(--text-secondary);
+//   font-size: 12px;
+// }
+
+// /* Currency Report Button */
+// .btn-currency.o_currency_report {
+//   display: flex;
+//   align-items: center;
+//   gap: 6px;
+//   padding: 6px 12px;
+//   height: 32px;
+//   background: var(--bg-primary);
+//   border: 1px solid var(--border-color);
+//   border-radius: var(--border-radius);
+//   font-size: 13px;
+//   font-weight: 500;
+//   color: var(--text-primary);
+//   cursor: pointer;
+//   transition: var(--transition);
+//   white-space: nowrap;
+//   flex-shrink: 0;
+//   text-decoration: none;
+// }
+
+// .btn-currency.o_currency_report i {
+//   color: #0ea5e9;
+//   font-size: 14px;
+//   flex-shrink: 0;
+// }
+
+// .btn-currency.o_currency_report:hover {
+//   background: var(--bg-accent);
+//   border-color: #0ea5e9;
+//   color: #0369a1;
+//   text-decoration: none;
+// }
+
+// /* Completely Hide Balance Summary Section */
+// .balance-summary-section {
+//   display: none !important;
+//   visibility: hidden !important;
+//   height: 0 !important;
+//   width: 0 !important;
+//   margin: 0 !important;
+//   padding: 0 !important;
+//   border: none !important;
+//   overflow: hidden !important;
+//   position: absolute !important;
+//   left: -9999px !important;
+// }
+
+// /* Single Row Summary - Hidden */
+// .single-row-summary {
+//   display: none !important;
+//   visibility: hidden !important;
+// }
+
+// /* Currency Tabs - Hidden */
+// .currency-tabs-container,
+// .horizontal-layout,
+// .tabs-wrapper,
+// .content-wrapper,
+// .currency-tab,
+// .currency-content {
+//   display: none !important;
+//   visibility: hidden !important;
+// }
+
+// /* Remove any spacing from hidden elements */
+// .balance-summary-section,
+// .balance-summary-section + *,
+// .balance-summary-section ~ * {
+//   margin: 0 !important;
+//   padding: 0 !important;
+// }
+
+// /* Responsive Adjustments */
+// @media (max-width: 768px) {
+//   .toolbar {
+//     flex-wrap: wrap;
+//     gap: 12px;
+//   }
+  
+//   .date-input {
+//     width: 100px;
+//   }
+  
+//   .btn-currency.o_currency_report {
+//     padding: 6px 8px;
+//     font-size: 12px;
+//   }
+// }
+
+// /* Focus States */
+// .export-btn-group .btn-icon:focus,
+// .date-input:focus,
+// .btn-currency.o_currency_report:focus {
+//   outline: 2px solid #3b82f6;
+//   outline-offset: 2px;
+// }
+
+// /* Ensure proper spacing in parent containers */
+// .o_content > *:not(.balance-summary-section) {
+//   margin-bottom: 0;
+// }
+
+// /* Fix any layout shifts */
+// .toolbar + * {
+//   margin-top: 0;
+// }
+
+
+
+
+
 /* Design System Variables */
 :root {
   --border-radius: 6px;
@@ -382,6 +609,21 @@
   max-width: 100%;
   box-sizing: border-box;
   overflow: visible;
+  justify-content: flex-start;
+  width: max-content;  /* shrink to fit content; prevents large blank area */
+}
+
+/* Keep every item to its natural width */
+.toolbar > * {
+  flex: 0 0 auto !important;
+}
+
+/* Remove any auto spacers/growers some views add */
+.toolbar .flex-grow-1,
+.toolbar .o-flex-grow,
+.toolbar .o-spacer,
+.toolbar .spacer {
+  display: none !important;
 }
 
 /* Export Buttons Group */
@@ -503,71 +745,86 @@
   text-decoration: none;
 }
 
-/* Completely Hide Balance Summary Section */
+/* ===== Visible Balance Summary Section (compact) ===== */
 .balance-summary-section {
-  display: none !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  width: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  overflow: hidden !important;
-  position: absolute !important;
-  left: -9999px !important;
+  display: inline-flex;                /* visible now */
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  height: 32px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  white-space: nowrap;
+  flex: 0 0 auto;                      /* do not grow */
 }
 
-/* Single Row Summary - Hidden */
-.single-row-summary {
-  display: none !important;
-  visibility: hidden !important;
-}
-
-/* Currency Tabs - Hidden */
+/* Currency tabs inside the summary */
 .currency-tabs-container,
 .horizontal-layout,
 .tabs-wrapper,
-.content-wrapper,
-.currency-tab,
-.currency-content {
-  display: none !important;
-  visibility: hidden !important;
+.content-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
 }
 
-/* Remove any spacing from hidden elements */
-.balance-summary-section,
-.balance-summary-section + *,
-.balance-summary-section ~ * {
-  margin: 0 !important;
-  padding: 0 !important;
+/* Tab buttons */
+.currency-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  border-radius: calc(var(--border-radius) - 2px);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition);
+  flex: 0 0 auto;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .toolbar {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  
-  .date-input {
-    width: 100px;
-  }
-  
-  .btn-currency.o_currency_report {
-    padding: 6px 8px;
-    font-size: 12px;
-  }
+.currency-tab.is-active,
+.currency-tab.active,
+.currency-tab[aria-selected="true"] {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
 }
 
-/* Focus States */
-.export-btn-group .btn-icon:focus,
-.date-input:focus,
-.btn-currency.o_currency_report:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
+.currency-tab:hover {
+  background: var(--bg-accent);
 }
 
-/* Ensure proper spacing in parent containers */
+/* The numbers/text */
+.currency-content,
+.single-row-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.balance-summary-section .label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 2px;
+}
+
+.balance-summary-section .value,
+.balance-summary-section .amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* Remove any spacing from hidden/previously-hidden siblings */
 .o_content > *:not(.balance-summary-section) {
   margin-bottom: 0;
 }
@@ -575,4 +832,26 @@
 /* Fix any layout shifts */
 .toolbar + * {
   margin-top: 0;
+}
+
+/* Focus States */
+.export-btn-group .btn-icon:focus,
+.date-input:focus,
+.btn-currency.o_currency_report:focus,
+.currency-tab:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .toolbar {
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;           /* allow wrap on small screens */
+  }
+  .date-input { width: 100px; }
+  .btn-currency.o_currency_report { padding: 6px 8px; font-size: 12px; }
+  .balance-summary-section { gap: 8px; padding: 6px 10px; }
+  .currency-tab { height: 28px; padding: 0 8px; }
 }
