@@ -136,12 +136,11 @@ var ExportPdfButtonListController = ListController.extend({
     },
     
     _getAvailableCurrencies: function() {
+        var context = this.model.loadParams.context || {};
         var state = this.model.get(this.handle);
         var currencies = [];
-        
-        if (state.groupedBy && state.groupedBy.includes('currency_id')) {
-            console.log('currency', state.groupsCount);
-            // If grouped by currency, get from group data
+
+        if (context.group_by === 'currency_id' || context.action_name === 'Statement Currency-based of Account') {
             state.data.forEach(function(group) {
                 if (group.res_id && group.value) {
                     currencies.push({
@@ -152,16 +151,11 @@ var ExportPdfButtonListController = ListController.extend({
                 
             });
         } else {
-            // If not grouped, get unique currencies from records
-            var currencySet = new Set();
-            state.data.forEach(function(record) {
-                if (record.data.currency_id) {
-                    currencySet.add(record.data.currency_id.data.display_name);
-                }
-            });
-            currencies = Array.from(currencySet).map(function(curr) {
-                return { name: curr };
-            });
+            // If not grouped by currency, default to company currency
+                currencies.push({
+                    id: 31,
+                    name: 'TRY', // Currency code
+                });
         }
         console.log('Available Currencies:', currencies);
         
