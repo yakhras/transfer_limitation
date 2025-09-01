@@ -38,13 +38,13 @@
                     <span class="summary-cell amount final-balance">$242,987.41</span>
                 </div>
 
-                <div class="currency-tabs-container">
-                    <!-- Currency Tabs -->
+                <!-- <div class="currency-tabs-container">
+                    Currency Tabs
                     <div class="currency-tabs">
                         <div class="currency-tab active" data-currency="USD">USD</div>
                         <div class="currency-tab" data-currency="TRY">TRY</div>
                         <div class="currency-tab" data-currency="EUR">EUR</div>
-                    </div>
+                    </div> -->
                     
                     <!-- Tab Content -->
                     <!-- <div class="currency-tab-content">
