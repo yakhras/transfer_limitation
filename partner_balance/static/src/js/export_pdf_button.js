@@ -140,6 +140,7 @@ var ExportPdfButtonListController = ListController.extend({
         var currencies = [];
         
         if (state.groupedBy && state.groupedBy.includes('currency_id')) {
+            console.log('currency', state.groupsCount);
             // If grouped by currency, get from group data
             state.data.forEach(function(group) {
                 if (group.res_id && group.displayName) {
@@ -149,7 +150,7 @@ var ExportPdfButtonListController = ListController.extend({
                         symbol: group.symbol || group.displayName
                     });
                 }
-                console.log('currency', currencies);
+                
             });
         } else {
             // If not grouped, get unique currencies from records
