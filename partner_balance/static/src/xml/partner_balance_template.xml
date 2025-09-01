@@ -25,7 +25,7 @@
                 <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
             </div>
 
-            <button class="btn btn-icon btn-xlsx o_button_excel" type="button" title="Currency Report">
+            <button class="btn btn-icon btn-xlsx o_currency_report" type="button" title="Currency Report">
             <i class="fa fa-file-excel-o"></i>
             </button>
 

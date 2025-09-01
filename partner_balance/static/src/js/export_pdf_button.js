@@ -65,7 +65,7 @@ var ExportPdfButtonListController = ListController.extend({
     events: _.extend({}, ListController.prototype.events, {
         'click .o_button_pdf': '_onPdf',
         'click .o_button_excel': '_onExcel',
-
+        'click .o_currency_report': '_onCurrency',
         'change .date-input': '_onDateChange',
     }),
 
@@ -198,24 +198,19 @@ var ExportPdfButtonListController = ListController.extend({
             domain, this.getSelectedIds());
     },
 
-    _onPdf: function () {
-        console.log('Exporting to PDF');
+    _onCurrency: function () {
 
         const ctx = this.model?.loadParams?.context || {};
         const partner_id = ctx.default_partner_id;
         if (!partner_id) {
-            console.error('No partner ID found');
             return;
         }
 
         this.do_action('partner_balance.action_partner_move_line_currency', {
             additional_context: {
-                // let the XML action's domain use this
                 active_id: partner_id,
                 active_ids: [partner_id],
                 active_model: 'res.partner',
-
-                // optional extras shown in the action title/search context
                 default_partner_id: partner_id,
                 partner_name: ctx.partner_name || '',
                 action_name: 'Statement Currency-based of Account',
