@@ -221,7 +221,7 @@ var ExportPdfButtonListController = ListController.extend({
                 action_name: 'Statement Currency-based of Account',
             },
         });
-    }
+    },
 
 
 
