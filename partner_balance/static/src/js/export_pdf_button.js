@@ -73,7 +73,6 @@ var ExportPdfButtonListController = ListController.extend({
         var self = this;
         return this._super.apply(this, arguments).then(function() {
             self._setupSummaryDisplay();
-            self.$('.balance-summary-section').hide(); // Initially hidden
         });
     },
 
@@ -121,6 +120,7 @@ var ExportPdfButtonListController = ListController.extend({
             return;
         }
         summarySection.show();
+        this._setupSummaryDisplay();
 
         if (dateTo && new Date(dateTo) <= new Date(dateFrom)) {
             $(ev.currentTarget).val('');
