@@ -26,7 +26,7 @@
             </div>
 
             <button class="btn btn-icon btn-currency o_currency_report" type="button" title="Currency Report">
-                <i class="fa fa-exchange"></i>
+                <i class="fa fa-exchange"></i> Currency Report
             </button>
 
             <div class="balance-summary-section">
