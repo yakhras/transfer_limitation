@@ -143,11 +143,10 @@ var ExportPdfButtonListController = ListController.extend({
             console.log('currency', state.groupsCount);
             // If grouped by currency, get from group data
             state.data.forEach(function(group) {
-                if (group.res_id && group.displayName) {
+                if (group.res_id && group.value) {
                     currencies.push({
                         id: group.res_id,
-                        name: group.displayName, // Currency code like 'USD', 'TRY'
-                        symbol: group.symbol || group.displayName
+                        name: group.value, // Currency code like 'USD', 'TRY'
                     });
                 }
                 
@@ -164,6 +163,7 @@ var ExportPdfButtonListController = ListController.extend({
                 return { name: curr, symbol: curr };
             });
         }
+        console.log('Available Currencies:', currencies);
         
         return currencies;
     },
