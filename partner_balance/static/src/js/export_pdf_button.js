@@ -74,7 +74,7 @@ var ExportPdfButtonListController = ListController.extend({
         var $clickedTab = $(ev.currentTarget);
         var currencyName = $clickedTab.data('currency');
         
-        console.log('Selected currency:', $clickedTab.data);
+        console.log('Selected currency:', currencyName);
         
         // Update active tab visual state
         this.$('.currency-tab').removeClass('active');
