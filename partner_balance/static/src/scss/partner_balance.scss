@@ -112,6 +112,8 @@
     color: #6b7280;
 }
 
-.o_currency_view .o_currency_report {
-    display: none !important;
-}
+.currency-tabs { display: flex; gap: 2px; margin-bottom: 10px; }
+.currency-tab { padding: 6px 12px; background: #e5e7eb; border-radius: 4px 4px 0 0; cursor: pointer; }
+.currency-tab.active { background: #3b82f6; color: white; }
+.currency-content { display: none; }
+.currency-content.active { display: block; }
