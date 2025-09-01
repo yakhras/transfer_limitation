@@ -128,8 +128,8 @@ var ExportPdfButtonListController = ListController.extend({
 
         // await the update so the model actually contains initial_balance
         await this._updateViewWithDates(dateFrom, dateTo);
-        this._buildCurrencyTabs();
-        this._setupSummaryDisplay();
+        await this._buildCurrencyTabs();
+        await this._setupSummaryDisplay();
         await this._updateSummaryFromModel();
     },
     
