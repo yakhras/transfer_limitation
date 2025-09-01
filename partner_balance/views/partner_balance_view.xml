@@ -10,12 +10,6 @@
             <field name="inherit_id" ref="l10n_tr_base_ubl.view_partner_form_esolutions"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_registered_user']" position="after">
-                    
-                    <!-- <button name="action_view_move_line_report_currency"
-                    type="object"
-                    string="View Currency Report"
-                    class="btn-primary"
-                    attrs="{'invisible': [('is_company', '=', False)]}" /> -->
                     <button name="action_view_move_line_report"
                     type="object"
                     string="View Report"
@@ -88,7 +82,7 @@
             </field>
         </record>
 
-        
+
         <!-- Action for Currency-based Report -->
         <record id="action_partner_move_line_currency" model="ir.actions.act_window">
             <field name="name">Statement Currency-based of Account</field>

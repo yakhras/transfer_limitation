@@ -3,8 +3,6 @@ from odoo import models, fields, api, _
 from odoo.tools import float_round
 from odoo import tools
 from io import BytesIO
-import xlsxwriter
-import base64
 from datetime import datetime
 
 
@@ -18,36 +16,35 @@ class AccountMoveLineReport(models.Model):
     # name = fields.Char(string='Note', readonly=True)
     amount_currency = fields.Monetary(string='Amount Currency', readonly=True)
     currency_id = fields.Many2one('res.currency', string='Original Currency', readonly=True)
-    debit = fields.Monetary(string='Debit', readonly=True, currency_field='company_currency_id')
-    credit = fields.Monetary(string='Credit', readonly=True, currency_field='company_currency_id')
-    balance = fields.Monetary(string='Balance', readonly=True)
-
-    # Adjusted fields
-    reference = fields.Char(string="Reference", readonly=True)  # will hold am.name
-    note = fields.Char(string="Note", readonly=True)            # will hold am.ref
-    type = fields.Char(string='Type', readonly=True)
-
-    initial_balance = fields.Monetary(string='Initial Balance', compute='_compute_initial_balance', store=False, currency_field='company_currency_id')
-
-
-    # Computed instead of SQL
-    cumulated_balance = fields.Monetary(string='Cumulated Balance', compute='_compute_cumulated_balance', store=False, currency_field='company_currency_id')
-
-    cumulated_balance_amount_currency = fields.Monetary(string='Cumulated Amount Currency', compute='_compute_cumulated_amount_currency', store=False, currency_field='company_currency_id')
-
     partner_id = fields.Many2one('res.partner', string='Partner', readonly=True)
     account_id = fields.Many2one('account.account', string='Account', readonly=True)
     company_id = fields.Many2one('res.company', string='Company', readonly=True)
     company_currency_id = fields.Many2one('res.currency', string='Company Currency', readonly=True)
 
+    reference = fields.Char(string="Reference", readonly=True)
+    note = fields.Char(string="Note", readonly=True)
+    type = fields.Char(string='Type', readonly=True)
+
+    # For Normal Report in Company Currency
+    debit = fields.Monetary(string='Debit', readonly=True, currency_field='company_currency_id')
+    credit = fields.Monetary(string='Credit', readonly=True, currency_field='company_currency_id')
+    balance = fields.Monetary(string='Balance', readonly=True)
+    cumulated_balance = fields.Monetary(string='Cumulated Balance', compute='_compute_cumulated_balance', store=False, currency_field='company_currency_id')
+
+    # For Original Currency Report
     debit_amount = fields.Monetary(string='Debit Amount', compute='_compute_debit_amount', currency_field='currency_id', store=False)
     credit_amount = fields.Monetary(string='Credit Amount', compute='_compute_credit_amount', currency_field='currency_id', store=False)
+    cumulated_balance_amount_currency = fields.Monetary(string='Cumulated Amount Currency', compute='_compute_cumulated_amount_currency', store=False, currency_field='company_currency_id')
     balance_amount = fields.Monetary(string='Balance Amount', compute='_compute_balance_amount', currency_field='currency_id', store=False)
 
-
+    # For USD Value Report
     usd_rate_display = fields.Char('Rate Display', compute='_compute_usd_value')
     usd_value = fields.Monetary('USD Value', compute='_compute_usd_value', currency_field='currency_id')
     cumulated_usd_value = fields.Monetary('Cumulated USD Value', compute='_compute_cumulated_usd_value', currency_field='currency_id')
+
+    # Initial Balance for Cumulation
+    initial_balance = fields.Monetary(string='Initial Balance', compute='_compute_initial_balance', store=False, currency_field='company_currency_id')
+    
 
 
 
@@ -312,6 +309,8 @@ class AccountMoveLineReport(models.Model):
         # Assign initial balances to records
         for rec in self:
             rec.initial_balance = initial_balances.get(rec.partner_id.id, 0.0)
+
+
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
