@@ -200,21 +200,29 @@ var ExportPdfButtonListController = ListController.extend({
 
     _onPdf: function () {
         console.log('Exporting to PDF');
-        
-        var partner_id = this.model.loadParams.context.default_partner_id;
+
+        const partner_id = this.model.loadParams.context.default_partner_id;
         if (!partner_id) {
             console.error('No partner ID found');
             return;
         }
-        
+
         this._rpc({
             model: 'res.partner',
             method: 'action_view_move_line_report_currency',
-            args: [partner_id],
+            // ⬇️ record method => pass a list of ids
+            args: [[partner_id]],
         }).then(action => {
+            if (!action) {
+                console.error('Server returned no action');
+                return;
+            }
             this.do_action(action);
+        }).catch(err => {
+            console.error('RPC error:', err);
         });
     },
+
 
 
     _onExcel: function () {
