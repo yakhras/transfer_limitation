@@ -186,14 +186,16 @@ var ExportPdfButtonListController = ListController.extend({
         currencies.forEach(function(curr, index) {
             var activeClass = index === 0 ? 'active' : '';
             tabsHtml += `<div class="currency-tab ${activeClass}" data-currency="${curr.name}">${curr.name}</div>`;
-            contentHtml += `<div class="currency-content ${activeClass}" data-currency="${curr.name}">
-                <div class="balance-summary-row">
-                    <span class="summary-cell">Opening Balance:</span>
-                    <span class="summary-cell amount">${curr.name} 0.00</span>
-                    <span class="summary-cell">Balance:</span>
-                    <span class="summary-cell amount">${curr.name} 0.00</span>
+            contentHtml = `
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div style="display: flex; gap: 5px;">
+                    ${tabsHtml}
                 </div>
-            </div>`;
+                <div style="flex: 1;">
+                    ${contentHtml}
+                </div>
+            </div>
+            `;
         });
         
         this.$('.currency-tabs').html(tabsHtml);
