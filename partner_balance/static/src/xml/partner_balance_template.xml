@@ -5,8 +5,8 @@
 <t t-extend="ListView.buttons" t-name="PartnerBalance.Buttons">
     <t t-jquery="button.o_list_export_xlsx" t-operation="after">
         <!-- Export Buttons with Icons -->
-        <div class="toolbar">
-            <!-- Export Buttons -->
+        <!-- <div class="toolbar">
+            Export Buttons
             <div class="btn-group export-btn-group" role="group">
                 <button class="btn btn-icon btn-pdf o_button_pdf" type="button" title="Export to PDF">
                 <i class="fa fa-file-pdf-o"></i>
@@ -16,7 +16,7 @@
                 </button>
             </div>
 
-            <!-- Date Filters -->
+            Date Filters
             <div class="date-range">
                 <label>From:</label>
                 <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_from" autocomplete="off" />
@@ -29,19 +29,8 @@
                 <i class="fa fa-exchange"></i> Currency Report
             </button>
 
-            <!-- <div class="balance-summary-section">
-                <div class="balance-summary-row">
-                    <span class="summary-cell">Opening Balance:</span>
-                    <span class="summary-cell">Debit:</span>
-                    <span class="summary-cell amount">$1,359,987.41</span>
-                    <span class="summary-cell">Credit:</span>
-                    <span class="summary-cell amount">$3,617,000.00</span>
-                    <span class="summary-cell">Balance:</span>
-                    <span class="summary-cell amount final-balance">$242,987.41</span>
-                </div>
-            </div> -->
 
-            <!-- Balance Summary Section with Currency Tabs -->
+            Balance Summary Section with Currency Tabs
             <div class="balance-summary-section">
 
                 <div class="single-row-summary">
@@ -56,16 +45,16 @@
                 </div>
 
                 <div class="currency-tabs-container">
-                    <!-- Currency Tabs -->
+                    Currency Tabs
                     <div class="currency-tabs">
                         <div class="currency-tab active" data-currency="USD">USD</div>
                         <div class="currency-tab" data-currency="TRY">TRY</div>
                         <div class="currency-tab" data-currency="EUR">EUR</div>
                     </div>
                     
-                    <!-- Tab Content -->
+                    Tab Content
                     <div class="currency-tab-content">
-                        <!-- USD Content (default active) -->
+                        USD Content (default active)
                         <div class="currency-content active" data-currency="USD">
                             <div class="balance-summary-row">
                                 <span class="summary-cell">Opening Balance:</span>
@@ -79,7 +68,7 @@
                             </div>
                         </div>
                         
-                        <!-- TRY Content -->
+                        TRY Content
                         <div class="currency-content" data-currency="TRY">
                             <div class="balance-summary-row">
                                 <span class="summary-cell">Opening Balance:</span>
@@ -93,7 +82,7 @@
                             </div>
                         </div>
                         
-                        <!-- EUR Content -->
+                        EUR Content
                         <div class="currency-content" data-currency="EUR">
                             <div class="balance-summary-row">
                                 <span class="summary-cell">Opening Balance:</span>
@@ -110,6 +99,110 @@
                 </div>
             </div>
 
+        </div> -->
+
+        <!-- Toolbar Section -->
+        <div class="toolbar">
+            <!-- Export Buttons -->
+            <div class="btn-group export-btn-group" role="group">
+                <button class="btn btn-icon btn-pdf o_button_pdf" type="button" title="Export to PDF">
+                    <i class="fa fa-file-pdf-o"></i>
+                </button>
+                <button class="btn btn-icon btn-xlsx o_button_excel" type="button" title="Export to Excel">
+                    <i class="fa fa-file-excel-o"></i>
+                </button>
+            </div>
+
+            <!-- Date Filters -->
+            <div class="date-range">
+                <label>From:</label>
+                <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_from" autocomplete="off" />
+
+                <label>To:</label>
+                <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
+            </div>
+
+            <!-- Currency Report Button -->
+            <button class="btn btn-icon btn-currency o_currency_report" type="button" title="Currency Report">
+                <i class="fa fa-exchange"></i> Currency Report
+            </button>
+        </div>
+
+        <!-- Balance Summary Section (Separate from toolbar) -->
+        <div class="balance-summary-section">
+            
+            <!-- Single Row Summary (for normal reports) -->
+            <div class="single-row-summary">
+                <div class="balance-summary-row">
+                    <span class="summary-cell">Opening Balance:</span>
+                    <span class="summary-cell amount">$2,500,000.00</span>
+                    <span class="summary-cell">Debit:</span>
+                    <span class="summary-cell amount">$1,359,987.41</span>
+                    <span class="summary-cell">Credit:</span>
+                    <span class="summary-cell amount">$3,617,000.00</span>
+                    <span class="summary-cell">Balance:</span>
+                    <span class="summary-cell amount final-balance">$242,987.41</span>
+                </div>
+            </div>
+
+            <!-- Currency Tabs Container (for currency reports) -->
+            <div class="currency-tabs-container">
+                
+                <!-- Tab Navigation -->
+                <div class="currency-tabs">
+                    <div class="currency-tab active" data-currency="USD">USD</div>
+                    <div class="currency-tab" data-currency="TRY">TRY</div>
+                    <div class="currency-tab" data-currency="EUR">EUR</div>
+                </div>
+                
+                <!-- Tab Content Area -->
+                <div class="currency-tab-content">
+                    
+                    <!-- USD Content -->
+                    <div class="currency-content active" data-currency="USD">
+                        <div class="balance-summary-row">
+                            <span class="summary-cell">Opening Balance:</span>
+                            <span class="summary-cell amount">$2,500,000.00</span>
+                            <span class="summary-cell">Debit:</span>
+                            <span class="summary-cell amount">$1,359,987.41</span>
+                            <span class="summary-cell">Credit:</span>
+                            <span class="summary-cell amount">$3,617,000.00</span>
+                            <span class="summary-cell">Balance:</span>
+                            <span class="summary-cell amount final-balance">$242,987.41</span>
+                        </div>
+                    </div>
+                    
+                    <!-- TRY Content -->
+                    <div class="currency-content" data-currency="TRY">
+                        <div class="balance-summary-row">
+                            <span class="summary-cell">Opening Balance:</span>
+                            <span class="summary-cell amount">₺185,000.00</span>
+                            <span class="summary-cell">Debit:</span>
+                            <span class="summary-cell amount">₺45,230.50</span>
+                            <span class="summary-cell">Credit:</span>
+                            <span class="summary-cell amount">₺89,450.75</span>
+                            <span class="summary-cell">Balance:</span>
+                            <span class="summary-cell amount final-balance">₺2,102,734.94</span>
+                        </div>
+                    </div>
+                    
+                    <!-- EUR Content -->
+                    <div class="currency-content" data-currency="EUR">
+                        <div class="balance-summary-row">
+                            <span class="summary-cell">Opening Balance:</span>
+                            <span class="summary-cell amount">€12,500.00</span>
+                            <span class="summary-cell">Debit:</span>
+                            <span class="summary-cell amount">€3,200.00</span>
+                            <span class="summary-cell">Credit:</span>
+                            <span class="summary-cell amount">€8,100.00</span>
+                            <span class="summary-cell">Balance:</span>
+                            <span class="summary-cell amount final-balance">€7,600.00</span>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
         </div>
     </t>
 </t>
