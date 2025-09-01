@@ -201,27 +201,27 @@ var ExportPdfButtonListController = ListController.extend({
     _onPdf: function () {
         console.log('Exporting to PDF');
 
-        const partner_id = this.model.loadParams.context.default_partner_id;
+        const ctx = this.model?.loadParams?.context || {};
+        const partner_id = ctx.default_partner_id;
         if (!partner_id) {
             console.error('No partner ID found');
             return;
         }
 
-        this._rpc({
-            model: 'res.partner',
-            method: 'action_view_move_line_report_currency',
-            // ⬇️ record method => pass a list of ids
-            args: [[partner_id]],
-        }).then(action => {
-            if (!action) {
-                console.error('Server returned no action');
-                return;
-            }
-            this.doaAction(action);
-        }).catch(err => {
-            console.error('RPC error:', err);
+        this.do_action('partner_balance.action_partner_move_line_currency', {
+            additional_context: {
+                // let the XML action's domain use this
+                active_id: partner_id,
+                active_ids: [partner_id],
+                active_model: 'res.partner',
+
+                // optional extras shown in the action title/search context
+                default_partner_id: partner_id,
+                partner_name: ctx.partner_name || '',
+                action_name: 'Statement Currency-based of Account',
+            },
         });
-    },
+    }
 
 
 
