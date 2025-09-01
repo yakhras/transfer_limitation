@@ -119,7 +119,6 @@ var ExportPdfButtonListController = ListController.extend({
             }
             return;
         }
-        summarySection.show();
 
         if (dateTo && new Date(dateTo) <= new Date(dateFrom)) {
             $(ev.currentTarget).val('');
