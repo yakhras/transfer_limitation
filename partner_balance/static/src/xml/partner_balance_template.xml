@@ -44,7 +44,7 @@
             <!-- Balance Summary Section with Currency Tabs -->
             <div class="balance-summary-section">
 
-                <div class="balance-summary-row">
+                <div class="single-row-summary">
                     <span class="summary-cell">Opening Balance:</span>
                     <span class="summary-cell amount">$2,500,000.00</span>
                     <span class="summary-cell">Debit:</span>
