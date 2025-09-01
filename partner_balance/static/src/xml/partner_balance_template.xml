@@ -41,6 +41,63 @@
                 </div>
             </div>
 
+            <!-- Balance Summary Section with Currency Tabs -->
+            <div class="balance-summary-section">
+                <div class="currency-tabs-container">
+                    <!-- Currency Tabs -->
+                    <div class="currency-tabs">
+                        <div class="currency-tab active" data-currency="USD">USD</div>
+                        <div class="currency-tab" data-currency="TRY">TRY</div>
+                        <div class="currency-tab" data-currency="EUR">EUR</div>
+                    </div>
+                    
+                    <!-- Tab Content -->
+                    <div class="currency-tab-content">
+                        <!-- USD Content (default active) -->
+                        <div class="currency-content active" data-currency="USD">
+                            <div class="balance-summary-row">
+                                <span class="summary-cell">Opening Balance:</span>
+                                <span class="summary-cell amount">$2,500,000.00</span>
+                                <span class="summary-cell">Debit:</span>
+                                <span class="summary-cell amount">$1,359,987.41</span>
+                                <span class="summary-cell">Credit:</span>
+                                <span class="summary-cell amount">$3,617,000.00</span>
+                                <span class="summary-cell">Balance:</span>
+                                <span class="summary-cell amount final-balance">$242,987.41</span>
+                            </div>
+                        </div>
+                        
+                        <!-- TRY Content -->
+                        <div class="currency-content" data-currency="TRY">
+                            <div class="balance-summary-row">
+                                <span class="summary-cell">Opening Balance:</span>
+                                <span class="summary-cell amount">₺185,000.00</span>
+                                <span class="summary-cell">Debit:</span>
+                                <span class="summary-cell amount">₺45,230.50</span>
+                                <span class="summary-cell">Credit:</span>
+                                <span class="summary-cell amount">₺89,450.75</span>
+                                <span class="summary-cell">Balance:</span>
+                                <span class="summary-cell amount final-balance">₺2,102,734.94</span>
+                            </div>
+                        </div>
+                        
+                        <!-- EUR Content -->
+                        <div class="currency-content" data-currency="EUR">
+                            <div class="balance-summary-row">
+                                <span class="summary-cell">Opening Balance:</span>
+                                <span class="summary-cell amount">€12,500.00</span>
+                                <span class="summary-cell">Debit:</span>
+                                <span class="summary-cell amount">€3,200.00</span>
+                                <span class="summary-cell">Credit:</span>
+                                <span class="summary-cell amount">€8,100.00</span>
+                                <span class="summary-cell">Balance:</span>
+                                <span class="summary-cell amount final-balance">€7,600.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </t>
 </t>
