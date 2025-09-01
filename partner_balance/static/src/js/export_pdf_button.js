@@ -70,23 +70,6 @@ var ExportPdfButtonListController = ListController.extend({
         'click .currency-tab': '_onCurrencyTabClick',
     }),
 
-    // update: function(params, options) {
-    //     var self = this;
-    //     return this._super.apply(this, arguments).then(function() {
-    //         self._checkCurrencyButtonVisibility();
-    //     });
-    // },
-
-    // _checkCurrencyButtonVisibility: function() {
-    //     var context = this.model.loadParams.context || {};
-        
-    //     if (context.action_name === 'Statement Currency-based of Account' || 
-    //         context.group_by === 'currency_id') {
-    //         this.$('.o_currency_report').hide();
-    //     } else {
-    //         this.$('.o_currency_report').show();
-    //     }
-    // },
 
     _onCurrencyTabClick: function(ev) {
         var $clickedTab = $(ev.currentTarget);
