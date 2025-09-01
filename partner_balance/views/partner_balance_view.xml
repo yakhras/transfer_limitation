@@ -25,46 +25,8 @@
             </field>
         </record>
 
-        <!-- <record id="view_account_move_line_custom_tree" model="ir.ui.view">
-            <field name="name">account.move.line.custom.tree</field>
-            <field name="model">account.move.line</field>
-            <field name="arch" type="xml">
-                <tree string="Journal Items (Custom)" create="false">
-                    <field name="date"/>
-                    <field name="move_id" string="Journal Entry"/>
-                    <field name="name" string="Label"/>
-                    <field name="amount_currency"/>
-                    <field name="cumulated_balance_amount_currency"/>
-                    <field name="currency_id"/>
-                    <field name="debit" />
-                    <field name="credit" />
-                    <field name="balance" />
-                    <field name="cumulated_balance" />
-                </tree>
-            </field>
-        </record> -->
 
-
-    <!-- Tree View for Account Move Line Report -->
-        <record id="view_account_move_line_report_currency_tree" model="ir.ui.view">
-            <field name="name">account.move.line.report.currency.tree</field>
-            <field name="model">account.move.line.report</field>
-            <field name="arch" type="xml">
-                <tree string="Currency-based Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance">
-                    <field name="date"/>
-                    <field name="type"/>
-                    <field name="reference"/>
-                    <field name="note"/>
-                    <field name="debit_amount"/>
-                    <field name="credit_amount"/>
-                    <field name="balance_amount"/>
-                    <field name="initial_balance" invisible="1"/>
-                    <field name="currency_id"/>
-                </tree>
-            </field>
-        </record>
-
-        <!-- Tree View for Account Move Line Report -->
+        <!-- Tree View for Account Move Line Normal Report -->
         <record id="view_account_move_line_report_tree" model="ir.ui.view">
             <field name="name">account.move.line.report.tree</field>
             <field name="model">account.move.line.report</field>
@@ -87,7 +49,27 @@
         </record>
 
 
-        <!-- Tree View for Account Move Line Report -->
+        <!-- Tree View for Account Move Line Currency-based Report -->
+        <record id="view_account_move_line_report_currency_tree" model="ir.ui.view">
+            <field name="name">account.move.line.report.currency.tree</field>
+            <field name="model">account.move.line.report</field>
+            <field name="arch" type="xml">
+                <tree string="Currency-based Partner Ledger" create="false" delete="false" edit="false" js_class="partner_balance">
+                    <field name="date"/>
+                    <field name="type"/>
+                    <field name="reference"/>
+                    <field name="note"/>
+                    <field name="debit_amount"/>
+                    <field name="credit_amount"/>
+                    <field name="balance_amount"/>
+                    <field name="initial_balance" invisible="1"/>
+                    <field name="currency_id"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!-- Tree View for Account Move Line USD Report -->
         <record id="view_account_move_line_report_usd_tree" model="ir.ui.view">
             <field name="name">account.move.line.report.usd.tree</field>
             <field name="model">account.move.line.report</field>
@@ -106,6 +88,8 @@
             </field>
         </record>
 
+        
+        <!-- Action for Currency-based Report -->
         <record id="action_partner_move_line_currency" model="ir.actions.act_window">
             <field name="name">Statement Currency-based of Account</field>
             <field name="type">ir.actions.act_window</field>
