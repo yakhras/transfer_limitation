@@ -183,17 +183,23 @@ var ExportPdfButtonListController = ListController.extend({
         var tabsHtml = '';
         var contentHtml = '';
         
-        currencies.forEach(function(curr, index) {
-            var activeClass = index === 0 ? 'active' : '';
-            tabsHtml += `<div class="currency-tab ${activeClass}" data-currency="${curr.name}">${curr.name}</div>`;
-            contentHtml += `<div class="currency-content ${activeClass}" data-currency="${curr.name}">
-                    <span class="summary-cell">Opening Balance:</span>
-                    <span class="summary-cell amount">${curr.name} 0.00</span>
-            </div>`;
-        });
-        
-        this.$('.currency-tabs').html(tabsHtml);
-        this.$('.currency-tab-content').html(contentHtml);
+        var tabs = currencies.map((curr, i) => 
+            `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
+        ).join('');
+
+        var content = currencies.map((curr, i) => 
+            `<div class="currency-content ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">
+                <span class="summary-cell">Opening Balance:</span>
+                <span class="summary-cell amount">${curr.name} 0.00</span>
+            </div>`
+        ).join('');
+
+        this.$('.currency-tabs-container').html(`
+            <div class="horizontal-layout">
+                <div class="tabs-wrapper">${tabs}</div>
+                <div class="content-wrapper">${content}</div>
+            </div>
+        `);
     },
 
 

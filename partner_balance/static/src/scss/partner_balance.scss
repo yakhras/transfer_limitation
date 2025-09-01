@@ -117,3 +117,8 @@
 .currency-tab.active { background: #3b82f6; color: white; }
 .currency-content { display: none; }
 .currency-content.active { display: block; }
+
+
+.horizontal-layout { display: flex; align-items: center; gap: 15px; }
+.tabs-wrapper { display: flex; gap: 5px; }
+.content-wrapper { border-left: 1px solid #ddd; padding-left: 15px; }
