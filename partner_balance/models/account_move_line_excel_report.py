@@ -343,13 +343,14 @@ class ResPartner(models.Model):
         self.ensure_one()  # Ensure only one record is processed
         action_name = _('Statement Currency-based of Account')
         
+        view_id = self.env.ref("partner_balance.view_account_move_line_report_currency_tree").id
     
         return {
             'type': 'ir.actions.act_window',
             'name': f'{action_name} - {self.name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree',
-            'views': [(8243, 'tree')] ,  # Add this line
+            'views': [(view_id, 'tree')] ,  # Add this line
             'domain': [('partner_id', '=', self.id)],
             'context': {
                 'group_by': 'currency_id',
