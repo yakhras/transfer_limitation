@@ -95,8 +95,10 @@ var ExportPdfButtonListController = ListController.extend({
         // Check if this is currency-grouped report
         if (context.group_by === 'currency_id' || context.action_name === 'Statement Currency-based of Account') {
             this._showCurrencyTabs();
+            this.$('.o_currency_report').hide(); // Hide button in currency view
         } else {
             this._showSingleRowSummary();
+            this.$('.o_currency_report').show(); // Show button in normal view
         }
     },
 
