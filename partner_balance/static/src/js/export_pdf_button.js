@@ -120,7 +120,6 @@ var ExportPdfButtonListController = ListController.extend({
             return;
         }
         summarySection.show();
-        this._setupSummaryDisplay();
 
         if (dateTo && new Date(dateTo) <= new Date(dateFrom)) {
             $(ev.currentTarget).val('');
@@ -131,8 +130,9 @@ var ExportPdfButtonListController = ListController.extend({
 
         // await the update so the model actually contains initial_balance
         await this._updateViewWithDates(dateFrom, dateTo);
+        this._buildCurrencyTabs();
+        this._setupSummaryDisplay();
         await this._updateSummaryFromModel();
-        this._getAvailableCurrencies();
     },
     
     _getAvailableCurrencies: function() {
@@ -160,6 +160,23 @@ var ExportPdfButtonListController = ListController.extend({
         console.log('Available Currencies:', currencies);
         
         return currencies;
+    },
+
+    _buildCurrencyTabs: function() {
+        var currencies = this._getAvailableCurrencies();
+        var tabsHtml = '';
+        var contentHtml = '';
+        
+        currencies.forEach(function(curr, index) {
+            var activeClass = index === 0 ? 'active' : '';
+            tabsHtml += `<div class="currency-tab ${activeClass}" data-currency="${curr.name}">${curr.name}</div>`;
+            contentHtml += `<div class="currency-content ${activeClass}" data-currency="${curr.name}">
+                <!-- Currency specific content -->
+            </div>`;
+        });
+        
+        this.$('.currency-tabs').html(tabsHtml);
+        this.$('.currency-tab-content').html(contentHtml);
     },
 
     _updateViewWithDates: function(dateFrom, dateTo) {
