@@ -132,8 +132,40 @@ var ExportPdfButtonListController = ListController.extend({
         // await the update so the model actually contains initial_balance
         await this._updateViewWithDates(dateFrom, dateTo);
         await this._updateSummaryFromModel();
+        this._getAvailableCurrencies();
     },
     
+    _getAvailableCurrencies: function() {
+        var state = this.model.get(this.handle);
+        var currencies = [];
+        
+        if (state.groupedBy && state.groupedBy.includes('currency_id')) {
+            // If grouped by currency, get from group data
+            state.data.forEach(function(group) {
+                if (group.res_id && group.displayName) {
+                    currencies.push({
+                        id: group.res_id,
+                        name: group.displayName, // Currency code like 'USD', 'TRY'
+                        symbol: group.symbol || group.displayName
+                    });
+                }
+                console.log('currency', currencies);
+            });
+        } else {
+            // If not grouped, get unique currencies from records
+            var currencySet = new Set();
+            state.data.forEach(function(record) {
+                if (record.data.currency_id) {
+                    currencySet.add(record.data.currency_id.data.name);
+                }
+            });
+            currencies = Array.from(currencySet).map(function(curr) {
+                return { name: curr, symbol: curr };
+            });
+        }
+        
+        return currencies;
+    },
 
     _updateViewWithDates: function(dateFrom, dateTo) {
         try {
