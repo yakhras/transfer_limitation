@@ -21,6 +21,7 @@ class AccountMoveLineReport(models.Model):
     company_id = fields.Many2one('res.company', string='Company', readonly=True)
     company_currency_id = fields.Many2one('res.currency', string='Company Currency', readonly=True)
 
+    # Enhance dta view
     reference = fields.Char(string="Reference", readonly=True)
     note = fields.Char(string="Note", readonly=True)
     type = fields.Char(string='Type', readonly=True)
