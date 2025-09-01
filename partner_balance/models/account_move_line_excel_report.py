@@ -323,7 +323,7 @@ class ResPartner(models.Model):
         
         return {
             'type': 'ir.actions.act_window',
-            'name': f'{action_name} - {self.name}',
+            'name': f'{action_name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree',
             'view_id' : self.env.ref("partner_balance.view_account_move_line_report_tree").id,
