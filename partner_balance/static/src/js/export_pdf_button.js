@@ -70,6 +70,25 @@ var ExportPdfButtonListController = ListController.extend({
         'click .currency-tab': '_onCurrencyTabClick',
     }),
 
+    start: function () {
+        var self = this;
+        return this._super.apply(this, arguments).then(function() {
+            self._setupCurrencyButton();
+        });
+    },
+
+    _setupCurrencyButton: function() {
+        var context = this.model.loadParams.context || {};
+        
+        // Show button only for normal reports, hide for currency reports
+        if (context.action_name === 'Statement Currency-based of Account' || 
+            context.group_by === 'currency_id') {
+            this.$('.o_currency_report').hide();
+        } else {
+            this.$('.o_currency_report').show();
+        }
+    },
+
     _onCurrencyTabClick: function(ev) {
         var $clickedTab = $(ev.currentTarget);
         var currencyName = $clickedTab.data('currency');
@@ -95,10 +114,8 @@ var ExportPdfButtonListController = ListController.extend({
         // Check if this is currency-grouped report
         if (context.group_by === 'currency_id' || context.action_name === 'Statement Currency-based of Account') {
             this._showCurrencyTabs();
-            this.$('.o_currency_report').hide(); // Hide button in currency view
         } else {
             this._showSingleRowSummary();
-            this.$('.o_currency_report').show(); // Show button in normal view
         }
     },
 
