@@ -343,20 +343,13 @@ class ResPartner(models.Model):
         self.ensure_one()  # Ensure only one record is processed
         action_name = _('Statement Currency-based of Account')
         
-        try:
-            view_id = self.env.ref("partner_balance.view_account_move_line_report_currency_tree").id
-            print(f"View ID found: {view_id}")
-        except ValueError:
-            print("View reference not found!")
-            # Fallback to any tree view for this model
-            view_id = False
     
         return {
             'type': 'ir.actions.act_window',
             'name': f'{action_name} - {self.name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree',
-            'views': [(view_id, 'tree')] if view_id else [],  # Add this line
+            'views': [(178, 'tree')] ,  # Add this line
             'domain': [('partner_id', '=', self.id)],
             'context': {
                 'group_by': 'currency_id',
