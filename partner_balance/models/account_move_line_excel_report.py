@@ -349,7 +349,7 @@ class ResPartner(models.Model):
             'name': f'{action_name} - {self.name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree',
-            'views': [(178, 'tree')] ,  # Add this line
+            'views': [(8243, 'tree')] ,  # Add this line
             'domain': [('partner_id', '=', self.id)],
             'context': {
                 'group_by': 'currency_id',
