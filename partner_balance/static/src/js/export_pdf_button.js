@@ -69,6 +69,37 @@ var ExportPdfButtonListController = ListController.extend({
         'change .date-input': '_onDateChange',
     }),
 
+    start: function () {
+        var self = this;
+        return this._super.apply(this, arguments).then(function() {
+            self._setupSummaryDisplay();
+            self.$('.balance-summary-section').hide(); // Initially hidden
+        });
+    },
+
+    _setupSummaryDisplay: function() {
+        var context = this.model.loadParams.context || {};
+        
+        // Check if this is currency-grouped report
+        if (context.group_by === 'currency_id' || context.action_name === 'Statement Currency-based of Account') {
+            this._showCurrencyTabs();
+        } else {
+            this._showSingleRowSummary();
+        }
+    },
+
+    _showSingleRowSummary: function() {
+        // Hide tabs, show single row
+        this.$('.currency-tabs-container').hide();
+        this.$('.single-row-summary').show();
+    },
+
+    _showCurrencyTabs: function() {
+        // Hide single row, show tabs
+        this.$('.single-row-summary').hide(); 
+        this.$('.currency-tabs-container').show();
+    },
+
     _onDateChange: async function(ev) {
         const fieldName = $(ev.currentTarget).data('field-name');
         const value = $(ev.currentTarget).val();
@@ -197,6 +228,7 @@ var ExportPdfButtonListController = ListController.extend({
         return new DataExportExtended(this, state, defaultExportFields, groupedBy,
             domain, this.getSelectedIds());
     },
+
 
     _onCurrency: function () {
 
