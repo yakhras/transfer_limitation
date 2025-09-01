@@ -211,13 +211,13 @@ var ExportPdfButtonListController = ListController.extend({
             model: 'res.partner',
             method: 'action_view_move_line_report_currency',
             // ⬇️ record method => pass a list of ids
-            args: [[partner_id]],
+            args: [[], [partner_id]],
         }).then(action => {
             if (!action) {
                 console.error('Server returned no action');
                 return;
             }
-            this.do_action(action);
+            this.doaAction(action);
         }).catch(err => {
             console.error('RPC error:', err);
         });
