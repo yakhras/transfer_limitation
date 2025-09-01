@@ -117,7 +117,6 @@ var ExportPdfButtonListController = ListController.extend({
             }
             return;
         }
-        // summarySection.show();
 
         if (dateTo && new Date(dateTo) <= new Date(dateFrom)) {
             $(ev.currentTarget).val('');
@@ -128,9 +127,10 @@ var ExportPdfButtonListController = ListController.extend({
 
         // await the update so the model actually contains initial_balance
         await this._updateViewWithDates(dateFrom, dateTo);
-        await this._buildCurrencyTabs();
-        await this._setupSummaryDisplay();
+        this._buildCurrencyTabs();
+        this._setupSummaryDisplay();
         await this._updateSummaryFromModel();
+        summarySection.show();
     },
     
     _getAvailableCurrencies: function() {
