@@ -47,8 +47,8 @@
                     </div>
                     
                     <!-- Tab Content -->
-                    <div class="currency-tab-content">
-                        <!-- USD Content (default active) -->
+                    <!-- <div class="currency-tab-content">
+                        USD Content (default active)
                         <div class="currency-content active" data-currency="USD">
                             <div class="balance-summary-row">
                                 <span class="summary-cell">Opening Balance:</span>
@@ -62,7 +62,7 @@
                             </div>
                         </div>
                         
-                        <!-- TRY Content -->
+                        TRY Content
                         <div class="currency-content" data-currency="TRY">
                             <div class="balance-summary-row">
                                 <span class="summary-cell">Opening Balance:</span>
@@ -76,7 +76,7 @@
                             </div>
                         </div>
                         
-                        <!-- EUR Content -->
+                        EUR Content
                         <div class="currency-content" data-currency="EUR">
                             <div class="balance-summary-row">
                                 <span class="summary-cell">Opening Balance:</span>
@@ -90,7 +90,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
         </div>
