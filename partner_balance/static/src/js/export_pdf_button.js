@@ -67,14 +67,23 @@ var ExportPdfButtonListController = ListController.extend({
         'click .o_button_excel': '_onExcel',
         'click .o_currency_report': '_onCurrency',
         'change .date-input': '_onDateChange',
+        'click .currency-tab': '_onCurrencyTabClick',
     }),
 
-    // start: function () {
-    //     var self = this;
-    //     return this._super.apply(this, arguments).then(function() {
-    //         self._setupSummaryDisplay();
-    //     });
-    // },
+    _onCurrencyTabClick: function(ev) {
+        var $clickedTab = $(ev.currentTarget);
+        var currencyName = $clickedTab.data('currency');
+        
+        console.log('Selected currency:', currencyName);
+        
+        // Update active tab visual state
+        this.$('.currency-tab').removeClass('active');
+        $clickedTab.addClass('active');
+        
+        // Update active content
+        this.$('.currency-content').removeClass('active');
+        this.$('.currency-content[data-currency="' + currencyName + '"]').addClass('active');
+    },
 
     _setupSummaryDisplay: function() {
         var context = this.model.loadParams.context || {};
@@ -87,17 +96,20 @@ var ExportPdfButtonListController = ListController.extend({
         }
     },
 
+
     _showSingleRowSummary: function() {
         // Hide tabs, show single row
         this.$('.currency-tabs-container').hide();
         this.$('.single-row-summary').show();
     },
 
+
     _showCurrencyTabs: function() {
         // Hide single row, show tabs
         this.$('.single-row-summary').hide(); 
         this.$('.currency-tabs-container').show();
     },
+
 
     _onDateChange: async function(ev) {
         const fieldName = $(ev.currentTarget).data('field-name');
@@ -132,6 +144,7 @@ var ExportPdfButtonListController = ListController.extend({
         await this._updateSummaryFromModel();
         summarySection.show();
     },
+
     
     _getAvailableCurrencies: function() {
         var context = this.model.loadParams.context || {};
@@ -143,7 +156,7 @@ var ExportPdfButtonListController = ListController.extend({
                 if (group.res_id && group.value) {
                     currencies.push({
                         id: group.res_id,
-                        name: group.value, // Currency code like 'USD', 'TRY'
+                        name: group.value,
                     });
                 }
                 
@@ -159,6 +172,7 @@ var ExportPdfButtonListController = ListController.extend({
         
         return currencies;
     },
+
 
     _buildCurrencyTabs: function() {
         var currencies = this._getAvailableCurrencies();
@@ -176,6 +190,7 @@ var ExportPdfButtonListController = ListController.extend({
         this.$('.currency-tabs').html(tabsHtml);
         this.$('.currency-tab-content').html(contentHtml);
     },
+
 
     _updateViewWithDates: function(dateFrom, dateTo) {
         try {
@@ -214,7 +229,6 @@ var ExportPdfButtonListController = ListController.extend({
         }
         console.log('context', this.model.loadParams.context);
     },
-
     
 
     _updateSummaryFromModel: function() {
@@ -230,6 +244,7 @@ var ExportPdfButtonListController = ListController.extend({
         this.$('.summary-cell.final-balance').text(this._formatCurrency(initialBalance));
         
     },
+
 
     _formatCurrency(value) {
         return '₺' + Number(value || 0).toLocaleString('en-US', {
@@ -293,7 +308,6 @@ var ExportPdfButtonListController = ListController.extend({
     },
 
 
-
     _onExcel: function () {
         console.log('Exporting to Excel');
         return this._rpc({
@@ -303,7 +317,6 @@ var ExportPdfButtonListController = ListController.extend({
             limit: 1,
         }).then(() => this._getBalanceExportDialogWidget().balanceExport())
     },
-
 
     
 });
