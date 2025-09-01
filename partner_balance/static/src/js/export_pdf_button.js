@@ -156,11 +156,11 @@ var ExportPdfButtonListController = ListController.extend({
             var currencySet = new Set();
             state.data.forEach(function(record) {
                 if (record.data.currency_id) {
-                    currencySet.add(record.data.currency_id.data.name);
+                    currencySet.add(record.data.currency_id.data.display_name);
                 }
             });
             currencies = Array.from(currencySet).map(function(curr) {
-                return { name: curr, symbol: curr };
+                return { name: curr };
             });
         }
         console.log('Available Currencies:', currencies);
