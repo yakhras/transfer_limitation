@@ -70,17 +70,16 @@ var ExportPdfButtonListController = ListController.extend({
         'click .currency-tab': '_onCurrencyTabClick',
     }),
 
-    start: function () {
+    update: function(params, options) {
         var self = this;
         return this._super.apply(this, arguments).then(function() {
-            self._setupCurrencyButton();
+            self._checkCurrencyButtonVisibility();
         });
     },
 
-    _setupCurrencyButton: function() {
+    _checkCurrencyButtonVisibility: function() {
         var context = this.model.loadParams.context || {};
         
-        // Show button only for normal reports, hide for currency reports
         if (context.action_name === 'Statement Currency-based of Account' || 
             context.group_by === 'currency_id') {
             this.$('.o_currency_report').hide();
