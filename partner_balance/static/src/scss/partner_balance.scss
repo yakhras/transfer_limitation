@@ -124,17 +124,17 @@
 // .content-wrapper { border-left: 1px solid #ddd; padding-left: 15px; }
 
 /* Unified Design System */
-// :root {
-//   --border-radius: 6px;
-//   --border-color: #d1d5db;
-//   --bg-primary: white;
-//   --bg-secondary: #f8fafc;
-//   --bg-accent: #f0f9ff;
-//   --text-primary: #1f2937;
-//   --text-secondary: #6b7280;
-//   --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-//   --transition: all 0.2s ease;
-// }
+:root {
+  --border-radius: 6px;
+  --border-color: #d1d5db;
+  --bg-primary: white;
+  --bg-secondary: #f8fafc;
+  --bg-accent: #f0f9ff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --transition: all 0.2s ease;
+}
 
 /* Toolbar - Main Container */
 .toolbar {
