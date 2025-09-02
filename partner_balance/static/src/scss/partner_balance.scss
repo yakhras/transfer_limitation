@@ -59,10 +59,11 @@
 
 /* Date Range */
 .date-range {
+  height: 32px;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
+  padding: 0px 12px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -96,7 +97,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 0px 12px;
   height: 32px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
@@ -120,11 +121,13 @@
 
 /* Balance Summary Section - Unified with Toolbar */
 .balance-summary-section {
+  min-height: 32px;
+  align-items: center;
   display: none;
   background: var(--bg-primary);
   border: none;
   border-radius: var(--border-radius);
-  padding: 16px;
+  padding: 0 16px;
 }
 
 /* Single Row Summary */
@@ -157,6 +160,8 @@
 
 /* Currency Tabs - Unified Design */
 .horizontal-layout {
+  height: 32px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 12px;
