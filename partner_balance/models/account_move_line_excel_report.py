@@ -158,7 +158,28 @@ class AccountMoveLineReport(models.Model):
                 rec.balance_amount = rec.cumulated_balance_amount_currency
 
 
-    @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance')
+    # @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance')
+    # def _compute_cumulated_balance(self):
+    #     """
+    #     Compute cumulated balance for each partner, starting with their initial_balance
+    #     (as computed from context date_from).
+    #     """
+    #     # group lines by partner
+    #     grouped = {}
+    #     for rec in sorted(
+    #         self,
+    #         key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)
+    #     ):
+    #         key = rec.partner_id.id
+    #         if key not in grouped:
+    #             # seed with the partner's initial_balance
+    #             grouped[key] = rec.initial_balance or 0.0
+    #         # add current line balance
+    #         grouped[key] += rec.balance
+    #         rec.cumulated_balance = grouped[key]
+
+
+    @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance', 'initial_balance_amount_currency')
     def _compute_cumulated_balance(self):
         """
         Compute cumulated balance for each partner, starting with their initial_balance
@@ -179,40 +200,6 @@ class AccountMoveLineReport(models.Model):
             rec.cumulated_balance = grouped[key]
 
 
-
-    # @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_currency')
-    # def _compute_cumulated_amount_currency(self):
-    #     """
-    #     Compute the cumulative amount in currency for non-TRY entries, grouped by partner and currency,
-    #     sorted by date, move_id, and id — no context required.
-    #     """
-    #     # Prepare a dictionary to track running totals for each (partner_id, currency_id)
-    #     grouped = {}
-
-    #     # Sort records to simulate SQL "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
-    #     sorted_records = sorted(
-    #         self,
-    #         key=lambda r: (
-    #             r.partner_id.id or 0,
-    #             r.currency_id.id or 0,
-    #             r.date or '',
-    #             r.move_id.id or 0,
-    #             r.id
-    #         )
-    #     )
-
-    #     for rec in sorted_records:
-    #         # Skip TRY currency records
-    #         if rec.currency_id and rec.currency_id.name == 'TRY':
-    #             rec.cumulated_balance_amount_currency = 0
-    #             continue
-
-    #         key = (rec.partner_id.id, rec.currency_id.id)
-    #         if key not in grouped:
-    #             grouped[key] = 0.0
-
-    #         grouped[key] += rec.amount_currency or 0.0
-    #         rec.cumulated_balance_amount_currency = grouped[key]
 
 
     @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'amount_currency', 'initial_balance_amount_currency')
