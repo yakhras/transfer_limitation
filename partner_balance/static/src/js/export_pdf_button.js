@@ -189,6 +189,7 @@ var ExportPdfButtonListController = ListController.extend({
                 if (group.res_id && group.value && group.data && group.data.length > 0) {
                     // Get first record from this currency group
                     var firstRecord = group.data[0];
+                    console.log('First Record for', group.value, firstRecord);
                     currencyBalances[group.value] = {
                         opening: firstRecord.data.initial_balance_amount_currency || 0,
                     };
