@@ -177,8 +177,10 @@
 }
 
 .currency-tab {
-  height: 30px;
-  padding: 0px 12px;
+  padding: 4px 12px; /* Reduce vertical padding */
+  height: 32px; /* Set explicit height */
+  display: flex;
+  align-items: center;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: calc(var(--border-radius) - 2px);
@@ -187,6 +189,7 @@
   color: var(--text-secondary);
   cursor: pointer;
   transition: var(--transition);
+  box-sizing: border-box;
 }
 
 .currency-tab:first-child {
