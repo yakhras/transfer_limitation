@@ -132,10 +132,11 @@
 
 /* Single Row Summary */
 .single-row-summary {
+  height: 32px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: 12px 16px;
+  padding: 4px 6px;
 }
 
 .balance-summary-row {
