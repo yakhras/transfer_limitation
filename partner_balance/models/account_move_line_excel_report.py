@@ -325,7 +325,7 @@ class AccountMoveLineReport(models.Model):
             return
 
         partners = self.mapped('partner_id')
-        currencies = self.mapped('currency_id').filtered(lambda c: c.name != 'TRY')
+        currencies = self.mapped('currency_id')
         
         if not partners or not currencies:
             return
@@ -333,17 +333,15 @@ class AccountMoveLineReport(models.Model):
         initial_balances = {}
 
         # Aggregate amount_currency balances before date_from with journal filter
-        # Group by partner_id and currency_id, exclude TRY currency
+        # Group by partner_id and currency_id, include all currencies
         self.env.cr.execute("""
             SELECT amlr.partner_id, amlr.currency_id, SUM(amlr.amount_currency) as balance
             FROM account_move_line_report amlr
             JOIN account_move am ON am.id = amlr.move_id
             JOIN account_journal aj ON aj.id = am.journal_id
-            JOIN res_currency rc ON rc.id = amlr.currency_id
             WHERE amlr.date < %s 
             AND amlr.partner_id IN %s
             AND amlr.currency_id IN %s
-            AND rc.name != 'TRY'
             AND aj.code != 'KRFRK'
             GROUP BY amlr.partner_id, amlr.currency_id
         """, (date_from, tuple(partners.ids), tuple(currencies.ids)))
@@ -353,11 +351,6 @@ class AccountMoveLineReport(models.Model):
 
         # Assign initial balances to records
         for rec in self:
-            # Skip TRY currency records
-            if rec.currency_id and rec.currency_id.name == 'TRY':
-                rec.initial_balance_amount_currency = 0.0
-                continue
-                
             key = (rec.partner_id.id, rec.currency_id.id)
             rec.initial_balance_amount_currency = initial_balances.get(key, 0.0)
 
