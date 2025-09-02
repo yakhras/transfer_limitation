@@ -158,22 +158,57 @@ class AccountMoveLineReport(models.Model):
                 rec.balance_amount = rec.cumulated_balance_amount_currency
 
 
-    @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance')
+    # @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance')
+    # def _compute_cumulated_balance(self):
+    #     """
+    #     Compute cumulated balance for each partner, starting with their initial_balance
+    #     (as computed from context date_from).
+    #     """
+    #     # group lines by partner
+    #     grouped = {}
+    #     for rec in sorted(
+    #         self,
+    #         key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)
+    #     ):
+    #         key = rec.partner_id.id
+    #         if key not in grouped:
+    #             # seed with the partner's initial_balance
+    #             grouped[key] = rec.initial_balance or 0.0
+    #         # add current line balance
+    #         grouped[key] += rec.balance
+    #         rec.cumulated_balance = grouped[key]
+
+    @api.depends('partner_id', 'date', 'move_id', 'balance', 'initial_balance', 'initial_balance_amount_currency')
+    @api.depends_context('action_name')
     def _compute_cumulated_balance(self):
         """
-        Compute cumulated balance for each partner, starting with their initial_balance
-        (as computed from context date_from).
+        Compute cumulated balance for each partner, starting with appropriate initial balance
+        based on report type (detected from action_name context).
         """
-        # group lines by partner
+        # Detect report type from context
+        action_name = self.env.context.get('action_name', '')
+        is_currency_based_report = action_name == 'Statement Currency-based of Account'
+        
+        # Prepare a dictionary to track running totals for each partner
         grouped = {}
-        for rec in sorted(
+        
+        # Sort records to simulate SQL "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW"
+        sorted_records = sorted(
             self,
             key=lambda r: (r.partner_id.id or 0, r.date or '', r.move_id.id or 0, r.id)
-        ):
+        )
+        
+        for rec in sorted_records:
             key = rec.partner_id.id
             if key not in grouped:
-                # seed with the partner's initial_balance
-                grouped[key] = rec.initial_balance or 0.0
+                # Choose appropriate initial balance based on report type
+                if is_currency_based_report:
+                    # Use currency-specific initial balance
+                    grouped[key] = rec.initial_balance_amount_currency or 0.0
+                else:
+                    # Use mixed-currency initial balance for normal report
+                    grouped[key] = rec.initial_balance or 0.0
+            
             # add current line balance
             grouped[key] += rec.balance
             rec.cumulated_balance = grouped[key]
@@ -271,7 +306,7 @@ class AccountMoveLineReport(models.Model):
 
     
     @api.depends_context('date_from')
-    def _compute_initial_balance(self):
+    def _compute_initial_balance(self): 
         """Compute the initial balance for each partner based on the context date_from"""
         date_from = self.env.context.get('date_from')
         
