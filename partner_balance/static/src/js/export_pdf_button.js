@@ -186,7 +186,7 @@ var ExportPdfButtonListController = ListController.extend({
         if (context.group_by === 'currency_id' || context.action_name === 'Statement Currency-based of Account') {
             // Data is grouped by currency
             state.data.forEach(function(group) {
-                if (group.res_id && group.value && group.data && group.data.length > 0) {
+                if (group.data && group.data.length > 0) {
                     // Get first record from this currency group
                     var firstRecord = group.data[0];
                     console.log('First Record for', group.value, firstRecord);
@@ -245,10 +245,7 @@ var ExportPdfButtonListController = ListController.extend({
         var content = currencies.map((curr, i) => {
             // ← Get the specific balance data for THIS currency
             var balanceData = currencyBalances[curr.name] || {
-                opening: 0, 
-                debit: 0, 
-                credit: 0, 
-                balance: 0
+                opening: 0,
             };
             
             return `<div class="currency-content ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">
