@@ -179,7 +179,7 @@ class AccountMoveLineReport(models.Model):
     #         rec.cumulated_balance = grouped[key]
 
 
-    @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'balance', 'initial_balance_amount_currency')
+    @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'balance', 'initial_balance_amount_currency', 'initial_balance')
     def _compute_cumulated_balance(self):
         """
         Compute cumulated balance for each partner-currency combination, starting with their initial_balance_amount_currency
@@ -204,7 +204,7 @@ class AccountMoveLineReport(models.Model):
             key = (rec.partner_id.id, rec.currency_id.id)
             if key not in grouped:
                 # seed with the partner-currency initial_balance_amount_currency
-                grouped[key] = rec.initial_balance_amount_currency or 0.0
+                grouped[key] = rec.initial_balance_amount_currency or rec.initial_balance or 0.0
             # add current line balance
             grouped[key] += rec.balance
             rec.cumulated_balance = grouped[key]
