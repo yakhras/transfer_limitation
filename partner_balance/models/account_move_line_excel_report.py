@@ -45,7 +45,7 @@ class AccountMoveLineReport(models.Model):
 
     # Initial Balance for Cumulation
     initial_balance = fields.Monetary(string='Initial Balance', compute='_compute_initial_balance', store=False, currency_field='company_currency_id')
-    
+    initial_balance_amount_currency = fields.Monetary(string='Initial Balance Amount Currency', compute='_compute_initial_balance_amount_currency', store=False, currency_field='currency_id')
 
 
 
@@ -311,6 +311,55 @@ class AccountMoveLineReport(models.Model):
         for rec in self:
             rec.initial_balance = initial_balances.get(rec.partner_id.id, 0.0)
 
+
+    @api.depends_context('date_from')
+    def _compute_initial_balance_amount_currency(self):
+        """Compute the initial balance in amount currency for each partner-currency combination based on the context date_from"""
+        date_from = self.env.context.get('date_from')
+        
+        # Initialize all records to 0.0 first
+        for rec in self:
+            rec.initial_balance_amount_currency = 0.0
+        
+        if not date_from:
+            return
+
+        partners = self.mapped('partner_id')
+        currencies = self.mapped('currency_id').filtered(lambda c: c.name != 'TRY')
+        
+        if not partners or not currencies:
+            return
+            
+        initial_balances = {}
+
+        # Aggregate amount_currency balances before date_from with journal filter
+        # Group by partner_id and currency_id, exclude TRY currency
+        self.env.cr.execute("""
+            SELECT amlr.partner_id, amlr.currency_id, SUM(amlr.amount_currency) as balance
+            FROM account_move_line_report amlr
+            JOIN account_move am ON am.id = amlr.move_id
+            JOIN account_journal aj ON aj.id = am.journal_id
+            JOIN res_currency rc ON rc.id = amlr.currency_id
+            WHERE amlr.date < %s 
+            AND amlr.partner_id IN %s
+            AND amlr.currency_id IN %s
+            AND rc.name != 'TRY'
+            AND aj.code != 'KRFRK'
+            GROUP BY amlr.partner_id, amlr.currency_id
+        """, (date_from, tuple(partners.ids), tuple(currencies.ids)))
+
+        for partner_id, currency_id, total_balance in self.env.cr.fetchall():
+            initial_balances[(partner_id, currency_id)] = total_balance
+
+        # Assign initial balances to records
+        for rec in self:
+            # Skip TRY currency records
+            if rec.currency_id and rec.currency_id.name == 'TRY':
+                rec.initial_balance_amount_currency = 0.0
+                continue
+                
+            key = (rec.partner_id.id, rec.currency_id.id)
+            rec.initial_balance_amount_currency = initial_balances.get(key, 0.0)
 
 
 class ResPartner(models.Model):
