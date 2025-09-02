@@ -581,11 +581,13 @@
 
 
 
-/* Design System Variables */
+/* =========================================================
+   Design System Variables
+   ========================================================= */
 :root {
   --border-radius: 6px;
   --border-color: #d1d5db;
-  --bg-primary: white;
+  --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
   --bg-accent: #f0f9ff;
   --text-primary: #1f2937;
@@ -594,7 +596,9 @@
   --transition: all 0.2s ease;
 }
 
-/* Main Toolbar Container */
+/* =========================================================
+   Toolbar (no extra growth / no yellow gap)
+   ========================================================= */
 .toolbar {
   display: flex;
   align-items: center;
@@ -609,16 +613,16 @@
   max-width: 100%;
   box-sizing: border-box;
   overflow: visible;
-  justify-content: flex-start;
-  width: max-content;  /* shrink to fit content; prevents large blank area */
+  justify-content: flex-start;   /* keep items together */
+  width: max-content;            /* shrink to content, avoid wide empty area */
 }
 
-/* Keep every item to its natural width */
+/* lock every direct child to its natural width */
 .toolbar > * {
   flex: 0 0 auto !important;
 }
 
-/* Remove any auto spacers/growers some views add */
+/* nuke any injected spacers/growers */
 .toolbar .flex-grow-1,
 .toolbar .o-flex-grow,
 .toolbar .o-spacer,
@@ -626,7 +630,9 @@
   display: none !important;
 }
 
-/* Export Buttons Group */
+/* =========================================================
+   Export Buttons
+   ========================================================= */
 .export-btn-group {
   display: flex;
   gap: 4px;
@@ -651,15 +657,8 @@
   flex-shrink: 0;
 }
 
-.export-btn-group .btn-pdf i {
-  color: #dc2626;
-  font-size: 14px;
-}
-
-.export-btn-group .btn-xlsx i {
-  color: #059669;
-  font-size: 14px;
-}
+.export-btn-group .btn-pdf i { color: #dc2626; font-size: 14px; }
+.export-btn-group .btn-xlsx i { color: #059669; font-size: 14px; }
 
 .export-btn-group .btn-icon:hover {
   background: var(--bg-accent);
@@ -667,7 +666,9 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Date Range Section */
+/* =========================================================
+   Date Range
+   ========================================================= */
 .date-range {
   display: flex;
   align-items: center;
@@ -685,7 +686,6 @@
   font-size: 13px;
   color: var(--text-primary);
   margin: 0;
-  flex-shrink: 0;
 }
 
 .date-input {
@@ -697,22 +697,20 @@
   font-size: 13px;
   background: var(--bg-primary);
   transition: var(--transition);
-  flex-shrink: 0;
   box-sizing: border-box;
 }
 
 .date-input:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 2px rgba(59,130,246,.1);
 }
 
-.date-input::placeholder {
-  color: var(--text-secondary);
-  font-size: 12px;
-}
+.date-input::placeholder { color: var(--text-secondary); font-size: 12px; }
 
-/* Currency Report Button */
+/* =========================================================
+   Currency Report Button
+   ========================================================= */
 .btn-currency.o_currency_report {
   display: flex;
   align-items: center;
@@ -728,16 +726,10 @@
   cursor: pointer;
   transition: var(--transition);
   white-space: nowrap;
-  flex-shrink: 0;
   text-decoration: none;
 }
 
-.btn-currency.o_currency_report i {
-  color: #0ea5e9;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
+.btn-currency.o_currency_report i { color: #0ea5e9; font-size: 14px; }
 .btn-currency.o_currency_report:hover {
   background: var(--bg-accent);
   border-color: #0ea5e9;
@@ -745,9 +737,11 @@
   text-decoration: none;
 }
 
-/* ===== Visible Balance Summary Section (compact) ===== */
+/* =========================================================
+   Balance Summary (visible, compact)
+   ========================================================= */
 .balance-summary-section {
-  display: inline-flex;                /* visible now */
+  display: inline-flex !important;  /* make it visible */
   align-items: center;
   gap: 10px;
   padding: 6px 12px;
@@ -756,10 +750,10 @@
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   white-space: nowrap;
-  flex: 0 0 auto;                      /* do not grow */
+  flex: 0 0 auto;                   /* no grow */
 }
 
-/* Currency tabs inside the summary */
+/* compact container rows inside the section */
 .currency-tabs-container,
 .horizontal-layout,
 .tabs-wrapper,
@@ -770,7 +764,7 @@
   flex: 0 0 auto;
 }
 
-/* Tab buttons */
+/* currency tab buttons */
 .currency-tab {
   display: inline-flex;
   align-items: center;
@@ -796,11 +790,9 @@
   border-color: #3b82f6;
 }
 
-.currency-tab:hover {
-  background: var(--bg-accent);
-}
+.currency-tab:hover { background: var(--bg-accent); }
 
-/* The numbers/text */
+/* main text / numbers */
 .currency-content,
 .single-row-summary {
   display: inline-flex;
@@ -812,29 +804,40 @@
   white-space: nowrap;
 }
 
-.balance-summary-section .label {
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-right: 2px;
-}
-
+.balance-summary-section .label { font-weight: 600; margin-right: 2px; }
 .balance-summary-section .value,
-.balance-summary-section .amount {
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
+.balance-summary-section .amount { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* =========================================================
+   Hide verbose multi-currency lines (screenshot #2)
+   ========================================================= */
+/* common text containers Odoo emits for long summary lines */
+.balance-summary-section .single-row-summary,
+.balance-summary-section .extra-info,
+.balance-summary-section .multi-currency-row,
+.balance-summary-section .summary-line,
+.balance-summary-section br {
+  display: none !important;
+  visibility: hidden !important;
 }
 
-/* Remove any spacing from hidden/previously-hidden siblings */
-.o_content > *:not(.balance-summary-section) {
-  margin-bottom: 0;
+/* keep only the active currency's numbers if multiple are rendered */
+.balance-summary-section .currency-content:not(.is-active):not([data-active="true"]):not(:first-child) {
+  display: none !important;
 }
 
-/* Fix any layout shifts */
-.toolbar + * {
-  margin-top: 0;
+/* in case the app renders duplicates outside the section, hide them too */
+.o_content .o_list_view .summary-line,
+.o_content .o_list_view .multi-currency-row {
+  display: none !important;
 }
 
-/* Focus States */
+/* =========================================================
+   Misc / Focus / Responsive
+   ========================================================= */
+.o_content > *:not(.balance-summary-section) { margin-bottom: 0; }
+.toolbar + * { margin-top: 0; }
+
 .export-btn-group .btn-icon:focus,
 .date-input:focus,
 .btn-currency.o_currency_report:focus,
@@ -843,12 +846,11 @@
   outline-offset: 2px;
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .toolbar {
     flex-wrap: wrap;
     gap: 12px;
-    width: 100%;           /* allow wrap on small screens */
+    width: 100%;          /* allow wrapping on mobile */
   }
   .date-input { width: 100px; }
   .btn-currency.o_currency_report { padding: 6px 8px; font-size: 12px; }
