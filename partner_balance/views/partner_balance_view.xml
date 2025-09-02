@@ -56,7 +56,7 @@
                     <field name="debit_amount"/>
                     <field name="credit_amount"/>
                     <field name="balance_amount"/>
-                    <field name="initial_balance_amount_currency" invisible="0"/>
+                    <field name="initial_balance_amount_currency" invisible="1"/>
                     <field name="currency_id"/>
                 </tree>
             </field>
