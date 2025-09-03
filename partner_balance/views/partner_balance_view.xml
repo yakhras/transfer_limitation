@@ -81,6 +81,24 @@
             </field>
         </record>
 
+        <record id="view_account_move_line_report_partner_currency" model="ir.ui.view">
+            <field name="name">account.move.line.report.partner.currency</field>
+            <field name="model">account.move.line.report</field>
+            <field name="arch" type="xml">
+                <tree string="Partner Ledger" create="false" delete="false" edit="false">
+                    <field name="date"/>
+                    <field name="type"/>
+                    <field name="reference"/>
+                    <field name="note"/>
+                    <field name="debit"/>
+                    <field name="credit"/>
+                    <field name="partner_currency_id"/>
+                    <field name="partner_currecy_value"/>
+                    <field name="cumulated_partner_currency_value"/>
+                </tree>
+            </field>
+        </record>
+
 
         <!-- Action for Currency-based Report -->
         <record id="action_partner_move_line_currency" model="ir.actions.act_window">
@@ -113,8 +131,8 @@
             <field name="res_model">account.move.line.report</field>
             <field name="view_mode">tree</field>
             <!-- Bind the specific tree view; fallback if missing is allowed -->
-            <field name="view_id" ref="partner_balance.view_account_move_line_report_usd_tree"/>
-            <field name="views" eval="[(ref('partner_balance.view_account_move_line_report_usd_tree'), 'tree')]"/>
+            <field name="view_id" ref="partner_balance.view_account_move_line_report_partner_currency"/>
+            <field name="views" eval="[(ref('partner_balance.view_account_move_line_report_partner_currency'), 'tree')]"/>
             <field name="target">current</field>
 
             <!-- Filter by the partner provided from JS via active_id -->

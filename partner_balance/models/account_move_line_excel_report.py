@@ -43,6 +43,10 @@ class AccountMoveLineReport(models.Model):
     usd_value = fields.Monetary('USD Value', compute='_compute_usd_value', currency_field='currency_id')
     cumulated_usd_value = fields.Monetary('Cumulated USD Value', compute='_compute_cumulated_usd_value', currency_field='currency_id')
 
+    partner_currency_id = fields.Many2one('res.currency', string='Partner Currency', compute='_compute_partner_currency',)
+    partner_currecy_value = fields.Monetary('Partner Currency Value', compute='_compute_partner_currency_value', currency_field='currency_id')
+    cumulated_partner_currency_value = fields.Monetary('Cumulated Partner Currency Value', compute='_compute_cumulated_partner_currency_value', currency_field='currency_id')
+
     # Initial Balance for Cumulation
     initial_balance = fields.Monetary(string='Initial Balance', compute='_compute_initial_balance', store=False, currency_field='company_currency_id')
     initial_balance_amount_currency = fields.Monetary(string='Initial Balance Amount Currency', compute='_compute_initial_balance_amount_currency', store=False, currency_field='currency_id')
@@ -282,6 +286,101 @@ class AccountMoveLineReport(models.Model):
 
             grouped[key] += rec.usd_value or 0.0
             rec.cumulated_usd_value = grouped[key]
+
+
+    @api.depends('partner_id', 'partner_id.property_product_pricelist', 'partner_id.property_product_pricelist.currency_id')
+    def _compute_partner_currency(self):
+        """Get partner's currency from pricelist"""
+        for rec in self:
+            if rec.partner_id and rec.partner_id.property_product_pricelist:
+                pricelist_currency = rec.partner_id.property_product_pricelist.currency_id
+                rec.partner_currency_id = pricelist_currency if pricelist_currency else rec.company_currency_id
+            else:
+                # Fallback to company currency if no partner or pricelist
+                rec.partner_currency_id = rec.company_currency_id
+
+
+    @api.depends('currency_id', 'amount_currency', 'date', 'company_id', 'partner_currency_id', 'balance')
+    def _compute_partner_currency_value(self):
+        """Convert transaction amount to partner's currency"""
+        for rec in self:
+            if not rec.partner_currency_id:
+                rec.partner_currency_value = 0.0
+                continue
+                
+            # If transaction currency matches partner currency (comparing objects)
+            if rec.currency_id == rec.partner_currency_id:
+                rec.partner_currency_value = rec.amount_currency or rec.balance
+                
+            # If transaction is in company currency (TRY) and partner uses different currency
+            elif rec.currency_id and rec.currency_id.name == 'TRY' and rec.partner_currency_id.name != 'TRY':
+                # Convert TRY to partner currency using partner_currency_id object
+                partner_rate = rec._get_currency_rate(rec.partner_currency_id, rec.date, rec.company_id)
+                if partner_rate:
+                    rec.partner_currency_value = float_round(
+                        (rec.amount_currency or rec.balance) / partner_rate, 
+                        precision_digits=2
+                    )
+                else:
+                    rec.partner_currency_value = 0.0
+                    
+            # If transaction is in foreign currency and needs conversion to partner currency
+            else:
+                # Convert using currency objects
+                try:
+                    if rec.amount_currency and rec.currency_id:
+                        # Convert from transaction currency to partner currency
+                        converted_amount = rec.currency_id._convert(
+                            rec.amount_currency,
+                            rec.partner_currency_id,  # This is a currency object
+                            rec.company_id,
+                            rec.date
+                        )
+                    else:
+                        # Convert balance from company currency to partner currency
+                        converted_amount = rec.company_currency_id._convert(
+                            rec.balance,
+                            rec.partner_currency_id,  # This is a currency object
+                            rec.company_id,
+                            rec.date
+                        )
+                    rec.partner_currency_value = float_round(converted_amount, precision_digits=2)
+                except Exception as e:
+                    rec.partner_currency_value = 0.0
+
+
+    def _get_currency_rate(self, target_currency, date, company):
+        """Helper method to get currency rate"""
+        rate = self.env['res.currency.rate'].search([
+            ('currency_id', '=', target_currency.id),
+            ('company_id', '=', company.id),
+            ('name', '<=', date)
+        ], order='name desc', limit=1)
+        
+        return rate.inverse_company_rate if rate else None
+
+    @api.depends('partner_id', 'date', 'move_id', 'partner_currency_value')
+    def _compute_cumulated_partner_currency_value(self):
+        """Calculate cumulative balance in partner's currency"""
+        grouped = {}
+
+        sorted_records = sorted(
+            self,
+            key=lambda r: (
+                r.partner_id.id or 0,
+                r.date or '',
+                r.move_id.id or 0,
+                r.id
+            )
+        )
+
+        for rec in sorted_records:
+            key = rec.partner_id.id
+            if key not in grouped:
+                grouped[key] = 0.0
+
+            grouped[key] += rec.partner_currency_value or 0.0
+            rec.cumulated_partner_currency_value = grouped[key]
 
     
     @api.depends_context('date_from')
