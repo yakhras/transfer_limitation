@@ -247,10 +247,14 @@ body {
   gap: var(--space-xs);
 }
 
+.currency-tabs {
+  display: none;
+}
+
 .currency-tab {
   padding: var(--space-xs) var(--space-md);
   height: 32px;
-  display: none;
+  display: flex;
   align-items: center;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
