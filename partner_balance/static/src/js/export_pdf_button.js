@@ -65,6 +65,7 @@ var ExportPdfButtonListController = ListController.extend({
         'click .o_button_pdf': '_onPdf',
         'click .o_button_excel': '_onExcel',
         'click .o_currency_report': '_onCurrency',
+        'click .o_partner_currency': '_onPartnerCurrency',
         'change .date-input': '_onDateChange',
     }),
 
@@ -319,6 +320,26 @@ var ExportPdfButtonListController = ListController.extend({
                 default_partner_id: partner_id,
                 partner_name: ctx.partner_name || '',
                 action_name: 'Statement Currency-based of Account',
+            },
+        });
+    },
+
+    _onPartnerCurrency: function () {
+
+        const ctx = this.model?.loadParams?.context || {};
+        const partner_id = ctx.default_partner_id;
+        if (!partner_id) {
+            return;
+        }
+
+        this.do_action('partner_balance.action_partner_move_line_partner_currency', {
+            additional_context: {
+                active_id: partner_id,
+                active_ids: [partner_id],
+                active_model: 'res.partner',
+                default_partner_id: partner_id,
+                partner_name: ctx.partner_name || '',
+                action_name: 'Statement in Partner Currency',
             },
         });
     },
