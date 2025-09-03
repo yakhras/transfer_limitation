@@ -277,7 +277,7 @@ class AccountMoveLineReport(models.Model):
             #     rec.cumulated_usd_value = 0
             #     continue
 
-            key = (rec.partner_id.id, rec.currency_id.id)
+            key = (rec.partner_id.id)
             if key not in grouped:
                 grouped[key] = 0.0
 
