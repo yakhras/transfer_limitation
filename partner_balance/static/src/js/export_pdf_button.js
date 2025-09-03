@@ -181,12 +181,14 @@ var ExportPdfButtonListController = ListController.extend({
    
 
     _buildCurrencyTabs: function() {
+        console.log('_buildCurrencyTabs called');
         var self = this;
         var currencies = this._getAvailableCurrencies();
-        
+        console.log('Currencies:', currencies);
         // Handle the Promise returned by _getCurrencyBalances
         this._getCurrencyBalance().then(function(currencyBalances) {
             console.log('Fetched Currency Balances:', currencyBalances);
+            console.log('RPC completed, updating template');
             
             var tabs = currencies.map((curr, i) => 
                 `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
