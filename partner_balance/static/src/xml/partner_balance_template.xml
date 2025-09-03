@@ -74,6 +74,22 @@
                         </div>
                     </div>
                 </div>
+                <!-- Horizontal Summary for All Currencies -->
+                <div class="horizontal-currency-summary">
+                    <div class="currency-block">
+                        <span class="currency-label">USD</span>
+                        <span class="final-balance">$12,450.00</span>
+                    </div>
+                    <div class="currency-block">
+                        <span class="currency-label">TRY</span>
+                        <span class="final-balance">₺115,000.00</span>
+                    </div>
+                    <div class="currency-block">
+                        <span class="currency-label">EUR</span>
+                        <span class="final-balance">€9,800.00</span>
+                    </div>
+                </div>
+
 
             </div>
 
