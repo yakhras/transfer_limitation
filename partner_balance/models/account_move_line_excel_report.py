@@ -355,7 +355,7 @@ class AccountMoveLineReport(models.Model):
         rate = self.env['res.currency.rate'].search([
             ('currency_id', '=', target_currency.id),
             ('company_id', '=', company.id),
-            ('name', '<=', date)
+            ('name', '<', date)
         ], order='name desc', limit=1)
         
         return rate.inverse_company_rate if rate else None
@@ -537,7 +537,7 @@ class AccountMoveLineReport(models.Model):
             from_rate = self.env['res.currency.rate'].search([
                 ('currency_id', '=', from_currency.id),
                 ('company_id', '=', company.id),
-                ('name', '<=', date)
+                ('name', '<', date)
             ], order='name desc', limit=1)
             
             if from_rate and from_rate.inverse_company_rate:
@@ -553,7 +553,7 @@ class AccountMoveLineReport(models.Model):
             to_rate = self.env['res.currency.rate'].search([
                 ('currency_id', '=', to_currency.id),
                 ('company_id', '=', company.id),
-                ('name', '<=', date)
+                ('name', '<', date)
             ], order='name desc', limit=1)
             
             if to_rate and to_rate.inverse_company_rate:
