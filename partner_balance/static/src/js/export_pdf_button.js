@@ -218,7 +218,6 @@ var ExportPdfButtonListController = ListController.extend({
 
     // },
 
-
     _buildCurrencyTabs: function() {
         var self = this;
         var currencies = this._getAvailableCurrencies();
@@ -226,25 +225,20 @@ var ExportPdfButtonListController = ListController.extend({
         this._getCurrencyBalance().then(function(currencyBalances) {
             console.log('Fetched Currency Balances:', currencyBalances);
             
-            // ✅ Just prepare data for template
-            self.currencies = currencies;
-            self.currencyBalances = currencyBalances;
+            // Build all currency blocks
+            var currencyBlocksHtml = currencies.map(function(currency) {
+                var balanceData = currencyBalances[currency.name] || {opening: 0};
+                var formattedBalance = self._formatCurrency(balanceData.opening, currency.name);
+                
+                return `<div class="currency-block">
+                    <span class="currency-label">${currency.name}</span>
+                    <span class="final-balance">${formattedBalance}</span>
+                </div>`;
+            }).join('');
             
-            // ✅ Re-render the currency section
-            self._renderCurrencySection();
+            // Update the container with all blocks at once
+            self.$('.horizontal-currency-summary').html(currencyBlocksHtml);
         });
-    },
-
-    _renderCurrencySection: function() {
-        var currencyHtml = QWeb.render('PartnerBalance.CurrencyBlocks', {
-            widget: this
-        });
-        this.$('.horizontal-currency-summary').html(currencyHtml);
-    },
-    
-    formatCurrencyInTemplate: function(currencyName) {
-        var balanceData = this.currencyBalances[currencyName] || {opening: 0};
-        return this._formatCurrency(balanceData.opening, currencyName);
     },
     
 
