@@ -216,7 +216,7 @@ var ExportPdfButtonListController = ListController.extend({
         //     `);
         // });
 
-        this._getCurrencyBalances().then(function(currencyBalances) {
+        this._getCurrencyBalance().then(function(currencyBalances) {
             var items = Object.keys(currencyBalances).map(function(currency) {
                 var balance = currencyBalances[currency].opening;
                 return `<span class="currency-balance-item">
