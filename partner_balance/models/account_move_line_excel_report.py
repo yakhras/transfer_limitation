@@ -542,7 +542,7 @@ class AccountMoveLineReport(models.Model):
             
             if from_rate and from_rate.inverse_company_rate:
                 # Convert to TRY
-                amount_in_try = amount / from_rate.inverse_company_rate
+                amount_in_try = amount * from_rate.inverse_company_rate
             else:
                 return 0.0
         else:
@@ -557,7 +557,7 @@ class AccountMoveLineReport(models.Model):
             ], order='name desc', limit=1)
             
             if to_rate and to_rate.inverse_company_rate:
-                return amount_in_try * to_rate.inverse_company_rate
+                return amount_in_try / to_rate.inverse_company_rate
             else:
                 return 0.0
         else:
