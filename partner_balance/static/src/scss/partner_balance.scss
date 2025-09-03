@@ -250,7 +250,7 @@ body {
 .currency-tab {
   padding: var(--space-xs) var(--space-md);
   height: 32px;
-  display: flex;
+  display: none;
   align-items: center;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
