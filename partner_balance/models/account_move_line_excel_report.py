@@ -273,9 +273,9 @@ class AccountMoveLineReport(models.Model):
 
         for rec in sorted_records:
             # Skip TRY currency records
-            if rec.currency_id and rec.currency_id.name == 'TRY':
-                rec.cumulated_usd_value = 0
-                continue
+            # if rec.currency_id and rec.currency_id.name == 'TRY':
+            #     rec.cumulated_usd_value = 0
+            #     continue
 
             key = (rec.partner_id.id, rec.currency_id.id)
             if key not in grouped:
