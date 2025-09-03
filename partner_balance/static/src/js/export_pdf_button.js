@@ -178,136 +178,13 @@ var ExportPdfButtonListController = ListController.extend({
         return currencies;
     },
 
-    _getCurrencyBalances: function() {
-        var context = this.model.loadParams.context || {};
-        var state = this.model.get(this.handle);
-        var currencyBalances = {};
-
-        if (context.group_by === 'currency_id' || context.action_name === 'Statement Currency-based of Account') {
-            // Data is grouped by currency
-            state.data.forEach(function(group) {
-                if (group.data && group.data.length > 0) {
-                    // Get first record from this currency group
-                    var firstRecord = group.data[0];
-                    console.log('First Record for', group.value, firstRecord);
-                    currencyBalances[group.value] = {
-                        opening: firstRecord.data.initial_balance_amount_currency || 0,
-                    };
-                }
-            });
-        } else {
-            // Single currency (company currency)
-            var records = state.data || [];
-            if (records.length > 0) {
-                currencyBalances['TRY'] = {
-                    opening: records[0].data.initial_balance || 0,
-                };
-            }
-        }
-        
-        return currencyBalances;
-    },
-
-
-    // _buildCurrencyTabs: function() {
-    //     var currencyBalances = this._getCurrencyBalances();
-    //     var currencies = this._getAvailableCurrencies();
-    //     var tabsHtml = '';
-    //     var contentHtml = '';
-        
-    //     var tabs = currencies.map((curr, i) => 
-    //         `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
-    //     ).join('');
-
-    //     var content = currencies.map((curr, i) => 
-    //         `<div class="currency-content ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">
-    //             <span class="summary-cell">Opening Balance:</span>
-    //             <span class="summary-cell amount">${curr.name} 0.00</span>
-    //         </div>`
-    //     ).join('');
-
-    //     this.$('.currency-tabs-container').html(`
-    //         <div class="horizontal-layout">
-    //             <div class="tabs-wrapper">${tabs}</div>
-    //             <div class="content-wrapper">${content}</div>
-    //         </div>
-    //     `);
-    // },
-
-    // _buildCurrencyTabs: function() {
-    //     var currencies = this._getAvailableCurrencies();
-    //     var currencyBalances = this._getCurrencyBalances(); // ← Get real data first
-        
-    //     var tabs = currencies.map((curr, i) => 
-    //         `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
-    //     ).join('');
-
-    //     var content = currencies.map((curr, i) => {
-    //         // ← Get the specific balance data for THIS currency
-    //         var balanceData = currencyBalances[curr.name] || {
-    //             opening: 0,
-    //         };
-            
-    //         return `<div class="currency-content ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">
-    //             <div class="balance-summary-row">
-    //                 <span class="summary-cell">Opening Balance:</span>
-    //                 <span class="summary-cell amount">${this._formatCurrency(balanceData.opening, curr.name)}</span>
-    //             </div>
-    //         </div>`;
-    //     }).join('');
-
-    //     this.$('.currency-tabs-container').html(`
-    //         <div class="horizontal-layout">
-    //             <div class="tabs-wrapper">${tabs}</div>
-    //             <div class="content-wrapper">${content}</div>
-    //         </div>
-    //     `);
-    // },
-
-    // _buildCurrencyTabs: function() {
-    //     var self = this;
-    //     var currencies = this._getAvailableCurrencies();
-        
-    //     // Handle the Promise returned by _getCurrencyBalances
-    //     this._getCurrencyBalance().then(function(currencyBalances) {
-    //         console.log('Fetched Currency Balances:', currencyBalances);
-            
-    //         var tabs = currencies.map((curr, i) => 
-    //             `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
-    //         ).join('');
-
-    //         var content = currencies.map((curr, i) => {
-    //             // ← Get the specific balance data for THIS currency
-    //             var balanceData = currencyBalances[curr.name] || {
-    //                 opening: 0,
-    //             };
-                
-    //             return `<div class="currency-content ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">
-    //                 <div class="balance-summary-row">
-    //                     <span class="summary-cell">Opening Balance:</span>
-    //                     <span class="summary-cell amount">${self._formatCurrency(balanceData.opening, curr.name)}</span>
-    //                 </div>
-    //             </div>`;
-    //         }).join('');
-
-    //         self.$('.currency-tabs-container').html(`
-    //             <div class="horizontal-layout">
-    //                 <div class="tabs-wrapper">${tabs}</div>
-    //                 <div class="content-wrapper">${content}</div>
-    //             </div>
-    //         `);
-    //     });
-    // },
+   
 
     _buildCurrencyTabs: function() {
         var self = this;
-        
-        // Show loading state first (optional)
-        // this.$('.currency-tabs-container').html('<div class="loading">Loading currency data...</div>');
-        
-        // Wait for both data sources
         var currencies = this._getAvailableCurrencies();
         
+        // Handle the Promise returned by _getCurrencyBalances
         this._getCurrencyBalance().then(function(currencyBalances) {
             console.log('Fetched Currency Balances:', currencyBalances);
             
@@ -316,6 +193,7 @@ var ExportPdfButtonListController = ListController.extend({
             ).join('');
 
             var content = currencies.map((curr, i) => {
+                // ← Get the specific balance data for THIS currency
                 var balanceData = currencyBalances[curr.name] || {
                     opening: 0,
                 };
@@ -328,7 +206,6 @@ var ExportPdfButtonListController = ListController.extend({
                 </div>`;
             }).join('');
 
-            // Render everything at once when data is ready
             self.$('.currency-tabs-container').html(`
                 <div class="horizontal-layout">
                     <div class="tabs-wrapper">${tabs}</div>
@@ -337,6 +214,8 @@ var ExportPdfButtonListController = ListController.extend({
             `);
         });
     },
+
+    
 
     _getCurrencyBalance: function() {
         var self = this;
