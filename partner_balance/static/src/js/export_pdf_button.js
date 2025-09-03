@@ -180,43 +180,6 @@ var ExportPdfButtonListController = ListController.extend({
         return currencies;
     },
 
-   
-
-    // _buildCurrencyTabs: function() {
-    //     var self = this;
-    //     var currencies = this._getAvailableCurrencies();
-    //     console.log('Currencies:', currencies);
-    //     // Handle the Promise returned by _getCurrencyBalances
-    //     this._getCurrencyBalance().then(function(currencyBalances) {
-    //         console.log('Fetched Currency Balances:', currencyBalances);
-            
-    //         var tabs = currencies.map((curr, i) => 
-    //             `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
-    //         ).join('');
-
-    //         var content = currencies.map((curr, i) => {
-    //             // ← Get the specific balance data for THIS currency
-    //             var balanceData = currencyBalances[curr.name] || {
-    //                 opening: 0,
-    //             };
-                
-    //             return `<div class="currency-content ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">
-    //                 <div class="balance-summary-row">
-    //                     <span class="summary-cell">Opening Balance:</span>
-    //                     <span class="summary-cell amount">${self._formatCurrency(balanceData.opening, curr.name)}</span>
-    //                 </div>
-    //             </div>`;
-    //         }).join('');
-
-    //         self.$('.currency-tabs-container').html(`
-    //             <div class="horizontal-layout">
-    //                 <div class="tabs-wrapper">${tabs}</div>
-    //                 <div class="content-wrapper">${content}</div>
-    //             </div>
-    //         `);
-    //     });
-
-    // },
 
     _buildCurrencyTabs: function() {
         var self = this;

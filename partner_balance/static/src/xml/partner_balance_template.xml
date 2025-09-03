@@ -42,38 +42,6 @@
                     <span class="summary-cell amount final-balance">$242,987.41</span>
                 </div>
 
-                <div class="currency-tabs-container">
-                    <!-- Currency Tabs -->
-                    <div class="currency-tabs">
-                        <div class="currency-tab active" data-currency="USD"></div>
-                        <div class="currency-tab" data-currency="TRY"></div>
-                        <div class="currency-tab" data-currency="EUR"></div>
-                    </div>
-                    
-                    <!-- Tab Content -->
-                    <div class="currency-tab-content">
-                        <!-- USD Content (default active) -->
-                        <div class="currency-content active" data-currency="USD">
-                            <div class="balance-summary-row">
-                                <span class="summary-cell amount final-balance"></span>
-                            </div>
-                        </div>
-                        
-                        <!-- TRY Content -->
-                        <div class="currency-content" data-currency="TRY">
-                            <div class="balance-summary-row">
-                                <span class="summary-cell amount final-balance"></span>
-                            </div>
-                        </div>
-                        
-                        <!-- EUR Content -->
-                        <div class="currency-content" data-currency="EUR">
-                            <div class="balance-summary-row">
-                                <span class="summary-cell amount final-balance"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!-- Horizontal Summary for All Currencies -->
                 <div class="horizontal-currency-summary">
                     <div class="currency-block">
