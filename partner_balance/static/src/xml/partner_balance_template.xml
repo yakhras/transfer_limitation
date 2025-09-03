@@ -45,9 +45,9 @@
                 <div class="currency-tabs-container">
                     <!-- Currency Tabs -->
                     <div class="currency-tabs">
-                        <div class="currency-tab active" data-currency="USD">USD</div>
-                        <div class="currency-tab" data-currency="TRY">TRY</div>
-                        <div class="currency-tab" data-currency="EUR">EUR</div>
+                        <div class="currency-tab active" data-currency="USD"></div>
+                        <div class="currency-tab" data-currency="TRY"></div>
+                        <div class="currency-tab" data-currency="EUR"></div>
                     </div>
                     
                     <!-- Tab Content -->
