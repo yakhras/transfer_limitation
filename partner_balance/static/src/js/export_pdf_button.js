@@ -376,7 +376,7 @@ var ExportPdfButtonListController = ListController.extend({
     // Method to re-render template
     _renderCurrencyTabs: function() {
         var $container = this.$('.currency-tabs-container');
-        var newContent = QWeb.render('YourTemplate.CurrencyTabs', {
+        var newContent = QWeb.render('PartnerBalance.Buttons.CurrencyTabs', {
             widget: this
         });
         $container.html(newContent);
