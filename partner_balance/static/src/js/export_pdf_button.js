@@ -356,7 +356,7 @@ var ExportPdfButtonListController = ListController.extend({
         var self = this;
         var availableCurrencies = this._getAvailableCurrencies();
         
-        this._getCurrencyBalances().then(function(currencyBalances) {
+        this._getCurrencyBalance().then(function(currencyBalances) {
             // Prepare data array for QWeb template
             self.currencies = availableCurrencies.map(function(curr, index) {
                 var balanceData = currencyBalances[curr.name] || {opening: 0};
