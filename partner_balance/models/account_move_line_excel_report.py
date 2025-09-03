@@ -44,7 +44,7 @@ class AccountMoveLineReport(models.Model):
     cumulated_usd_value = fields.Monetary('Cumulated USD Value', compute='_compute_cumulated_usd_value', currency_field='currency_id')
 
     partner_currency_id = fields.Many2one('res.currency', string='Partner Currency', compute='_compute_partner_currency',)
-    partner_currecy_value = fields.Monetary('Partner Currency Value', compute='_compute_partner_currency_value', currency_field='currency_id')
+    partner_currency_value = fields.Monetary('Partner Currency Value', compute='_compute_partner_currency_value', currency_field='currency_id')
     cumulated_partner_currency_value = fields.Monetary('Cumulated Partner Currency Value', compute='_compute_cumulated_partner_currency_value', currency_field='currency_id')
 
     # Initial Balance for Cumulation

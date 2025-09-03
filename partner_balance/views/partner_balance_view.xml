@@ -93,7 +93,7 @@
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="partner_currency_id"/>
-                    <field name="partner_currecy_value"/>
+                    <field name="partner_currency_value"/>
                     <field name="cumulated_partner_currency_value"/>
                 </tree>
             </field>
