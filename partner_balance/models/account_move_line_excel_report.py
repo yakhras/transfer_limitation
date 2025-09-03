@@ -522,6 +522,49 @@ class AccountMoveLineReport(models.Model):
             rec.initial_balance_partner_currency = initial_balances.get(rec.partner_id.id, 0.0)
 
 
+    def _convert_to_partner_currency(self, amount, from_currency, to_currency, date, company):
+        """Convert amount from one currency to partner currency"""
+        if from_currency == to_currency:
+            return amount
+        
+        """Manual currency conversion using exchange rates"""
+        if from_currency == to_currency:
+            return amount
+        
+        # Convert to company currency first (TRY), then to target currency
+        if from_currency.name != 'TRY':
+            # Get rate to convert FROM currency to TRY
+            from_rate = self.env['res.currency.rate'].search([
+                ('currency_id', '=', from_currency.id),
+                ('company_id', '=', company.id),
+                ('name', '<=', date)
+            ], order='name desc', limit=1)
+            
+            if from_rate and from_rate.inverse_company_rate:
+                # Convert to TRY
+                amount_in_try = amount / from_rate.inverse_company_rate
+            else:
+                return 0.0
+        else:
+            amount_in_try = amount
+        
+        # Convert from TRY to target currency
+        if to_currency.name != 'TRY':
+            to_rate = self.env['res.currency.rate'].search([
+                ('currency_id', '=', to_currency.id),
+                ('company_id', '=', company.id),
+                ('name', '<=', date)
+            ], order='name desc', limit=1)
+            
+            if to_rate and to_rate.inverse_company_rate:
+                return amount_in_try * to_rate.inverse_company_rate
+            else:
+                return 0.0
+        else:
+            return amount_in_try
+
+
+
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
