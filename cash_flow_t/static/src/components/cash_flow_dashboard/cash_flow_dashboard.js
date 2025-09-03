@@ -904,6 +904,7 @@ export class CashFlowDashboard extends Component {
             view_mode: "list",
             target: "current",
             context: {
+                groupby:['partner_id'],
                 date_from: dateRange.date_from,
                 date_to: dateRange.date_to,
                 period_type: this.state.period,
