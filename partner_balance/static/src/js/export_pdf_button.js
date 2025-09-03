@@ -237,6 +237,7 @@ var ExportPdfButtonListController = ListController.extend({
     _buildCurrencyTabs: function() {
         var currencies = this._getAvailableCurrencies();
         var currencyBalances = this._getCurrencyBalances(); // ← Get real data first
+        var currencyBalances = this._getCurrencyBalance(); // ← Get real data first
         
         var tabs = currencies.map((curr, i) => 
             `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
@@ -262,6 +263,39 @@ var ExportPdfButtonListController = ListController.extend({
                 <div class="content-wrapper">${content}</div>
             </div>
         `);
+    },
+
+    _getCurrencyBalance: function() {
+        var self = this;
+        var context = this.model.loadParams.context || {};
+        var domain = this.model.loadParams.domain || [];
+        
+        // Make direct RPC call to get currency balances
+        return this._rpc({
+            model: 'account.move.line.report',
+            method: 'search_read',
+            args: [domain],
+            kwargs: {
+                fields: ['currency_id', 'initial_balance_amount_currency'],
+                context: context,
+                limit: 1000 // Adjust as needed
+            }
+        }).then(function(records) {
+            var currencyBalances = {};
+            
+            // Group by currency and get first occurrence of each
+            records.forEach(function(record) {
+                var currencyKey = record.currency_id ? record.currency_id[1] : 'TRY';
+                
+                if (!currencyBalances[currencyKey]) {
+                    currencyBalances[currencyKey] = {
+                        opening: record.initial_balance_amount_currency || 0,
+                    };
+                }
+            });
+            console.log('Fetched Currency Balances:', currencyBalances);
+            return currencyBalances;
+        });
     },
 
 
