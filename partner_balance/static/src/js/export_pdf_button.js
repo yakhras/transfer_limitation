@@ -308,7 +308,7 @@ var ExportPdfButtonListController = ListController.extend({
         // Wait for both data sources
         var currencies = this._getAvailableCurrencies();
         
-        this._getCurrencyBalances().then(function(currencyBalances) {
+        this._getCurrencyBalance().then(function(currencyBalances) {
             console.log('Fetched Currency Balances:', currencyBalances);
             
             var tabs = currencies.map((curr, i) => 
