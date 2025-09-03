@@ -237,7 +237,7 @@ var ExportPdfButtonListController = ListController.extend({
     _buildCurrencyTabs: function() {
         var currencies = this._getAvailableCurrencies();
         var currencyBalances = this._getCurrencyBalances(); // ← Get real data first
-        var currencyBalances = this._getCurrencyBalance(); // ← Get real data first
+        var currencyBalance = this._getCurrencyBalance(); // ← Get real data first
         
         var tabs = currencies.map((curr, i) => 
             `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
