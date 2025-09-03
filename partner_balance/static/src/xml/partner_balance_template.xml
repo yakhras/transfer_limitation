@@ -86,6 +86,17 @@
                     </div>
                 </div>
 
+                <!-- Add this as a separate template -->
+                <t t-name="PartnerBalance.CurrencyBlocks">
+                    <t t-foreach="widget.currencies" t-as="currency">
+                        <div class="currency-block">
+                            <span class="currency-label" t-esc="currency.name"/>
+                            <span class="final-balance" 
+                                t-esc="widget.formatCurrencyInTemplate(currency.name)"/>
+                        </div>
+                    </t>
+                </t>
+
 
             </div>
 

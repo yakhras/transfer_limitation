@@ -182,44 +182,70 @@ var ExportPdfButtonListController = ListController.extend({
 
    
 
+    // _buildCurrencyTabs: function() {
+    //     var self = this;
+    //     var currencies = this._getAvailableCurrencies();
+    //     console.log('Currencies:', currencies);
+    //     // Handle the Promise returned by _getCurrencyBalances
+    //     this._getCurrencyBalance().then(function(currencyBalances) {
+    //         console.log('Fetched Currency Balances:', currencyBalances);
+            
+    //         var tabs = currencies.map((curr, i) => 
+    //             `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
+    //         ).join('');
+
+    //         var content = currencies.map((curr, i) => {
+    //             // ← Get the specific balance data for THIS currency
+    //             var balanceData = currencyBalances[curr.name] || {
+    //                 opening: 0,
+    //             };
+                
+    //             return `<div class="currency-content ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">
+    //                 <div class="balance-summary-row">
+    //                     <span class="summary-cell">Opening Balance:</span>
+    //                     <span class="summary-cell amount">${self._formatCurrency(balanceData.opening, curr.name)}</span>
+    //                 </div>
+    //             </div>`;
+    //         }).join('');
+
+    //         self.$('.currency-tabs-container').html(`
+    //             <div class="horizontal-layout">
+    //                 <div class="tabs-wrapper">${tabs}</div>
+    //                 <div class="content-wrapper">${content}</div>
+    //             </div>
+    //         `);
+    //     });
+
+    // },
+
+
     _buildCurrencyTabs: function() {
-        console.log('_buildCurrencyTabs called');
         var self = this;
         var currencies = this._getAvailableCurrencies();
-        console.log('Currencies:', currencies);
-        // Handle the Promise returned by _getCurrencyBalances
+        
         this._getCurrencyBalance().then(function(currencyBalances) {
             console.log('Fetched Currency Balances:', currencyBalances);
-            console.log('RPC completed, updating template');
             
-            var tabs = currencies.map((curr, i) => 
-                `<div class="currency-tab ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">${curr.name}</div>`
-            ).join('');
-
-            var content = currencies.map((curr, i) => {
-                // ← Get the specific balance data for THIS currency
-                var balanceData = currencyBalances[curr.name] || {
-                    opening: 0,
-                };
-                
-                return `<div class="currency-content ${i === 0 ? 'active' : ''}" data-currency="${curr.name}">
-                    <div class="balance-summary-row">
-                        <span class="summary-cell">Opening Balance:</span>
-                        <span class="summary-cell amount">${self._formatCurrency(balanceData.opening, curr.name)}</span>
-                    </div>
-                </div>`;
-            }).join('');
-
-            self.$('.currency-tabs-container').html(`
-                <div class="horizontal-layout">
-                    <div class="tabs-wrapper">${tabs}</div>
-                    <div class="content-wrapper">${content}</div>
-                </div>
-            `);
+            // ✅ Just prepare data for template
+            self.currencies = currencies;
+            self.currencyBalances = currencyBalances;
+            
+            // ✅ Re-render the currency section
+            self._renderCurrencySection();
         });
-
     },
 
+    _renderCurrencySection: function() {
+        var currencyHtml = QWeb.render('PartnerBalance.CurrencyBlocks', {
+            widget: this
+        });
+        this.$('.horizontal-currency-summary').html(currencyHtml);
+    },
+    
+    formatCurrencyInTemplate: function(currencyName) {
+        var balanceData = this.currencyBalances[currencyName] || {opening: 0};
+        return this._formatCurrency(balanceData.opening, currencyName);
+    },
     
 
     _getCurrencyBalance: function() {
