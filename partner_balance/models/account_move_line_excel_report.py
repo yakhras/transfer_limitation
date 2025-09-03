@@ -43,6 +43,7 @@ class AccountMoveLineReport(models.Model):
     usd_value = fields.Monetary('USD Value', compute='_compute_usd_value', currency_field='currency_id')
     cumulated_usd_value = fields.Monetary('Cumulated USD Value', compute='_compute_cumulated_usd_value', currency_field='currency_id')
 
+    # For Partner Currency Report
     partner_currency_id = fields.Many2one('res.currency', string='Partner Currency', compute='_compute_partner_currency',)
     partner_currency_value = fields.Monetary('Partner Currency Value', compute='_compute_partner_currency_value', currency_field='currency_id')
     cumulated_partner_currency_value = fields.Monetary('Cumulated Partner Currency Value', compute='_compute_cumulated_partner_currency_value', currency_field='currency_id')
@@ -50,7 +51,7 @@ class AccountMoveLineReport(models.Model):
     # Initial Balance for Cumulation
     initial_balance = fields.Monetary(string='Initial Balance', compute='_compute_initial_balance', store=False, currency_field='company_currency_id')
     initial_balance_amount_currency = fields.Monetary(string='Initial Balance Amount Currency', compute='_compute_initial_balance_amount_currency', store=False, currency_field='currency_id')
-
+    initial_balance_partner_currency = fields.Monetary('Initial Balance Partner Currency', compute='_compute_initial_balance_partner_currency',store=False, currency_field='partner_currency_id')
 
 
     def init(self):
@@ -462,6 +463,63 @@ class AccountMoveLineReport(models.Model):
         for rec in self:
             key = (rec.partner_id.id, rec.currency_id.id)
             rec.initial_balance_amount_currency = initial_balances.get(key, 0.0)
+
+
+    def _compute_initial_balance_partner_currency(self):
+        """Compute the initial balance in partner currency for each partner based on the context date_from"""
+        date_from = self.env.context.get('date_from')
+        
+        # Initialize all records to 0.0 first
+        for rec in self:
+            rec.initial_balance_partner_currency = 0.0
+        
+        if not date_from:
+            return
+
+        partners = self.mapped('partner_id')
+        if not partners:
+            return
+            
+        initial_balances = {}
+
+        # Get historical transactions before date_from for each partner
+        for partner in partners:
+            # Get partner's current currency (assuming it hasn't changed)
+            partner_currency = partner.property_product_pricelist.currency_id if partner.property_product_pricelist else self.env.company.currency_id
+            
+            # Get all historical transactions for this partner
+            self.env.cr.execute("""
+                SELECT amlr.currency_id, amlr.amount_currency, amlr.balance, amlr.date, amlr.company_id
+                FROM account_move_line_report amlr
+                JOIN account_move am ON am.id = amlr.move_id
+                JOIN account_journal aj ON aj.id = am.journal_id
+                WHERE amlr.date < %s 
+                AND amlr.partner_id = %s
+                AND aj.code != 'KRFRK'
+            """, (date_from, partner.id))
+
+            total_partner_currency_balance = 0.0
+            
+            for currency_id, amount_currency, balance, trans_date, company_id in self.env.cr.fetchall():
+                # Get currency object
+                trans_currency = self.env['res.currency'].browse(currency_id) if currency_id else self.env.company.currency_id
+                company = self.env['res.company'].browse(company_id)
+                
+                # Convert to partner currency
+                converted_amount = self._convert_to_partner_currency(
+                    amount_currency or balance,
+                    trans_currency,
+                    partner_currency,
+                    trans_date,
+                    company
+                )
+                total_partner_currency_balance += converted_amount
+
+            initial_balances[partner.id] = total_partner_currency_balance
+
+        # Assign initial balances to records
+        for rec in self:
+            rec.initial_balance_partner_currency = initial_balances.get(rec.partner_id.id, 0.0)
 
 
 class ResPartner(models.Model):
