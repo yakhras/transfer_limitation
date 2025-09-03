@@ -66,26 +66,8 @@ var ExportPdfButtonListController = ListController.extend({
         'click .o_button_excel': '_onExcel',
         'click .o_currency_report': '_onCurrency',
         'change .date-input': '_onDateChange',
-        'click .currency-tab': '_onCurrencyTabClick',
     }),
 
-
-    _onCurrencyTabClick: function(ev) {
-        var $clickedTab = $(ev.currentTarget);
-        var currencyName = $clickedTab.data('currency');
-        
-        // Update active tab visual state
-        this.$('.currency-tab').removeClass('active');
-        $clickedTab.addClass('active');
-        
-        // Update active content
-
-        var $allContent = this.$('.currency-content');
-        var $targetContent = this.$('.currency-content[data-currency="' + currencyName + '"]');
-        
-        $allContent.removeClass('active');
-        $targetContent.addClass('active');
-    },
 
     _setupSummaryDisplay: function() {
         var context = this.model.loadParams.context || {};
@@ -101,7 +83,6 @@ var ExportPdfButtonListController = ListController.extend({
 
     _showSingleRowSummary: function() {
         // Hide tabs, show single row
-        this.$('.currency-tabs-container').hide();
         this.$('.horizontal-currency-summary').hide();
         this.$('.single-row-summary').show();
     },
@@ -109,8 +90,7 @@ var ExportPdfButtonListController = ListController.extend({
 
     _showCurrencyTabs: function() {
         // Hide single row, show tabs
-        this.$('.single-row-summary').hide(); 
-        // this.$('.currency-tabs-container').show();
+        this.$('.single-row-summary').hide();
         this.$('.horizontal-currency-summary').show();
     },
 
