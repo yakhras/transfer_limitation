@@ -99,7 +99,7 @@
             <!-- Server-side defaults; JS can add to context but shouldn’t need to replace -->
             <field name="context">
                 {
-                'group_by': 'partner_id',
+                'group_by': 'currency_id',
                 'search_default_group_by_account': 1
                 }
             </field>
