@@ -245,7 +245,7 @@ var ExportPdfButtonListController = ListController.extend({
 
         var content = currencies.map((curr, i) => {
             // ← Get the specific balance data for THIS currency
-            var balanceData = currencyBalances[curr.name] || {
+            var balanceData = currencyBalance[curr.name] || {
                 opening: 0,
             };
             
