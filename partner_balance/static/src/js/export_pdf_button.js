@@ -69,6 +69,7 @@ var ExportPdfButtonListController = ListController.extend({
         'change .date-input': '_onDateChange',
         'click .currency-tab': '_onCurrencyTabClick',
     }),
+    currencies: [],
 
 
     _onCurrencyTabClick: function(ev) {
@@ -144,7 +145,8 @@ var ExportPdfButtonListController = ListController.extend({
 
         // await the update so the model actually contains initial_balance
         await this._updateViewWithDates(dateFrom, dateTo);
-        await this._buildCurrencyTabs();
+        // await this._buildCurrencyTabs();
+        this._updateCurrencyBalances();
         this._setupSummaryDisplay();
         await this._updateSummaryFromModel();
         summarySection.show();
@@ -346,6 +348,55 @@ var ExportPdfButtonListController = ListController.extend({
         const domain = this.isDomainSelected && state.getDomain();
         return new DataExportExtended(this, state, defaultExportFields, groupedBy,
             domain, this.getSelectedIds());
+    },
+
+
+    // Method to prepare data for template
+    _prepareCurrencyData: function() {
+        var self = this;
+        var availableCurrencies = this._getAvailableCurrencies();
+        
+        this._getCurrencyBalances().then(function(currencyBalances) {
+            // Prepare data array for QWeb template
+            self.currencies = availableCurrencies.map(function(curr, index) {
+                var balanceData = currencyBalances[curr.name] || {opening: 0};
+                
+                return {
+                    name: curr.name,
+                    balance: balanceData.opening,
+                    is_first: index === 0  // For active class
+                };
+            });
+            
+            // Re-render the template section
+            self._renderCurrencyTabs();
+        });
+    },
+
+    // Method to re-render template
+    _renderCurrencyTabs: function() {
+        var $container = this.$('.currency-tabs-container');
+        var newContent = QWeb.render('YourTemplate.CurrencyTabs', {
+            widget: this
+        });
+        $container.html(newContent);
+    },
+
+    // Helper method for template
+    formatCurrency: function(value, currency) {
+        var symbol = currency === 'TRY' ? '₺' : 
+                    currency === 'USD' ? '$' : 
+                    currency === 'EUR' ? '€' : currency + ' ';
+        
+        return symbol + Number(value || 0).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    },
+
+    // Call when needed (date filter change, etc.)
+    _updateCurrencyBalances: function() {
+        this._prepareCurrencyData();
     },
 
 
