@@ -264,7 +264,6 @@ class AccountMoveLineReport(models.Model):
             self,
             key=lambda r: (
                 r.partner_id.id or 0,
-                r.currency_id.id or 0,
                 r.date or '',
                 r.move_id.id or 0,
                 r.id
@@ -277,7 +276,7 @@ class AccountMoveLineReport(models.Model):
             #     rec.cumulated_usd_value = 0
             #     continue
 
-            key = (rec.partner_id.id)
+            key = rec.partner_id.id
             if key not in grouped:
                 grouped[key] = 0.0
 
