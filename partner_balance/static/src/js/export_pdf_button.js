@@ -38,7 +38,6 @@ var DataExportExtended = DataExport.extend({
         if (this.isCompatibleMode) {
             exportedFields.unshift({ name: 'id', label: _t('External ID') });
         }
-        console.log('exportedFields', exportedFields);
         framework.blockUI();
         this.getSession().get_file({
             url: '/web/balance_export/' + exportFormat,
@@ -74,8 +73,6 @@ var ExportPdfButtonListController = ListController.extend({
     _onCurrencyTabClick: function(ev) {
         var $clickedTab = $(ev.currentTarget);
         var currencyName = $clickedTab.data('currency');
-        
-        console.log('Selected currency:', currencyName);
         
         // Update active tab visual state
         this.$('.currency-tab').removeClass('active');
@@ -175,7 +172,6 @@ var ExportPdfButtonListController = ListController.extend({
                     name: 'TRY', // Currency code
                 });
         }
-        console.log('Available Currencies:', currencies);
         
         return currencies;
     },
@@ -186,7 +182,6 @@ var ExportPdfButtonListController = ListController.extend({
         var currencies = this._getAvailableCurrencies();
         
         this._getCurrencyBalance().then(function(currencyBalances) {
-            console.log('Fetched Currency Balances:', currencyBalances);
             
             // Build all currency blocks
             var currencyBlocksHtml = currencies.map(function(currency) {
@@ -233,7 +228,6 @@ var ExportPdfButtonListController = ListController.extend({
                     };
                 }
             });
-            console.log('Fetched Currency Balances:', currencyBalances);
             return currencyBalances;
         });
     },
@@ -274,18 +268,15 @@ var ExportPdfButtonListController = ListController.extend({
         } catch (error) {
             console.error('Error updating view with dates:', error);
         }
-        console.log('context', this.model.loadParams.context);
     },
     
 
     _updateSummaryFromModel: function() {
         this.update({}, {reload: true});
         var state = this.model.get(this.handle);
-        console.log('State Data:', state);
         const records = (state && state.data) || [];
         const initialBalance = records.length ? (records[0].data.initial_balance || 0) : 0;
         
-        console.log('Initial Balance:', initialBalance);
         
         // Update the template element
         this.$('.summary-cell.final-balance').text(this._formatCurrency(initialBalance));
@@ -302,14 +293,11 @@ var ExportPdfButtonListController = ListController.extend({
 
 
     _onExport: function(){
-        console.log('Hi Yaser')
         const domain = this.get('domain');
         const context = this.model.get('context');
         const order = this.model.get('order');
         const viewId = this.viewId;
         const actionData = JSON.parse(sessionStorage.getItem('current_action'));
-        console.log('domain', actionData.domain);
-        console.log('context', sessionStorage);
         this._rpc({
             model: 'account.move.line.report',
             method: 'export_to_excel',
@@ -357,7 +345,6 @@ var ExportPdfButtonListController = ListController.extend({
 
 
     _onExcel: function () {
-        console.log('Exporting to Excel');
         return this._rpc({
             model: 'ir.exports',
             method: 'search_read',
