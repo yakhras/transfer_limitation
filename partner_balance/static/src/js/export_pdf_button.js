@@ -105,6 +105,7 @@ var ExportPdfButtonListController = ListController.extend({
     _showSingleRowSummary: function() {
         // Hide tabs, show single row
         this.$('.currency-tabs-container').hide();
+        this.$('.horizontal-currency-summary').hide();
         this.$('.single-row-summary').show();
     },
 
@@ -112,7 +113,8 @@ var ExportPdfButtonListController = ListController.extend({
     _showCurrencyTabs: function() {
         // Hide single row, show tabs
         this.$('.single-row-summary').hide(); 
-        this.$('.currency-tabs-container').show();
+        // this.$('.currency-tabs-container').show();
+        this.$('.horizontal-currency-summary').show();
     },
 
 
