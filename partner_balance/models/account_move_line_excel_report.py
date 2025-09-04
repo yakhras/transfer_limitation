@@ -470,22 +470,41 @@ class AccountMoveLineReport(models.Model):
     @api.depends_context('date_from')
     def _compute_initial_balance_partner_currency(self):
         date_from = self.env.context.get('date_from')
+
+        # 1) Assign a default to EVERY record up front (prevents "failed to assign")
+        for rec in self:
+            rec.initial_balance_partner_currency = 0.0
+
+        # If no date_from in context, keep zeros and exit cleanly
         if not date_from:
             return
 
-        partners = self.mapped('partner_id')
-        for partner in partners:
-            # Use ORM to access computed field
-            lines = self.search([
-                ('date', '<', date_from),
-                ('partner_id', '=', partner.id)
-            ])
-            total = sum(lines.mapped('partner_currency_value'))
-            
-            # Set for all records of this partner
-            partner_records = self.filtered(lambda r: r.partner_id == partner)
-            for rec in partner_records:
-                rec.initial_balance_partner_currency = total
+        # 2) Collect partner ids present on these records (skip False)
+        partner_ids = [p.id for p in self.mapped('partner_id') if p]
+        if not partner_ids:
+            return  # all records already set to 0.0
+
+        # 3) Aggregate prior balance per partner in a single query
+        domain = [
+            ('date', '<', date_from),
+            ('partner_id', 'in', partner_ids),
+        ]
+        # Sum partner_currency_value grouped by partner
+        grouped = self.read_group(
+            domain,
+            ['partner_currency_value:sum', 'partner_id'],
+            ['partner_id']
+        )
+        totals = {
+            g['partner_id'][0]: (g.get('partner_currency_value_sum') or 0.0)
+            for g in grouped
+        }
+
+        # 4) Assign totals per record
+        for rec in self:
+            pid = rec.partner_id.id if rec.partner_id else False
+            rec.initial_balance_partner_currency = totals.get(pid, 0.0)
+
 
 
 
