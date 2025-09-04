@@ -467,43 +467,46 @@ class AccountMoveLineReport(models.Model):
             rec.initial_balance_amount_currency = initial_balances.get(key, 0.0)
 
 
+
+
+    
+
     @api.depends_context('date_from')
     def _compute_initial_balance_partner_currency(self):
         date_from = self.env.context.get('date_from')
 
-        # 1) Assign a default to EVERY record up front (prevents "failed to assign")
+        # Always assign something to every record to satisfy the compute contract
         for rec in self:
             rec.initial_balance_partner_currency = 0.0
 
-        # If no date_from in context, keep zeros and exit cleanly
         if not date_from:
             return
 
-        # 2) Collect partner ids present on these records (skip False)
+        # Only consider partners actually present on these records
         partner_ids = [p.id for p in self.mapped('partner_id') if p]
         if not partner_ids:
-            return  # all records already set to 0.0
+            return
 
-        # 3) Aggregate prior balance per partner in a single query
+        # Single batched search, then sum in Python (works for non-stored fields)
         domain = [
             ('date', '<', date_from),
             ('partner_id', 'in', partner_ids),
         ]
-        # Sum partner_currency_value grouped by partner
-        grouped = self.read_group(
-            domain,
-            ['partner_currency_value:sum', 'partner_id'],
-            ['partner_id']
-        )
-        totals = {
-            g['partner_id'][0]: (g.get('partner_currency_value_sum') or 0.0)
-            for g in grouped
-        }
+        # Fetch minimal fields to reduce overhead; computed fields will be evaluated
+        lines = self.search(domain)
 
-        # 4) Assign totals per record
+        totals = defaultdict(float)
+        for line in lines:
+            pid = line.partner_id.id or False
+            # handle None safely
+            totals[pid] += (line.partner_currency_value or 0.0)
+
+        # Assign per record (records without partner stay 0.0)
         for rec in self:
             pid = rec.partner_id.id if rec.partner_id else False
             rec.initial_balance_partner_currency = totals.get(pid, 0.0)
+
+
 
 
 
