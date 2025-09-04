@@ -173,9 +173,13 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
     def from_data(self, fields, rows, params=None):
         ctx = params.get('context', {})
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
-
+            
+            report_title = params.get('action_name', '')
+            if report_title == 'Statement of Account':
             # Get opening balance
-            opening_data = self.calculate_opening_balance(params)
+                opening_data = self.calculate_opening_balance(params)
+            else:
+                opening_data = self.calculate_partner_currency_opening_balance(params)
             running_balance = self.calculate_period_summary(params, rows)
 
             row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
@@ -287,6 +291,55 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             currency_balances[currency_name]['credit'] += credit
 
         return currency_balances
+
+
+    def export_partner_currency_balance(self, **params):
+        ctx = params.get('context', {})
+        date_from = ctx.get('date_from')
+        partner_id = ctx.get('default_partner_id')
+        
+        # Query 1: Get initial balance (current domain)
+        balance_records = request.env['account.move.line.report'].with_context(
+            date_from=date_from
+        ).search_read(
+            domain=[('partner_id', '=', partner_id),
+                    ('date', '>=', date_from),
+                    ],
+            fields=['partner_currency_id', 'initial_balance_partner_currency']
+        )
+        
+        # Query 2: Get debit/credit amounts (different domain)
+        debit_credit_records = request.env['account.move.line.report'].search_read(
+            domain=[('partner_id', '=', partner_id),
+                    ('date', '<', date_from),
+                    ('move_id.journal_id.code', '!=', 'KRFRK')
+                    ],
+            fields=['partner_currency_id', 'partner_currency_debit', 'partner_currency_credit']
+        )
+        
+        # Process initial balances
+        currency_balances = {}
+        for record in balance_records:
+            currency_name = record['partner_currency_id'][1] if record['partner_currency_id'] else 'Unknown'
+            balance = record['initial_balance_partner_currency'] or 0
+            
+            if currency_name not in currency_balances:
+                currency_balances[currency_name] = {'balance': 0, 'debit': 0, 'credit': 0}
+            currency_balances[currency_name]['balance'] = balance
+        
+        # Process debit/credit amounts
+        for record in debit_credit_records:
+            currency_name = record['partner_currency_id'][1] if record['partner_currency_id'] else 'Unknown'
+            debit = record['partner_currency_debit'] or 0
+            credit = record['partner_currency_credit'] or 0
+            
+            if currency_name not in currency_balances:
+                currency_balances[currency_name] = {'balance': 0, 'debit': 0, 'credit': 0}
+                
+            currency_balances[currency_name]['debit'] += debit
+            currency_balances[currency_name]['credit'] += credit
+
+        return currency_balances
     
 
     def calculate_opening_balance(self, params, filter_field=None, filter_value=None):
@@ -374,8 +427,6 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             opening_domain.append((filter_field, '=', filter_value))
         
         opening_records = Model.search(opening_domain)
-        # debit = sum(opening_records.mapped('debit'))
-        # credit = sum(opening_records.mapped('credit'))
         
         # Determine currency for display
         currency = 'TRY'  # Default
@@ -398,6 +449,64 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             'currency': currency,
             'date': opening_date
         }
+    
+
+    def calculate_partner_currency_opening_balance(self, params, filter_field=None, filter_value=None):
+        """Calculate opening balance before date_from for the given partner"""
+
+        ctx = params.get('context', {})
+        date_from = ctx.get('date_from')
+        partner_id = ctx.get('default_partner_id')
+        
+        if not date_from or not partner_id:
+            return {
+                'debit': 0.0,
+                'credit': 0.0,
+                'balance': 0.0,
+                'balance_currency': 0.0,
+                'currency': filter_value if filter_field == 'currency_id.name' else 'TRY',
+                'date': ''
+            }
+        
+        # Get corrected balances from our method
+        currency_balances = self.export_partner_currency_balance(**params)  # {"TRY": 87300.94, "USD": 90908.91}
+        
+        # Calculate opening balance (for debit/credit - keep original logic)
+        Model = request.env['account.move.line.report']
+        opening_domain = [
+            ('partner_id', '=', partner_id),
+            ('date', '<', date_from),
+            ('move_id.journal_id.code', '!=', 'KRFRK')
+        ]
+        
+        # Add specific field filter if provided
+        if filter_field and filter_value:
+            opening_domain.append((filter_field, '=', filter_value))
+        
+        opening_records = Model.search(opening_domain)
+        
+        # Determine currency for display
+        currency = 'TRY'  # Default
+        if filter_field == 'currency_id.name':
+            currency = filter_value
+        elif opening_records:
+            currency = opening_records[0].currency_id.name or 'TRY'
+        
+        # Use corrected balance from our method instead of calculating
+        balance = currency_balances.get(currency, {}).get('balance', 0.0)
+        debit = currency_balances.get(currency, {}).get('debit', 0.0)
+        credit = currency_balances.get(currency, {}).get('credit', 0.0)
+        
+        opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        
+        return {
+            'debit': debit,
+            'credit': credit,
+            'balance': balance,  # Updated with corrected value
+            'currency': currency,
+            'date': opening_date
+        }
+
 
     def calculate_period_summary(self, params, data):
         """
