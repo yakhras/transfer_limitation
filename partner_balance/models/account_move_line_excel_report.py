@@ -3,6 +3,7 @@ from odoo import models, fields, api, _
 from odoo.tools import float_round
 from odoo import tools
 from io import BytesIO
+from collections import defaultdict
 from datetime import datetime
 
 
