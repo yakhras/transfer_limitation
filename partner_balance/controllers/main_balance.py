@@ -242,8 +242,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             date_from=date_from
         ).search_read(
             domain=[('partner_id', '=', partner_id),
-                    ('date', '<', date_from),
-                    ('move_id.journal_id.code', '!=', 'KRFRK')
+                    ('date', '>=', date_from),
                     ],
             fields=['currency_id', 'initial_balance_amount_currency']
         )
