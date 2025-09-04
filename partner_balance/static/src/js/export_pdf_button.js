@@ -185,6 +185,7 @@ var ExportPdfButtonListController = ListController.extend({
         var self = this;
         var context = this.model.loadParams.context || {};
         var domain = this.model.loadParams.domain || [];
+        console.log(domain);
         
         // Make direct RPC call to get currency balances
         return this._rpc({

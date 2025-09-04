@@ -256,7 +256,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             if currency_name not in currency_balances:
                 currency_balances[currency_name] = 0
-            # currency_balances[currency_name] += balance
+            currency_balances[currency_name] += balance
 
         
         return currency_balances
