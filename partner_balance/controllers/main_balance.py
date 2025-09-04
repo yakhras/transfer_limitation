@@ -241,7 +241,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         records = request.env['account.move.line.report'].with_context(
             date_from=date_from
         ).search_read(
-            domain=[('partner_id', '=', partner_id)],
+            domain=[('partner_id', '=', partner_id),
+                    ('date', '<', date_from),
+                    ('move_id.journal_id.code', '!=', 'KRFRK')
+                    ],
             fields=['currency_id', 'initial_balance_amount_currency']
         )
         
