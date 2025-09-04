@@ -47,8 +47,8 @@ class AccountMoveLineReport(models.Model):
     # For Partner Currency Report
     partner_currency_id = fields.Many2one('res.currency', string='Partner Currency', compute='_compute_partner_currency',)
     partner_currency_value = fields.Monetary('Partner Currency Value', compute='_compute_partner_currency_value', currency_field='partner_currency_id')
-    partner_currency_debit = fields.Monetary(string='Partner Currency Debit', compute='_compute_partner_currency_value', currency_field='partner_currency_id', store=False)
-    partner_currency_credit = fields.Monetary(string='Partner Currency Credit', compute='_compute_partner_currency_value', currency_field='partner_currency_id', store=False)
+    partner_currency_debit = fields.Monetary(string='Partner Currency Debit', compute='_compute_partner_currency_values', currency_field='partner_currency_id', store=False)
+    partner_currency_credit = fields.Monetary(string='Partner Currency Credit', compute='_compute_partner_currency_values', currency_field='partner_currency_id', store=False)
     cumulated_partner_currency_value = fields.Monetary('Cumulated Partner Currency Value', compute='_compute_cumulated_partner_currency_value', currency_field='partner_currency_id')
 
     # Initial Balance for Cumulation
@@ -258,7 +258,7 @@ class AccountMoveLineReport(models.Model):
                 rec.usd_rate_display = "N/A"
 
     @api.depends('debit', 'credit', 'partner_currency_id', 'partner_currency_value')
-    def _compute_partner_currency_value(self):
+    def _compute_partner_currency_values(self):
         for rec in self:
             rec.partner_currency_debit = rec.partner_currency_value if rec.partner_currency_value > 0 else 0.0
             rec.partner_currency_credit = abs(rec.partner_currency_value) if rec.partner_currency_value < 0 else 0.0
