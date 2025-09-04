@@ -174,7 +174,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         ctx = params.get('context', {})
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             
-            report_title = params.get('action_name', '')
+            report_title = ctx.get('action_name', '')
             if report_title == 'Statement in Partner Currency':
             # Get opening balance
                 opening_data = self.calculate_partner_currency_opening_balance(params)
