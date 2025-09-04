@@ -133,8 +133,6 @@ class AccountMoveLineReport(models.Model):
         """)
 
 
-    
-
     @api.depends('debit', 'amount_currency', 'currency_id')
     def _compute_debit_amount(self):
         for rec in self:
@@ -468,10 +466,6 @@ class AccountMoveLineReport(models.Model):
             rec.initial_balance_amount_currency = initial_balances.get(key, 0.0)
 
 
-
-
-    
-
     @api.depends_context('date_from')
     def _compute_initial_balance_partner_currency(self):
         date_from = self.env.context.get('date_from')
@@ -506,8 +500,6 @@ class AccountMoveLineReport(models.Model):
         for rec in self:
             pid = rec.partner_id.id if rec.partner_id else False
             rec.initial_balance_partner_currency = totals.get(pid, 0.0)
-
-
 
 
 
