@@ -81,6 +81,7 @@
             </field>
         </record>
 
+        <!-- Tree View for Account Move Line Partner Currency Report -->
         <record id="view_account_move_line_report_partner_currency" model="ir.ui.view">
             <field name="name">account.move.line.report.partner.currency</field>
             <field name="model">account.move.line.report</field>
@@ -90,9 +91,8 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
-                    <field name="debit"/>
-                    <field name="credit"/>
-                    <field name="company_currency_id" invisible="1"/>
+                    <field name="partner_currency_debit"/>
+                    <field name="partner_currency_credit"/>
                     <field name="partner_currency_id"/>
                     <field name="partner_currency_value"/>
                     <field name="cumulated_partner_currency_value"/>
