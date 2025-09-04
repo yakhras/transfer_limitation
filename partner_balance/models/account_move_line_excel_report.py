@@ -361,7 +361,7 @@ class AccountMoveLineReport(models.Model):
         
         return rate.inverse_company_rate if rate else None
 
-    @api.depends('partner_id', 'date', 'move_id', 'partner_currency_value')
+    @api.depends('partner_id', 'date', 'move_id', 'partner_currency_value', 'initial_balance_partner_currency')
     def _compute_cumulated_partner_currency_value(self):
         """Calculate cumulative balance in partner's currency"""
         grouped = {}
@@ -379,7 +379,7 @@ class AccountMoveLineReport(models.Model):
         for rec in sorted_records:
             key = rec.partner_id.id
             if key not in grouped:
-                grouped[key] = 0.0
+                grouped[key] = rec.initial_balance_partner_currency or 0.0
 
             grouped[key] += rec.partner_currency_value or 0.0
             rec.cumulated_partner_currency_value = grouped[key]
