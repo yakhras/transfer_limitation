@@ -428,7 +428,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 # Use group_name as key for consistency
                 opening_balances[group_name] = opening_data
             
-            # xlsx_writer.write(31, 0, opening_balances, xlsx_writer.partner_name_style)
+            xlsx_writer.write(36, 0, opening_balances, xlsx_writer.partner_name_style)
             # Update group balances with respective opening balances
             self._update_group_balances_per_currency(groups, opening_balances)
             
