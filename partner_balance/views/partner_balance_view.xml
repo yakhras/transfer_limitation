@@ -93,9 +93,9 @@
                     <field name="note"/>
                     <field name="partner_currency_debit"/>
                     <field name="partner_currency_credit"/>
-                    <field name="partner_currency_id"/>
-                    <field name="partner_currency_value"/>
                     <field name="cumulated_partner_currency_value"/>
+                    <field name="partner_currency_value"/>
+                    <field name="partner_currency_id"/>
                     <field name="initial_balance_partner_currency" invisible="1"/>
                     <field name="partner_currency_id" invisible="1"/>
                 </tree>
