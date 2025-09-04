@@ -481,14 +481,14 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                     # Other grouping - no filtering (total opening balance)
                     filter_field = None
                     filter_value = None
-                opening_data = self.calculate_opening_balance(params, filter_field, filter_value)
-                grouped_balance = self.calculate_grouped_opening_balance(params, filter_field, filter_value)
-                grouped_balances[group_name] = grouped_balance
+                opening_data = self.calculate_grouped_opening_balance(params, filter_field, filter_value)
+                # grouped_balance = self.calculate_grouped_opening_balance(params, filter_field, filter_value)
+                # grouped_balances[group_name] = grouped_balance
                 # Use group_name as key for consistency
                 opening_balances[group_name] = opening_data
             
-            xlsx_writer.write(37, 0, opening_balances, xlsx_writer.partner_name_style)
-            xlsx_writer.write(38, 0, grouped_balances, xlsx_writer.partner_name_style)
+            # xlsx_writer.write(37, 0, opening_balances, xlsx_writer.partner_name_style)
+            # xlsx_writer.write(38, 0, grouped_balances, xlsx_writer.partner_name_style)
             # Update group balances with respective opening balances
             self._update_group_balances_per_currency(groups, opening_balances)
             
