@@ -313,6 +313,62 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         }
 
 
+    def calculate_grouped_opening_balance(self, params, filter_field=None, filter_value=None):
+        """Calculate opening balance before date_from for the given partner"""
+
+        ctx = params.get('context', {})
+        date_from = ctx.get('date_from')
+        partner_id = ctx.get('default_partner_id')
+        
+        if not date_from or not partner_id:
+            return {
+                'debit': 0.0,
+                'credit': 0.0,
+                'balance': 0.0,
+                'balance_currency': 0.0,
+                'currency': filter_value if filter_field == 'currency_id.name' else 'TRY',
+                'date': ''
+            }
+        
+        # Get corrected balances from our method
+        currency_balances = self.export_partner_balance(**params)  # {"TRY": 87300.94, "USD": 90908.91}
+        
+        # Calculate opening balance (for debit/credit - keep original logic)
+        Model = request.env['account.move.line.report']
+        opening_domain = [
+            ('partner_id', '=', partner_id),
+            ('date', '<', date_from),
+            ('move_id.journal_id.code', '!=', 'KRFRK')
+        ]
+        
+        # Add specific field filter if provided
+        if filter_field and filter_value:
+            opening_domain.append((filter_field, '=', filter_value))
+        
+        opening_records = Model.search(opening_domain)
+        debit = sum(opening_records.mapped('debit'))
+        credit = sum(opening_records.mapped('credit'))
+        
+        # Determine currency for display
+        currency = 'TRY'  # Default
+        if filter_field == 'currency_id.name':
+            currency = filter_value
+        elif opening_records:
+            currency = opening_records[0].currency_id.name or 'TRY'
+        
+        # Use corrected balance from our method instead of calculating
+        balance = currency_balances.get(currency, 0.0)
+        
+        opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        
+        return {
+            'debit': debit,
+            'credit': credit,
+            'balance': balance,  # Updated with corrected value
+            'currency': currency,
+            'date': opening_date
+        }
+
     def calculate_period_summary(self, params, data):
         """
         Calculate period summary for both grouped and ungrouped data
@@ -407,6 +463,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             
             # Determine filter approach based on grouping field
             opening_balances = {}
+            grouped_balances = {}
             for group_name in groups.children.keys():
                 # xlsx_writer.write(31, 0, group_name, xlsx_writer.partner_name_style)
                 filter_field = None
@@ -425,10 +482,13 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                     filter_field = None
                     filter_value = None
                 opening_data = self.calculate_opening_balance(params, filter_field, filter_value)
+                grouped_balance = self.calculate_grouped_opening_balance(params, filter_field, filter_value)
+                grouped_balances[group_name] = grouped_balance
                 # Use group_name as key for consistency
                 opening_balances[group_name] = opening_data
             
-            xlsx_writer.write(36, 0, opening_balances, xlsx_writer.partner_name_style)
+            xlsx_writer.write(37, 0, opening_balances, xlsx_writer.partner_name_style)
+            xlsx_writer.write(38, 0, grouped_balances, xlsx_writer.partner_name_style)
             # Update group balances with respective opening balances
             self._update_group_balances_per_currency(groups, opening_balances)
             
