@@ -256,7 +256,7 @@ var ExportPdfButtonListController = ListController.extend({
         this.update({}, {reload: true});
         var state = this.model.get(this.handle);
         const records = (state && state.data) || [];
-        const initialBalance = records.length ? (records[0].data.initial_balance || 0) : 0;
+        const initialBalance = records.length ? (records[0].data.initial_balance || records[0].data.initial_balance_partner_currency || 0) : 0;
         
         
         // Update the template element
