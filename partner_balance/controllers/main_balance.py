@@ -133,9 +133,17 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         date_to = params.get('date_to')
 
         oldest_date = self.get_oldest_date_for_partner(partner_id)
+
+        start_date_str = date_from or oldest_date
+        end_date_str = date_to or datetime.datetime.now().strftime('%Y-%m-%d')
+
+        start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
+        days_diff = (end_date - start_date).days
+        days_count = f"{days_diff} days"
         
         # Report Period row - multiple labels and values
-        period = f"{date_from or oldest_date} to {date_to or datetime.datetime.now().strftime('%Y-%m-%d')}"
+        period = f"{start_date_str} to {end_date_str}"
         xlsx_writer.write(row, 0, "Report Period:", xlsx_writer.summary_metric_style)
         xlsx_writer.worksheet.merge_range(row, 1, row, 2, period, xlsx_writer.base_style)
         
@@ -144,7 +152,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         xlsx_writer.worksheet.merge_range(row, 5, row, 6, export_date, xlsx_writer.base_style)
 
         xlsx_writer.write(row, 7, "Days:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 8, "14 days", xlsx_writer.base_style)
+        xlsx_writer.write(row, 8, days_count, xlsx_writer.base_style)
         row += 1
 
 
