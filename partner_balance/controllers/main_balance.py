@@ -244,7 +244,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             domain=[('partner_id', '=', partner_id),
                     ('date', '>=', date_from),
                     ],
-            fields=['currency_id', 'initial_balance_amount_currency']
+            fields=['currency_id', 'initial_balance_amount_currency', 'debit_amount', 'credit_amount']
         )
         
         # Group by currency
@@ -252,12 +252,21 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         for record in records:
             currency_name = record['currency_id'][1] if record['currency_id'] else 'Unknown'
             balance = record['initial_balance_amount_currency'] or 0
+            debit = record['debit_amount'] or 0
+            credit = record['credit_amount'] or 0
             
             if currency_name not in currency_balances:
-                currency_balances[currency_name] = 0
-            currency_balances[currency_name] = balance
+                currency_balances[currency_name] = {
+                    'balance': balance,
+                    'debit': 0,
+                    'credit': 0
+                }
+                
+            # Set balance (same for all records) and accumulate debit/credit
+            currency_balances[currency_name]['balance'] = balance
+            currency_balances[currency_name]['debit'] += debit
+            currency_balances[currency_name]['credit'] += credit
 
-        
         return currency_balances
     
 
@@ -346,8 +355,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             opening_domain.append((filter_field, '=', filter_value))
         
         opening_records = Model.search(opening_domain)
-        debit = sum(opening_records.mapped('debit'))
-        credit = sum(opening_records.mapped('credit'))
+        # debit = sum(opening_records.mapped('debit'))
+        # credit = sum(opening_records.mapped('credit'))
         
         # Determine currency for display
         currency = 'TRY'  # Default
@@ -357,7 +366,9 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             currency = opening_records[0].currency_id.name or 'TRY'
         
         # Use corrected balance from our method instead of calculating
-        balance = currency_balances.get(currency, 0.0)
+        balance = currency_balances.get(currency, {}).get('balance', 0.0)
+        debit = currency_balances.get(currency, {}).get('debit', 0.0)
+        credit = currency_balances.get(currency, {}).get('credit', 0.0)
         
         opening_date = (datetime.datetime.strptime(date_from, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
         
