@@ -95,6 +95,7 @@
                     <field name="partner_currency_id"/>
                     <field name="partner_currency_value"/>
                     <field name="cumulated_partner_currency_value"/>
+                    <field name="partner_currency" invisible="1"/>
                 </tree>
             </field>
         </record>
