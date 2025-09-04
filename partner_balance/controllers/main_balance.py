@@ -237,33 +237,44 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         date_from = ctx.get('date_from')
         partner_id = ctx.get('default_partner_id')
         
-        # Get records with context
-        records = request.env['account.move.line.report'].with_context(
+        # Query 1: Get initial balance (current domain)
+        balance_records = request.env['account.move.line.report'].with_context(
             date_from=date_from
         ).search_read(
             domain=[('partner_id', '=', partner_id),
                     ('date', '>=', date_from),
                     ],
-            fields=['currency_id', 'initial_balance_amount_currency', 'debit_amount', 'credit_amount']
+            fields=['currency_id', 'initial_balance_amount_currency']
         )
         
-        # Group by currency
+        # Query 2: Get debit/credit amounts (different domain)
+        debit_credit_records = request.env['account.move.line.report'].search_read(
+            domain=[('partner_id', '=', partner_id),
+                    ('date', '<', date_from),
+                    ('move_id.journal_id.code', '!=', 'KRFRK')
+                    ],
+            fields=['currency_id', 'debit_amount', 'credit_amount']
+        )
+        
+        # Process initial balances
         currency_balances = {}
-        for record in records:
+        for record in balance_records:
             currency_name = record['currency_id'][1] if record['currency_id'] else 'Unknown'
             balance = record['initial_balance_amount_currency'] or 0
+            
+            if currency_name not in currency_balances:
+                currency_balances[currency_name] = {'balance': 0, 'debit': 0, 'credit': 0}
+            currency_balances[currency_name]['balance'] = balance
+        
+        # Process debit/credit amounts
+        for record in debit_credit_records:
+            currency_name = record['currency_id'][1] if record['currency_id'] else 'Unknown'
             debit = record['debit_amount'] or 0
             credit = record['credit_amount'] or 0
             
             if currency_name not in currency_balances:
-                currency_balances[currency_name] = {
-                    'balance': balance,
-                    'debit': 0,
-                    'credit': 0
-                }
+                currency_balances[currency_name] = {'balance': 0, 'debit': 0, 'credit': 0}
                 
-            # Set balance (same for all records) and accumulate debit/credit
-            currency_balances[currency_name]['balance'] = balance
             currency_balances[currency_name]['debit'] += debit
             currency_balances[currency_name]['credit'] += credit
 
