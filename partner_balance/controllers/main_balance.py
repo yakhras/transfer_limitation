@@ -232,6 +232,33 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         return 'Beginning'
 
 
+    def export_partner_balance(self, **params):
+        ctx = params.get('context', {})
+        date_from = ctx.get('date_from')
+        partner_id = ctx.get('default_partner_id')
+        
+        # Get records with context
+        records = request.env['account.move.line.report'].with_context(
+            date_from=date_from
+        ).search_read(
+            domain=[('partner_id', '=', partner_id)],
+            fields=['currency_id', 'initial_balance_amount_currency']
+        )
+        
+        # Group by currency
+        currency_balances = {}
+        for record in records:
+            currency_name = record['currency_id'][1] if record['currency_id'] else 'Unknown'
+            balance = record['initial_balance_amount_currency'] or 0
+            
+            if currency_name not in currency_balances:
+                currency_balances[currency_name] = 0
+            currency_balances[currency_name] += balance
+
+        
+        return currency_balances
+    
+
     def calculate_opening_balance(self, params, filter_field=None, filter_value=None):
         """Calculate opening balance before date_from for the given partner"""
 
@@ -322,6 +349,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             'total_credit': total_credit,
         }
 
+
     def _extract_rows_from_groups(self, groups_node):
         """
         Recursively extract all data rows from GroupsTreeNode structure
@@ -363,6 +391,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             running_balance = self.calculate_period_summary(params, groups)
             xlsx_writer.write(31, 0, running_balance, xlsx_writer.partner_name_style)
             opening_data = self.calculate_opening_balance(params)
+            initial_balances = self.export_partner_balance(**params)
+            xlsx_writer.write(35, 0, initial_balances, xlsx_writer.partner_name_style)
             row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
             
             # Start groups from row 9

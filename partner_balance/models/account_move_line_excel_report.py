@@ -361,6 +361,7 @@ class AccountMoveLineReport(models.Model):
         
         return rate.inverse_company_rate if rate else None
 
+
     @api.depends('partner_id', 'date', 'move_id', 'partner_currency_value', 'initial_balance_partner_currency')
     def _compute_cumulated_partner_currency_value(self):
         """Calculate cumulative balance in partner's currency"""
