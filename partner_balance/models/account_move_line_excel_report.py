@@ -54,6 +54,84 @@ class AccountMoveLineReport(models.Model):
     initial_balance_partner_currency = fields.Monetary('Initial Balance Partner Currency', compute='_compute_initial_balance_partner_currency',store=False, currency_field='partner_currency_id')
 
 
+    # def init(self):
+    #     """Initialize the report view"""
+    #     tools.drop_view_if_exists(self.env.cr, self._table)
+    #     self.env.cr.execute(f"""
+    #         CREATE OR REPLACE VIEW {self._table} AS (
+    #             WITH check_aggregates AS (
+    #                 SELECT 
+    #                     ap.id as payment_id,
+    #                     string_agg(DISTINCT ac.number::text, ', ' ORDER BY ac.number::text) as check_numbers
+    #                 FROM account_payment ap
+    #                 JOIN account_check ac ON ac.payment_id = ap.id
+    #                 GROUP BY ap.id
+    #             )
+                
+    #             SELECT
+    #                 aml.id                AS id,
+    #                 aml.date              AS date,
+    #                 aml.move_id           AS move_id,
+    #                 aml.partner_id        AS partner_id,
+    #                 aml.account_id        AS account_id,
+    #                 aml.company_id        AS company_id,
+
+    #                 aml.debit             AS debit,
+    #                 aml.credit            AS credit,
+    #                 aml.balance           AS balance,
+    #                 aml.amount_currency   AS amount_currency,
+    #                 aml.currency_id       AS currency_id,
+    #                 rc.id                 AS company_currency_id,
+
+    #                 -- Enhanced reference logic with check numbers and bank ref
+    #                 CASE
+    #                     WHEN aj.payment_subtype = 'check' AND ca.check_numbers IS NOT NULL THEN
+    #                         ca.check_numbers  -- Show aggregated check numbers
+    #                     WHEN aj.payment_subtype = 'bank' AND aml.ref IS NOT NULL THEN
+    #                         aml.ref          -- Show bank reference from move line
+    #                     ELSE
+    #                         am.name          -- Default journal entry reference
+    #                 END AS reference,
+                    
+    #                 -- Transaction type classification
+    #                 CASE 
+    #                     WHEN am.move_type = 'out_invoice' THEN 'Invoice'
+    #                     WHEN am.move_type = 'in_invoice' THEN 'Bill'
+    #                     WHEN am.move_type = 'out_refund' THEN 'Credit Note'
+    #                     WHEN am.move_type = 'in_refund' THEN 'Credit Note'
+    #                     WHEN aj.payment_subtype = 'bank' THEN 'Bank Payment'
+    #                     WHEN aj.payment_subtype = 'check' THEN 'Check'
+    #                     WHEN aj.type = 'purchase' THEN 'Purchase'
+    #                     WHEN aj.type = 'sale' THEN 'Sale'
+    #                     ELSE 'Journal Entry'
+    #                 END AS type,
+                    
+    #                 am.document_number    AS note        -- Document number / Reference
+                    
+    #             FROM account_move_line aml
+    #             JOIN account_move am
+    #             ON am.id = aml.move_id
+    #             JOIN account_journal aj
+    #             ON aj.id = am.journal_id  -- Added for payment_subtype
+    #             JOIN account_account aa
+    #             ON aa.id = aml.account_id
+    #             JOIN account_account_type aat
+    #             ON aat.id = aa.user_type_id
+    #             JOIN res_company comp
+    #             ON comp.id = aml.company_id
+    #             JOIN res_currency rc
+    #             ON rc.id = comp.currency_id
+    #             LEFT JOIN account_payment ap
+    #             ON ap.move_id = am.id     -- Link to payment for check lookup
+    #             LEFT JOIN check_aggregates ca
+    #             ON ca.payment_id = ap.id  -- Get aggregated check numbers
+    #             WHERE am.state = 'posted'
+    #             AND aat.type IN ('payable','receivable')
+    #             AND aml.partner_id IS NOT NULL
+    #         )
+    #     """)
+
+
     def init(self):
         """Initialize the report view"""
         tools.drop_view_if_exists(self.env.cr, self._table)
@@ -130,7 +208,6 @@ class AccountMoveLineReport(models.Model):
                 AND aml.partner_id IS NOT NULL
             )
         """)
-
 
     @api.depends('debit', 'amount_currency', 'currency_id')
     def _compute_debit_amount(self):
