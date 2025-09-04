@@ -485,7 +485,7 @@ class AccountMoveLineReport(models.Model):
 
         # Aggregate balances before date_from with journal filter
         self.env.cr.execute("""
-            SELECT amlr.partner_id, SUM(amlr.debit) - SUM(amlr.credit) as balance
+            SELECT amlr.partner_id, SUM(amlr.partner_currency_value) as balance
             FROM account_move_line_report amlr
             JOIN account_move am ON am.id = amlr.move_id
             JOIN account_journal aj ON aj.id = am.journal_id
