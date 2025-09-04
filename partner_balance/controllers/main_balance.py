@@ -175,11 +175,11 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         with BalanceExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             
             report_title = params.get('action_name', '')
-            if report_title == 'Statement of Account':
+            if report_title == 'Statement in Partner Currency':
             # Get opening balance
-                opening_data = self.calculate_opening_balance(params)
-            else:
                 opening_data = self.calculate_partner_currency_opening_balance(params)
+            else:
+                opening_data = self.calculate_opening_balance(params)
             running_balance = self.calculate_period_summary(params, rows)
 
             row_index = self.header_metadata(ctx, xlsx_writer, opening_data, running_balance)
