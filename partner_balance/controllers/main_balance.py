@@ -253,8 +253,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             currency_name = record['currency_id'][1] if record['currency_id'] else 'Unknown'
             balance = record['initial_balance_amount_currency'] or 0
             
-            # if currency_name not in currency_balances:
-            #     currency_balances[currency_name] = 0
+            if currency_name not in currency_balances:
+                currency_balances[currency_name] = 0
             currency_balances[currency_name] = balance
 
         
