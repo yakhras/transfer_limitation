@@ -465,8 +465,9 @@ class AccountMoveLineReport(models.Model):
             rec.initial_balance_amount_currency = initial_balances.get(key, 0.0)
 
 
-    def _compute_initial_balance_partner_currency(self):
-        """Compute the initial balance in partner currency for each partner based on the context date_from"""
+    @api.depends_context('date_from')
+    def _compute_initial_balance_partner_currency(self): 
+        """Compute the initial balance for each partner based on the context date_from"""
         date_from = self.env.context.get('date_from')
         
         # Initialize all records to 0.0 first
@@ -482,86 +483,24 @@ class AccountMoveLineReport(models.Model):
             
         initial_balances = {}
 
-        # Get historical transactions before date_from for each partner
-        for partner in partners:
-            # Get partner's current currency (assuming it hasn't changed)
-            partner_currency = partner.property_product_pricelist.currency_id if partner.property_product_pricelist else self.env.company.currency_id
-            
-            # Get all historical transactions for this partner
-            self.env.cr.execute("""
-                SELECT amlr.currency_id, amlr.amount_currency, amlr.balance, amlr.date, amlr.company_id
-                FROM account_move_line_report amlr
-                JOIN account_move am ON am.id = amlr.move_id
-                JOIN account_journal aj ON aj.id = am.journal_id
-                WHERE amlr.date < %s 
-                AND amlr.partner_id = %s
-                AND aj.code != 'KRFRK'
-            """, (date_from, partner.id))
+        # Aggregate balances before date_from with journal filter
+        self.env.cr.execute("""
+            SELECT amlr.partner_id, SUM(amlr.debit) - SUM(amlr.credit) as balance
+            FROM account_move_line_report amlr
+            JOIN account_move am ON am.id = amlr.move_id
+            JOIN account_journal aj ON aj.id = am.journal_id
+            WHERE amlr.date < %s 
+            AND amlr.partner_id IN %s
+            AND aj.code != 'KRFRK'
+            GROUP BY amlr.partner_id
+        """, (date_from, tuple(partners.ids)))
 
-            total_partner_currency_balance = 0.0
-            
-            for currency_id, amount_currency, balance, trans_date, company_id in self.env.cr.fetchall():
-                # Get currency object
-                trans_currency = self.env['res.currency'].browse(currency_id) if currency_id else self.env.company.currency_id
-                company = self.env['res.company'].browse(company_id)
-                
-                # Convert to partner currency
-                converted_amount = self._convert_to_partner_currency(
-                    amount_currency or balance,
-                    trans_currency,
-                    partner_currency,
-                    trans_date,
-                    company
-                )
-                total_partner_currency_balance += converted_amount
-
-            initial_balances[partner.id] = total_partner_currency_balance
+        for partner_id, total_balance in self.env.cr.fetchall():
+            initial_balances[partner_id] = total_balance
 
         # Assign initial balances to records
         for rec in self:
             rec.initial_balance_partner_currency = initial_balances.get(rec.partner_id.id, 0.0)
-
-
-    def _convert_to_partner_currency(self, amount, from_currency, to_currency, date, company):
-        """Convert amount from one currency to partner currency"""
-        if from_currency == to_currency:
-            return amount
-        
-        """Manual currency conversion using exchange rates"""
-        if from_currency == to_currency:
-            return amount
-        
-        # Convert to company currency first (TRY), then to target currency
-        if from_currency.name != 'TRY':
-            # Get rate to convert FROM currency to TRY
-            from_rate = self.env['res.currency.rate'].search([
-                ('currency_id', '=', from_currency.id),
-                ('company_id', '=', company.id),
-                ('name', '<', date)
-            ], order='name desc', limit=1)
-            
-            if from_rate and from_rate.inverse_company_rate:
-                # Convert to TRY
-                amount_in_try = amount * from_rate.inverse_company_rate
-            else:
-                return 0.0
-        else:
-            amount_in_try = amount
-        
-        # Convert from TRY to target currency
-        if to_currency.name != 'TRY':
-            to_rate = self.env['res.currency.rate'].search([
-                ('currency_id', '=', to_currency.id),
-                ('company_id', '=', company.id),
-                ('name', '<', date)
-            ], order='name desc', limit=1)
-            
-            if to_rate and to_rate.inverse_company_rate:
-                return amount_in_try / to_rate.inverse_company_rate
-            else:
-                return 0.0
-        else:
-            return amount_in_try
 
 
 
