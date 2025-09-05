@@ -1,343 +1,19 @@
-// /* ===============================
-//    🌐 Variables
-// ================================ */
-// :root {
-//   // Spacing
-//   --space-xs: 4px;
-//   --space-sm: 8px;
-//   --space-md: 12px;
-//   --space-lg: 16px;
-//   --space-xl: 24px;
-
-//   // Border & Radius
-//   --border-radius: 6px;
-//   --border-color: #d1d5db;
-
-//   // Colors
-//   --bg-primary: #ffffff;
-//   --bg-secondary: #f8fafc;
-//   --bg-accent: #f0f9ff;
-//   --accent-color: #3b82f6;
-//   --accent-hover: #2563eb;
-//   --text-primary: #1f2937;
-//   --text-secondary: #6b7280;
-//   --success-color: #059669;
-//   --info-color: #0ea5e9;
-//   --danger-color: #dc2626;
-
-//   // Shadows
-//   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-//   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-//   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-
-//   // Transitions
-//   --transition: all 0.2s ease;
-//   --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.3);
-// }
-
-// /* ===============================
-//    🧱 Base Styles
-// ================================ */
-// body {
-//   font-family: 'Inter', 'Segoe UI', sans-serif;
-//   font-size: 14px;
-//   color: var(--text-primary);
-//   background: var(--bg-secondary);
-//   margin: 0;
-//   padding: 0;
-// }
-
-// /* ===============================
-//    📦 Card Component
-// ================================ */
-// .card {
-//   background: var(--bg-primary);
-//   border-radius: var(--border-radius);
-//   box-shadow: var(--shadow-md);
-//   padding: var(--space-lg);
-//   transition: var(--transition);
-
-//   &:hover {
-//     transform: translateY(-2px);
-//     box-shadow: var(--shadow-lg);
-//   }
-// }
-
-// /* ===============================
-//    🧭 Toolbar
-// ================================ */
-
-
-// .toolbar {
-//   display: flex;
-//   align-items: center;
-//   gap: var(--space-lg);
-//   flex-wrap: wrap;
-//   background: var(--bg-primary);
-//   padding: var(--space-sm) var(--space-md);
-//   border: 1px solid var(--border-color);
-//   border-radius: var(--border-radius);
-//   box-shadow: var(--shadow-sm);
-//   margin-bottom: var(--space-sm);
-// }
-
-// /* ===============================
-//    📤 Export Buttons
-// ================================ */
-// .export-btn-group {
-//   display: flex;
-//   gap: var(--space-xs);
-//   padding: var(--space-xs);
-//   background: var(--bg-secondary);
-//   border-radius: var(--border-radius);
-//   border: 1px solid var(--border-color);
-
-//   .btn-icon {
-//     width: 32px;
-//     height: 32px;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     border-radius: calc(var(--border-radius) - 2px);
-//     background: var(--bg-primary);
-//     border: none;
-//     transition: var(--transition);
-//     cursor: pointer;
-
-//     &:hover {
-//       background: var(--bg-accent);
-//       transform: scale(1.05);
-//       box-shadow: var(--shadow-sm);
-//     }
-
-//     &.btn-pdf i {
-//       color: var(--danger-color);
-//     }
-
-//     &.btn-xlsx i {
-//       color: var(--success-color);
-//     }
-//   }
-// }
-
-// /* ===============================
-//    📅 Date Range
-// ================================ */
-// .date-range {
-//   height: 32px;
-//   display: flex;
-//   align-items: center;
-//   gap: var(--space-md);
-//   padding: 0 var(--space-md);
-//   background: var(--bg-secondary);
-//   border: 1px solid var(--border-color);
-//   border-radius: var(--border-radius);
-
-//   label {
-//     font-weight: 600;
-//     font-size: 13px;
-//     color: var(--text-primary);
-//     margin-right: var(--space-xs);
-//   }
-
-//   .date-input {
-//     height: 32px;
-//     padding: var(--space-xs) var(--space-sm);
-//     border: 1px solid var(--border-color);
-//     border-radius: calc(var(--border-radius) - 2px);
-//     font-size: 13px;
-//     background: var(--bg-primary);
-//     transition: var(--transition);
-
-//     &:focus {
-//       outline: none;
-//       border-color: var(--accent-color);
-//       box-shadow: var(--focus-ring);
-//     }
-//   }
-// }
-
-// /* ===============================
-//    💱 Currency Report Button
-// ================================ */
-// .o_currency_report {
-//   display: flex;
-//   align-items: center;
-//   gap: var(--space-sm);
-//   padding: 0 var(--space-md);
-//   height: 32px;
-//   background: var(--bg-primary);
-//   border: 1px solid var(--border-color);
-//   border-radius: var(--border-radius);
-//   font-size: 13px;
-//   font-weight: 500;
-//   color: var(--text-primary);
-//   cursor: pointer;
-//   transition: var(--transition);
-
-//   i {
-//     color: var(--info-color);
-//   }
-
-//   &:hover {
-//     background: var(--bg-accent);
-//     border-color: var(--info-color);
-//     color: #0369a1;
-//   }
-// }
-
-// /* ===============================
-//    📊 Balance Summary
-// ================================ */
-// .balance-summary-section {
-//   min-height: 32px;
-//   display: none;
-//   align-items: center;
-//   background: var(--bg-primary);
-//   border: 1px solid var(--border-color);
-//   border-radius: var(--border-radius);
-//   padding: 0 var(--space-lg);
-// }
-
-// .single-row-summary {
-//   height: 32px;
-//   background: var(--bg-secondary);
-//   border: 1px solid var(--border-color);
-//   border-radius: var(--border-radius);
-//   padding: var(--space-xs) var(--space-sm);
-// }
-
-// .balance-summary-row {
-//   display: flex;
-//   align-items: center;
-//   gap: var(--space-lg);
-//   font-weight: 600;
-//   font-size: 13px;
-//   color: var(--text-primary);
-
-//   .summary-cell {
-//     &.amount {
-//       font-family: 'Courier New', monospace;
-//       font-weight: bold;
-//       color: var(--success-color);
-//     }
-
-//     &.final-balance {
-//       color: var(--info-color);
-//       font-weight: bold;
-//     }
-//   }
-// }
-
-// /* ===============================
-//    🧩 Horizontal Summary Design
-// ================================ */
-// .horizontal-currency-summary {
-//   display: flex;
-//   justify-content: space-around;
-//   align-items: center;
-//   flex-wrap: wrap;
-//   gap: var(--space-lg);
-//   padding: 2px;
-//   background-color: var(--bg-primary);
-//   border-radius: var(--border-radius);
-//   box-shadow: var(--shadow-sm);
-//   font-family: 'Segoe UI', sans-serif;
-//   transition: var(--transition);
-
-//   &:hover {
-//     box-shadow: var(--shadow-md);
-//   }
-
-//   @media (max-width: 600px) {
-//     flex-direction: column;
-//     align-items: stretch;
-//   }
-// }
-
-// .currency-block {
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center;
-//   min-width: 100px;
-//   padding: var(--space-sm);
-//   border-radius: var(--border-radius);
-//   transition: var(--transition);
-
-//   &:hover {
-//     background: var(--bg-accent);
-//     transform: translateY(-2px);
-//     box-shadow: var(--shadow-sm);
-//   }
-
-//   .currency-icon {
-//     font-size: 1rem;
-//     color: var(--accent-color);
-//     margin-bottom: var(--space-xs);
-//   }
-// }
-
-// .currency-label {
-//   font-size: 0.875rem;
-//   font-weight: 600;
-//   color: var(--text-secondary);
-//   background: var(--bg-accent);
-//   padding: var(--space-xs) var(--space-sm);
-//   border-radius: var(--border-radius);
-//   text-transform: uppercase;
-//   margin-bottom: var(--space-xs);
-// }
-
-// .final-balance {
-//   font-size: 1.4rem;
-//   font-weight: 700;
-//   color: var(--text-primary);
-//   opacity: 0;
-//   transform: translateY(6px);
-//   animation: fadeUp 0.4s ease-out forwards;
-// }
-
-// @keyframes fadeUp {
-//   to {
-//     opacity: 1;
-//     transform: translateY(0);
-//   }
-// }
-
-
-// .currency-button-group {
-//   display: flex;
-//   flex-direction: column;
-//   gap: var(--space-sm);
-//   padding: var(--space-md);
-//   background: var(--bg-secondary);
-//   border: 1px solid var(--border-color);
-//   border-radius: var(--border-radius);
-//   box-shadow: var(--shadow-sm);
-//   width: fit-content;
-//   margin-left: var(--space-md);
-// }
-
-
-
-
-
 /* ===============================
    🌐 Variables
 ================================ */
 :root {
-  /* Spacing */
+  // Spacing
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 12px;
   --space-lg: 16px;
   --space-xl: 24px;
 
-  /* Border & Radius */
+  // Border & Radius
   --border-radius: 6px;
   --border-color: #d1d5db;
 
-  /* Colors */
+  // Colors
   --bg-primary: #ffffff;
   --bg-secondary: #f8fafc;
   --bg-accent: #f0f9ff;
@@ -349,12 +25,12 @@
   --info-color: #0ea5e9;
   --danger-color: #dc2626;
 
-  /* Shadows */
+  // Shadows
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
-  /* Transitions */
+  // Transitions
   --transition: all 0.2s ease;
   --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
@@ -362,12 +38,6 @@
 /* ===============================
    🧱 Base Styles
 ================================ */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 body {
   font-family: 'Inter', 'Segoe UI', sans-serif;
   font-size: 14px;
@@ -386,20 +56,23 @@ body {
   box-shadow: var(--shadow-md);
   padding: var(--space-lg);
   transition: var(--transition);
-}
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
 }
 
 /* ===============================
-   🧭 Toolbar (two-zone grid)
+   🧭 Toolbar
 ================================ */
+
+
 .toolbar {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-lg);
+  flex-wrap: wrap;
   background: var(--bg-primary);
   padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--border-color);
@@ -408,127 +81,91 @@ body {
   margin-bottom: var(--space-sm);
 }
 
-.toolbar-left,
-.toolbar-right {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-}
-
-/* ===============================
-   🎛️ Unified Control Primitive
-================================ */
-.control {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  height: 34px;
-  padding-inline: var(--space-md);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  background: var(--bg-primary);
-  font-size: 13px;
-  line-height: 1;
-  transition: var(--transition);
-}
-.control:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-  border-color: var(--accent-color);
-}
-
 /* ===============================
    📤 Export Buttons
 ================================ */
 .export-btn-group {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
   gap: var(--space-xs);
   padding: var(--space-xs);
   background: var(--bg-secondary);
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
-  height: 34px;
-}
-.export-btn-group .btn-icon {
-  width: 30px;
-  height: 30px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: calc(var(--border-radius) - 2px);
-  background: var(--bg-primary);
-  border: 1px solid transparent;
-  line-height: 1;
-  cursor: pointer;
-  transition: var(--transition);
-}
-.export-btn-group .btn-icon i {
-  font-size: 16px;
-  line-height: 1;
-}
-.export-btn-group .btn-icon:hover {
-  background: var(--bg-accent);
-  box-shadow: var(--shadow-sm);
-  transform: scale(1.02);
-}
-.export-btn-group .btn-icon.btn-pdf i {
-  color: var(--danger-color);
-}
-.export-btn-group .btn-icon.btn-xlsx i {
-  color: var(--success-color);
+
+  .btn-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: calc(var(--border-radius) - 2px);
+    background: var(--bg-primary);
+    border: none;
+    transition: var(--transition);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-accent);
+      transform: scale(1.05);
+      box-shadow: var(--shadow-sm);
+    }
+
+    &.btn-pdf i {
+      color: var(--danger-color);
+    }
+
+    &.btn-xlsx i {
+      color: var(--success-color);
+    }
+  }
 }
 
 /* ===============================
    📅 Date Range
 ================================ */
 .date-range {
-  display: inline-flex;
+  height: 32px;
+  display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding-inline: var(--space-md);
+  gap: var(--space-md);
+  padding: 0 var(--space-md);
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  height: 34px;
-}
-.date-range label {
-  font-weight: 600;
-  font-size: 12.5px;
-  color: var(--text-primary);
-  margin-inline-end: var(--space-xs);
-}
-.date-range .date-input {
-  height: 30px;
-  padding: 0 var(--space-sm);
-  border: 1px solid var(--border-color);
-  border-radius: calc(var(--border-radius) - 2px);
-  font-size: 13px;
-  background: var(--bg-primary);
-  line-height: 30px; /* aligns placeholder baseline */
-  transition: var(--transition);
-}
-.date-range .date-input::placeholder {
-  color: var(--text-secondary);
-  opacity: 0.9;
-}
-.date-range .date-input:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: var(--focus-ring);
+
+  label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-right: var(--space-xs);
+  }
+
+  .date-input {
+    height: 32px;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--border-color);
+    border-radius: calc(var(--border-radius) - 2px);
+    font-size: 13px;
+    background: var(--bg-primary);
+    transition: var(--transition);
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: var(--focus-ring);
+    }
+  }
 }
 
 /* ===============================
-   💱 Currency Report / Partner Currency
+   💱 Currency Report Button
 ================================ */
-.o_currency_report,
-.currency-button {
-  display: inline-flex;
+.o_currency_report {
+  display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding-inline: var(--space-md);
-  height: 34px;
+  padding: 0 var(--space-md);
+  height: 32px;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
@@ -537,59 +174,59 @@ body {
   color: var(--text-primary);
   cursor: pointer;
   transition: var(--transition);
-}
-.o_currency_report i,
-.currency-button i {
-  color: var(--info-color);
-  font-size: 16px;
-  line-height: 1;
-}
-.o_currency_report:hover,
-.currency-button:hover {
-  background: var(--bg-accent);
-  border-color: var(--info-color);
-  color: #0369a1;
+
+  i {
+    color: var(--info-color);
+  }
+
+  &:hover {
+    background: var(--bg-accent);
+    border-color: var(--info-color);
+    color: #0369a1;
+  }
 }
 
 /* ===============================
    📊 Balance Summary
 ================================ */
 .balance-summary-section {
-  min-height: 34px;
+  min-height: 32px;
   display: none;
   align-items: center;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding-inline: var(--space-lg);
+  padding: 0 var(--space-lg);
 }
+
 .single-row-summary {
-  height: 34px;
+  height: 32px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding-inline: var(--space-sm);
-  display: inline-flex;
-  align-items: center;
+  padding: var(--space-xs) var(--space-sm);
 }
 
 .balance-summary-row {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: var(--space-lg);
   font-weight: 600;
   font-size: 13px;
   color: var(--text-primary);
-}
-.balance-summary-row .summary-cell.amount {
-  font-family: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
-  color: var(--text-primary); /* neutral for opening balance */
-  letter-spacing: 0.2px;
-  font-weight: 700;
-}
-.balance-summary-row .summary-cell.final-balance {
-  color: var(--info-color);
-  font-weight: 700;
+
+  .summary-cell {
+    &.amount {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      color: var(--success-color);
+    }
+
+    &.final-balance {
+      color: var(--info-color);
+      font-weight: bold;
+    }
+  }
 }
 
 /* ===============================
@@ -597,21 +234,22 @@ body {
 ================================ */
 .horizontal-currency-summary {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-lg);
-  padding: 2px var(--space-md);
+  padding: 2px;
   background-color: var(--bg-primary);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
+  font-family: 'Segoe UI', sans-serif;
   transition: var(--transition);
-}
-.horizontal-currency-summary:hover {
-  box-shadow: var(--shadow-md);
-}
-@media (max-width: 720px) {
-  .horizontal-currency-summary {
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  @media (max-width: 600px) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -621,19 +259,22 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 110px;
+  min-width: 100px;
   padding: var(--space-sm);
   border-radius: var(--border-radius);
   transition: var(--transition);
-}
-.currency-block:hover {
-  background: var(--bg-accent);
-  box-shadow: var(--shadow-sm);
-}
-.currency-block .currency-icon {
-  font-size: 1rem;
-  color: var(--accent-color);
-  margin-bottom: var(--space-xs);
+
+  &:hover {
+    background: var(--bg-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .currency-icon {
+    font-size: 1rem;
+    color: var(--accent-color);
+    margin-bottom: var(--space-xs);
+  }
 }
 
 .currency-label {
@@ -663,9 +304,7 @@ body {
   }
 }
 
-/* ===============================
-   🔘 Currency Buttons Group (optional module)
-================================ */
+
 .currency-button-group {
   display: flex;
   flex-direction: column;
@@ -675,17 +314,9 @@ body {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
-  width: -moz-fit-content;
   width: fit-content;
   margin-left: var(--space-md);
 }
 
-/* ===============================
-   ♿ Reduced Motion
-================================ */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-    animation: none !important;
-  }
-}
+
+
