@@ -220,7 +220,7 @@ var ExportPdfButtonListController = ListController.extend({
         return this._rpc({
             model: 'account.move.line.report', 
             method: 'partner_details',
-            args: [[user_id]],
+            args: [[], [user_id]],
         }).then(function(users) {
             console.log(users);
         });
