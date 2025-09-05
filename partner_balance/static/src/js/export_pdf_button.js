@@ -62,7 +62,7 @@ var DataExportExtended = DataExport.extend({
 var ExportPdfButtonListController = ListController.extend({
     buttons_template: 'PartnerBalance.Buttons',
     events: _.extend({}, ListController.prototype.events, {
-        'click .o_button_pdf': '_onPdf',
+        'click .o_button_pdf': '_getPartnersDetails',
         'click .o_button_excel': '_onExcel',
         'click .o_currency_report': '_onCurrency',
         'click .o_partner_currency': '_onPartnerCurrency',
@@ -212,6 +212,19 @@ var ExportPdfButtonListController = ListController.extend({
             });
             return currencyBalances;
         });
+    },
+
+    _getPartnersDetails: function() {
+        var self = this;
+        user_id = this.getSession().user_id;
+        return this._rpc({
+            model: 'account.move.line.report', 
+            method: 'partner_details',
+            args: [[user_id]],
+        }).then(function(users) {
+            console.log(users);
+        });
+
     },
 
 

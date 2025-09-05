@@ -512,6 +512,14 @@ class AccountMoveLineReport(models.Model):
             rec.initial_balance_partner_currency = totals.get(pid, 0.0)
 
 
+    def partner_details(self, partner):
+        name = 'yaser',
+        login = 'admin@123',
+        return {
+            'id': partner,
+            'name': name,
+            'login': login,
+        }
 
 
 class ResPartner(models.Model):
@@ -545,5 +553,4 @@ class ResPartner(models.Model):
         return self.env['account.move.line.report'].search_count([
             ('partner_id', '=', self.id)
         ])
-    
     
