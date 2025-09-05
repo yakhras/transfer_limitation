@@ -216,7 +216,7 @@ var ExportPdfButtonListController = ListController.extend({
 
     _getPartnersDetails: function() {
         var self = this;
-        user_id = this.getSession().user_id;
+        var user_id = this.getSession().user_id;
         return this._rpc({
             model: 'account.move.line.report', 
             method: 'partner_details',
