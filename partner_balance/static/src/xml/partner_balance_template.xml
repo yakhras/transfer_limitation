@@ -112,13 +112,9 @@
 
                 <t t-if="!widget.model.loadParams.context 
                         or widget.model.loadParams.context.action_name !== 'Statement in Partner Currency'">
-                    <!-- <button class="btn btn-icon btn-currency o_partner_currency" type="button" title="Partner Currency">
+                    <button class="btn btn-icon btn-currency o_partner_currency" type="button" title="Partner Currency">
                     <i class="fa fa-exchange"></i> Partner Currency
-                    </button> -->
-                    <button class="btn btn-toggle" type="button">
-                        <i class="fa fa-check"></i> Partner Currency
                     </button>
-
                 </t>
             </div>
         </div>
