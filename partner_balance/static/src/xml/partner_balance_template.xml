@@ -64,59 +64,57 @@
 
         </div> -->
 
-        <div class="toolbar-wrapper">
-            <!-- Toolbar Section -->
-            <div class="toolbar">
-                <!-- Export Buttons -->
-                <div class="btn-group export-btn-group" role="group">
-                    <button class="btn btn-icon btn-xlsx o_button_excel" type="button" title="Export to Excel">
-                    <i class="fa fa-file-excel-o"></i>
-                    </button>
-                </div>
+        <!-- Toolbar Section -->
+        <div class="toolbar">
+            <!-- Export Buttons -->
+            <div class="btn-group export-btn-group" role="group">
+                <button class="btn btn-icon btn-xlsx o_button_excel" type="button" title="Export to Excel">
+                <i class="fa fa-file-excel-o"></i>
+                </button>
+            </div>
 
-                <!-- Date Filters -->
-                <div class="date-range">
-                    <label>From:</label>
-                    <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_from" autocomplete="off" />
-                    <label>To:</label>
-                    <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
-                </div>
+            <!-- Date Filters -->
+            <div class="date-range">
+                <label>From:</label>
+                <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_from" autocomplete="off" />
+                <label>To:</label>
+                <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
+            </div>
 
-                <div class="balance-summary-section">
-                    <div class="single-row-summary">
-                        <span class="summary-cell">Opening Balance:</span>
-                        <span class="summary-cell amount final-balance"></span>
+            <div class="balance-summary-section">
+                <div class="single-row-summary">
+                    <span class="summary-cell">Opening Balance:</span>
+                    <span class="summary-cell amount final-balance"></span>
+                </div>
+                <!-- Horizontal Summary for All Currencies -->
+                <div class="horizontal-currency-summary">
+                    <div class="currency-block">
+                        <span class="currency-label"></span>
+                        <span class="final-balance"></span>
                     </div>
-                    <!-- Horizontal Summary for All Currencies -->
-                    <div class="horizontal-currency-summary">
-                        <div class="currency-block">
-                            <span class="currency-label"></span>
-                            <span class="final-balance"></span>
-                        </div>
-                        <div class="currency-block">
-                            <span class="currency-label"></span>
-                            <span class="final-balance"></span>
-                        </div>
+                    <div class="currency-block">
+                        <span class="currency-label"></span>
+                        <span class="final-balance"></span>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Currency Buttons Section -->
-            <div class="currency-button-group">
-                <t t-if="!widget.model.loadParams.context 
-                        or widget.model.loadParams.context.action_name !== 'Statement Currency-based of Account'">
-                    <button class="btn btn-icon btn-currency o_currency_report" type="button" title="Currency Report">
-                        <i class="fa fa-exchange"></i> Currency Report
-                    </button>
-                </t>
+        <!-- Currency Buttons Section -->
+        <div class="currency-button-group">
+            <t t-if="!widget.model.loadParams.context 
+                    or widget.model.loadParams.context.action_name !== 'Statement Currency-based of Account'">
+                <button class="btn btn-icon btn-currency o_currency_report" type="button" title="Currency Report">
+                    <i class="fa fa-exchange"></i> Currency Report
+                </button>
+            </t>
 
-                <t t-if="!widget.model.loadParams.context 
-                        or widget.model.loadParams.context.action_name !== 'Statement in Partner Currency'">
-                    <button class="btn btn-icon btn-currency o_partner_currency" type="button" title="Partner Currency">
-                    <i class="fa fa-exchange"></i> Partner Currency
-                    </button>
-                </t>
-            </div>
+            <t t-if="!widget.model.loadParams.context 
+                    or widget.model.loadParams.context.action_name !== 'Statement in Partner Currency'">
+                <button class="btn btn-icon btn-currency o_partner_currency" type="button" title="Partner Currency">
+                <i class="fa fa-exchange"></i> Partner Currency
+                </button>
+            </t>
         </div>
 
     </t>
