@@ -76,9 +76,9 @@
             <!-- Date Filters -->
             <div class="date-range">
                 <label>From:</label>
-                <input type="date" class="date-input" placeholder="From" data-field-name="date_from" autocomplete="off" />
+                <input type="date" class="date-input" data-field-name="date_from" autocomplete="off" />
                 <label>To:</label>
-                <input type="date" class="date-input" placeholder="To" data-field-name="date_to" autocomplete="off" />
+                <input type="date" class="date-input" data-field-name="date_to" autocomplete="off" />
             </div>
 
             <div class="balance-summary-section">
