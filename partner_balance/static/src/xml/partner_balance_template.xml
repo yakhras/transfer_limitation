@@ -8,9 +8,9 @@
         <div class="toolbar">
             <!-- Export Buttons -->
             <div class="btn-group export-btn-group" role="group">
-                <button class="btn btn-icon btn-pdf o_button_pdf" type="button" title="Export to PDF">
+                <!-- <button class="btn btn-icon btn-pdf o_button_pdf" type="button" title="Export to PDF">
                 <i class="fa fa-file-pdf-o"></i>
-                </button>
+                </button> -->
                 <button class="btn btn-icon btn-xlsx o_button_excel" type="button" title="Export to Excel">
                 <i class="fa fa-file-excel-o"></i>
                 </button>
