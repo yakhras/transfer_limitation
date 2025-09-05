@@ -257,11 +257,13 @@ class AccountMoveLineReport(models.Model):
                 rec.usd_value = 0.0
                 rec.usd_rate_display = "N/A"
 
+
     @api.depends('debit', 'credit', 'partner_currency_id', 'partner_currency_value')
     def _compute_partner_currency_values(self):
         for rec in self:
             rec.partner_currency_debit = rec.partner_currency_value if rec.partner_currency_value > 0 else 0.0
             rec.partner_currency_credit = abs(rec.partner_currency_value) if rec.partner_currency_value < 0 else 0.0
+
 
     @api.depends('partner_id', 'currency_id', 'date', 'move_id', 'usd_value')
     def _compute_cumulated_usd_value(self):
@@ -543,3 +545,5 @@ class ResPartner(models.Model):
         return self.env['account.move.line.report'].search_count([
             ('partner_id', '=', self.id)
         ])
+    
+    
