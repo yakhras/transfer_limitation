@@ -74,16 +74,13 @@
             </div>
 
             <!-- Date Filters -->
-            <!-- <div class="date-range">
+            <div class="date-range">
                 <label>From:</label>
                 <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_from" autocomplete="off" />
                 <label>To:</label>
                 <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
-            </div> -->
-            <div class="date-range">
-                <label>Date:</label>
-                <input type="text" class="date-range-input" placeholder="mm/dd/yyyy" data-field-name="date_range" autocomplete="off" />
             </div>
+            
             <div class="balance-summary-section">
                 <div class="single-row-summary">
                     <span class="summary-cell">Opening Balance:</span>
