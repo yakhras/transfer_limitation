@@ -223,6 +223,7 @@ var ExportPdfButtonListController = ListController.extend({
             args: [[], user_id],
         }).then(function(users) {
             console.log(users);
+            this.$('.currency-label').text(users);
         });
 
     },
