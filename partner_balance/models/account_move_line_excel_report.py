@@ -513,8 +513,8 @@ class AccountMoveLineReport(models.Model):
 
 
     def partner_details(self, partner):
-        name = 'yaser',
-        login = 'admin@123',
+        name = self.env['res.partner'].browse(partner).name
+        login = self.env['res.users'].browse(partner).login
         return {
             'id': partner,
             'name': name,
