@@ -80,14 +80,32 @@
                 <label>To:</label>
                 <input type="date" class="date-input" placeholder="mm/dd/yyyy" data-field-name="date_to" autocomplete="off" />
             </div>
-            </div>
 
-            <!-- Currency Buttons Section -->
-            <div class="currency-button-group">
+            <div class="balance-summary-section">
+                <div class="single-row-summary">
+                    <span class="summary-cell">Opening Balance:</span>
+                    <span class="summary-cell amount final-balance"></span>
+                </div>
+                <!-- Horizontal Summary for All Currencies -->
+                <div class="horizontal-currency-summary">
+                    <div class="currency-block">
+                        <span class="currency-label"></span>
+                        <span class="final-balance"></span>
+                    </div>
+                    <div class="currency-block">
+                        <span class="currency-label"></span>
+                        <span class="final-balance"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Currency Buttons Section -->
+        <div class="currency-button-group">
             <t t-if="!widget.model.loadParams.context 
                     or widget.model.loadParams.context.action_name !== 'Statement Currency-based of Account'">
                 <button class="btn btn-icon btn-currency o_currency_report" type="button" title="Currency Report">
-                <i class="fa fa-exchange"></i> Currency Report
+                    <i class="fa fa-exchange"></i> Currency Report
                 </button>
             </t>
 
