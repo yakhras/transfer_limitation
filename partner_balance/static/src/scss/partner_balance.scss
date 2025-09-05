@@ -69,9 +69,10 @@ body {
 .toolbar-wrapper {
   display: flex;
   gap: var(--space-lg);
-  align-items: flex-start;
+  align-items: stretch; // 👈 This ensures equal height
   flex-wrap: wrap;
 }
+
 
 
 .toolbar,
