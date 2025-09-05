@@ -513,8 +513,9 @@ class AccountMoveLineReport(models.Model):
 
 
     def partner_details(self, partner):
-        name = self.env['res.partner'].browse(partner).name
-        login = self.env['res.users'].browse(partner).login
+        user = self.env['res.users'].browse(partner)
+        login = user.login
+        name = user.partner_id.name if user.partner_id else 'N/A' 
         return {
             'id': partner,
             'name': name,
