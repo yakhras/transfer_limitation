@@ -66,21 +66,6 @@ body {
 /* ===============================
    🧭 Toolbar
 ================================ */
-.toolbar-wrapper {
-  display: flex;
-  gap: var(--space-lg);
-  align-items: stretch; // 👈 This ensures equal height
-  flex-wrap: wrap;
-}
-
-
-
-.toolbar,
-.currency-button-group {
-  flex: 1 1 100%;
-  max-width: 100%;
-}
-
 
 .toolbar {
   display: flex;
