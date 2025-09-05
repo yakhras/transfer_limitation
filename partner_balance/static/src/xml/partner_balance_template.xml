@@ -82,7 +82,7 @@
             </div> -->
             <div class="date-range">
                 <label>Date:</label>
-                <input type="text" class="date-range-input" placeholder="mm/dd/yyyy - mm/dd/yyyy" data-field-name="date_range" autocomplete="off" />
+                <input type="text" class="date-range-input" placeholder="mm/dd/yyyy" data-field-name="date_range" autocomplete="off" />
             </div>
             <div class="balance-summary-section">
                 <div class="single-row-summary">

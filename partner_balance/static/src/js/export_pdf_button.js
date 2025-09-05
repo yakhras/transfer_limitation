@@ -67,7 +67,33 @@ var ExportPdfButtonListController = ListController.extend({
         'click .o_currency_report': '_onCurrency',
         'click .o_partner_currency': '_onPartnerCurrency',
         'change .date-input': '_onDateChange',
+        'click .date-range-input': '_onDate',
     }),
+
+    _onDate: function(ev) {
+        var self = this;
+        
+        // Initialize daterangepicker (you need to include the library)
+        $(ev.currentTarget).daterangepicker({
+            format: 'YYYY-MM-DD',
+            separator: ' to ',
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                applyLabel: 'Apply'
+            }
+        });
+        
+        // Handle date selection
+        $(ev.currentTarget).on('apply.daterangepicker', function(ev, picker) {
+            var startDate = picker.startDate.format('YYYY-MM-DD');
+            console.log(startDate);
+            var endDate = picker.endDate.format('YYYY-MM-DD');
+            console.log(endDate);
+        });
+        
+    },
+    
 
 
     _setupSummaryDisplay: function() {
