@@ -53,8 +53,8 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
-                    <field name="debit_amount"/>
-                    <field name="credit_amount"/>
+                    <field name="debit_amount" sum="Total Debit"/>
+                    <field name="credit_amount" sum="Total Credit"/>
                     <field name="balance_amount"/>
                     <field name="currency_id"/>
                 </tree>
