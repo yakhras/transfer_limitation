@@ -5,7 +5,7 @@ odoo.define('partner_balance.listpdf', function (require) {
 var DataExport = require('web.DataExport') ;
 var ListController = require('web.ListController');
 var ListView = require('web.ListView');
-var ListRenderer = require('web.ListRenderer');
+// var ListRenderer = require('web.ListRenderer');
 var viewRegistry = require('web.view_registry');
 var framework = require('web.framework');
 var pyUtils = require('web.py_utils');
@@ -60,55 +60,55 @@ var DataExportExtended = DataExport.extend({
     },
 });
 
-var PartnerBalanceRenderer = ListRenderer.extend({
-    _renderGroupRow: function(group, groupLevel) {
-        var $row = this._super.apply(this, arguments);
+// var PartnerBalanceRenderer = ListRenderer.extend({
+//     _renderGroupRow: function(group, groupLevel) {
+//         var $row = this._super.apply(this, arguments);
         
-        try {
-            console.log('Adding balance aggregation for group:', group);
+//         try {
+//             console.log('Adding balance aggregation for group:', group);
             
-            if (!group || !group.data || !this.state || !this.state.fields) {
-                console.warn('Missing required data');
-                return $row;
-            }
+//             if (!group || !group.data || !this.state || !this.state.fields) {
+//                 console.warn('Missing required data');
+//                 return $row;
+//             }
             
-            var $groupCell = $row.find('.o_group_name');
-            if ($groupCell.length === 0) {
-                console.warn('Group cell not found');
-                return $row;
-            }
+//             var $groupCell = $row.find('.o_group_name');
+//             if ($groupCell.length === 0) {
+//                 console.warn('Group cell not found');
+//                 return $row;
+//             }
             
-            var balanceField = this.state.fields['balance'];
-            if (!balanceField) {
-                console.log('Balance field not found');
-                return $row;
-            }
+//             var balanceField = this.state.fields['balance'];
+//             if (!balanceField) {
+//                 console.log('Balance field not found');
+//                 return $row;
+//             }
             
-            if (balanceField.type === 'float' || balanceField.type === 'integer' || balanceField.type === 'monetary') {
-                var balanceSum = 1500;
+//             if (balanceField.type === 'float' || balanceField.type === 'integer' || balanceField.type === 'monetary') {
+//                 var balanceSum = 1500;
                 
-                var formattedBalance;
-                try {
-                    formattedBalance = this._formatFieldValue(balanceSum, balanceField);
-                } catch(e) {
-                    formattedBalance = balanceSum.toFixed(2);
-                }
+//                 var formattedBalance;
+//                 try {
+//                     formattedBalance = this._formatFieldValue(balanceSum, balanceField);
+//                 } catch(e) {
+//                     formattedBalance = balanceSum.toFixed(2);
+//                 }
                 
-                var $balanceSpan = $('<span class="o_list_number" style="margin-left: 20px;">Balance: ' + 
-                    formattedBalance + 
-                '</span>');
+//                 var $balanceSpan = $('<span class="o_list_number" style="margin-left: 20px;">Balance: ' + 
+//                     formattedBalance + 
+//                 '</span>');
                 
-                $groupCell.append($balanceSpan);
-                console.log('Balance sum added:', balanceSum);
-            }
+//                 $groupCell.append($balanceSpan);
+//                 console.log('Balance sum added:', balanceSum);
+//             }
             
-        } catch(error) {
-            console.error('Balance aggregation error:', error);
-        }
+//         } catch(error) {
+//             console.error('Balance aggregation error:', error);
+//         }
         
-        return $row;
-    }
-});
+//         return $row;
+//     }
+// });
 
 var ExportPdfButtonListController = ListController.extend({
     buttons_template: 'PartnerBalance.Buttons',
@@ -428,7 +428,7 @@ var ExportPdfButtonListController = ListController.extend({
 var BalanceListView = ListView.extend({
     config: _.extend({}, ListView.prototype.config, {
         Controller: ExportPdfButtonListController,
-        Renderer: PartnerBalanceRenderer,
+        // Renderer: PartnerBalanceRenderer,
     }),
 });
 
