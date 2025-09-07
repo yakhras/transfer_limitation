@@ -547,9 +547,9 @@ class AccountMoveLineReport(models.Model):
                     GROUP BY ap.id
                 )
                 
-                -- Main transaction rows (existing logic)
+                -- Main transaction rows
                 SELECT
-                    aml.id * 1000 AS id,  -- Multiply to avoid conflicts with detail rows
+                    (aml.id::bigint * 1000000 + 1)::bigint AS id,  -- Use bigint and larger multiplier
                     'TRANSACTION' AS row_type,
                     aml.date,
                     aml.move_id,
@@ -563,14 +563,12 @@ class AccountMoveLineReport(models.Model):
                     aml.currency_id,
                     rc.id AS company_currency_id,
                     
-                    -- Enhanced reference logic
                     CASE
                         WHEN aj.payment_subtype = 'check' AND ca.check_numbers IS NOT NULL THEN ca.check_numbers
                         WHEN aj.payment_subtype = 'bank' AND aml.ref IS NOT NULL THEN aml.ref
                         ELSE am.name
                     END AS reference,
                     
-                    -- Transaction type
                     CASE 
                         WHEN am.move_type = 'out_invoice' THEN 'Invoice'
                         WHEN am.move_type = 'in_invoice' THEN 'Bill'
@@ -609,7 +607,7 @@ class AccountMoveLineReport(models.Model):
 
                 -- Product detail rows for invoices
                 SELECT
-                    aml.id * 1000 + invoice_lines.id AS id,  -- Unique ID for each product line
+                    (aml.id::bigint * 1000000 + 2 + row_number() OVER (PARTITION BY aml.id ORDER BY invoice_lines.id))::bigint AS id,
                     'PRODUCT' AS row_type,
                     aml.date,
                     aml.move_id,
@@ -617,7 +615,6 @@ class AccountMoveLineReport(models.Model):
                     aml.account_id,
                     aml.company_id,
                     
-                    -- Zero out main amounts for detail rows
                     0::numeric AS debit,
                     0::numeric AS credit,
                     0::numeric AS balance,
@@ -625,12 +622,10 @@ class AccountMoveLineReport(models.Model):
                     aml.currency_id,
                     rc.id AS company_currency_id,
                     
-                    -- Reference points to parent
                     am.name AS reference,
                     'Product Line' AS type,
-                    concat('Line ', invoice_lines.sequence) AS note,
+                    concat('Line ', COALESCE(invoice_lines.sequence, 1)) AS note,
                     
-                    -- Product details from invoice lines
                     invoice_lines.product_id,
                     pp.default_code AS product_code,
                     pt.name AS product_name,
@@ -646,8 +641,6 @@ class AccountMoveLineReport(models.Model):
                 JOIN account_account_type aat ON aat.id = aa.user_type_id
                 JOIN res_company comp ON comp.id = aml.company_id
                 JOIN res_currency rc ON rc.id = comp.currency_id
-                
-                -- Join with invoice lines to get product details
                 JOIN account_move_line invoice_lines ON invoice_lines.move_id = am.id 
                     AND invoice_lines.product_id IS NOT NULL
                     AND invoice_lines.exclude_from_invoice_tab = false
@@ -659,7 +652,7 @@ class AccountMoveLineReport(models.Model):
                 AND aml.partner_id IS NOT NULL
                 AND am.move_type IN ('out_invoice', 'in_invoice', 'out_refund', 'in_refund')
                 
-                ORDER BY date, move_id, row_type DESC  -- TRANSACTION rows first, then PRODUCT rows
+                ORDER BY date, move_id, row_type DESC
             )
         """)
 
