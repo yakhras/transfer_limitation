@@ -80,6 +80,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
+                    <field name="product_id"/>
+                    <field name="quantity"/>
+                    <field name="price_unit"/>
+                    <field name="price_subtotal"/>
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="usd_rate_display"/>
