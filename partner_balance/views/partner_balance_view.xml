@@ -31,7 +31,6 @@
                     <field name="reference"/>
                     <field name="note"/>
                     <field name="product_id"/>
-                    <field name="product_code"/>
                     <field name="quantity"/>
                     <field name="price_unit"/>
                     <field name="price_subtotal"/>
