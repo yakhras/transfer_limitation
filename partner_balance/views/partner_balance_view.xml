@@ -30,6 +30,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
+                    <field name= "product_id"/>
+                    <field name="quantity"/>
+                    <field name="price_unit"/>
+                    <field name="price_subtotal"/>
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="cumulated_balance"/>
@@ -53,6 +57,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
+                    <field name= "product_id"/>
+                    <field name="quantity"/>
+                    <field name="price_unit"/>
+                    <field name="price_subtotal"/>
                     <field name="debit_amount" sum="Total Debit"/>
                     <field name="credit_amount" sum="Total Credit"/>
                     <field name="balance_amount"/>
@@ -72,6 +80,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
+                    <field name= "product_id"/>
+                    <field name="quantity"/>
+                    <field name="price_unit"/>
+                    <field name="price_subtotal"/>
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="usd_rate_display"/>
@@ -91,6 +103,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
+                    <field name= "product_id"/>
+                    <field name="quantity"/>
+                    <field name="price_unit"/>
+                    <field name="price_subtotal"/>
                     <field name="partner_currency_debit"/>
                     <field name="partner_currency_credit"/>
                     <field name="cumulated_partner_currency_value"/>
