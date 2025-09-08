@@ -13,8 +13,7 @@
                     <button name="action_view_move_line_report"
                     type="object"
                     string="View Report"
-                    class="btn-primary"
-                    attrs="{'invisible': [('is_company', '=', False)]}" />
+                    class="btn-primary" />
                 </xpath>
             </field>
         </record>
