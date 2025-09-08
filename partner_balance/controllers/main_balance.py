@@ -134,7 +134,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
 
         oldest_date = self.get_oldest_date_for_partner(partner_id)
 
-        start_date_str = date_from or oldest_date
+        start_date_str = str(date_from or oldest_date)
         end_date_str = date_to or datetime.datetime.now().strftime('%Y-%m-%d')
 
         start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
