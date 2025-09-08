@@ -900,7 +900,7 @@ export class CashFlowDashboard extends Component {
             name: "Cash Flow Details",
             res_model: "account.move.line.report",
             domain: domain,
-            views: [[8266, "list"],[false, "form"]],
+            views: [[8272, "list"],[false, "form"]],
             view_mode: "list",
             target: "current",
             context: {
