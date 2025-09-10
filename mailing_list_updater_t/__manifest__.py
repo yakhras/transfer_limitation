@@ -49,18 +49,16 @@ Technical Features:
         'data/registry_default_data.xml',
         'data/menu_items.xml',
         
-        # Views
-        # 'views/mailing_list_updater_views.xml',
         
     ],
     'assets': {
         'web.assets_backend': [
-            'mailing_list_updater/static/src/css/*.css',
-            'mailing_list_updater/static/src/js/*.js',
+            'mailing_list_updater_t/static/src/css/*.css',
+            'mailing_list_updater_t/static/src/js/*.js',
             
         ],
         'web.assets_qweb': [
-            'mailing_list_updater/static/src/xml/*.xml',
+            'mailing_list_updater_t/static/src/xml/*.xml',
         ],
     },
     'installable': True,

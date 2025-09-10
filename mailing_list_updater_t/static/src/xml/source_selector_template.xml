@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
-    <t t-name="mailing_list_updater.SourceSelectorTemplate" owl="1">
+    <t t-name="mailing_list_updater_t.SourceSelectorTemplate" owl="1">
         <div class="source-selector">
             
 

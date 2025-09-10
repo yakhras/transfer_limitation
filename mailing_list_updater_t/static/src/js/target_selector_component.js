@@ -243,7 +243,7 @@ class TargetSelectorComponent extends Component {
     
 }
 
-TargetSelectorComponent.template = 'mailing_list_updater.TargetSelectorTemplate';
+TargetSelectorComponent.template = 'mailing_list_updater_t.TargetSelectorTemplate';
 TargetSelectorComponent.props = {
     selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
 };

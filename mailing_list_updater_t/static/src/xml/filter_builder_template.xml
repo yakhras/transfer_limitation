@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
 
-    <t t-name="mailing_list_updater.FilterBuilderTemplate" owl="1">
+    <t t-name="mailing_list_updater_t.FilterBuilderTemplate" owl="1">
         
         <div class="filter-builder">
             <div class="content-header">

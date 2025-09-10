@@ -53,7 +53,7 @@ class RegistryConfigController(http.Controller):
         start_time = time.time()
         
         # Check admin permissions
-        if not request.env.user.has_group('mailing_list_updater.group_mailing_list_updater_manager'):
+        if not request.env.user.has_group('mailing_list_updater_t.group_mailing_list_updater_manager'):
             return self._error_response(message="Access denied: Manager permissions required", code=403)
         
         try:
@@ -183,7 +183,7 @@ class RegistryConfigController(http.Controller):
         start_time = time.time()
         
         # Check permissions
-        if not request.env.user.has_group('mailing_list_updater.group_mailing_list_updater_manager'):
+        if not request.env.user.has_group('mailing_list_updater_t.group_mailing_list_updater_manager'):
             return self._error_response(message="Access denied: Manager permissions required", code=403)
         
         try:

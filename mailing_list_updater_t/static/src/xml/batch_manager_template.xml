@@ -3,7 +3,7 @@
 
     
     
-    <t t-name="mailing_list_updater.BatchManagerTemplate" owl="1">
+    <t t-name="mailing_list_updater_t.BatchManagerTemplate" owl="1">
         <div class="batch-manager">
             <div class="content-header">
                 <h2>

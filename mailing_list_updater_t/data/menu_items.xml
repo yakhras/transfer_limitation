@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Actions for Menu Items -->
+        
+        <!-- Main Mailing List Update Client Action -->
+        <record id="action_mailing_list_updater" model="ir.actions.client">
+            <field name="name">Update Mailing Lists</field>
+            <field name="tag">mailing_list_updater</field>
+            <field name="context">{
+                'initial_step': 'target_selection',
+                'show_breadcrumb': True
+            }</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first mailing list update batch!
+                </p>
+                <p>
+                    Use the mailing list updater to automatically add contacts from various sources
+                    (Contacts, CRM, HR, Events) to your mailing lists with advanced filtering and
+                    deduplication capabilities.
+                </p>
+            </field>
+        </record>
+
+        
+
+        <!-- Main Menu Items -->
+        
+        <!-- Primary Menu Item under Email Marketing -->
+        <menuitem id="menu_mailing_list_updater_main"
+                  name="Update Lists"
+                  parent="mass_mailing.mass_mailing_menu_root"
+                  action="action_mailing_list_updater"
+                  sequence="15"
+                  groups="group_mailing_list_updater_user"/>
+
+
+    </data>
+</odoo>

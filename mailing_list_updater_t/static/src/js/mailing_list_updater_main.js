@@ -929,7 +929,7 @@ class MailingListUpdaterMain extends Component {
 }
 
 // OWL 1.0 component registration
-MailingListUpdaterMain.template = "mailing_list_updater.MainTemplate";
+MailingListUpdaterMain.template = "mailing_list_updater_t.MainTemplate";
 
 // Register child components for OWL 1.0
 MailingListUpdaterMain.components = {

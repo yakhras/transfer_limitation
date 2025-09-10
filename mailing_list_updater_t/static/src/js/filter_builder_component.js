@@ -1890,7 +1890,7 @@ class FilterBuilderComponent extends Component {
     }
 }
 
-FilterBuilderComponent.template = 'mailing_list_updater.FilterBuilderTemplate';
+FilterBuilderComponent.template = 'mailing_list_updater_t.FilterBuilderTemplate';
 FilterBuilderComponent.props = {
     selectedSources: { validate: (value) => Array.isArray(value) },
     filterCriteria: { validate: (value) => typeof value === 'object', optional: true },

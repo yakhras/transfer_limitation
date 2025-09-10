@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
-    <t t-name="mailing_list_updater.PreviewResultsTemplate" owl="1">
+    <t t-name="mailing_list_updater_t.PreviewResultsTemplate" owl="1">
         <div class="preview-results">
             
             <!-- Show message when no mailing list selected -->

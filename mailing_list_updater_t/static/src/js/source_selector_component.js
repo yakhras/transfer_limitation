@@ -236,7 +236,7 @@ class SourceSelectorComponent extends Component {
     }
 }
 
-SourceSelectorComponent.template = 'mailing_list_updater.SourceSelectorTemplate';
+SourceSelectorComponent.template = 'mailing_list_updater_t.SourceSelectorTemplate';
 SourceSelectorComponent.props = {
     selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
     selectedSources: { validate: (value) => Array.isArray(value), optional: true },

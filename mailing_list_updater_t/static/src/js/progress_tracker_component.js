@@ -127,7 +127,7 @@ class ExecutionComponent extends Component {
 
 
 // OWL 1.0 component registration
-ExecutionComponent .template = 'mailing_list_updater.ExecutionStepTemplate';
+ExecutionComponent .template = 'mailing_list_updater_t.ExecutionStepTemplate';
 ExecutionComponent .props = {
     selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
     selectedSources: { validate: (value) => Array.isArray(value) },

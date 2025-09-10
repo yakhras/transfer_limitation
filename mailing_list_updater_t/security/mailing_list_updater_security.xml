@@ -13,7 +13,7 @@
         <record id="group_mailing_list_updater_manager" model="res.groups">
             <field name="name">Mailing List Updater: Manager</field>
             <field name="category_id" ref="base.module_category_marketing"/>
-            <field name="implied_ids" eval="[(6, 0, [ref('mailing_list_updater.group_mailing_list_updater_user')])]"/>
+            <field name="implied_ids" eval="[(6, 0, [ref('mailing_list_updater_t.group_mailing_list_updater_user')])]"/>
             <field name="comment">Can manage all mailing list update operations, rollback batches, configure registry, view all operations within company.</field>
         </record>
 

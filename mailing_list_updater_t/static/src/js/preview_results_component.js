@@ -114,7 +114,7 @@ class PreviewResultsComponent extends Component {
 }
 
 
-PreviewResultsComponent.template = 'mailing_list_updater.PreviewResultsTemplate';
+PreviewResultsComponent.template = 'mailing_list_updater_t.PreviewResultsTemplate';
 
 PreviewResultsComponent.props = {
     selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },

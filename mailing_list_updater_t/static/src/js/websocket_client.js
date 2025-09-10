@@ -307,7 +307,7 @@ export class MailingWebSocketClient {
  * WebSocket communication with reactive UI updates.
  */
 export class MailingProgressTracker extends Component {
-    static template = "mailing_list_updater.ProgressTracker";
+    static template = "mailing_list_updater_t.ProgressTracker";
     
     setup() {
         this.rpc = useService("rpc");
