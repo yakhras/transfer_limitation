@@ -15,8 +15,6 @@ class SourceSelectorComponent extends Component {
             selectedSources: this.props.selectedSources || [],
             isLoading: false,
             searchTerm: '',
-            // showSourceDetails: {},
-            // companyRecordCounts: {},
             currentCompany: this.company?.currentCompany || null,
         });
 
@@ -146,36 +144,6 @@ class SourceSelectorComponent extends Component {
         return this.state.selectedSources.includes(modelName);
     }
 
-    // toggleSourceDetails(event) {
-    //     const modelName = event.currentTarget.dataset.model;
-    //     this.state.showSourceDetails[modelName] = !this.state.showSourceDetails[modelName];
-    //     if (this.state.showSourceDetails[modelName] && !this.state.companyRecordCounts[modelName]) {
-    //         this.fetchCompanyRecordCount(modelName);
-    //         console.log(modelName, 'details toggled');
-    //         console.log(this.state.showSourceDetails);
-    //         console.log(this.state.companyRecordCounts);
-    //     }
-    //     event.stopPropagation();
-    // }
-
-    // async fetchCompanyRecordCount(modelName) {
-    //     try {
-    //         const domain = [['company_id', '=', this.company.currentCompany.id]];
-    //         console.log('Fetching count for model:', modelName);
-    //         console.log('Using domain:', domain);
-            
-    //         const count = await this.rpc({
-    //             model: modelName,
-    //             method: 'search_count',
-    //             args: [domain]
-    //         });
-    //         console.log(`Count for ${modelName}:`, count);
-    //         this.state.companyRecordCounts[modelName] = count;
-    //     } catch (error) {
-    //         console.error(`Failed to get record count for ${modelName}:`, error);
-    //         this.state.companyRecordCounts[modelName] = 'N/A';
-    //     }
-    // }
 
     onSearchInput(event) {
         // Method kept for compatibility but does nothing since search was removed
