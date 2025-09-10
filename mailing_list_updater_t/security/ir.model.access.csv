@@ -8,4 +8,3 @@ access_mailing_filter_template_public,mailing.filter.template.public,model_maili
 access_mailing_operation_audit_user,mailing.operation.audit.user,model_mailing_operation_audit,mass_mailing.group_mass_mailing_user,1,1,1,0
 access_mailing_operation_audit_system,mailing.operation.audit.system,model_mailing_operation_audit,base.group_system,1,1,1,1
 access_mailing_deduplication_engine_user,mailing.deduplication.engine.user,model_mailing_deduplication_engine,mass_mailing.group_mass_mailing_user,1,1,1,0
-access_mailing_batch_processor_user,mailing.batch.processor.user,model_mailing_batch_processor,mass_mailing.group_mass_mailing_user,1,1,1,0

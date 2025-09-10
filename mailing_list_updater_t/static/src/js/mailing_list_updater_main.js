@@ -5,7 +5,6 @@ import { TargetSelectorComponent } from './target_selector_component.js';
 import { FilterBuilderComponent } from './filter_builder_component.js';
 import { PreviewResultsComponent } from './preview_results_component.js';
 import { ExecutionComponent } from './progress_tracker_component.js';
-import { BatchManagerComponent } from './batch_manager_component.js';
 
 const { Component, useState } = owl;
 
@@ -938,7 +937,6 @@ MailingListUpdaterMain.components = {
     FilterBuilderComponent,
     PreviewResultsComponent,
     ExecutionComponent,
-    BatchManagerComponent,
 };
 
 export { MailingListUpdaterMain };
