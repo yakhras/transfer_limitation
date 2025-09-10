@@ -78,39 +78,39 @@
                             <i class="fa fa-info-circle"></i>
                             Start typing to search for mailing lists
                         </div>
-                        <div t-elif="state.targetSearchTerm.length &lt; 2" class="search-hint">
+                        <!-- <div t-elif="state.targetSearchTerm.length &lt; 2" class="search-hint">
                             <i class="fa fa-edit"></i>
                             Type at least 2 characters to search
-                        </div>
+                        </div> -->
                         <div t-elif="state.targetListsLoading" class="search-hint loading">
                             <i class="fa fa-spinner fa-spin"></i>
                             Searching...
                         </div>
-                        <div t-elif="!state.targetListsLoading and state.availableTargetLists.length &gt; 0" class="search-hint success">
+                        <!-- <div t-elif="!state.targetListsLoading and state.availableTargetLists.length &gt; 0" class="search-hint success">
                             <i class="fa fa-check"></i>
                             Found <span t-esc="state.availableTargetLists.length"/> mailing list(s)
-                        </div>
-                        <div t-elif="!state.targetListsLoading and state.targetSearchTerm.length &gt;= 2 and state.availableTargetLists.length === 0" class="search-hint no-results">
+                        </div> -->
+                        <!-- <div t-elif="!state.targetListsLoading and state.targetSearchTerm.length &gt;= 2 and state.availableTargetLists.length === 0" class="search-hint no-results">
                             <i class="fa fa-exclamation-triangle"></i>
                             No mailing lists found matching "<span t-esc="state.targetSearchTerm"/>"
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
                 <!-- Target Selection Results -->
-                <div t-if="state.targetSearchTerm.length &gt;= 2 and !state.targetListsLoading and state.availableTargetLists.length &gt; 0" class="target-results">
+                <!-- <div t-if="state.targetSearchTerm.length &gt;= 2 and !state.targetListsLoading and state.availableTargetLists.length &gt; 0" class="target-results">
                     <div class="results-header">
                         <span class="results-count"><span t-esc="state.availableTargetLists.length"/> result(s)</span>
                     </div>
                     
-                    <div class="target-lists target-cards"> <!-- Changed to target-cards for better styling -->
+                    <div class="target-lists target-cards"> Changed to target-cards for better styling
                         <div t-foreach="state.availableTargetLists" 
                              t-as="targetList" 
                              t-key="targetList.mailing_list_id"
                              t-att-class="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id ? 'target-card selected' : 'target-card'"
                              t-on-click="() => this.onTargetListSelect(targetList)">
                             
-                            <!-- Selection indicator -->
+                            Selection indicator
                             <div t-if="state.selectedTargetList?.mailing_list_id === targetList.mailing_list_id" class="card-badges">
                                 <span class="badge badge-selected">
                                     <i class="fa fa-check"></i>
@@ -118,7 +118,7 @@
                                 </span>
                             </div>
                             
-                            <!-- Card Header -->
+                            Card Header
                             <div class="card-header">
                                 <div class="card-icon target-icon">
                                     <i class="fa fa-list-alt"></i>
@@ -132,7 +132,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Card Stats -->
+                            Card Stats
                             <div class="card-stats">
                                 <span class="stat-item">
                                     <i class="fa fa-users"></i>
@@ -143,7 +143,7 @@
                                     Recommended
                                 </span>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
