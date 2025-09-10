@@ -70,35 +70,6 @@
                         
                         <!-- Card Description -->
                         <p class="card-description" t-esc="source.description"></p>
-                        
-                        <!-- Card Stats -->
-                        <div class="card-stats">
-                            <!-- <span class="stat-item">
-                                <i class="fa fa-users"></i>
-                                <span t-esc="source.estimated_count"/> contacts
-                            </span>
-                            <button class="btn-details" 
-                                    t-att-data-model="source.model_name"
-                                    t-on-click.stop="toggleSourceDetails">
-                                <i t-att-class="state.showSourceDetails[source.model_name] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
-                                <span t-if="state.showSourceDetails[source.model_name]">Hide Details</span>
-                                <span t-else="">Show Details</span>
-                            </button> -->
-                        </div>
-                        
-                        <!-- Expandable Details -->
-                        <!-- <div t-if="state.showSourceDetails[source.model_name]" class="card-details">
-                            <div class="details-content">
-                                <div class="detail-item">
-                                    <strong>Company:</strong> <span t-esc="state.currentCompany.name"/>
-                                </div>
-                                
-                                <div class="detail-item">
-                                    <strong>Counts:</strong> 
-                                    <span t-esc="state.companyRecordCounts[source.model_name] || 'Loading...'"/>
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
                 
