@@ -39,6 +39,20 @@
                          t-att-data-model="source.model_name"
                          t-on-click="onSourceToggle">
                         
+                        <!-- Badges -->
+                        <!-- <div t-if="source.recommended || isSourceSelected(source.model_name)" 
+                             class="card-badges">
+                            <span t-if="source.recommended" 
+                                  class="badge badge-recommended">
+                                <i class="fa fa-star"></i>
+                                RECOMMENDED
+                            </span>
+                            <span t-if="isSourceSelected(source.model_name)"
+                                  class="badge badge-selected">
+                                <i class="fa fa-check"></i>
+                                SELECTED
+                            </span>
+                        </div> -->
                         
                         <!-- Card Header -->
                         <div class="card-header">
@@ -56,6 +70,21 @@
                         
                         <!-- Card Description -->
                         <p class="card-description" t-esc="source.description"></p>
+                        
+                        <!-- Card Stats -->
+                        <div class="card-stats">
+                            <span class="stat-item">
+                                <i class="fa fa-users"></i>
+                                <span t-esc="source.estimated_count"/> contacts
+                            </span>
+                            <button class="btn-details" 
+                                    t-att-data-model="source.model_name"
+                                    t-on-click.stop="toggleSourceDetails">
+                                <i t-att-class="state.showSourceDetails[source.model_name] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                                <span t-if="state.showSourceDetails[source.model_name]">Hide Details</span>
+                                <span t-else="">Show Details</span>
+                            </button>
+                        </div>
                         
                         <!-- Expandable Details -->
                         <div t-if="state.showSourceDetails[source.model_name]" class="card-details">

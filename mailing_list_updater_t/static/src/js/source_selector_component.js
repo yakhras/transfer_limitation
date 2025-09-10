@@ -15,6 +15,7 @@ class SourceSelectorComponent extends Component {
             selectedSources: this.props.selectedSources || [],
             isLoading: false,
             searchTerm: '',
+            showSourceDetails: {},
             companyRecordCounts: {},
             currentCompany: this.company?.currentCompany || null,
         });
@@ -66,6 +67,7 @@ class SourceSelectorComponent extends Component {
                 description: 'Import contacts from Contacts module',
                 available: true,
                 recommended: true,
+                estimated_count: 1247,
                 email_field: 'email',
                 name_field: 'name',
                 phone_field: 'phone',
@@ -77,6 +79,7 @@ class SourceSelectorComponent extends Component {
                 description: 'Import contacts from CRM Leads',
                 available: true,
                 recommended: true,
+                estimated_count: 856,
                 email_field: 'email_from',
                 name_field: 'name',
                 phone_field: 'phone',
@@ -141,6 +144,18 @@ class SourceSelectorComponent extends Component {
 
     isSourceSelected(modelName) {
         return this.state.selectedSources.includes(modelName);
+    }
+
+    toggleSourceDetails(event) {
+        const modelName = event.currentTarget.dataset.model;
+        this.state.showSourceDetails[modelName] = !this.state.showSourceDetails[modelName];
+        if (this.state.showSourceDetails[modelName] && !this.state.companyRecordCounts[modelName]) {
+            this.fetchCompanyRecordCount(modelName);
+            console.log(modelName, 'details toggled');
+            console.log(this.state.showSourceDetails);
+            console.log(this.state.companyRecordCounts);
+        }
+        event.stopPropagation();
     }
 
     async fetchCompanyRecordCount(modelName) {
