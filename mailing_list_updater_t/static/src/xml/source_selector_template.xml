@@ -39,21 +39,6 @@
                          t-att-data-model="source.model_name"
                          t-on-click="onSourceToggle">
                         
-                        <!-- Badges -->
-                        <!-- <div t-if="source.recommended || isSourceSelected(source.model_name)" 
-                             class="card-badges">
-                            <span t-if="source.recommended" 
-                                  class="badge badge-recommended">
-                                <i class="fa fa-star"></i>
-                                RECOMMENDED
-                            </span>
-                            <span t-if="isSourceSelected(source.model_name)"
-                                  class="badge badge-selected">
-                                <i class="fa fa-check"></i>
-                                SELECTED
-                            </span>
-                        </div> -->
-                        
                         <!-- Card Header -->
                         <div class="card-header">
                             <div t-att-class="'card-icon ' + source.model_name.replace('.', '-') + '-icon'">
