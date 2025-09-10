@@ -10,6 +10,8 @@ class SourceSelectorComponent extends Component {
 
         this.state = useState({
             // Original contact source selection (KEEP)
+            operationType: null,
+            selectedSourceMailingList: null,
             availableSources: [],
             filteredSources: [],
             selectedSources: this.props.selectedSources || [],
@@ -38,6 +40,19 @@ class SourceSelectorComponent extends Component {
         if (this.state.selectedSources.length > 0) {
             console.log('Triggering initial notification for pre-selected sources');
             this.notifyParentOfSelection();
+        }
+    }
+
+    selectOperationType(type) {
+        this.state.operationType = type;
+        
+        // Reset only relevant source selections
+        if (type === 'update') {
+            // Clear selected source mailing list (for merge)
+            this.state.selectedSourceMailingList = null;
+        } else if (type === 'merge') {
+            // Clear selected contact sources (for update)
+            this.state.selectedSources = [];
         }
     }
 

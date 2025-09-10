@@ -17,28 +17,38 @@
                 
                 <div class="operation-cards">
                     <!-- Update Operation -->
-                    <div class="operation-card active">
+                    <div class="operation-card"
+                         t-att-class="state.operationType === 'update' ? 'operation-card active' : 'operation-card'"
+                         t-on-click="() => this.selectOperationType('update')">
                         <div class="card-header">
                             <div class="card-icon update-icon">
                                 <i class="fa fa-users"></i>
                             </div>
                             <h3>Update from Sources</h3>
                             <div class="selection-check">
-                                <i class="fa fa-check-circle"></i>
+                                <i t-if="state.operationType === 'update'" 
+                                   class="fa fa-check-circle"></i>
+                                <i t-else="" 
+                                   class="fa fa-circle-o"></i>
                             </div>
                         </div>
                         <p class="card-description">Add contacts from database sources like Contacts and CRM Leads</p>
                     </div>
                     
                     <!-- Merge Operation -->
-                    <div class="operation-card">
+                    <div class="operation-card"
+                         t-att-class="state.operationType === 'merge' ? 'operation-card active' : 'operation-card'"
+                         t-on-click="() => this.selectOperationType('merge')">
                         <div class="card-header">
                             <div class="card-icon merge-icon">
                                 <i class="fa fa-envelope"></i>
                             </div>
                             <h3>Merge from Mailing List</h3>
                             <div class="selection-check">
-                                <i class="fa fa-circle-o"></i>
+                                <i t-if="state.operationType === 'merge'" 
+                                   class="fa fa-check-circle"></i>
+                                <i t-else="" 
+                                   class="fa fa-circle-o"></i>
                             </div>
                         </div>
                         <p class="card-description">Merge contacts from another existing mailing list</p>
@@ -49,7 +59,7 @@
             <!-- ========================================= -->
             <!-- UPDATE: CONTACT SOURCE SELECTION -->
             <!-- ========================================= -->
-            <div class="source-selection-section">
+            <div t-if="state.operationType === 'update'" class="source-selection-section">
                 <div class="content-header">
                     <h2>
                         <i class="fa fa-database"></i>
@@ -113,7 +123,7 @@
             <!-- ========================================= -->
             <!-- MERGE: MAILING LIST SEARCH -->
             <!-- ========================================= -->
-            <div class="mailing-list-search-section" style="display: none;">
+            <div t-if="state.operationType === 'merge'" class="mailing-list-search-section">
                 <div class="content-header">
                     <h2>
                         <i class="fa fa-envelope"></i>
