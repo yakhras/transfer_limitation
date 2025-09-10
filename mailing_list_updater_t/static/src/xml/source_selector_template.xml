@@ -1,11 +1,140 @@
-<?xml version="1.0" encoding="utf-8"?>
-<templates xml:space="preserve">
+ <?xml version="1.0" encoding="utf-8"?>
+<!--<templates xml:space="preserve">
     <t t-name="mailing_list_updater_t.SourceSelectorTemplate" owl="1">
         <div class="source-selector">
             
 
+            =========================================
+            CONTACT SOURCE SELECTION (ORIGINAL)
+            =========================================
+            <div class="source-selection-section">
+                <div class="content-header">
+                    <h2>
+                        <i class="fa fa-database"></i>
+                        Select Contact Sources
+                    </h2>
+                    <p>Choose which contact sources to import from</p>
+                </div>
+                
+                Source Loading State
+                <div t-if="state.isLoading" class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Loading contact sources...</p>
+                </div>
+                
+                Source Selection Summary
+                <div t-if="state.selectedSources.length &gt; 0" class="selection-summary">
+                    <div class="mlu-alert mlu-alert-success">
+                        <i class="fa fa-check-circle"></i>
+                        <span t-esc="state.selectedSources.length"/> source(s) selected • Ready to proceed
+                    </div>
+                </div>
+                
+                Source Cards
+                <div t-if="!state.isLoading" class="source-cards">
+                    <div t-foreach="state.filteredSources" 
+                         t-as="source" 
+                         t-key="source.model_name"
+                         t-att-class="getSourceItemClass(source)"
+                         t-att-data-model="source.model_name"
+                         t-on-click="onSourceToggle">
+                        
+                        Card Header
+                        <div class="card-header">
+                            <div t-att-class="'card-icon ' + source.model_name.replace('.', '-') + '-icon'">
+                                <i t-att-class="source.icon || 'fa fa-users'"></i>
+                            </div>
+                            <h3 t-esc="source.name"></h3>
+                            <div class="selection-check">
+                                <i t-if="isSourceSelected(source.model_name)" 
+                                   class="fa fa-check-circle"></i>
+                                <i t-else="" 
+                                   class="fa fa-circle-o"></i>
+                            </div>
+                        </div>
+                        
+                        Card Description
+                        <p class="card-description" t-esc="source.description"></p>
+                    </div>
+                </div>
+
+                
+                
+                Source Empty State
+                <div t-if="!state.isLoading and state.filteredSources.length === 0" class="empty-state">
+                    <div class="empty-content">
+                        <i class="fa fa-database fa-3x"></i>
+                        <h3>No contact sources available</h3>
+                        <p>Check if contact sources are properly configured in the system.</p>
+                    </div>
+                </div>
+            </div>
+
+            Overall Validation Summary
+            <div class="overall-validation">
+                
+                <div t-if="state.selectedSources.length === 0" 
+                     class="mlu-alert mlu-alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Please select at least one contact source
+                </div>
+            </div>
+        </div>
+    </t>
+</templates> -->
+
+
+
+<!-- <?xml version="1.0" encoding="utf-8"?> -->
+<templates xml:space="preserve">
+    <t t-name="mailing_list_updater_t.SourceSelectorTemplate" owl="1">
+        <div class="source-selector">
+            
             <!-- ========================================= -->
-            <!-- CONTACT SOURCE SELECTION (ORIGINAL) -->
+            <!-- PRIMARY SELECTION: UPDATE vs MERGE -->
+            <!-- ========================================= -->
+            <div class="operation-selection">
+                <div class="content-header">
+                    <h2>
+                        <i class="fa fa-database"></i>
+                        Select Operation Type
+                    </h2>
+                    <p>Choose how to add contacts to your mailing list</p>
+                </div>
+                
+                <div class="operation-cards">
+                    <!-- Update Operation -->
+                    <div class="operation-card active">
+                        <div class="card-header">
+                            <div class="card-icon update-icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                            <h3>Update from Sources</h3>
+                            <div class="selection-check">
+                                <i class="fa fa-check-circle"></i>
+                            </div>
+                        </div>
+                        <p class="card-description">Add contacts from database sources like Contacts and CRM Leads</p>
+                    </div>
+                    
+                    <!-- Merge Operation -->
+                    <div class="operation-card">
+                        <div class="card-header">
+                            <div class="card-icon merge-icon">
+                                <i class="fa fa-envelope"></i>
+                            </div>
+                            <h3>Merge from Mailing List</h3>
+                            <div class="selection-check">
+                                <i class="fa fa-circle-o"></i>
+                            </div>
+                        </div>
+                        <p class="card-description">Merge contacts from another existing mailing list</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================= -->
+            <!-- UPDATE: CONTACT SOURCE SELECTION -->
             <!-- ========================================= -->
             <div class="source-selection-section">
                 <div class="content-header">
@@ -57,8 +186,6 @@
                         <p class="card-description" t-esc="source.description"></p>
                     </div>
                 </div>
-
-                
                 
                 <!-- Source Empty State -->
                 <div t-if="!state.isLoading and state.filteredSources.length === 0" class="empty-state">
@@ -70,9 +197,55 @@
                 </div>
             </div>
 
+            <!-- ========================================= -->
+            <!-- MERGE: MAILING LIST SEARCH -->
+            <!-- ========================================= -->
+            <div class="mailing-list-search-section" style="display: none;">
+                <div class="content-header">
+                    <h2>
+                        <i class="fa fa-envelope"></i>
+                        Select Source Mailing List
+                    </h2>
+                    <p>Choose which mailing list to merge from</p>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <i class="fa fa-search"></i>
+                        <input type="text" 
+                               class="search-input" 
+                               placeholder="Search mailing lists..."
+                               value=""/>
+                    </div>
+                </div>
+                
+                <!-- Mailing List Results -->
+                <div class="mailing-list-results">
+                    <div class="mailing-list-item">
+                        <div class="list-info">
+                            <h4>Newsletter Subscribers</h4>
+                            <p>245 contacts • Created Jan 15, 2024</p>
+                        </div>
+                        <div class="selection-check">
+                            <i class="fa fa-circle-o"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="mailing-list-item">
+                        <div class="list-info">
+                            <h4>Product Updates</h4>
+                            <p>156 contacts • Created Feb 3, 2024</p>
+                        </div>
+                        <div class="selection-check">
+                            <i class="fa fa-circle-o"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Overall Validation Summary -->
             <div class="overall-validation">
-                
                 <div t-if="state.selectedSources.length === 0" 
                      class="mlu-alert mlu-alert-warning">
                     <i class="fa fa-exclamation-triangle"></i>
