@@ -2,6 +2,14 @@
 <templates xml:space="preserve">
     <t t-name="mailing_list_updater_t.SourceSelectorTemplate" owl="1">
         <div class="source-selector">
+            <!-- Show message when no mailing list selected -->
+            <div t-if="!props.selectedMailingList" class="no-preview-message">
+                <div class="empty-state">
+                    <i class="fa fa-info-circle"></i>
+                    <h3>Nothing to preview right now</h3>
+                    <p>Please select a target mailing list first to see the preview</p>
+                </div>
+            </div>
             
             <!-- ========================================= -->
             <!-- PRIMARY SELECTION: UPDATE vs MERGE -->
