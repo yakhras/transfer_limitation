@@ -79,20 +79,26 @@ class SourceSelectorComponent extends Component {
     }
 
     /**
-     * Get filtered source mailing lists based on search term
-    */
+     * Get filtered source mailing lists based on search term and selection
+     */
     get filteredSourceMailingLists() {
-        const searchTerm = this.state.sourceMailingListSearchTerm?.toLowerCase().trim();
-        
-        if (!searchTerm) {
-            return this.state.availableSourceMailingLists || [];
+        // If user is searching, show filtered results
+        if (this.state.sourceMailingListSearchTerm) {
+            const searchTerm = this.state.sourceMailingListSearchTerm.toLowerCase().trim();
+            return this.state.availableSourceMailingLists.filter(mailingList => {
+                const nameMatch = mailingList.name?.toLowerCase().includes(searchTerm);
+                const countMatch = mailingList.contact_count?.toString().includes(searchTerm);
+                return nameMatch || countMatch;
+            });
         }
         
-        return this.state.availableSourceMailingLists.filter(mailingList => {
-            const nameMatch = mailingList.name?.toLowerCase().includes(searchTerm);
-            const countMatch = mailingList.contact_count?.toString().includes(searchTerm);
-            return nameMatch || countMatch;
-        });
+        // If user has selected a list, show only that one
+        if (this.props.selectedSourceMailingList) {
+            return [this.props.selectedSourceMailingList];
+        }
+        
+        // Otherwise show nothing
+        return [];
     }
 
     onSourceMailingListSelected(mailingListId) {
