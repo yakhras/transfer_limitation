@@ -131,18 +131,18 @@ class SourceSelectorComponent extends Component {
         
         try {
             // Call Odoo API to get mailing lists
-            const response = await this._rpc({
-                model: 'mailing.list',
-                method: 'search_read',
-                args: [
+            const response = await this.env.services.orm.call(
+                'mailing.list',
+                'search_read',
+                [
                     [
                         ["id", "!=", this.props.selectedMailingList?.id || false]
                     ]
                 ],
-                kwargs: {
+                {
                     fields: ['id', 'name', 'contact_count'],
                 }
-            });
+            );
             
             // Process and format the response
             if (response && Array.isArray(response)) {
