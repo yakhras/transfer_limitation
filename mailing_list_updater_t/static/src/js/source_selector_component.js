@@ -95,21 +95,11 @@ class SourceSelectorComponent extends Component {
         });
     }
 
-    /**
-    * Handle source mailing list selection for merge
-    */
     onSourceMailingListSelected(mailingListId) {
-        // Validate not same as target
-        if (this.props.selectedMailingList?.id === mailingListId) {
-            this.showError("Cannot merge a mailing list with itself");
-            return;
-        }
-
-        // Create mailing list object (in real app, get from loaded data)
-        const selectedList = {
-            id: mailingListId,
-            name: mailingListId === 1 ? "Newsletter Subscribers" : "Product Updates"
-        };
+        // Find selected list from loaded data
+        const selectedList = this.state.availableSourceMailingLists.find(
+            list => list.id === mailingListId
+        );
 
         // Emit event to parent
         this.trigger('source-mailing-list-changed', {
@@ -136,11 +126,11 @@ class SourceSelectorComponent extends Component {
                 'search_read',
                 [
                     [
-                        ["id", "!=", this.props.selectedMailingList?.id || false]
+                        ["id", "!=", this.props.selectedMailingList?.id || 0]
                     ]
                 ],
                 {
-                    fields: ['id', 'name', 'contact_count'],
+                    fields: ['id', 'name', 'contact_count', 'create_date'],
                 }
             );
             
