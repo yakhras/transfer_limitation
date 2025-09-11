@@ -299,7 +299,7 @@ class MailingListUpdaterMain extends Component {
         // Reset relevant selections when switching operation types
         if (event.detail.operationType === 'update') {
             // Clear merge-related selections
-            // this.state.selectedSourceMailingList = null;
+            this.state.selectedSourceMailingList = null;
         } else if (event.detail.operationType === 'merge') {
             // Clear update-related selections
             this.state.selectedSources = [];
