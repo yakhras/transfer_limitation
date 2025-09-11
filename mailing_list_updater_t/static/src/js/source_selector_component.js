@@ -136,7 +136,6 @@ class SourceSelectorComponent extends Component {
                 method: "search_read",
                 args: [
                     [
-                        ["active", "=", true],
                         ["id", "!=", this.props.selectedMailingList?.id || false] // Exclude target list
                     ]
                 ],
