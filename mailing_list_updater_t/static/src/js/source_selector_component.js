@@ -118,6 +118,7 @@ class SourceSelectorComponent extends Component {
         // Clear previous data
         this.state.availableSourceMailingLists = [];
         this.state.sourceMailingListSearchTerm = '';
+        console.log('targetList', this.selectedMailingList);
         
         try {
             // Call Odoo API to get mailing lists
