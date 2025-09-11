@@ -82,6 +82,13 @@ class SourceSelectorComponent extends Component {
      * Get filtered source mailing lists based on search term and selection
      */
     get filteredSourceMailingLists() {
+        
+        
+        // If user has selected a list, show only that one
+        if (this.props.selectedSourceMailingList) {
+            return [this.props.selectedSourceMailingList];
+        }
+
         // If user is searching, show filtered results
         if (this.state.sourceMailingListSearchTerm) {
             const searchTerm = this.state.sourceMailingListSearchTerm.toLowerCase().trim();
@@ -90,11 +97,6 @@ class SourceSelectorComponent extends Component {
                 const countMatch = mailingList.contact_count?.toString().includes(searchTerm);
                 return nameMatch || countMatch;
             });
-        }
-        
-        // If user has selected a list, show only that one
-        if (this.props.selectedSourceMailingList) {
-            return [this.props.selectedSourceMailingList];
         }
         
         // Otherwise show nothing
