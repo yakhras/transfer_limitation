@@ -163,7 +163,7 @@
                     </div>
                     
                     <!-- Mailing List Results -->
-                    <div t-if="!state.isLoadingSourceMailingLists" class="mailing-list-results">
+                    <div t-if="!state.isLoadingSourceMailingLists and state.sourceMailingListSearchTerm" class="mailing-list-results">
                         <div t-foreach="filteredSourceMailingLists" 
                              t-as="mailingList" 
                              t-key="mailingList.id"
