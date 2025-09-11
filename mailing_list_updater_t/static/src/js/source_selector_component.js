@@ -127,7 +127,7 @@ class SourceSelectorComponent extends Component {
                 'search_read',
                 [
                     [
-                        ["id", "!=", this.props.selectedMailingList?.id || 0]
+                        ["id", "!=", this.props.selectedMailingList?.mailing_list_id || 0]
                     ]
                 ],
                 {
