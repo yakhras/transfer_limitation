@@ -78,7 +78,11 @@
                         <SourceSelectorComponent 
                             selectedMailingList="state.selectedMailingList"
                             selectedSources="state.selectedSources.map(s => s.model_name)"
-                            t-on-sources-changed="onSourcesChanged"/>
+                            operationType="state.operationType"
+                            selectedSourceMailingList="state.selectedSourceMailingList"
+                            t-on-sources-changed="onSourcesChanged"
+                            t-on-operation-type-changed="onOperationTypeChanged"
+                            t-on-source-mailing-list-changed="onSourceMailingListChanged"/>
                     </div>
                     
                     <!-- Step 2: Filter Building - USE YOUR COMPONENT -->

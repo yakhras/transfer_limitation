@@ -223,6 +223,8 @@ SourceSelectorComponent.template = 'mailing_list_updater_t.SourceSelectorTemplat
 SourceSelectorComponent.props = {
     selectedMailingList: { validate: (value) => value === null || typeof value === 'object' },
     selectedSources: { validate: (value) => Array.isArray(value), optional: true },
+    operationType: { validate: (value) => ['update', 'merge', null].includes(value) },
+    selectedSourceMailingList: { validate: (value) => value === null || typeof value === 'object', optional: true },
 };
 
 export { SourceSelectorComponent };

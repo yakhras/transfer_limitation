@@ -36,6 +36,8 @@ class MailingListUpdaterMain extends Component {
             // Data
             selectedMailingList: null,
             selectedSources: [],
+            operationType: null,
+            selectedSourceMailingList: null,
             filterCriteria: {},
             previewData: null,
             currentBatch: null,
@@ -281,6 +283,28 @@ class MailingListUpdaterMain extends Component {
             default:
                 // Standard entry, no special handling needed
                 break;
+        }
+    }
+
+    onSourceMailingListChanged(event) {
+        this.state.selectedSourceMailingList = event.detail.selectedSourceMailingList;
+    }
+
+    /**
+     * Handle operation type changes from SourceSelector
+     */
+    onOperationTypeChanged(event) {
+        this.state.operationType = event.detail.operationType;
+        
+        // Reset relevant selections when switching operation types
+        if (event.detail.operationType === 'update') {
+            // Clear merge-related selections
+            this.state.selectedSourceMailingList = null;
+        } else if (event.detail.operationType === 'merge') {
+            // Clear update-related selections
+            this.state.selectedSources = [];
+            this.state.filterCriteria = {};
+            this.state.previewData = null;
         }
     }
     

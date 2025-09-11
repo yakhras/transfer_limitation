@@ -18,15 +18,15 @@
                 <div class="operation-cards">
                     <!-- Update Operation -->
                     <div class="operation-card"
-                         t-att-class="state.operationType === 'update' ? 'operation-card active' : 'operation-card'"
-                         t-on-click="() => this.selectOperationType('update')">
+                         t-att-class="props.operationType === 'update' ? 'operation-card active' : 'operation-card'"
+                         t-on-click="() => this.onOperationTypeChanged('update')">
                         <div class="card-header">
                             <div class="card-icon update-icon">
                                 <i class="fa fa-users"></i>
                             </div>
                             <h3>Update from Sources</h3>
                             <div class="selection-check">
-                                <i t-if="state.operationType === 'update'" 
+                                <i t-if="props.operationType === 'update'" 
                                    class="fa fa-check-circle"></i>
                                 <i t-else="" 
                                    class="fa fa-circle-o"></i>
@@ -37,15 +37,15 @@
                     
                     <!-- Merge Operation -->
                     <div class="operation-card"
-                         t-att-class="state.operationType === 'merge' ? 'operation-card active' : 'operation-card'"
-                         t-on-click="() => this.selectOperationType('merge')">
+                         t-att-class="props.operationType === 'merge' ? 'operation-card active' : 'operation-card'"
+                         t-on-click="() => this.onOperationTypeChanged('merge')">
                         <div class="card-header">
                             <div class="card-icon merge-icon">
                                 <i class="fa fa-envelope"></i>
                             </div>
                             <h3>Merge from Mailing List</h3>
                             <div class="selection-check">
-                                <i t-if="state.operationType === 'merge'" 
+                                <i t-if="props.operationType === 'merge'" 
                                    class="fa fa-check-circle"></i>
                                 <i t-else="" 
                                    class="fa fa-circle-o"></i>
@@ -59,7 +59,7 @@
             <!-- ========================================= -->
             <!-- UPDATE: CONTACT SOURCE SELECTION -->
             <!-- ========================================= -->
-            <div t-if="state.operationType === 'update'" class="source-selection-section">
+            <div t-if="props.operationType === 'update'" class="source-selection-section">
                 <div class="content-header">
                     <h2>
                         <i class="fa fa-database"></i>
@@ -123,7 +123,7 @@
             <!-- ========================================= -->
             <!-- MERGE: MAILING LIST SEARCH -->
             <!-- ========================================= -->
-            <div t-if="state.operationType === 'merge'" class="mailing-list-search-section">
+            <div t-if="props.operationType === 'merge'" class="mailing-list-search-section">
                 <div class="content-header">
                     <h2>
                         <i class="fa fa-envelope"></i>
@@ -145,23 +145,25 @@
                 
                 <!-- Mailing List Results -->
                 <div class="mailing-list-results">
-                    <div class="mailing-list-item">
+                    <div class="mailing-list-item" t-on-click="() => this.onSourceMailingListSelected(1)">
                         <div class="list-info">
                             <h4>Newsletter Subscribers</h4>
                             <p>245 contacts • Created Jan 15, 2024</p>
                         </div>
                         <div class="selection-check">
-                            <i class="fa fa-circle-o"></i>
+                            <i t-if="props.selectedSourceMailingList?.id === 1" class="fa fa-check-circle"></i>
+                            <i t-else="" class="fa fa-circle-o"></i>
                         </div>
                     </div>
                     
-                    <div class="mailing-list-item">
+                    <div class="mailing-list-item" t-on-click="() => this.onSourceMailingListSelected(2)">
                         <div class="list-info">
                             <h4>Product Updates</h4>
                             <p>156 contacts • Created Feb 3, 2024</p>
                         </div>
                         <div class="selection-check">
-                            <i class="fa fa-circle-o"></i>
+                            <i t-if="props.selectedSourceMailingList?.id === 2" class="fa fa-check-circle"></i>
+                            <i t-else="" class="fa fa-circle-o"></i>
                         </div>
                     </div>
                 </div>
