@@ -12,6 +12,9 @@ class SourceSelectorComponent extends Component {
             // Original contact source selection (KEEP)
             operationType: null,
             selectedSourceMailingList: null,
+            sourceMailingListSearchTerm: '',
+            availableSourceMailingLists: [],
+            isLoadingSourceMailingLists: false,
             availableSources: [],
             filteredSources: [],
             selectedSources: this.props.selectedSources || [],
@@ -57,12 +60,38 @@ class SourceSelectorComponent extends Component {
     }
 
     /**
-     * Handle operation type selection
+     * Handle operation type selection (Update/Merge)
      */
-    onOperationTypeChanged(type) {
-        // Emit event UP to parent
+    async onOperationTypeChanged(type) {
+        // Emit to parent
         this.trigger('operation-type-changed', { 
             operationType: type 
+        });
+        
+        // Handle specific operation
+        if (type === 'merge') {
+            await this.loadAvailableSourceMailingLists();
+        } else if (type === 'update') {
+            // Clear merge data
+            this.state.availableSourceMailingLists = [];
+            this.state.sourceMailingListSearchTerm = '';
+        }
+    }
+
+    /**
+     * Get filtered source mailing lists based on search term
+    */
+    get filteredSourceMailingLists() {
+        const searchTerm = this.state.sourceMailingListSearchTerm?.toLowerCase().trim();
+        
+        if (!searchTerm) {
+            return this.state.availableSourceMailingLists || [];
+        }
+        
+        return this.state.availableSourceMailingLists.filter(mailingList => {
+            const nameMatch = mailingList.name?.toLowerCase().includes(searchTerm);
+            const countMatch = mailingList.contact_count?.toString().includes(searchTerm);
+            return nameMatch || countMatch;
         });
     }
 
@@ -86,6 +115,70 @@ class SourceSelectorComponent extends Component {
         this.trigger('source-mailing-list-changed', {
             selectedSourceMailingList: selectedList
         });
+    }
+
+    /**
+     * Load available source mailing lists for merge operation
+     * Called when user selects "Merge" operation type
+     */
+    async loadAvailableSourceMailingLists() {
+        // Set loading state
+        this.state.isLoadingSourceMailingLists = true;
+        
+        // Clear previous data
+        this.state.availableSourceMailingLists = [];
+        this.state.sourceMailingListSearchTerm = '';
+        
+        try {
+            // Call Odoo API to get mailing lists
+            const response = await this.rpc({
+                model: "mailing.list",
+                method: "search_read",
+                args: [
+                    [
+                        ["active", "=", true],
+                        ["id", "!=", this.props.selectedMailingList?.id || false] // Exclude target list
+                    ]
+                ],
+                kwargs: {
+                    fields: [
+                        "id", 
+                        "name", 
+                        "contact_count", 
+                    ],
+                    order: "name ASC",
+                }
+            });
+            
+            // Process and format the response
+            if (response && Array.isArray(response)) {
+                this.state.availableSourceMailingLists = response.map(list => ({
+                    id: list.id,
+                    name: list.name,
+                    contact_count: list.contact_count || 0,
+                }));
+                
+                console.log(`Loaded ${response.length} source mailing lists for merge`);
+            } else {
+                throw new Error("Invalid response format from server");
+            }
+            
+        } catch (error) {
+            console.error("Failed to load source mailing lists:", error);
+            
+            // Show user-friendly error message
+            this.env.services.notification.add(
+                "Failed to load mailing lists. Please try again.", 
+                { type: 'danger' }
+            );
+            
+            // Reset to empty state
+            this.state.availableSourceMailingLists = [];
+            
+        } finally {
+            // Always clear loading state
+            this.state.isLoadingSourceMailingLists = false;
+        }
     }
 
     // ========================================

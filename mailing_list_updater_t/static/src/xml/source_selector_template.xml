@@ -132,38 +132,52 @@
                     <p>Choose which mailing list to merge from</p>
                 </div>
                 
+                <!-- Loading State -->
+                <div t-if="state.isLoadingSourceMailingLists" class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Loading mailing lists...</p>
+                </div>
+                
                 <!-- Search Bar -->
-                <div class="search-container">
+                <div t-if="!state.isLoadingSourceMailingLists" class="search-container">
                     <div class="search-input-wrapper">
                         <i class="fa fa-search"></i>
                         <input type="text" 
                                class="search-input" 
                                placeholder="Search mailing lists..."
-                               value=""/>
+                               t-model="state.sourceMailingListSearchTerm"/>
                     </div>
                 </div>
                 
                 <!-- Mailing List Results -->
-                <div class="mailing-list-results">
-                    <div class="mailing-list-item" t-on-click="() => this.onSourceMailingListSelected(1)">
+                <div t-if="!state.isLoadingSourceMailingLists" class="mailing-list-results">
+                    <div t-foreach="filteredSourceMailingLists" 
+                         t-as="mailingList" 
+                         t-key="mailingList.id"
+                         class="mailing-list-item" 
+                         t-on-click="() => this.onSourceMailingListSelected(mailingList.id)">
                         <div class="list-info">
-                            <h4>Newsletter Subscribers</h4>
-                            <p>245 contacts • Created Jan 15, 2024</p>
+                            <h4 t-esc="mailingList.name"></h4>
+                            <p><span t-esc="mailingList.contact_count"/> contacts • Created <span t-esc="mailingList.created_date"/></p>
                         </div>
                         <div class="selection-check">
-                            <i t-if="props.selectedSourceMailingList?.id === 1" class="fa fa-check-circle"></i>
+                            <i t-if="props.selectedSourceMailingList?.id === mailingList.id" class="fa fa-check-circle"></i>
                             <i t-else="" class="fa fa-circle-o"></i>
                         </div>
                     </div>
                     
-                    <div class="mailing-list-item" t-on-click="() => this.onSourceMailingListSelected(2)">
-                        <div class="list-info">
-                            <h4>Product Updates</h4>
-                            <p>156 contacts • Created Feb 3, 2024</p>
-                        </div>
-                        <div class="selection-check">
-                            <i t-if="props.selectedSourceMailingList?.id === 2" class="fa fa-check-circle"></i>
-                            <i t-else="" class="fa fa-circle-o"></i>
+                    <!-- No Results -->
+                    <div t-if="filteredSourceMailingLists.length === 0 and state.sourceMailingListSearchTerm" class="no-results">
+                        <i class="fa fa-search"></i>
+                        <p>No mailing lists found matching "<span t-esc="state.sourceMailingListSearchTerm"/>"</p>
+                    </div>
+                    
+                    <!-- Empty State when no lists loaded -->
+                    <div t-if="filteredSourceMailingLists.length === 0 and !state.sourceMailingListSearchTerm" class="empty-state">
+                        <div class="empty-content">
+                            <i class="fa fa-envelope fa-3x"></i>
+                            <h3>No mailing lists available</h3>
+                            <p>No active mailing lists found for merging.</p>
                         </div>
                     </div>
                 </div>
@@ -171,96 +185,18 @@
 
             <!-- Overall Validation Summary -->
             <div class="overall-validation">
-                <div t-if="state.selectedSources.length === 0" 
+                <div t-if="props.operationType === 'update' and state.selectedSources.length === 0" 
                      class="mlu-alert mlu-alert-warning">
                     <i class="fa fa-exclamation-triangle"></i>
                     Please select at least one contact source
+                </div>
+                
+                <div t-if="props.operationType === 'merge' and !props.selectedSourceMailingList" 
+                     class="mlu-alert mlu-alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Please select a source mailing list to merge from
                 </div>
             </div>
         </div>
     </t>
 </templates>
-
-<!--<templates xml:space="preserve">
-    <t t-name="mailing_list_updater_t.SourceSelectorTemplate" owl="1">
-        <div class="source-selector">
-            
-
-            =========================================
-            CONTACT SOURCE SELECTION (ORIGINAL)
-            =========================================
-            <div class="source-selection-section">
-                <div class="content-header">
-                    <h2>
-                        <i class="fa fa-database"></i>
-                        Select Contact Sources
-                    </h2>
-                    <p>Choose which contact sources to import from</p>
-                </div>
-                
-                Source Loading State
-                <div t-if="state.isLoading" class="loading-container">
-                    <div class="loading-spinner"></div>
-                    <p>Loading contact sources...</p>
-                </div>
-                
-                Source Selection Summary
-                <div t-if="state.selectedSources.length &gt; 0" class="selection-summary">
-                    <div class="mlu-alert mlu-alert-success">
-                        <i class="fa fa-check-circle"></i>
-                        <span t-esc="state.selectedSources.length"/> source(s) selected • Ready to proceed
-                    </div>
-                </div>
-                
-                Source Cards
-                <div t-if="!state.isLoading" class="source-cards">
-                    <div t-foreach="state.filteredSources" 
-                         t-as="source" 
-                         t-key="source.model_name"
-                         t-att-class="getSourceItemClass(source)"
-                         t-att-data-model="source.model_name"
-                         t-on-click="onSourceToggle">
-                        
-                        Card Header
-                        <div class="card-header">
-                            <div t-att-class="'card-icon ' + source.model_name.replace('.', '-') + '-icon'">
-                                <i t-att-class="source.icon || 'fa fa-users'"></i>
-                            </div>
-                            <h3 t-esc="source.name"></h3>
-                            <div class="selection-check">
-                                <i t-if="isSourceSelected(source.model_name)" 
-                                   class="fa fa-check-circle"></i>
-                                <i t-else="" 
-                                   class="fa fa-circle-o"></i>
-                            </div>
-                        </div>
-                        
-                        Card Description
-                        <p class="card-description" t-esc="source.description"></p>
-                    </div>
-                </div>
-
-                
-                
-                Source Empty State
-                <div t-if="!state.isLoading and state.filteredSources.length === 0" class="empty-state">
-                    <div class="empty-content">
-                        <i class="fa fa-database fa-3x"></i>
-                        <h3>No contact sources available</h3>
-                        <p>Check if contact sources are properly configured in the system.</p>
-                    </div>
-                </div>
-            </div>
-
-            Overall Validation Summary
-            <div class="overall-validation">
-                
-                <div t-if="state.selectedSources.length === 0" 
-                     class="mlu-alert mlu-alert-warning">
-                    <i class="fa fa-exclamation-triangle"></i>
-                    Please select at least one contact source
-                </div>
-            </div>
-        </div>
-    </t>
-</templates> -->
