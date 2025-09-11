@@ -158,7 +158,7 @@
                          t-on-click="() => this.onSourceMailingListSelected(mailingList.id)">
                         <div class="list-info">
                             <h4 t-esc="mailingList.name"></h4>
-                            <p><span t-esc="mailingList.contact_count"/> contacts • Created <span t-esc="mailingList.created_date"/></p>
+                            <p><span t-esc="mailingList.contact_count"/> contacts •</p>
                         </div>
                         <div class="selection-check">
                             <i t-if="props.selectedSourceMailingList?.id === mailingList.id" class="fa fa-check-circle"></i>
