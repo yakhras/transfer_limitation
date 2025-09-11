@@ -56,6 +56,38 @@ class SourceSelectorComponent extends Component {
         }
     }
 
+    /**
+     * Handle operation type selection
+     */
+    onOperationTypeChanged(type) {
+        // Emit event UP to parent
+        this.trigger('operation-type-changed', { 
+            operationType: type 
+        });
+    }
+
+    /**
+    * Handle source mailing list selection for merge
+    */
+    onSourceMailingListSelected(mailingListId) {
+        // Validate not same as target
+        if (this.props.selectedMailingList?.id === mailingListId) {
+            this.showError("Cannot merge a mailing list with itself");
+            return;
+        }
+
+        // Create mailing list object (in real app, get from loaded data)
+        const selectedList = {
+            id: mailingListId,
+            name: mailingListId === 1 ? "Newsletter Subscribers" : "Product Updates"
+        };
+
+        // Emit event to parent
+        this.trigger('source-mailing-list-changed', {
+            selectedSourceMailingList: selectedList
+        });
+    }
+
     // ========================================
     // ORIGINAL CONTACT SOURCE METHODS (KEEP)
     // ========================================
