@@ -4,7 +4,7 @@
         <div class="source-selector">
             
             <!-- Show message when no target mailing list selected -->
-            <div t-if="!props.selectedMailingList" class="no-target-message">
+            <div t-if="!props.selectedMailingList" class="no-preview-message">
                 <div class="empty-state">
                     <i class="fa fa-info-circle"></i>
                     <h3>Select Target Mailing List First</h3>
