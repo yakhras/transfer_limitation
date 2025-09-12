@@ -115,6 +115,7 @@ class SourceSelectorComponent extends Component {
         this.trigger('source-mailing-list-changed', {
             selectedSourceMailingList: selectedList
         });
+        console.log('event', selectedSourceMailingList);
     }
 
     /**
