@@ -148,11 +148,11 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         xlsx_writer.worksheet.merge_range(row, 1, row, 2, period, xlsx_writer.base_style)
         
         export_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-        xlsx_writer.write(row, 4, "Generated:", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 5, row, 6, export_date, xlsx_writer.base_style)
+        xlsx_writer.write(row, 3, "Generated:", xlsx_writer.summary_metric_style)
+        xlsx_writer.worksheet.merge_range(row, 4, row, 5, export_date, xlsx_writer.base_style)
 
-        xlsx_writer.write(row, 7, f"{days_count}", xlsx_writer.summary_metric_style)
-        # xlsx_writer.write(row, 8, days_count, xlsx_writer.base_style)
+        xlsx_writer.write(row, 6, f"Days:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 7, days_count, xlsx_writer.base_style)
         row += 1
 
 
