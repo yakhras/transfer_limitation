@@ -194,7 +194,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
                 opening_credit = opening_row[5] if opening_row[5] else 0
 
                 for cell_index, cell_value in enumerate(opening_row):
-                    if cell_index < len(self.field_names):
+                    if cell_index < len(self.fields):
                         xlsx_writer.write_cell_with_style(9, cell_index, cell_value, xlsx_writer.opening_balance_style)
                     # xlsx_writer.write_cell(31, cell_index, params)
                 period_start_row = 10  # Period data starts at row 8
