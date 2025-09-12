@@ -346,5 +346,6 @@ SourceSelectorComponent.props = {
     operationType: { validate: (value) => ['update', 'merge', null].includes(value) },
     selectedSourceMailingList: { validate: (value) => value === null || typeof value === 'object' },
 };
+console.log('props:', SourceSelectorComponent.props);
 
 export { SourceSelectorComponent };
