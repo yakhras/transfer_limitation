@@ -156,16 +156,16 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         row += 1
 
 
-        period_movement = running_balance['closing_balance'] - (summary_data['balance'] if summary_data['balance'] else 0.0)
+        # period_movement = running_balance['closing_balance'] - (summary_data['balance'] if summary_data['balance'] else 0.0)
 
-        # Financial summary row
-        xlsx_writer.write(row, 0, "Opening Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 1, row, 2, summary_data['balance'], xlsx_writer.summary_value_style if summary_data['balance'] >= 0 else xlsx_writer.negative_value_style)
-        xlsx_writer.write(row, 3, "Period Movement", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 4, row, 5, period_movement, xlsx_writer.negative_value_style if period_movement < 0 else xlsx_writer.summary_value_style)
-        xlsx_writer.write(row, 6, "Closing Balance:", xlsx_writer.summary_metric_style)
-        xlsx_writer.worksheet.merge_range(row, 7, row, 8, running_balance['closing_balance'], xlsx_writer.summary_value_style if running_balance['closing_balance'] >= 0 else xlsx_writer.negative_value_style)
-        row += 1
+        # # Financial summary row
+        # xlsx_writer.write(row, 0, "Opening Balance:", xlsx_writer.summary_metric_style)
+        # xlsx_writer.worksheet.merge_range(row, 1, row, 2, summary_data['balance'], xlsx_writer.summary_value_style if summary_data['balance'] >= 0 else xlsx_writer.negative_value_style)
+        # xlsx_writer.write(row, 3, "Period Movement", xlsx_writer.summary_metric_style)
+        # xlsx_writer.worksheet.merge_range(row, 4, row, 5, period_movement, xlsx_writer.negative_value_style if period_movement < 0 else xlsx_writer.summary_value_style)
+        # xlsx_writer.write(row, 6, "Closing Balance:", xlsx_writer.summary_metric_style)
+        # xlsx_writer.worksheet.merge_range(row, 7, row, 8, running_balance['closing_balance'], xlsx_writer.summary_value_style if running_balance['closing_balance'] >= 0 else xlsx_writer.negative_value_style)
+        # row += 1
         
         return row
 
