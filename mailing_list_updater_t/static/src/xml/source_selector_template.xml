@@ -82,10 +82,10 @@
                     </div>
                     
                     <!-- Source Loading State -->
-                    <div t-if="state.isLoading" class="loading-container">
+                    <!-- <div t-if="state.isLoading" class="loading-container">
                         <div class="loading-spinner"></div>
                         <p>Loading contact sources...</p>
-                    </div>
+                    </div> -->
                     
                     <!-- Source Selection Summary -->
                     <div t-if="state.selectedSources.length &gt; 0" class="selection-summary">
