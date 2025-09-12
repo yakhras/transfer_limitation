@@ -104,10 +104,12 @@ class SourceSelectorComponent extends Component {
     }
 
     onSourceMailingListSelected(mailingListId) {
+        console.log('Selected ID:', mailingListId);
         // Find selected list from loaded data
         const selectedList = this.state.availableSourceMailingLists.find(
             list => list.id === mailingListId
         );
+        console.log('Selected List:', selectedList);
 
         // Emit event to parent
         this.trigger('source-mailing-list-changed', {
