@@ -38,8 +38,8 @@
                     <field name="cumulated_balance"/>
                     <field name="initial_balance" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
-                    <field name="amount_currency"/>
-                    <field name="currency_id"/>
+                    <field name="amount_currency" string="Origin Amount"/>
+                    <field name="currency_id" invisible="1"/>
 
                 </tree>
             </field>
