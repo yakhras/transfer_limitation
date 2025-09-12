@@ -38,6 +38,7 @@ class SourceSelectorComponent extends Component {
     mounted() {
         console.log('=== SOURCE SELECTOR MOUNTED ===');
         console.log('Initial selected sources:', this.state.selectedSources);
+        console.log("Mounted, prop:", this.props.selectedSourceMailingList);
         
         // Trigger initial notification if sources are pre-selected
         if (this.state.selectedSources.length > 0) {
@@ -52,7 +53,7 @@ class SourceSelectorComponent extends Component {
         // Reset only relevant source selections
         if (type === 'update') {
             // Clear selected source mailing list (for merge)
-            this.props.selectedSourceMailingList = null;
+            this.this.selectedSourceMailingList = null;
         } else if (type === 'merge') {
             // Clear selected contact sources (for update)
             this.state.selectedSources = [];
