@@ -35,7 +35,7 @@
                     <field name="price_subtotal"/> -->
                     <field name="debit"/>
                     <field name="credit"/>
-                    <field name="cumulated_balance"/>
+                    <field name="cumulated_balance" string="Balance"/>
                     <field name="initial_balance" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="amount_currency" string="Origin Amount"/>
@@ -60,9 +60,9 @@
                     <field name="quantity"/>
                     <field name="price_unit"/>
                     <field name="price_subtotal"/> -->
-                    <field name="debit_amount" sum="Total Debit"/>
-                    <field name="credit_amount" sum="Total Credit"/>
-                    <field name="balance_amount"/>
+                    <field name="debit_amount" string="Debit"/>
+                    <field name="credit_amount" string="Credit"/>
+                    <field name="balance_amount" string="Balance"/>
                     <field name="currency_id"/>
                 </tree>
             </field>
@@ -106,10 +106,10 @@
                     <field name="quantity"/>
                     <field name="price_unit"/>
                     <field name="price_subtotal"/> -->
-                    <field name="partner_currency_debit"/>
-                    <field name="partner_currency_credit"/>
-                    <field name="cumulated_partner_currency_value"/>
-                    <field name="amount_currency"/>
+                    <field name="partner_currency_debit" string="Debit"/>
+                    <field name="partner_currency_credit" string="Credit"/>
+                    <field name="cumulated_partner_currency_value" string="Balance"/>
+                    <field name="amount_currency" string="Origin Amount"/>
                     <field name="currency_id" invisible="1"/>
                     <field name="initial_balance_partner_currency" invisible="1"/>
                     <field name="partner_currency_id" invisible="1"/>
