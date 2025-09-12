@@ -38,7 +38,6 @@ class SourceSelectorComponent extends Component {
     mounted() {
         console.log('=== SOURCE SELECTOR MOUNTED ===');
         console.log('Initial selected sources:', this.state.selectedSources);
-        console.log("Mounted, prop:", this.props.selectedSourceMailingList);
         
         // Trigger initial notification if sources are pre-selected
         if (this.state.selectedSources.length > 0) {
@@ -83,7 +82,7 @@ class SourceSelectorComponent extends Component {
      * Get filtered source mailing lists based on search term and selection
      */
     get filteredSourceMailingLists() {
-        
+        console.log("getter called:", this.props.selectedSourceMailingList);
         
         // If user has selected a list, show only that one
         if (this.props.selectedSourceMailingList) {
