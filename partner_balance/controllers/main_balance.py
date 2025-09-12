@@ -151,8 +151,8 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         xlsx_writer.write(row, 4, "Generated:", xlsx_writer.summary_metric_style)
         xlsx_writer.worksheet.merge_range(row, 5, row, 6, export_date, xlsx_writer.base_style)
 
-        xlsx_writer.write(row, 7, "Days:", xlsx_writer.summary_metric_style)
-        xlsx_writer.write(row, 8, days_count, xlsx_writer.base_style)
+        xlsx_writer.write(row, 7, f"Days: {days_count}", xlsx_writer.summary_metric_style)
+        # xlsx_writer.write(row, 8, days_count, xlsx_writer.base_style)
         row += 1
 
 
