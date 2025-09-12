@@ -35,9 +35,9 @@ class AccountMoveLineReport(models.Model):
 
     # For Original Currency Report
     debit_amount = fields.Monetary(string="Debit", compute='_compute_debit_amount', currency_field='currency_id', store=False)
-    credit_amount = fields.Monetary(string='Credit Amount', compute='_compute_credit_amount', currency_field='currency_id', store=False)
+    credit_amount = fields.Monetary(string="Credit", compute='_compute_credit_amount', currency_field='currency_id', store=False)
     cumulated_balance_amount_currency = fields.Monetary(string='Cumulated Amount Currency', compute='_compute_cumulated_amount_currency', store=False, currency_field='company_currency_id')
-    balance_amount = fields.Monetary(string='Balance Amount', compute='_compute_balance_amount', currency_field='currency_id', store=False)
+    balance_amount = fields.Monetary(string='Balance', compute='_compute_balance_amount', currency_field='currency_id', store=False)
 
     # For USD Value Report
     usd_rate_display = fields.Char('Rate Display', compute='_compute_usd_value')
@@ -47,9 +47,9 @@ class AccountMoveLineReport(models.Model):
     # For Partner Currency Report
     partner_currency_id = fields.Many2one('res.currency', string='Partner Currency', compute='_compute_partner_currency',)
     partner_currency_value = fields.Monetary('Partner Currency Value', compute='_compute_partner_currency_value', currency_field='partner_currency_id')
-    partner_currency_debit = fields.Monetary(string='Partner Currency Debit', compute='_compute_partner_currency_values', currency_field='partner_currency_id', store=False)
-    partner_currency_credit = fields.Monetary(string='Partner Currency Credit', compute='_compute_partner_currency_values', currency_field='partner_currency_id', store=False)
-    cumulated_partner_currency_value = fields.Monetary('Cumulated Partner Currency Value', compute='_compute_cumulated_partner_currency_value', currency_field='partner_currency_id')
+    partner_currency_debit = fields.Monetary(string='Debit', compute='_compute_partner_currency_values', currency_field='partner_currency_id', store=False)
+    partner_currency_credit = fields.Monetary(string='Credit', compute='_compute_partner_currency_values', currency_field='partner_currency_id', store=False)
+    cumulated_partner_currency_value = fields.Monetary('Balance', compute='_compute_cumulated_partner_currency_value', currency_field='partner_currency_id')
 
     # Initial Balance for Cumulation
     initial_balance = fields.Monetary(string='Initial Balance', compute='_compute_initial_balance', store=False, currency_field='company_currency_id')
