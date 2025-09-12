@@ -710,7 +710,7 @@ class BalanceExportXlsxWriter:
     def write_header(self):
         for i, fieldname in enumerate(self.field_names):
             self.write(8, i, fieldname, self.transaction_header_style)
-        self.worksheet.set_column(0, i, 9) # around 220 pixels
+        self.worksheet.set_column(0, i, 10) # around 220 pixels
 
 
     def close(self):
