@@ -34,7 +34,7 @@ class AccountMoveLineReport(models.Model):
     cumulated_balance = fields.Monetary(string='Cumulated Balance', compute='_compute_cumulated_balance', store=False, currency_field='company_currency_id')
 
     # For Original Currency Report
-    debit_amount = fields.Monetary(compute='_compute_debit_amount', currency_field='currency_id', store=False)
+    debit_amount = fields.Monetary(string="Debit", compute='_compute_debit_amount', currency_field='currency_id', store=False)
     credit_amount = fields.Monetary(string='Credit Amount', compute='_compute_credit_amount', currency_field='currency_id', store=False)
     cumulated_balance_amount_currency = fields.Monetary(string='Cumulated Amount Currency', compute='_compute_cumulated_amount_currency', store=False, currency_field='company_currency_id')
     balance_amount = fields.Monetary(string='Balance Amount', compute='_compute_balance_amount', currency_field='currency_id', store=False)
