@@ -287,9 +287,10 @@ class MailingListUpdaterMain extends Component {
     }
 
     onSourceMailingListChanged(event) {
-        console.log('Source event:', event.detail);
         this.state.selectedSourceMailingList = event.detail.selectedSourceMailingList;
+        console.log('Source changed:', this.state.selectedSourceMailingList);
     }
+
 
     /**
      * Handle operation type changes from SourceSelector
