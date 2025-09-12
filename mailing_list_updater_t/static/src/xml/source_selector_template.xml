@@ -146,10 +146,10 @@
                     </div>
                     
                     <!-- Loading State -->
-                    <div t-if="state.isLoadingSourceMailingLists" class="loading-container">
+                    <!-- <div t-if="state.isLoadingSourceMailingLists" class="loading-container">
                         <div class="loading-spinner"></div>
                         <p>Loading mailing lists...</p>
-                    </div>
+                    </div> -->
                     
                     <!-- Search Bar -->
                     <div t-if="!state.isLoadingSourceMailingLists" class="search-container">
