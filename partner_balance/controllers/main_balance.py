@@ -110,23 +110,23 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
             partner_record = request.env['res.partner'].sudo().browse(partner_id)
             if partner_record.exists() and partner_record.company_id:
                 company_name = partner_record.company_id.name
-                xlsx_writer.worksheet.merge_range(row, 0, row, 8, f"{company_name}", xlsx_writer.company_header_style)
+                xlsx_writer.worksheet.merge_range(row, 0, row, 7, f"{company_name}", xlsx_writer.company_header_style)
                 row += 1
         
         # Report title with special style
         action_name = params.get('action_name', '')
         report_title = f"{action_name}" if action_name else "STATEMENT OF ACCOUNT - DETAILED ANALYSIS"
-        xlsx_writer.worksheet.merge_range(row, 0, row, 8, report_title, xlsx_writer.report_title_style)
+        xlsx_writer.worksheet.merge_range(row, 0, row, 7, report_title, xlsx_writer.report_title_style)
         row += 2
 
-        xlsx_writer.worksheet.merge_range(row, 0, row, 8, "EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
+        xlsx_writer.worksheet.merge_range(row, 0, row, 7, "EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
         row += 1
         
         # Other metadata with regular style
         partner_name = params.get('partner_name', '')
         if partner_name:
             xlsx_writer.write(row, 0, "Partner:", xlsx_writer.partner_name_style)
-            xlsx_writer.worksheet.merge_range(row, 1, row, 8, partner_name, xlsx_writer.partner_name_style)
+            xlsx_writer.worksheet.merge_range(row, 1, row, 7, partner_name, xlsx_writer.partner_name_style)
             row += 1
 
         date_from = params.get('date_from')
