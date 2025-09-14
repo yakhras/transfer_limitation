@@ -66,17 +66,20 @@ class PurchaseRequisitionContainerDistribution(models.Model):
                 # For manual method, will be sum of manual lines
                 line.qty_per_container = sum(line.manual_distribution_ids.mapped('qty'))
     
+    
     @api.onchange('product_id')
     def _onchange_product_id(self):
         if self.product_id:
             self.product_uom_id = self.product_id.uom_id
     
+
     @api.constrains('container_count')
     def _check_container_count(self):
         for line in self:
             if line.container_count < 1:
                 raise ValidationError(_('Container count must be at least 1.'))
     
+
     @api.constrains('total_qty', 'qty_per_container', 'container_count')
     def _check_quantities(self):
         for line in self:
@@ -91,3 +94,4 @@ class PurchaseRequisitionContainerDistribution(models.Model):
                         'count': line.container_count,
                         'calculated': expected_total
                     })
+

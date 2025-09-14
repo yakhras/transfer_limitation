@@ -17,6 +17,9 @@ class PurchaseRequisition(models.Model):
     bill_lading_count = fields.Integer('B/L Count', compute='_compute_counts', store=True)
     
     supplier_ref = fields.Char('Supplier Reference', copy=False, tracking=True)
+
+    container_distribution_ids = fields.One2many('purchase.requisition.container.distribution', 'requisition_id', string='Container Distribution')
+    has_container_distribution = fields.Boolean('Has Container Distribution', compute='_compute_has_container_distribution')
     
     @api.depends('container_ids', 'bill_lading_ids')
     def _compute_counts(self):
@@ -24,6 +27,7 @@ class PurchaseRequisition(models.Model):
             requisition.container_count = len(requisition.container_ids)
             requisition.bill_lading_count = len(requisition.bill_lading_ids)
     
+
     # Smart button action methods - ADD THESE NEW METHODS
     def action_view_containers(self):
         """Smart button action to view related containers"""
@@ -48,6 +52,7 @@ class PurchaseRequisition(models.Model):
             
         return action
     
+
     def action_view_bill_ladings(self):
         """Smart button action to view related bills of lading"""
         self.ensure_one()
@@ -72,21 +77,13 @@ class PurchaseRequisition(models.Model):
             
         return action
     
-    container_distribution_ids = fields.One2many(
-        'purchase.requisition.container.distribution', 
-        'requisition_id', 
-        string='Container Distribution'
-    )
-    has_container_distribution = fields.Boolean(
-        'Has Container Distribution', 
-        compute='_compute_has_container_distribution'
-    )
     
     @api.depends('container_distribution_ids')
     def _compute_has_container_distribution(self):
         for requisition in self:
             requisition.has_container_distribution = bool(requisition.container_distribution_ids)
     
+
     def action_create_containers_from_distribution(self):
         """Create actual containers and container lines based on distribution"""
         self.ensure_one()
@@ -165,3 +162,4 @@ class PurchaseRequisition(models.Model):
                 notification_type='success'
             ),
         }
+    

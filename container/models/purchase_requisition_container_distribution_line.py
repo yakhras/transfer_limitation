@@ -20,6 +20,7 @@ class PurchaseRequisitionContainerDistributionLine(models.Model):
     container_name = fields.Char('Container Name')
     qty = fields.Float('Quantity', required=True, digits='Product Unit of Measure')
     
+    
     @api.constrains('qty')
     def _check_qty(self):
         for line in self:

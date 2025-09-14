@@ -127,6 +127,7 @@ class LogisticsContainer(models.Model):
         
         return record
     
+
     @api.depends('container_line_ids.product_qty', 'container_line_ids.price_subtotal')
     def _compute_totals(self):
         for container in self:
@@ -134,6 +135,7 @@ class LogisticsContainer(models.Model):
             container.total_value = sum(container.container_line_ids.mapped('price_subtotal'))
             container.product_count = len(container.container_line_ids)
     
+
     @api.depends('total_value', 'freight_cost', 'insurance_cost', 'customs_duty', 'other_charges')
     def _compute_total_cost(self):
         for container in self:
@@ -141,6 +143,7 @@ class LogisticsContainer(models.Model):
                                   container.insurance_cost + container.customs_duty + 
                                   container.other_charges)
     
+
     # @api.constrains('requisition_id', 'purchase_order_ids')
     # def _check_purchase_order_requisition_consistency(self):
     #     for container in self:
@@ -158,6 +161,7 @@ class LogisticsContainer(models.Model):
                     'Container %s: Bill of Lading must belong to the same requisition (%s).'
                 ) % (container.name, container.requisition_id.name))
     
+
     @api.onchange('requisition_id')
     def _onchange_requisition_id(self):
         if self.requisition_id:
@@ -169,6 +173,7 @@ class LogisticsContainer(models.Model):
                 }
             }
     
+
     @api.onchange('purchase_order_ids')
     def _onchange_purchase_order_ids(self):
         if self.purchase_order_ids:
@@ -176,6 +181,7 @@ class LogisticsContainer(models.Model):
             if not self.requisition_id and self.purchase_order_ids[0].requisition_id:
                 self.requisition_id = self.purchase_order_ids[0].requisition_id
     
+
     @api.onchange('country_id')
     def _onchange_country_id(self):
         """Reset port of loading when country changes"""
@@ -199,6 +205,7 @@ class LogisticsContainer(models.Model):
                 }
             }
     
+
     # State Management Methods
     def action_ship(self):
         for record in self:
@@ -208,11 +215,13 @@ class LogisticsContainer(models.Model):
             })
         return True
     
+
     def action_in_transit(self):
         for record in self:
             record.write({'state': 'in_transit'})
         return True
     
+
     def action_arrived(self):
         for record in self:
             vals = {'state': 'arrived'}
@@ -221,48 +230,57 @@ class LogisticsContainer(models.Model):
             record.write(vals)
         return True
     
+
     def action_antrepo(self):
         for record in self:
             record.write({'state': 'antrepo'})
         return True
     
+
     def action_released(self):
         for record in self:
             record.write({'state': 'released'})
         return True
     
+
     def action_start_unloading(self):
         for record in self:
             record.write({'state': 'unloading'})
         return True
     
+
     def action_unloaded(self):
         for record in self:
             record.write({'state': 'unloaded'})
         return True
     
+
     def action_at_port(self):
         for record in self:
             record.write({'state': 'at_port'})
         return True
     
+
     def action_purchasing(self):
         for record in self:
             record.write({'state': 'purchasing'})
         return True
     
+
     def action_reset_to_draft(self):
         for record in self:
             record.write({'state': 'draft'})
         return True
     
+
     @api.constrains('arrival_date', 'departure_date')
     def _check_dates(self):
         for container in self:
             if container.arrival_date and container.departure_date:
                 if container.arrival_date < container.departure_date:
                     raise ValidationError(_('Arrival date cannot be before departure date.'))
-                
+
+
     @api.onchange('requisition_id')
     def _onchange_requisition_id_details(self):
         """Filter domains when requisition is selected"""
@@ -274,6 +292,7 @@ class LogisticsContainer(models.Model):
                     'bill_lading_id': [('requisition_id', '=', self.requisition_id.id)]
                 }
             }
+
 
     purchase_order_count = fields.Integer(
         'Purchase Order Count', 
@@ -290,6 +309,7 @@ class LogisticsContainer(models.Model):
                 po_count += len(container.requisition_id.purchase_ids - container.purchase_order_ids)
             container.purchase_order_count = po_count
     
+
     def action_view_purchase_requisition(self):
         """Smart button to view related purchase requisition"""
         self.ensure_one()
@@ -305,6 +325,7 @@ class LogisticsContainer(models.Model):
             'target': 'current',
         }
     
+
     def action_view_purchase_orders(self):
         """Smart button to view related purchase orders"""
         self.ensure_one()
@@ -365,3 +386,5 @@ class LogisticsContainer(models.Model):
             action['views'] = [(False, 'form')]
         
         return action
+    
+    

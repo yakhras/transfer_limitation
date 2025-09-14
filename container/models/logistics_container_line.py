@@ -53,22 +53,26 @@ class LogisticsContainerLine(models.Model):
     currency_id = fields.Many2one('res.currency', related='container_id.currency_id')
     container_state = fields.Selection(related='container_id.state', string='Container Status')
     
+
     @api.depends('product_qty', 'price_unit')
     def _compute_price_subtotal(self):
         for line in self:
             line.price_subtotal = line.product_qty * line.price_unit
     
+
     @api.depends('product_qty', 'gross_weight', 'net_weight')
     def _compute_total_weights(self):
         for line in self:
             line.total_gross_weight = line.product_qty * line.gross_weight
             line.total_net_weight = line.product_qty * line.net_weight
     
+
     @api.depends('product_qty', 'volume_per_unit')
     def _compute_total_volume(self):
         for line in self:
             line.total_volume = line.product_qty * line.volume_per_unit
     
+
     @api.onchange('product_id')
     def _onchange_product_id(self):
         if self.product_id:
@@ -76,3 +80,5 @@ class LogisticsContainerLine(models.Model):
             # self.price_unit = self.product_id.standard_price
             # if self.product_id.country_of_origin:
             #     self.country_of_origin = self.product_id.country_of_origin
+
+            

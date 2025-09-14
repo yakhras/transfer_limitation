@@ -25,6 +25,7 @@ class PurchaseRequisitionLine(models.Model):
         
         return lines
     
+
     def write(self, vals):
         """Update distribution record when requisition line is updated"""
         result = super().write(vals)
@@ -57,6 +58,7 @@ class PurchaseRequisitionLine(models.Model):
         
         return result
     
+
     def unlink(self):
         """Remove distribution record when requisition line is deleted"""
         # Store distribution records to delete
@@ -75,3 +77,4 @@ class PurchaseRequisitionLine(models.Model):
         distributions_to_delete.unlink()
         
         return result
+

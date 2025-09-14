@@ -116,6 +116,7 @@ class LogisticsBillLading(models.Model):
         
         return record
     
+
     def write(self, vals):
         """Override write to update containers when needed"""
         result = super(LogisticsBillLading, self).write(vals)
@@ -128,6 +129,7 @@ class LogisticsBillLading(models.Model):
         
         return result
     
+
     def _update_containers_port_of_discharge(self):
         """Helper method to update port of discharge in containers"""
         for container in self.container_ids:
@@ -136,12 +138,14 @@ class LogisticsBillLading(models.Model):
                     'port_of_discharge': self.port_of_discharge_id.id
                 })
     
+
     @api.depends('container_ids', 'purchase_order_ids')
     def _compute_counts(self):
         for bl in self:
             bl.container_count = len(bl.container_ids)
             bl.purchase_order_count = len(bl.purchase_order_ids)
     
+
     @api.onchange('container_ids')
     def _onchange_container_ids(self):
         if self.container_ids:
@@ -162,6 +166,7 @@ class LogisticsBillLading(models.Model):
                     if hasattr(container, 'port_of_discharge'):
                         container.port_of_discharge = self.port_of_discharge_id
     
+
     @api.onchange('port_of_discharge_id')
     def _onchange_port_of_discharge_bl(self):
         """Update containers' port of discharge when B/L port changes"""
@@ -173,6 +178,7 @@ class LogisticsBillLading(models.Model):
         # Call the original onchange method for place of delivery
         self._onchange_port_of_discharge()
     
+
     @api.constrains('container_ids')
     def _check_container_requisition_consistency(self):
         for bl in self:
@@ -183,6 +189,7 @@ class LogisticsBillLading(models.Model):
                             'Container %s must belong to the same requisition (%s) as the Bill of Lading.'
                         ) % (container.name, bl.requisition_id.name))
     
+
     @api.constrains('purchase_order_ids')
     def _check_purchase_order_requisition_consistency(self):
         for bl in self:
@@ -193,10 +200,12 @@ class LogisticsBillLading(models.Model):
                             'Purchase Order %s must belong to the same requisition (%s) as the Bill of Lading.'
                         ) % (po.name, bl.requisition_id.name))
     
+
     # State Management Methods
     def action_confirm(self):
         self.state = 'confirmed'
     
+
     def action_ship(self):
         self.state = 'shipped'
         if not self.actual_departure_date:
@@ -204,9 +213,11 @@ class LogisticsBillLading(models.Model):
         # Update related containers
         self.container_ids.filtered(lambda c: c.state in ['draft', 'shipped']).action_in_transit()
     
+
     def action_in_transit(self):
         self.state = 'in_transit'
     
+
     def action_arrived(self):
         self.state = 'arrived'
         if not self.actual_arrival_date:
@@ -214,25 +225,31 @@ class LogisticsBillLading(models.Model):
         # Update related containers
         self.container_ids.filtered(lambda c: c.state == 'in_transit').action_arrived()
     
+
     def action_delivered(self):
         self.state = 'delivered'
     
+
     def action_close(self):
         self.state = 'closed'
     
+
     def action_cancel(self):
         self.state = 'cancelled'
     
+
     def action_reset_to_draft(self):
         self.state = 'draft'
     
+
     @api.constrains('eta', 'etd')
     def _check_dates(self):
         for bl in self:
             if bl.eta and bl.etd:
                 if bl.eta < bl.etd:
                     raise ValidationError(_('ETA cannot be before ETD.'))
-                
+
+
     @api.onchange('port_of_loading_id')
     def _onchange_port_of_loading(self):
         """Update place of receipt when port of loading changes"""
@@ -240,12 +257,14 @@ class LogisticsBillLading(models.Model):
             if not self.place_of_receipt:
                 self.place_of_receipt = f"{self.port_of_loading_id.name}, {self.port_of_loading_id.country_id.name}"
     
+
     @api.onchange('port_of_discharge_id')
     def _onchange_port_of_discharge(self):
         """Update place of delivery when port of discharge changes"""
         if self.port_of_discharge_id:
             if not self.place_of_delivery:
                 self.place_of_delivery = f"{self.port_of_discharge_id.name}, {self.port_of_discharge_id.country_id.name}"
+
 
     @api.constrains('port_of_loading_id', 'port_of_discharge_id')
     def _check_ports_different(self):
@@ -254,6 +273,7 @@ class LogisticsBillLading(models.Model):
             if bl.port_of_loading_id and bl.port_of_discharge_id:
                 if bl.port_of_loading_id == bl.port_of_discharge_id:
                     raise ValidationError(_('Port of Loading and Port of Discharge must be different.'))
+
 
     @api.onchange('requisition_id')
     def _onchange_requisition_id_details(self):
@@ -274,6 +294,7 @@ class LogisticsBillLading(models.Model):
                 if len(products) > 5:
                     self.description_of_goods += f' and {len(products) - 5} more items'
 
+
     @api.onchange('purchase_order_ids')
     def _onchange_purchase_order_ids(self):
         """Auto-populate vessel info and cargo details from purchase orders"""
@@ -287,6 +308,7 @@ class LogisticsBillLading(models.Model):
             total_amount = sum(self.purchase_order_ids.mapped('amount_total'))
             if total_amount and not self.total_charges:
                 self.total_charges = total_amount
+
 
     def action_view_purchase_requisition(self):
         """Smart button to view related purchase requisition"""
@@ -303,6 +325,7 @@ class LogisticsBillLading(models.Model):
             'target': 'current',
         }
     
+
     def action_view_purchase_orders(self):
         """Smart button to view related purchase orders"""
         self.ensure_one()
@@ -325,4 +348,5 @@ class LogisticsBillLading(models.Model):
             action['res_id'] = purchase_orders.id
         
         return action
+    
     
