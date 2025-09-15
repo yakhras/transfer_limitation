@@ -124,13 +124,13 @@
                     </div>
                     
                     <!-- Source Empty State -->
-                    <div t-if="!state.isLoading and state.filteredSources.length === 0" class="empty-state">
+                    <!-- <div t-if="!state.isLoading and state.filteredSources.length === 0" class="empty-state">
                         <div class="empty-content">
                             <i class="fa fa-database fa-3x"></i>
                             <h3>No contact sources available</h3>
                             <p>Check if contact sources are properly configured in the system.</p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- ========================================= -->
