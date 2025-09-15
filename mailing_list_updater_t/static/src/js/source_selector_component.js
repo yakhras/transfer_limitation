@@ -220,6 +220,7 @@ class SourceSelectorComponent extends Component {
                 company_field: 'company_id'
             }
         ];
+        this.state.filteredSources = [...this.state.availableSources];
         // this.updateFilteredSources();
         // this.preSelectRecommended();
     }
