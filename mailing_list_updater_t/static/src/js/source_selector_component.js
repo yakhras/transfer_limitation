@@ -220,7 +220,7 @@ class SourceSelectorComponent extends Component {
                 company_field: 'company_id'
             }
         ];
-        this.state.filteredSources = [...this.state.availableSources];
+        this.props.filteredSources = [...this.state.availableSources];
         this.props.selectedSources = this.state.availableSources
                 .filter(s => s.recommended)
                 .map(s => s.model_name);
