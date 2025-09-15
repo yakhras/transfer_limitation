@@ -1,7 +1,7 @@
 /** @odoo-module */
 
 import { registry } from "@web/core/registry"
-import { loadJS } from "@web/core/assets"
+const ajax = require('web.ajax');
 const { Component } = owl
 const { useRef, onWillStart, onMounted } = owl.hooks;
 
@@ -9,7 +9,7 @@ export class ChartRenderer extends Component {
     setup(){
         this.chartRef = useRef("chart")
         onWillStart(async ()=>{
-            await loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js")
+            await ajax.loadJS("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js")
         })
 
         onMounted(()=>this.renderChart())
