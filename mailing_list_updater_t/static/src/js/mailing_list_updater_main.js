@@ -81,7 +81,6 @@ class MailingListUpdaterMain extends Component {
             
             // Load initial data
             // await this.loadMailingLists();
-            await this.loadAvailableSources();
             
             // Apply context-based initialization
             await this.applyContextInitialization();
@@ -388,23 +387,7 @@ class MailingListUpdaterMain extends Component {
     /**
      * Load available contact sources from registry
      */
-    async loadAvailableSources() {
-        try {
-            const response = await this.rpc({
-                route: "/mailing/update/sources"
-            });
-            
-            if (response.success) {
-                this.availableSources = response.data.sources;
-            } else {
-                throw new Error(response.error?.message || "Unknown error");
-            }
-            
-        } catch (error) {
-            // this.showError("Failed to load contact sources");
-            throw error;
-        }
-    }
+   
     
     /**
      * Handle mailing list selection
