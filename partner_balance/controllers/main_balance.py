@@ -144,7 +144,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         
         # Report Period row - multiple labels and values
         period = f"{start_date_str} to {end_date_str}"
-        xlsx_writer.write(row, 0, "Report Period:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 0, _("Report Period:"), xlsx_writer.summary_metric_style)
         xlsx_writer.worksheet.merge_range(row, 1, row, 2, period, xlsx_writer.base_style)
         
         export_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
