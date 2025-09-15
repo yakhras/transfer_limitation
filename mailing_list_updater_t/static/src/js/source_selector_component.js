@@ -72,6 +72,7 @@ class SourceSelectorComponent extends Component {
         if (type === 'merge') {
             await this.loadAvailableSourceMailingLists();
         } else if (type === 'update') {
+            this.loadFallbackSources();
             // Clear merge data
             this.state.availableSourceMailingLists = [];
             this.state.sourceMailingListSearchTerm = '';
@@ -191,37 +192,37 @@ class SourceSelectorComponent extends Component {
     //     console.log('=== END CONTACT SOURCES DEBUG ===');
     // }
 
-    // loadFallbackSources() {
-    //     console.log('Using fallback contact sources');
-    //     this.state.availableSources = [
-    //         {
-    //             model_name: 'res.partner',
-    //             name: 'Contacts',
-    //             description: 'Import contacts from Contacts module',
-    //             available: true,
-    //             recommended: true,
+    loadFallbackSources() {
+        console.log('Using fallback contact sources');
+        this.state.availableSources = [
+            {
+                model_name: 'res.partner',
+                name: 'Contacts',
+                description: 'Import contacts from Contacts module',
+                available: true,
+                recommended: true,
                 
-    //             email_field: 'email',
-    //             name_field: 'name',
-    //             phone_field: 'phone',
-    //             company_field: 'company_id'
-    //         },
-    //         {
-    //             model_name: 'crm.lead',
-    //             name: 'CRM Leads',
-    //             description: 'Import contacts from CRM Leads',
-    //             available: true,
-    //             recommended: true,
+                email_field: 'email',
+                name_field: 'name',
+                phone_field: 'phone',
+                company_field: 'company_id'
+            },
+            {
+                model_name: 'crm.lead',
+                name: 'CRM Leads',
+                description: 'Import contacts from CRM Leads',
+                available: true,
+                recommended: true,
                 
-    //             email_field: 'email_from',
-    //             name_field: 'name',
-    //             phone_field: 'phone',
-    //             company_field: 'company_id'
-    //         }
-    //     ];
-    //     this.updateFilteredSources();
-    //     this.preSelectRecommended();
-    // }
+                email_field: 'email_from',
+                name_field: 'name',
+                phone_field: 'phone',
+                company_field: 'company_id'
+            }
+        ];
+        // this.updateFilteredSources();
+        // this.preSelectRecommended();
+    }
 
     // updateFilteredSources() {
     //     // Show all sources since search was removed
