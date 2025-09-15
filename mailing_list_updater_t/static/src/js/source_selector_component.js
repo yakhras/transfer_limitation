@@ -31,7 +31,7 @@ class SourceSelectorComponent extends Component {
         if (this.company && this.company.currentCompany) {
             this.state.currentCompany = this.company.currentCompany;
         }
-        await this.loadContactSources();
+        // await this.loadContactSources();
     }
 
     // ===== FIX: Add mounted lifecycle to trigger initial notification =====
@@ -180,71 +180,71 @@ class SourceSelectorComponent extends Component {
     // ORIGINAL CONTACT SOURCE METHODS (KEEP)
     // ========================================
 
-    async loadContactSources() {
-        this.state.isLoading = true;
-        console.log('=== CONTACT SOURCES DEBUG ===');
+    // async loadContactSources() {
+    //     this.state.isLoading = true;
+    //     console.log('=== CONTACT SOURCES DEBUG ===');
         
-        console.log('Skipping /mailing/update/sources - using fallback directly');
-        this.loadFallbackSources();
+    //     console.log('Skipping /mailing/update/sources - using fallback directly');
+    //     this.loadFallbackSources();
         
-        this.state.isLoading = false;
-        console.log('=== END CONTACT SOURCES DEBUG ===');
-    }
+    //     this.state.isLoading = false;
+    //     console.log('=== END CONTACT SOURCES DEBUG ===');
+    // }
 
-    loadFallbackSources() {
-        console.log('Using fallback contact sources');
-        this.state.availableSources = [
-            {
-                model_name: 'res.partner',
-                name: 'Contacts',
-                description: 'Import contacts from Contacts module',
-                available: true,
-                recommended: true,
+    // loadFallbackSources() {
+    //     console.log('Using fallback contact sources');
+    //     this.state.availableSources = [
+    //         {
+    //             model_name: 'res.partner',
+    //             name: 'Contacts',
+    //             description: 'Import contacts from Contacts module',
+    //             available: true,
+    //             recommended: true,
                 
-                email_field: 'email',
-                name_field: 'name',
-                phone_field: 'phone',
-                company_field: 'company_id'
-            },
-            {
-                model_name: 'crm.lead',
-                name: 'CRM Leads',
-                description: 'Import contacts from CRM Leads',
-                available: true,
-                recommended: true,
+    //             email_field: 'email',
+    //             name_field: 'name',
+    //             phone_field: 'phone',
+    //             company_field: 'company_id'
+    //         },
+    //         {
+    //             model_name: 'crm.lead',
+    //             name: 'CRM Leads',
+    //             description: 'Import contacts from CRM Leads',
+    //             available: true,
+    //             recommended: true,
                 
-                email_field: 'email_from',
-                name_field: 'name',
-                phone_field: 'phone',
-                company_field: 'company_id'
-            }
-        ];
-        this.updateFilteredSources();
-        this.preSelectRecommended();
-    }
+    //             email_field: 'email_from',
+    //             name_field: 'name',
+    //             phone_field: 'phone',
+    //             company_field: 'company_id'
+    //         }
+    //     ];
+    //     this.updateFilteredSources();
+    //     this.preSelectRecommended();
+    // }
 
-    updateFilteredSources() {
-        // Show all sources since search was removed
-        this.state.filteredSources = [...this.state.availableSources];
-    }
+    // updateFilteredSources() {
+    //     // Show all sources since search was removed
+    //     this.state.filteredSources = [...this.state.availableSources];
+    // }
 
-    // ===== FIX: Modified preSelectRecommended to NOT notify initially =====
-    preSelectRecommended() {
-        console.log('=== PRE-SELECT RECOMMENDED ===');
-        console.log('Current selected sources:', this.state.selectedSources);
-        console.log('Props selected sources:', this.props.selectedSources);
+    // // ===== FIX: Modified preSelectRecommended to NOT notify initially =====
+    // preSelectRecommended() {
+    //     console.log('=== PRE-SELECT RECOMMENDED ===');
+    //     console.log('Current selected sources:', this.state.selectedSources);
+    //     console.log('Props selected sources:', this.props.selectedSources);
         
-        if (this.state.selectedSources.length === 0) {
-            this.state.selectedSources = this.state.availableSources
-                .filter(s => s.recommended)
-                .map(s => s.model_name);
+    //     if (this.state.selectedSources.length === 0) {
+    //         this.state.selectedSources = this.state.availableSources
+    //             .filter(s => s.recommended)
+    //             .map(s => s.model_name);
             
-            console.log('Pre-selected recommended sources:', this.state.selectedSources);
+    //         console.log('Pre-selected recommended sources:', this.state.selectedSources);
             
-            // DON'T notify here - let mounted() handle it
-            // this.notifyParentOfSelection(); // REMOVED
-        }
-    }
+    //         // DON'T notify here - let mounted() handle it
+    //         // this.notifyParentOfSelection(); // REMOVED
+    //     }
+    // }
 
     willUpdateProps(nextProps) {
         console.log('=== SOURCE SELECTOR PROPS UPDATE ===');
