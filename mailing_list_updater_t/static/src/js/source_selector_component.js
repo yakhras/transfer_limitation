@@ -55,7 +55,7 @@ class SourceSelectorComponent extends Component {
             this.this.selectedSourceMailingList = null;
         } else if (type === 'merge') {
             // Clear selected contact sources (for update)
-            this.state.selectedSources = [];
+            this.props.selectedSources = [];
         }
     }
 
