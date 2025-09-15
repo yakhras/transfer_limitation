@@ -2,8 +2,8 @@
 
 import { registry } from "@web/core/registry"
 import { loadJS } from "@web/core/assets"
-const { Component, onWillStart, onMounted } = owl
-const { useRef } = owl.hooks;
+const { Component, onMounted } = owl
+const { useRef, onWillStart } = owl.hooks;
 
 export class ChartRenderer extends Component {
     setup(){
