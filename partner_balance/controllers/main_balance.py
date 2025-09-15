@@ -119,13 +119,13 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         xlsx_writer.worksheet.merge_range(row, 0, row, 7, report_title, xlsx_writer.report_title_style)
         row += 2
 
-        xlsx_writer.worksheet.merge_range(row, 0, row, 7, "EXECUTIVE SUMMARY", xlsx_writer.section_header_style)
+        xlsx_writer.worksheet.merge_range(row, 0, row, 7, _("EXECUTIVE SUMMARY"), xlsx_writer.section_header_style)
         row += 1
         
         # Other metadata with regular style
         partner_name = params.get('partner_name', '')
         if partner_name:
-            xlsx_writer.write(row, 0, "Partner:", xlsx_writer.partner_name_style)
+            xlsx_writer.write(row, 0, _("Partner:"), xlsx_writer.partner_name_style)
             xlsx_writer.worksheet.merge_range(row, 1, row, 7, partner_name, xlsx_writer.partner_name_style)
             row += 1
 
@@ -140,7 +140,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
         end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
         days_diff = (end_date - start_date).days
-        days_count = f"{days_diff} Days"
+        days_count = f"{days_diff} _(Days)"
         
         # Report Period row - multiple labels and values
         period = f"{start_date_str} to {end_date_str}"
@@ -148,10 +148,10 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         xlsx_writer.worksheet.merge_range(row, 1, row, 2, period, xlsx_writer.base_style)
         
         export_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-        xlsx_writer.write(row, 3, "Generated:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 3, _("Generated:"), xlsx_writer.summary_metric_style)
         xlsx_writer.worksheet.merge_range(row, 4, row, 5, export_date, xlsx_writer.base_style)
 
-        xlsx_writer.write(row, 6, f"Days:", xlsx_writer.summary_metric_style)
+        xlsx_writer.write(row, 6, _(f"Days:"), xlsx_writer.summary_metric_style)
         xlsx_writer.write(row, 7, days_count, xlsx_writer.base_style)
         row += 1
 
@@ -571,7 +571,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         return [
             opening_data['date'],           
             '',                              
-            'Opening Balance',             
+            _('Opening Balance'),             
             '',                            
             opening_data['debit'],         
             opening_data['credit'],          
@@ -991,7 +991,7 @@ class BalanceGroupExportXlsxWriter(BalanceExportXlsxWriter):
         return [
             opening_data.get('date', ''),           # Date
             '',                                     # Journal Entry  
-            'Opening Balance',                      # Label
+            _('Opening Balance'),                      # Label
             '',                                     # Reference
             opening_data.get('debit', 0.0),        # Debit
             opening_data.get('credit', 0.0),       # Credit  
