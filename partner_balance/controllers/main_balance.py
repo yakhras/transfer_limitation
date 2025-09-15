@@ -140,7 +140,7 @@ class BalanceExcelExport(BaseExportFormat, http.Controller):
         start_date = datetime.datetime.strptime(start_date_str, '%Y-%m-%d')
         end_date = datetime.datetime.strptime(end_date_str, '%Y-%m-%d')
         days_diff = (end_date - start_date).days
-        days_count = f"{days_diff} _(Days)"
+        days_count = f"{days_diff}" if days_diff >=0 else "0"
         
         # Report Period row - multiple labels and values
         period = f"{start_date_str} to {end_date_str}"
