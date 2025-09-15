@@ -221,6 +221,9 @@ class SourceSelectorComponent extends Component {
             }
         ];
         this.state.filteredSources = [...this.state.availableSources];
+        this.state.selectedSources = this.state.availableSources
+                .filter(s => s.recommended)
+                .map(s => s.model_name);
         // this.updateFilteredSources();
         // this.preSelectRecommended();
     }
