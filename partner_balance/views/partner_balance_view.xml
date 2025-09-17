@@ -241,5 +241,89 @@
         <!-- Menu Item -->
         <!-- <menuitem id="menu_partner_balance" name="Partner Balances" action="action_partner_balance" parent="point_of_sale.menu_point_rep" sequence="10"/> -->
 
+        
+        <record id="view_account_partial_reconcile_tree" model="ir.ui.view">
+            <field name="name">account.partial.reconcile.tree</field>
+            <field name="model">account.partial.reconcile</field>
+            <field name="arch" type="xml">
+                <tree string="Partial Reconciliations" 
+                    decoration-muted="full_reconcile_id" 
+                    decoration-info="not full_reconcile_id">
+                    
+                    <!-- Reference Information -->
+                    <field name="id" string="Reconcile ID"/>
+                    <field name="max_date" string="Date"/>
+                    
+                    <!-- Debit Move Information -->
+                    <field name="debit_move_id" string="Debit Entry"/>
+                    <field name="debit_currency_id" string="Debit Currency" optional="hide"/>
+                    <field name="debit_amount_currency" 
+                        string="Debit Amount" 
+                        sum="Total Debit Amount"
+                        widget="monetary" 
+                        options="{'currency_field': 'debit_currency_id'}"/>
+                    
+                    <!-- Credit Move Information -->
+                    <field name="credit_move_id" string="Credit Entry"/>
+                    <field name="credit_currency_id" string="Credit Currency" optional="hide"/>
+                    <field name="credit_amount_currency" 
+                        string="Credit Amount" 
+                        sum="Total Credit Amount"
+                        widget="monetary" 
+                        options="{'currency_field': 'credit_currency_id'}"/>
+                    
+                    <!-- Company Currency Amount -->
+                    <field name="amount" 
+                        string="Company Amount" 
+                        sum="Total Company Amount"
+                        widget="monetary" 
+                        options="{'currency_field': 'company_currency_id'}"/>
+                    <field name="company_currency_id" string="Company Currency" optional="hide"/>
+                    
+                    <!-- Reconciliation Status -->
+                    <field name="full_reconcile_id" 
+                        string="Full Reconcile" 
+                        optional="show"
+                        widget="many2one_tags"/>
+                    
+                    <!-- Company -->
+                    <field name="company_id" 
+                        string="Company" 
+                        optional="hide"
+                        groups="base.group_multi_company"/>
+                    
+                    <!-- Hidden fields for computations -->
+                    <field name="debit_currency_id" invisible="1"/>
+                    <field name="credit_currency_id" invisible="1"/>
+                    <field name="company_currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Action for Partial Reconciliations -->
+        <record id="action_account_partial_reconcile" model="ir.actions.act_window">
+            <field name="name">Partial Reconciliations</field>
+            <field name="res_model">account.partial.reconcile</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_account_partial_reconcile_tree"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No partial reconciliations found!
+                </p>
+                <p>
+                    Partial reconciliations show the matching between debit and credit journal entries.
+                    They are created automatically when payments are matched with invoices.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item (optional) -->
+        <menuitem id="menu_account_partial_reconcile"
+                name="Partial Reconciliations" 
+                parent="account.menu_finance_configuration"
+                action="action_account_partial_reconcile"
+                sequence="50"
+                groups="account.group_account_user"/>
+
     </data>
 </odoo>
