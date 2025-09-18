@@ -1,57 +1,35 @@
-from odoo import api, models
+from odoo import api, models, _
 
 
 
 class ResPartner(models.Model):
-    _inherit = "res.partner"
+    _inherit = 'res.partner'
 
-    def create(self, vals_list):
-        partners = super().create(vals_list)
-        # Create corresponding partner.balance records
-        balances = [{
-            'partner_id': partner.id,
-            'balance': 0.0,  # Default balance, adjust as necessary
-            'currency_id': partner.currency_id.id,  # Ensure currency is handled
-        } for partner in partners]
-        self.env['partner.balance'].create(balances)
-        return partners
-
-    def write(self, vals):
-    # Track changes to balance-related fields
-        res = super().write(vals)
-        if 'name' in vals or 'currency_id' in vals:
-            for partner in self:
-                balance = self.env['partner.balance'].search([('partner_id', '=', partner.id)], limit=1)
-                if balance:
-                    balance.write({
-                        'partner_id': partner.id,  # Use the actual partner ID
-                        'currency_id': vals.get('currency_id', balance.currency_id.id),  # Update currency if changed
-                    })
-        return res
-
-    def unlink(self):
-        # Remove corresponding partner.balance records
-        self.env['partner.balance'].search([('partner_id', 'in', self.ids)]).unlink()
-        return super().unlink()
-    
-
-    def action_view_partner_report(self):
-        self.ensure_one()
+    def action_view_move_line_report(self):
+        """Open Account Move Line Report for this partner"""
+        self.ensure_one()  # Ensure only one record is processed
+        action_name = _("Statement of Account")  # Default action name
+        
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Journal Items',
-            'res_model': 'account.move.line',
+            'name': f'{action_name}',
+            'res_model': 'account.move.line.report',
             'view_mode': 'tree',
-            'views': [
-                (self.env.ref('partner_balance.view_account_move_line_custom_tree').id, 'tree'),
-            ],
-            'domain': [
-                ('partner_id', '=', self.id),
-                ('move_id.state', '=', 'posted'),
-                ('account_id.user_type_id.type', 'in', ['payable', 'receivable']),
-            ],
+            'view_id' : self.env.ref("partner_balance.view_account_move_line_report_tree").id,
+            'domain': [('partner_id', '=', self.id),
+                       ('move_id.journal_id.code', '!=', 'KRFRK')],
             'context': {
                 'default_partner_id': self.id,
-                'group_by': ['partner_id', 'currency_id'],
+                'search_default_group_by_account': 1,
+                'partner_name': self.name,
+                'action_name': action_name,
             },
+            'target': 'current',  # Open in current window
         }
+    
+
+    def get_move_line_count(self):
+        """Get count of move lines for this partner (for display purposes)"""
+        return self.env['account.move.line.report'].search_count([
+            ('partner_id', '=', self.id)
+        ])
