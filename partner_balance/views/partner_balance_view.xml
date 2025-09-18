@@ -29,10 +29,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
-                    <field name= "product_id"/>
+                    <!-- <field name= "product_id"/>
                     <field name="quantity"/>
                     <field name="price_unit"/>
-                    <field name="price_subtotal"/>
+                    <field name="price_subtotal"/> -->
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="cumulated_balance" string="Balance"/>
@@ -56,10 +56,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
-                    <field name= "product_id"/>
+                    <!-- <field name= "product_id"/>
                     <field name="quantity"/>
                     <field name="price_unit"/>
-                    <field name="price_subtotal"/>
+                    <field name="price_subtotal"/> -->
                     <field name="debit_amount" />
                     <field name="credit_amount" />
                     <field name="balance_amount"/>
@@ -79,10 +79,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
-                    <field name= "product_id"/>
+                    <!-- <field name= "product_id"/>
                     <field name="quantity"/>
                     <field name="price_unit"/>
-                    <field name="price_subtotal"/>
+                    <field name="price_subtotal"/> -->
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="usd_rate_display"/>
@@ -102,10 +102,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
-                    <field name= "product_id"/>
+                    <!-- <field name= "product_id"/>
                     <field name="quantity"/>
                     <field name="price_unit"/>
-                    <field name="price_subtotal"/>
+                    <field name="price_subtotal"/> -->
                     <field name="partner_currency_debit"/>
                     <field name="partner_currency_credit"/>
                     <field name="cumulated_partner_currency_value"/>
@@ -164,85 +164,8 @@
             </field>
         </record>
 
-        <!-- Tree View -->
-        <!-- <record id="view_partner_balance_tree" model="ir.ui.view">
-            <field name="name">partner.balance.tree</field>
-            <field name="model">partner.balance</field>
-            <field name="arch" type="xml">
-                <tree string="Partner Balances" create="false" js_class="partner_balance">
-                    <field name="partner_id"/>
-                    <field name="sales_user"/>
-                    <field name="balance" sum="Total"/>
-                    <field name="currency_id"/>
-                    <field name="date_updated"/>
-                </tree>
-            </field>
-        </record> -->
-
-        <!-- Form View -->
-        <!-- <record id="view_partner_balance_form" model="ir.ui.view">
-            <field name="name">partner.balance.form</field>
-            <field name="model">partner.balance</field>
-            <field name="arch" type="xml">
-                <form string="Partner Balance" create="false" edit="false">
-                    <sheet>
-                        <group>
-                            <field name="partner_id"/>
-                            <field name="sales_user"/>
-                            <field name="currency_id"/>
-                            <field name="balance"/>
-                        </group>
-                        <group string="Related Move Lines">
-                            <field name="move_line_ids" context="{'default_partner_id': partner_id}" options="{'no_open': True}">
-                                <tree string="Move Lines">
-                                    <field name="date"/>
-                                    <field name="name"/>
-                                    <field name="debit" sum="Total"/>
-                                    <field name="credit" sum="Total"/>
-                                    <field name="balance" sum="Total"/>
-                                </tree>
-                            </field>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record> -->
-
-
-        <!-- Action -->
-        <!-- <record id="action_partner_balance" model="ir.actions.act_window">
-            <field name="name">Partner Balances</field>
-            <field name="res_model">partner.balance</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-                <p>
-                    View and manage partner balances.
-                </p>
-            </field>
-            <field name="context">{
-                'group_by': ['sales_user'],
-            }</field>
-            <field name="domain">[
-                ("partner_id.category_id","not ilike","Personel"),
-                ("partner_id.id","!=",1),
-                ]</field>
-        </record>
-
-        <record id="action_view_move_lines" model="ir.actions.act_window">
-            <field name="name">Move Lines</field>
-            <field name="res_model">account.move.line</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{}</field>
-        </record> -->
-
         
-        
-
-        <!-- Menu Item -->
-        <!-- <menuitem id="menu_partner_balance" name="Partner Balances" action="action_partner_balance" parent="point_of_sale.menu_point_rep" sequence="10"/> -->
-
-        
-        <record id="view_account_partial_reconcile_tree" model="ir.ui.view">
+        <!-- <record id="view_account_partial_reconcile_tree" model="ir.ui.view">
             <field name="name">account.partial.reconcile.tree</field>
             <field name="model">account.partial.reconcile</field>
             <field name="arch" type="xml">
@@ -250,11 +173,11 @@
                     decoration-muted="full_reconcile_id" 
                     decoration-info="not full_reconcile_id">
                     
-                    <!-- Reference Information -->
+                    Reference Information
                     <field name="id" string="Reconcile ID"/>
                     <field name="max_date" string="Date"/>
                     
-                    <!-- Debit Move Information -->
+                    Debit Move Information
                     <field name="debit_move_id" string="Debit Entry"/>
                     <field name="debit_currency_id" string="Debit Currency" optional="hide"/>
                     <field name="debit_amount_currency" 
@@ -263,7 +186,7 @@
                         widget="monetary" 
                         options="{'currency_field': 'debit_currency_id'}"/>
                     
-                    <!-- Credit Move Information -->
+                    Credit Move Information
                     <field name="credit_move_id" string="Credit Entry"/>
                     <field name="credit_currency_id" string="Credit Currency" optional="hide"/>
                     <field name="credit_amount_currency" 
@@ -272,7 +195,7 @@
                         widget="monetary" 
                         options="{'currency_field': 'credit_currency_id'}"/>
                     
-                    <!-- Company Currency Amount -->
+                    Company Currency Amount
                     <field name="amount" 
                         string="Company Amount" 
                         sum="Total Company Amount"
@@ -280,19 +203,19 @@
                         options="{'currency_field': 'company_currency_id'}"/>
                     <field name="company_currency_id" string="Company Currency" optional="hide"/>
                     
-                    <!-- Reconciliation Status -->
+                    Reconciliation Status
                     <field name="full_reconcile_id" 
                         string="Full Reconcile" 
                         optional="show"
                         widget="many2one_tags"/>
                     
-                    <!-- Company -->
+                    Company
                     <field name="company_id" 
                         string="Company" 
                         optional="hide"
                         groups="base.group_multi_company"/>
                     
-                    <!-- Hidden fields for computations -->
+                    Hidden fields for computations
                     <field name="debit_currency_id" invisible="1"/>
                     <field name="credit_currency_id" invisible="1"/>
                     <field name="company_currency_id" invisible="1"/>
@@ -300,7 +223,7 @@
             </field>
         </record>
 
-        <!-- Action for Partial Reconciliations -->
+        Action for Partial Reconciliations
         <record id="action_account_partial_reconcile" model="ir.actions.act_window">
             <field name="name">Partial Reconciliations</field>
             <field name="res_model">account.partial.reconcile</field>
@@ -317,13 +240,13 @@
             </field>
         </record>
 
-        <!-- Menu Item (optional) -->
+        Menu Item (optional)
         <menuitem id="menu_account_partial_reconcile"
                 name="Partial Reconciliations" 
                 parent="account.menu_finance_configuration"
                 action="action_account_partial_reconcile"
                 sequence="50"
-                groups="account.group_account_user"/>
+                groups="account.group_account_user"/> -->
 
     </data>
 </odoo>
