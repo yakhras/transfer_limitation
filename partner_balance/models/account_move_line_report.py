@@ -27,7 +27,6 @@ class AccountMoveLineReport(models.Model):
     note = fields.Char(string="Note", readonly=True)
     type_key = fields.Char(string='Type Key', readonly=True)
     type = fields.Char(string='Type', compute='_compute_type_display', store=False)
-    # type = fields.Char(string='Type', readonly=True)
 
     # For Normal Report in Company Currency
     debit = fields.Monetary(string='Debit', readonly=True, currency_field='company_currency_id')
@@ -99,17 +98,6 @@ class AccountMoveLineReport(models.Model):
                     END AS reference,
                     
                     -- Transaction type classification
-                    -- CASE 
-                    --     WHEN am.move_type = 'out_invoice' THEN 'Invoice'
-                    --     WHEN am.move_type = 'in_invoice' THEN 'Bill'
-                    --     WHEN am.move_type = 'out_refund' THEN 'Credit Note'
-                    --     WHEN am.move_type = 'in_refund' THEN 'Credit Note'
-                    --     WHEN aj.payment_subtype = 'bank' THEN 'Bank Payment'
-                    --     WHEN aj.payment_subtype = 'check' THEN 'Check'
-                    --     WHEN aj.type = 'purchase' THEN 'Purchase'
-                    --     WHEN aj.type = 'sale' THEN 'Sale'
-                    --     ELSE 'Journal Entry'
-                    -- END AS type,
                     CASE 
                         WHEN am.move_type = 'out_invoice' THEN 'out_invoice'
                         WHEN am.move_type = 'in_invoice' THEN 'in_invoice'
