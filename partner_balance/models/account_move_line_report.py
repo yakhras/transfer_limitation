@@ -99,17 +99,17 @@ class AccountMoveLineReport(models.Model):
                     END AS reference,
                     
                     -- Transaction type classification
-                    # CASE 
-                    #     WHEN am.move_type = 'out_invoice' THEN 'Invoice'
-                    #     WHEN am.move_type = 'in_invoice' THEN 'Bill'
-                    #     WHEN am.move_type = 'out_refund' THEN 'Credit Note'
-                    #     WHEN am.move_type = 'in_refund' THEN 'Credit Note'
-                    #     WHEN aj.payment_subtype = 'bank' THEN 'Bank Payment'
-                    #     WHEN aj.payment_subtype = 'check' THEN 'Check'
-                    #     WHEN aj.type = 'purchase' THEN 'Purchase'
-                    #     WHEN aj.type = 'sale' THEN 'Sale'
-                    #     ELSE 'Journal Entry'
-                    # END AS type,
+                    -- CASE 
+                    --     WHEN am.move_type = 'out_invoice' THEN 'Invoice'
+                    --     WHEN am.move_type = 'in_invoice' THEN 'Bill'
+                    --     WHEN am.move_type = 'out_refund' THEN 'Credit Note'
+                    --     WHEN am.move_type = 'in_refund' THEN 'Credit Note'
+                    --     WHEN aj.payment_subtype = 'bank' THEN 'Bank Payment'
+                    --     WHEN aj.payment_subtype = 'check' THEN 'Check'
+                    --     WHEN aj.type = 'purchase' THEN 'Purchase'
+                    --     WHEN aj.type = 'sale' THEN 'Sale'
+                    --     ELSE 'Journal Entry'
+                    -- END AS type,
                     CASE 
                         WHEN am.move_type = 'out_invoice' THEN 'out_invoice'
                         WHEN am.move_type = 'in_invoice' THEN 'in_invoice'
@@ -162,7 +162,7 @@ class AccountMoveLineReport(models.Model):
         }
         for rec in self:
             rec.type = type_translations.get(rec.type_key, rec.type_key)
-            
+
 
     @api.depends('debit', 'amount_currency', 'currency_id')
     def _compute_debit_amount(self):
