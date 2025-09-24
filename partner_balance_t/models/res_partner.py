@@ -15,7 +15,7 @@ class ResPartner(models.Model):
             'name': f'{action_name}',
             'res_model': 'account.move.line.report',
             'view_mode': 'tree',
-            'view_id' : self.env.ref("partner_balance.view_account_move_line_report_tree").id,
+            'view_id' : self.env.ref("partner_balance_t.view_account_move_line_report_tree").id,
             'domain': [('partner_id', '=', self.id),
                        ('move_id.journal_id.code', '!=', 'KRFRK')],
             'context': {

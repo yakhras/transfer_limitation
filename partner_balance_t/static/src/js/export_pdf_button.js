@@ -1,4 +1,4 @@
-odoo.define('partner_balance.listpdf', function (require) {
+odoo.define('partner_balance_t.listpdf', function (require) {
     "use strict";
 
 
@@ -379,7 +379,7 @@ var ExportPdfButtonListController = ListController.extend({
             return;
         }
 
-        this.do_action('partner_balance.action_partner_move_line_currency', {
+        this.do_action('partner_balance_t.action_partner_move_line_currency', {
             additional_context: {
                 active_id: partner_id,
                 active_ids: [partner_id],
@@ -399,7 +399,7 @@ var ExportPdfButtonListController = ListController.extend({
             return;
         }
 
-        this.do_action('partner_balance.action_partner_move_line_partner_currency', {
+        this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
             additional_context: {
                 active_id: partner_id,
                 active_ids: [partner_id],
@@ -433,7 +433,7 @@ var BalanceListView = ListView.extend({
 });
 
 
-viewRegistry.add('partner_balance', BalanceListView);
+viewRegistry.add('partner_balance_t', BalanceListView);
 return DataExportExtended;
 });
 

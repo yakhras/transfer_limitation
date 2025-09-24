@@ -33,12 +33,12 @@
 
     'assets': {
         'web.assets_backend': [
-            'partner_balance/static/src/scss/partner_balance.scss',
-            'partner_balance/static/src/js/export_pdf_button.js',
+            'partner_balance_t/static/src/scss/partner_balance.scss',
+            'partner_balance_t/static/src/js/export_pdf_button.js',
         ],
 
         'web.assets_qweb': [
-            'partner_balance/static/src/xml/partner_balance_template.xml',
+            'partner_balance_t/static/src/xml/partner_balance_template.xml',
         ],
         
         
