@@ -1,5 +1,6 @@
 # In: models/partner_statement_report.py
 from odoo import api, models
+import datetime, time
 
 class PartnerStatementReport(models.AbstractModel):
     _name = 'report.partner_balance_t.partner_statement_template'
@@ -31,7 +32,7 @@ class PartnerStatementReport(models.AbstractModel):
             'docs': partners,
             'statement_data': statements_data[0] if statements_data else {},
             'company': self.env.company,
-            'time': __import__('time'),
-            'datetime': __import__('datetime'),
+            'time': time,
+            'datetime': datetime,
         }
     
