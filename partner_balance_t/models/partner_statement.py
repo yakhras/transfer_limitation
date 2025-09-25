@@ -248,7 +248,7 @@ class PartnerStatement(models.Model):
                     
                     section['section_type'] = 'partially_invoiced'
         
-        elif order.invoice_status == 'fully invoiced':
+        elif order.invoice_status == 'invoiced':
             # Get all invoiced products
             invoiced_data = self.get_sale_order_invoice_products(order)
             section['products'] = invoiced_data.get('invoices', [])
@@ -270,7 +270,7 @@ class PartnerStatement(models.Model):
             else:
                 section['section_type'] = 'invoiced_unpaid' # Fully unpaid
         
-        elif order.invoice_status == 'nothing to invoice':
+        elif order.invoice_status == 'no':
             if order.invoice_ids:
                 # Case: Had invoices, now zero balance (credit notes)
                 invoiced_data = self.get_sale_order_invoice_products(order)
