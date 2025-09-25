@@ -2,7 +2,18 @@
 
 <odoo>
     <data>
-
+        <!-- Report Action Definition -->
+        <record id="action_partner_statement_report" model="ir.actions.report">
+            <field name="name">Partner Statement</field>
+            <field name="model">res.partner</field>
+            <field name="report_type">qweb-html</field>
+            <field name="report_name">partner_balance_t.partner_statement_template</field>
+            <field name="report_file">partner_balance_t.partner_statement_template</field>
+            <field name="binding_model_id" ref="base.model_res_partner"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="base.paperformat_a4"/>
+            <field name="print_report_name">'Partner Statement - %s' % (object.name)</field>
+        </record>
 
         <record id="view_partner_form_inherit_custom_button" model="ir.ui.view">
             <field name="name">res.partner.form.inherit.custom.button</field>
@@ -229,18 +240,7 @@
             </field>
         </record>
 
-        <!-- Report Action Definition -->
-        <record id="action_partner_statement_report" model="ir.actions.report">
-            <field name="name">Partner Statement</field>
-            <field name="model">res.partner</field>
-            <field name="report_type">qweb-html</field>
-            <field name="report_name">partner_balance_t.partner_statement_template</field>
-            <field name="report_file">partner_balance_t.partner_statement_template</field>
-            <field name="binding_model_id" ref="base.model_res_partner"/>
-            <field name="binding_type">report</field>
-            <field name="paperformat_id" ref="base.paperformat_a4"/>
-            <field name="print_report_name">'Partner Statement - %s' % (object.name)</field>
-        </record>
+        
 
         <!-- Action for Partial Reconciliations -->
         <record id="action_account_partial_reconcile" model="ir.actions.act_window">
