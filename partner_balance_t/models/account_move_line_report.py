@@ -541,14 +541,14 @@ class AccountMoveLineReport(models.Model):
 
 
     # Add these fields to AccountMoveLineReport class
-    # product_id = fields.Many2one('product.product', string='Product', readonly=True)
-    # product_code = fields.Char(string='Product Code', readonly=True)
-    # product_name = fields.Char(string='Product Name', readonly=True)
-    # quantity = fields.Float(string='Quantity', readonly=True)
-    # price_unit = fields.Monetary(string='Unit Price', readonly=True, currency_field='currency_id')
-    # price_subtotal = fields.Monetary(string='Subtotal', readonly=True, currency_field='currency_id')
-    # invoice_line_id = fields.Many2one('account.move.line', string='Invoice Line', readonly=True)
-    # row_type = fields.Char(string='Row Type', readonly=True)  # To distinguish main vs detail rows
+    product_id = fields.Many2one('product.product', string='Product', readonly=True)
+    product_code = fields.Char(string='Product Code', readonly=True)
+    product_name = fields.Char(string='Product Name', readonly=True)
+    quantity = fields.Float(string='Quantity', readonly=True)
+    price_unit = fields.Monetary(string='Unit Price', readonly=True, currency_field='currency_id')
+    price_subtotal = fields.Monetary(string='Subtotal', readonly=True, currency_field='currency_id')
+    invoice_line_id = fields.Many2one('account.move.line', string='Invoice Line', readonly=True)
+    row_type = fields.Char(string='Row Type', readonly=True)  # To distinguish main vs detail rows
 
     def init(self):
         """Initialize the report view with product details"""
