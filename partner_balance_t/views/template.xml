@@ -106,7 +106,7 @@
                                 <table class="table table-sm table-borderless">
                                     <tr><td><strong>Partner:</strong></td><td><t t-esc="statement_data.get('partner_name', partner.name)"/></td></tr>
                                     <tr><td><strong>Partner Code:</strong></td><td><t t-esc="partner.ref or '-'"/></td></tr>
-                                    <tr><td><strong>Generated On:</strong></td><td><t t-esc="context_today()"/></td></tr>
+                                    <tr><td><strong>Generated On:</strong></td><td><t t-esc="now"/></td></tr>
                                 </table>
                             </div>
                             <div class="col-6">
