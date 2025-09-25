@@ -19,7 +19,7 @@
                         string="View Statement"
                         type="action"
                         class="oe_stat_button"
-                        icon="fa-file-text-o">
+                        icon="fa-file-text-o"/>
                 </xpath>
             </field>
         </record>
