@@ -22,13 +22,13 @@ class PartnerStatement(models.Model):
     def get_posted_invoices(self):
         """Get posted invoices recordset for this partner"""
         return self.partner_id.invoice_ids.filtered(
-            lambda invoice: invoice.state == 'posted'
+            lambda invoice: invoice.state == 'posted' and invoice.move_type not in ['entry']
         )
     
     def get_non_cancelled_invoices(self):
         """Get invoices that are not cancelled (posted or draft)"""
         return self.partner_id.invoice_ids.filtered(
-            lambda invoice: invoice.state != 'cancel'
+            lambda invoice: invoice.state != 'cancel' and invoice.move_type not in ['entry']
         )
     
     def get_unpaid_invoices(self):
