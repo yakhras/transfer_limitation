@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Simple Debug Template for Partner Statement -->
+    <template id="partner_statement_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="partner">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Partner Statement Debug</h2>
+                        <p><strong>Partner:</strong> <t t-esc="partner.name"/></p>
+                        
+                        <!-- Debug Info -->
+                        <h3>Debug Information</h3>
+                        <p>Total Orders: <t t-esc="statement_data.get('summary', {}).get('total_orders', 0)"/></p>
+                        <p>Statement Sections Count: <t t-esc="len(statement_data.get('statement_sections', []))"/></p>
+                        
+                        <!-- Loop through sections -->
+                        <t t-foreach="statement_data.get('statement_sections', [])" t-as="section">
+                            <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+                                <h4>Section Type: <t t-esc="section.get('section_type', 'Unknown')"/></h4>
+                                
+                                <t t-if="section.get('order_name')">
+                                    <p><strong>Order Name:</strong> <t t-esc="section.get('order_name')"/></p>
+                                    <p><strong>Order State:</strong> <t t-esc="section.get('order_state')"/></p>
+                                    <p><strong>Order Total:</strong> <t t-esc="section.get('order_total')"/></p>
+                                    <p><strong>Invoice Status:</strong> <t t-esc="section.get('invoice_status')"/></p>
+                                </t>
+                                
+                                <p><strong>Products Count:</strong> <t t-esc="len(section.get('products', []))"/></p>
+                                <p><strong>Payments Count:</strong> <t t-esc="len(section.get('payments', []))"/></p>
+                                <p><strong>Unpaid Count:</strong> <t t-esc="len(section.get('unpaid_invoices', []))"/></p>
+                                
+                                <!-- Show basic product info if exists -->
+                                <t t-if="section.get('products')">
+                                    <h5>Products in this section:</h5>
+                                    <ul>
+                                        <t t-foreach="section['products']" t-as="record">
+                                            <li>Record: <t t-esc="record.get('record_name', 'No name')"/> - Products: <t t-esc="len(record.get('products', []))"/></li>
+                                        </t>
+                                    </ul>
+                                </t>
+                            </div>
+                        </t>
+                        
+                        <!-- If no sections -->
+                        <t t-if="not statement_data.get('statement_sections')">
+                            <p style="color: red;">No statement sections found!</p>
+                        </t>
+                        
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
