@@ -587,14 +587,16 @@ class AccountMoveLineReport(models.Model):
                     END AS reference,
                     
                     CASE 
-                        WHEN am.move_type = 'out_invoice' THEN 'Invoice'
-                        WHEN am.move_type = 'in_invoice' THEN 'Bill'
-                        WHEN am.move_type = 'out_refund' THEN 'Credit Note'
-                        WHEN am.move_type = 'in_refund' THEN 'Credit Note'
-                        WHEN aj.payment_subtype = 'bank' THEN 'Bank Payment'
-                        WHEN aj.payment_subtype = 'check' THEN 'Check'
-                        ELSE 'Journal Entry'
-                    END AS type,
+                        WHEN am.move_type = 'out_invoice' THEN 'out_invoice'
+                        WHEN am.move_type = 'in_invoice' THEN 'in_invoice'
+                        WHEN am.move_type = 'out_refund' THEN 'out_refund'
+                        WHEN am.move_type = 'in_refund' THEN 'in_refund'
+                        WHEN aj.payment_subtype = 'bank' THEN 'bank_payment'
+                        WHEN aj.payment_subtype = 'check' THEN 'check_payment'
+                        WHEN aj.type = 'purchase' THEN 'purchase'
+                        WHEN aj.type = 'sale' THEN 'sale'
+                        ELSE 'journal_entry'
+                    END AS type_key,
                     
                     am.document_number AS note,
                     
