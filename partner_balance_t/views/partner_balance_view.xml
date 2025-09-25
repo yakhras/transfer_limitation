@@ -15,7 +15,7 @@
                     string="View Report"
                     class="btn-primary" />
 
-                    <button name="action_partner_statement_report"
+                    <button name="%(partner_balance_t.action_partner_statement_report)d"
                         string="View Statement"
                         type="action"
                         class="oe_stat_button"
