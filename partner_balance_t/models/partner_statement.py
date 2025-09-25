@@ -291,7 +291,7 @@ class PartnerStatement(models.Model):
                 section['products'] = uninvoiced_data.get('sale_orders', [])
                 section['section_type'] = 'never_invoiced'
         
-        return section if section['products'] or section['payments'] or section['unpaid_invoices'] else None
+        return section #if section['products'] or section['payments'] or section['unpaid_invoices'] else None
     
     def _process_manual_invoices(self):
         """Process manual invoices (not from sale orders)"""
