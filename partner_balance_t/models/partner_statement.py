@@ -136,7 +136,7 @@ class PartnerStatement(models.Model):
                 'product_name': line.product_id.name,
                 'quantity': quantity_field,
                 'price_unit': line.price_unit,
-                'tax_amount': line.price_tax,
+                'tax_amount': line.tax_ids.amount if line.tax_ids else 0,
                 'subtotal': line.price_subtotal,
             })
         
