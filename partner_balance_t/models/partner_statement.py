@@ -117,10 +117,12 @@ class PartnerStatement(models.Model):
                 parent_id = line.order_id.id
                 parent_record = line.order_id
                 quantity_field = line.product_uom_qty
+                tax_field = line.tax_id.amount
             else:  # invoices
                 parent_id = line.move_id.id
                 parent_record = line.move_id
                 quantity_field = line.quantity
+                tax_field = line.tax_ids.amount
                 
             if parent_id not in records_data:
                 records_data[parent_id] = {
@@ -136,7 +138,7 @@ class PartnerStatement(models.Model):
                 'product_name': line.product_id.name,
                 'quantity': quantity_field,
                 'price_unit': line.price_unit,
-                'tax_amount': line.tax_ids.amount if line.tax_ids else 0,
+                'tax_amount': tax_field,
                 'subtotal': line.price_subtotal,
             })
         
