@@ -33,6 +33,7 @@ class PartnerStatementReport(models.AbstractModel):
             'statement_data': statements_data[0] if statements_data else {},
             'company': self.env.company,
             'time': time,
-            'datetime': datetime,
+            'today': time.strftime('%Y-%m-%d'),
+            'now': time.strftime('%Y-%m-%d %H:%M:%S'),
         }
     
