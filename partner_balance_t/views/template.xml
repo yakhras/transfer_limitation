@@ -347,7 +347,7 @@
                         <div class="row mt-4">
                             <div class="col-12 text-center">
                                 <small class="text-muted">
-                                    Report generated on <t t-esc="datetime.datetime.now().strftime('%Y-%m-%d at %H:%M:%S')"/> | 
+                                    Report generated on <t t-esc="now"/> |
                                     <t t-esc="company.name"/>
                                 </small>
                             </div>
