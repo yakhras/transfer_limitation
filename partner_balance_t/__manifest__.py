@@ -21,12 +21,13 @@
     'license': 'AGPL-3',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'account', 'l10n_tr_account_check', 'l10n_tr_base_ubl'],
+    'depends': ['base', 'account', 'l10n_tr_account_check', 'l10n_tr_base_ubl', 'sale_management'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         "views/partner_balance_view.xml",
+        "views/template.xml",
         
 
     ],
