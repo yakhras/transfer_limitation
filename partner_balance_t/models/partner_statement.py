@@ -212,6 +212,14 @@ class PartnerStatement(models.Model):
         
         # Step 3: Calculate totals
         self._calculate_statement_totals(result)
+
+        # Step 4: Calculate running balances for each section
+        running_balance = 0
+    
+        for section in result['statement_sections']:
+            section = self._calculate_section_balances(section, running_balance)
+            # Update running balance for next section
+            running_balance = section.get('ending_balance', running_balance)
         
         return result
     
@@ -412,6 +420,27 @@ class PartnerStatement(models.Model):
         result['summary']['total_invoices'] = total_invoices
         result['summary']['total_payments'] = total_payments
         result['summary']['total_unpaid_invoices'] = total_unpaid_invoices
+
+    def _calculate_section_balances(self, section, starting_balance):
+        """Calculate running balance for each transaction in section"""
+        current_balance = starting_balance
+        
+        # Process each record (invoice)
+        if section.get('products'):
+            for record in section['products']:
+                # Add invoice amount to balance (debit)
+                current_balance += record.get('record_total', 0)
+                record['balance_after_invoice'] = current_balance
+        
+        # Process payments (subtract from balance)
+        if section.get('payments'):
+            for payment in section['payments']:
+                current_balance -= payment.get('amount', 0)
+                payment['balance_after_payment'] = current_balance
+        
+        section['ending_balance'] = current_balance
+        return section
+    
 
     # ==========================================
     # UTILITY METHODS
