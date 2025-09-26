@@ -99,7 +99,7 @@ class PartnerStatement(models.Model):
             'mapping': [{
                 'invoice': rec.debit_move_id.move_id.name,
                 'payment': rec.credit_move_id.move_id.name,
-                'amount': rec.amount,
+                'amount': rec.credit_amount_currency,
                 'date': rec.max_date
             } for rec in partial_reconciles]
         }
