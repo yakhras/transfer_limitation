@@ -271,12 +271,34 @@
                                                     <td class="text-right">-</td>
                                                     <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
                                                 </tr>
+
+                                                <!-- Related Payment Lines for this Invoice -->
+                                                <t t-if="section.get('payments')">
+                                                    <t t-foreach="section['payments']" t-as="payment">
+                                                        <tr class="payment-row">
+                                                            <td><t t-esc="payment.get('date', '-')"/></td>
+                                                            <td><t t-esc="payment.get('payment', 'Unknown Payment')"/></td>
+                                                            <td>Payment Received</td>
+                                                            <td class="text-center"><small class="badge badge-success">PAYMENT</small></td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td>-</td>
+                                                            <td class="text-right">-</td>
+                                                            <td class="text-right currency text-success font-weight-bold">
+                                                                <t t-esc="'{:,.2f}'.format(payment.get('amount', 0))"/>
+                                                            </td>
+                                                            <td class="text-right">-</td>
+                                                        </tr>
+                                                    </t>
+                                                </t>
                                                 
                                             </t>
                                         </t>
 
                                         <!-- Payments Section -->
-                                        <t t-if="section.get('payments')">
+                                        <!-- <t t-if="section.get('payments')">
                                             <tr class="payment-header">
                                                 <td colspan="12" class="font-weight-bold">💰 PAYMENTS RECEIVED</td>
                                             </tr>
@@ -298,7 +320,7 @@
                                                     <td class="text-right">-</td>
                                                 </tr>
                                             </t>
-                                        </t>
+                                        </t> -->
 
                                         <!-- Unpaid Invoices Section -->
                                         <t t-if="section.get('unpaid_invoices')">
