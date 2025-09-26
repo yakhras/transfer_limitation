@@ -118,17 +118,19 @@ class PartnerStatement(models.Model):
                 parent_record = line.order_id
                 quantity_field = line.product_uom_qty
                 tax_field = line.tax_id.amount
+                date_field = line.order_id.date_order
             else:  # invoices
                 parent_id = line.move_id.id
                 parent_record = line.move_id
                 quantity_field = line.quantity
                 tax_field = line.tax_ids.amount
+                date_field = line.move_id.date
                 
             if parent_id not in records_data:
                 records_data[parent_id] = {
                     'record_id': parent_id,
                     'record_name': parent_record.name,
-                    'record_date': parent_record.date,
+                    'record_date': date_field,
                     'record_state': parent_record.state,
                     'record_total': parent_record.amount_total,
                     'products': []
