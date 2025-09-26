@@ -234,7 +234,7 @@
                                                 <!-- Product Lines Only -->
                                                 <t t-foreach="record.get('products', [])" t-as="product">
                                                     <tr class="product-row">
-                                                        <td>-</td>
+                                                        <td></td>
                                                         <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
                                                         <td>Product Sale</td>
                                                         <td class="text-center">PRODUCT</td>
@@ -262,11 +262,11 @@
                                                     <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
                                                     <td>Invoice Posted</td>
                                                     <td class="text-center">INVOICE</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                     <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
                                                     <td class="text-right">-</td>
                                                     <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('balance_after_invoice', 0))"/></td>
@@ -281,11 +281,11 @@
                                                                 <td><t t-esc="payment.get('payment', 'Unknown Payment')"/></td>
                                                                 <td>Payment Received</td>
                                                                 <td class="text-center"><small class="badge badge-success">PAYMENT</small></td>
-                                                                <td>-</td>
-                                                                <td>-</td>
-                                                                <td>-</td>
-                                                                <td>-</td>
-                                                                <td>-</td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>
                                                                 <td class="text-right">-</td>
                                                                 <td class="text-right currency text-success font-weight-bold">
                                                                     <t t-esc="'{:,.2f}'.format(payment.get('amount', 0))"/>
@@ -335,11 +335,11 @@
                                                     <td><t t-esc="unpaid.get('invoice_name', 'Unknown Invoice')"/></td>
                                                     <td>Outstanding Invoice</td>
                                                     <td class="text-center"><small class="badge badge-danger">OVERDUE</small></td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
-                                                    <td>-</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
                                                     <td class="text-right currency text-danger font-weight-bold">
                                                         <t t-esc="'{:,.2f}'.format(unpaid.get('amount_total', 0))"/>
                                                     </td>
