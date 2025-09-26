@@ -421,21 +421,21 @@ class PartnerStatement(models.Model):
 
     def _calculate_section_balances(self, section):
         """Calculate balance within this section only"""
-        current_balance = 0  # Always start at 0 for each section
+        current_balance = 0
         
         if section.get('products'):
             for record in section['products']:
-                # Invoice adds to balance (debit)
                 current_balance += record.get('record_total', 0)
-                record['balance_after_invoice'] = current_balance
+                record['balance_after_invoice'] = round(current_balance, 2)  # Add rounding
                 
-                # Process payments for this specific record immediately
                 if section.get('payments'):
                     for payment in section['payments']:
-                        # Check if payment belongs to this record
                         if payment.get('invoice', '') == record.get('record_name', ''):
-                            current_balance -= payment.get('amount', 0)  # Subtract payment
-                            payment['balance_after_payment'] = current_balance
+                            current_balance -= payment.get('amount', 0)
+                            # Fix negative zero issue
+                            if abs(current_balance) < 0.01:  # If very close to zero
+                                current_balance = 0.00
+                            payment['balance_after_payment'] = round(current_balance, 2)
         
         return section
     
