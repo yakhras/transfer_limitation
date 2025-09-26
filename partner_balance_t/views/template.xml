@@ -357,7 +357,7 @@
                         </t>
 
                         <!-- Executive Summary -->
-                        <div class="summary-section">
+                        <!-- <div class="summary-section">
                             <table class="table table-bordered summary-table">
                                 <thead>
                                     <tr>
@@ -419,7 +419,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> -->
 
                         <!-- Report Footer -->
                         <div class="row mt-4">
