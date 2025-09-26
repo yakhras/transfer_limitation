@@ -128,6 +128,7 @@ class PartnerStatement(models.Model):
                 records_data[parent_id] = {
                     'record_id': parent_id,
                     'record_name': parent_record.name,
+                    'record_date': parent_record.date,
                     'record_state': parent_record.state,
                     'record_total': parent_record.amount_total,
                     'products': []
