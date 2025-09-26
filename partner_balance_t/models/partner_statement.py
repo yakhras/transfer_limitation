@@ -96,12 +96,12 @@ class PartnerStatement(models.Model):
             'invoice_lines': invoice_debit_lines,
             'payment_lines': payment_credit_lines,
             'reconcile_records': partial_reconciles,
-            'mapping': [{
+            'mapping': sorted([{
                 'invoice': rec.debit_move_id.move_id.name,
                 'payment': rec.credit_move_id.move_id.name,
-                'amount': rec.credit_amount_currency,
-                'date': rec.max_date
-            } for rec in partial_reconciles]
+                'amount': rec.amount,
+                'date': rec.create_date
+            } for rec in partial_reconciles], key=lambda x: x['date'])
         }
     
     # ==========================================
@@ -149,7 +149,7 @@ class PartnerStatement(models.Model):
             'partner_id': self.partner_id.id,
             'partner_name': self.partner_id.name,
             'total_records': len(records),
-            record_type: list(records_data.values()),
+            record_type: sorted(records_data.values(), key=lambda x: x['record_date']),
             'has_products': bool(lines)
         }
     
