@@ -173,11 +173,11 @@
                                     <tbody>
                                         
                                         <!-- Products/Orders Section -->
-                                        <t t-if="section.get('products')">
+                                        <!-- <t t-if="section.get('products')">
                                             <t t-set="section_total" t-value="0"/>
                                             <t t-foreach="section['products']" t-as="record">
                                                 
-                                                <!-- Record Header (Order/Invoice) -->
+                                                Record Header (Order/Invoice)
                                                 <tr class="products-header">
                                                     <td colspan="12" class="font-weight-bold">
                                                         📄 <t t-esc="record.get('record_name', 'Unknown')"/> 
@@ -186,7 +186,7 @@
                                                     </td>
                                                 </tr>
                                                 
-                                                <!-- Product Lines -->
+                                                Product Lines
                                                 <t t-foreach="record.get('products', [])" t-as="product">
                                                     <t t-set="product_total" t-value="product.get('subtotal', 0) + product.get('tax_amount', 0)"/>
                                                     <t t-set="section_total" t-value="section_total + product_total"/>
@@ -217,6 +217,61 @@
                                                         <td class="text-right">-</td>
                                                     </tr>
                                                 </t>
+                                            </t>
+                                        </t> -->
+
+                                        <!-- Products/Orders Section -->
+                                        <t t-if="section.get('products')">
+                                            <t t-foreach="section['products']" t-as="record">
+                                                
+                                                <!-- Product Details Header -->
+                                                <tr class="products-header">
+                                                    <td colspan="12" class="font-weight-bold">
+                                                        📦 PRODUCT DETAILS - <t t-esc="record.get('record_name', 'Unknown')"/>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <!-- Product Lines Only -->
+                                                <t t-foreach="record.get('products', [])" t-as="product">
+                                                    <tr class="product-row">
+                                                        <td>-</td>
+                                                        <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
+                                                        <td>Product Sale</td>
+                                                        <td class="text-center">PRODUCT</td>
+                                                        <td><t t-esc="product.get('product_name', 'Unknown Product')"/></td>
+                                                        <td class="text-right"><t t-esc="'{:,.2f}'.format(product.get('quantity', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('price_unit', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('subtotal', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('tax_amount', 0))"/></td>
+                                                        <td class="text-right">-</td>
+                                                        <td class="text-right">-</td>
+                                                        <td class="text-right">-</td>
+                                                    </tr>
+                                                </t>
+                                                
+                                                <!-- Invoice/Debit Details Header -->
+                                                <tr style="background-color: #e3f2fd; font-weight: bold;">
+                                                    <td colspan="12" class="font-weight-bold">
+                                                        💼 INVOICE DETAILS - <t t-esc="record.get('record_name', 'Unknown')"/>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <!-- Invoice/Debit Line -->
+                                                <tr style="background-color: #f8f9ff;">
+                                                    <td>-</td>
+                                                    <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
+                                                    <td>Invoice Posted</td>
+                                                    <td class="text-center">INVOICE</td>
+                                                    <td>State: <t t-esc="record.get('record_state', 'Unknown')"/> | Total: <t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
+                                                    <td class="text-right">-</td>
+                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
+                                                </tr>
+                                                
                                             </t>
                                         </t>
 
