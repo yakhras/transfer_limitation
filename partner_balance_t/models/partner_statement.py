@@ -99,8 +99,8 @@ class PartnerStatement(models.Model):
             'mapping': sorted([{
                 'invoice': rec.debit_move_id.move_id.name,
                 'payment': rec.credit_move_id.move_id.name,
-                'amount': rec.amount,
-                'date': rec.create_date
+                'amount': rec.credit_amount_currency,
+                'date': rec.max_date
             } for rec in partial_reconciles], key=lambda x: x['date'])
         }
     
