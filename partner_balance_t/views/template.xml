@@ -243,9 +243,9 @@
                                                         <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('price_unit', 0))"/></td>
                                                         <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('subtotal', 0))"/></td>
                                                         <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('tax_amount', 0))"/></td>
-                                                        <td class="text-right">-</td>
-                                                        <td class="text-right">-</td>
-                                                        <td class="text-right">-</td>
+                                                        <td class="text-right"></td>
+                                                        <td class="text-right"></td>
+                                                        <td class="text-right"></td>
                                                     </tr>
                                                 </t>
                                                 
