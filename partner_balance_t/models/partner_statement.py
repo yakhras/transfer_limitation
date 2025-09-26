@@ -217,7 +217,7 @@ class PartnerStatement(models.Model):
         running_balance = 0
     
         for section in result['statement_sections']:
-            section = self._calculate_section_balances(section, 0)
+            section = self._calculate_section_balances(section)
         
         return result
     
@@ -419,24 +419,24 @@ class PartnerStatement(models.Model):
         result['summary']['total_payments'] = total_payments
         result['summary']['total_unpaid_invoices'] = total_unpaid_invoices
 
-    def _calculate_section_balances(self, section, starting_balance=0):
-        """Calculate running balance for each transaction in section"""
-        current_balance = starting_balance
+    def _calculate_section_balances(self, section):
+        """Calculate balance within this section only"""
+        current_balance = 0  # Always start at 0 for each section
         
-        # Process each record (invoice)
         if section.get('products'):
             for record in section['products']:
-                # Add invoice amount to balance (debit)
+                # Invoice adds to balance (debit)
                 current_balance += record.get('record_total', 0)
                 record['balance_after_invoice'] = current_balance
+                
+                # Process payments for this specific record immediately
+                if section.get('payments'):
+                    for payment in section['payments']:
+                        # Check if payment belongs to this record
+                        if payment.get('invoice', '') == record.get('record_name', ''):
+                            current_balance -= payment.get('amount', 0)  # Subtract payment
+                            payment['balance_after_payment'] = current_balance
         
-        # Process payments (subtract from balance)
-        if section.get('payments'):
-            for payment in section['payments']:
-                current_balance -= payment.get('amount', 0)
-                payment['balance_after_payment'] = current_balance
-        
-        section['ending_balance'] = current_balance
         return section
     
 
