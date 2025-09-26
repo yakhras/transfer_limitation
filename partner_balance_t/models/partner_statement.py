@@ -100,7 +100,7 @@ class PartnerStatement(models.Model):
                 'invoice': rec.debit_move_id.move_id.name,
                 'payment': rec.credit_move_id.move_id.name,
                 'amount': rec.amount,
-                'date': rec.create_date
+                'date': rec.max_date
             } for rec in partial_reconciles]
         }
     
