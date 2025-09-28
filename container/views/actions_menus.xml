@@ -98,7 +98,7 @@
               parent="menu_container_root" sequence="100"/>
               
     <menuitem id="menu_container_lines" name="Container Contents" 
-              parent="menu_container_configuration" sequence="10"
+              parent="menu_container_containers" sequence="10"
               action="action_container_line"/>
               
     <menuitem id="menu_container_ports" name="Ports" 
