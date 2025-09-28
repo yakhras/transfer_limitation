@@ -313,26 +313,18 @@ class LogisticsContainer(models.Model):
     
 
     def action_view_purchase_requisition(self):
-        """View related requisitions"""
+        """Smart button to view related purchase requisition"""
         self.ensure_one()
-        requisitions = self.requisition_id
+        if not self.requisition_id:
+            return
         
-        if len(requisitions) == 1:
-            return {
-                'type': 'ir.actions.act_window',
-                'res_model': 'purchase.requisition',
-                'res_id': requisitions.id,
-                'view_mode': 'form',
-                'target': 'current',
-            }
-        else:
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Purchase Requisitions',
-                'res_model': 'purchase.requisition', 
-                'view_mode': 'tree,form',
-                'domain': [('id', 'in', requisitions.ids)],
-            }
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.requisition',
+            'res_id': self.requisition_id.id,  # Single record - no .ids needed
+            'view_mode': 'form',
+            'target': 'current',
+        }
     
 
     def action_view_purchase_orders(self):
