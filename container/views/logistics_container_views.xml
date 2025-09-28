@@ -14,7 +14,7 @@
                 <field name="name" />
                 <field name="container_type" />
                 <field name="requisition_id" />
-                <field name="purchase_order_ids" widget="many2many_tags"/>
+                <field name="purchase_order_ids" widget="many2many_tags" domain="['requisition_id', in, requisition_id ]"/>
                 <field name="supplier_id" readonly="1"/>
                 <field name="supplier_ref" readonly="1"/>
                 <field name="departure_date" />
