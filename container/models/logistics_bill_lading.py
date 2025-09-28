@@ -30,7 +30,6 @@ class LogisticsBillLading(models.Model):
     # Direct container relation
     container_ids = fields.One2many('logistics.container', 'bill_lading_id', string='Containers')
     
-    
     # Parties Information
     shipper_id = fields.Many2one('res.partner', string='Shipper', required=True,
                                 domain=[('is_company', '=', True)], tracking=True)
