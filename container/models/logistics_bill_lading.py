@@ -331,20 +331,27 @@ class LogisticsBillLading(models.Model):
                 self.total_charges = total_amount
 
 
-    def action_view_purchase_requisition(self):
-        """Smart button to view related purchase requisition"""
+    def action_view_purchase_requisitions(self):
+        """View related requisitions"""
         self.ensure_one()
-        if not self.requisition_id:
-            return
+        requisitions = self.requisition_id
         
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'purchase.requisition',
-            'res_id': self.requisition_id.id,
-            'view_mode': 'form',
-            'view_type': 'form',
-            'target': 'current',
-        }
+        if len(requisitions) == 1:
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'purchase.requisition',
+                'res_id': requisitions.id,
+                'view_mode': 'form',
+                'target': 'current',
+            }
+        else:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Purchase Requisitions',
+                'res_model': 'purchase.requisition', 
+                'view_mode': 'tree,form',
+                'domain': [('id', 'in', requisitions.ids)],
+            }
     
 
     def action_view_purchase_orders(self):
