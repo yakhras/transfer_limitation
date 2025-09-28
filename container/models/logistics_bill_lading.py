@@ -28,9 +28,11 @@ class LogisticsBillLading(models.Model):
     purchase_order_ids = fields.One2many('purchase.order', 'bill_lading_id', string='Purchase Orders')
     
     # Direct container relation
-    container_ids = fields.One2many('logistics.container', 'bill_lading_id', 
-                               string='Containers',
-                               domain="[('requisition_id', '=', requisition_id), ('bill_lading_id', '=', False)]")
+    container_ids = fields.Many2many(
+        'logistics.container', 
+        string='Containers',
+        domain="[('requisition_id', 'in', requisition_id)]"  # Only containers from selected requisitions
+    )
     
     # Parties Information
     shipper_id = fields.Many2one('res.partner', string='Shipper', required=True,

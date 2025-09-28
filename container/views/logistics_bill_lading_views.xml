@@ -105,8 +105,8 @@
                         <notebook>
                             <page string="Containers">
                                 <field name="container_ids" 
-                                       context="{'default_requisition_id': requisition_id}"
-                                       domain="[('requisition_id', '=', requisition_id)]">
+                                    domain="[('requisition_id', 'in', requisition_id)]"
+                                    options="{'no_create': True, 'no_create_edit': True}"/>
                                     <tree>
                                         <field name="name"/>
                                         <field name="container_type"/>
