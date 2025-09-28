@@ -161,8 +161,14 @@ class LogisticsContainer(models.Model):
             if container.bill_lading_id and container.requisition_id:
                 if container.requisition_id not in container.bill_lading_id.requisition_id:
                     raise ValidationError(_(
-                        'Container %s: Bill of Lading must belong to the same requisition (%s).'
-                    ) % (container.name, container.requisition_id.name))
+                        "Container %s is linked to requisition %s, "
+                        "which is not among the requisitions of Bill of Lading %s."
+                    ) % (
+                        container.name,
+                        container.requisition_id.display_name,
+                        container.bill_lading_id.name
+                    ))
+
     
 
     @api.onchange('requisition_id')
