@@ -116,7 +116,7 @@ class PurchaseRequisition(models.Model):
                     'product_id': dist_line.product_id.id,
                     'product_uom_id': dist_line.product_uom_id.id,
                     'product_qty': qty_for_container,
-                    'price_unit': dist_line.product_id.standard_price,
+                    'price_unit': dist_line.price_unit,
                 })
         
         # Create containers
