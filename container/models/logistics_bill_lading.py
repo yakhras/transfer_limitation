@@ -121,7 +121,6 @@ class LogisticsBillLading(models.Model):
     
     def action_view_containers(self):
         """Smart button to view related containers"""
-        self.ensure_one()
         if not self.container_ids:
             return
         
