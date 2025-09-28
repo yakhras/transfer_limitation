@@ -127,7 +127,7 @@ class LogisticsBillLading(models.Model):
         action = self.env.ref('container.action_container_container').read()[0]
         
         if len(self.container_ids) > 1:
-            action['domain'] = [('bill_lading_id', 'in', self.id)]
+            action['domain'] = [('id', 'in', self.container_ids.ids)]
         else:
             action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
             action['res_id'] = self.container_ids.id
