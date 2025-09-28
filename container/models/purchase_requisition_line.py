@@ -32,7 +32,7 @@ class PurchaseRequisitionLine(models.Model):
         result = super().write(vals)
         
         # If product or quantity changed, update distribution
-        if 'product_id' in vals or 'product_qty' in vals or 'product_uom_id' in vals:
+        if 'product_id' in vals or 'product_qty' in vals or 'product_uom_id' in vals or 'price_unit' in vals:
             for line in self:
                 # Find existing distribution record
                 distribution = self.env['purchase.requisition.container.distribution'].search([
