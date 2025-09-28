@@ -152,11 +152,10 @@ class LogisticsBillLading(models.Model):
     def _update_containers_port_of_discharge(self):
         """Helper method to update port of discharge in containers"""
         for container in self.container_ids:
-            if hasattr(container, 'port_of_discharge', 'port_of_loading'):
-                container.sudo().write({
-                    'port_of_discharge': self.port_of_discharge_id.id,
-                    'port_of_loading': self.port_of_loading_id.id,
-                })
+            container.sudo().write({
+                'port_of_discharge': self.port_of_discharge_id.id if self.port_of_discharge_id else False,
+                'port_of_loading': self.port_of_loading_id.id if self.port_of_loading_id else False,
+            })
     
 
     @api.depends('container_ids', 'purchase_order_ids')
