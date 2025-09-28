@@ -45,6 +45,7 @@ class PurchaseRequisitionLine(models.Model):
                     distribution.write({
                         'total_qty': line.product_qty,
                         'product_uom_id': line.product_uom_id.id,
+                        'price_unit': line.price_unit,
                     })
                 else:
                     # Create new distribution if it doesn't exist
