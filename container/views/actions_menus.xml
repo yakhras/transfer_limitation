@@ -9,6 +9,19 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="view_container_search" model="ir.ui.view">
+        <field name="name">logistics.container.search</field>
+        <field name="model">logistics.container</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="requisition_id"/>
+                <filter name="group_requisition" string="Requisition" 
+                        context="{'group_by': 'requisition_id'}"/>
+            </search>
+        </field>
+    </record>
+
     <record id="action_container_container" model="ir.actions.act_window">
         <field name="name">Containers</field>
         <field name="res_model">logistics.container</field>
