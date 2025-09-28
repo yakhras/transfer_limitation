@@ -13,7 +13,7 @@
         <field name="name">Containers</field>
         <field name="res_model">logistics.container</field>
         <field name="view_mode">kanban,tree,form</field>
-        <field name="context">{'search_default_group_state': 1}</field>
+        <field name="context">{'search_default_group_requisition_id': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first shipping container!
