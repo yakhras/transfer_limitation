@@ -119,6 +119,22 @@ class LogisticsBillLading(models.Model):
         
         return record
     
+    def action_view_containers(self):
+        """Smart button to view related containers"""
+        self.ensure_one()
+        if not self.container_ids:
+            return
+        
+        action = self.env.ref('container.action_container_container').read()[0]
+        
+        if len(self.container_ids) > 1:
+            action['domain'] = [('bill_lading_id', 'in', self.id)]
+        else:
+            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
+            action['res_id'] = self.container_ids.id
+        
+        return action
+    
 
     def write(self, vals):
         """Override write to update containers when needed"""

@@ -37,6 +37,10 @@
                                     <span class="o_stat_text">Requisition</span>
                                 </div>
                             </button>
+                            <button type="object" name="action_view_containers" 
+                                    class="oe_stat_button" icon="fa-ship">
+                                <field name="container_count" widget="statinfo" string="Containers"/>
+                            </button>
                             <button type="object" name="action_view_purchase_orders" 
                                     class="oe_stat_button" icon="fa-shopping-cart"
                                     attrs="{'invisible': [('purchase_order_count', '=', 0)]}">
