@@ -19,7 +19,7 @@ class PurchaseRequisitionLine(models.Model):
                 'product_id': line.product_id.id,
                 'product_uom_id': line.product_uom_id.id,
                 'total_qty': line.product_qty,
-                'unit_price': line.price_unit,
+                'price_unit': line.price_unit,
                 'container_count': 1,  # Default to 1 container
                 'distribution_method': 'equal',
             })
@@ -53,7 +53,7 @@ class PurchaseRequisitionLine(models.Model):
                         'product_id': line.product_id.id,
                         'product_uom_id': line.product_uom_id.id,
                         'total_qty': line.product_qty,
-                        'unit_price': line.price_unit,
+                        'price_unit': line.price_unit,
                         'container_count': 1,
                         'distribution_method': 'equal',
                     })
