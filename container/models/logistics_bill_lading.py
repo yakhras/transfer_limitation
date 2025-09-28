@@ -116,6 +116,7 @@ class LogisticsBillLading(models.Model):
         # Update containers' port of discharge after creation
         if record.container_ids :
             record._update_containers_port_of_discharge()
+            record._update_containers_dates()
         
         return record
     
@@ -145,6 +146,7 @@ class LogisticsBillLading(models.Model):
             for record in self:
                 if record.container_ids:
                     record._update_containers_port_of_discharge()
+                    record._update_containers_dates()
         
         return result
     
@@ -155,6 +157,14 @@ class LogisticsBillLading(models.Model):
             container.sudo().write({
                 'port_of_discharge': self.port_of_discharge_id.id if self.port_of_discharge_id else False,
                 'port_of_loading': self.port_of_loading_id.id if self.port_of_loading_id else False,
+            })
+
+    def _update_containers_dates(self):
+        """Helper method to update ETD and ETA in containers"""
+        for container in self.container_ids:
+            container.sudo().write({
+                'arrival_date': self.actual_arrival_date if self.actual_arrival_date else False,
+                'departure_date': self.actual_departure_date if self.actual_departure_date else False,
             })
     
 

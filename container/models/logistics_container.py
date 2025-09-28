@@ -47,8 +47,8 @@ class LogisticsContainer(models.Model):
     volume_m3 = fields.Float('Volume (M³)', digits=(10, 2))
     
     # Logistics Information
-    arrival_date = fields.Date('Arrival Date', tracking=True)
-    departure_date = fields.Date('Departure Date', tracking=True)
+    arrival_date = fields.Date('Arrival Date', tracking=True, readonly=True)
+    departure_date = fields.Date('Departure Date', tracking=True, readonly=True)
     country_id = fields.Many2one('res.country', string='Country', 
                                 related='supplier_id.country_id', store=True, tracking=True)
     tracking_number = fields.Char('Tracking Number')
