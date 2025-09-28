@@ -158,7 +158,7 @@ class LogisticsContainer(models.Model):
     @api.constrains('bill_lading_id', 'requisition_id')
     def _check_bill_lading_requisition_consistency(self):
         for container in self:
-            if container.bill_lading_id and container.bill_lading_id.requisition_id != container.requisition_id:
+            if container.bill_lading_id and container.bill_lading_id.requisition_id not in container.requisition_id:
                 raise ValidationError(_(
                     'Container %s: Bill of Lading must belong to the same requisition (%s).'
                 ) % (container.name, container.requisition_id.name))
