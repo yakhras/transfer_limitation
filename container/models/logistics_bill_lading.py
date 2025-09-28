@@ -28,7 +28,7 @@ class LogisticsBillLading(models.Model):
     purchase_order_ids = fields.One2many('purchase.order', 'bill_lading_id', string='Purchase Orders')
     
     # Direct container relation
-    fields.One2many('logistics.container', 'bill_lading_id', string='Containers')
+    container_ids = fields.One2many('logistics.container', 'bill_lading_id', string='Containers')
     
     
     # Parties Information
