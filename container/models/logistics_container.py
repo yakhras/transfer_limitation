@@ -312,7 +312,7 @@ class LogisticsContainer(models.Model):
             container.purchase_order_count = po_count
     
 
-    def action_view_purchase_requisitions(self):
+    def action_view_purchase_requisition(self):
         """View related requisitions"""
         self.ensure_one()
         requisitions = self.requisition_id

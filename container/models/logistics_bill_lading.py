@@ -331,7 +331,7 @@ class LogisticsBillLading(models.Model):
                 self.total_charges = total_amount
 
 
-    def action_view_purchase_requisitions(self):
+    def action_view_purchase_requisition(self):
         """View related requisitions"""
         self.ensure_one()
         requisitions = self.requisition_id
