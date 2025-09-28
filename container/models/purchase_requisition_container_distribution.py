@@ -65,7 +65,15 @@ class PurchaseRequisitionContainerDistribution(models.Model):
             else:
                 # For manual method, will be sum of manual lines
                 line.qty_per_container = sum(line.manual_distribution_ids.mapped('qty'))
-    
+
+
+    @api.constrains('manual_distribution_ids', 'total_qty')
+    def _check_manual_distribution(self):
+        for line in self.filtered(lambda l: l.distribution_method == 'manual'):
+            manual_sum = sum(line.manual_distribution_ids.mapped('qty'))
+            if manual_sum > line.total_qty:
+                raise ValidationError(f"Manual distribution total cannot exceed {line.total_qty}")
+        
     
     @api.onchange('product_id')
     def _onchange_product_id(self):
