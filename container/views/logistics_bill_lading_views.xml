@@ -168,8 +168,8 @@
                     <field name="vessel_name"/>
                     <field name="port_of_loading_id"/>
                     <field name="port_of_discharge_id"/>
-                    <field name="etd"/>
-                    <field name="eta"/>
+                    <field name="actual_departure_date"/>
+                    <field name="actual_arrival_date"/>
                     <field name="container_count"/>
                     <field name="state"/>
                 </tree>
