@@ -52,7 +52,7 @@
                             <group string="Bill of Lading Information">
                                 <field name="bl_type"/>
                                 <field name="bl_date"/>
-                                <field name="requisition_id"/>
+                                <field name="requisition_id" widget="many2many_tags"/>
                                 <field name="booking_reference"/>
                                 <field name="export_reference"/>
                             </group>
