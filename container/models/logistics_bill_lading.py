@@ -142,7 +142,7 @@ class LogisticsBillLading(models.Model):
         result = super(LogisticsBillLading, self).write(vals)
         
         # If containers or port of discharge changed, update containers
-        if ['container_ids', 'port_of_discharge_id', 'port_of_loading_id', 'actual_arrival_date', 'actual_departure_date'] in vals.keys():
+        if any(field in vals for field in ['container_ids', 'port_of_discharge_id', 'port_of_loading_id', 'actual_arrival_date', 'actual_departure_date']):
             for record in self:
                 if record.container_ids:
                     record._update_containers_port_of_discharge()
