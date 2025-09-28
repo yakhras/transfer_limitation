@@ -32,6 +32,7 @@
                             <field name="product_uom_id"/>
                         </group>
                         <group>
+                            <field name="price_unit"/>
                             <field name="container_count"/>
                             <field name="distribution_method"/>
                             <field name="qty_per_container"/>
