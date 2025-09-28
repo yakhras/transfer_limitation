@@ -21,7 +21,7 @@ class LogisticsBillLading(models.Model):
     bl_date = fields.Date('B/L Date', required=True, default=fields.Date.context_today, tracking=True)
     
     # Master Relation - One B/L belongs to one Requisition
-    requisition_id = fields.Many2one('purchase.requisition', string='Purchase Requisition', 
+    requisition_id = fields.Many2many('purchase.requisition', string='Purchase Requisition', 
                                     required=True, tracking=True, ondelete='cascade')
     
     # Related Purchase Orders (from the requisition)
