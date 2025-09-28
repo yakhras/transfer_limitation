@@ -114,7 +114,7 @@ class LogisticsBillLading(models.Model):
         record = super(LogisticsBillLading, self).create(vals)
         
         # Update containers' port of discharge after creation
-        if record.container_ids and record.port_of_discharge_id:
+        if record.container_ids :
             record._update_containers_port_of_discharge()
         
         return record
@@ -141,9 +141,9 @@ class LogisticsBillLading(models.Model):
         result = super(LogisticsBillLading, self).write(vals)
         
         # If containers or port of discharge changed, update containers
-        if 'container_ids' in vals or 'port_of_discharge_id' in vals:
+        if 'container_ids' in vals or 'port_of_discharge_id' in vals or 'port_of_loading_id' in vals:
             for record in self:
-                if record.container_ids and record.port_of_discharge_id:
+                if record.container_ids:
                     record._update_containers_port_of_discharge()
         
         return result
