@@ -197,7 +197,7 @@ class LogisticsBillLading(models.Model):
         self._onchange_port_of_discharge()
     
 
-    @api.constrains('container_ids')
+    @api.constrains('container_ids', 'requisition_id')
     def _check_container_requisition_consistency(self):
         for bl in self:
             if bl.container_ids:
