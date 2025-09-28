@@ -49,7 +49,7 @@ class PurchaseRequisitionContainerDistribution(models.Model):
         store=True, 
         digits='Product Unit of Measure'
     )
-    
+    price_unit = fields.Float('Unit Price', digits='Product Price')
     # Manual distribution fields (for future enhancement)
     manual_distribution_ids = fields.One2many(
         'purchase.requisition.container.distribution.line',
