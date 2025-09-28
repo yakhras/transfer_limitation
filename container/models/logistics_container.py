@@ -32,8 +32,12 @@ class LogisticsContainer(models.Model):
     # Master Relations - Following hierarchy: Requisition > Purchase Order > Container > Bill of Lading
     requisition_id = fields.Many2one('purchase.requisition', string='Purchase Requisition', 
                                     required=True, tracking=True, ondelete='cascade')
-    purchase_order_ids = fields.Many2many('purchase.order', string='Purchase Orders', 
-                                         tracking=True)
+    purchase_order_ids = fields.Many2many(
+        'purchase.order', 
+        string='Purchase Orders',
+        domain="[('requisition_id', '=', requisition_id)]",
+        tracking=True
+    )
     
     # Compatibility field for migration - remove after fixing all references
     purchase_order_id = fields.Many2one('purchase.order', string='Purchase Order (Deprecated)', 
