@@ -38,7 +38,7 @@ class PurchaseRequisition(models.Model):
         action['context'] = {
             'default_requisition_id': self.id,
             'default_supplier_id': self.vendor_id.id if self.vendor_id else False,
-            'deault_group_by': 'requisition_id',
+            'search_default_group_requisition': 1,
         }
         
         if len(self.container_ids) > 1:
