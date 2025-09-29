@@ -187,6 +187,10 @@
                     <field name="actual_arrival_date"/>
                     <field name="container_count"/>
                     <field name="state"/>
+                    <field name="docs_draft"/>
+                    <field name="docs_original"/>
+                    <field name="ordino"/>
+                    <field name="ccl_company"/>
                 </tree>
             </field>
         </record>
