@@ -239,28 +239,28 @@ class LogisticsBillLading(models.Model):
         self._onchange_port_of_discharge()
     
 
-    @api.constrains('container_ids', 'requisition_id')
-    def _check_container_requisition_consistency(self):
-        for bl in self:
-            if bl.container_ids and bl.requisition_id:
-                invalid_containers = bl.container_ids.filtered(
-                    lambda c: c.requisition_id not in bl.requisition_id
-                )
-                if invalid_containers:
-                    raise ValidationError(_(
-                        'These containers must belong to selected requisitions: %s'
-                    ) % ', '.join(invalid_containers.mapped('name')))
+    # @api.constrains('container_ids', 'requisition_id')
+    # def _check_container_requisition_consistency(self):
+    #     for bl in self:
+    #         if bl.container_ids and bl.requisition_id:
+    #             invalid_containers = bl.container_ids.filtered(
+    #                 lambda c: c.requisition_id not in bl.requisition_id
+    #             )
+    #             if invalid_containers:
+    #                 raise ValidationError(_(
+    #                     'These containers must belong to selected requisitions: %s'
+    #                 ) % ', '.join(invalid_containers.mapped('name')))
     
 
-    @api.constrains('purchase_order_ids')
-    def _check_purchase_order_requisition_consistency(self):
-        for bl in self:
-            if bl.purchase_order_ids:
-                for po in bl.purchase_order_ids:
-                    if po.requisition_id != bl.requisition_id:
-                        raise ValidationError(_(
-                            'Purchase Order %s must belong to the same requisition (%s) as the Bill of Lading.'
-                        ) % (po.name, bl.requisition_id.name))
+    # @api.constrains('purchase_order_ids')
+    # def _check_purchase_order_requisition_consistency(self):
+    #     for bl in self:
+    #         if bl.purchase_order_ids:
+    #             for po in bl.purchase_order_ids:
+    #                 if po.requisition_id != bl.requisition_id:
+    #                     raise ValidationError(_(
+    #                         'Purchase Order %s must belong to the same requisition (%s) as the Bill of Lading.'
+    #                     ) % (po.name, bl.requisition_id.name))
     
 
     # State Management Methods
@@ -304,12 +304,12 @@ class LogisticsBillLading(models.Model):
         self.state = 'draft'
     
 
-    @api.constrains('eta', 'etd')
-    def _check_dates(self):
-        for bl in self:
-            if bl.eta and bl.etd:
-                if bl.eta < bl.etd:
-                    raise ValidationError(_('ETA cannot be before ETD.'))
+    # @api.constrains('eta', 'etd')
+    # def _check_dates(self):
+    #     for bl in self:
+    #         if bl.eta and bl.etd:
+    #             if bl.eta < bl.etd:
+    #                 raise ValidationError(_('ETA cannot be before ETD.'))
 
 
     @api.onchange('port_of_loading_id')
@@ -328,13 +328,13 @@ class LogisticsBillLading(models.Model):
                 self.place_of_delivery = f"{self.port_of_discharge_id.name}, {self.port_of_discharge_id.country_id.name}"
 
 
-    @api.constrains('port_of_loading_id', 'port_of_discharge_id')
-    def _check_ports_different(self):
-        """Ensure loading and discharge ports are different"""
-        for bl in self:
-            if bl.port_of_loading_id and bl.port_of_discharge_id:
-                if bl.port_of_loading_id == bl.port_of_discharge_id:
-                    raise ValidationError(_('Port of Loading and Port of Discharge must be different.'))
+    # @api.constrains('port_of_loading_id', 'port_of_discharge_id')
+    # def _check_ports_different(self):
+    #     """Ensure loading and discharge ports are different"""
+    #     for bl in self:
+    #         if bl.port_of_loading_id and bl.port_of_discharge_id:
+    #             if bl.port_of_loading_id == bl.port_of_discharge_id:
+    #                 raise ValidationError(_('Port of Loading and Port of Discharge must be different.'))
 
 
     @api.onchange('requisition_id')
