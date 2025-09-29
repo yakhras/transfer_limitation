@@ -28,6 +28,16 @@ class LogisticsContainer(models.Model):
         ('20ot', '20ft Open Top'),
         ('40ot', '40ft Open Top'),
     ], string='Container Type', required=True, tracking=True)
+
+    declaration_type = fields.Selection([
+        ('import', 'Import'),
+        ('export', 'Export'),
+        ('transit', 'Transit'),
+        ('bonded', 'Bonded Warehouse'),
+        ('transit_sy', 'Transit SY'),
+        ('transfer', 'Transfer'),
+        ('domestic', 'Domestic'),
+    ], string='Declaration Type', required=True, tracking=True, default='import')
     
     # Master Relations - Following hierarchy: Requisition > Purchase Order > Container > Bill of Lading
     requisition_id = fields.Many2one('purchase.requisition', string='Purchase Requisition', 
