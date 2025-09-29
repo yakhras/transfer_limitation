@@ -429,11 +429,4 @@ class LogisticsContainer(models.Model):
     
 
 
-    # In logistics.container
-    def action_assign_to_bill_lading(self):
-        """Assign containers to B/L from selection"""
-        bl_id = self.env.context.get('active_id')
-        if bl_id:
-            self.write({'bill_lading_id': bl_id})
-            return {'type': 'ir.actions.act_window_close'}
     

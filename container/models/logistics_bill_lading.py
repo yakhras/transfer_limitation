@@ -37,16 +37,13 @@ class LogisticsBillLading(models.Model):
     purchase_order_ids = fields.Many2many('purchase.order', string='Purchase Orders')
     
     # Direct container relation
-    # container_ids = fields.Many2many(
-    #     'logistics.container', 
-    #     string='Containers',
-    #     domain="[('requisition_id', 'in', requisition_id)]"  # Only containers from selected requisitions
-    # )
-
-    container_ids = fields.One2many('logistics.container', 'bill_lading_id',
+    container_ids = fields.Many2many(
+        'logistics.container', 
         string='Containers',
-        domain="[('requisition_id', 'in', requisition_id)]"
+        domain="[('requisition_id', 'in', requisition_id)]"  # Only containers from selected requisitions
     )
+
+    
     
     # Parties Information
     shipper_id = fields.Many2one('res.partner', string='Shipper', required=True,
@@ -436,24 +433,5 @@ class LogisticsBillLading(models.Model):
         return action
     
 
-    def action_add_containers(self):
-        """Open wizard to select containers"""
-        self.ensure_one()
-        return {
-            'name': 'Select Containers',
-            'type': 'ir.actions.act_window',
-            'res_model': 'logistics.container',
-            'view_mode': 'tree',
-            'views': [(False, 'tree')],
-            'domain': [
-                ('requisition_id', 'in', self.requisition_id.ids),
-                ('bill_lading_id', '=', False)
-            ],
-            'target': 'new',
-            'context': {
-                'no_create': True,  # Remove create button
-                'no_create_edit': True,
-                'tree_view_ref': 'container.view_container_selection_tree',
-            },
-        }
+    
     
