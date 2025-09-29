@@ -150,7 +150,7 @@ class LogisticsBillLading(models.Model):
         
         # If containers or port of discharge changed, update containers
         if any(field in vals for field in ['container_ids', 'port_of_discharge_id', 'port_of_loading_id', 'actual_arrival_date', 'actual_departure_date', 'vessel_name', 'voyage_number'
-                                           , 'forwarder_id', 'shipping_line_id', 'incoterm_id']):
+                                           , 'forwarder_id', 'shipping_line_id', 'incoterm_id', 'docs_draft', 'docs_original', 'ordino', 'ccl_company']):
             for record in self:
                 if record.container_ids:
                     record._update_containers_port_of_discharge()
