@@ -126,21 +126,7 @@ class LogisticsBillLading(models.Model):
         
         return record
     
-    def action_view_containers(self):
-        """Smart button to view related containers"""
-        self.ensure_one()
-        if not self.container_ids:
-            return
-        
-        action = self.env.ref('container.action_container_container').read()[0]
-        
-        if len(self.container_ids) > 1:
-            action['domain'] = [('id', 'in', self.container_ids.ids)]
-        else:
-            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
-            action['res_id'] = self.container_ids.id
-        
-        return action
+    
     
 
     def write(self, vals):
@@ -412,10 +398,27 @@ class LogisticsBillLading(models.Model):
         
         if len(purchase_orders) > 1:
             action['domain'] = [('id', 'in', purchase_orders.ids)]
+            action['context'] = {'search_default_group_requisition': 1}
         else:
             action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
             action['res_id'] = purchase_orders.id
         
         return action
     
+
+    def action_view_containers(self):
+        """Smart button to view related containers"""
+        self.ensure_one()
+        if not self.container_ids:
+            return
+        
+        action = self.env.ref('container.action_container_container').read()[0]
+        
+        if len(self.container_ids) > 1:
+            action['domain'] = [('id', 'in', self.container_ids.ids)]
+        else:
+            action['views'] = [(self.env.ref('container.view_logistics_container_form').id, 'form')]
+            action['res_id'] = self.container_ids.id
+        
+        return action
     
