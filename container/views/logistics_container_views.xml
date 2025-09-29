@@ -107,6 +107,13 @@
                         </group>
                     </group>
 
+                    <!-- Document Fields -->
+                    <group string="Documents">
+                        <field name="docs_draft"/>
+                        <field name="docs_original"/>
+                        <field name="ordino"/>
+                        <field name="ccl_company" options="{'no_create': True}"/>
+
                     <group string="Summary">
                         <group>
                             <field name="product_count" readonly="1"/>

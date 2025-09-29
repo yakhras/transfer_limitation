@@ -96,6 +96,12 @@ class LogisticsContainer(models.Model):
     # Computed Fields
     total_qty = fields.Float('Total Quantity', compute='_compute_totals', store=True)
     product_count = fields.Integer('Product Count', compute='_compute_totals', store=True)
+
+    # Document
+    docs_draft = fields.Boolean('Docs Draft')
+    docs_original = fields.Boolean('Docs Org.')
+    ordino = fields.Boolean('Ordino')
+    ccl_company = fields.Many2one('res.partner', string='CCL Company')
     
     # Company
     company_id = fields.Many2one('res.company', string='Company', compute='_compute_company', store=True)

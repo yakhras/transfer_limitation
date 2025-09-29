@@ -91,7 +91,6 @@
                                 <field name="port_of_discharge_country_id"/>
                             </group>
                             <group>
-                                
                                 <field name="vessel_name"/>
                                 <field name="voyage_number"/>
                                 <field name="place_of_receipt"/>
@@ -110,6 +109,12 @@
                                 <field name="actual_arrival_date"/>
                             </group>
                         </group>
+
+                        <group string="Documents">
+                            <field name="docs_draft"/>
+                            <field name="docs_original"/>
+                            <field name="ordino"/>
+                            <field name="ccl_company" options="{'no_create': True}"/>
 
                         <notebook>
                             <page string="Containers">

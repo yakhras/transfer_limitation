@@ -50,16 +50,13 @@ class LogisticsBillLading(models.Model):
     voyage_number = fields.Char('Voyage Number', tracking=True)
     incoterm_id = fields.Many2one('account.incoterms', string='Incoterm', tracking=True)
     port_of_loading_id = fields.Many2one('res.country.state', string='Port of Loading', tracking=True)
-    port_of_loading_country_id = fields.Many2one('res.country', string='Loading Country', 
-                                                 related='port_of_loading_id.country_id', readonly=True)
+    port_of_loading_country_id = fields.Many2one('res.country', string='Loading Country', related='port_of_loading_id.country_id', readonly=True)
     port_of_discharge_id = fields.Many2one('res.country.state', string='Port of Discharge', tracking=True)
-    port_of_discharge_country_id = fields.Many2one('res.country', string='Discharge Country', 
-                                                   related='port_of_discharge_id.country_id', readonly=True)
+    port_of_discharge_country_id = fields.Many2one('res.country', string='Discharge Country', related='port_of_discharge_id.country_id', readonly=True)
     place_of_receipt = fields.Char('Place of Receipt')
     place_of_delivery = fields.Char('Place of Delivery')
     
     # Dates
-    
     etd = fields.Date('ETD (Estimated Time of Departure)', tracking=True)
     eta = fields.Date('ETA (Estimated Time of Arrival)', tracking=True)
     actual_departure_date = fields.Date('Actual Departure Date', tracking=True)
@@ -96,8 +93,7 @@ class LogisticsBillLading(models.Model):
     measurement = fields.Float('Measurement (CBM)', digits=(10, 3))
     
     # Financial
-    currency_id = fields.Many2one('res.currency', string='Currency', 
-                                 default=lambda self: self.env.company.currency_id)
+    currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
     freight_amount = fields.Monetary('Freight Amount', currency_field='currency_id')
     total_charges = fields.Monetary('Total Charges', currency_field='currency_id')
     
@@ -105,6 +101,10 @@ class LogisticsBillLading(models.Model):
     booking_reference = fields.Char('Booking Reference')
     export_reference = fields.Char('Export Reference')
     forwarding_agent_reference = fields.Char('Forwarding Agent Reference')
+    docs_draft = fields.Boolean('Docs Draft')
+    docs_original = fields.Boolean('Docs Org.')
+    ordino = fields.Boolean('Ordino')
+    ccl_company = fields.Many2one('res.partner', string='CCL Company')
     
     # Company
     company_id = fields.Many2one('res.company', string='Company', required=True,
