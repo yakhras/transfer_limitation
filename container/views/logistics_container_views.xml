@@ -71,6 +71,12 @@
                         <h1>
                             <field name="name" placeholder="Container Reference" readonly="1"/>
                         </h1>
+                        <div class="oe_button_box" name="button_box">
+                            <button type="object" name="action_view_bill_of_lading" 
+                                    class="oe_stat_button" icon="fa-ship">
+                                <field name="bill_lading_count" widget="statinfo" string="Bill of Lading"/>
+                            </button>
+                        </div>
                     </div>
                     <group>
                         <group string="Container Information">

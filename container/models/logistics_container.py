@@ -54,6 +54,12 @@ class LogisticsContainer(models.Model):
                                        help='Deprecated field for compatibility. Use purchase_order_ids instead.')
     bill_lading_id = fields.Many2one('logistics.bill.lading', string='Bill of Lading', 
                                     tracking=True, ondelete='set null')
+    bill_lading_count = fields.Integer('B/L Count', compute='_compute_bill_lading_count', store=True)
+
+    @api.depends('bill_lading_id')
+    def _compute_bill_lading_count(self):
+        for container in self:
+            container.bill_lading_count = 1 if container.bill_lading_id else 0
     
     # Physical Properties
     seal_number = fields.Char('Seal Number', tracking=True)
@@ -332,6 +338,20 @@ class LogisticsContainer(models.Model):
                 po_count += len(container.requisition_id.purchase_ids - container.purchase_order_ids)
             container.purchase_order_count = po_count
     
+
+    def action_view_bill_of_lading(self):
+        """Smart button to view related bill of lading"""
+        self.ensure_one()
+        if not self.bill_lading_id:
+            return
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'logistics.bill.lading',
+            'res_id': self.bill_lading_id.id,  # Single record - no .ids needed
+            'view_mode': 'form',
+            'target': 'current',
+        }
 
     def action_view_purchase_requisition(self):
         """Smart button to view related purchase requisition"""
