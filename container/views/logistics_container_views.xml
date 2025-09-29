@@ -12,11 +12,17 @@
                   decoration-danger="state in ('unloading','unloaded')"
                   multi_edit="1">
                 <field name="name" />
+                <field name="container_number" />
                 <field name="container_type" />
                 <field name="requisition_id" />
                 <field name="purchase_order_ids" widget="many2many_tags" domain="[('requisition_id', '=', requisition_id)]" />
                 <field name="supplier_id" readonly="1"/>
                 <field name="supplier_ref" readonly="1"/>
+                <field name="forwarder_id" readonly="1"/>
+                <field name="shipping_line_id" readonly="1"/>
+                <field name="incoterm_id" readonly="1"/>
+                <field name="vessel_name" readonly="1"/>
+                <field name="voyage_number" readonly="1"/>
                 <field name="departure_date" />
                 <field name="arrival_date" />
                 <field name="country_id" readonly="1"/>
@@ -91,7 +97,6 @@
                             <field name="incoterm_id" readonly="1"/>
                             <field name="vessel_name"/>
                             <field name="voyage_number"/>
-                            
                         </group>
                         <group>
                             <field name="port_of_loading"/>
