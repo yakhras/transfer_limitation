@@ -61,7 +61,6 @@ class PurchaseRequisition(models.Model):
         
         # Always set the context for auto-population
         action['context'] = {
-            'default_requisition_id': self.id,
             'default_shipper_id': self.vendor_id.id if self.vendor_id else False,
             'default_consignee_id': self.company_id.partner_id.id,
         }
