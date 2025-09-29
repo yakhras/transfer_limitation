@@ -86,12 +86,16 @@
                     
                     <group string="Logistics Details">
                         <group>
+                            <field name="forwarder_id" readonly="1"/>
+                            <field name="shipping_line_id" readonly="1"/>
+                            <field name="incoterm_id" readonly="1"/>
                             <field name="vessel_name"/>
                             <field name="voyage_number"/>
-                            <field name="port_of_loading"/>
-                            <field name="port_of_discharge"/>
+                            
                         </group>
                         <group>
+                            <field name="port_of_loading"/>
+                            <field name="port_of_discharge"/>
                             <field name="departure_date"/>
                             <field name="arrival_date"/>
                             <field name="currency_id" readonly="1"/>
