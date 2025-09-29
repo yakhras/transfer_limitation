@@ -202,6 +202,25 @@
                 </tree>
             </field>
         </record>
+
+        <record id="view_container_selection_tree" model="ir.ui.view">
+            <field name="name">logistics.container.selection.tree</field>
+            <field name="model">logistics.container</field>
+            <field name="arch" type="xml">
+                <tree multi_edit="1">
+                    <field name="name"/>
+                    <field name="container_type"/>
+                    <field name="seal_number"/>
+                    <field name="weight_kg"/>
+                    <field name="volume_m3"/>
+                    <field name="state"/>
+                    <button name="action_assign_to_bill_lading" 
+                            string="Select" 
+                            type="object" 
+                            class="btn-primary"/>
+                </tree>
+            </field>
+        </record>
         
         <!-- Bill of Lading Kanban View -->
         <record id="view_logistics_bill_lading_kanban" model="ir.ui.view">
