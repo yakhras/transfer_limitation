@@ -342,8 +342,6 @@ class LogisticsContainer(models.Model):
     def action_view_bill_of_lading(self):
         """Smart button to view related bill of lading"""
         self.ensure_one()
-        if not self.bill_lading_id:
-            return
         
         return {
             'type': 'ir.actions.act_window',
