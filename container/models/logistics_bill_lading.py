@@ -123,6 +123,7 @@ class LogisticsBillLading(models.Model):
             record._update_containers_port_of_discharge()
             record._update_containers_dates()
             record._update_containers_shipping_info()
+            record._update_containers_documents()
         
         return record
     
@@ -155,6 +156,7 @@ class LogisticsBillLading(models.Model):
                     record._update_containers_port_of_discharge()
                     record._update_containers_dates()
                     record._update_containers_shipping_info()
+                    record._update_containers_documents()
         
         return result
     
@@ -184,6 +186,16 @@ class LogisticsBillLading(models.Model):
                 'forwarder_id': self.forwarder_id.id if self.forwarder_id else False,
                 'shipping_line_id': self.shipping_line_id.id if self.shipping_line_id else False,
                 'incoterm_id': self.incoterm_id.id if self.incoterm_id else False,
+            })
+
+    def _update_containers_documents(self):
+        """Helper method to update document fields in containers"""
+        for container in self.container_ids:
+            container.sudo().write({
+                'docs_draft': self.docs_draft,
+                'docs_original': self.docs_original,
+                'ordino': self.ordino,
+                'ccl_company': self.ccl_company.id if self.ccl_company else False,
             })
     
 
