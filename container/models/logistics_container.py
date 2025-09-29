@@ -51,15 +51,16 @@ class LogisticsContainer(models.Model):
     volume_m3 = fields.Float('Volume (M³)', digits=(10, 2))
     
     # Logistics Information
+    forwarder_id = fields.Many2one('res.partner', string='Forwarding Agent', tracking=True, readonly=True)
+    shipping_line_id = fields.Many2one('res.partner', string='Shipping Line', tracking=True, readonly=True)
+    incoterm_id = fields.Many2one('account.incoterms', string='Incoterm', tracking=True, readonly=True)
     arrival_date = fields.Date('Arrival Date', tracking=True, readonly=True)
     departure_date = fields.Date('Departure Date', tracking=True, readonly=True)
-    country_id = fields.Many2one('res.country', string='Country', 
-                                related='supplier_id.country_id', store=True, tracking=True)
+    country_id = fields.Many2one('res.country', string='Country', related='supplier_id.country_id', store=True, tracking=True)
     tracking_number = fields.Char('Tracking Number')
-    vessel_name = fields.Char('Vessel Name')
-    voyage_number = fields.Char('Voyage Number')
-    port_of_loading = fields.Many2one('res.country.state', string='Port of Loading', 
-                                     domain="[('country_id', '=', country_id)]", tracking=True, readonly=True)
+    vessel_name = fields.Char('Vessel Name', readonly=True)
+    voyage_number = fields.Char('Voyage Number', readonly=True)
+    port_of_loading = fields.Many2one('res.country.state', string='Port of Loading', domain="[('country_id', '=', country_id)]", tracking=True, readonly=True)
     port_of_discharge = fields.Many2one('res.country.state', string='Port of Discharge', tracking=True, readonly=True)
     
     # Status Management
@@ -77,34 +78,27 @@ class LogisticsContainer(models.Model):
     ], string='Status', default='draft', tracking=True, required=True)
     
     # Business Relations
-    supplier_id = fields.Many2one('res.partner', string='Supplier', 
-                                 related='requisition_id.vendor_id', store=True, tracking=True)
-    supplier_ref = fields.Char('Supplier Reference', 
-                              related='requisition_id.supplier_ref', store=True, tracking=True)
+    supplier_id = fields.Many2one('res.partner', string='Supplier', related='requisition_id.vendor_id', store=True, tracking=True)
+    supplier_ref = fields.Char('Supplier Reference', related='requisition_id.supplier_ref', store=True, tracking=True)
     
     # Container Content
-    container_line_ids = fields.One2many('logistics.container.line', 'container_id', 
-                                        string='Container Lines')
+    container_line_ids = fields.One2many('logistics.container.line', 'container_id', string='Container Lines')
     
     # Financial Information
-    currency_id = fields.Many2one('res.currency', string='Currency', 
-                                 compute='_compute_currency', store=True)
-    total_value = fields.Monetary('Total Value', compute='_compute_totals', 
-                                 store=True, currency_field='currency_id')
+    currency_id = fields.Many2one('res.currency', string='Currency', compute='_compute_currency', store=True)
+    total_value = fields.Monetary('Total Value', compute='_compute_totals', store=True, currency_field='currency_id')
     freight_cost = fields.Monetary('Freight Cost', currency_field='currency_id')
     insurance_cost = fields.Monetary('Insurance Cost', currency_field='currency_id')
     customs_duty = fields.Monetary('Customs Duty', currency_field='currency_id')
     other_charges = fields.Monetary('Other Charges', currency_field='currency_id')
-    total_cost = fields.Monetary('Total Cost', compute='_compute_total_cost', 
-                                store=True, currency_field='currency_id')
+    total_cost = fields.Monetary('Total Cost', compute='_compute_total_cost', store=True, currency_field='currency_id')
     
     # Computed Fields
     total_qty = fields.Float('Total Quantity', compute='_compute_totals', store=True)
     product_count = fields.Integer('Product Count', compute='_compute_totals', store=True)
     
     # Company
-    company_id = fields.Many2one('res.company', string='Company', 
-                                compute='_compute_company', store=True)
+    company_id = fields.Many2one('res.company', string='Company', compute='_compute_company', store=True)
     
     @api.model
     def create(self, vals):

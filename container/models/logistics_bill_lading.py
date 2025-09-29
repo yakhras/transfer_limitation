@@ -120,6 +120,7 @@ class LogisticsBillLading(models.Model):
         if record.container_ids :
             record._update_containers_port_of_discharge()
             record._update_containers_dates()
+            record._update_containers_shipping_info()
         
         return record
     
@@ -145,11 +146,13 @@ class LogisticsBillLading(models.Model):
         result = super(LogisticsBillLading, self).write(vals)
         
         # If containers or port of discharge changed, update containers
-        if any(field in vals for field in ['container_ids', 'port_of_discharge_id', 'port_of_loading_id', 'actual_arrival_date', 'actual_departure_date']):
+        if any(field in vals for field in ['container_ids', 'port_of_discharge_id', 'port_of_loading_id', 'actual_arrival_date', 'actual_departure_date', 'vessel_name', 'voyage_number'
+                                           , 'forwarder_id', 'shipping_line_id', 'incoterm_id']):
             for record in self:
                 if record.container_ids:
                     record._update_containers_port_of_discharge()
                     record._update_containers_dates()
+                    record._update_containers_shipping_info()
         
         return result
     
@@ -168,6 +171,17 @@ class LogisticsBillLading(models.Model):
             container.sudo().write({
                 'arrival_date': self.actual_arrival_date if self.actual_arrival_date else False,
                 'departure_date': self.actual_departure_date if self.actual_departure_date else False,
+            })
+
+    def _update_containers_shipping_info(self):
+        """Helper method to update vessel and voyage in containers"""
+        for container in self.container_ids:
+            container.sudo().write({
+                'vessel_name': self.vessel_name if self.vessel_name else False,
+                'voyage_number': self.voyage_number if self.voyage_number else False,
+                'forwarder_id': self.forwarder_id.id if self.forwarder_id else False,
+                'shipping_line_id': self.shipping_line_id.id if self.shipping_line_id else False,
+                'incoterm_id': self.incoterm_id.id if self.incoterm_id else False,
             })
     
 
