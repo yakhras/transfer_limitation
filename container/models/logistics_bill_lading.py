@@ -22,11 +22,10 @@ class LogisticsBillLading(models.Model):
     bl_date = fields.Date('B/L Date', required=True, default=fields.Date.context_today, tracking=True)
     
     # Master Relation - One B/L belongs to one Requisition
-    requisition_id = fields.Many2many('purchase.requisition', string='Purchase Requisition', 
-                                    required=True, tracking=True, ondelete='cascade')
+    requisition_id = fields.Many2many('purchase.requisition', string='Purchase Requisition', required=True, tracking=True, ondelete='cascade')
     
     # Related Purchase Orders (from the requisition)
-    purchase_order_ids = fields.One2many('purchase.order', 'bill_lading_id', string='Purchase Orders')
+    purchase_order_ids = fields.Many2many('purchase.order', string='Purchase Orders')
     
     # Direct container relation
     container_ids = fields.Many2many(
