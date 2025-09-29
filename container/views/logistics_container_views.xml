@@ -113,6 +113,7 @@
                         <field name="docs_original"/>
                         <field name="ordino"/>
                         <field name="ccl_company" options="{'no_create': True}"/>
+                    </group>
 
                     <group string="Summary">
                         <group>
