@@ -435,3 +435,30 @@ class LogisticsBillLading(models.Model):
         
         return action
     
+
+    # In Bill of Lading model
+    def action_add_containers(self):
+        """Open wizard to select containers"""
+        self.ensure_one()
+        return {
+            'name': 'Select Containers',
+            'type': 'ir.actions.act_window',
+            'res_model': 'logistics.container',
+            'view_mode': 'tree',
+            'domain': [
+                ('requisition_id', 'in', self.requisition_id.ids),
+                ('bill_lading_id', '=', False)  # Only unassigned containers
+            ],
+            'target': 'new',
+            'context': {
+                'search_default_available': 1,
+                'select_containers_for_bl': self.id,
+            },
+        }
+
+    def action_assign_containers(self, container_ids):
+        """Assign selected containers to this B/L"""
+        self.ensure_one()
+        containers = self.env['logistics.container'].browse(container_ids)
+        containers.write({'bill_lading_id': self.id})
+    

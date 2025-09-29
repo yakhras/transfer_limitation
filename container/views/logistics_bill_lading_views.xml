@@ -122,9 +122,13 @@
 
                         <notebook>
                             <page string="Containers">
-                                <field name="container_ids" 
-                                    domain="[('requisition_id', 'in', requisition_id)]"
-                                    options="{'no_create': True, 'no_create_edit': True}">
+                                <group>
+                                    <button name="action_add_containers" 
+                                            string="Add Containers" 
+                                            type="object" 
+                                            class="btn-primary"/>
+                                </group>
+                                <field name="container_ids" readonly="1">
                                     <tree>
                                         <field name="name"/>
                                         <field name="container_type"/>
