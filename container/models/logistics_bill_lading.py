@@ -22,7 +22,16 @@ class LogisticsBillLading(models.Model):
     bl_date = fields.Date('B/L Date', required=True, default=fields.Date.context_today, tracking=True)
     
     # Master Relation - One B/L belongs to one Requisition
-    requisition_id = fields.Many2many('purchase.requisition', string='Purchase Requisition', required=True, tracking=True, ondelete='cascade')
+    # requisition_id = fields.Many2many('purchase.requisition', string='Purchase Requisition', required=True, tracking=True, ondelete='cascade')
+
+    requisition_id = fields.Many2many(
+        'purchase.requisition',
+        'bill_lading_requisition_rel',  # Same table!
+        'bill_lading_id',
+        'requisition_id',
+        string='Purchase Requisitions',
+        required=True
+    )
     
     # Related Purchase Orders (from the requisition)
     purchase_order_ids = fields.Many2many('purchase.order', string='Purchase Orders')

@@ -10,7 +10,15 @@ class PurchaseRequisition(models.Model):
     
     # Direct relations
     container_ids = fields.One2many('logistics.container', 'requisition_id', string='Containers')
-    bill_lading_ids = fields.Many2many('logistics.bill.lading', 'requisition_id', string='Bills of Lading')
+    # bill_lading_ids = fields.Many2many('logistics.bill.lading', 'requisition_id', string='Bills of Lading')
+
+    bill_lading_ids = fields.Many2many(
+        'logistics.bill.lading',
+        'bill_lading_requisition_rel',
+        'requisition_id',
+        'bill_lading_id',
+        string='Bills of Lading'
+    )
     
     # Computed fields
     container_count = fields.Integer('Container Count', compute='_compute_counts', store=True)
