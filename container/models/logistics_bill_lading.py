@@ -127,7 +127,6 @@ class LogisticsBillLading(models.Model):
         return record
     
     
-    
 
     def write(self, vals):
         """Override write to update containers when needed"""
@@ -398,7 +397,7 @@ class LogisticsBillLading(models.Model):
         
         if len(purchase_orders) > 1:
             action['domain'] = [('id', 'in', purchase_orders.ids)]
-            action['context'] = {'search_default_group_requisition': 1}
+            action['context'] = {'group_by': 'requisition_id'}
         else:
             action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
             action['res_id'] = purchase_orders.id
