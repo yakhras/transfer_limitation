@@ -278,8 +278,7 @@
                         <field name="purchase_order_count" widget="statinfo" string="Purchase Orders"/>
                     </button>
                     <button type="object" name="action_view_bill_of_lading" 
-                            class="oe_stat_button" icon="fa-ship"
-                            attrs="{'invisible': [('bill_lading_count', '=', 0)]}">
+                            class="oe_stat_button" icon="fa-ship">
                         <field name="bill_lading_count" widget="statinfo" string="Bill of Lading"/>
                     </button>
                 </div>
