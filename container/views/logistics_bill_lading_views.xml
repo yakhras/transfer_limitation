@@ -122,12 +122,6 @@
 
                         <notebook>
                             <page string="Containers">
-                                <group>
-                                    <button name="action_add_containers" 
-                                            string="Add Containers" 
-                                            type="object" 
-                                            class="btn-primary"/>
-                                </group>
                                 <field name="container_ids" readonly="1">
                                     <tree>
                                         <field name="name"/>
