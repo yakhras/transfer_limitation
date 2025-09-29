@@ -408,7 +408,7 @@ class LogisticsBillLading(models.Model):
         if not purchase_orders:
             return
         
-        action = self.env.ref('purchase.purchase_order_action_generic').read()[0]
+        action = self.env.ref('purchase.purchase_rfq').read()[0]
         
         if len(purchase_orders) > 1:
             action['domain'] = [('id', 'in', purchase_orders.ids)]
