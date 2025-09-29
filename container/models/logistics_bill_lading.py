@@ -43,6 +43,7 @@ class LogisticsBillLading(models.Model):
                                      domain=[('is_company', '=', True)], tracking=True)
     
     # Shipping Information
+    forwarder_id = fields.Many2one('res.partner', string='Forwarding Agent', tracking=True)
     vessel_name = fields.Char('Vessel Name', tracking=True)
     voyage_number = fields.Char('Voyage Number', tracking=True)
     port_of_loading_id = fields.Many2one('res.country.state', string='Port of Loading', tracking=True)
