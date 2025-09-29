@@ -82,13 +82,15 @@
                         <group string="Shipping Details">
                             <group>
                                 <field name="forwarder_id" options="{'no_create': True}"/>
+                                <field name="shipping_line_id" options="{'no_create': True}"/>
+                                <field name="incoterm_id" options="{'no_create': True}"/>
                                 <field name="port_of_loading_id" options="{'no_create': True}"/>
                                 <field name="port_of_loading_country_id"/>
                                 <field name="port_of_discharge_id" options="{'no_create': True}"/>
                                 <field name="port_of_discharge_country_id"/>
                             </group>
                             <group>
-                                <field name="shipping_line_id" options="{'no_create': True}"/>
+                                
                                 <field name="vessel_name"/>
                                 <field name="voyage_number"/>
                                 <field name="place_of_receipt"/>
@@ -169,6 +171,7 @@
                     <field name="consignee_id"/>
                     <field name="forwarder_id"/>
                     <field name="shipping_line_id"/>
+                    <field name="incoterm_id"/>
                     <field name="vessel_name"/>
                     <field name="port_of_loading_id"/>
                     <field name="port_of_discharge_id"/>
