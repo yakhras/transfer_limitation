@@ -10,8 +10,9 @@ class LogisticsBillLading(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Basic Information - Modified to auto-generate reference
-    name = fields.Char('B/L Number', required=True, copy=False, tracking=True,
+    name = fields.Char('B/L Ref', required=True, copy=False, tracking=True,
                       readonly=True, default=lambda self: _('New'))
+    number = fields.Char('B/L Number', tracking=True, required=True)
     bl_type = fields.Selection([
         ('master', 'Master B/L'),
         ('house', 'House B/L'),
@@ -58,6 +59,7 @@ class LogisticsBillLading(models.Model):
     place_of_delivery = fields.Char('Place of Delivery')
     
     # Dates
+    
     etd = fields.Date('ETD (Estimated Time of Departure)', tracking=True)
     eta = fields.Date('ETA (Estimated Time of Arrival)', tracking=True)
     actual_departure_date = fields.Date('Actual Departure Date', tracking=True)

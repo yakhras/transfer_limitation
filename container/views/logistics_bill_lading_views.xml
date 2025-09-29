@@ -54,6 +54,7 @@
                         </div>
                         <group>
                             <group string="Bill of Lading Information">
+                                <field name="number"/>
                                 <field name="bl_type"/>
                                 <field name="bl_date"/>
                                 <field name="requisition_id" widget="many2many_tags"/>
@@ -164,6 +165,7 @@
                       decoration-success="state in ('arrived','delivered')"
                       decoration-muted="state in ('closed','cancelled')" multi_edit="1">
                     <field name="name"/>
+                    <field name="number"/>
                     <field name="bl_type"/>
                     <field name="bl_date"/>
                     <field name="requisition_id"/>
