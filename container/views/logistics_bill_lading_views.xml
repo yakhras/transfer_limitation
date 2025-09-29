@@ -166,6 +166,7 @@
                     <field name="requisition_id"/>
                     <field name="shipper_id"/>
                     <field name="consignee_id"/>
+                    <field name="forwarder_id"/>
                     <field name="vessel_name"/>
                     <field name="port_of_loading_id"/>
                     <field name="port_of_discharge_id"/>
