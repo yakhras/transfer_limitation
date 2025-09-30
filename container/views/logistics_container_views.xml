@@ -101,6 +101,7 @@
                             <field name="voyage_number"/>
                         </group>
                         <group>
+                            <field name="bill_lading_id"/>
                             <field name="port_of_loading"/>
                             <field name="port_of_discharge"/>
                             <field name="departure_date"/>
