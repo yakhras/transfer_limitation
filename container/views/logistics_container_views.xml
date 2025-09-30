@@ -13,6 +13,7 @@
                   multi_edit="1">
                 <field name="name" />
                 <field name="container_number" />
+                <field name="bill_lading_id" />
                 <field name="container_type" />
                 <field name="declaration_type" />
                 <field name="requisition_id" />
