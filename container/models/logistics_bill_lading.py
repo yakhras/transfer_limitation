@@ -38,7 +38,8 @@ class LogisticsBillLading(models.Model):
     
     # Direct container relation
     container_ids = fields.One2many(
-        'logistics.container', 
+        'logistics.container',
+        'bill_lading_id',
         string='Containers',
         domain="[('requisition_id', 'in', requisition_id)]"  # Only containers from selected requisitions
     )
