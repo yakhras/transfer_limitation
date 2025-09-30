@@ -295,6 +295,7 @@
                 <field name="supplier_id"/>
                 <field name="supplier_ref"/>
                 <field name="requisition_id"/>
+                <field name="bill_lading_id"/>
                 <field name="purchase_order_ids"/>
                 <field name="container_type"/>
                 <field name="country_id"/>
@@ -325,6 +326,7 @@
                     <filter string="Port of Loading" name="group_port_loading" context="{'group_by':'port_of_loading'}"/>
                     <filter string="Port of Discharge" name="group_port_discharge" context="{'group_by':'port_of_discharge'}"/>
                     <filter string="Purchase Requisition" name="group_requisition" context="{'group_by':'requisition_id'}"/>
+                    <filter string="Bill of Lading" name="group_bill_lading" context="{'group_by':'bill_lading_id'}"/>
                     <filter string="Container Type" name="group_type" context="{'group_by':'container_type'}"/>
                     <filter string="Arrival Date" name="group_arrival" context="{'group_by':'arrival_date'}"/>
                 </group>
