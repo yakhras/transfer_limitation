@@ -122,8 +122,7 @@
 
                         <notebook>
                             <page string="Containers">
-                                <field name="container_ids">
-                                </field>
+                                <field name="container_ids" readonly="1" />
                             </page>
                             <page string="Cargo Details">
                                 <group>
