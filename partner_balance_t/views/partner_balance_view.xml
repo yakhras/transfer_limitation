@@ -145,7 +145,7 @@
             <field name="target">current</field>
 
             <!-- Filter by the partner provided from JS via active_id -->
-            <field name="domain">[('partner_id', '=', active_id)]</field>
+            <field name="domain">[('partner_id', '=', active_id if active_id else False)]</field>
 
             <!-- Server-side defaults; JS can add to context but shouldn’t need to replace -->
             <field name="context">
