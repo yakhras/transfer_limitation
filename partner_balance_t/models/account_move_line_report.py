@@ -58,82 +58,82 @@ class AccountMoveLineReport(models.Model):
     initial_balance_partner_currency = fields.Monetary('Initial Balance Partner Currency', compute='_compute_initial_balance_partner_currency',store=False, currency_field='partner_currency_id')
 
 
-    # def init(self):
-    #     """Initialize the report view"""
-    #     tools.drop_view_if_exists(self.env.cr, self._table)
-    #     self.env.cr.execute(f"""
-    #         CREATE OR REPLACE VIEW {self._table} AS (
-    #             WITH check_aggregates AS (
-    #                 SELECT 
-    #                     ap.id as payment_id,
-    #                     string_agg(DISTINCT ac.number::text, ', ' ORDER BY ac.number::text) as check_numbers
-    #                 FROM account_payment ap
-    #                 JOIN account_check ac ON ac.payment_id = ap.id
-    #                 GROUP BY ap.id
-    #             )
+    def init(self):
+        """Initialize the report view"""
+        tools.drop_view_if_exists(self.env.cr, self._table)
+        self.env.cr.execute(f"""
+            CREATE OR REPLACE VIEW {self._table} AS (
+                WITH check_aggregates AS (
+                    SELECT 
+                        ap.id as payment_id,
+                        string_agg(DISTINCT ac.number::text, ', ' ORDER BY ac.number::text) as check_numbers
+                    FROM account_payment ap
+                    JOIN account_check ac ON ac.payment_id = ap.id
+                    GROUP BY ap.id
+                )
                 
-    #             SELECT
-    #                 aml.id                AS id,
-    #                 aml.date              AS date,
-    #                 aml.move_id           AS move_id,
-    #                 aml.partner_id        AS partner_id,
-    #                 aml.account_id        AS account_id,
-    #                 aml.company_id        AS company_id,
+                SELECT
+                    aml.id                AS id,
+                    aml.date              AS date,
+                    aml.move_id           AS move_id,
+                    aml.partner_id        AS partner_id,
+                    aml.account_id        AS account_id,
+                    aml.company_id        AS company_id,
 
-    #                 aml.debit             AS debit,
-    #                 aml.credit            AS credit,
-    #                 aml.balance           AS balance,
-    #                 aml.amount_currency   AS amount_currency,
-    #                 aml.currency_id       AS currency_id,
-    #                 rc.id                 AS company_currency_id,
+                    aml.debit             AS debit,
+                    aml.credit            AS credit,
+                    aml.balance           AS balance,
+                    aml.amount_currency   AS amount_currency,
+                    aml.currency_id       AS currency_id,
+                    rc.id                 AS company_currency_id,
 
-    #                 -- Enhanced reference logic with check numbers and bank ref
-    #                 CASE
-    #                     WHEN aj.payment_subtype = 'check' AND ca.check_numbers IS NOT NULL THEN
-    #                         ca.check_numbers  -- Show aggregated check numbers
-    #                     WHEN aj.payment_subtype = 'bank' AND aml.ref IS NOT NULL THEN
-    #                         aml.ref          -- Show bank reference from move line
-    #                     ELSE
-    #                         am.name          -- Default journal entry reference
-    #                 END AS reference,
+                    -- Enhanced reference logic with check numbers and bank ref
+                    CASE
+                        WHEN aj.payment_subtype = 'check' AND ca.check_numbers IS NOT NULL THEN
+                            ca.check_numbers  -- Show aggregated check numbers
+                        WHEN aj.payment_subtype = 'bank' AND aml.ref IS NOT NULL THEN
+                            aml.ref          -- Show bank reference from move line
+                        ELSE
+                            am.name          -- Default journal entry reference
+                    END AS reference,
                     
-    #                 -- Transaction type classification
-    #                 CASE 
-    #                     WHEN am.move_type = 'out_invoice' THEN 'out_invoice'
-    #                     WHEN am.move_type = 'in_invoice' THEN 'in_invoice'
-    #                     WHEN am.move_type = 'out_refund' THEN 'out_refund'
-    #                     WHEN am.move_type = 'in_refund' THEN 'in_refund'
-    #                     WHEN aj.payment_subtype = 'bank' THEN 'bank_payment'
-    #                     WHEN aj.payment_subtype = 'check' THEN 'check_payment'
-    #                     WHEN aj.type = 'purchase' THEN 'purchase'
-    #                     WHEN aj.type = 'sale' THEN 'sale'
-    #                     ELSE 'journal_entry'
-    #                 END AS type_key,
+                    -- Transaction type classification
+                    CASE 
+                        WHEN am.move_type = 'out_invoice' THEN 'out_invoice'
+                        WHEN am.move_type = 'in_invoice' THEN 'in_invoice'
+                        WHEN am.move_type = 'out_refund' THEN 'out_refund'
+                        WHEN am.move_type = 'in_refund' THEN 'in_refund'
+                        WHEN aj.payment_subtype = 'bank' THEN 'bank_payment'
+                        WHEN aj.payment_subtype = 'check' THEN 'check_payment'
+                        WHEN aj.type = 'purchase' THEN 'purchase'
+                        WHEN aj.type = 'sale' THEN 'sale'
+                        ELSE 'journal_entry'
+                    END AS type_key,
                     
-    #                 am.document_number    AS note        -- Document number / Reference
+                    am.document_number    AS note        -- Document number / Reference
                     
-    #             FROM account_move_line aml
-    #             JOIN account_move am
-    #             ON am.id = aml.move_id
-    #             JOIN account_journal aj
-    #             ON aj.id = am.journal_id  -- Added for payment_subtype
-    #             JOIN account_account aa
-    #             ON aa.id = aml.account_id
-    #             JOIN account_account_type aat
-    #             ON aat.id = aa.user_type_id
-    #             JOIN res_company comp
-    #             ON comp.id = aml.company_id
-    #             JOIN res_currency rc
-    #             ON rc.id = comp.currency_id
-    #             LEFT JOIN account_payment ap
-    #             ON ap.move_id = am.id     -- Link to payment for check lookup
-    #             LEFT JOIN check_aggregates ca
-    #             ON ca.payment_id = ap.id  -- Get aggregated check numbers
-    #             WHERE am.state = 'posted'
-    #             AND aat.type IN ('payable','receivable')
-    #             AND aml.partner_id IS NOT NULL
-    #         )
-    #     """)
+                FROM account_move_line aml
+                JOIN account_move am
+                ON am.id = aml.move_id
+                JOIN account_journal aj
+                ON aj.id = am.journal_id  -- Added for payment_subtype
+                JOIN account_account aa
+                ON aa.id = aml.account_id
+                JOIN account_account_type aat
+                ON aat.id = aa.user_type_id
+                JOIN res_company comp
+                ON comp.id = aml.company_id
+                JOIN res_currency rc
+                ON rc.id = comp.currency_id
+                LEFT JOIN account_payment ap
+                ON ap.move_id = am.id     -- Link to payment for check lookup
+                LEFT JOIN check_aggregates ca
+                ON ca.payment_id = ap.id  -- Get aggregated check numbers
+                WHERE am.state = 'posted'
+                AND aat.type IN ('payable','receivable')
+                AND aml.partner_id IS NOT NULL
+            )
+        """)
 
     @api.depends('type_key')
     def _compute_type_display(self):
@@ -541,139 +541,139 @@ class AccountMoveLineReport(models.Model):
 
 
     # Add these fields to AccountMoveLineReport class
-    product_id = fields.Many2one('product.product', string='Product', readonly=True)
-    product_code = fields.Char(string='Product Code', readonly=True)
-    product_name = fields.Char(string='Product Name', readonly=True)
-    quantity = fields.Float(string='Quantity', readonly=True)
-    price_unit = fields.Monetary(string='Unit Price', readonly=True, currency_field='currency_id')
-    price_subtotal = fields.Monetary(string='Subtotal', readonly=True, currency_field='currency_id')
-    invoice_line_id = fields.Many2one('account.move.line', string='Invoice Line', readonly=True)
-    row_type = fields.Char(string='Row Type', readonly=True)  # To distinguish main vs detail rows
+    # product_id = fields.Many2one('product.product', string='Product', readonly=True)
+    # product_code = fields.Char(string='Product Code', readonly=True)
+    # product_name = fields.Char(string='Product Name', readonly=True)
+    # quantity = fields.Float(string='Quantity', readonly=True)
+    # price_unit = fields.Monetary(string='Unit Price', readonly=True, currency_field='currency_id')
+    # price_subtotal = fields.Monetary(string='Subtotal', readonly=True, currency_field='currency_id')
+    # invoice_line_id = fields.Many2one('account.move.line', string='Invoice Line', readonly=True)
+    # row_type = fields.Char(string='Row Type', readonly=True)  # To distinguish main vs detail rows
 
-    def init(self):
-        """Initialize the report view with product details"""
-        tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute(f"""
-            CREATE OR REPLACE VIEW {self._table} AS (
-                WITH check_aggregates AS (
-                    SELECT 
-                        ap.id as payment_id,
-                        string_agg(DISTINCT ac.number::text, ', ' ORDER BY ac.number::text) as check_numbers
-                    FROM account_payment ap
-                    JOIN account_check ac ON ac.payment_id = ap.id
-                    GROUP BY ap.id
-                )
+    # def init(self):
+    #     """Initialize the report view with product details"""
+    #     tools.drop_view_if_exists(self.env.cr, self._table)
+    #     self.env.cr.execute(f"""
+    #         CREATE OR REPLACE VIEW {self._table} AS (
+    #             WITH check_aggregates AS (
+    #                 SELECT 
+    #                     ap.id as payment_id,
+    #                     string_agg(DISTINCT ac.number::text, ', ' ORDER BY ac.number::text) as check_numbers
+    #                 FROM account_payment ap
+    #                 JOIN account_check ac ON ac.payment_id = ap.id
+    #                 GROUP BY ap.id
+    #             )
                 
-                -- Main transaction rows
-                SELECT
-                    (aml.id::bigint * 1000000 + 1)::bigint AS id,  -- Use bigint and larger multiplier
-                    'TRANSACTION' AS row_type,
-                    aml.date,
-                    aml.move_id,
-                    aml.partner_id,
-                    aml.account_id,
-                    aml.company_id,
-                    aml.debit,
-                    aml.credit,
-                    aml.balance,
-                    aml.amount_currency,
-                    aml.currency_id,
-                    rc.id AS company_currency_id,
+    #             -- Main transaction rows
+    #             SELECT
+    #                 (aml.id::bigint * 1000000 + 1)::bigint AS id,  -- Use bigint and larger multiplier
+    #                 'TRANSACTION' AS row_type,
+    #                 aml.date,
+    #                 aml.move_id,
+    #                 aml.partner_id,
+    #                 aml.account_id,
+    #                 aml.company_id,
+    #                 aml.debit,
+    #                 aml.credit,
+    #                 aml.balance,
+    #                 aml.amount_currency,
+    #                 aml.currency_id,
+    #                 rc.id AS company_currency_id,
                     
-                    CASE
-                        WHEN aj.payment_subtype = 'check' AND ca.check_numbers IS NOT NULL THEN ca.check_numbers
-                        WHEN aj.payment_subtype = 'bank' AND aml.ref IS NOT NULL THEN aml.ref
-                        ELSE am.name
-                    END AS reference,
+    #                 CASE
+    #                     WHEN aj.payment_subtype = 'check' AND ca.check_numbers IS NOT NULL THEN ca.check_numbers
+    #                     WHEN aj.payment_subtype = 'bank' AND aml.ref IS NOT NULL THEN aml.ref
+    #                     ELSE am.name
+    #                 END AS reference,
                     
-                    CASE 
-                        WHEN am.move_type = 'out_invoice' THEN 'out_invoice'
-                        WHEN am.move_type = 'in_invoice' THEN 'in_invoice'
-                        WHEN am.move_type = 'out_refund' THEN 'out_refund'
-                        WHEN am.move_type = 'in_refund' THEN 'in_refund'
-                        WHEN aj.payment_subtype = 'bank' THEN 'bank_payment'
-                        WHEN aj.payment_subtype = 'check' THEN 'check_payment'
-                        WHEN aj.type = 'purchase' THEN 'purchase'
-                        WHEN aj.type = 'sale' THEN 'sale'
-                        ELSE 'journal_entry'
-                    END AS type_key,
+    #                 CASE 
+    #                     WHEN am.move_type = 'out_invoice' THEN 'out_invoice'
+    #                     WHEN am.move_type = 'in_invoice' THEN 'in_invoice'
+    #                     WHEN am.move_type = 'out_refund' THEN 'out_refund'
+    #                     WHEN am.move_type = 'in_refund' THEN 'in_refund'
+    #                     WHEN aj.payment_subtype = 'bank' THEN 'bank_payment'
+    #                     WHEN aj.payment_subtype = 'check' THEN 'check_payment'
+    #                     WHEN aj.type = 'purchase' THEN 'purchase'
+    #                     WHEN aj.type = 'sale' THEN 'sale'
+    #                     ELSE 'journal_entry'
+    #                 END AS type_key,
                     
-                    am.document_number AS note,
+    #                 am.document_number AS note,
                     
-                    -- Product fields (null for main transaction rows)
-                    NULL::integer AS product_id,
-                    NULL AS product_code,
-                    NULL AS product_name,
-                    NULL::numeric AS quantity,
-                    NULL::numeric AS price_unit,
-                    NULL::numeric AS price_subtotal,
-                    NULL::integer AS invoice_line_id
+    #                 -- Product fields (null for main transaction rows)
+    #                 NULL::integer AS product_id,
+    #                 NULL AS product_code,
+    #                 NULL AS product_name,
+    #                 NULL::numeric AS quantity,
+    #                 NULL::numeric AS price_unit,
+    #                 NULL::numeric AS price_subtotal,
+    #                 NULL::integer AS invoice_line_id
                     
-                FROM account_move_line aml
-                JOIN account_move am ON am.id = aml.move_id
-                JOIN account_journal aj ON aj.id = am.journal_id
-                JOIN account_account aa ON aa.id = aml.account_id
-                JOIN account_account_type aat ON aat.id = aa.user_type_id
-                JOIN res_company comp ON comp.id = aml.company_id
-                JOIN res_currency rc ON rc.id = comp.currency_id
-                LEFT JOIN account_payment ap ON ap.move_id = am.id
-                LEFT JOIN check_aggregates ca ON ca.payment_id = ap.id
-                WHERE am.state = 'posted'
-                AND aat.type IN ('payable','receivable')
-                AND aml.partner_id IS NOT NULL
+    #             FROM account_move_line aml
+    #             JOIN account_move am ON am.id = aml.move_id
+    #             JOIN account_journal aj ON aj.id = am.journal_id
+    #             JOIN account_account aa ON aa.id = aml.account_id
+    #             JOIN account_account_type aat ON aat.id = aa.user_type_id
+    #             JOIN res_company comp ON comp.id = aml.company_id
+    #             JOIN res_currency rc ON rc.id = comp.currency_id
+    #             LEFT JOIN account_payment ap ON ap.move_id = am.id
+    #             LEFT JOIN check_aggregates ca ON ca.payment_id = ap.id
+    #             WHERE am.state = 'posted'
+    #             AND aat.type IN ('payable','receivable')
+    #             AND aml.partner_id IS NOT NULL
 
-                UNION ALL
+    #             UNION ALL
 
-                -- Product detail rows for invoices
-                SELECT
-                    (aml.id::bigint * 1000000 + 2 + row_number() OVER (PARTITION BY aml.id ORDER BY invoice_lines.id))::bigint AS id,
-                    'PRODUCT' AS row_type,
-                    aml.date,
-                    aml.move_id,
-                    aml.partner_id,
-                    aml.account_id,
-                    aml.company_id,
+    #             -- Product detail rows for invoices
+    #             SELECT
+    #                 (aml.id::bigint * 1000000 + 2 + row_number() OVER (PARTITION BY aml.id ORDER BY invoice_lines.id))::bigint AS id,
+    #                 'PRODUCT' AS row_type,
+    #                 aml.date,
+    #                 aml.move_id,
+    #                 aml.partner_id,
+    #                 aml.account_id,
+    #                 aml.company_id,
                     
-                    0::numeric AS debit,
-                    0::numeric AS credit,
-                    0::numeric AS balance,
-                    0::numeric AS amount_currency,
-                    aml.currency_id,
-                    rc.id AS company_currency_id,
+    #                 0::numeric AS debit,
+    #                 0::numeric AS credit,
+    #                 0::numeric AS balance,
+    #                 0::numeric AS amount_currency,
+    #                 aml.currency_id,
+    #                 rc.id AS company_currency_id,
                     
-                    am.name AS reference,
-                    'Product Line' AS type,
-                    concat('Line ', COALESCE(invoice_lines.sequence, 1)) AS note,
+    #                 am.name AS reference,
+    #                 'Product Line' AS type,
+    #                 concat('Line ', COALESCE(invoice_lines.sequence, 1)) AS note,
                     
-                    invoice_lines.product_id,
-                    pp.default_code AS product_code,
-                    pt.name AS product_name,
-                    invoice_lines.quantity,
-                    invoice_lines.price_unit,
-                    invoice_lines.price_subtotal,
-                    invoice_lines.id AS invoice_line_id
+    #                 invoice_lines.product_id,
+    #                 pp.default_code AS product_code,
+    #                 pt.name AS product_name,
+    #                 invoice_lines.quantity,
+    #                 invoice_lines.price_unit,
+    #                 invoice_lines.price_subtotal,
+    #                 invoice_lines.id AS invoice_line_id
                     
-                FROM account_move_line aml
-                JOIN account_move am ON am.id = aml.move_id
-                JOIN account_journal aj ON aj.id = am.journal_id
-                JOIN account_account aa ON aa.id = aml.account_id
-                JOIN account_account_type aat ON aat.id = aa.user_type_id
-                JOIN res_company comp ON comp.id = aml.company_id
-                JOIN res_currency rc ON rc.id = comp.currency_id
-                JOIN account_move_line invoice_lines ON invoice_lines.move_id = am.id 
-                    AND invoice_lines.product_id IS NOT NULL
-                    AND invoice_lines.exclude_from_invoice_tab = false
-                LEFT JOIN product_product pp ON pp.id = invoice_lines.product_id
-                LEFT JOIN product_template pt ON pt.id = pp.product_tmpl_id
+    #             FROM account_move_line aml
+    #             JOIN account_move am ON am.id = aml.move_id
+    #             JOIN account_journal aj ON aj.id = am.journal_id
+    #             JOIN account_account aa ON aa.id = aml.account_id
+    #             JOIN account_account_type aat ON aat.id = aa.user_type_id
+    #             JOIN res_company comp ON comp.id = aml.company_id
+    #             JOIN res_currency rc ON rc.id = comp.currency_id
+    #             JOIN account_move_line invoice_lines ON invoice_lines.move_id = am.id 
+    #                 AND invoice_lines.product_id IS NOT NULL
+    #                 AND invoice_lines.exclude_from_invoice_tab = false
+    #             LEFT JOIN product_product pp ON pp.id = invoice_lines.product_id
+    #             LEFT JOIN product_template pt ON pt.id = pp.product_tmpl_id
                 
-                WHERE am.state = 'posted'
-                AND aat.type IN ('payable','receivable')
-                AND aml.partner_id IS NOT NULL
-                AND am.move_type IN ('out_invoice', 'in_invoice', 'out_refund', 'in_refund')
+    #             WHERE am.state = 'posted'
+    #             AND aat.type IN ('payable','receivable')
+    #             AND aml.partner_id IS NOT NULL
+    #             AND am.move_type IN ('out_invoice', 'in_invoice', 'out_refund', 'in_refund')
                 
-                ORDER BY date, move_id, row_type DESC
-            )
-        """)
+    #             ORDER BY date, move_id, row_type DESC
+    #         )
+    #     """)
 
 
     
