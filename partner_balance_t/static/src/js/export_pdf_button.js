@@ -407,7 +407,7 @@ var ExportPdfButtonListController = ListController.extend({
                     action_name: 'Statement Currency-based of Account',
                 },
                 domain: [[('partner_id', '=', partner_id),
-                    ('account_id', 'in', 'payable','receivable'),
+                    ('account_id', 'in', ['payable','receivable']),
                 ]],  // Pass domain here
             });
         } 
