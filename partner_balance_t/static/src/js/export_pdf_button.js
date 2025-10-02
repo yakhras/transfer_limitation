@@ -395,7 +395,12 @@ var ExportPdfButtonListController = ListController.extend({
         const ctx = this.model?.loadParams?.context || {};
         const partner_id = ctx.default_partner_id;
         
-        // Called from res.partner form view
+        // Base filters for account type and partner
+        const baseFilters = [
+            ['account_id.user_type_id.type', 'in', ['payable', 'receivable']],
+            ['partner_id', '!=', false]
+        ];
+        
         if (partner_id) {
             this.do_action('partner_balance_t.action_partner_move_line_currency', {
                 additional_context: {
@@ -406,18 +411,50 @@ var ExportPdfButtonListController = ListController.extend({
                     partner_name: ctx.partner_name || '',
                     action_name: 'Statement Currency-based of Account',
                 },
-                domain: [[('partner_id', '=', partner_id),
-                    ('account_id', 'in', ['payable','receivable']),
-                ]],  // Pass domain here
+                domain: [...baseFilters, ['partner_id', '=', partner_id]],
             });
-        } 
-        // Called from account.move.line list view
-        else {
+        } else {
             const state = this.model.get(this.handle);
             const currentDomain = state.getDomain();
             const currentContext = state.getContext();
             
             this.do_action('partner_balance_t.action_partner_move_line_currency', {
+                additional_context: {
+                    ...currentContext,
+                    search_default_group_by_account: 1,
+                },
+                domain: currentDomain,
+            });
+        }
+    },
+
+    _onPartnerCurrency: function () {
+        const ctx = this.model?.loadParams?.context || {};
+        const partner_id = ctx.default_partner_id;
+        
+        const baseFilters = [
+            ['account_id.user_type_id.type', 'in', ['payable', 'receivable']],
+            ['partner_id', '!=', false]
+        ];
+        
+        if (partner_id) {
+            this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
+                additional_context: {
+                    active_id: partner_id,
+                    active_ids: [partner_id],
+                    active_model: 'res.partner',
+                    default_partner_id: partner_id,
+                    partner_name: ctx.partner_name || '',
+                    action_name: 'Statement in Partner Currency',
+                },
+                domain: [...baseFilters, ['partner_id', '=', partner_id]],
+            });
+        } else {
+            const state = this.model.get(this.handle);
+            const currentDomain = state.getDomain();
+            const currentContext = state.getContext();
+            
+            this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
                 additional_context: {
                     ...currentContext,
                     search_default_group_by_account: 1,
@@ -447,39 +484,39 @@ var ExportPdfButtonListController = ListController.extend({
     //     });
     // },
 
-    _onPartnerCurrency: function () {
-        const ctx = this.model?.loadParams?.context || {};
-        const partner_id = ctx.default_partner_id;
+    // _onPartnerCurrency: function () {
+    //     const ctx = this.model?.loadParams?.context || {};
+    //     const partner_id = ctx.default_partner_id;
         
-        // Called from res.partner form view
-        if (partner_id) {
-            this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
-                additional_context: {
-                    active_id: partner_id,
-                    active_ids: [partner_id],
-                    active_model: 'res.partner',
-                    default_partner_id: partner_id,
-                    partner_name: ctx.partner_name || '',
-                    action_name: 'Statement in Partner Currency',
-                },
-                domain: [['partner_id', '=', partner_id]],
-            });
-        } 
-        // Called from account.move.line list view
-        else {
-            const state = this.model.get(this.handle);
-            const currentDomain = state.getDomain();
-            const currentContext = state.getContext();
+    //     // Called from res.partner form view
+    //     if (partner_id) {
+    //         this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
+    //             additional_context: {
+    //                 active_id: partner_id,
+    //                 active_ids: [partner_id],
+    //                 active_model: 'res.partner',
+    //                 default_partner_id: partner_id,
+    //                 partner_name: ctx.partner_name || '',
+    //                 action_name: 'Statement in Partner Currency',
+    //             },
+    //             domain: [['partner_id', '=', partner_id]],
+    //         });
+    //     } 
+    //     // Called from account.move.line list view
+    //     else {
+    //         const state = this.model.get(this.handle);
+    //         const currentDomain = state.getDomain();
+    //         const currentContext = state.getContext();
             
-            this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
-                additional_context: {
-                    ...currentContext,
-                    search_default_group_by_account: 1,
-                },
-                domain: currentDomain,
-            });
-        }
-    },
+    //         this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
+    //             additional_context: {
+    //                 ...currentContext,
+    //                 search_default_group_by_account: 1,
+    //             },
+    //             domain: currentDomain,
+    //         });
+    //     }
+    // },
 
 
     _onExcel: function () {
