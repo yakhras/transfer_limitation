@@ -130,8 +130,8 @@ class AccountMoveLineReport(models.Model):
                 LEFT JOIN check_aggregates ca
                 ON ca.payment_id = ap.id  -- Get aggregated check numbers
                 WHERE am.state = 'posted'
-                AND aat.type IN ('payable','receivable')
-                AND aml.partner_id IS NOT NULL
+                -- AND aat.type IN ('payable','receivable')
+                -- AND aml.partner_id IS NOT NULL
             )
         """)
 
