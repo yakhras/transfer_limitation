@@ -44,10 +44,10 @@
                     <field name="type"/>
                     <field name="reference"/>
                     <field name="note"/>
-                    <field name= "product_id"/>
+                    <!-- <field name= "product_id"/>
                     <field name="quantity"/>
                     <field name="price_unit"/>
-                    <field name="price_subtotal"/>
+                    <field name="price_subtotal"/> -->
                     <field name="debit"/>
                     <field name="credit"/>
                     <field name="cumulated_balance" string="Balance"/>
