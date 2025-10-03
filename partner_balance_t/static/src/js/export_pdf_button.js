@@ -402,6 +402,7 @@ var ExportPdfButtonListController = ListController.extend({
         ];
         
         if (partner_id) {
+            console.log('Partner ID found:', partner_id);
             this.do_action('partner_balance_t.action_partner_move_line_currency', {
                 additional_context: {
                     active_id: partner_id,
