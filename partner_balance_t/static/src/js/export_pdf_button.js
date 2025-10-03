@@ -413,8 +413,10 @@ var ExportPdfButtonListController = ListController.extend({
                     action_name: 'Statement Currency-based of Account',
                 },
                 domain: [...baseFilters, ['partner_id', '=', partner_id]],
+            }).then((action) => {
+                console.log('Action executed:', action);
+                console.log('Applied domain:', action.domain);
             });
-            console.log('Domain:', domain);
         } else {
             const state = this.model.get(this.handle);
             const currentDomain = state.getDomain();
