@@ -414,6 +414,7 @@ var ExportPdfButtonListController = ListController.extend({
                 },
                 domain: [...baseFilters, ['partner_id', '=', partner_id]],
             });
+            console.log('Domain:', domain);
         } else {
             const state = this.model.get(this.handle);
             const currentDomain = state.getDomain();
