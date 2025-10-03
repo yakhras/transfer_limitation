@@ -465,6 +465,26 @@ var ExportPdfButtonListController = ListController.extend({
     //     }
     // },
 
+    _onPartnerCurrency: function () {
+        const ctx = this.model?.loadParams?.context || {};
+        const partner_id = ctx.default_partner_id;
+        
+        if (partner_id) {
+            this.do_action('partner_balance_t.action_partner_move_line_partner_currency_from_partner', {
+                additional_context: {
+                    active_id: partner_id,
+                    partner_name: ctx.partner_name || '',
+                }
+            });
+        } else {
+            const state = this.model.get(this.handle);
+            this.do_action('partner_balance_t.action_partner_move_line_partner_currency_from_lines', {
+                domain: state.getDomain(),
+                additional_context: state.getContext(),
+            });
+        }
+    },
+
 
     _onExcel: function () {
         return this._rpc({
