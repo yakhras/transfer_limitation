@@ -395,75 +395,18 @@ var ExportPdfButtonListController = ListController.extend({
         const ctx = this.model?.loadParams?.context || {};
         const partner_id = ctx.default_partner_id;
         
-        // Base filters for account type and partner
-        const baseFilters = [
-            ['account_id.user_type_id.type', 'in', ['payable', 'receivable']],
-            ['partner_id', '!=', false]
-        ];
-        
         if (partner_id) {
-            console.log('Partner ID found:', partner_id);
-            this.do_action('partner_balance_t.action_partner_move_line_currency', {
+            this.do_action('partner_balance_t.action_partner_move_line_currency_from_partner', {
                 additional_context: {
                     active_id: partner_id,
-                    active_ids: [partner_id],
-                    active_model: 'res.partner',
-                    default_partner_id: partner_id,
                     partner_name: ctx.partner_name || '',
-                    action_name: 'Statement Currency-based of Account',
-                },
-                domain: [...baseFilters, ['partner_id', '=', partner_id]],
-            }).then((action) => {
-                console.log('Action executed:', action);
-                console.log('Applied domain:', action['domain']);
+                }
             });
         } else {
             const state = this.model.get(this.handle);
-            const currentDomain = state.getDomain();
-            const currentContext = state.getContext();
-            
-            this.do_action('partner_balance_t.action_partner_move_line_currency', {
-                additional_context: {
-                    ...currentContext,
-                    search_default_group_by_account: 1,
-                },
-                domain: currentDomain,
-            });
-        }
-    },
-
-    _onPartnerCurrency: function () {
-        const ctx = this.model?.loadParams?.context || {};
-        const partner_id = ctx.default_partner_id;
-        
-        const baseFilters = [
-            ['account_id.user_type_id.type', 'in', ['payable', 'receivable']],
-            ['partner_id', '!=', false]
-        ];
-        
-        if (partner_id) {
-            this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
-                additional_context: {
-                    active_id: partner_id,
-                    active_ids: [partner_id],
-                    active_model: 'res.partner',
-                    default_partner_id: partner_id,
-                    partner_name: ctx.partner_name || '',
-                    action_name: 'Statement in Partner Currency',
-                },
-                domain: [...baseFilters, ['partner_id', '=', partner_id]],
-            });
-        } else {
-            const state = this.model.get(this.handle);
-            const currentDomain = state.getDomain();
-            const currentContext = state.getContext();
-            
-            this.do_action('partner_balance_t.action_partner_move_line_partner_currency', {
-                additional_context: {
-                    ...currentContext,
-                    search_default_group_by_account: 1,
-                },
-                domain: currentDomain,
+            this.do_action('partner_balance_t.action_partner_move_line_currency_from_lines', {
+                domain: state.getDomain(),
+                additional_context: state.getContext(),
             });
         }
     },
