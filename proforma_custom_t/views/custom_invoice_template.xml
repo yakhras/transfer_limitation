@@ -426,7 +426,7 @@
                     </div>
                 </t>
                 
-                <!-- <div style="margin-top: 10px; page-break-inside: avoid;">
+                <div style="margin-top: 10px; page-break-inside: avoid;">
                     
                     <div style="border-bottom: 1px solid #333; margin-bottom: 15px; margin-top: 10px;"></div>
                     <div style="padding: 3px; text-align: left; font-size: 12px; ">
@@ -465,7 +465,7 @@
                             </table>
                         </div>
                     </div>
-                </div> -->
+                </div>
             </div>
         </t>   
     </template>
