@@ -328,23 +328,23 @@
                         <div><strong>VAT: </strong> <span t-esc="doc.partner_id.vat[2:] if doc.partner_id.vat and doc.partner_id.vat.startswith('TR') else doc.partner_id.vat"/></div>
                     </div>
                 </div>
-                <!-- <div class="row" style="margin-top: 20px; font-size: 12px;">
+                <div class="row" style="margin-top: 20px; font-size: 12px;">
                     <div class="col-8">
-                        <t t-if="doc.date_order">
-                            <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
+                        <t t-if="doc.invoice_date">
+                            <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-esc="doc.invoice_date.strftime('%d.%m.%Y')"/></div>
                         </t>
                         <t t-if="doc.name">
-                            <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
+                            <div style="margin-bottom: 5px;"><strong>Invoice No.: </strong> <span t-field="doc.name"/></div>
                         </t>
-                        <t t-if="doc.payment_term_id">
-                            <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
+                        <t t-if="doc.invoice_payment_term_id">
+                            <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.invoice_payment_term_id.name"/></div>
                         </t>
-                        <t t-if="doc.expiration_days">
+                        <!-- <t t-if="doc.expiration_days">
                             <div><strong>Expiration: </strong> <span t-field="doc.expiration_days"/></div>
-                        </t>
+                        </t> -->
                     </div>
 
-                    <div class="col-4">
+                    <!-- <div class="col-4">
                         <t t-if="doc.client_order_ref">
                             <div style="margin-bottom: 5px; "><strong>Customer ref.: </strong> <span t-field="doc.client_order_ref"/></div>
                         </t>
@@ -354,8 +354,8 @@
                         <t t-if="doc.commitment_date">
                             <div style="margin-bottom: 5px;"><strong>Delivery Date: </strong> <span t-esc="doc.commitment_date.strftime('%d.%m.%Y')"/></div>
                         </t>
-                    </div>
-                </div> -->
+                    </div> -->
+                </div>
                 <div style="margin-top: 20px;">
                     <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                         <thead style="background-color: black; color: white; font-size: 12px;">
