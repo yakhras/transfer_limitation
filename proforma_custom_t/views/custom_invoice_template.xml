@@ -328,7 +328,7 @@
                         <div><strong>VAT: </strong> <span t-esc="doc.partner_id.vat[2:] if doc.partner_id.vat and doc.partner_id.vat.startswith('TR') else doc.partner_id.vat"/></div>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 20px; font-size: 12px;">
+                <!-- <div class="row" style="margin-top: 20px; font-size: 12px;">
                     <div class="col-8">
                         <t t-if="doc.date_order">
                             <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
@@ -355,8 +355,8 @@
                             <div style="margin-bottom: 5px;"><strong>Delivery Date: </strong> <span t-esc="doc.commitment_date.strftime('%d.%m.%Y')"/></div>
                         </t>
                     </div>
-                </div>
-                <!-- <div style="margin-top: 20px;">
+                </div> -->
+                <div style="margin-top: 20px;">
                     <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                         <thead style="background-color: black; color: white; font-size: 12px;">
                             <tr>
@@ -465,7 +465,7 @@
                             </table>
                         </div>
                     </div>
-                </div> -->
+                </div>
             </div>
         </t>   
     </template>
