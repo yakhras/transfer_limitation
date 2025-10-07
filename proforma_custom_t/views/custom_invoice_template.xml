@@ -68,6 +68,14 @@
         </t>
     </template>
 
+    <template id="custom_invoice_template_account">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="proforma_custom_t.custom_invoice_template_Arabic_account" t-lang= "doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
     <template id="custom_invoice_template_Arabic">
         <t t-call="proforma_custom_t.external_layout_yaser">
             <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
@@ -279,7 +287,220 @@
                 </div>
             </div>
         </t>   
-    </template>    
+    </template>
+    
+    <template id="custom_invoice_template_Arabic_account">
+        <t t-call="proforma_custom_t.external_layout_yaser">
+            <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+            <div class="page">
+                <!-- Proforma Invoice Section -->
+                <div class="row">
+                    <div class="col-12" style="text-align: center;">
+                        <strong style="font-size: 24px; font-family: Arial, sans-serif; border-bottom: 3px solid #000;">
+                         PROFORMA INVOICE
+                        </strong>
+                    </div>
+                </div>
+                
+                <!-- New Row with Two Columns -->
+                <div class="row" style="margin-top: 20px; font-size: 12px;">
+                    <div class="col-12">
+                        <div style="margin-bottom: 5px;"><strong>Customer: </strong><span t-esc="doc.partner_id.name"/></div>
+                        <div style="margin-bottom: 5px;">
+                            <strong>Address: </strong>
+                            <span t-if="doc.partner_shipping_id.street">
+                                <span t-field="doc.partner_shipping_id.street"/> 
+                            </span>
+                            <span t-if="doc.partner_shipping_id.street2">
+                                <span t-field="doc.partner_shipping_id.street2"/> 
+                            </span>
+                            <span t-if="doc.partner_shipping_id.city">
+                                <span t-field="doc.partner_shipping_id.city"/>
+                            </span>
+                            <span t-if="doc.partner_shipping_id.state_id">
+                                <span t-field="doc.partner_shipping_id.state_id.name"/>
+                            </span>
+                            <span t-if="doc.partner_shipping_id.zip">
+                                <span t-field="doc.partner_shipping_id.zip"/>
+                            </span>
+                            <span t-if="doc.partner_shipping_id.country_id">
+                                <span t-field="doc.partner_shipping_id.country_id.name"/>
+                            </span>
+                        </div>
+                        <div><strong>VAT: </strong> <span t-esc="doc.partner_id.vat[2:] if doc.partner_id.vat and doc.partner_id.vat.startswith('TR') else doc.partner_id.vat"/></div>
+                    </div>
+                </div>
+                <!-- New Row with Two Columns -->
+                <div class="row" style="margin-top: 20px; font-size: 12px;">
+                    <!-- Left Column (col-8) -->
+                    <div class="col-8">
+                        <t t-if="doc.date_order">
+                            <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-esc="doc.date_order.strftime('%d.%m.%Y')"/></div>
+                        </t>
+                        <t t-if="doc.name">
+                            <div style="margin-bottom: 5px;"><strong>Proforma No.: </strong> <span t-field="doc.name"/></div>
+                        </t>
+                        <t t-if="doc.payment_term_id">
+                            <div style="margin-bottom: 5px;"><strong>Payment Terms: </strong> <span t-field="doc.payment_term_id.name"/></div>
+                        </t>
+                        <t t-if="doc.expiration_days">
+                            <div><strong>Expiration: </strong> <span t-field="doc.expiration_days"/></div>
+                        </t>
+                    </div>
+
+                    <!-- Right Column (col-4) -->
+                    <div class="col-4">
+                        <t t-if="doc.client_order_ref">
+                            <div style="margin-bottom: 5px; "><strong>Customer ref.: </strong> <span t-field="doc.client_order_ref"/></div>
+                        </t>
+                        <t t-if="doc.incoterm">
+                            <div style="margin-bottom: 5px;"><strong>Incoterm: </strong> <span t-field="doc.incoterm.code"/></div>
+                        </t>
+                        <t t-if="doc.commitment_date">
+                            <div style="margin-bottom: 5px;"><strong>Delivery Date: </strong> <span t-esc="doc.commitment_date.strftime('%d.%m.%Y')"/></div>
+                        </t>
+                    </div>
+                </div>
+                <!-- Table Section -->
+                <div style="margin-top: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <thead style="background-color: black; color: white; font-size: 12px;">
+                            <tr>
+                                <th style="border: 1px none #ccc; padding: 6px; text-align: left;">Product</th>
+                                <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Quantity</th>
+                                <th style="border: 1px none #ccc; padding: 6px; text-align: center;">UOM</th>
+                                <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Unit Price</th>
+                                <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Tax</th>
+                                <th style="border: 1px none #ccc; padding: 6px; text-align: center;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody style="background-color: #f4f4f4; color: black; font-size: 12px;">
+                            <!-- Loop through order line items -->
+                            <t t-foreach="doc.invoice_line_ids" t-as="line">
+                                <tr>
+                                    <td style="border: 1px none black; padding: 6px;">
+                                        <span t-esc="line.name.split(']', 1)[1].strip() if '[' in line.name and ']' in line.name else line.name"/>
+                                    </td>
+                                    <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                        <span t-field="line.product_uom_qty"/>
+                                    </td>
+                                    <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                        <span t-field="line.product_uom.name"/>
+                                    </td>
+                                    <t t-set="is_small_value" t-value="line.price_unit &lt; 1"/>
+                                    <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                        <t t-if="is_small_value">
+                                            <span t-esc="('%.6f' % line.price_unit).rstrip('0')"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="'%.2f' % line.price_unit"/>
+                                        </t>
+                                    </td>
+                                    <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                        <span t-esc="int(line.tax_id.amount)"/>%
+                                    </td>
+                                    <td style="border: 1px none black; padding: 6px; text-align: center;">
+                                        <span t-field="line.price_subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            
+                <div class="clearfix" name="so_total_summary" style="margin-top: 20px; font-size: 12px;">
+                    <div id="total" class="row" name="total">
+                        <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ml-auto">
+                            <table class="table table-sm" style="border: 1px solid #ccc; color: #333; border-collapse: collapse;">
+                                <!-- Tax Totals -->
+                                <tbody>
+                                    <t t-set="tax_totals" t-value="json.loads(doc.tax_totals_json)"/>
+                                    <t t-call="proforma_custom_t.document_tax_totals_yaser"/>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="border-bottom: 1px solid #333; margin-bottom: 15px; margin-top: 10px;"></div>
+                <t t-if="doc.has_note">
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-12" style="text-align: left;">
+                            <!-- Display HTML Note Content -->
+                            <div style="margin-top: 10px; font-size: 12px; line-height: 1.6; color: #333;">
+                                <t t-raw="doc.note"/>
+                                <t t-raw= "doc.company_id.company_bank_journal_ids"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                
+                <!-- Terms Section -->
+                <div style="margin-top: 10px; page-break-inside: avoid;">
+                    
+                    <!-- First Row in Terms (Temel Koşullar) -->
+                    <!-- <div class="row" style="margin-bottom: 20px;">
+                        <div class="col-12" style="text-align: left;">
+                            Styled Header for "Temel Koşullar"
+                            <div style="background-color: #333; color: #fff; padding: 8px; border: 1px solid #ccc; font-weight: bold;">
+                                Payment Terms:
+                            </div>
+                            
+                            Terms Content
+                            <p style="font-size: 13px; line-height: 1.6; color: #333; margin-top: 10px;">
+                                1. Fiyatlarımıza %20 KDV Dahil değildir.<br/>
+                                2. Ürün fiyatlarını direkt veya dolaylı olarak etkileyen vergiler veya vergi oran değişiklikleri lehte veya aleyhte fiyatlarımıza yansıtılacaktır.<br/>
+                                3. Fiyatlarımız USD bazında olup, %100 tesliminde ödenecektir. Ödemeler, ödeme tarihindeki TCMB efektif satış kuru üzerinden yapılacaktır.<br/>
+                                4. Bu proforma müşteri tarafından teyit edildikten sonra sözleşme niteliği taşır.<br/>
+                                5. Vadesinde ödenmeyen faturalara aylık TL bazında %8, USD bazında % 3 vade farkı ilave edilecektir.
+                            </p>
+                        </div>
+                    </div> -->
+                    <!-- Second Row in Terms (Banka Bilgileri) -->
+                    <div style="border-bottom: 1px solid #333; margin-bottom: 15px; margin-top: 10px;"></div>
+                    <div style="padding: 3px; text-align: left; font-size: 12px; ">
+                        <strong style="border-bottom: 1px solid #000;">Bank Account Details:</strong>
+                    </div>
+                    <div class="row" style="margin-top: 15px; margin: 0; padding: 0;">
+                        <div class="col-8" style="text-align: left;">
+                            <!-- Bank Information Table -->
+                            <table style="width: 100%; font-size: 10px; line-height: 1.6; color: #333; border-collapse: collapse;">
+                                <!-- Table Header -->
+                                <thead>
+                                    <tr style="color: #000;">
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left; text-decoration: underline; ">Bank</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left; text-decoration: underline;">Account</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left; text-decoration: underline;">IBAN</th>
+                                        <th style="padding: 3px; border: 1px none #ccc; text-align: left; text-decoration: underline;">Swift Code</th>
+                                    </tr>
+                                </thead>
+                                
+                                <!-- Table Body -->
+                                <tbody>
+                                    <t t-foreach ="doc.company_id.company_bank_journal_ids" t-as="bank">
+                                        <tr>
+                                            <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
+                                                <span t-esc="bank.bank_id.name"/>
+                                            </td>
+                                            <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
+                                                <span t-esc="bank.online_bank_account_id.fec_name"/> IBAN
+                                            </td>
+                                            <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
+                                                <span t-esc="bank.bank_account_id.acc_number"/>
+                                            </td>
+                                            <td style="padding: 3px; border: 1px none #ccc; text-align: left;">
+                                                <span t-esc="bank.bank_id.bic"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>   
+    </template>
 
     <template id="document_tax_totals_yaser">
         <t t-foreach="tax_totals['subtotals']" t-as="subtotal">

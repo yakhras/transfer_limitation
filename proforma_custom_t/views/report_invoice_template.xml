@@ -9,4 +9,14 @@
         name="proforma_custom_t.custom_invoice_template"
         print_report_name="'Proforma Invoice - %s' % (object.name)"
     />
+
+    <report 
+        id="action_report_proforma_account_move"
+        model="account.move"
+        string="TVO Invoice"
+        report_type="qweb-pdf"
+        file="proforma_custom_t.custom_invoice_template_account"
+        name="proforma_custom_t.custom_invoice_template_account"
+        print_report_name="'Proforma Invoice - %s' % (object.name)"
+    />
 </odoo>
