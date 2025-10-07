@@ -420,7 +420,7 @@
                         <div class="col-12" style="text-align: left;">
                             <div style="margin-top: 10px; font-size: 12px; line-height: 1.6; color: #333;">
                                 <t t-raw="doc.narration"/>
-                                <!-- <t t-raw= "doc.company_id.company_bank_journal_ids"/> -->
+                                <t t-raw= "doc.company_id.company_bank_journal_ids"/>
                             </div>
                         </div>
                     </div>
