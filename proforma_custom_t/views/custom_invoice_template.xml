@@ -375,10 +375,10 @@
                                         <span t-esc="line.name.split(']', 1)[1].strip() if '[' in line.name and ']' in line.name else line.name"/>
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                        <span t-field="line.product_uom_qty"/>
+                                        <span t-field="line.quantity"/>
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                        <span t-field="line.product_uom.name"/>
+                                        <span t-field="line.product_uom_id.name"/>
                                     </td>
                                     <t t-set="is_small_value" t-value="line.price_unit &lt; 1"/>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
@@ -390,7 +390,7 @@
                                         </t>
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
-                                        <span t-esc="int(line.tax_id.amount)"/>%
+                                        <span t-esc="int(line.tax_ids.amount)"/>%
                                     </td>
                                     <td style="border: 1px none black; padding: 6px; text-align: center;">
                                         <span t-field="line.price_subtotal"/>
