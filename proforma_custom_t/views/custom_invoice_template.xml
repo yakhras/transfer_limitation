@@ -296,7 +296,7 @@
                 <div class="row">
                     <div class="col-12" style="text-align: center;">
                         <strong style="font-size: 24px; font-family: Arial, sans-serif; border-bottom: 3px solid #000;">
-                         PROFORMA INVOICE
+                         INVOICE
                         </strong>
                     </div>
                 </div>
@@ -331,7 +331,7 @@
                 <div class="row" style="margin-top: 20px; font-size: 12px;">
                     <div class="col-8">
                         <t t-if="doc.invoice_date">
-                            <div style="margin-bottom: 5px;"><strong>Proforma Date: </strong> <span t-esc="doc.invoice_date.strftime('%d.%m.%Y')"/></div>
+                            <div style="margin-bottom: 5px;"><strong>Invoice Date: </strong> <span t-esc="doc.invoice_date.strftime('%d.%m.%Y')"/></div>
                         </t>
                         <t t-if="doc.name">
                             <div style="margin-bottom: 5px;"><strong>Invoice No.: </strong> <span t-field="doc.name"/></div>
