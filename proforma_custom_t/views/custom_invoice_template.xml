@@ -356,7 +356,7 @@
                         </t>
                     </div>
                 </div> -->
-                <div style="margin-top: 20px;">
+                <!-- <div style="margin-top: 20px;">
                     <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                         <thead style="background-color: black; color: white; font-size: 12px;">
                             <tr>
@@ -465,7 +465,7 @@
                             </table>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </t>   
     </template>
