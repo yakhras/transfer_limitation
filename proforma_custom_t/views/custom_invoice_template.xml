@@ -301,7 +301,7 @@
                     </div>
                 </div>
                 
-                <div class="row" style="margin-top: 20px; font-size: 12px;">
+                <!-- <div class="row" style="margin-top: 20px; font-size: 12px;">
                     <div class="col-12">
                         <div style="margin-bottom: 5px;"><strong>Customer: </strong><span t-esc="doc.partner_id.name"/></div>
                         <div style="margin-bottom: 5px;">
@@ -356,7 +356,7 @@
                         </t>
                     </div>
                 </div>
-                <!-- <div style="margin-top: 20px;">
+                <div style="margin-top: 20px;">
                     <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                         <thead style="background-color: black; color: white; font-size: 12px;">
                             <tr>
@@ -399,7 +399,7 @@
                             </t>
                         </tbody>
                     </table>
-                </div> -->
+                </div>
             
                 <div class="clearfix" name="so_total_summary" style="margin-top: 20px; font-size: 12px;">
                     <div id="total" class="row" name="total">
@@ -465,7 +465,7 @@
                             </table>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </t>   
     </template>
