@@ -27,7 +27,7 @@
     'data': [
         'security/ir.model.access.csv',
         "views/partner_balance_view.xml",
-        "views/template_new.xml",
+        "views/templates.xml",
         
 
     ],
