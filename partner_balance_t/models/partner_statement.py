@@ -40,11 +40,6 @@ class PartnerStatement(models.Model):
     # ==========================================
     # PRODUCT METHODS (BUSINESS LOGIC)
     # ==========================================
-
-    def get_products(self, sale_orders):
-        """Get all products from given sale orders"""
-        all_lines = sale_orders.mapped('order_line')
-        return self._build_product_object(sale_orders, all_lines, 'sale_orders')
     
     def get_uninvoiced_products(self, sale_orders):
         """Get uninvoiced products from given sale orders"""
@@ -56,8 +51,16 @@ class PartnerStatement(models.Model):
     
     def get_sale_order_invoice_products(self, sale_orders):
         """Get products from non-cancelled invoices from sale orders"""
-        all_lines = sale_orders.mapped('order_line')
-        return self._build_product_object(all_lines, all_lines, 'invoices')
+        # Step 1: Get invoices from specific sale orders only
+        sale_invoices = sale_orders.mapped('invoice_ids')
+        
+        # Step 2: Filter only those invoices (more efficient on smaller dataset)
+        related_invoices = sale_invoices.filtered(
+            lambda inv: inv.state != 'cancel'
+        )
+        
+        all_lines = related_invoices.mapped('invoice_line_ids')
+        return self._build_product_object(related_invoices, all_lines, 'invoices')
     
     def get_manual_invoice_products(self):
         """Get products from non-cancelled manual invoices"""
@@ -236,7 +239,7 @@ class PartnerStatement(models.Model):
         
         if order.invoice_status == 'to invoice':
             # Get uninvoiced products only
-            uninvoiced_data = self.get_products(order)
+            uninvoiced_data = self.get_uninvoiced_products(order)
             section['products'] = uninvoiced_data.get('sale_orders', [])
             section['section_type'] = 'uninvoiced'
             
@@ -295,7 +298,7 @@ class PartnerStatement(models.Model):
                 section['section_type'] = 'credit_note_case'
             else:
                 # Case: Never invoiced
-                uninvoiced_data = self.get_products(order)
+                uninvoiced_data = self.get_uninvoiced_products(order)
                 section['products'] = uninvoiced_data.get('sale_orders', [])
                 section['section_type'] = 'never_invoiced'
         
