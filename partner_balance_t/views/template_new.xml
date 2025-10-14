@@ -221,9 +221,8 @@
 
                                         <!-- Products/Orders Section -->
                                         <t t-if="section.get('products')">
+                                            <!-- FIRST: Display all product lines -->
                                             <t t-foreach="section['products']" t-as="record">
-                                                
-                                                <!-- Product Lines Only -->
                                                 <t t-foreach="record.get('products', [])" t-as="product">
                                                     <tr class="product-row">
                                                         <td></td>
@@ -239,6 +238,10 @@
                                                         <td class="text-right"></td>
                                                     </tr>
                                                 </t>
+                                            </t>
+                                            
+                                            <!-- THEN: Display all invoice rows -->
+                                            <t t-foreach="section['products']" t-as="record">
                                                 <tr style="background-color: #f8f9ff;">
                                                     <td><t t-esc="record.get('record_date', 'Unknown')"/></td>
                                                     <td class="text-center">INVOICE</td>
