@@ -239,21 +239,20 @@
                                                         <td class="text-right"></td>
                                                     </tr>
                                                 </t>
-                                                
+                                                <tr style="background-color: #f8f9ff;">
+                                                    <td><t t-esc="record.get('record_date', 'Unknown')"/></td>
+                                                    <td class="text-center">INVOICE</td>
+                                                    <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
+                                                    <td class="text-right"></td>
+                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('balance_after_invoice', 0))"/></td>
+                                                </tr>
                                             </t>
-                                            <tr style="background-color: #f8f9ff;">
-                                                <td><t t-esc="record.get('record_date', 'Unknown')"/></td>
-                                                <td class="text-center">INVOICE</td>
-                                                <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
-                                                <td class="text-right"></td>
-                                                <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('balance_after_invoice', 0))"/></td>
-                                            </tr>
                                         </t>
 
                                         <!-- <t t-if="section.get('invoices')">
