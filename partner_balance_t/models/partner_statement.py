@@ -258,7 +258,7 @@ class PartnerStatement(models.Model):
         
         elif order.invoice_status == 'invoiced':
             # Get all invoiced products
-            invoiced_data = self.get__products(order)
+            invoiced_data = self.get_products(order)
             section['products'] = invoiced_data.get('sale_orders', [])
             
             # Get payment details
