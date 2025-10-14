@@ -110,12 +110,18 @@ class PartnerStatement(models.Model):
         records_data = {}
         
         for line in lines:
-            parent_id = line.order_id.id
-            parent_record = line.order_id
-            quantity_field = line.product_uom_qty
-            tax_field = line.tax_id.amount
-            date_field = line.order_id.date_order
-            
+            if record_type == 'sale_orders':
+                parent_id = line.order_id.id
+                parent_record = line.order_id
+                quantity_field = line.product_uom_qty
+                tax_field = line.tax_id.amount
+                date_field = line.order_id.date_order
+            else:  # invoices
+                parent_id = line.move_id.id
+                parent_record = line.move_id
+                quantity_field = line.quantity
+                tax_field = line.tax_ids.amount
+                date_field = line.move_id.date
                 
             if parent_id not in records_data:
                 records_data[parent_id] = {
