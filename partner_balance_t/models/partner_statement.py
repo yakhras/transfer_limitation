@@ -42,22 +42,23 @@ class PartnerStatement(models.Model):
         invoices = orders.mapped('invoice_ids').filtered(
             lambda invoice: invoice.state != 'cancel' and invoice.move_type not in ['entry']
         )
-        invoices_data = {}
+        invoices_data = []
         for invoice in invoices:
-            invoices_data.update(self._format_invoice_data(invoice))
+            invoices_data.append(self._format_invoice_data(invoice))
         return invoices_data
     
-    def _format_invoice_data(self, invoices):
+    def _format_invoice_data(self, invoice):
         """Format invoice data for output"""
-        if invoices:
+        if invoice:
             return {
-                'invoice_id': invoices.id,
-                'invoice_name': invoices.name,
-                'invoice_state': invoices.state,
-                'amount_total': invoices.amount_total,
-                'payment_state': invoices.payment_state,
-                'invoice_date': invoices.invoice_date,
+                'invoice_id': invoice.id,
+                'invoice_name': invoice.name,
+                'invoice_state': invoice.state,
+                'amount_total': invoice.amount_total,
+                'payment_state': invoice.payment_state,
+                'invoice_date': invoice.invoice_date,
             }
+        return {}
     
     # ==========================================
     # PRODUCT METHODS (BUSINESS LOGIC)
