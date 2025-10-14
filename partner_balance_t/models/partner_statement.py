@@ -254,6 +254,8 @@ class PartnerStatement(models.Model):
             
             # Check if there are existing invoices for this order
             if order.invoice_ids:
+                invoices = self.get_invoices_from_orders(order)
+                section['invoices'] = invoices
                 posted_invoices = order.invoice_ids.filtered(lambda inv: inv.state == 'posted')
                 if posted_invoices:
                     # Get payment details
@@ -298,6 +300,9 @@ class PartnerStatement(models.Model):
                 # Case: Had invoices, now zero balance (credit notes)
                 invoiced_data = self.get_products(order)
                 section['products'] = invoiced_data.get('sale_orders', [])
+
+                invoices = self.get_invoices_from_orders(order)
+                section['invoices'] = invoices
                 
                 payment_data = self._get_order_payments(order)
                 section['payments'] = payment_data
