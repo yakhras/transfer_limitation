@@ -37,6 +37,12 @@ class PartnerStatement(models.Model):
             lambda inv: inv.payment_state == 'not_paid'
         )
     
+    def get_invoices_from_orders(self, orders):
+        """Get all invoices related to given sale orders"""
+        return orders.mapped('invoice_ids').filtered(
+            lambda invoice: invoice.state != 'cancel' and invoice.move_type not in ['entry']
+        )
+    
     # ==========================================
     # PRODUCT METHODS (BUSINESS LOGIC)
     # ==========================================
@@ -46,18 +52,6 @@ class PartnerStatement(models.Model):
         all_lines = sale_orders.mapped('order_line')
         return self._build_product_object(sale_orders, all_lines, 'sale_orders')
     
-    def get_sale_order_invoice_products(self, sale_orders):
-        """Get products from non-cancelled invoices from sale orders"""
-        # Step 1: Get invoices from specific sale orders only
-        sale_invoices = sale_orders.mapped('invoice_ids')
-        
-        # Step 2: Filter only those invoices (more efficient on smaller dataset)
-        related_invoices = sale_invoices.filtered(
-            lambda inv: inv.state != 'cancel'
-        )
-        
-        all_lines = related_invoices.mapped('invoice_line_ids')
-        return self._build_product_object(related_invoices, all_lines, 'invoices')
     
     def get_manual_invoice_products(self):
         """Get products from non-cancelled manual invoices"""
@@ -227,6 +221,7 @@ class PartnerStatement(models.Model):
             'order_total': order.amount_total,
             'invoice_status': order.invoice_status,
             'products': [],
+            'invoices': [],
             'payments': [],
             'unpaid_invoices': [],
             'section_type': '',
@@ -260,6 +255,9 @@ class PartnerStatement(models.Model):
             # Get all invoiced products
             invoiced_data = self.get_products(order)
             section['products'] = invoiced_data.get('sale_orders', [])
+
+            invoices = self.get_invoices_from_orders(order)
+            section['invoices'] = invoices.sorted(key=lambda inv: inv.date)
             
             # Get payment details
             payment_data = self._get_order_payments(order)
