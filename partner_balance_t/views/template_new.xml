@@ -224,19 +224,21 @@
                                             <!-- FIRST: Display all product lines -->
                                             <t t-foreach="section['products']" t-as="record">
                                                 <t t-foreach="record.get('products', [])" t-as="product">
-                                                    <tr class="product-row">
-                                                        <td></td>
-                                                        <td class="text-center">PRODUCT</td>
-                                                        <td></td>
-                                                        <td><t t-esc="product.get('product_name', 'Unknown Product')"/></td>
-                                                        <td class="text-right"><t t-esc="'{:,.2f}'.format(product.get('quantity', 0))"/></td>
-                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('price_unit', 0))"/></td>
-                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('subtotal', 0))"/></td>
-                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('tax_amount', 0))"/></td>
-                                                        <td class="text-right"></td>
-                                                        <td class="text-right"></td>
-                                                        <td class="text-right"></td>
-                                                    </tr>
+                                                    <t t-if="product.get('quantity') > 0">
+                                                        <tr class="product-row">
+                                                            <td></td>
+                                                            <td class="text-center">PRODUCT</td>
+                                                            <td></td>
+                                                            <td><t t-esc="product.get('product_name', 'Unknown Product')"/></td>
+                                                            <td class="text-right"><t t-esc="'{:,.2f}'.format(product.get('quantity', 0))"/></td>
+                                                            <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('price_unit', 0))"/></td>
+                                                            <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('subtotal', 0))"/></td>
+                                                            <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('tax_amount', 0))"/></td>
+                                                            <td class="text-right"></td>
+                                                            <td class="text-right"></td>
+                                                            <td class="text-right"></td>
+                                                        </tr>
+                                                    </t>
                                                 </t>
                                             </t>
                                             
