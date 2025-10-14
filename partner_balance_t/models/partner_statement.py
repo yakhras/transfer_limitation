@@ -41,13 +41,10 @@ class PartnerStatement(models.Model):
     # PRODUCT METHODS (BUSINESS LOGIC)
     # ==========================================
     
-    def get_uninvoiced_products(self, sale_orders):
+    def get_products(self, sale_orders):
         """Get uninvoiced products from given sale orders"""
-        uninvoiced_orders = sale_orders.filtered(
-            lambda order: order.invoice_status == 'to invoice' or not order.invoice_ids
-        )
-        all_lines = uninvoiced_orders.mapped('order_line')
-        return self._build_product_object(uninvoiced_orders, all_lines, 'sale_orders')
+        all_lines = sale_orders.mapped('order_line')
+        return self._build_product_object(sale_orders, all_lines, 'sale_orders')
     
     def get_sale_order_invoice_products(self, sale_orders):
         """Get products from non-cancelled invoices from sale orders"""
@@ -239,7 +236,7 @@ class PartnerStatement(models.Model):
         
         if order.invoice_status == 'to invoice':
             # Get uninvoiced products only
-            uninvoiced_data = self.get_uninvoiced_products(order)
+            uninvoiced_data = self.get_products(order)
             section['products'] = uninvoiced_data.get('sale_orders', [])
             section['section_type'] = 'uninvoiced'
             
@@ -261,8 +258,8 @@ class PartnerStatement(models.Model):
         
         elif order.invoice_status == 'invoiced':
             # Get all invoiced products
-            invoiced_data = self.get_sale_order_invoice_products(order)
-            section['products'] = invoiced_data.get('invoices', [])
+            invoiced_data = self.get__products(order)
+            section['products'] = invoiced_data.get('sale_orders', [])
             
             # Get payment details
             payment_data = self._get_order_payments(order)
@@ -284,8 +281,8 @@ class PartnerStatement(models.Model):
         elif order.invoice_status == 'no':
             if order.invoice_ids:
                 # Case: Had invoices, now zero balance (credit notes)
-                invoiced_data = self.get_sale_order_invoice_products(order)
-                section['products'] = invoiced_data.get('invoices', [])
+                invoiced_data = self.get_products(order)
+                section['products'] = invoiced_data.get('sale_orders', [])
                 
                 payment_data = self._get_order_payments(order)
                 section['payments'] = payment_data
@@ -298,7 +295,7 @@ class PartnerStatement(models.Model):
                 section['section_type'] = 'credit_note_case'
             else:
                 # Case: Never invoiced
-                uninvoiced_data = self.get_uninvoiced_products(order)
+                uninvoiced_data = self.get_products(order)
                 section['products'] = uninvoiced_data.get('sale_orders', [])
                 section['section_type'] = 'never_invoiced'
         
@@ -487,3 +484,4 @@ class PartnerStatement(models.Model):
         for record in self:
             record.total_orders_count = len(record.get_active_sales_orders())
             record.total_invoices_count = len(record.get_posted_invoices())
+
