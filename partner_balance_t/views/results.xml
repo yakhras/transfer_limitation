@@ -1,0 +1,50 @@
+                        {
+                            'partner_id': 65538, 
+                            'partner_name': '24 GAYRİMENKUL VE GİRİŞİM SERMAYESİ PORTFÖY YÖNETİMİ ANONİM ŞİRKETİ', 
+                            'statement_sections': [{
+                                'order_id': 6562, 
+                                'order_name': 'S06561', 
+                                'order_state': 'done', 
+                                'order_total': 589.99, 
+                                'invoice_status': 'invoiced', 
+                                'products': [{
+                                    'record_id': 149010, 
+                                    'record_name': 'TFAT/2023/03649', 
+                                    'record_date': datetime.date(2023, 12, 18), 
+                                    'record_state': 'posted', 
+                                    'record_total': 589.99, 
+                                    'products': [{
+                                        'product_id': 13133, 
+                                        'product_name': 'Lugano Arabica Espresso Coffee Beans, 1 kg Valve Bag', 
+                                        'quantity': 1.0, 
+                                        'price_unit': 589.99, 
+                                        'tax_amount': 1.0, 
+                                        'subtotal': 584.15
+                                    }], 
+                                    'balance_after_invoice': 589.99
+                                }], 
+                                'payments': [{
+                                    'invoice': 'TFAT/2023/03649', 
+                                    'payment': 'False/2023/12/KT0038', 
+                                    'amount': 589.99, 
+                                    'date': datetime.date(2023, 12, 31), 
+                                    'balance_after_payment': 0.0
+                                }], 
+                                'unpaid_invoices': [], 
+                                'section_type': 'invoiced_paid', 
+                                'has_payments': True, 
+                                'has_unpaid_invoices': False
+                            }], 
+                            'summary': {
+                                'total_orders': 2, 
+                                'total_invoices': 2, 
+                                'total_payments': 2, 
+                                'total_unpaid_invoices': 0, 
+                                'has_uninvoiced_products': False, 
+                                'has_invoiced_products': True, 
+                                'has_manual_invoices': False, 
+                                'has_payments': True, 
+                                'has_unpaid_invoices': False
+                            }
+                        }
+<?xml version="1.0" encoding="UTF-8"?>
