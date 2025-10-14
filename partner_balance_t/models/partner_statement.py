@@ -45,7 +45,7 @@ class PartnerStatement(models.Model):
         invoices_data = {}
         for invoice in invoices:
             invoices_data.update(self._format_invoice_data(invoice))
-        return sorted(invoices_data, key=lambda x: x['invoice_date'])
+        return invoices_data
     
     def _format_invoice_data(self, invoices):
         """Format invoice data for output"""
