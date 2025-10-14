@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Partner Statement Report Template -->
+    <template id="partner_statement_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="partner">
+                    <div class="page">
+                        
+                        <!-- Custom CSS Styles -->
+                        <style>
+                            .statement-header {
+                                background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+                                color: white;
+                                padding: 20px;
+                                text-align: center;
+                                margin-bottom: 20px;
+                                border-radius: 8px;
+                            }
+                            .section-header {
+                                background: linear-gradient(90deg, #374151, #6b7280);
+                                color: white;
+                                padding: 10px 15px;
+                                font-weight: bold;
+                                border-radius: 5px 5px 0 0;
+                            }
+                            .statement-table {
+                                font-size: 11px;
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-bottom: 20px;
+                            }
+                            .statement-table th, .statement-table td {
+                                border: 1px solid #dee2e6;
+                                padding: 6px 8px;
+                                text-align: left;
+                            }
+                            .statement-table thead th {
+                                background-color: #495057;
+                                color: white;
+                                font-weight: bold;
+                                text-align: center;
+                                font-size: 10px;
+                            }
+                            .products-header {
+                                background-color: #e9ecef;
+                                font-weight: bold;
+                                font-style: italic;
+                            }
+                            .product-row {
+                                background-color: #f8f9fa;
+                            }
+                            .payment-header {
+                                background-color: #d1ecf1;
+                                color: #0c5460;
+                                font-weight: bold;
+                            }
+                            .payment-row {
+                                background-color: #d4edda;
+                            }
+                            .unpaid-header {
+                                background-color: #fff3cd;
+                                color: #856404;
+                                font-weight: bold;
+                            }
+                            .unpaid-row {
+                                background-color: #ffeeba;
+                            }
+                            .text-right {
+                                text-align: right;
+                            }
+                            .text-center {
+                                text-align: center;
+                            }
+                            .font-weight-bold {
+                                font-weight: bold;
+                            }
+                            .text-danger {
+                                color: #dc3545;
+                            }
+                            .text-success {
+                                color: #28a745;
+                            }
+                            .summary-table {
+                                margin-top: 30px;
+                                background-color: #f8f9fa;
+                            }
+                            .summary-table th {
+                                background: linear-gradient(90deg, #1e40af, #3b82f6);
+                                color: white;
+                            }
+                            .currency {
+                                font-family: monospace;
+                            }
+                        </style>
+
+                        <!-- Report Header -->
+                        <div class="statement-header">
+                            <h2><t t-esc="company.name"/></h2>
+                            <h4>📊 PARTNER STATEMENT - DETAILED ANALYSIS</h4>
+                        </div>
+
+                        <!-- Partner Information Section -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr><td><strong>Partner:</strong></td><td><t t-esc="statement_data.get('partner_name', partner.name)"/></td></tr>
+                                    <tr><td><strong>Partner Code:</strong></td><td><t t-esc="partner.ref or '-'"/></td></tr>
+                                    <tr><td><strong>Generated On:</strong></td><td><t t-esc="now"/></td></tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless">
+                                    <tr><td><strong>Total Orders:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_orders', 0)"/></td></tr>
+                                    <tr><td><strong>Total Invoices:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_invoices', 0)"/></td></tr>
+                                    <tr><td><strong>Total Payments:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_payments', 0)"/></td></tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Main Statement Sections -->
+                        <t t-foreach="statement_data.get('statement_sections', [])" t-as="section">
+                            <div class="statement-section mb-4">
+                                
+                                <!-- Dynamic Section Header -->
+                                <div class="section-header">
+                                    <t t-if="section.get('section_type') == 'uninvoiced'">
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                    </t>
+                                    <t t-elif="section.get('section_type') == 'invoiced_paid'">
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                    </t>
+                                    <t t-elif="section.get('section_type') == 'invoiced_unpaid'">
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                    </t>
+                                    <t t-elif="section.get('section_type') == 'invoiced_mixed'">
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                    </t>
+                                    <t t-elif="section.get('section_type') == 'partially_invoiced'">
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                    </t>
+                                    <t t-elif="section.get('section_type') == 'manual_invoices'">
+                                        📝 MANUAL INVOICES
+                                    </t>
+                                    <t t-elif="section.get('section_type') == 'credit_note_case'">
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                    </t>
+                                    <t t-elif="section.get('section_type') == 'never_invoiced'">
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                    </t>
+                                    <t t-else="">
+                                        📄 TRANSACTION DETAILS
+                                    </t>
+                                </div>
+
+                                <!-- Main Transaction Table -->
+                                <table class="statement-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 8%;">Date</th>
+                                            <th style="width: 8%;">Type</th>
+                                            <th style="width: 12%;">Reference</th>
+                                            <th style="width: 15%;">Product</th>
+                                            <th style="width: 7%;">Qty</th>
+                                            <th style="width: 8%;">Unit Price</th>
+                                            <th style="width: 8%;">Subtotal</th>
+                                            <th style="width: 7%;">Tax</th>
+                                            <th style="width: 8%;">Debit</th>
+                                            <th style="width: 8%;">Credit</th>
+                                            <th style="width: 8%;">Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <!-- Products/Orders Section -->
+                                        <!-- <t t-if="section.get('products')">
+                                            <t t-set="section_total" t-value="0"/>
+                                            <t t-foreach="section['products']" t-as="record">
+                                                
+                                                Record Header (Order/Invoice)
+                                                <tr class="products-header">
+                                                    <td colspan="12" class="font-weight-bold">
+                                                        📄 <t t-esc="record.get('record_name', 'Unknown')"/> 
+                                                        | State: <t t-esc="record.get('record_state', 'Unknown')"/>
+                                                        | Total: <span class="currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></span>
+                                                    </td>
+                                                </tr>
+                                                
+                                                Product Lines
+                                                <t t-foreach="record.get('products', [])" t-as="product">
+                                                    <t t-set="product_total" t-value="product.get('subtotal', 0) + product.get('tax_amount', 0)"/>
+                                                    <t t-set="section_total" t-value="section_total + product_total"/>
+                                                    <tr class="product-row">
+                                                        <td>-</td>
+                                                        <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
+                                                        <td>Product Sale</td>
+                                                        <td class="text-center">
+                                                            <t t-if="section.get('section_type') in ['uninvoiced', 'never_invoiced']">
+                                                                <small class="badge badge-warning">TO INVOICE</small>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <small class="badge badge-info">INVOICED</small>
+                                                            </t>
+                                                        </td>
+                                                        <td><t t-esc="product.get('product_name', 'Unknown Product')"/></td>
+                                                        <td class="text-right"><t t-esc="'{:,.2f}'.format(product.get('quantity', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('price_unit', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('subtotal', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('tax_amount', 0))"/></td>
+                                                        <td class="text-right currency">
+                                                            <t t-if="section.get('section_type') not in ['uninvoiced', 'never_invoiced']">
+                                                                <t t-esc="'{:,.2f}'.format(product_total)"/>
+                                                            </t>
+                                                            <t t-else="">-</t>
+                                                        </td>
+                                                        <td class="text-right">-</td>
+                                                        <td class="text-right">-</td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                        </t> -->
+
+                                        <!-- Products/Orders Section -->
+                                        <t t-if="section.get('products')">
+                                            <t t-foreach="section['products']" t-as="record">
+                                                
+                                                <!-- Product Lines Only -->
+                                                <t t-foreach="record.get('products', [])" t-as="product">
+                                                    <tr class="product-row">
+                                                        <td></td>
+                                                        <td class="text-center">PRODUCT</td>
+                                                        <td></td>
+                                                        <td><t t-esc="product.get('product_name', 'Unknown Product')"/></td>
+                                                        <td class="text-right"><t t-esc="'{:,.2f}'.format(product.get('quantity', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('price_unit', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('subtotal', 0))"/></td>
+                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('tax_amount', 0))"/></td>
+                                                        <td class="text-right"></td>
+                                                        <td class="text-right"></td>
+                                                        <td class="text-right"></td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                        </t>
+
+                                        <t t-if="section.get('invoices')">
+                                            <t t-foreach="section['invoices']" t-as="record">
+                                                <tr style="background-color: #f8f9ff;">
+                                                    <td><t t-esc="record.get('record_date', 'Unknown')"/></td>
+                                                    <td class="text-center">INVOICE</td>
+                                                    <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
+                                                    <td class="text-right"></td>
+                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('balance_after_invoice', 0))"/></td>
+                                                </tr>
+                                            </t>
+                                        </t>
+
+                                        <!-- Payments Section -->
+                                        <t t-if="section.get('payments')">
+                                            <tr class="payment-header">
+                                                <td colspan="12" class="font-weight-bold">💰 PAYMENTS RECEIVED</td>
+                                            </tr>
+                                            <t t-foreach="section['payments']" t-as="payment">
+                                                <tr class="payment-row">
+                                                    <td><t t-esc="payment.get('date', '-')"/></td>
+                                                    <td><t t-esc="payment.get('payment', 'Unknown Payment')"/></td>
+                                                    <td>Payment Received</td>
+                                                    <td class="text-center"><small class="badge badge-success">PAYMENT</small></td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td class="text-right">-</td>
+                                                    <td class="text-right currency text-success font-weight-bold">
+                                                        <t t-esc="'{:,.2f}'.format(payment.get('amount', 0))"/>
+                                                    </td>
+                                                    <td class="text-right">-</td>
+                                                </tr>
+                                            </t>
+                                        </t>
+
+                                        <!-- Unpaid Invoices Section -->
+                                        <t t-if="section.get('unpaid_invoices')">
+                                            <!-- <tr class="unpaid-header">
+                                                <td colspan="12" class="font-weight-bold">⚠️ UNPAID INVOICES</td>
+                                            </tr> -->
+                                            <t t-foreach="section['unpaid_invoices']" t-as="unpaid">
+                                                <tr class="unpaid-row">
+                                                    <td><t t-esc="unpaid.get('due_date', '-')"/></td>
+                                                    <td class="text-center"><small class="badge badge-danger">OVERDUE</small></td>
+                                                    <td><t t-esc="unpaid.get('invoice_name', 'Unknown Invoice')"/></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td class="text-right currency text-danger font-weight-bold">
+                                                        <t t-esc="'{:,.2f}'.format(unpaid.get('amount_total', 0))"/>
+                                                    </td>
+                                                    <td class="text-right"></td>
+                                                    <td class="text-right currency text-danger font-weight-bold">
+                                                        <t t-esc="'{:,.2f}'.format(unpaid.get('amount_total', 0))"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </t>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+
+                        <!-- Executive Summary -->
+                        <!-- <div class="summary-section">
+                            <table class="table table-bordered summary-table">
+                                <thead>
+                                    <tr>
+                                        <th colspan="4" class="text-center">📊 EXECUTIVE SUMMARY</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-weight-bold">Total Active Orders:</td>
+                                        <td><t t-esc="statement_data.get('summary', {}).get('total_orders', 0)"/></td>
+                                        <td class="font-weight-bold">Uninvoiced Products:</td>
+                                        <td>
+                                            <t t-if="statement_data.get('summary', {}).get('has_uninvoiced_products')">
+                                                <span class="badge badge-warning">Yes - Action Required</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge badge-success">No</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Total Invoices:</td>
+                                        <td><t t-esc="statement_data.get('summary', {}).get('total_invoices', 0)"/></td>
+                                        <td class="font-weight-bold">Outstanding Invoices:</td>
+                                        <td>
+                                            <t t-if="statement_data.get('summary', {}).get('has_unpaid_invoices')">
+                                                <span class="badge badge-danger">
+                                                    <t t-esc="statement_data.get('summary', {}).get('total_unpaid_invoices', 0)"/> Unpaid
+                                                </span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge badge-success">All Paid</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-weight-bold">Total Payment Transactions:</td>
+                                        <td><t t-esc="statement_data.get('summary', {}).get('total_payments', 0)"/></td>
+                                        <td class="font-weight-bold">Manual Invoices:</td>
+                                        <td>
+                                            <t t-if="statement_data.get('summary', {}).get('has_manual_invoices')">
+                                                <span class="badge badge-info">Yes</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge badge-secondary">None</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr class="table-primary">
+                                        <td class="font-weight-bold">Overall Status:</td>
+                                        <td colspan="3" class="text-center">
+                                            <t t-if="statement_data.get('summary', {}).get('has_unpaid_invoices') or statement_data.get('summary', {}).get('has_uninvoiced_products')">
+                                                <span class="badge badge-warning" style="font-size: 14px;">⚠️ ATTENTION REQUIRED</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="badge badge-success" style="font-size: 14px;">✅ ALL CLEAR</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> -->
+
+                        <!-- Report Footer -->
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <small class="text-muted">
+                                    Report generated on <t t-esc="now"/> |
+                                    <t t-esc="company.name"/>
+                                </small>
+                            </div>
+                        </div>
+
+                    </div>
+            </t>
+        </t>
+    </template>
+</odoo>
