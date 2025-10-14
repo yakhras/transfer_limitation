@@ -124,28 +124,28 @@
                                 <!-- Dynamic Section Header -->
                                 <div class="section-header">
                                     <t t-if="section.get('section_type') == 'uninvoiced'">
-                                        📋 UNINVOICED PRODUCTS - <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'invoiced_paid'">
-                                        ✅ FULLY INVOICED &amp; PAID - <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'invoiced_unpaid'">
-                                        ⚠️ INVOICED BUT UNPAID - <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'invoiced_mixed'">
-                                        📊 PARTIALLY PAID - <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'partially_invoiced'">
-                                        ⏳ PARTIALLY INVOICED - <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'manual_invoices'">
                                         📝 MANUAL INVOICES
                                     </t>
                                     <t t-elif="section.get('section_type') == 'credit_note_case'">
-                                        🔄 CREDIT NOTE CASE - <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'never_invoiced'">
-                                        🆕 NEVER INVOICED - <t t-esc="section.get('order_name', 'Unknown Order')"/>
+                                        <t t-esc="section.get('order_name', 'Unknown Order')"/>
                                     </t>
                                     <t t-else="">
                                         📄 TRANSACTION DETAILS
