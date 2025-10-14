@@ -42,7 +42,7 @@ class PartnerStatement(models.Model):
         invoices = orders.mapped('invoice_ids').filtered(
             lambda invoice: invoice.state != 'cancel' and invoice.move_type not in ['entry']
         )
-        invoices_data = []
+        invoices_data = {}
         for invoice in invoices:
             invoices_data.append(self._format_invoice_data(invoice))
         return sorted(invoices_data, key=lambda x: x['invoice_date'])
