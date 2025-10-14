@@ -279,23 +279,21 @@
                                         <!-- Payments Section -->
                                         <t t-if="section.get('payments')">
                                             <t t-foreach="section['payments']" t-as="payment">
-                                                <t t-if="payment.get('invoice', '') == record.get('record_name', '')">
-                                                    <tr class="payment-row">
-                                                        <td><t t-esc="payment.get('date', '-')"/></td>
-                                                        <td class="text-center"><small class="badge badge-success">PAYMENT</small></td>
-                                                        <td><t t-esc="payment.get('payment', 'Unknown Payment')"/></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td class="text-right"></td>
-                                                        <td class="text-right currency text-success font-weight-bold">
-                                                            <t t-esc="'{:,.2f}'.format(payment.get('amount', 0))"/>
-                                                        </td>
-                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(payment.get('balance_after_payment', 0))"/></td>
-                                                    </tr>
-                                                </t>
+                                                <tr class="payment-row">
+                                                    <td><t t-esc="payment.get('date', '-')"/></td>
+                                                    <td class="text-center"><small class="badge badge-success">PAYMENT</small></td>
+                                                    <td><t t-esc="payment.get('payment', 'Unknown Payment')"/></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td class="text-right">-</td>
+                                                    <td class="text-right currency text-success font-weight-bold">
+                                                        <t t-esc="'{:,.2f}'.format(payment.get('amount', 0))"/>
+                                                    </td>
+                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(payment.get('balance_after_payment', 0))"/></td>
+                                                </tr>
                                             </t>
                                         </t>
 
