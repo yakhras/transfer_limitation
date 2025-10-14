@@ -39,9 +39,17 @@ class PartnerStatement(models.Model):
     
     def get_invoices_from_orders(self, orders):
         """Get all invoices related to given sale orders"""
-        return orders.mapped('invoice_ids').filtered(
+        invoices = orders.mapped('invoice_ids').filtered(
             lambda invoice: invoice.state != 'cancel' and invoice.move_type not in ['entry']
         )
+        return {
+            'invoice_id': invoices.id,
+            'invoice_name': invoices.name,
+            'invoice_state': invoices.state,
+            'amount_total': invoices.amount_total,
+            'payment_state': invoices.payment_state,
+            'invoice_date': invoices.invoice_date,
+        }
     
     # ==========================================
     # PRODUCT METHODS (BUSINESS LOGIC)
