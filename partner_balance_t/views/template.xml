@@ -225,11 +225,11 @@
                                             <t t-foreach="section['products']" t-as="record">
                                                 
                                                 <!-- Product Details Header -->
-                                                <tr class="products-header">
+                                                <!-- <tr class="products-header">
                                                     <td colspan="12" class="font-weight-bold">
                                                         📦 PRODUCT DETAILS - <t t-esc="record.get('record_name', 'Unknown')"/>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                                 
                                                 <!-- Product Lines Only -->
                                                 <t t-foreach="record.get('products', [])" t-as="product">
@@ -250,11 +250,11 @@
                                                 </t>
                                                 
                                                 <!-- Invoice/Debit Details Header -->
-                                                <tr style="background-color: #e3f2fd; font-weight: bold;">
+                                                <!-- <tr style="background-color: #e3f2fd; font-weight: bold;">
                                                     <td colspan="12" class="font-weight-bold">
                                                         💼 INVOICE DETAILS - <t t-esc="record.get('record_name', 'Unknown')"/>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                                 
                                                 <!-- Invoice/Debit Line -->
                                                 <tr style="background-color: #f8f9ff;">
