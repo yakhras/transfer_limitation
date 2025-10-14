@@ -257,7 +257,7 @@ class PartnerStatement(models.Model):
             section['products'] = invoiced_data.get('sale_orders', [])
 
             invoices = self.get_invoices_from_orders(order)
-            section['invoices'] = invoices.sorted(key=lambda inv: inv.date)
+            section['invoices'] = invoices
             
             # Get payment details
             payment_data = self._get_order_payments(order)
