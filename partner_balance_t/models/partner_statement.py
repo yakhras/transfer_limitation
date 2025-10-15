@@ -233,7 +233,7 @@ class PartnerStatement(models.Model):
         """Process a single sale order based on its invoice status"""
         section = {
             'order_id': order.id,
-            'order_date': order.date_order,
+            'order_date': order.date_order.strftime('%Y-%m-%d'),
             'order_name': order.name,
             'order_state': order.state,
             'order_total': order.amount_total,
