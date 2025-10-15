@@ -168,6 +168,11 @@
                             .currency {
                                 font-family: monospace;
                             }
+                            .section-header-flex {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                            }
                         </style>
 
                         <div class="info-section">
@@ -209,9 +214,10 @@
                             <div class="statement-section mb-4">
                                 
                                 <!-- Dynamic Section Header -->
-                                <div class="section-header">
+                                <div class="section-header section-header-flex">
                                     <t t-if="section.get('section_type') == 'uninvoiced'">
-                                        <t t-esc="section.get('order_name', 'Unknown Order')"/> - Total: <t t-esc="section.get('order_total', '')"/>
+                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/></span> 
+                                        <span>Total: <t t-esc="section.get('order_total', '')"/></span>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'invoiced_paid'">
                                         <t t-esc="section.get('order_name', 'Unknown Order')"/> - Total: <t t-esc="section.get('order_total', '')"/>
