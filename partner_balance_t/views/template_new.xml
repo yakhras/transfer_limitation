@@ -318,7 +318,9 @@
                                                             <t t-esc="'{:,.2f}'.format(inv.get('amount_total', 0))"/>
                                                         </td>
                                                         <td class="text-right"></td>
-                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(inv.get('balance_after_invoice', 0))"/></td>
+                                                        <td class="text-right currency">
+                                                            <t t-esc="inv.get('currency_symbol', '')"/>
+                                                            <t t-esc="'{:,.2f}'.format(inv.get('balance_after_invoice', 0))"/></td>
                                                     </tr>
                                                 </t>
                                             </t>
@@ -340,7 +342,9 @@
                                                         <t t-esc="payment.get('currency_symbol', '')"/>
                                                         <t t-esc="'{:,.2f}'.format(payment.get('amount', 0))"/>
                                                     </td>
-                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(payment.get('balance_after_payment', 0))"/></td>
+                                                    <td class="text-right currency">
+                                                        <t t-esc="payment.get('currency_symbol', '')"/>
+                                                        <t t-esc="'{:,.2f}'.format(payment.get('balance_after_payment', 0))"/></td>
                                                 </tr>
                                             </t>
                                         </t>
