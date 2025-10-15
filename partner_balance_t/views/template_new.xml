@@ -185,11 +185,6 @@
 
                             <!-- Content -->
                             <div class="section-content">
-                                <!-- Partner Name -->
-                                <div class="partner-info">
-                                    <t t-esc="statement_data.get('partner_name', partner.name)"/>
-                                </div>
-
                                 <!-- Metrics -->
                                 <div class="metrics-group">
                                     <div class="metric-item">
