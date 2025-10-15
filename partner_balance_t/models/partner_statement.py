@@ -41,7 +41,7 @@ class PartnerStatement(models.Model):
         """Get all invoices related to given sale orders"""
         invoices = orders.mapped('invoice_ids').filtered(
             lambda invoice: invoice.state != 'cancel' and invoice.move_type not in ['entry']
-        )
+        ).sorted('invoice_date')
         invoices_data = []
         for invoice in invoices:
             invoices_data.append(self._format_invoice_data(invoice))
@@ -302,7 +302,7 @@ class PartnerStatement(models.Model):
                 section['products'] = invoiced_data.get('sale_orders', [])
 
                 invoices = self.get_invoices_from_orders(order)
-                section['invoices'] = invoices.sort(key=lambda x: x['invoice_date'])
+                section['invoices'] = invoices
                 
                 payment_data = self._get_order_payments(order)
                 section['payments'] = payment_data
