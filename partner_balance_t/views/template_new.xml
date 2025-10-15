@@ -169,53 +169,6 @@
                                     </thead>
                                     <tbody>
                                         
-                                        <!-- Products/Orders Section -->
-                                        <!-- <t t-if="section.get('products')">
-                                            <t t-set="section_total" t-value="0"/>
-                                            <t t-foreach="section['products']" t-as="record">
-                                                
-                                                Record Header (Order/Invoice)
-                                                <tr class="products-header">
-                                                    <td colspan="12" class="font-weight-bold">
-                                                        📄 <t t-esc="record.get('record_name', 'Unknown')"/> 
-                                                        | State: <t t-esc="record.get('record_state', 'Unknown')"/>
-                                                        | Total: <span class="currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></span>
-                                                    </td>
-                                                </tr>
-                                                
-                                                Product Lines
-                                                <t t-foreach="record.get('products', [])" t-as="product">
-                                                    <t t-set="product_total" t-value="product.get('subtotal', 0) + product.get('tax_amount', 0)"/>
-                                                    <t t-set="section_total" t-value="section_total + product_total"/>
-                                                    <tr class="product-row">
-                                                        <td>-</td>
-                                                        <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
-                                                        <td>Product Sale</td>
-                                                        <td class="text-center">
-                                                            <t t-if="section.get('section_type') in ['uninvoiced', 'never_invoiced']">
-                                                                <small class="badge badge-warning">TO INVOICE</small>
-                                                            </t>
-                                                            <t t-else="">
-                                                                <small class="badge badge-info">INVOICED</small>
-                                                            </t>
-                                                        </td>
-                                                        <td><t t-esc="product.get('product_name', 'Unknown Product')"/></td>
-                                                        <td class="text-right"><t t-esc="'{:,.2f}'.format(product.get('quantity', 0))"/></td>
-                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('price_unit', 0))"/></td>
-                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('subtotal', 0))"/></td>
-                                                        <td class="text-right currency"><t t-esc="'{:,.2f}'.format(product.get('tax_amount', 0))"/></td>
-                                                        <td class="text-right currency">
-                                                            <t t-if="section.get('section_type') not in ['uninvoiced', 'never_invoiced']">
-                                                                <t t-esc="'{:,.2f}'.format(product_total)"/>
-                                                            </t>
-                                                            <t t-else="">-</t>
-                                                        </td>
-                                                        <td class="text-right">-</td>
-                                                        <td class="text-right">-</td>
-                                                    </tr>
-                                                </t>
-                                            </t>
-                                        </t> -->
 
                                         <!-- Products/Orders Section -->
                                         <t t-if="section.get('products')">
@@ -257,24 +210,6 @@
                                             
                                         </t>
 
-                                        <!-- <t t-if="section.get('invoices')">
-                                            <t t-foreach="section['invoices']" t-as="record">
-                                                <tr style="background-color: #f8f9ff;">
-                                                    <td><t t-esc="record.get('record_date', 'Unknown')"/></td>
-                                                    <td class="text-center">INVOICE</td>
-                                                    <td><t t-esc="record.get('record_name', 'Unknown')"/></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
-                                                    <td class="text-right"></td>
-                                                    <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('balance_after_invoice', 0))"/></td>
-                                                </tr>
-                                            </t>
-                                        </t> -->
-
                                         <!-- Payments Section -->
                                         <t t-if="section.get('payments')">
                                             <t t-foreach="section['payments']" t-as="payment">
@@ -285,7 +220,7 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td class="text-right">-</td>
+                                                    <td class="text-right"></td>
                                                     <td class="text-right currency text-success font-weight-bold">
                                                         <t t-esc="'{:,.2f}'.format(payment.get('amount', 0))"/>
                                                     </td>
@@ -296,9 +231,6 @@
 
                                         <!-- Unpaid Invoices Section -->
                                         <t t-if="section.get('unpaid_invoices')">
-                                            <!-- <tr class="unpaid-header">
-                                                <td colspan="12" class="font-weight-bold">⚠️ UNPAID INVOICES</td>
-                                            </tr> -->
                                             <t t-foreach="section['unpaid_invoices']" t-as="unpaid">
                                                 <tr class="unpaid-row">
                                                     <td><t t-esc="unpaid.get('due_date', '-')"/></td>
