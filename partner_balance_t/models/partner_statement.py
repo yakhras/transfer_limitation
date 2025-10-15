@@ -207,6 +207,9 @@ class PartnerStatement(models.Model):
         # Step 2: Calculate totals
         self._calculate_statement_totals(result)
 
+        sections = result['statement_sections']
+        result['summary']['order_fulfillment_rate'] = self._calculate_order_fulfillment_rate(sections)
+
         # Step 3: Calculate running balances for each section
         running_balance = 0
     
@@ -434,6 +437,15 @@ class PartnerStatement(models.Model):
         string='Total Invoices', 
         compute='_compute_statement_counts'
     )
+
+    def _calculate_order_fulfillment_rate(self, sections):
+        """Calculate % of orders that are fully invoiced"""
+        if not sections:
+            return 0
+        
+        fully_invoiced = sum(1 for s in sections if s.get('invoice_status') == 'invoiced')
+        rate = (fully_invoiced / len(sections)) * 100
+        return round(rate, 1)
     
     @api.depends('partner_id')
     def _compute_statement_flags(self):
