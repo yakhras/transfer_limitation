@@ -93,29 +93,41 @@
                             }
                         </style>
 
-                        <!-- Report Header -->
-                        <div class="statement-header">
-                            <h2><t t-esc="company.name"/></h2>
-                            <h4>📊 PARTNER STATEMENT - DETAILED ANALYSIS</h4>
+                        <div class="info-section">
+                            <!-- Header -->
+                            <div class="section-header">
+                                <div class="company-name"><t t-esc="company.name"/></div>
+                                <div class="header-row">
+                                    <span class="report-title">PARTNER STATEMENT - DETAILED ANALYSIS</span>
+                                    <span class="generated-date">Generated: <t t-esc="now"/></span>
+                                </div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="section-content">
+                                <!-- Partner Name -->
+                                <div class="partner-info">
+                                    <t t-esc="statement_data.get('partner_name', partner.name)"/>
+                                </div>
+
+                                <!-- Metrics -->
+                                <div class="metrics-group">
+                                    <div class="metric-item">
+                                        <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('total_orders', 0)"/></div>
+                                        <div class="metric-label">Total Orders</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('total_invoices', 0)"/></div>
+                                        <div class="metric-label">Total Invoices</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('total_payments', 0)"/></div>
+                                        <div class="metric-label">Total Payments</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Partner Information Section -->
-                        <div class="row mb-4">
-                            <div class="col-6">
-                                <table class="table table-sm table-borderless">
-                                    <tr><td><strong>Partner:</strong></td><td><t t-esc="statement_data.get('partner_name', partner.name)"/></td></tr>
-                                    <tr><td><strong>Partner Code:</strong></td><td><t t-esc="partner.ref or '-'"/></td></tr>
-                                    <tr><td><strong>Generated On:</strong></td><td><t t-esc="now"/></td></tr>
-                                </table>
-                            </div>
-                            <div class="col-6">
-                                <table class="table table-sm table-borderless">
-                                    <tr><td><strong>Total Orders:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_orders', 0)"/></td></tr>
-                                    <tr><td><strong>Total Invoices:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_invoices', 0)"/></td></tr>
-                                    <tr><td><strong>Total Payments:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_payments', 0)"/></td></tr>
-                                </table>
-                            </div>
-                        </div>
 
                         <!-- Main Statement Sections -->
                         <t t-foreach="statement_data.get('statement_sections', [])" t-as="section">
