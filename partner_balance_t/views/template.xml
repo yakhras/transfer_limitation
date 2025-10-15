@@ -162,8 +162,6 @@
                                             <th style="width: 15%;">Product</th>
                                             <th style="width: 7%;">Qty</th>
                                             <th style="width: 8%;">Unit Price</th>
-                                            <th style="width: 8%;">Subtotal</th>
-                                            <th style="width: 7%;">Tax</th>
                                             <th style="width: 8%;">Debit</th>
                                             <th style="width: 8%;">Credit</th>
                                             <th style="width: 8%;">Balance</th>
@@ -262,8 +260,6 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td></td>
-                                                    <td></td>
                                                     <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('record_total', 0))"/></td>
                                                     <td class="text-right"></td>
                                                     <td class="text-right currency"><t t-esc="'{:,.2f}'.format(record.get('balance_after_invoice', 0))"/></td>
@@ -277,8 +273,6 @@
                                                                 <td><t t-esc="payment.get('date', '-')"/></td>
                                                                 <td class="text-center"><small class="badge badge-success">PAYMENT</small></td>
                                                                 <td><t t-esc="payment.get('payment', 'Unknown Payment')"/></td>
-                                                                <td></td>
-                                                                <td></td>
                                                                 <td></td>
                                                                 <td></td>
                                                                 <td></td>
@@ -330,8 +324,6 @@
                                                     <td><t t-esc="unpaid.get('due_date', '-')"/></td>
                                                     <td class="text-center"><small class="badge badge-danger">OVERDUE</small></td>
                                                     <td><t t-esc="unpaid.get('invoice_name', 'Unknown Invoice')"/></td>
-                                                    <td></td>
-                                                    <td></td>
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
