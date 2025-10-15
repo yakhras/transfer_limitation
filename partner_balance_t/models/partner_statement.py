@@ -445,13 +445,13 @@ class PartnerStatement(models.Model):
                 current_balance += record.get('amount_total', 0)
                 record['balance_after_invoice'] = round(current_balance, 2)  # Add rounding
                 
-                if section.get('payments'):
-                    for payment in section['payments']:
-                        current_balance -= payment.get('amount', 0)
-                        # Fix negative zero issue
-                        if abs(current_balance) < 0.01:  # If very close to zero
-                            current_balance = 0.00
-                        payment['balance_after_payment'] = round(current_balance, 2)
+        if section.get('payments'):
+            for payment in section['payments']:
+                current_balance -= payment.get('amount', 0)
+                # Fix negative zero issue
+                if abs(current_balance) < 0.01:  # If very close to zero
+                    current_balance = 0.00
+                payment['balance_after_payment'] = round(current_balance, 2)
         
         return section
     
