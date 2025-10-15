@@ -138,9 +138,9 @@
                                     <t t-elif="section.get('section_type') == 'partially_invoiced'">
                                         <t t-esc="section.get('order_name', 'Unknown Order')"/> - Total: <t t-esc="section.get('order_total', '')"/>
                                     </t>
-                                    <t t-elif="section.get('section_type') == 'manual_invoices'">
+                                    <!-- <t t-elif="section.get('section_type') == 'manual_invoices'">
                                         📝 MANUAL INVOICES
-                                    </t>
+                                    </t> -->
                                     <t t-elif="section.get('section_type') == 'credit_note_case'">
                                         <t t-esc="section.get('order_name', 'Unknown Order')"/> - Total: <t t-esc="section.get('order_total', '')"/>
                                     </t>

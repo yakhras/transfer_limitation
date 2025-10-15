@@ -70,13 +70,13 @@ class PartnerStatement(models.Model):
         return self._build_product_object(sale_orders, all_lines, 'sale_orders')
     
     
-    def get_manual_invoice_products(self):
-        """Get products from non-cancelled manual invoices"""
-        non_cancelled_invoices = self.get_non_cancelled_invoices()
-        manual_invoices = non_cancelled_invoices.filtered(lambda inv: not inv.sale_ids)
+    # def get_manual_invoice_products(self):
+    #     """Get products from non-cancelled manual invoices"""
+    #     non_cancelled_invoices = self.get_non_cancelled_invoices()
+    #     manual_invoices = non_cancelled_invoices.filtered(lambda inv: not inv.sale_ids)
         
-        all_lines = manual_invoices.mapped('invoice_line_ids')
-        return self._build_product_object(manual_invoices, all_lines, 'invoices')
+    #     all_lines = manual_invoices.mapped('invoice_line_ids')
+    #     return self._build_product_object(manual_invoices, all_lines, 'invoices')
     
     # ==========================================
     # PAYMENT METHODS
@@ -208,15 +208,15 @@ class PartnerStatement(models.Model):
                             result['summary']['has_payments'] = True
         
         # Step 2: Handle manual invoices (not from sale orders)
-        manual_section = self._process_manual_invoices()
-        if manual_section:
-            result['statement_sections'].append(manual_section)
-            result['summary']['has_manual_invoices'] = True
-            result['summary']['total_invoices'] += manual_section.get('total_records', 0)
-            if manual_section.get('has_payments'):
-                result['summary']['has_payments'] = True
-            if manual_section.get('has_unpaid_invoices'):
-                result['summary']['has_unpaid_invoices'] = True
+        # manual_section = self._process_manual_invoices()
+        # if manual_section:
+        #     result['statement_sections'].append(manual_section)
+        #     result['summary']['has_manual_invoices'] = True
+        #     result['summary']['total_invoices'] += manual_section.get('total_records', 0)
+        #     if manual_section.get('has_payments'):
+        #         result['summary']['has_payments'] = True
+        #     if manual_section.get('has_unpaid_invoices'):
+        #         result['summary']['has_unpaid_invoices'] = True
         
         # Step 3: Calculate totals
         self._calculate_statement_totals(result)
@@ -321,51 +321,51 @@ class PartnerStatement(models.Model):
         
         return section #if section['products'] or section['payments'] or section['unpaid_invoices'] else None
     
-    def _process_manual_invoices(self):
-        """Process manual invoices (not from sale orders)"""
-        manual_data = self.get_manual_invoice_products()
+    # def _process_manual_invoices(self):
+    #     """Process manual invoices (not from sale orders)"""
+    #     manual_data = self.get_manual_invoice_products()
         
-        if not manual_data.get('has_products'):
-            return None
+    #     if not manual_data.get('has_products'):
+    #         return None
         
-        # Get payment details for manual invoices
-        manual_invoices = self.get_non_cancelled_invoices().filtered(lambda inv: not inv.sale_ids)
-        payment_data = []
-        unpaid_data = []
+    #     # Get payment details for manual invoices
+    #     manual_invoices = self.get_non_cancelled_invoices().filtered(lambda inv: not inv.sale_ids)
+    #     payment_data = []
+    #     unpaid_data = []
         
-        if manual_invoices:
-            posted_manual = manual_invoices.filtered(lambda inv: inv.state == 'posted')
-            if posted_manual:
-                # Get payments for manual invoices
-                payment_mapping = self.get_invoice_payment_mapping()
-                manual_payments = [
-                    mapping for mapping in payment_mapping.get('mapping', [])
-                    if any(inv.name == mapping['invoice'] for inv in posted_manual)
-                ]
-                payment_data = manual_payments
+    #     if manual_invoices:
+    #         posted_manual = manual_invoices.filtered(lambda inv: inv.state == 'posted')
+    #         if posted_manual:
+    #             # Get payments for manual invoices
+    #             payment_mapping = self.get_invoice_payment_mapping()
+    #             manual_payments = [
+    #                 mapping for mapping in payment_mapping.get('mapping', [])
+    #                 if any(inv.name == mapping['invoice'] for inv in posted_manual)
+    #             ]
+    #             payment_data = manual_payments
                 
-                # Get unpaid manual invoices
-                unpaid_manual_invoices = posted_manual.filtered(
-                    lambda inv: inv.payment_state == 'not_paid'
-                )
-                unpaid_data = [{
-                    'invoice_id': inv.id,
-                    'invoice_name': inv.name,
-                    'invoice_state': inv.state,
-                    'amount_total': inv.amount_total,
-                    'payment_state': inv.payment_state
-                } for inv in unpaid_manual_invoices]
+    #             # Get unpaid manual invoices
+    #             unpaid_manual_invoices = posted_manual.filtered(
+    #                 lambda inv: inv.payment_state == 'not_paid'
+    #             )
+    #             unpaid_data = [{
+    #                 'invoice_id': inv.id,
+    #                 'invoice_name': inv.name,
+    #                 'invoice_state': inv.state,
+    #                 'amount_total': inv.amount_total,
+    #                 'payment_state': inv.payment_state
+    #             } for inv in unpaid_manual_invoices]
         
-        return {
-            'section_type': 'manual_invoices',
-            'section_name': 'Manual Invoices',
-            'products': manual_data.get('invoices', []),
-            'payments': payment_data,
-            'unpaid_invoices': unpaid_data,
-            'total_records': manual_data.get('total_records', 0),
-            'has_payments': bool(payment_data),
-            'has_unpaid_invoices': bool(unpaid_data)
-        }
+    #     return {
+    #         'section_type': 'manual_invoices',
+    #         'section_name': 'Manual Invoices',
+    #         'products': manual_data.get('invoices', []),
+    #         'payments': payment_data,
+    #         'unpaid_invoices': unpaid_data,
+    #         'total_records': manual_data.get('total_records', 0),
+    #         'has_payments': bool(payment_data),
+    #         'has_unpaid_invoices': bool(unpaid_data)
+    #     }
     
     def _get_order_payments(self, order):
         """Get payment details for a specific order"""
