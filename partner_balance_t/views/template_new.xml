@@ -8,21 +8,86 @@
                         
                         <!-- Custom CSS Styles -->
                         <style>
-                            .statement-header {
-                                background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-                                color: white;
-                                padding: 20px;
-                                text-align: center;
-                                margin-bottom: 20px;
+                            .info-section {
+                                background: white;
                                 border-radius: 8px;
+                                border: 1px solid #e2e8f0;
+                                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                                overflow: hidden;
+                                margin-bottom: 20px;
                             }
+
                             .section-header {
-                                background: linear-gradient(90deg, #374151, #6b7280);
+                                background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+                                padding: 16px 24px;
                                 color: white;
-                                padding: 10px 15px;
-                                font-weight: bold;
-                                border-radius: 5px 5px 0 0;
                             }
+
+                            .company-name {
+                                font-size: 15px;
+                                font-weight: 600;
+                                margin-bottom: 10px;
+                            }
+
+                            .header-row {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                flex-wrap: nowrap;
+                            }
+
+                            .report-title {
+                                font-size: 13px;
+                                font-weight: 600;
+                            }
+
+                            .generated-date {
+                                font-size: 12px;
+                                opacity: 0.95;
+                            }
+
+                            .section-content {
+                                padding: 24px;
+                                display: grid;
+                                grid-template-columns: 1.5fr 1fr;
+                                gap: 40px;
+                                align-items: center;
+                            }
+
+                            .partner-info {
+                                font-size: 14px;
+                                color: #0f172a;
+                                font-weight: 600;
+                                line-height: 1.5;
+                            }
+
+                            .metrics-group {
+                                display: flex;
+                                justify-content: space-around;
+                                gap: 20px;
+                            }
+
+                            .metric-item {
+                                text-align: center;
+                            }
+
+                            .metric-value {
+                                font-size: 32px;
+                                font-weight: 700;
+                                color: #2563eb;
+                                line-height: 1;
+                                margin-bottom: 6px;
+                            }
+
+                            .metric-label {
+                                font-size: 11px;
+                                color: #64748b;
+                                font-weight: 600;
+                                text-transform: uppercase;
+                                letter-spacing: 0.04em;
+                            }
+
+                            /* Table styles */
                             .statement-table {
                                 font-size: 11px;
                                 width: 100%;
@@ -41,26 +106,11 @@
                                 text-align: center;
                                 font-size: 10px;
                             }
-                            .products-header {
-                                background-color: #e9ecef;
-                                font-weight: bold;
-                                font-style: italic;
-                            }
                             .product-row {
                                 background-color: #f8f9fa;
                             }
-                            .payment-header {
-                                background-color: #d1ecf1;
-                                color: #0c5460;
-                                font-weight: bold;
-                            }
                             .payment-row {
                                 background-color: #d4edda;
-                            }
-                            .unpaid-header {
-                                background-color: #fff3cd;
-                                color: #856404;
-                                font-weight: bold;
                             }
                             .unpaid-row {
                                 background-color: #ffeeba;
@@ -71,49 +121,44 @@
                             .text-center {
                                 text-align: center;
                             }
-                            .font-weight-bold {
-                                font-weight: bold;
-                            }
-                            .text-danger {
-                                color: #dc3545;
-                            }
-                            .text-success {
-                                color: #28a745;
-                            }
-                            .summary-table {
-                                margin-top: 30px;
-                                background-color: #f8f9fa;
-                            }
-                            .summary-table th {
-                                background: linear-gradient(90deg, #1e40af, #3b82f6);
-                                color: white;
-                            }
                             .currency {
                                 font-family: monospace;
                             }
                         </style>
 
-                        <!-- Report Header -->
-                        <div class="statement-header">
-                            <h2><t t-esc="company.name"/></h2>
-                            <h4>📊 PARTNER STATEMENT - DETAILED ANALYSIS</h4>
-                        </div>
-
-                        <!-- Partner Information Section -->
-                        <div class="row mb-4">
-                            <div class="col-6">
-                                <table class="table table-sm table-borderless">
-                                    <tr><td><strong>Partner:</strong></td><td><t t-esc="statement_data.get('partner_name', partner.name)"/></td></tr>
-                                    <tr><td><strong>Partner Code:</strong></td><td><t t-esc="partner.ref or '-'"/></td></tr>
-                                    <tr><td><strong>Generated On:</strong></td><td><t t-esc="now"/></td></tr>
-                                </table>
+                        <!-- Info Section -->
+                        <div class="info-section">
+                            <!-- Header -->
+                            <div class="section-header">
+                                <div class="company-name"><t t-esc="company.name"/></div>
+                                <div class="header-row">
+                                    <span class="report-title">📊 PARTNER STATEMENT - DETAILED ANALYSIS</span>
+                                    <span class="generated-date">Generated: <t t-esc="now"/></span>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <table class="table table-sm table-borderless">
-                                    <tr><td><strong>Total Orders:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_orders', 0)"/></td></tr>
-                                    <tr><td><strong>Total Invoices:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_invoices', 0)"/></td></tr>
-                                    <tr><td><strong>Total Payments:</strong></td><td><t t-esc="statement_data.get('summary', {}).get('total_payments', 0)"/></td></tr>
-                                </table>
+
+                            <!-- Content -->
+                            <div class="section-content">
+                                <!-- Partner Name -->
+                                <div class="partner-info">
+                                    <t t-esc="statement_data.get('partner_name', partner.name)"/>
+                                </div>
+
+                                <!-- Metrics -->
+                                <div class="metrics-group">
+                                    <div class="metric-item">
+                                        <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('total_orders', 0)"/></div>
+                                        <div class="metric-label">Total Orders</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('total_invoices', 0)"/></div>
+                                        <div class="metric-label">Total Invoices</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('total_payments', 0)"/></div>
+                                        <div class="metric-label">Total Payments</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
