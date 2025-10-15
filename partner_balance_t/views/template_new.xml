@@ -8,6 +8,11 @@
                         
                         <!-- Custom CSS Styles -->
                         <style>
+                            .metrics-group {
+                                display: flex;
+                                justify-content: space-around;
+                                gap: 20px;
+                            }
                             .statement-header {
                                 background: linear-gradient(135deg, #1e3a8a, #3b82f6);
                                 color: white;
