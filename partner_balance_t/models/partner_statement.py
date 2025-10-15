@@ -17,7 +17,7 @@ class PartnerStatement(models.Model):
         """Get confirmed sales orders recordset for this partner"""
         return self.partner_id.sale_order_ids.filtered(
             lambda order: order.state in ['sale', 'done']
-        )
+        ).sorted('date_order')
     
     def get_posted_invoices(self):
         """Get posted invoices recordset for this partner"""
