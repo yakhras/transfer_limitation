@@ -262,7 +262,7 @@
                                                     <t t-if="product.get('quantity') > 0">
                                                         <tr class="product-row">
                                                             <td></td>
-                                                            <td class="text-center">PRODUCT</td>
+                                                            <td class="text-center">Sale</td>
                                                             <td></td>
                                                             <td><t t-esc="product.get('product_name', 'Unknown Product')"/></td>
                                                             <td class="text-right"><t t-esc="'{:,.2f}'.format(product.get('quantity', 0))"/></td>
@@ -280,7 +280,7 @@
                                                 <t t-foreach="section.get('invoices')" t-as="inv">
                                                     <tr style="background-color: #f8f9ff;">
                                                         <td><t t-esc="inv.get('invoice_date', 'Unknown')"/></td>
-                                                        <td class="text-center">INVOICE</td>
+                                                        <td class="text-center">Invoice</td>
                                                         <td><t t-esc="inv.get('invoice_name', 'Unknown')"/></td>
                                                         <td></td>
                                                         <td></td>
@@ -299,7 +299,7 @@
                                             <t t-foreach="section['payments']" t-as="payment">
                                                 <tr class="payment-row">
                                                     <td><t t-esc="payment.get('date', '-')"/></td>
-                                                    <td class="text-center"><small class="badge badge-success">PAYMENT</small></td>
+                                                    <td class="text-center"><small class="badge badge-success">Payment</small></td>
                                                     <td><t t-esc="payment.get('payment', 'Unknown Payment')"/></td>
                                                     <td></td>
                                                     <td></td>
