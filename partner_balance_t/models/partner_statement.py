@@ -209,6 +209,7 @@ class PartnerStatement(models.Model):
 
         sections = result['statement_sections']
         result['summary']['order_fulfillment_rate'] = self._calculate_order_fulfillment_rate(sections)
+        result['summary']['order_payment_success_rate'] = self._calculate_order_payment_rate(sections)
 
         # Step 3: Calculate running balances for each section
         running_balance = 0
@@ -445,6 +446,22 @@ class PartnerStatement(models.Model):
         
         fully_invoiced = sum(1 for s in sections if s.get('invoice_status') == 'invoiced')
         rate = (fully_invoiced / len(sections)) * 100
+        return round(rate, 1)
+    
+
+    def _calculate_order_payment_rate(self, sections):
+        """Calculate % of orders that are fully paid"""
+        if not sections:
+            return 0
+        
+        fully_paid = 0
+        for section in sections:
+            if section.get('payments'):
+                last_payment = section['payments'][-1]
+                if last_payment.get('balance_after_payment', 0) == 0:
+                    fully_paid += 1
+        
+        rate = (fully_paid / len(sections)) * 100
         return round(rate, 1)
     
     @api.depends('partner_id')

@@ -208,6 +208,10 @@
                                         <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('order_fulfillment_rate', 0)"/>%</div>
                                         <div class="metric-label">Fulfillment Rate</div>
                                     </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('order_payment_success_rate', 0)"/>%</div>
+                                        <div class="metric-label">Payment Rate</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
