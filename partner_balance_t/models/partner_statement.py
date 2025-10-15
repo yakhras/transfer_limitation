@@ -102,6 +102,7 @@ class PartnerStatement(models.Model):
                 'invoice': rec.debit_move_id.move_id.name,
                 'payment': rec.credit_move_id.move_id.name,
                 'amount': rec.credit_amount_currency,
+                'currency_symbol': rec.credit_move_id.currency_id.symbol,
                 'date': rec.max_date
             } for rec in partial_reconciles], key=lambda x: x['date'])
         }
@@ -135,6 +136,7 @@ class PartnerStatement(models.Model):
                     'record_date': date_field,
                     'record_state': parent_record.state,
                     'record_total': parent_record.amount_total,
+                    'currency_symbol': parent_record.currency_id.symbol,
                     'products': []
                 }
             
@@ -221,6 +223,7 @@ class PartnerStatement(models.Model):
             'order_name': order.name,
             'order_state': order.state,
             'order_total': order.amount_total,
+            'currency_symbol': order.currency_id.symbol,
             'invoice_status': order.invoice_status,
             'products': [],
             'invoices': [],
@@ -348,6 +351,7 @@ class PartnerStatement(models.Model):
             'invoice_name': inv.name,
             'invoice_state': inv.state,
             'amount_total': inv.amount_total,
+            'currency_symbol': inv.currency_id.symbol,
             'payment_state': inv.payment_state,
             'due_date': inv.invoice_date_due
         } for inv in unpaid_invoices]
