@@ -16,6 +16,18 @@
                                 overflow: hidden;
                                 margin-bottom: 20px;
                             }
+                            .company-partner-row {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 10px;
+                                flex-wrap: nowrap;
+                            }
+
+                            .company-name, .partner-name {
+                                font-size: 15px;
+                                font-weight: 600;
+                            }
                             .company-name {
                                 font-size: 15px;
                                 font-weight: 600;
@@ -161,9 +173,12 @@
                         <div class="info-section">
                             <!-- Header -->
                             <div class="section-header">
-                                <div class="company-name"><t t-esc="company.name"/></div>
+                                <div class="company-partner-row">
+                                    <span class="company-name"><t t-esc="company.name"/></span>
+                                    <span class="partner-name"><t t-esc="statement_data.get('partner_name', partner.name)"/></span>
+                                </div>
                                 <div class="header-row">
-                                    <span class="report-title">PARTNER STATEMENT - DETAILED ANALYSIS</span>
+                                    <span class="report-title">Sales Order Statement</span>
                                     <span class="generated-date">Generated: <t t-esc="now"/></span>
                                 </div>
                             </div>
