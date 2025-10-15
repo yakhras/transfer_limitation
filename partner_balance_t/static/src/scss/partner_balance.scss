@@ -318,3 +318,170 @@ body {
   margin-left: var(--space-md);
 }
 
+
+
+.info-section {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.company-partner-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: nowrap;
+}
+
+.company-name, .partner-name {
+    font-size: 15px;
+    font-weight: 600;
+}
+.company-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.report-title {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.generated-date {
+    font-size: 12px;
+    opacity: 0.95;
+}
+.section-content {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.partner-info {
+    font-size: 14px;
+    color: #0f172a;
+    font-weight: 600;
+    line-height: 1.5;
+}
+.metrics-group {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+.metric-item {
+    text-align: center;
+}
+.metric-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2563eb;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+.metric-label {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.statement-header {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+.section-header {
+    background: linear-gradient(90deg, #374151, #6b7280);
+    color: white;
+    padding: 10px 15px;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+}
+.statement-table {
+    font-size: 11px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.statement-table th, .statement-table td {
+    border: 1px solid #dee2e6;
+    padding: 6px 8px;
+    text-align: left;
+}
+.statement-table thead th {
+    background-color: #495057;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 10px;
+}
+.products-header {
+    background-color: #e9ecef;
+    font-weight: bold;
+    font-style: italic;
+}
+.product-row {
+    background-color: #f8f9fa;
+}
+.payment-header {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    font-weight: bold;
+}
+.payment-row {
+    background-color: #d4edda;
+}
+.unpaid-header {
+    background-color: #fff3cd;
+    color: #856404;
+    font-weight: bold;
+}
+.unpaid-row {
+    background-color: #ffeeba;
+}
+.text-right {
+    text-align: right;
+}
+.text-center {
+    text-align: center;
+}
+.font-weight-bold {
+    font-weight: bold;
+}
+.text-danger {
+    color: #dc3545;
+}
+.text-success {
+    color: #28a745;
+}
+.summary-table {
+    margin-top: 30px;
+    background-color: #f8f9fa;
+}
+.summary-table th {
+    background: linear-gradient(90deg, #1e40af, #3b82f6);
+    color: white;
+}
+.currency {
+    font-family: monospace;
+}
+.section-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

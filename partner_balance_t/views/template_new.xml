@@ -7,7 +7,7 @@
                     <div class="page">
                         
                         <!-- Custom CSS Styles -->
-                        <style>
+                        <!-- <style>
                             .info-section {
                                 background: white;
                                 border-radius: 8px;
@@ -173,7 +173,7 @@
                                 justify-content: space-between;
                                 align-items: center;
                             }
-                        </style>
+                        </style> -->
 
                         <div class="info-section">
                             <!-- Header -->
