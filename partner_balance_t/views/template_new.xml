@@ -8,6 +8,49 @@
                         
                         <!-- Custom CSS Styles -->
                         <style>
+                            .info-section {
+                                background: white;
+                                border-radius: 8px;
+                                border: 1px solid #e2e8f0;
+                                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                                overflow: hidden;
+                                margin-bottom: 20px;
+                            }
+                            .company-name {
+                                font-size: 15px;
+                                font-weight: 600;
+                                margin-bottom: 10px;
+                            }
+                            .header-row {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                flex-wrap: nowrap;
+                            }
+
+                            .report-title {
+                                font-size: 13px;
+                                font-weight: 600;
+                            }
+
+                            .generated-date {
+                                font-size: 12px;
+                                opacity: 0.95;
+                            }
+                            .section-content {
+                                padding: 24px;
+                                display: grid;
+                                grid-template-columns: 1.5fr 1fr;
+                                gap: 40px;
+                                align-items: center;
+                            }
+
+                            .partner-info {
+                                font-size: 14px;
+                                color: #0f172a;
+                                font-weight: 600;
+                                line-height: 1.5;
+                            }
                             .metrics-group {
                                 display: flex;
                                 justify-content: space-around;
