@@ -440,9 +440,9 @@ class PartnerStatement(models.Model):
         """Calculate balance within this section only"""
         current_balance = 0
         
-        if section.get('products'):
-            for record in section['products']:
-                current_balance += record.get('record_total', 0)
+        if section.get('invoices'):
+            for record in section['invoices']:
+                current_balance += record.get('amount_total', 0)
                 record['balance_after_invoice'] = round(current_balance, 2)  # Add rounding
                 
                 if section.get('payments'):
