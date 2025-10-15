@@ -50,9 +50,8 @@
                                 opacity: 0.95;
                             }
                             .section-content {
-                                padding: 24px;
+                                padding: 12px;
                                 display: grid;
-                                grid-template-columns: 1.5fr 1fr;
                                 gap: 40px;
                                 align-items: center;
                             }
@@ -65,7 +64,6 @@
                             }
                             .metrics-group {
                                 display: flex;
-                                align-items: center;
                                 justify-content: space-around;
                                 gap: 20px;
                             }
