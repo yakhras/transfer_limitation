@@ -216,31 +216,31 @@
                                 <!-- Dynamic Section Header -->
                                 <div class="section-header section-header-flex">
                                     <t t-if="section.get('section_type') == 'uninvoiced'">
-                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/></span> 
+                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/> - <t t-esc="section.get('order_date', '')"/></span> 
                                         <span>Total: <t t-esc="section.get('order_total', '')"/></span>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'invoiced_paid'">
-                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/></span>
+                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/> - <t t-esc="section.get('order_date', '')"/></span>
                                         <span>Total: <t t-esc="section.get('order_total', '')"/></span>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'invoiced_unpaid'">
-                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/></span>
+                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/> - <t t-esc="section.get('order_date', '')"/></span>
                                         <span>Total: <t t-esc="section.get('order_total', '')"/></span>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'invoiced_mixed'">
-                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/></span>
+                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/> - <t t-esc="section.get('order_date', '')"/></span>
                                         <span>Total: <t t-esc="section.get('order_total', '')"/></span>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'partially_invoiced'">
-                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/></span>
+                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/> - <t t-esc="section.get('order_date', '')"/></span>
                                         <span>Total: <t t-esc="section.get('order_total', '')"/></span>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'credit_note_case'">
-                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/></span>
+                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/> - <t t-esc="section.get('order_date', '')"/></span>
                                         <span>Total: <t t-esc="section.get('order_total', '')"/></span>
                                     </t>
                                     <t t-elif="section.get('section_type') == 'never_invoiced'">
-                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/></span>
+                                        <span><t t-esc="section.get('order_name', 'Unknown Order')"/> - <t t-esc="section.get('order_date', '')"/></span>
                                         <span>Total: <t t-esc="section.get('order_total', '')"/></span>
                                     </t>
                                     <t t-else="">
