@@ -210,6 +210,7 @@ class PartnerStatement(models.Model):
         sections = result['statement_sections']
         result['summary']['order_fulfillment_rate'] = self._calculate_order_fulfillment_rate(sections)
         result['summary']['order_payment_success_rate'] = self._calculate_order_payment_rate(sections)
+        result['summary']['avg_order_to_cash_days'] = int(self._calculate_avg_order_to_cash_days(sections))
 
         # Step 3: Calculate running balances for each section
         running_balance = 0
@@ -463,6 +464,29 @@ class PartnerStatement(models.Model):
         
         rate = (fully_paid / len(sections)) * 100
         return round(rate, 1)
+    
+
+    def _calculate_avg_order_to_cash_days(self, sections):
+        """Calculate average days from order date to final payment"""
+        total_days = 0
+        paid_orders = 0
+        
+        for section in sections:
+            if section.get('payments'):
+                last_payment = section['payments'][-1]
+                if last_payment.get('balance_after_payment', 0) == 0:
+                    order_date = fields.Date.from_string(section.get('order_date'))
+                    payment_date = fields.Date.from_string(last_payment.get('date'))
+                    if order_date and payment_date:
+                        days = (payment_date - order_date).days
+                        total_days += days
+                        paid_orders += 1
+        
+        if paid_orders == 0:
+            return 0
+        
+        return round(total_days / paid_orders, 0)
+    
     
     @api.depends('partner_id')
     def _compute_statement_flags(self):

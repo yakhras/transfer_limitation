@@ -212,6 +212,10 @@
                                         <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('order_payment_success_rate', 0)"/>%</div>
                                         <div class="metric-label">Payment Rate</div>
                                     </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value"><t t-esc="statement_data.get('summary', {}).get('avg_order_to_cash_days', 0)"/></div>
+                                        <div class="metric-label">Avg. Cash Days</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
