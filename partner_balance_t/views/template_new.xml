@@ -13,6 +13,23 @@
                                 justify-content: space-around;
                                 gap: 20px;
                             }
+                            .metric-item {
+                                text-align: center;
+                            }
+                            .metric-value {
+                                font-size: 32px;
+                                font-weight: 700;
+                                color: #2563eb;
+                                line-height: 1;
+                                margin-bottom: 6px;
+                            }
+                            .metric-label {
+                                font-size: 11px;
+                                color: #64748b;
+                                font-weight: 600;
+                                text-transform: uppercase;
+                                letter-spacing: 0.04em;
+                            }
                             .statement-header {
                                 background: linear-gradient(135deg, #1e3a8a, #3b82f6);
                                 color: white;
