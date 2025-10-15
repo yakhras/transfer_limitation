@@ -55,6 +55,7 @@ class PartnerStatement(models.Model):
                 'invoice_name': invoice.name,
                 'invoice_state': invoice.state,
                 'amount_total': invoice.amount_total,
+                'currency_symbol': invoice.currency_id.symbol,
                 'payment_state': invoice.payment_state,
                 'invoice_date': invoice.invoice_date,
             }
